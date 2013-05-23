@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -493,7 +494,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 tempVar.setEntity(diskImage.getSizeInGigabytes());
                                 diskModel.setSize(tempVar);
                                 ListModel tempVar2 = new ListModel();
-                                tempVar2.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
+                                tempVar2.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
                                         : AsyncDataProvider.getVolumeTypeList()));
                                 tempVar2.setSelectedItem(diskImage.getVolumeType());
                                 diskModel.setVolumeType(tempVar2);
@@ -893,5 +894,19 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
         getModel().getCdImage().setIsChangable(hasCd);
         getModel().getCdAttached().setEntity(hasCd);
+    }
+
+    public void vmTypeChanged(VmType vmType) {
+        getModel().getIsSoundcardEnabled().setEntity(vmType == VmType.Desktop);
+    }
+
+    protected void initSoundCard(Guid id) {
+        AsyncDataProvider.isSoundcardEnabled(new AsyncQuery(getModel(), new INewAsyncCallback() {
+
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                getModel().getIsSoundcardEnabled().setEntity(returnValue);
+            }
+        }), id);
     }
 }

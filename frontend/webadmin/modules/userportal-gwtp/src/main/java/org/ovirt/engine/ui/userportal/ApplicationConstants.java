@@ -152,12 +152,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String removeTemplate();
 
     // Vm
-    @DefaultStringValue("New Server")
-    String newServerVm();
-
-    @DefaultStringValue("New Desktop")
-    String newDesktopVm();
-
     @DefaultStringValue("Edit")
     String editVm();
 

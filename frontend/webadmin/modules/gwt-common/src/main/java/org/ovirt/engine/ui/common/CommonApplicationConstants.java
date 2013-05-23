@@ -207,6 +207,9 @@ public interface CommonApplicationConstants extends Constants {
     String no();
 
     // Vm
+    @DefaultStringValue("New VM")
+    String newVm();
+
     @DefaultStringValue("Power Off")
     String powerOffVm();
 
@@ -1271,4 +1274,10 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Are you sure you want to remove the following items?")
     String removeConfirmationPopupMessage();
+
+    @DefaultStringValue("Soundcard enabled")
+    String soundcardEnabled();
+
+    @DefaultStringValue("Optimized for")
+    String optimizedFor();
 }

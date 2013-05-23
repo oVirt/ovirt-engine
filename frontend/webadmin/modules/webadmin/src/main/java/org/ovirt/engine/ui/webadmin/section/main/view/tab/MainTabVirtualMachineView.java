@@ -158,16 +158,10 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(uptimeColumn, constants.uptimeVm(), "80px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.newServerVm()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.newVm()) {
             @Override
             protected UICommand resolveCommand() {
-                return getMainModel().getNewServerCommand();
-            }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.newDesktopVm()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getMainModel().getNewDesktopCommand();
+                return getMainModel().getNewVmCommand();
             }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.editVm()) {

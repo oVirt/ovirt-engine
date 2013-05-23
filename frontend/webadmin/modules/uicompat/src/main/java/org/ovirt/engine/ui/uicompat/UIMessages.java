@@ -87,12 +87,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("''{0}'' Storage Domain is not active. Please activate it.")
     String storageDomainIsNotActive(String storageName);
 
-    @DefaultMessage("New {0} Virtual Machine")
-    String newVmTitle(String vmType);
-
-    @DefaultMessage("Edit {0} Virtual Machine")
-    String editVmTitle(String vmType);
-
     @DefaultMessage("Import process has begun for Template(s): {0}.\nYou can check import status in the main ''Events'' tab")
     String importProcessHasBegunForTemplates(String importedTemplates);
 

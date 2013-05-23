@@ -7,10 +7,18 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NewPoolNameLengthValidation;
 
 public class NewPoolModelBehavior extends PoolModelBehaviorBase {
+
+    @Override
+    public void initialize(SystemTreeItemModel systemTreeSelectedItem) {
+        super.initialize(systemTreeSelectedItem);
+
+        getModel().getVmType().setIsChangable(true);
+    }
 
     @Override
     protected void setupSelectedTemplate(ListModel model, List<VmTemplate> templates) {

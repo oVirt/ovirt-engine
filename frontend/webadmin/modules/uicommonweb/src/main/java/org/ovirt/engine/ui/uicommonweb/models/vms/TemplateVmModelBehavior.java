@@ -33,6 +33,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getTemplate().setIsChangable(false);
         getModel().getProvisioning().setIsChangable(false);
         getModel().getStorageDomain().setIsChangable(false);
+        getModel().getIsSoundcardEnabled().setIsChangable(true);
+        getModel().getVmType().setIsChangable(true);
 
         if (template.getStoragePoolId() != null && !template.getStoragePoolId().getValue().equals(NGuid.Empty))
         {
@@ -58,10 +60,19 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                                             }
                                             model.setDataCentersAndClusters(model,
                                                     new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCenter })),
-                                                    filteredClusters, template.getVdsGroupId().getValue());
+                                                    filteredClusters,
+                                                    template.getVdsGroupId().getValue());
 
-                                            initTemplate();
-                                            initCdImage();
+                                            AsyncDataProvider.isSoundcardEnabled(new AsyncQuery(getModel(),
+                                                    new INewAsyncCallback() {
+
+                                                        @Override
+                                                        public void onSuccess(Object model, Object returnValue) {
+                                                            getModel().getIsSoundcardEnabled().setEntity(returnValue);
+                                                            initTemplate();
+                                                            initCdImage();
+                                                        }
+                                                    }), template.getId());
                                         }
                                     }, getModel().getHash()),
                                     true,

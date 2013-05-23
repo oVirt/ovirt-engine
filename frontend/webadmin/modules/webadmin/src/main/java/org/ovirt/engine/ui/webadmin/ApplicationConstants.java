@@ -1368,12 +1368,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Uptime")
     String uptimeVm();
 
-    @DefaultStringValue("New Server")
-    String newServerVm();
-
-    @DefaultStringValue("New Desktop")
-    String newDesktopVm();
-
     @DefaultStringValue("Edit")
     String editVm();
 

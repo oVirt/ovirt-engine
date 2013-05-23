@@ -108,30 +108,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         this.newVMCommand = newVMCommand;
     }
 
-    private UICommand privateNewServerCommand;
-
-    public UICommand getNewServerCommand()
-    {
-        return privateNewServerCommand;
-    }
-
-    private void setNewServerCommand(UICommand value)
-    {
-        privateNewServerCommand = value;
-    }
-
-    private UICommand privateNewDesktopCommand;
-
-    public UICommand getNewDesktopCommand()
-    {
-        return privateNewDesktopCommand;
-    }
-
-    private void setNewDesktopCommand(UICommand value)
-    {
-        privateNewDesktopCommand = value;
-    }
-
     private UICommand privateEditCommand;
 
     @Override
@@ -417,9 +393,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         consoleModelsCache = new ConsoleModelsCache(this);
         setConsoleHelpers();
 
-        setNewVmCommand(new UICommand("NewVM", this)); //$NON-NLS-1$
-        setNewServerCommand(new UICommand("NewServer", this)); //$NON-NLS-1$
-        setNewDesktopCommand(new UICommand("NewDesktop", this)); //$NON-NLS-1$
+        setNewVmCommand(new UICommand("NewVm", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setRunCommand(new UICommand("Run", this, true)); //$NON-NLS-1$
@@ -705,17 +679,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setSelectedHasConsoleModels(list);
     }
 
-    private void newDesktop()
-    {
-        newInternal(VmType.Desktop);
-    }
-
-    private void newServer()
-    {
-        newInternal(VmType.Server);
-    }
-
-    private void newInternal(VmType vmType)
+    private void newVm()
     {
         if (getWindow() != null)
         {
@@ -723,13 +687,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
 
         UnitVmModel model = new UnitVmModel(new NewVmModelBehavior());
-        model.setTitle(ConstantsManager.getInstance()
-                .getMessages()
-                .newVmTitle(vmType == VmType.Server ? ConstantsManager.getInstance().getConstants().serverVmType()
-                        : ConstantsManager.getInstance().getConstants().desktopVmType()));
-        model.setHashName("new_" + (vmType == VmType.Server ? "server" : "desktop")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        model.setTitle(ConstantsManager.getInstance().getConstants().newVmTitle());
+        model.setHashName("new_vm"); //$NON-NLS-1$
         model.setIsNew(true);
-        model.setVmType(vmType);
+        model.getVmType().setSelectedItem(VmType.Server);
         model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
 
         setWindow(model);
@@ -740,9 +701,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         switchModeCommand.init(model);
         model.getCommands().add(switchModeCommand);
 
-        // Ensures that the default provisioning is "Clone" for a new server and "Thin" for a new desktop.
-        boolean selectValue = model.getVmType() == VmType.Server;
-        model.getProvisioning().setEntity(selectValue);
+        model.getProvisioning().setEntity(true);
 
         UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -794,16 +753,12 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
 
         UnitVmModel model = new UnitVmModel(new ExistingVmModelBehavior(vm));
-        model.setVmType(vm.getVmType());
+        model.getVmType().setSelectedItem(vm.getVmType());
         model.setVmAttachedToPool(vm.getVmPoolId() != null);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance()
-                .getMessages()
-                .editVmTitle(vm.getVmType() == VmType.Server ? ConstantsManager.getInstance()
-                        .getConstants()
-                        .serverVmType()
-                        : ConstantsManager.getInstance().getConstants().desktopVmType()));
-        model.setHashName("edit_" + (vm.getVmType() == VmType.Server ? "server" : "desktop")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                .getConstants().editVmTitle());
+        model.setHashName("edit_vm"); //$NON-NLS-1$
         model.setCustomPropertiesKeysList(getCustomPropertiesKeysList());
 
         model.initialize(this.getSystemTreeSelectedItem());
@@ -1314,7 +1269,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setTitle(ConstantsManager.getInstance().getConstants().newTemplateTitle());
         model.setHashName("new_template"); //$NON-NLS-1$
         model.setIsNew(true);
-        model.setVmType(vm.getVmType());
+        model.getVmType().setSelectedItem(vm.getVmType());
 
         model.initialize(getSystemTreeSelectedItem());
 
@@ -1391,7 +1346,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         VM tempVar = new VM();
         tempVar.setId(vm.getId());
-        tempVar.setVmType(model.getVmType());
+        tempVar.setVmType((VmType) model.getVmType().getSelectedItem());
         if (model.getQuota().getSelectedItem() != null) {
             tempVar.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
         }
@@ -1440,7 +1395,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         addVmTemplateParameters.setDiskInfoDestinationMap(
                 model.getDisksAllocationModel().getImageToDestinationDomainMap());
-
+        addVmTemplateParameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
         model.startProgress(null);
 
         Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
@@ -1961,7 +1916,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         // Save changes.
         VmTemplate template = (VmTemplate) model.getTemplate().getSelectedItem();
 
-        getcurrentVm().setVmType(model.getVmType());
+        getcurrentVm().setVmType((VmType) model.getVmType().getSelectedItem());
         getcurrentVm().setVmtGuid(template.getId());
         getcurrentVm().setName(name);
         if (model.getQuota().getSelectedItem() != null) {
@@ -2033,10 +1988,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                 model.startProgress(null);
 
-
                 AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(getcurrentVm(),
                         new ArrayList<DiskImage>(),
                         NGuid.Empty);
+                parameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
 
                 setVmWatchdogToParams(model, parameters);
                 Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters,
@@ -2082,7 +2037,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     vmListModel.getcurrentVm(),
                                     unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
                                     Guid.Empty);
-
+                            param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                             ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                             parameters.add(param);
 
@@ -2114,6 +2069,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                     ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                     parameters.add(params);
+                    params.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
 
                     setVmWatchdogToParams(model, params);
                     Frontend.RunMultipleAction(VdcActionType.AddVm, parameters,
@@ -2155,8 +2111,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 VdcReturnValueBase returnValueBase = result.getReturnValue();
                                 if (returnValueBase != null && returnValueBase.getSucceeded())
                                 {
-                                    VmManagementParametersBase updateVmParams = new VmManagementParametersBase(vmListModel.getcurrentVm());
+                                    VmManagementParametersBase updateVmParams =
+                                            new VmManagementParametersBase(vmListModel.getcurrentVm());
                                     setVmWatchdogToParams(model, updateVmParams);
+                                    updateVmParams.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled()
+                                            .getEntity());
 
                                     Frontend.RunAction(VdcActionType.UpdateVm,
                                             updateVmParams,
@@ -2194,6 +2153,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 VmManagementParametersBase updateVmParams = new VmManagementParametersBase(getcurrentVm());
 
                 setVmWatchdogToParams(model, updateVmParams);
+                updateVmParams.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                 Frontend.RunAction(VdcActionType.UpdateVm, updateVmParams,
                         new IFrontendActionAsyncCallback() {
                             @Override
@@ -2216,7 +2176,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         VmWatchdogType wdModel = VmWatchdogType.getByName((String) model.getWatchdogModel()
                 .getSelectedItem());
         updateVmParams.setUpdateWatchdog(true);
-        if(wdModel != null) {
+        if (wdModel != null) {
             VmWatchdog vmWatchdog = new VmWatchdog();
             vmWatchdog.setAction(VmWatchdogAction.getByName((String) model.getWatchdogAction()
                     .getSelectedItem()));
@@ -2418,13 +2378,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     {
         super.executeCommand(command);
 
-        if (command == getNewServerCommand())
+        if (command == getNewVmCommand())
         {
-            newServer();
-        }
-        else if (command == getNewDesktopCommand())
-        {
-            newDesktop();
+            newVm();
         }
         else if (command == getEditCommand())
         {

@@ -42,6 +42,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         super.initialize(systemTreeSelectedItem);
         getModel().getTemplate().setIsChangable(false);
 
+        getModel().getVmType().setIsChangable(true);
+
         DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
         disksAllocationModel.setIsAliasChangable(true);
 
@@ -69,12 +71,26 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                             UnitVmModel model = (UnitVmModel) target;
 
                                             List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
-                                            model.setDataCentersAndClusters(model, Arrays.asList(dataCenter), clusters, vm.getVdsGroupId().getValue());
+                                            model.setDataCentersAndClusters(model,
+                                                    Arrays.asList(dataCenter),
+                                                    clusters,
+                                                    vm.getVdsGroupId().getValue());
+
                                             initTemplate();
+
                                         }
                                     }, getModel().getHash()),
                                     true,
                                     false);
+
+                            AsyncDataProvider.isSoundcardEnabled(new AsyncQuery(getModel(),
+                                    new INewAsyncCallback() {
+
+                                        @Override
+                                        public void onSuccess(Object model, Object returnValue) {
+                                            getModel().getIsSoundcardEnabled().setEntity(returnValue);
+                                        }
+                                    }, getModel().getHash()), vm.getId());
                         }
 
                     }

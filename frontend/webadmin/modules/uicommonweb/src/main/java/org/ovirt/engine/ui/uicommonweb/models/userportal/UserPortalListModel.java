@@ -97,28 +97,16 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         privateSearchCompletedEvent = value;
     }
 
-    private UICommand privateNewDesktopCommand;
+    private UICommand privateNewVmCommand;
 
-    public UICommand getNewDesktopCommand()
+    public UICommand getNewVmCommand()
     {
-        return privateNewDesktopCommand;
+        return privateNewVmCommand;
     }
 
-    private void setNewDesktopCommand(UICommand value)
+    private void setNewVmCommand(UICommand value)
     {
-        privateNewDesktopCommand = value;
-    }
-
-    private UICommand privateNewServerCommand;
-
-    public UICommand getNewServerCommand()
-    {
-        return privateNewServerCommand;
-    }
-
-    private void setNewServerCommand(UICommand value)
-    {
-        privateNewServerCommand = value;
+        privateNewVmCommand = value;
     }
 
     private UICommand privateEditCommand;
@@ -273,8 +261,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     {
         setSearchCompletedEvent(new Event(SearchCompletedEventDefinition));
 
-        setNewDesktopCommand(new UICommand("NewDesktop", this)); //$NON-NLS-1$
-        setNewServerCommand(new UICommand("NewServer", this)); //$NON-NLS-1$
+        setNewVmCommand(new UICommand("NewVm", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setSaveCommand(new UICommand("Save", this)); //$NON-NLS-1$
@@ -462,13 +449,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     {
         super.executeCommand(command);
 
-        if (command == getNewDesktopCommand())
+        if (command == getNewVmCommand())
         {
-            newDesktop();
-        }
-        if (command == getNewServerCommand())
-        {
-            newServer();
+            newInternal();
         }
         else if (command == getEditCommand())
         {
@@ -533,7 +516,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         windowModel.setTitle(ConstantsManager.getInstance().getConstants().newTemplateTitle());
         windowModel.setHashName("new_template"); //$NON-NLS-1$
         windowModel.setIsNew(true);
-        windowModel.setVmType(vm.getVmType());
+        windowModel.getVmType().setSelectedItem(vm.getVmType());
         windowModel.initialize(null);
         windowModel.getIsTemplatePublic().setEntity(false);
 
@@ -609,8 +592,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         VM tempVar = new VM();
         tempVar.setId(vm.getId());
-        tempVar.setVmType(model.getVmType());
+        tempVar.setVmType((VmType) model.getVmType().getSelectedItem());
         tempVar.setVmOs((Integer) model.getOSType().getSelectedItem());
+
         tempVar.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         tempVar.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         tempVar.setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
@@ -658,7 +642,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         addVmTemplateParameters.setDiskInfoDestinationMap(model.getDisksAllocationModel()
                 .getImageToDestinationDomainMap());
-
+        addVmTemplateParameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
         Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -724,25 +708,13 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 VdcActionType.AddVmTemplate));
     }
 
-    private void newDesktop()
-    {
-        newInternal(VmType.Desktop);
-    }
-
-    private void newServer()
-    {
-        newInternal(VmType.Server);
-    }
-
-    private void newInternal(VmType vmType)
+    private void newInternal()
     {
         UnitVmModel model = new UnitVmModel(new UserPortalNewVmModelBehavior());
-        model.setVmType(vmType);
+        model.getVmType().setSelectedItem(VmType.Server);
         model.setTitle(ConstantsManager.getInstance()
-                .getMessages()
-                .newVmTitle(vmType == VmType.Server ? ConstantsManager.getInstance().getConstants().serverVmType()
-                        : ConstantsManager.getInstance().getConstants().desktopVmType()));
-        model.setHashName("new_" + (vmType == VmType.Server ? "server" : "desktop")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                .getConstants().newVmTitle());
+        model.setHashName("new_vm"); //$NON-NLS-1$
         model.setIsNew(true);
         model.setCustomPropertiesKeysList(CustomPropertiesKeysList);
 
@@ -754,9 +726,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         switchModeCommand.init(model);
         model.getCommands().add(switchModeCommand);
 
-        // Ensures that the default provisioning is "Clone" for a new server and "Thin" for a new desktop.
-        boolean selectValue = model.getVmType() == VmType.Server;
-        model.getProvisioning().setEntity(selectValue);
+        model.getProvisioning().setEntity(true);
 
         UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -786,13 +756,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         UnitVmModel model = new UnitVmModel(new UserPortalExistingVmModelBehavior(vm));
 
         model.setTitle(ConstantsManager.getInstance()
-                .getMessages()
-                .editVmTitle(vm.getVmType() == VmType.Server ? ConstantsManager.getInstance()
-                        .getConstants()
-                        .serverVmType()
-                        : ConstantsManager.getInstance().getConstants().desktopVmType()));
-        model.setHashName("edit_" + (vm.getVmType() == VmType.Server ? "server" : "desktop")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        model.setVmType(vm.getVmType());
+                .getConstants().editVmTitle());
+        model.setHashName("edit_vm"); //$NON-NLS-1$
+        model.getVmType().setSelectedItem(vm.getVmType());
         model.setCustomPropertiesKeysList(CustomPropertiesKeysList);
 
         setWindow(model);
@@ -1009,14 +975,14 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     public void postVmNameUniqueCheck(UserPortalListModel userPortalListModel)
     {
 
-        UnitVmModel model = (UnitVmModel) getWindow();
+        final UnitVmModel model = (UnitVmModel) getWindow();
         UserPortalItemModel selectedItem = (UserPortalItemModel) userPortalListModel.getSelectedItem();
         String name = (String) model.getName().getEntity();
 
         // Save changes.
         VmTemplate template = (VmTemplate) model.getTemplate().getSelectedItem();
 
-        gettempVm().setVmType(model.getVmType());
+        gettempVm().setVmType((VmType) model.getVmType().getSelectedItem());
         gettempVm().setVmtGuid(template.getId());
         gettempVm().setName(name);
         gettempVm().setVmOs((Integer) model.getOSType().getSelectedItem());
@@ -1087,7 +1053,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                 new ArrayList<DiskImage>(),
                                 NGuid.Empty);
                 parameters.setMakeCreatorExplicitOwner(true);
-
+                parameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                 Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters,
                         new IFrontendActionAsyncCallback() {
                             @Override
@@ -1118,6 +1084,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             param.setMakeCreatorExplicitOwner(true);
 
                             ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+                            param.setSoundDeviceEnabled((Boolean) unitVmModel.getIsSoundcardEnabled().getEntity());
                             parameters.add(param);
 
                             Frontend.RunMultipleAction(VdcActionType.AddVmFromTemplate, parameters,
@@ -1140,6 +1107,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     param.setMakeCreatorExplicitOwner(true);
 
                     ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+                    param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                     parameters.add(param);
                     Frontend.RunMultipleAction(VdcActionType.AddVm, parameters,
                             new IFrontendMultipleActionAsyncCallback() {
@@ -1163,8 +1131,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void executed(FrontendActionAsyncResult result) {
-
-                                Frontend.RunAction(VdcActionType.UpdateVm, new VmManagementParametersBase(gettempVm()),
+                                VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
+                                param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+                                Frontend.RunAction(VdcActionType.UpdateVm, param,
                                         new IFrontendActionAsyncCallback() {
                                             @Override
                                             public void executed(FrontendActionAsyncResult a) {
@@ -1178,7 +1147,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             }
             else
             {
-                Frontend.RunAction(VdcActionType.UpdateVm, new VmManagementParametersBase(gettempVm()),
+                VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
+                param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+                Frontend.RunAction(VdcActionType.UpdateVm, param,
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void executed(FrontendActionAsyncResult a) {

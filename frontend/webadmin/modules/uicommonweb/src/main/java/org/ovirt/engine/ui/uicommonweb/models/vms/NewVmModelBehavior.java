@@ -26,6 +26,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
     public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
         super.initialize(systemTreeSelectedItem);
+        getModel().getIsSoundcardEnabled().setIsChangable(true);
+        getModel().getVmType().setIsChangable(true);
 
         AsyncDataProvider.getDataCenterByClusterServiceList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
@@ -85,10 +87,8 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
             getModel().getIsDeleteProtected().setEntity(template.isDeleteProtected());
             getModel().getVncKeyboardLayout().setSelectedItem(template.getVncKeyboardLayout());
 
-            if (getModel().getVmType() == VmType.Desktop) {
-                getModel().getIsStateless().setEntity(template.isStateless());
-                getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
-            }
+            getModel().getIsStateless().setEntity(template.isStateless());
+            getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
 
             boolean hasCd = !StringHelper.isNullOrEmpty(template.getIsoPath());
 
@@ -133,8 +133,10 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
                 getModel().getStorageDomain().setIsChangable(true);
                 getModel().getProvisioning().setIsChangable(true);
 
+                getModel().getVmType().setSelectedItem(template.getVmType());
                 getModel().setIsBlankTemplate(false);
                 initDisks();
+                initSoundCard(template.getId());
             }
             else
             {
@@ -305,4 +307,14 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
                 && getModel().getProvisioning().getIsChangable());
     }
 
+    @Override
+    public void vmTypeChanged(VmType vmType) {
+        super.vmTypeChanged(vmType);
+
+        // provisioning thin -> false
+        // provisioning clone -> true
+        if (getModel().getProvisioning().getIsAvailable()) {
+            getModel().getProvisioning().setEntity(vmType == VmType.Server);
+        }
+    }
 }

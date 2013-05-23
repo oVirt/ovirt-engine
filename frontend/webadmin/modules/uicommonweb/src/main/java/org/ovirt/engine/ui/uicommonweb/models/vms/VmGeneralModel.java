@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -213,22 +212,6 @@ public class VmGeneralModel extends EntityModel
         }
     }
 
-    private boolean hasMonitorCount;
-
-    public boolean getHasMonitorCount()
-    {
-        return hasMonitorCount;
-    }
-
-    public void setHasMonitorCount(boolean value)
-    {
-        if (hasMonitorCount != value)
-        {
-            hasMonitorCount = value;
-            onPropertyChanged(new PropertyChangedEventArgs("HasMonitorCount")); //$NON-NLS-1$
-        }
-    }
-
     private boolean hasDomain;
 
     public boolean getHasDomain()
@@ -293,22 +276,6 @@ public class VmGeneralModel extends EntityModel
         }
     }
 
-    private boolean hasUsbPolicy;
-
-    public boolean getHasUsbPolicy()
-    {
-        return hasUsbPolicy;
-    }
-
-    public void setHasUsbPolicy(boolean value)
-    {
-        if (hasUsbPolicy != value)
-        {
-            hasUsbPolicy = value;
-            onPropertyChanged(new PropertyChangedEventArgs("HasUsbPolicy")); //$NON-NLS-1$
-        }
-    }
-
     private String cpuInfo;
 
     public String getCpuInfo()
@@ -325,22 +292,6 @@ public class VmGeneralModel extends EntityModel
         }
     }
 
-    private boolean hasHighlyAvailable;
-
-    public boolean getHasHighlyAvailable()
-    {
-        return hasHighlyAvailable;
-    }
-
-    public void setHasHighlyAvailable(boolean value)
-    {
-        if (hasHighlyAvailable != value)
-        {
-            hasHighlyAvailable = value;
-            onPropertyChanged(new PropertyChangedEventArgs("HasHighlyAvailable")); //$NON-NLS-1$
-        }
-    }
-
     private boolean isHighlyAvailable;
 
     public boolean getIsHighlyAvailable()
@@ -354,22 +305,6 @@ public class VmGeneralModel extends EntityModel
         {
             isHighlyAvailable = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsHighlyAvailable")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean hasPriority;
-
-    public boolean getHasPriority()
-    {
-        return hasPriority;
-    }
-
-    public void setHasPriority(boolean value)
-    {
-        if (hasPriority != value)
-        {
-            hasPriority = value;
-            onPropertyChanged(new PropertyChangedEventArgs("HasPriority")); //$NON-NLS-1$
         }
     }
 
@@ -602,16 +537,12 @@ public class VmGeneralModel extends EntityModel
         translator = EnumTranslator.Create(OriginType.class);
         setOrigin(translator.get(vm.getOrigin()));
 
-        setHasHighlyAvailable(vm.getVmType() == VmType.Server);
         setIsHighlyAvailable(vm.isAutoStartup());
 
-        setHasPriority(vm.getVmType() == VmType.Server);
         setPriority(AsyncDataProvider.priorityToString(vm.getPriority()));
 
-        setHasMonitorCount(vm.getVmType() == VmType.Desktop);
         setMonitorCount(vm.getNumOfMonitors());
 
-        setHasUsbPolicy(true);
         translator = EnumTranslator.Create(UsbPolicy.class);
         setUsbPolicy(translator.get(vm.getUsbPolicy()));
 

@@ -52,34 +52,14 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         formBuilder.addFormItem(new FormItem(constants.templateVm(), template, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.osVm(), oS, 3, 0));
         formBuilder.addFormItem(new FormItem(constants.defaultDisplayTypeVm(), defaultDisplayType, 4, 0));
-        formBuilder.addFormItem(new FormItem(constants.priorityVm(), priority, 5, 0) {
-            @Override
-            public boolean getIsAvailable() {
-                return getModel().getHasPriority();
-            }
-        });
+        formBuilder.addFormItem(new FormItem(constants.priorityVm(), priority, 5, 0));
 
         formBuilder.addFormItem(new FormItem(constants.definedMemoryVm(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.physMemGauranteedVm(), minAllocatedMemory, 1, 1));
         formBuilder.addFormItem(new FormItem(constants.numOfCpuCoresVm(), cpuInfo, 2, 1));
-        formBuilder.addFormItem(new FormItem(constants.highlyAvailableVm(), isHighlyAvailable, 3, 1) {
-            @Override
-            public boolean getIsAvailable() {
-                return getModel().getHasHighlyAvailable();
-            }
-        });
-        formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 4, 1) {
-            @Override
-            public boolean getIsAvailable() {
-                return getModel().getHasMonitorCount();
-            }
-        });
-        formBuilder.addFormItem(new FormItem(constants.usbPolicyVm(), usbPolicy, 5, 1) {
-            @Override
-            public boolean getIsAvailable() {
-                return getModel().getHasUsbPolicy();
-            }
-        });
+        formBuilder.addFormItem(new FormItem(constants.highlyAvailableVm(), isHighlyAvailable, 3, 1));
+        formBuilder.addFormItem(new FormItem(constants.numOfMonitorsVm(), monitorCount, 4, 1));
+        formBuilder.addFormItem(new FormItem(constants.usbPolicyVm(), usbPolicy, 5, 1));
 
         formBuilder.addFormItem(new FormItem(constants.originVm(), origin, 0, 2));
         formBuilder.addFormItem(new FormItem(constants.runOnVm(), defaultHost, 1, 2));

@@ -38,6 +38,9 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         // The custom properties tab should be hidden on the User Portal
         getModel().setIsCustomPropertiesTabAvailable(false);
 
+        getModel().getIsSoundcardEnabled().setIsChangable(true);
+        getModel().getVmType().setIsChangable(true);
+
         // Get datacenters with permitted create action
         AsyncDataProvider.getDataCentersWithPermittedActionOnClusters(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {

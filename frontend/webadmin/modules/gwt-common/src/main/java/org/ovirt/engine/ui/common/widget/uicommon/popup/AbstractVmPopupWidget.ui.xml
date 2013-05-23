@@ -221,6 +221,7 @@
 				<e:ListModelTypeAheadListBoxEditor ui:field="quotaEditor" />
 				<e:ListModelTypeAheadListBoxEditor ui:field="templateEditor"/>
 				<e:ListModelListBoxEditor ui:field="oSTypeEditor" />
+				<e:ListModelListBoxEditor ui:field="vmTypeEditor" />
 			</g:FlowPanel>
 		</t:header>
 		<t:tab>
@@ -352,6 +353,7 @@
 							<g:Label addStyleNames="{style.warningLabel}" text="{constants.advancedOptionsLabel}" />
 							<e:EntityModelCheckBoxEditor ui:field="allowConsoleReconnectEditor" addStyleNames="{style.checkboxWithLongLabel}" />
 						</g:FlowPanel>
+                        <e:EntityModelCheckBoxEditor ui:field="isSoundcardEnabledEditor" addStyleNames="{style.checkbox}" />
 					</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>

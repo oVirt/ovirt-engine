@@ -14,13 +14,12 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.Temp
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
-import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDesktopNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmRunOncePopupPresenterWidget;
-import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmServerNewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabBasicPresenter;
@@ -59,13 +58,12 @@ import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateI
 import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateNewPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmClonePopupView;
-import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDesktopNewPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDiskPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDiskRemovePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmInterfacePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmMakeTemplatePopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmRunOncePopupView;
-import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmServerNewPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmSnapshotCreatePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VncInfoPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.MainTabBasicView;
@@ -256,12 +254,9 @@ public class PresenterModule extends BasePresenterModule {
                 PermissionsPopupView.class);
 
         // VM popups
-        bindPresenterWidget(VmDesktopNewPopupPresenterWidget.class,
-                VmDesktopNewPopupPresenterWidget.ViewDef.class,
-                VmDesktopNewPopupView.class);
-        bindPresenterWidget(VmServerNewPopupPresenterWidget.class,
-                VmServerNewPopupPresenterWidget.ViewDef.class,
-                VmServerNewPopupView.class);
+        bindPresenterWidget(VmPopupPresenterWidget.class,
+                VmPopupPresenterWidget.ViewDef.class,
+                VmPopupView.class);
         bindPresenterWidget(VmRunOncePopupPresenterWidget.class,
                 VmRunOncePopupPresenterWidget.ViewDef.class,
                 VmRunOncePopupView.class);

@@ -5,13 +5,13 @@ import org.ovirt.engine.ui.common.widget.popup.AbstractVmBasedPopupPresenterWidg
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class VmServerNewPopupPresenterWidget extends AbstractVmBasedPopupPresenterWidget<VmServerNewPopupPresenterWidget.ViewDef> {
+public class VmPopupPresenterWidget extends AbstractVmBasedPopupPresenterWidget<VmPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractVmBasedPopupPresenterWidget.ViewDef {
     }
 
     @Inject
-    public VmServerNewPopupPresenterWidget(EventBus eventBus, ViewDef view) {
+    public VmPopupPresenterWidget(EventBus eventBus, ViewDef view) {
         super(eventBus, view);
     }
 

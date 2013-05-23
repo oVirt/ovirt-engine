@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
@@ -294,7 +295,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editTemplateTitle());
         model.setHashName("edit_template"); //$NON-NLS-1$
-        model.setVmType(template.getVmType());
+        model.getVmType().setSelectedItem(template.getVmType());
 
         model.initialize(this.getSystemTreeSelectedItem());
 
@@ -435,7 +436,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         }
 
         // Save changes.
-        template.setVmType(model.getVmType());
+        template.setVmType((VmType) model.getVmType().getSelectedItem());
         template.setName(name);
         template.setOsId((Integer) model.getOSType().getSelectedItem());
         template.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
@@ -493,6 +494,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         UpdateVmTemplateParameters parameters = new UpdateVmTemplateParameters(template);
         setVmWatchdogToParams(model, parameters);
+        parameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
 
         Frontend.RunAction(VdcActionType.UpdateVmTemplate, parameters,
                 new IFrontendActionAsyncCallback() {

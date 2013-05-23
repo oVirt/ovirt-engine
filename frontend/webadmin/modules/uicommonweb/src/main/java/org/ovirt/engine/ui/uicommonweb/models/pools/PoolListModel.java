@@ -215,7 +215,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newPoolTitle());
         model.setHashName("new_pool"); //$NON-NLS-1$
-        model.setVmType(VmType.Desktop);
+        model.getVmType().setSelectedItem(VmType.Desktop);
         model.initialize(getSystemTreeSelectedItem());
 
         VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
@@ -294,6 +294,8 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                                     model.getCdImage().setSelectedItem(cdImage);
                                 }
 
+                                model.getVmType().setSelectedItem(vm.getVmType());
+
                                 model.getProvisioning().setIsChangable(false);
                                 model.getStorageDomain().setIsChangable(false);
 
@@ -318,8 +320,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         model.startProgress("");
                         setWindow(model);
                         model.setTitle(ConstantsManager.getInstance().getConstants().editPoolTitle());
-                        model.setHashName("edit_pool"); //$NON-NLS-1$
-                        model.setVmType(VmType.Desktop);
                         model.initialize(getSystemTreeSelectedItem());
                         model.getName().setEntity(pool.getName());
                         model.getDescription().setEntity(pool.getVmPoolDescription());
@@ -470,45 +470,46 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         }
 
 
-                        VM desktop = new VM();
-                        desktop.setVmtGuid(((VmTemplate) model.getTemplate().getSelectedItem()).getId());
-                        desktop.setName(name);
-                        desktop.setVmOs((Integer) model.getOSType().getSelectedItem());
-                        desktop.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
-                        desktop.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
-                        desktop.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
-                        desktop.setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain()
+                        VM vm = new VM();
+                        vm.setVmtGuid(((VmTemplate) model.getTemplate().getSelectedItem()).getId());
+                        vm.setName(name);
+                        vm.setVmOs((Integer) model.getOSType().getSelectedItem());
+                        vm.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
+                        vm.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
+                        vm.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
+                        vm.setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain()
                                 .getSelectedItem() : ""); //$NON-NLS-1$
-                        desktop.setVmMemSizeMb((Integer) model.getMemSize().getEntity());
-                        desktop.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
-                        desktop.setVdsGroupId(model.getSelectedCluster().getId());
-                        desktop.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
+                        vm.setVmMemSizeMb((Integer) model.getMemSize().getEntity());
+                        vm.setMinAllocatedMem((Integer) model.getMinAllocatedMemory().getEntity());
+                        vm.setVdsGroupId(model.getSelectedCluster().getId());
+                        vm.setTimeZone((model.getTimeZone().getIsAvailable() && model.getTimeZone()
                                 .getSelectedItem() != null) ? ((TimeZoneModel) model.getTimeZone()
                                 .getSelectedItem()).getTimeZoneKey()
                                 : ""); //$NON-NLS-1$
-                        desktop.setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
-                        desktop.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
+                        vm.setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
+                        vm.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
                                 / (Integer) model.getNumOfSockets().getSelectedItem());
-                        desktop.setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
-                        desktop.setAutoSuspend(false);
-                        desktop.setStateless(false);
-                        desktop.setDefaultBootSequence(model.getBootSequence());
-                        desktop.setIsoPath(model.getCdImage().getIsChangable() ? (String) model.getCdImage()
+                        vm.setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
+                        vm.setAutoSuspend(false);
+                        vm.setStateless(false);
+                        vm.setDefaultBootSequence(model.getBootSequence());
+                        vm.setIsoPath(model.getCdImage().getIsChangable() ? (String) model.getCdImage()
                                 .getSelectedItem() : ""); //$NON-NLS-1$
-                        desktop.setDedicatedVmForVds(default_host);
-                        desktop.setKernelUrl((String) model.getKernel_path().getEntity());
-                        desktop.setKernelParams((String) model.getKernel_parameters().getEntity());
-                        desktop.setInitrdUrl((String) model.getInitrd_path().getEntity());
-                        desktop.setMigrationSupport((MigrationSupport) (model.getMigrationMode().getSelectedItem()));
-                        desktop.setVncKeyboardLayout((String) model.getVncKeyboardLayout().getSelectedItem());
+                        vm.setDedicatedVmForVds(default_host);
+                        vm.setKernelUrl((String) model.getKernel_path().getEntity());
+                        vm.setKernelParams((String) model.getKernel_parameters().getEntity());
+                        vm.setInitrdUrl((String) model.getInitrd_path().getEntity());
+                        vm.setMigrationSupport((MigrationSupport) (model.getMigrationMode().getSelectedItem()));
+                        vm.setVncKeyboardLayout((String) model.getVncKeyboardLayout().getSelectedItem());
 
                         EntityModel displayProtocolSelectedItem =
                                 (EntityModel) model.getDisplayProtocol().getSelectedItem();
-                        desktop.setDefaultDisplayType((DisplayType) displayProtocolSelectedItem.getEntity());
-                        desktop.setCustomProperties(model.getCustomPropertySheet().getEntity());
+                        vm.setDefaultDisplayType((DisplayType) displayProtocolSelectedItem.getEntity());
+                        vm.setCustomProperties(model.getCustomPropertySheet().getEntity());
+                        vm.setVmType((VmType) model.getVmType().getSelectedItem());
 
                         AddVmPoolWithVmsParameters param =
-                                new AddVmPoolWithVmsParameters(pool, desktop, model.getNumOfDesktops()
+                                new AddVmPoolWithVmsParameters(pool, vm, model.getNumOfDesktops()
                                         .asConvertible()
                                         .integer(), 0);
 
@@ -516,8 +517,9 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         param.setDiskInfoDestinationMap(model.getDisksAllocationModel()
                                 .getImageToDestinationDomainMap());
 
+                        param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                         if (model.getQuota().getSelectedItem() != null) {
-                            desktop.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
+                            vm.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
                         }
 
                         model.startProgress(null);

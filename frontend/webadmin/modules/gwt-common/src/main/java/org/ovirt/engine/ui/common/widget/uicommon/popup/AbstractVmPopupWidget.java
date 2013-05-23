@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -153,6 +152,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public ListModelListBoxEditor<Object> oSTypeEditor;
 
     @UiField(provided = true)
+    @Path(value = "vmType.selectedItem")
+    @WithElementId("vmType")
+    public ListModelListBoxEditor<Object> vmTypeEditor;
+
+    @UiField(provided = true)
     @Path(value = "isDeleteProtected.entity")
     @WithElementId("isDeleteProtected")
     public EntityModelCheckBoxEditor isDeleteProtectedEditor;
@@ -192,6 +196,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "coresPerSocket.selectedItem")
     @WithElementId("coresPerSocket")
     public ListModelListBoxEditor<Object> corePerSocketEditor;
+
+    @UiField(provided = true)
+    @Path(value = "isSoundcardEnabled.entity")
+    @WithElementId("isSoundcardEnabled")
+    public EntityModelCheckBoxEditor isSoundcardEnabledEditor;
 
     // == Pools ==
     @UiField
@@ -543,6 +552,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isSmartcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         cdAttachedEditor = new EntityModelCheckBoxEditor(Align.LEFT, new ModeSwitchingVisibilityRenderer());
         allowConsoleReconnectEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        isSoundcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
 
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
@@ -699,12 +709,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 },
                 new ModeSwitchingVisibilityRenderer());
 
+
         oSTypeEditor = new ListModelListBoxEditor<Object>(new AbstractRenderer<Object>() {
             @Override
             public String render(Object object) {
                 return AsyncDataProvider.getOsName((Integer)object);
             }
-        });
+        }, new ModeSwitchingVisibilityRenderer());
+        vmTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+
         numOfSocketsEditor = new ListModelListBoxEditor<Object>(new ModeSwitchingVisibilityRenderer());
         corePerSocketEditor = new ListModelListBoxEditor<Object>(new ModeSwitchingVisibilityRenderer());
 
@@ -833,12 +846,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         nameLabel.setText(constants.nameVmPopup());
         descriptionEditor.setLabel(constants.descriptionVmPopup());
         templateEditor.setLabel(constants.basedOnTemplateVmPopup());
-        memSizeEditor.setLabel(constants.memSizeVmPopup());
-        totalvCPUsEditor.setLabel(constants.numOfVCPUs());
-        corePerSocketEditor.setLabel(constants.coresPerSocket());
-        numOfSocketsEditor.setLabel(constants.numOfSockets());
 
         oSTypeEditor.setLabel(constants.osVmPopup());
+        vmTypeEditor.setLabel(constants.optimizedFor());
         isStatelessEditor.setLabel(constants.statelessVmPopup());
         isRunAndPauseEditor.setLabel(constants.runAndPauseVmPopup());
         isDeleteProtectedEditor.setLabel(constants.deleteProtectionPopup());
@@ -894,6 +904,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         kernel_pathEditor.setLabel(constants.kernelPathVmPopup());
         initrd_pathEditor.setLabel(constants.initrdPathVmPopup());
         kernel_parametersEditor.setLabel(constants.kernelParamsVmPopup());
+
+        // System tab
+        memSizeEditor.setLabel(constants.memSizeVmPopup());
+        totalvCPUsEditor.setLabel(constants.numOfVCPUs());
+        corePerSocketEditor.setLabel(constants.coresPerSocket());
+        numOfSocketsEditor.setLabel(constants.numOfSockets());
+        isSoundcardEnabledEditor.setLabel(constants.soundcardEnabled());
     }
 
     protected void applyStyles() {
@@ -1100,10 +1117,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         });
 
-        // only avail for desktop mode
-        changeApplicationLevelVisibility(isStatelessEditor, vm.getVmType().equals(VmType.Desktop));
-        changeApplicationLevelVisibility(numOfMonitorsEditor, vm.getVmType().equals(VmType.Desktop));
-
         defaultHostEditor.setEnabled(false);
         specificHost.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
             @Override
@@ -1221,11 +1234,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         corePerSocketEditor.setTabIndex(nextTabIndex++);
         numOfSocketsEditor.setTabIndex(nextTabIndex++);
 
-        oSTypeEditor.setTabIndex(nextTabIndex++);
-        isStatelessEditor.setTabIndex(nextTabIndex++);
-        isRunAndPauseEditor.setTabIndex(nextTabIndex++);
-        isDeleteProtectedEditor.setTabIndex(nextTabIndex++);
-
         // == Pools ==
         nextTabIndex = poolTab.setTabIndexes(nextTabIndex);
         poolTypeEditor.setTabIndex(nextTabIndex++);
@@ -1244,6 +1252,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isSmartcardEnabledEditor.setTabIndex(nextTabIndex++);
         nextTabIndex = expander.setTabIndexes(nextTabIndex);
         allowConsoleReconnectEditor.setTabIndex(nextTabIndex++);
+        isSoundcardEnabledEditor.setTabIndex(nextTabIndex++);
 
         // ==Host Tab==
         nextTabIndex = hostTab.setTabIndexes(nextTabIndex);
@@ -1293,7 +1302,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 putAll(adancedFieldsFromGeneralTab(), simpleField().visibleInAdvancedModeOnly()).
                 putAll(consoleTabWidgets(), simpleField().visibleInAdvancedModeOnly()).
                 update(consoleTab, simpleField()).
-                update(numOfMonitorsEditor, simpleField());
+                update(numOfMonitorsEditor, simpleField()).
+                putOne(isSoundcardEnabledEditor, simpleField().visibleInAdvancedModeOnly());
     }
 
     protected List<Widget> consoleTabWidgets() {

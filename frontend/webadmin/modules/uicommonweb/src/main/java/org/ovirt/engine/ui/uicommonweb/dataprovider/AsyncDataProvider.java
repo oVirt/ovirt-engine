@@ -627,6 +627,20 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void isSoundcardEnabled(AsyncQuery aQuery, Guid vmId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                if (source != null) {
+                    return ((List<String>) source).size() > 0;
+                }
+
+                return false;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetSoundDevices, new IdQueryParameters(vmId), aQuery);
+    }
+
     public static void getClusterListByService(AsyncQuery aQuery, final boolean supportsVirtService,
             final boolean supportsGlusterService) {
 

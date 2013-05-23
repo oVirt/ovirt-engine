@@ -772,4 +772,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String VmWatchdogAction___DUMP();
 
     String VmWatchdogAction___PAUSE();
+
+    String VmType___Desktop();
+
+    String VmType___Server();
 }

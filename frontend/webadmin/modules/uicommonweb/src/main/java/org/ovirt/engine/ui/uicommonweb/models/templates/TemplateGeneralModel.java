@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -189,22 +188,6 @@ public class TemplateGeneralModel extends EntityModel
         }
     }
 
-    private boolean hasHighlyAvailable;
-
-    public boolean getHasHighlyAvailable()
-    {
-        return hasHighlyAvailable;
-    }
-
-    public void setHasHighlyAvailable(boolean value)
-    {
-        if (hasHighlyAvailable != value)
-        {
-            hasHighlyAvailable = value;
-            onPropertyChanged(new PropertyChangedEventArgs("HasHighlyAvailable")); //$NON-NLS-1$
-        }
-    }
-
     private boolean isHighlyAvailable;
 
     public boolean getIsHighlyAvailable()
@@ -218,22 +201,6 @@ public class TemplateGeneralModel extends EntityModel
         {
             isHighlyAvailable = value;
             onPropertyChanged(new PropertyChangedEventArgs("IsHighlyAvailable")); //$NON-NLS-1$
-        }
-    }
-
-    private boolean hasPriority;
-
-    public boolean getHasPriority()
-    {
-        return hasPriority;
-    }
-
-    public void setHasPriority(boolean value)
-    {
-        if (hasPriority != value)
-        {
-            hasPriority = value;
-            onPropertyChanged(new PropertyChangedEventArgs("HasPriority")); //$NON-NLS-1$
         }
     }
 
@@ -449,7 +416,6 @@ public class TemplateGeneralModel extends EntityModel
                 && !template.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
         setHostCluster(template.getVdsGroupName());
         setDefinedMemory(template.getMemSizeMb() + " MB"); //$NON-NLS-1$
-        setHasHighlyAvailable(template.getVmType() == VmType.Server);
         setIsHighlyAvailable(template.isAutoStartup());
         setPriority(AsyncDataProvider.priorityToString(template.getPriority()));
         setMonitorCount(template.getNumOfMonitors());

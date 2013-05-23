@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -478,7 +479,7 @@ public class VmSnapshotListModel extends SearchableListModel
         VM selectedVm = (VM) getEntity();
 
         UnitVmModel model = new UnitVmModel(new CloneVmFromSnapshotModelBehavior());
-        model.setVmType(selectedVm.getVmType());
+        model.getVmType().setSelectedItem(selectedVm.getVmType());
         setWindow(model);
 
         model.startProgress(null);
@@ -539,7 +540,7 @@ public class VmSnapshotListModel extends SearchableListModel
         // Save changes.
         VmTemplate template = (VmTemplate) model.getTemplate().getSelectedItem();
 
-        getcurrentVm().setVmType(model.getVmType());
+        getcurrentVm().setVmType((VmType) model.getVmType().getSelectedItem());
         getcurrentVm().setVmtGuid(template.getId());
         getcurrentVm().setName(name);
         getcurrentVm().setVmOs((Integer) model.getOSType().getSelectedItem());

@@ -219,16 +219,10 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
 
         getTable().addColumn(new UserPortalItemSimpleColumn(consoleEditCell), constants.empty());
 
-        getTable().addActionButton(new UserPortalButtonDefinition<UserPortalItemModel>(constants.newServerVm()) {
+        getTable().addActionButton(new UserPortalButtonDefinition<UserPortalItemModel>(constants.newVm()) {
             @Override
             protected UICommand resolveCommand() {
-                return getModel().getNewServerCommand();
-            }
-        });
-        getTable().addActionButton(new UserPortalButtonDefinition<UserPortalItemModel>(constants.newDesktopVm()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getModel().getNewDesktopCommand();
+                return getModel().getNewVmCommand();
             }
         });
         getTable().addActionButton(new UserPortalButtonDefinition<UserPortalItemModel>(constants.editVm()) {

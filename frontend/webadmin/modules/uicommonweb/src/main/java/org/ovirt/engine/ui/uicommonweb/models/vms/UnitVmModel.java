@@ -84,6 +84,16 @@ public class UnitVmModel extends Model {
         return vmAttachedToPool;
     }
 
+    private NotChangableForVmInPoolEntityModel isSoundcardEnabled;
+
+    public EntityModel getIsSoundcardEnabled() {
+        return isSoundcardEnabled;
+    }
+
+    private void setIsSoundcardEnabled(NotChangableForVmInPoolEntityModel isSoundcardEnabled) {
+        this.isSoundcardEnabled = isSoundcardEnabled;
+    }
+
     private NotChangableForVmInPoolListModel dataCenterWithClustersList;
 
     public ListModel getDataCenterWithClustersList() {
@@ -161,18 +171,6 @@ public class UnitVmModel extends Model {
 
             vmAttachedToPool = true;
         }
-    }
-
-    private VmType privateVmType = getVmType().values()[0];
-
-    public VmType getVmType()
-    {
-        return privateVmType;
-    }
-
-    public void setVmType(VmType value)
-    {
-        privateVmType = value;
     }
 
     private String privateHash;
@@ -401,6 +399,16 @@ public class UnitVmModel extends Model {
     private void setTemplate(NotChangableForVmInPoolListModel value)
     {
         privateTemplate = value;
+    }
+
+    private NotChangableForVmInPoolListModel vmType;
+
+    public void setVmType(NotChangableForVmInPoolListModel vmType) {
+        this.vmType = vmType;
+    }
+
+    public ListModel getVmType() {
+        return vmType;
     }
 
     private EntityModel privateName;
@@ -1048,6 +1056,11 @@ public class UnitVmModel extends Model {
         setIsSmartcardEnabled(new NotChangableForVmInPoolEntityModel());
         setIsDeleteProtected(new NotChangableForVmInPoolEntityModel());
         setVncKeyboardLayout(new NotChangableForVmInPoolListModel());
+        setVmType(new NotChangableForVmInPoolListModel());
+        getVmType().setItems(Arrays.asList(VmType.Desktop, VmType.Server));
+        getVmType().setSelectedItem(VmType.Server);
+        getVmType().setIsChangable(false);
+        getVmType().getSelectedItemChangedEvent().addListener(this);
 
         setCdImage(new NotChangableForVmInPoolListModel());
         getCdImage().setIsChangable(false);
@@ -1118,7 +1131,7 @@ public class UnitVmModel extends Model {
         setWatchdogAction(new NotChangableForVmInPoolListModel());
         getWatchdogAction().getEntityChangedEvent().addListener(this);
         ArrayList<String> watchDogActions = new ArrayList<String>();
-        for(VmWatchdogAction action : VmWatchdogAction.values()) {
+        for (VmWatchdogAction action : VmWatchdogAction.values()) {
             watchDogActions.add(EnumTranslator.createAndTranslate(action));
         }
         getWatchdogAction().setItems(watchDogActions);
@@ -1127,7 +1140,7 @@ public class UnitVmModel extends Model {
         getWatchdogModel().getEntityChangedEvent().addListener(this);
         ArrayList<String> watchDogModels = new ArrayList<String>();
         watchDogModels.add(null);
-        for(VmWatchdogType type : VmWatchdogType.values()) {
+        for (VmWatchdogType type : VmWatchdogType.values()) {
             watchDogModels.add(EnumTranslator.createAndTranslate(type));
         }
         getWatchdogModel().setItems(watchDogModels);
@@ -1180,6 +1193,10 @@ public class UnitVmModel extends Model {
         setCpuPinning(new NotChangableForVmInPoolEntityModel());
         getCpuPinning().setEntity("");
         getCpuPinning().setIsChangable(false);
+
+        setIsSoundcardEnabled(new NotChangableForVmInPoolEntityModel());
+        getIsSoundcardEnabled().setEntity(false);
+        getIsSoundcardEnabled().setIsChangable(false);
     }
 
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem)
@@ -1232,7 +1249,9 @@ public class UnitVmModel extends Model {
         }
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition))
         {
-            if (sender == getDataCenterWithClustersList())
+            if (sender == getVmType()) {
+                vmTypeChanged();
+            } else if (sender == getDataCenterWithClustersList())
             {
                 dataCenterWithClusterSelectedItemChanged(sender, args);
                 initUsbPolicy();
@@ -1313,8 +1332,12 @@ public class UnitVmModel extends Model {
         }
     }
 
+    private void vmTypeChanged() {
+        behavior.vmTypeChanged(((VmType) getVmType().getSelectedItem()));
+    }
+
     private void WatchdogModel_EntityChanged(Object sender, EventArgs args) {
-        if("".equals(getWatchdogModel().getEntity())) {
+        if ("".equals(getWatchdogModel().getEntity())) {
             getWatchdogAction().setIsChangable(false);
             getWatchdogAction().setSelectedItem(""); //$NON-NLS-1$
         } else {
@@ -1344,39 +1367,32 @@ public class UnitVmModel extends Model {
 
     protected void initNumOfMonitors()
     {
-        if (getVmType() == VmType.Desktop)
-        {
-            AsyncDataProvider.getNumOfMonitorList(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
+        AsyncDataProvider.getNumOfMonitorList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
 
-                            UnitVmModel model = (UnitVmModel) target;
-                            Integer oldNumOfMonitors = null;
-                            if (model.getNumOfMonitors().getSelectedItem() != null)
-                            {
-                                oldNumOfMonitors = (Integer) model.getNumOfMonitors().getSelectedItem();
-                            }
-                            ArrayList<Integer> numOfMonitors = (ArrayList<Integer>) returnValue;
-                            model.getNumOfMonitors().setItems(numOfMonitors);
-                            if (oldNumOfMonitors != null)
-                            {
-                                model.getNumOfMonitors().setSelectedItem(oldNumOfMonitors);
-                            }
-
+                        UnitVmModel model = (UnitVmModel) target;
+                        Integer oldNumOfMonitors = null;
+                        if (model.getNumOfMonitors().getSelectedItem() != null)
+                        {
+                            oldNumOfMonitors = (Integer) model.getNumOfMonitors().getSelectedItem();
                         }
-                    }, getHash()));
-        }
-        else
-        {
-            getNumOfMonitors().setItems(new ArrayList<Integer>(Arrays.asList(new Integer[] { 1 })));
-            getNumOfMonitors().setSelectedItem(1);
-        }
+                        ArrayList<Integer> numOfMonitors = (ArrayList<Integer>) returnValue;
+                        model.getNumOfMonitors().setItems(numOfMonitors);
+                        if (oldNumOfMonitors != null)
+                        {
+                            model.getNumOfMonitors().setSelectedItem(oldNumOfMonitors);
+                        }
+
+                    }
+                }, getHash()));
+
     }
 
     protected void initAllowConsoleReconnect()
     {
-        getAllowConsoleReconnect().setEntity(getVmType() == VmType.Server);
+        getAllowConsoleReconnect().setEntity(true);
     }
 
     private void initOSType() {
@@ -1530,7 +1546,8 @@ public class UnitVmModel extends Model {
 
     private void initVncKeyboardLayout() {
 
-        final List<String> layouts = (List<String>)AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
+        final List<String> layouts =
+                (List<String>) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
         final ArrayList<String> vncKeyboardLayoutItems = new ArrayList<String>();
         vncKeyboardLayoutItems.add(null); // null value means the global VncKeyboardLayout from vdc_options will be used
         vncKeyboardLayoutItems.addAll(layouts);
@@ -1924,8 +1941,10 @@ public class UnitVmModel extends Model {
                     new IValidation[] {
                             new NotEmptyValidation(),
                             new LengthValidation(
-                                (getBehavior() instanceof TemplateVmModelBehavior || getBehavior() instanceof NewTemplateVmModelBehavior)
-                                    ? VM_TEMPLATE_NAME_MAX_LIMIT : AsyncDataProvider.isWindowsOsType(osType) ? WINDOWS_VM_NAME_MAX_LIMIT : NON_WINDOWS_VM_NAME_MAX_LIMIT),
+                                    (getBehavior() instanceof TemplateVmModelBehavior || getBehavior() instanceof NewTemplateVmModelBehavior)
+                                            ? VM_TEMPLATE_NAME_MAX_LIMIT
+                                            : AsyncDataProvider.isWindowsOsType(osType) ? WINDOWS_VM_NAME_MAX_LIMIT
+                                                    : NON_WINDOWS_VM_NAME_MAX_LIMIT),
                             isPoolTabValid ? new PoolNameValidation() : new I18NNameValidation()
                     });
 
@@ -2184,6 +2203,7 @@ public class UnitVmModel extends Model {
     }
 
     private ListModel watchdogModel;
+
     public ListModel getWatchdogModel() {
         return watchdogModel;
     }

@@ -1,10 +1,7 @@
 package org.ovirt.engine.ui.uicompat;
 
+
 import org.ovirt.engine.core.common.businessentities.VmPool;
-
-
-
-
 
 public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
@@ -110,6 +107,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Copy to Clipboard")
     String copytoClipboardTitle();
+
+    @DefaultStringValue("New Virtual Machine")
+    String newVmTitle();
+
+    @DefaultStringValue("Edit Virtual Machine")
+    String editVmTitle();
 
     // Tag
     @DefaultStringValue("Root")
@@ -1318,12 +1321,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Error in retrieving the relevant Storage Domain.")
     String errorRetrievingRelevantStorageDomainMsg();
-
-    @DefaultStringValue("Server")
-    String serverVmType();
-
-    @DefaultStringValue("Desktop")
-    String desktopVmType();
 
     @DefaultStringValue("Could not read templates from Export Domain")
     String couldNotReadTemplatesFromExportDomainMsg();

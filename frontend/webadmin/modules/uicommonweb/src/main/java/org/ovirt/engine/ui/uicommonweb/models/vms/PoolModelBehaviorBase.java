@@ -41,6 +41,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     {
         super.initialize(systemTreeSelectedItem);
 
+        getModel().getIsSoundcardEnabled().setIsChangable(true);
+
         getModel().getDisksAllocationModel().setIsVolumeFormatAvailable(false);
         getModel().getDisksAllocationModel().setIsAliasChangable(true);
 
@@ -171,6 +173,8 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             } else {
                 getModel().getMinAllocatedMemory().setEntity(vmBase.getMinAllocatedMem());
             }
+
+            initSoundCard(vmBase.getId());
         }
     }
 

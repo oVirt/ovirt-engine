@@ -44,6 +44,9 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     public void initialize(SystemTreeItemModel systemTreeSelectedItem)
     {
         super.initialize(systemTreeSelectedItem);
+        getModel().getVmType().setIsChangable(true);
+        getModel().getIsSoundcardEnabled().setIsChangable(true);
+
         AsyncDataProvider.getDataCenterById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
@@ -74,6 +77,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                             model.getDataCenterWithClustersList().setSelectedItem(Arrays.asList(dataCenterWithCluster));
                             behavior.initTemplate();
                             behavior.initCdImage();
+                            behavior.initSoundCard(vm.getId());
                         }
 
                     }
@@ -97,7 +101,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         }), vm.getId());
     }
 
-
     protected void initClusters(final List<StoragePool> dataCenters) {
         AsyncDataProvider.getClusterListByService(
                 new AsyncQuery(getModel(), new INewAsyncCallback() {
@@ -110,6 +113,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                                 (List<VDSGroup>) returnValue, vm.getVdsGroupId().getValue());
                         initTemplate();
                         initCdImage();
+                        initSoundCard(vm.getId());
                     }
                 }, getModel().getHash()),
                 true, false);
