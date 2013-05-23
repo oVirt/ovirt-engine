@@ -141,12 +141,12 @@ public class VdsUpdateRunTimeInfoTest {
         VmDynamic dynamic = new VmDynamic();
         VM vm = new VM();
         assertFalse(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
-        dynamic.setLastWatchdogEvent(1l);
+        dynamic.setLastWatchdogEvent(1L);
         assertTrue(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
-        vm.setLastWatchdogEvent(1l);
-        dynamic.setLastWatchdogEvent(1l);
+        vm.setLastWatchdogEvent(1L);
+        dynamic.setLastWatchdogEvent(1L);
         assertFalse(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
-        dynamic.setLastWatchdogEvent(2l);
+        dynamic.setLastWatchdogEvent(2L);
         assertTrue(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
         dynamic.setLastWatchdogEvent(null);
         assertFalse(VdsUpdateRunTimeInfo.isNewWatchdogEvent(dynamic, vm));
