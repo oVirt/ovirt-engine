@@ -11,4 +11,19 @@
        <Method name="toString"/>
        <Bug code="DE"/>
      </Match>
+
+     <!--
+      findbugs complains that we are checking ldapPort for null when its not
+      suppose to be null.
+      in this case we are checking for the return value from getConfigValue()
+      and we may have a null value from the Database
+
+      findbugs reason:
+      RCN: Redundant nullcheck of value known to be non-null
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.core.domains.ManageDomains" />
+       <Method name="createConfigurationProvider"/>
+       <Bug code="RCN"/>
+     </Match>
 </FindBugsFilter>
