@@ -1432,6 +1432,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} in VM ${VmName} already marked as boot.")
     String ACTION_TYPE_FAILED_DISK_BOOT_IN_USE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The VMs ${VmsName} already have a disk marked as boot.")
+    String ACTION_TYPE_FAILED_VMS_BOOT_IN_USE();
+
     @DefaultStringValue("Cannot change cpu level when VMs are running.")
     String VDS_GROUP_CANNOT_UPDATE_CPU_WHEN_RUNNING_VMS();
 

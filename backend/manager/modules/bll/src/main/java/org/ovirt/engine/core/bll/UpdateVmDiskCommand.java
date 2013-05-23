@@ -7,6 +7,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -126,13 +127,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                     return false;
                 }
             }
+        }
 
-            // Validate update boot disk.
-            if (newDisk.isBoot()) {
-                VmHandler.updateDisksForVm(vm, getOtherVmDisks(vmId));
-                if (!isDiskCanBeAddedToVm(newDisk, vm)) {
-                    return false;
-                }
+        // Validate update boot disk.
+        if (newDisk.isBoot()) {
+            if (!validate(noVmsContainBootableDisks(vmsDiskPluggedTo))) {
+                return false;
             }
         }
 
@@ -268,6 +268,24 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_UPDATE_VM_DISK : AuditLogType.USER_FAILED_UPDATE_VM_DISK;
+    }
+
+    private ValidationResult noVmsContainBootableDisks(List<VM> vms) {
+        List<String> vmsWithBoot = new ArrayList<String>(vms.size());
+
+        for (VM vm : vms) {
+            Disk bootDisk = getDiskDao().getVmBootDisk(vm.getId());
+            if (bootDisk != null) {
+                vmsWithBoot.add(vm.getName());
+            }
+        }
+
+        if (!vmsWithBoot.isEmpty()) {
+            addCanDoActionMessage(String.format("$VmsName %1$s", StringUtils.join(vmsWithBoot.toArray(), ", ")));
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VMS_BOOT_IN_USE);
+        }
+
+        return ValidationResult.VALID;
     }
 
     @Override

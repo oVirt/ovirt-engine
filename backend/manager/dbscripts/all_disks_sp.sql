@@ -52,6 +52,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION GetVmBootDisk(v_vm_guid UUID) RETURNS SETOF all_disks AS $procedure$
+BEGIN
+      RETURN QUERY SELECT all_disks.*
+      FROM all_disks
+      JOIN vm_device ON vm_device.device_id = all_disks.image_group_id
+      WHERE vm_device.vm_id = v_vm_guid and boot = true;
+END; $procedure$
+LANGUAGE plpgsql;
+
 -- Returns all the attachable disks in the storage pool
 -- If storage pool is ommited, all the attachable disks are retrurned.
 -- in case vm id is provided, returning all the disks in SP that are not attached to the vm

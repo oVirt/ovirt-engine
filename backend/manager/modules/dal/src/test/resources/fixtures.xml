@@ -2709,7 +2709,7 @@
             <value>false</value>
             <value>New Description</value>
             <value>false</value>
-            <value>false</value>
+            <value>true</value>
         </row>
     </table>
 
