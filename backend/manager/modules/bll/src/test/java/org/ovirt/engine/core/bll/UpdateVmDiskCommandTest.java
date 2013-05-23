@@ -27,11 +27,11 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -171,7 +171,9 @@ public class UpdateVmDiskCommandTest {
         otherDisk.setId(Guid.NewGuid());
         otherDisk.setActive(true);
         otherDisk.setBoot(boot);
-        when(diskDao.getAllForVm(vmId)).thenReturn(new LinkedList<Disk>(Collections.singleton(otherDisk)));
+        if (boot) {
+            when(diskDao.getVmBootDisk(vmId)).thenReturn(otherDisk);
+        }
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
         initializeCommand(parameters);
 
@@ -204,7 +206,9 @@ public class UpdateVmDiskCommandTest {
         otherDisk.setId(Guid.NewGuid());
         otherDisk.setActive(true);
         otherDisk.setBoot(boot);
-        when(diskDao.getAllForVm(otherVmId)).thenReturn(new LinkedList<Disk>(Collections.singleton(otherDisk)));
+        if (boot) {
+            when(diskDao.getVmBootDisk(otherVmId)).thenReturn(otherDisk);
+        }
         when(diskDao.get(diskImageGuid)).thenReturn(createDiskImage());
         initializeCommand(parameters);
 
