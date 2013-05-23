@@ -84,7 +84,7 @@ public class CustomSelectionCell extends AbstractInputCell<String, String> {
             viewData = null;
         }
 
-        int selectedIndex = getSelectedIndex(viewData == null ? value : viewData);
+        int selectedIndex = getSelectedIndex(value);
         if (isEnabled) {
             sb.appendHtmlConstant("<select class='" + style + "' tabindex=\"-1\">"); //$NON-NLS-1$ //$NON-NLS-2$
         } else {
