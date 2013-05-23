@@ -96,6 +96,35 @@ class Plugin(plugin.PluginBase):
         self.environment[osetupcons.AIOEnv.VDSM_CPU] = None
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+        condition=lambda self: self.environment[
+            osetupcons.AIOEnv.ENABLE
+        ],
+        priority=plugin.Stages.PRIORITY_HIGH,
+    )
+    def _setup(self):
+        supported = False
+        try:
+            hardware = util.loadModule(
+                path=osetupcons.FileLocations.AIO_HOST_DEPLOY_VDSM_PATH,
+                name='hardware'
+            ).Plugin(context=self.context)
+            hardware._validate_virtualization()
+            supported = True
+        except ImportError:
+            self.logger.debug("Can't validate virtualization support")
+        except Exception as e:
+            self.logger.warning(e)
+        if not supported:
+            self.logger.warning(
+                _(
+                    'Disabling all-in-one plugin because hardware '
+                    'does not support virtualization'
+                )
+            )
+            self.environment[osetupcons.AIOEnv.ENABLE] = False
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: self.environment[
             osetupcons.AIOEnv.CONFIGURE
@@ -114,20 +143,6 @@ class Plugin(plugin.PluginBase):
                 set([entry['model'] for entry in self.CPU_FAMILIES]) &
                 set(compatible)
             )
-            if not supported:
-                self.logger.error(
-                    _(
-                        'CPU {cpu} provides the following compatible'
-                        'CPUs:\n{compatible}\n which are not supported'
-                    ).format(
-                        cpu=cpu,
-                        compatible="\n".join(compatible)
-                    )
-                )
-                raise RuntimeError(
-                    _('Host CPU is not capable of serving as hypervisor')
-                )
-
             # All-in-one want the best cpu between compatible.
             # The preference is defined by the order of
             # CPU_FAMILIES
