@@ -1120,10 +1120,11 @@ public abstract class HostModel extends Model
                 public void onSuccess(Object model, Object returnValue) {
 
                     List<String> pmOptions = (ArrayList<String>) returnValue;
-
-                    getPmPort().setIsAvailable(pmOptions.contains(PmPortKey));
-                    getPmSlot().setIsAvailable(pmOptions.contains(PmSlotKey));
-                    getPmSecure().setIsAvailable(pmOptions.contains(PmSecureKey));
+                    if (pmOptions != null) {
+                        getPmPort().setIsAvailable(pmOptions.contains(PmPortKey));
+                        getPmSlot().setIsAvailable(pmOptions.contains(PmSlotKey));
+                        getPmSecure().setIsAvailable(pmOptions.contains(PmSecureKey));
+                    }
                 }
             }), pmType);
         } else {
@@ -1157,9 +1158,11 @@ public abstract class HostModel extends Model
 
                     List<String> pmOptions = (ArrayList<String>) returnValue;
 
-                    getPmSecondaryPort().setIsAvailable(pmOptions.contains(PmPortKey));
-                    getPmSecondarySlot().setIsAvailable(pmOptions.contains(PmSlotKey));
-                    getPmSecondarySecure().setIsAvailable(pmOptions.contains(PmSecureKey));
+                    if (pmOptions != null) {
+                        getPmSecondaryPort().setIsAvailable(pmOptions.contains(PmPortKey));
+                        getPmSecondarySlot().setIsAvailable(pmOptions.contains(PmSlotKey));
+                        getPmSecondarySecure().setIsAvailable(pmOptions.contains(PmSecureKey));
+                    }
                 }
             }), pmSecondaryType);
         } else {
