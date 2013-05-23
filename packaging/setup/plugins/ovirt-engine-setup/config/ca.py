@@ -52,7 +52,14 @@ class Plugin(plugin.PluginBase):
         uninstall_files = []
         self.environment[
             osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
-        ].addFiles('ca_pki', uninstall_files)
+        ].createGroup(
+            group='ca_config',
+            description='PKI configuration',
+            optional=True,
+        ).addFiles(
+            'ca_config',
+            uninstall_files,
+        )
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=(

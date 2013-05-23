@@ -70,18 +70,6 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
-    )
-    def _setupGroup(self):
-        self.environment[
-            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
-        ].createGroup(
-            group='ca_pki',
-            description='PKI configuration and keys',
-            optional=True,
-        )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
         condition=lambda self: not os.path.exists(
             osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
         )
@@ -142,7 +130,11 @@ class Plugin(plugin.PluginBase):
         uninstall_files = []
         self.environment[
             osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
-        ].addFiles(
+        ].createGroup(
+            group='ca_pki',
+            description='PKI keys',
+            optional=True,
+        ).addFiles(
             group='ca_pki',
             fileList=uninstall_files,
         )
