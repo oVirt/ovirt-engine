@@ -1025,14 +1025,19 @@ public class ManageDomains {
                 if (actionType.equals(ActionType.add)) {
                     requireArgs(parser, Arguments.domain, Arguments.user, Arguments.provider);
                     requireAtLeastOneArg(parser, Arguments.passwordFile, Arguments.interactive);
+                    requireArgsValue(parser, Arguments.domain, Arguments.user, Arguments.provider,
+                            Arguments.passwordFile);
                     checkInvalidArgs(parser,
                             Arguments.forceDelete);
                 } else if (actionType.equals(ActionType.edit)) {
                     requireArgs(parser, Arguments.domain);
+                    requireArgsValue(parser, Arguments.domain, Arguments.user, Arguments.provider,
+                            Arguments.passwordFile);
                     checkInvalidArgs(parser,
                             Arguments.forceDelete);
                 } else if (actionType.equals(ActionType.delete)) {
                     requireArgs(parser, Arguments.domain);
+                    requireArgsValue(parser, Arguments.domain, Arguments.passwordFile);
                     checkInvalidArgs(parser);
                 } else if (actionType.equals(ActionType.validate)) {
                     checkInvalidArgs(parser,
@@ -1064,6 +1069,17 @@ public class ManageDomains {
         for (Arguments arg : args) {
             if (!parser.hasArg(arg.name())) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.ARGUMENT_IS_REQUIRED, arg.name());
+            }
+        }
+    }
+
+    /**
+     * Tests that if arguments is entered, then it has to have a value also
+     */
+    private void requireArgsValue(CLIParser parser, Arguments... args) throws ManageDomainsResult {
+        for (Arguments arg : args) {
+            if (parser.hasArg(arg.name()) && StringUtils.isEmpty(parser.getArg(arg.name()))) {
+                throw new ManageDomainsResult(ManageDomainsResultEnum.ARGUMENT_VALUE_REQUIRED, arg.name());
             }
         }
     }
