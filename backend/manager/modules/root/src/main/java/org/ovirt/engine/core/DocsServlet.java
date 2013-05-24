@@ -8,6 +8,7 @@ import java.util.Locale;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,12 +43,12 @@ public class DocsServlet extends FileServlet {
         if (file == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         } else if (!response.isCommitted()){ //If the response is committed, we have already redirected.
-            Object languagePageShown = request.getSession(true).getAttribute(LANG_PAGE_SHOWN);
+            boolean languagePageShown = isLangPageShown(request);
             if (!file.equals(originalFile)) {
                 //We determined that we are going to redirect the user to the English version URI.
                 String redirect = request.getServletPath() + replaceLocaleWithUSLocale(request.getPathInfo(), locale);
-                if ((languagePageShown == null || !Boolean.parseBoolean(languagePageShown.toString()))) {
-                    request.getSession(true).setAttribute(LANG_PAGE_SHOWN, true);
+                if (!languagePageShown) {
+                    setLangPageShown(response, true);
                     request.setAttribute(LocaleFilter.LOCALE, locale);
                     request.setAttribute(ENGLISH_HREF, redirect);
                     RequestDispatcher dispatcher = request.getRequestDispatcher(LANG_JSP);
@@ -64,6 +65,26 @@ public class DocsServlet extends FileServlet {
                 ServletUtils.sendFile(request, response, file, type);
             }
         }
+    }
+
+    private boolean isLangPageShown(HttpServletRequest request) {
+        boolean result = false;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (LANG_PAGE_SHOWN.equalsIgnoreCase(cookie.getName())) {
+                    result = Boolean.parseBoolean(cookie.getValue());
+                    break;
+                }
+            }
+        }
+        return result;
+    }
+
+    private void setLangPageShown(HttpServletResponse response, boolean value) {
+        Cookie cookie = new Cookie(LANG_PAGE_SHOWN, Boolean.toString(value));
+        // Don't set max age, i.e. let this be a session cookie
+        response.addCookie(cookie);
     }
 
     /**
