@@ -1345,9 +1345,10 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void getAllVmTemplates(AsyncQuery aQuery) {
+    public static void getAllVmTemplates(AsyncQuery aQuery, final boolean refresh) {
         aQuery.converterCallback = new TemplateConverter();
         VdcQueryParametersBase params = new VdcQueryParametersBase();
+        params.setRefresh(refresh);
         Frontend.RunQuery(VdcQueryType.GetAllVmTemplates, params, aQuery);
     }
 

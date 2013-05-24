@@ -28,7 +28,7 @@ public class UserPortalTemplateListModel extends TemplateListModel
             public void onSuccess(Object model, Object returnValue) {
                 ((UserPortalTemplateListModel) model).setItems((Iterable) returnValue);
             }
-        }));
+        }),getIsQueryFirstTime());
     }
 
     @Override

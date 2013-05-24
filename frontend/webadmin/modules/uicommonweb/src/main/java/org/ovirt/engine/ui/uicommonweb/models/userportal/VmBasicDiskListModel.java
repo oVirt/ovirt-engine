@@ -57,8 +57,9 @@ public class VmBasicDiskListModel extends SearchableListModel
                 }
             };
 
-            Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId,
-                    new GetAllDisksByVmIdParameters(vm.getId()),
+            GetAllDisksByVmIdParameters queryParameters = new GetAllDisksByVmIdParameters(vm.getId());
+            queryParameters.setRefresh(getIsQueryFirstTime());
+            Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, queryParameters,
                     _asyncQuery);
         }
         else if (getEntity() instanceof VmPool)
@@ -93,8 +94,9 @@ public class VmBasicDiskListModel extends SearchableListModel
                                 searchableListModel.setItems(diskList);
                             }
                         };
-                        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId,
-                                new GetAllDisksByVmIdParameters(vm.getId()),
+                        GetAllDisksByVmIdParameters queryParameters = new GetAllDisksByVmIdParameters(vm.getId());
+                        queryParameters.setRefresh(getIsQueryFirstTime());
+                        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, queryParameters,
                                 _asyncQuery1);
                     }
                 }

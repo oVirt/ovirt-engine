@@ -326,8 +326,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
     protected void syncSearch()
     {
         super.syncSearch();
-        Frontend.RunQuery(VdcQueryType.GetAllVmsAndVmPools,
-                new VdcQueryParametersBase(),
+        VdcQueryParametersBase queryParameters = new VdcQueryParametersBase();
+        queryParameters.setRefresh(getIsQueryFirstTime());
+        Frontend.RunQuery(VdcQueryType.GetAllVmsAndVmPools, queryParameters,
                 new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
