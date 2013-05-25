@@ -89,6 +89,7 @@ public class LiveMigrateVmDisksCommandTest {
 
     @Test
     public void canDoActionNoDisksSpecified() {
+        initVm(VMStatus.Up, Guid.NewGuid(), null);
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
@@ -168,7 +169,9 @@ public class LiveMigrateVmDisksCommandTest {
         VM vm = new VM();
         vm.setStatus(vmStatus);
         vm.setRunOnVds(runOnVds);
+        vm.setStoragePoolId(storagePoolId);
 
+        doReturn(vm).when(command).getVm();
         when(vmDao.get(any(Guid.class))).thenReturn(vm);
         when(vmDao.getVmsListForDisk(diskImageId)).thenReturn(Collections.singletonList(vm));
     }

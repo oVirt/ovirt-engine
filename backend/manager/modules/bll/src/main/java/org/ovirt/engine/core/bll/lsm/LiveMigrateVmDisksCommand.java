@@ -193,6 +193,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     @Override
     protected boolean canDoAction() {
+        setStoragePoolId(getVm().getStoragePoolId());
+
         if (!isValidParametersList() || !checkImagesStatus() || !isValidSpaceRequirements()) {
             return false;
         }
