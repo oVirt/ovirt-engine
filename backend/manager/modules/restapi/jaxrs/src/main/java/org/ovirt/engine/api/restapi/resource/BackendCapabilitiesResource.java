@@ -64,6 +64,8 @@ import org.ovirt.engine.api.model.SchedulingPolicies;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.api.model.ScsiGenericIoOptions;
+import org.ovirt.engine.api.model.StepEnum;
+import org.ovirt.engine.api.model.StepTypes;
 import org.ovirt.engine.api.model.StorageDomainStates;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
@@ -153,7 +155,6 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
         caps.setPermits(getPermits());
         caps.setSchedulingPolicies(getSchedulingPolicies());
-
         return  caps;
     }
 
@@ -220,6 +221,9 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addScsiGenericIoOptions(version, ScsiGenericIO.values());
         addWatchdogActions(version, WatchdogAction.values());
         addWatchdogModels(version, WatchdogModel.values());
+
+        // External tasks types
+        addStepEnumTypes(version, StepEnum.values());
 
         version.setFeatures(featuresHelper.getFeatures(v));
 
@@ -657,6 +661,12 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         }
     }
 
+    private void addStepEnumTypes(VersionCaps version, StepEnum[] states) {
+        version.setStepTypes(new StepTypes());
+        for(StepEnum type : states) {
+            version.getStepTypes().getStepType().add(type.value());
+        }
+    }
 
     @Override
     public CapabiliyResource getCapabilitiesSubResource(String id) {

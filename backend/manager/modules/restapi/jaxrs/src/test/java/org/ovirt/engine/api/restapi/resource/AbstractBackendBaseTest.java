@@ -555,6 +555,8 @@ public abstract class AbstractBackendBaseTest extends Assert {
         }
     }
 
+
+
     protected UriInfo setUpGetMatrixConstraintsExpectations(String matrixConstraint,
             boolean matrixConstraintExist,
             String matrixConstraintValue, UriInfo uriInfo, boolean replay) {
@@ -567,12 +569,15 @@ public abstract class AbstractBackendBaseTest extends Assert {
         expect(ps.getMatrixParameters()).andReturn(matrixParams).anyTimes();
 
         if (matrixConstraintExist) {
-            expect(matrixParams.containsKey(matrixConstraint)).andReturn(matrixConstraintExist);
+            expect(matrixParams.containsKey(matrixConstraint)).andReturn(matrixConstraintExist).anyTimes();
+
             List<String> matrixParamsList = control.createMock(List.class);
             expect(matrixParams.get(matrixConstraint)).andReturn(matrixParamsList).anyTimes();
 
             expect(matrixParamsList.size()).andReturn(1);
             expect(matrixParamsList.get(0)).andReturn(matrixConstraintValue);
+
+
         }
 
         psl.add(ps);

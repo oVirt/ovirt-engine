@@ -45,6 +45,7 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.LinkCapabilities;
 import org.ovirt.engine.api.model.NIC;
@@ -59,6 +60,7 @@ import org.ovirt.engine.api.model.Request;
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Statistic;
+import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Tag;
@@ -106,6 +108,8 @@ import org.ovirt.engine.api.resource.HostNicsResource;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostStorageResource;
 import org.ovirt.engine.api.resource.HostsResource;
+import org.ovirt.engine.api.resource.JobResource;
+import org.ovirt.engine.api.resource.JobsResource;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.api.resource.PermissionResource;
@@ -120,6 +124,8 @@ import org.ovirt.engine.api.resource.SnapshotResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
 import org.ovirt.engine.api.resource.StatisticResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
+import org.ovirt.engine.api.resource.StepResource;
+import org.ovirt.engine.api.resource.StepsResource;
 import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.api.resource.StorageDomainContentsResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
@@ -326,6 +332,11 @@ public class LinkHelper {
         map.add(WatchdogResource.class, DevicesResource.class, Template.class);
         TYPES.put(WatchDog.class, map);
 
+        map = new ParentToCollectionMap(JobResource.class, JobsResource.class);
+        TYPES.put(Job.class, map);
+
+        map = new ParentToCollectionMap(StepResource.class, StepsResource.class, Job.class);
+        TYPES.put(Step.class, map);
     }
 
     /**

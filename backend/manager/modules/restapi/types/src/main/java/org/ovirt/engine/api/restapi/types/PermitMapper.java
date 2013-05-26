@@ -170,6 +170,8 @@ public class PermitMapper {
             return PermitType.MANIPULATE_GLUSTER_SERVICE;
         case CONFIGURE_SCSI_GENERIC_IO:
             return PermitType.CONFIGURE_SCSI_GENERIC_IO;
+        case INJECT_EXTERNAL_TASKS:
+            return PermitType.INJECT_EXTERNAL_TASKS;
         default:
             return null;
         }
@@ -304,6 +306,8 @@ public class PermitMapper {
             return ActionGroup.ASSIGN_CLUSTER_NETWORK;
         case CONFIGURE_SCSI_GENERIC_IO:
             return ActionGroup.CONFIGURE_SCSI_GENERIC_IO;
+        case INJECT_EXTERNAL_TASKS:
+            return ActionGroup.INJECT_EXTERNAL_TASKS;
         default:
             return null;
         }

@@ -48,7 +48,8 @@ public class BackendResource extends BaseBackendResource {
     private static final String NON_BLOCKING_EXPECTATION = "202-accepted";
     protected static final Log LOG = LogFactory.getLog(BackendResource.class);
     public static final String POPULATE = "All-Content";
-
+    public static final String JOB_ID_CONSTRAINT = "JobId";
+    public static final String STEP_ID_CONSTRAINT = "StepId";
     protected <T> T getEntity(Class<T> clz, SearchType searchType, String constraint) {
         try {
             VdcQueryReturnValue result = runQuery(VdcQueryType.Search,
@@ -236,6 +237,7 @@ public class BackendResource extends BaseBackendResource {
 
     protected VdcReturnValueBase doAction(VdcActionType task,
                                           VdcActionParametersBase params) throws BackendFailureException {
+        setJobOrStepId(params);
         setCorrelationId(params);
         VdcReturnValueBase result = backend.RunAction(task, sessionize(params));
         if (result != null && !result.getCanDoAction()) {
@@ -249,6 +251,7 @@ public class BackendResource extends BaseBackendResource {
 
     protected void doNonBlockingAction(final VdcActionType task, final VdcActionParametersBase params) {
         setCorrelationId(params);
+        setJobOrStepId(params);
         ThreadPoolUtil.execute(new Runnable() {
             SessionHelper sh = getSessionHelper();
             VdcActionParametersBase sp = sessionize(params);
@@ -268,6 +271,17 @@ public class BackendResource extends BaseBackendResource {
         });
     }
 
+    private void setJobOrStepId(VdcActionParametersBase params) {
+        if (QueryHelper.hasMatrixParam(uriInfo, JOB_ID_CONSTRAINT)) {
+            String value = QueryHelper.getMatrixConstraint(uriInfo, JOB_ID_CONSTRAINT);
+            params.setJobId(asGuid(value));
+        }
+
+        if (QueryHelper.hasMatrixParam(uriInfo, STEP_ID_CONSTRAINT)) {
+            String value = QueryHelper.getMatrixConstraint(uriInfo, STEP_ID_CONSTRAINT);
+            params.setJobId(asGuid(value));
+        }
+    }
     private void setCorrelationId(VdcActionParametersBase params) {
         List<String> correlationIds = httpHeaders.getRequestHeader(CORRELATION_ID);
         if (correlationIds != null && correlationIds.size() > 0) {

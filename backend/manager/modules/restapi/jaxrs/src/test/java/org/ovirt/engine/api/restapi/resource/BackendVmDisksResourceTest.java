@@ -185,12 +185,50 @@ public class BackendVmDisksResourceTest
     }
 
     @Test
-    public void testAddDisk() throws Exception {
-        testAddDiskImpl(getModel(0));
+    public void testAddDiskWithJobId() throws Exception {
+
+        Disk model = getModel(0);
+
+        setUriInfo(setUpBasicUriExpectations());
+
+        setUriInfo(setUpGetMatrixConstraintsExpectations(
+                BackendResource.JOB_ID_CONSTRAINT,
+                true,
+                GUIDS[1].toString(),
+                collection.getUriInfo(),
+                false));
+
+        setCommonExpectations(model);
+        Response response = collection.add(getModel(0));
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof Disk);
+        verifyModel((Disk)response.getEntity(), 0);
+        assertNull(((Disk)response.getEntity()).getCreationStatus());
     }
 
-    private void testAddDiskImpl(Disk model) {
+    @Test
+    public void testAddDiskWithStepId() throws Exception {
+
+        Disk model = getModel(0);
+
         setUriInfo(setUpBasicUriExpectations());
+
+        setUriInfo(setUpGetMatrixConstraintsExpectations(
+                BackendResource.STEP_ID_CONSTRAINT,
+                true,
+                GUIDS[1].toString(),
+                collection.getUriInfo(),
+                false));
+
+        setCommonExpectations(model);
+        Response response = collection.add(getModel(0));
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof Disk);
+        verifyModel((Disk)response.getEntity(), 0);
+        assertNull(((Disk)response.getEntity()).getCreationStatus());
+    }
+
+    private void setCommonExpectations(Disk model) {
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
                                      IdQueryParameters.class,
@@ -212,6 +250,16 @@ public class BackendVmDisksResourceTest
                                   new Object[] { PARENT_ID },
                 asList(getEntity(0)));
         model.setSize(1024 * 1024L);
+    }
+
+    @Test
+    public void testAddDisk() throws Exception {
+        testAddDiskImpl(getModel(0));
+    }
+
+    private void testAddDiskImpl(Disk model) {
+        setUriInfo(setUpBasicUriExpectations());
+        setCommonExpectations(model);
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
@@ -351,6 +399,7 @@ public class BackendVmDisksResourceTest
     @Test
     public void testAddIncompleteParameters_2() throws Exception {
         Disk model = getModel(0);
+        model.setSize(null);
         setUriInfo(setUpBasicUriExpectations());
         control.replay();
         try {

@@ -101,7 +101,8 @@ public enum PermitType {
 
     // Login action group
     LOGIN,
-    INJECT_EXTERNAL_EVENTS;
+    INJECT_EXTERNAL_EVENTS,
+    INJECT_EXTERNAL_TASKS;
 
     public String value() {
         return name().toLowerCase();

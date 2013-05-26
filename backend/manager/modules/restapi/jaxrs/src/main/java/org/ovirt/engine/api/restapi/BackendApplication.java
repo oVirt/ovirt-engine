@@ -45,6 +45,7 @@ import org.ovirt.engine.api.restapi.resource.BackendDomainsResource;
 import org.ovirt.engine.api.restapi.resource.BackendEventsResource;
 import org.ovirt.engine.api.restapi.resource.BackendGroupsResource;
 import org.ovirt.engine.api.restapi.resource.BackendHostsResource;
+import org.ovirt.engine.api.restapi.resource.BackendJobsResource;
 import org.ovirt.engine.api.restapi.resource.BackendNetworksResource;
 import org.ovirt.engine.api.restapi.resource.BackendResource;
 import org.ovirt.engine.api.restapi.resource.BackendRolesResource;
@@ -128,6 +129,7 @@ public class BackendApplication extends Application {
         addResource(new BackendUsersResource());
         addResource(new BackendGroupsResource());
         addResource(new BackendDomainsResource());
+        addResource(new BackendJobsResource());
 
         // Authentication singletons:
         final BasicAuthorizationScheme scheme = new BasicAuthorizationScheme();

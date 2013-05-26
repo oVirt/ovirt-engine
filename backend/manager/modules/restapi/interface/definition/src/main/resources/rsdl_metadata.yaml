@@ -3228,3 +3228,103 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+
+- name: /api/jobs|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+
+- name: /api/jobs/{job:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+
+- name: /api/jobs|rel=add
+  request:
+    body:
+      parameterType: Job
+      signatures:
+      - mandatoryArguments: {job.description: 'xs:string'}
+        optionalArguments: {job.auto_cleared: 'xs:boolean'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+
+- name: /api/jobs/{job:id}/end|rel=end
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {action.status.state: 'xs:string'}
+        optionalArguments: {action.force: 'xs:boolean'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+
+- name: /api/jobs/{job:id}/clear|rel=clear
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+
+- name: /api/jobs/{job:id}/steps|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+
+- name: /api/jobs/{job:id}/steps/{step:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+
+- name: /api/jobs/{job:id}/steps|rel=add
+  request:
+    body:
+      parameterType: Step
+      signatures:
+      - mandatoryArguments: {step.type: 'xs:string' , step.description: 'xs:string', step.status.state: 'xs:string'}
+        optionalArguments: {step.job.id: 'xs:string', step.parent_step.id: 'xs:string'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+
+- name: /api/jobs/{job:id}/steps/{step:id}/end|rel=end
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.force: 'xs:boolean', action.status.state'xs:string'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+
+
+
+
