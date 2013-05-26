@@ -92,7 +92,22 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION GetAsyncTasksByEntityId(v_entity_id UUID)
+Create or replace FUNCTION InsertAsyncTaskEntities(
+        v_task_id UUID,
+        v_entity_id UUID,
+        v_entity_type varchar(128))
+
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      IF NOT EXISTS (SELECT 1 from async_tasks_entities where async_task_id = v_task_id and entity_id = v_entity_id) THEN
+            INSERT INTO async_tasks_entities (async_task_id,entity_id,entity_type) VALUES (v_task_id, v_entity_id, v_entity_type);
+      END IF;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION GetAsyncTasksIdsByEntityId(v_entity_id UUID)
 RETURNS SETOF idUuidType
    AS $procedure$
 BEGIN

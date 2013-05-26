@@ -102,4 +102,6 @@ public interface AsyncTaskDAO extends DAO {
      * @return
      */
     List<AsyncTasks> getTasksByEntity(Guid entityId);
+
+    void insertAsyncTaskEntity(Guid taskId, Guid entityId, VdcObjectType value);
 }

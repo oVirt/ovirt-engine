@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import static org.ovirt.engine.core.common.config.ConfigValues.UknownTaskPrePollingLapse;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
@@ -25,25 +27,16 @@ public class SPMAsyncTask {
     }
 
     private AsyncTaskParameters privateParameters;
-    private Guid[] associatedEntities;
-    private VdcObjectType entityType;
 
-    public void setAssociatedEntities(Guid[] associatedEntities) {
-        this.associatedEntities = associatedEntities;
+    private Map<Guid, VdcObjectType> entitiesMap;
+
+    public Map<Guid, VdcObjectType> getEntitiesMap() {
+        return entitiesMap;
     }
 
-    public Guid[] getAssociatedEntities() {
-        return associatedEntities;
+    public void setEntitiesMap(Map<Guid, VdcObjectType> entitiesMap) {
+        this.entitiesMap = entitiesMap;
     }
-
-    public VdcObjectType getEntityType() {
-        return entityType;
-    }
-
-    public void setEntityType(VdcObjectType entityType) {
-        this.entityType = entityType;
-    }
-
 
     public AsyncTaskParameters getParameters() {
         return privateParameters;

@@ -146,11 +146,9 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
 
         AsyncTasks result = dao.get(newAsyncTask.getTaskId());
         /*
-        //Setting startTime to null is required as DB auto generates
-        //the value of start time
-        //Without this, the comparison would fail
-        result.setStartTime(null);
-    */
+         * //Setting startTime to null is required as DB auto generates //the value of start time //Without this, the
+         * comparison would fail result.setStartTime(null);
+         */
         assertEquals(newAsyncTask, result);
     }
 
@@ -163,8 +161,8 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         dao.save(newAsyncTask, VdcObjectType.Storage, storageId);
         List<Guid> asyncTasks = dao.getAsyncTaskIdsByEntity(storageId);
         assertNotNull(asyncTasks);
-        assertEquals(asyncTasks.size(),1);
-        assertEquals(asyncTasks.get(0),newAsyncTask.getTaskId());
+        assertEquals(asyncTasks.size(), 1);
+        assertEquals(asyncTasks.get(0), newAsyncTask.getTaskId());
     }
 
     /**
@@ -235,6 +233,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         assertNotNull(taskIds);
         assertTrue(taskIds.isEmpty());
     }
+
     @Test
     public void testSaveOrUpdate() {
         existingAsyncTask.setstatus(AsyncTaskStatusEnum.aborting);
@@ -255,13 +254,26 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         assertEquals(tasksNumber, tasks.size());
         AsyncTasks taskFromDb = dao.get(existingAsyncTask.getTaskId());
         assertNotNull(taskFromDb);
-        assertEquals(taskFromDb,existingAsyncTask);
+        assertEquals(taskFromDb, existingAsyncTask);
         dao.saveOrUpdate(newAsyncTask, VdcObjectType.Disk, Guid.newGuid());
         tasks = dao.getAll();
         assertNotNull(tasks);
-        assertEquals(tasksNumber+1, tasks.size());
+        assertEquals(tasksNumber + 1, tasks.size());
         taskFromDb = dao.get(newAsyncTask.getTaskId());
         assertEquals(taskFromDb, newAsyncTask);
+
+    }
+
+    @Test
+    public void testInsertAsyncTaskEntities() {
+        dao.save(newAsyncTask);
+        Guid newEntityId = Guid.newGuid();
+        dao.insertAsyncTaskEntity(newAsyncTask.getTaskId(), newEntityId, VdcObjectType.VM);
+        List<Guid> taskIds = dao.getAsyncTaskIdsByEntity(newEntityId);
+        assertNotNull(taskIds);
+        assertEquals(1, taskIds.size());
+        Guid taskIdFromDb = taskIds.get(0);
+        assertEquals(newAsyncTask.getTaskId(), taskIdFromDb);
 
     }
 }

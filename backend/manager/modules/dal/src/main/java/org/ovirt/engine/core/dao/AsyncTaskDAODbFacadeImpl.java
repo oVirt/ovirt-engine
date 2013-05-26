@@ -192,7 +192,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     public List<Guid> getAsyncTaskIdsByEntity(Guid entityId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("entity_id", entityId);
-        return getCallsHandler().executeReadList("GetAsyncTasksByEntityId", IdRowMapper.instance, parameterSource);
+        return getCallsHandler().executeReadList("GetAsyncTasksIdsByEntityId", IdRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -209,5 +209,15 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
         return getCallsHandler().executeReadList("GetAsyncTasksByEntityId",
                 AsyncTaskRowMapper.instance,
                 parameterSource);
+    }
+
+    @Override
+    public void insertAsyncTaskEntity(Guid taskId, Guid entityId, VdcObjectType entityType) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
+        parameterSource.addValue("task_id", taskId).
+                addValue("entity_id", entityId).
+                addValue("entity_type", entityType);
+        getCallsHandler().executeModification("InsertAsyncTaskEntities", parameterSource);
+
     }
 }

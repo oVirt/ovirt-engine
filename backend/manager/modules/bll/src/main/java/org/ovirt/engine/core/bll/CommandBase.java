@@ -1420,9 +1420,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected Guid createTask(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
-            VdcObjectType entityType,
-            Guid... entityIds) {
-        return createTask(taskId, asyncTaskCreationInfo, parentCommand, null, entityType, entityIds);
+            Map<Guid, VdcObjectType> entitiesMap) {
+        return createTask(taskId, asyncTaskCreationInfo, parentCommand, null, entitiesMap);
     }
 
     /**
@@ -1460,7 +1459,30 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
-        return createTask(taskId, asyncTaskCreationInfo, parentCommand, null, null, EMPTY_GUID_ARRAY);
+        return createTask(taskId,
+                asyncTaskCreationInfo,
+                parentCommand,
+                null,
+                new HashMap<Guid, VdcObjectType> ());
+    }
+
+    protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand,
+            VdcObjectType vdcObjectType, Guid... entityIds) {
+        return createTask(taskId,
+                asyncTaskCreationInfo,
+                parentCommand,
+                createEntitiesMapForSingleEntityType(vdcObjectType, entityIds));
+    }
+
+    protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand,
+            String description, VdcObjectType entityType, Guid... entityIds) {
+        return createTask(taskId,
+                asyncTaskCreationInfo,
+                parentCommand,
+                description,
+                createEntitiesMapForSingleEntityType(entityType, entityIds));
     }
 
     /**
@@ -1473,20 +1495,16 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            VdcActionType of the command that its EndAction we want to invoke when tasks are finished.
      * @param description
      *            A message which describes the task
-     * @param entityType
-     *            type of entities that are associated with the task
-     * @param entityIds
-     *            Ids of entities to be associated with task
-     * @return Guid of the created task.
+     * @param entitiesMap - map of entities
      */
     protected Guid createTask(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
-            String description, VdcObjectType entityType, Guid... entityIds) {
+            String description, Map<Guid, VdcObjectType> entitiesMap) {
 
         Transaction transaction = TransactionSupport.suspend();
 
         try {
-            return createTaskImpl(taskId, asyncTaskCreationInfo, parentCommand, description, entityType, entityIds);
+            return createTaskImpl(taskId, asyncTaskCreationInfo, parentCommand, description, entitiesMap);
         } catch (RuntimeException ex) {
             log.errorFormat("Error during CreateTask for command: {0}. Exception {1}", getClass().getName(), ex);
         } finally {
@@ -1498,6 +1516,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private Guid createTaskImpl(Guid taskId, AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand,
             String description, VdcObjectType entityType, Guid... entityIds) {
+        return createTaskImpl(taskId,
+                asyncTaskCreationInfo,
+                parentCommand,
+                description,
+                createEntitiesMapForSingleEntityType(entityType, entityIds));
+    }
+
+    private Guid createTaskImpl(Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo, VdcActionType parentCommand,
+            String description,
+            Map<Guid, VdcObjectType> entitiesMap) {
         Step taskStep =
                 ExecutionHandler.addTaskStep(getExecutionContext(),
                         StepEnum.getStepNameByTaskType(asyncTaskCreationInfo.getTaskType()),
@@ -1506,13 +1535,21 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             asyncTaskCreationInfo.setStepId(taskStep.getId());
         }
         SPMAsyncTask task = concreteCreateTask(taskId, asyncTaskCreationInfo, parentCommand);
-        task.setEntityType(entityType);
-        task.setAssociatedEntities(entityIds);
+        task.setEntitiesMap(entitiesMap);
         AsyncTaskUtils.addOrUpdateTaskInDB(task);
         getAsyncTaskManager().lockAndAddTaskToManager(task);
         Guid vdsmTaskId = task.getVdsmTaskId();
         ExecutionHandler.updateStepExternalId(taskStep, vdsmTaskId, ExternalSystemType.VDSM);
         return vdsmTaskId;
+
+    }
+
+    private Map<Guid, VdcObjectType> createEntitiesMapForSingleEntityType(VdcObjectType entityType, Guid... entityIds) {
+        Map<Guid, VdcObjectType> entitiesMap = new HashMap<Guid, VdcObjectType>();
+        for (Guid entityId : entityIds) {
+            entitiesMap.put(entityId, entityType);
+        }
+        return entitiesMap;
     }
 
     /**
