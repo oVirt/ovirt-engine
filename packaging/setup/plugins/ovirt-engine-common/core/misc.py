@@ -43,15 +43,10 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_BOOT,
         before=[
-            otopicons.Stages.CORE_LOG_INIT,
             otopicons.Stages.CORE_CONFIG_INIT,
         ],
     )
     def _preinit(self):
-        self.environment.setdefault(
-            otopicons.CoreEnv.LOG_FILE_NAME_PREFIX,
-            osetupcons.FileLocations.OVIRT_OVIRT_SETUP_LOG_PREFIX
-        )
         self.environment.setdefault(
             otopicons.CoreEnv.CONFIG_FILE_NAME,
             self.resolveFile(

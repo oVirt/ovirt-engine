@@ -83,6 +83,7 @@ class FileLocations(object):
     )
 
     OVIRT_OVIRT_SETUP_LOG_PREFIX = 'ovirt-engine-setup'
+    OVIRT_OVIRT_REMOVE_LOG_PREFIX = 'ovirt-engine-remove'
 
     OVIRT_IPTABLES_EXAMPLE = os.path.join(
         OVIRT_ENGINE_SYSCONFDIR,

@@ -23,6 +23,7 @@ import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
+from otopi import constants as otopicons
 from otopi import util
 from otopi import plugin
 
@@ -37,6 +38,18 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_BOOT,
+        before=[
+            otopicons.Stages.CORE_LOG_INIT,
+        ],
+    )
+    def _preinit(self):
+        self.environment.setdefault(
+            otopicons.CoreEnv.LOG_FILE_NAME_PREFIX,
+            osetupcons.FileLocations.OVIRT_OVIRT_REMOVE_LOG_PREFIX
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
