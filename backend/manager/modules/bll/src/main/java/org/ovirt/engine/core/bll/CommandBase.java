@@ -348,6 +348,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected void compensate() {
         if (hasTaskHandlers()) {
+            getParameters().setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
             getCurrentTaskHandler().compensate();
             revertPreviousHandlers();
         } else {
@@ -586,8 +587,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private void internalEndWithFailure() {
         log.errorFormat("Ending command with failure: {0}", getClass().getName());
         if (hasTaskHandlers()) {
-            getCurrentTaskHandler().endWithFailure();
-            revertPreviousHandlers();
+            if (hasStepsToRevert()) {
+                getCurrentTaskHandler().endWithFailure();
+                revertPreviousHandlers();
+            }
             startPollingAsyncTasks();
         } else {
             endWithFailure();
@@ -644,7 +647,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private void revertPreviousHandlers() {
         getParameters().decrementExecutionIndex();
-        if (getExecutionIndex() >= 0) {
+        if (hasStepsToRevert()) {
             logRollbackedTask();
             getParameters().setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
             getCurrentTaskHandler().compensate();
@@ -653,6 +656,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 // If there is no task to take us onwards, just run the previous handler's revert
                 revertPreviousHandlers();
             }
+        }
+        else {
+            setSucceeded(true);
         }
     }
 
@@ -1826,6 +1832,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private int getExecutionIndex() {
         return getParameters().getExecutionIndex();
+    }
+
+    private boolean hasStepsToRevert() {
+        return getExecutionIndex() >= 0;
     }
 
     public boolean isQuotaChanged() {
