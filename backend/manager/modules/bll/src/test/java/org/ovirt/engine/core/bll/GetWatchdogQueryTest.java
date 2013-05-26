@@ -42,7 +42,7 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
         final Guid vmId = new Guid("ee655a4d-effc-4aab-be2b-2f80ff40cd1c");
         VmDeviceDAO vmDeviceDaoMock = Mockito.mock(VmDeviceDAO.class);
         HashMap<String, Object> watchdogSpecParams = new HashMap<String, Object>();
-        watchdogSpecParams.put("model", "i3600esb");
+        watchdogSpecParams.put("model", "i6300esb");
         watchdogSpecParams.put("action", "reset");
         VmDevice vmDevice = new VmDevice(new VmDeviceId(new Guid("6f86b8a4-e721-4149-b2df-056eb621b16a"),
                 vmId), VmDeviceType.WATCHDOG.getName(), "watchdog", "", 1, watchdogSpecParams, true, true, true, "");
@@ -61,8 +61,8 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
 
         query.executeQueryCommand();
         Assert.assertNotNull(query.getReturnValue());
-        Assert.assertEquals(((VmWatchdog)query.getReturnValue()).getAction(), "reset");
-        Assert.assertEquals(((VmWatchdog)query.getReturnValue()).getModel(), "i3600esb");
+        Assert.assertEquals((((VmWatchdog)query.getReturnValue()).getAction()).name().toLowerCase(), "reset");
+        Assert.assertEquals((((VmWatchdog)query.getReturnValue()).getModel()).name().toLowerCase(), "i6300esb");
     }
 
 }
