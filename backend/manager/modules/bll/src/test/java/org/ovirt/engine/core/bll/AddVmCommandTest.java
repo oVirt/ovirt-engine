@@ -46,9 +46,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -343,10 +340,6 @@ public class AddVmCommandTest {
     }
 
     private void mockBackend(AddVmCommand<?> cmd) {
-        VdcQueryReturnValue returnValue = new VdcQueryReturnValue();
-        returnValue.setReturnValue(Boolean.FALSE);
-        when(backend.runInternalQuery(Matchers.<VdcQueryType> any(VdcQueryType.class),
-                Matchers.any(VdcQueryParametersBase.class))).thenReturn(returnValue);
         when(backend.getResourceManager()).thenReturn(vdsBrokerFrontend);
         doReturn(backend).when(cmd).getBackend();
     }
@@ -499,6 +492,7 @@ public class AddVmCommandTest {
 
     private <T extends VmManagementParametersBase> void mockUninterestingMethods(AddVmCommand<T> spy) {
         doReturn(true).when(spy).isVmNameValidLength(Matchers.<VM> any(VM.class));
+        doReturn(false).when(spy).isVmWithSameNameExists(anyString());
         doReturn(STORAGE_POOL_ID).when(spy).getStoragePoolId();
         doReturn(createVmTemplate()).when(spy).getVmTemplate();
         doReturn(true).when(spy).areParametersLegal(anyListOf(String.class));

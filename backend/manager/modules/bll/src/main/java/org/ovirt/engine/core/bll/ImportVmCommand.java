@@ -57,7 +57,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -497,9 +496,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     protected boolean canAddVm() {
         // Checking if a desktop with same name already exists
-        boolean exists = (Boolean) getBackend()
-                .runInternalQuery(VdcQueryType.IsVmWithSameNameExist,
-                        new IsVmWithSameNameExistParameters(getVm().getName())).getReturnValue();
+        boolean exists = VmHandler.isVmWithSameNameExistStatic(getVm().getName());
 
         if (exists) {
             addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_NAME_EXISTS);

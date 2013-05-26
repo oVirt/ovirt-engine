@@ -31,8 +31,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
-import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -106,10 +104,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             do {
                 number++;
                 currentVmName = NameForVmInPoolGenerator.generateVmName(poolName, number);
-            } while ((Boolean) Backend
-                    .getInstance()
-                    .runInternalQuery(VdcQueryType.IsVmWithSameNameExist,
-                            new IsVmWithSameNameExistParameters(currentVmName)).getReturnValue());
+            } while (VmHandler.isVmWithSameNameExistStatic(currentVmName));
 
             VmStatic currVm = new VmStatic(getParameters().getVmStaticData());
             currVm.setName(currentVmName);

@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll;
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
@@ -19,7 +19,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
@@ -29,9 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -48,8 +44,6 @@ public class UpdateVmCommandTest {
     private UpdateVmCommand<VmManagementParametersBase> command;
     private VDSGroup group;
 
-    @Mock
-    private BackendInternal backendInternal;
     @Mock
     private VmDAO vmDAO;
     @Mock
@@ -97,7 +91,6 @@ public class UpdateVmCommandTest {
             }
         });
         doReturn(vm).when(command).getVm();
-        doReturn(backendInternal).when(command).getBackend();
     }
 
     @Test
@@ -240,9 +233,6 @@ public class UpdateVmCommandTest {
     }
 
     private void mockSameNameQuery(boolean result) {
-        VdcQueryReturnValue returnValue = mock(VdcQueryReturnValue.class);
-        when(backendInternal.runInternalQuery(any(VdcQueryType.class), any(IsVmWithSameNameExistParameters.class)))
-                .thenReturn(returnValue);
-        when(returnValue.getReturnValue()).thenReturn(result);
+        doReturn(result).when(command).isVmWithSameNameExists(anyString());
     }
 }

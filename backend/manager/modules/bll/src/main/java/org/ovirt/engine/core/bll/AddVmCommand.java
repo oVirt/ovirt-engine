@@ -51,10 +51,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -439,9 +437,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             int vmPriority) {
         boolean returnValue;
         // Checking if a desktop with same name already exists
-        boolean exists = (Boolean) getBackend()
-                .runInternalQuery(VdcQueryType.IsVmWithSameNameExist, new IsVmWithSameNameExistParameters(name))
-                .getReturnValue();
+        boolean exists = isVmWithSameNameExists(name);
 
         if (exists) {
             if (reasons != null) {

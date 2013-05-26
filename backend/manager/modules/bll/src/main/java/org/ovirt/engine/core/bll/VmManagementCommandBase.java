@@ -202,4 +202,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         return true;
     }
 
+    protected boolean isVmWithSameNameExists(String name) {
+        return VmHandler.isVmWithSameNameExistStatic(name);
+    }
 }

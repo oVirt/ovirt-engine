@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -223,10 +222,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         // Checking if a desktop with same name already exists
         if (!StringUtils.equals(vmFromDB.getName(), vmFromParams.getName())) {
-            boolean exists = (Boolean) getBackend()
-                    .runInternalQuery(VdcQueryType.IsVmWithSameNameExist,
-                            new IsVmWithSameNameExistParameters(vmFromParams.getName()))
-                    .getReturnValue();
+            boolean exists = isVmWithSameNameExists(vmFromParams.getName());
+
             if (exists) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
                 return false;
