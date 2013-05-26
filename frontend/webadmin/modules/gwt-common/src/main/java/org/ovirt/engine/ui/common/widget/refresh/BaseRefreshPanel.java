@@ -177,11 +177,14 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
 
     private ToggleButton refreshMenuButton;
 
+    private Image separator;
+
     private final RefreshRateOptionsMenu refreshOptionsMenu;
 
     private final Label statusLabel;
 
     private final BaseRefreshPanelCss style;
+
 
     /**
      * Create a Panel managed by the specified {@link RefreshManager}<BR>
@@ -256,15 +259,23 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
 
         // Create panel separator
         ImageResource separatorImg = RESOURCES.separator();
+        separator = new Image(separatorImg);
 
         // Add refresh button and refresh options menu button
         HorizontalPanel panel = new HorizontalPanel();
         statusLabel = new Label();
         panel.add(statusLabel);
         panel.add(refreshButton);
-        panel.add(new Image(separatorImg));
+        panel.add(separator);
         panel.add(refreshMenuButton);
         setWidget(panel);
+    }
+
+    public void hideRefreshMenuButton() {
+        HorizontalPanel refreshPanel = (HorizontalPanel) getWidget();
+        refreshPanel.remove(separator);
+        refreshPanel.remove(refreshMenuButton);
+        getElement().getStyle().setMarginRight(2, Unit.PX);
     }
 
     @Override

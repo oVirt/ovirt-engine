@@ -118,6 +118,9 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     }
 
     public void showRefreshButton() {
+        if (getDataProvider().getModel().getIsTimerDisabled()) {
+            refreshPanel.hideRefreshMenuButton();
+        }
         refreshPanel.setVisible(true);
     }
 
