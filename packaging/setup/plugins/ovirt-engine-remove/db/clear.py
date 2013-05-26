@@ -76,6 +76,9 @@ class Plugin(plugin.PluginBase):
             self.environment[osetupcons.DBEnv.PASSWORD] is not None and
             self.environment[osetupcons.DBEnv.REMOVE_EMPTY_DATABASE]
         ),
+        after=[
+            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE,
+        ],
     )
     def _misc(self):
 
