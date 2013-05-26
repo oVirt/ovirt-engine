@@ -454,6 +454,7 @@ class Stages(object):
     DIALOG_TITLES_S_ENGINE = 'osetup.dialog.titles.engine.start'
     DIALOG_TITLES_S_NETWORK = 'osetup.dialog.titles.network.start'
     DIALOG_TITLES_S_FIREWALL = 'osetup.dialog.titles.firewall.start'
+    DIALOG_TITLES_S_PACKAGES = 'osetup.dialog.titles.packaging.start'
     DIALOG_TITLES_S_PKI = 'osetup.dialog.titles.pki.start'
     DIALOG_TITLES_S_SYSTEM = 'osetup.dialog.titles.system.start'
     DIALOG_TITLES_E_APACHE = 'osetup.dialog.titles.apache.end'
@@ -461,6 +462,7 @@ class Stages(object):
     DIALOG_TITLES_E_ENGINE = 'osetup.dialog.titles.engine.end'
     DIALOG_TITLES_E_NETWORK = 'osetup.dialog.titles.network.end'
     DIALOG_TITLES_E_FIREWALL = 'osetup.dialog.titles.firewall.end'
+    DIALOG_TITLES_E_PACKAGES = 'osetup.dialog.titles.packages.end'
     DIALOG_TITLES_E_PKI = 'osetup.dialog.titles.pki.end'
     DIALOG_TITLES_E_SYSTEM = 'osetup.dialog.titles.system.end'
 
@@ -482,7 +484,6 @@ class Const(object):
     USER_ADMIN = 'admin'
     DOMAIN_INTERNAL = 'internal'
     ENGINE_SERVICE_NAME = 'ovirt-engine'
-    ENGINE_PACKAGE_NAME = 'ovirt-engine'
     PKI_PASSWORD = 'mypass'
     DEFAULT_CLUSTER_ID = '99408929-82CF-4DC7-A532-9D998063FA95'
     MINIMUM_SPACE_ISODOMAIN_MB = 350
@@ -491,10 +492,14 @@ class Const(object):
 
     ENGINE_URI = '/ovirt-engine'
 
+    ENGINE_PACKAGE_NAME = 'ovirt-engine'
+    ENGINE_PACKAGE_SETUP_NAME = '%s-setup' % ENGINE_PACKAGE_NAME
+    UPGRADE_YUM_GROUP = 'ovirt-engine-3.3'
+
     @classproperty
     def RPM_LOCK_LIST(self):
         return [
-            '{name}%s-{{version}}-{{release}}'.format(
+            '{name}%s'.format(
                 name=self.ENGINE_PACKAGE_NAME,
             ) % package for package in (
                 '',
@@ -835,6 +840,27 @@ class ApacheEnv(object):
     )
     def CONFIGURE_ROOT_REDIRECTION(self):
         return 'OVESETUP_APACHE/configureRootRedirection'
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
+class RPMDistroEnv(object):
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('Upgrade packages'),
+    )
+    def ENABLE_UPGRADE(self):
+        return 'OSETUP_RPMDISTRO/enableUpgrade'
+
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('Require packages rollback'),
+    )
+    def REQUIRE_ROLLBACK(self):
+        return 'OSETUP_RPMDISTRO/requireRollback'
 
 
 @util.export

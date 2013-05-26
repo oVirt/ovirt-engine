@@ -19,6 +19,7 @@
 """Fake packager for offline mode"""
 
 
+import platform
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -59,6 +60,9 @@ class Plugin(plugin.PluginBase, packager.PackagerBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
+        self._distribution = platform.linux_distribution(
+            full_distribution_name=0
+        )[0]
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -69,7 +73,10 @@ class Plugin(plugin.PluginBase, packager.PackagerBase):
     def _init(self):
         if self.environment.setdefault(
             osetupcons.CoreEnv.OFFLINE_PACKAGER,
-            False
+            (
+                self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] or
+                self._distribution not in ('redhat', 'fedora', 'centos')
+            ),
         ):
             self.logger.debug('Registering offline packager')
             self.context.registerPackager(packager=self)

@@ -97,6 +97,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLEANUP,
+        priority=plugin.Stages.PRIORITY_LOW,
     )
     def _cleanup(self):
         config = configparser.ConfigParser()

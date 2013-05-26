@@ -31,6 +31,8 @@ Usage: $0
         Load configuration files.
     --config-append=file
         Load extra configuration files.
+    --offline
+        Offline mode.
     --generate-answer=file
         Generate answer file.
     --jboss-home=dir
@@ -46,8 +48,6 @@ scriptdir="$(dirname "${script}")"
 baseenv="APPEND:BASE/pluginPath=str:${scriptdir}/../plugins APPEND:BASE/pluginGroups=str:ovirt-engine-common:ovirt-engine-setup"
 otopienv=""
 environment=""
-
-environment="${environment} OVESETUP_CORE/offlinePackager=bool:True"
 
 while [ -n "$1" ]; do
 	x="$1"
@@ -71,6 +71,9 @@ while [ -n "$1" ]; do
 		;;
 		--jboss-home=*)
 			environment="${environment} OVESETUP_CONFIG/jbossHome=str:${v}"
+		;;
+		--offline)
+			environment="${environment} OVESETUP_CORE/offlinePackager=bool:True PACKAGER/yumpackagerEnabled=bool:False"
 		;;
 		--help)
 			usage

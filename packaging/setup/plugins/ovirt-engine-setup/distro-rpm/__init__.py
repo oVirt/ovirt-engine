@@ -22,12 +22,12 @@
 
 
 from otopi import util
-from . import versionlock
+from . import packages
 
 
 @util.export
 def createPlugins(context):
-    versionlock.Plugin(context=context)
+    packages.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

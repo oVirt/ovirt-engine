@@ -19,6 +19,7 @@
 """Titles plugin."""
 
 
+import platform
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -41,10 +42,38 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
+        self._distribution = platform.linux_distribution(
+            full_distribution_name=0
+        )[0]
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.DIALOG_TITLES_S_PACKAGES,
+        condition=lambda self: self._distribution in (
+            'redhat', 'fedora', 'centos',
+        ),
+    )
+    def _title_s_packages(self):
+        self._title(
+            text=_('PACKAGES'),
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.DIALOG_TITLES_E_PACKAGES,
+        after=[
+            osetupcons.Stages.DIALOG_TITLES_S_PACKAGES,
+        ],
+    )
+    def _title_e_packages(self):
+        pass
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_S_NETWORK,
+        after=[
+            osetupcons.Stages.DIALOG_TITLES_E_PACKAGES,
+        ],
     )
     def _title_s_network(self):
         self._title(
