@@ -209,7 +209,7 @@ class Plugin(plugin.PluginBase):
 
             try:
                 dbovirtutils.clearOvirtEngineDatabase()
-                dbovirtutils.restore(backupfile=backupFile)
+                dbovirtutils.restore(backupFile=backupFile)
             except Exception as e:
                 self.logger.debug(
                     'Exception during database restore',
