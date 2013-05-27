@@ -31,9 +31,8 @@ public abstract class StoragePoolManagementCommandBase<T extends StoragePoolMana
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__POOL);
-        return super.canDoAction();
     }
 
     @Override
