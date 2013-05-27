@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVmInterfaceModel;
@@ -151,9 +150,6 @@ public class NetworkVmListModel extends SearchableListModel
     private boolean canRemoveVnics() {
         List<PairQueryable<VmNetworkInterface, VM>> selectedItems =
                 getSelectedItems() != null ? getSelectedItems() : new ArrayList();
-        ArrayList<VmNetworkInterface> nics =
-                getSelectedItems() != null ? Linq.<VmNetworkInterface> cast(getSelectedItems())
-                        : new ArrayList<VmNetworkInterface>();
 
         for (PairQueryable<VmNetworkInterface, VM> pair : selectedItems)
         {

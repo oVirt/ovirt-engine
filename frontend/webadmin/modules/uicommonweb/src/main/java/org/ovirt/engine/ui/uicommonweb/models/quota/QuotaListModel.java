@@ -402,7 +402,6 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                final QuotaListModel outer_quotaListModel = (QuotaListModel) model;
                 final Quota quota = (Quota) ((VdcQueryReturnValue) returnValue).getReturnValue();
                 qModel.setEntity(quota);
                 if (quota.getGlobalQuotaVdsGroup() != null) {

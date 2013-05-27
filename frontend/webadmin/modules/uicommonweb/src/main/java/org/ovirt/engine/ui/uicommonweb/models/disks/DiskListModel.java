@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -407,7 +406,6 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
     private void onRemove()
     {
-        VM vm = (VM) getEntity();
         RemoveDiskModel model = (RemoveDiskModel) getWindow();
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
 
@@ -434,7 +432,6 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
     private void updateActionAvailability()
     {
-        VM vm = (VM) getEntity();
         Disk disk = (Disk) getSelectedItem();
         ArrayList<Disk> disks = getSelectedItems() != null ? (ArrayList<Disk>) getSelectedItems() : null;
         boolean isDiskLocked = disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE &&

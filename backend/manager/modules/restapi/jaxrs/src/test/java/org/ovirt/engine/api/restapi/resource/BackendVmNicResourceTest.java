@@ -191,7 +191,7 @@ public class BackendVmNicResourceTest
                     true));
             NIC nic = getNic(false);
             nic.setNetwork(new Network());
-            nic = resource.update(nic);
+            resource.update(nic);
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyFault(wae, CANT_DO);

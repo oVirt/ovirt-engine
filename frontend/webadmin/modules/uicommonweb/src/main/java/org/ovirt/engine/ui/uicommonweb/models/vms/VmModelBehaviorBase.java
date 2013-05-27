@@ -608,7 +608,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 Linq.sort(activeStorageDomains, new Linq.StorageDomainByNameComparer());
 
                 for (DiskModel diskModel : disks) {
-                    ArrayList<StorageDomain> availableDiskStorageDomains = new ArrayList<StorageDomain>();
+                    ArrayList<StorageDomain> availableDiskStorageDomains;
                     diskModel.getQuota().setItems(behavior.getModel().getQuota().getItems());
                     ArrayList<Guid> storageIds = ((DiskImage) diskModel.getDisk()).getStorageIds();
 

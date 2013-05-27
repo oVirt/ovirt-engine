@@ -161,7 +161,7 @@ public class AddDiskToVmCommandTest {
         initializeCommand(sdid, VolumeType.Sparse);
 
         mockVm();
-        StorageDomain domains = mockStorageDomain(sdid, availableSize, usedSize);
+        mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
 
         assertTrue(command.canDoAction());
@@ -175,7 +175,7 @@ public class AddDiskToVmCommandTest {
         initializeCommand(sdid, VolumeType.Sparse);
 
         mockVm();
-        StorageDomain domains = mockStorageDomain(sdid, availableSize, usedSize);
+        mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
 
         assertFalse(command.canDoAction());
@@ -192,7 +192,7 @@ public class AddDiskToVmCommandTest {
         initializeCommand(sdid, VolumeType.Preallocated);
 
         mockVm();
-        StorageDomain domains = mockStorageDomain(sdid, availableSize, usedSize);
+        mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
         assertTrue(command.canDoAction());
     }
@@ -205,7 +205,7 @@ public class AddDiskToVmCommandTest {
         initializeCommand(sdid, VolumeType.Preallocated);
 
         mockVm();
-        StorageDomain domains = mockStorageDomain(sdid, availableSize, usedSize);
+        mockStorageDomain(sdid, availableSize, usedSize);
         mockStoragePoolIsoMap();
 
         assertFalse(command.canDoAction());

@@ -395,14 +395,9 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         String ctrlAltDel = "ctrl+alt+del"; //$NON-NLS-1$
         String ctrlAltEnd = "ctrl+alt+end"; //$NON-NLS-1$
 
-        String toggleFullScreenKeysTranslated =
-                AsyncDataProvider.getComplexValueFromSpiceRedKeysResource((toggleFullScreenKeys != null) ? toggleFullScreenKeys
-                        : "shift+f11"); //$NON-NLS-1$
         String releaseCursorKeysTranslated =
                 AsyncDataProvider.getComplexValueFromSpiceRedKeysResource((releaseCursorKeys != null) ? releaseCursorKeys
                         : "shift+f12"); //$NON-NLS-1$
-        String ctrlAltDelTranslated = AsyncDataProvider.getComplexValueFromSpiceRedKeysResource(ctrlAltDel);
-        String ctrlAltEndTranslated = AsyncDataProvider.getComplexValueFromSpiceRedKeysResource(ctrlAltEnd);
 
         getspice().setTitle(getEntity().getName()
                 + ":%d" //$NON-NLS-1$

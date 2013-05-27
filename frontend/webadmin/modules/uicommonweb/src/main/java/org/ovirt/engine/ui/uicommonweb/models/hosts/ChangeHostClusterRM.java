@@ -31,7 +31,6 @@ public class ChangeHostClusterRM extends IEnlistmentNotification {
         PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) context.enlistment.getContext();
         HostListModel model = enlistmentContext.getModel();
-        ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
         VDS host = (VDS) model.getSelectedItem();
 

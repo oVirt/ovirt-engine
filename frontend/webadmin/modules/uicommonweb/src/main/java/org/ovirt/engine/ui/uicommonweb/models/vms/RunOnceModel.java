@@ -846,9 +846,6 @@ public abstract class RunOnceModel extends Model
     // floppy]
     private void updateIsSysprepEnabled()
     {
-        boolean isFloppyAttached = (Boolean) getAttachFloppy().getEntity();
-        boolean isVmFirstRun = (Boolean) getIsVmFirstRun().getEntity();
-
         getIsSysprepEnabled().setEntity(getIsWindowsOS() && getReinitialize());
     }
 

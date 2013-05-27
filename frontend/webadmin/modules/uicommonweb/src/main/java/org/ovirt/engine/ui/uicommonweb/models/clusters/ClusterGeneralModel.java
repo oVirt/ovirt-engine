@@ -415,7 +415,6 @@ public class ClusterGeneralModel extends EntityModel {
             @Override
             public void onSuccess(Object model, Object result)
             {
-                ClusterGeneralModel innerGeneralModel = (ClusterGeneralModel) model;
                 ArrayList<GlusterVolumeEntity> volumeList = (ArrayList<GlusterVolumeEntity>) result;
                 int volumesUp = 0;
                 int volumesDown = 0;

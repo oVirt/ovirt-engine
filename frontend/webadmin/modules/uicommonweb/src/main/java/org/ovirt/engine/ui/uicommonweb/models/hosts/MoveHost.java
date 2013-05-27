@@ -78,7 +78,6 @@ public class MoveHost extends ListModel
     private void postGetHostList(ArrayList<VDS> hosts) {
 
         VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
-        ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) getCluster().getItems();
         ArrayList<EntityModel> items = new ArrayList<EntityModel>();
 
         for (VDS vds : hosts)

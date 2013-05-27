@@ -1048,7 +1048,6 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         this.context = context;
         StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanModel = (SanStorageModel) model.getSelectedItem();
-        VDS host = (VDS) model.getHost().getSelectedItem();
 
         storageDomain = new StorageDomainStatic();
         storageDomain.setStorageType(sanModel.getType());
@@ -1090,7 +1089,6 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     {
         StorageModel model = (StorageModel) getWindow();
         SanStorageModel sanStorageModel = (SanStorageModel) model.getSelectedItem();
-        VDS host = (VDS) model.getHost().getSelectedItem();
 
         ArrayList<String> usedLunsMessages = sanStorageModel.getUsedLunsMessages();
 
@@ -1524,8 +1522,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                             null,
                                             this);
                                 }
+                                i++;
                             }
-                            i++;
                         }
                         dataCenterGuideModel.getWindow().stopProgress();
                         dataCenterGuideModel.cancel();

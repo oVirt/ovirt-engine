@@ -593,7 +593,6 @@ public class VolumeBrickModel extends Model {
 
     public boolean validateReplicateBricks(int oldReplicaCount, List<GlusterBrickEntity> existingBricks) {
 
-        int brickCount = ((List) bricks.getItems()).size() + (existingBricks != null ? existingBricks.size() : 0);
         int replicaCount = getReplicaCountValue();
         Set<String> servers = new HashSet<String>();
 

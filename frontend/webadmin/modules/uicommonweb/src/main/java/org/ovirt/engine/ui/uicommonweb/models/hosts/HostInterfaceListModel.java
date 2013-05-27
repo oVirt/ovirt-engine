@@ -1237,7 +1237,6 @@ public class HostInterfaceListModel extends SearchableListModel
                 }
             }
         }
-        VdsNetworkInterface selectedItem = (VdsNetworkInterface) getSelectedItem();
         if (nic.getBonded() == null || nic.getBonded() == false)
         {
             parameters.setBondingOptions(null);
@@ -1314,7 +1313,6 @@ public class HostInterfaceListModel extends SearchableListModel
             {
                 HostInterfaceListModel hostInterfaceListModel = (HostInterfaceListModel) model;
                 ArrayList<Network> networksByCluster = (ArrayList<Network>) ReturnValue;
-                VdsNetworkInterface item = (VdsNetworkInterface) hostInterfaceListModel.getSelectedItem();
                 HostBondInterfaceModel innerBondModel = (HostBondInterfaceModel) hostInterfaceListModel.getWindow();
                 Network selectedNetwork = null;
 

@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -76,10 +75,6 @@ public class PoolItemBehavior extends ItemBehavior
                         if (!result.getReturnValue().getSucceeded()) {
                             return;
                         }
-
-                        PoolItemBehavior behavior = (PoolItemBehavior) result.getState();
-                        VdcReturnValueBase returnValueBase = result.getReturnValue();
-                        Guid Guid = (Guid) returnValueBase.getActionReturnValue();
                     }
                 }, this);
     }

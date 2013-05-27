@@ -370,9 +370,7 @@ public class ConfigureLocalStorageModel extends Model {
             }
 
             names = new ArrayList<String>();
-            if (clusters == null) {
-                clusters = context.clusterList;
-            } else {
+            if (clusters != null) {
                 for (VDSGroup cluster : clusters) {
                     names.add(cluster.getname());
                 }

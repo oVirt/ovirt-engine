@@ -292,8 +292,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
      *         priority is the one being checked.
      */
     private VmStatic[] initVmStaticsOrderedByPriority(List<VmStatic> vmStatics) {
-        VmStatic[] vmStaticArray = new VmStatic[NUM_OF_VM_STATIC_IN_FIXTURES];
-        vmStaticArray = initVmStaticsOrderedByMigrationSupport(vmStatics);
+        VmStatic[] vmStaticArray = initVmStaticsOrderedByMigrationSupport(vmStatics);
 
         // Swapping the first two VmStatics
         VmStatic tempVmStatic = vmStaticArray[0];
@@ -318,8 +317,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
      *         auto_startup is the one being checked
      */
     private VmStatic[] initVmStaticsOrderedByAutoStartup(List<VmStatic> vmStatics) {
-        VmStatic[] vmStaticArray = new VmStatic[NUM_OF_VM_STATIC_IN_FIXTURES];
-        vmStaticArray = initVmStaticsOrderedByPriority(vmStatics);
+        VmStatic[] vmStaticArray = initVmStaticsOrderedByPriority(vmStatics);
 
         // Swapping the first two VmStatics
         VmStatic tempVmStatic = vmStaticArray[0];

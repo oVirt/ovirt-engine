@@ -138,7 +138,7 @@ public class RemoveStorageDomainTest {
 
         if (format || (type != StorageDomainType.ISO && type != StorageDomainType.ImportExport)) {
             setUpStorageHelper(cmd, dom, true, failure);
-            VDSBrokerFrontend vdsBroker = expectFormat(setUpVdsBroker(), failure);
+            expectFormat(setUpVdsBroker(), failure);
         } else {
             setUpStorageHelper(cmd, dom, false, false);
         }

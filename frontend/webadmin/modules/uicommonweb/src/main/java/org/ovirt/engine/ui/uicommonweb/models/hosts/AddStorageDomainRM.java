@@ -48,7 +48,6 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
 
         EnlistmentContext enlistmentContext = (EnlistmentContext) context.enlistment.getContext();
         HostListModel model = enlistmentContext.getModel();
-        ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
         final VDS host = (VDS) model.getSelectedItem();
         VdsActionParameters parameters = new VdsActionParameters(host.getId());
@@ -67,7 +66,6 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
     private void prepare2() {
 
         PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
-        EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
         VdcReturnValueBase returnValue = context.activateVdsReturnValue;
 
         if (returnValue == null || !returnValue.getSucceeded()) {
@@ -195,7 +193,6 @@ public class AddStorageDomainRM extends IEnlistmentNotification {
 
     private void prepare6() {
 
-        PreparingEnlistment enlistment = (PreparingEnlistment) context.enlistment;
         VdcReturnValueBase returnValue = context.addLocalStorageDomainReturnValue;
 
         if (returnValue == null || !returnValue.getSucceeded()) {

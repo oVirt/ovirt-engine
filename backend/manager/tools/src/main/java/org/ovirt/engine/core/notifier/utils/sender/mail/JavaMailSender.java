@@ -80,8 +80,6 @@ public class JavaMailSender {
             mailSessionProps.put("mail.debug", "true");
         }
 
-        String mailHost = aMailProps.getProperty(NotificationProperties.MAIL_SERVER);
-
         String emailUser = aMailProps.getProperty(NotificationProperties.MAIL_USER, true);
         if (StringUtils.isEmpty(emailUser)) {
             if (aMailProps.getBoolean(NotificationProperties.MAIL_ENABLE_SSL, false) ||

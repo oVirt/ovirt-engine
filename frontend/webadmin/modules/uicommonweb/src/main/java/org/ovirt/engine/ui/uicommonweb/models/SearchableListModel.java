@@ -841,7 +841,6 @@ public abstract class SearchableListModel extends ListModel implements GridContr
         {
             forceRefresh();
         } else if (command instanceof ReportCommand) {
-            ReportCommand reportCommand = (ReportCommand) command;
             openReport();
         }
 

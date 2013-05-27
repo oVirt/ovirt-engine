@@ -78,7 +78,6 @@ public class DiskStorageListModel extends SearchableListModel
 
     private void updateActionAvailability()
     {
-        DiskImage disk = (DiskImage) getEntity();
     }
 
     @Override

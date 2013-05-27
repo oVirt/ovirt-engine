@@ -583,7 +583,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private void prepareSanStorageForEdit(final SanStorageModel model)
     {
         StorageModel storageModel = (StorageModel) getWindow();
-        StorageDomain storage = (StorageDomain) getSelectedItem();
         boolean isStorageEditable = storageModel.isStorageActive() || storageModel.isNewStorage();
 
         if (isStorageEditable) {

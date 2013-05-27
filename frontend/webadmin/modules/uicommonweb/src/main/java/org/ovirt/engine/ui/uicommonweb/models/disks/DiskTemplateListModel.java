@@ -83,7 +83,6 @@ public class DiskTemplateListModel extends SearchableListModel
 
     private void updateActionAvailability()
     {
-        DiskImage disk = (DiskImage) getEntity();
     }
 
     @Override

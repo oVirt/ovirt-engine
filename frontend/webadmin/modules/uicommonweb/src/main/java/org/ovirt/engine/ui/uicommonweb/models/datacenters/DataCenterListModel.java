@@ -476,13 +476,11 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                StorageDomain master = null;
                 List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
                 for (StorageDomain a : storageDomainList)
                 {
                     if (a.getStorageDomainType() == StorageDomainType.Master)
                     {
-                        master = a;
                         break;
                     }
                 }
@@ -575,10 +573,9 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         {
             return;
         }
-        VdcActionParametersBase parametersBase = new VdcActionParametersBase();
         StoragePoolParametersBase tempVar = new StoragePoolParametersBase(((StoragePool) getSelectedItem()).getId());
         tempVar.setForceDelete(true);
-        parametersBase = tempVar;
+        VdcActionParametersBase parametersBase = tempVar;
         Frontend.RunAction(VdcActionType.RemoveStoragePool, parametersBase);
         cancel();
     }

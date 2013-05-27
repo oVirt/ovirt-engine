@@ -237,8 +237,6 @@ public class AdElementListModel extends SearchableListModel
         super.syncSearch();
         // var exclude = ExcludeItems != null ? ExcludeItems.Cast<DbUser>() : new List<DbUser>();
 
-        String domain = (String) getDomain().getSelectedItem();
-
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {

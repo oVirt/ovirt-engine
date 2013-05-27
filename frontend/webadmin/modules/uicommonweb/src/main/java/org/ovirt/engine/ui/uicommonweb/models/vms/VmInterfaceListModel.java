@@ -138,16 +138,12 @@ public class VmInterfaceListModel extends SearchableListModel
     {
         super.asyncSearch();
 
-        VM vm = getEntity();
-
         setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
 
     private void newEntity()
     {
-        VM vm = getEntity();
-
         if (getWindow() != null)
         {
             return;

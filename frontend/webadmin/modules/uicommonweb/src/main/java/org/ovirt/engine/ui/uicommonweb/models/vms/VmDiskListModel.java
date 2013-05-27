@@ -235,8 +235,6 @@ public class VmDiskListModel extends VmDiskListModelBase
     {
         super.asyncSearch();
 
-        VM vm = getEntity();
-
         setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
@@ -516,7 +514,6 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     private void updateActionAvailability()
     {
-        VM vm = getEntity();
         Disk disk = (Disk) getSelectedItem();
         boolean isDiskLocked = disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE &&
                 ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;

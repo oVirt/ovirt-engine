@@ -492,7 +492,6 @@ public class VmSnapshotListModel extends SearchableListModel
             public void onSuccess(Object target, Object returnValue) {
                 VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) target;
                 UnitVmModel model = (UnitVmModel) vmSnapshotListModel.getWindow();
-                VM selectedVm = (VM) getEntity();
 
                 CloneVmFromSnapshotModelBehavior behavior = (CloneVmFromSnapshotModelBehavior) model.getBehavior();
                 VM vm = (VM) returnValue;
@@ -593,7 +592,6 @@ public class VmSnapshotListModel extends SearchableListModel
 
         HashMap<Guid, DiskImage> imageToDestinationDomainMap =
                 model.getDisksAllocationModel().getImageToDestinationDomainMap();
-        ArrayList<DiskImage> diskInfoList = createDiskInfoList();
 
         AddVmFromSnapshotParameters parameters =
                 new AddVmFromSnapshotParameters(getcurrentVm().getStaticData(), snapshot.getId());

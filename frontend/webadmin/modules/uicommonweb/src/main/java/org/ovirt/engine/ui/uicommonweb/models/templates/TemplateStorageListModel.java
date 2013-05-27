@@ -77,8 +77,6 @@ public class TemplateStorageListModel extends SearchableListModel
     {
         super.asyncSearch();
 
-        VmTemplate template = (VmTemplate) getEntity();
-
         setAsyncResult(null);
         setItems(getAsyncResult().getData());
     }
@@ -152,8 +150,6 @@ public class TemplateStorageListModel extends SearchableListModel
 
     private void remove()
     {
-        VmTemplate template = (VmTemplate) getEntity();
-
         if (getWindow() != null)
         {
             return;
@@ -188,7 +184,6 @@ public class TemplateStorageListModel extends SearchableListModel
 
     private void onRemove()
     {
-        VmTemplate template = (VmTemplate) getEntity();
         ConfirmationModel model = (ConfirmationModel) getWindow();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         ArrayList<DiskModel> disks = (ArrayList<DiskModel>) getSelectedItems();
@@ -241,10 +236,6 @@ public class TemplateStorageListModel extends SearchableListModel
 
     private void updateActionAvailability()
     {
-        VmTemplate template = (VmTemplate) getEntity();
-        ArrayList<StorageDomainModel> selectedItems = getSelectedItems() != null ?
-                Linq.<StorageDomainModel> cast(getSelectedItems()) : new ArrayList<StorageDomainModel>();
-
         getRemoveCommand().setIsExecutionAllowed(isRemoveCommandAvailable());
     }
 

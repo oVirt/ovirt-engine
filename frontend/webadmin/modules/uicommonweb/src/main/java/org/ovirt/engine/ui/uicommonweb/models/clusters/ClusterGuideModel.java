@@ -359,8 +359,8 @@ public class ClusterGuideModel extends GuideModel
                                     Frontend.RunAction(VdcActionType.ApproveVds,
                                             new ApproveVdsParameters(selectedHost.getId()));
                                 }
+                                i++;
                             }
-                            i++;
                         }
                         clusterGuideModel.getWindow().stopProgress();
                         clusterGuideModel.cancel();

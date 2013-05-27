@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetVmsByDiskGuidParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -92,7 +91,6 @@ public class DiskVmListModel extends SearchableListModel
 
     private void updateActionAvailability()
     {
-        DiskImage disk = (DiskImage) getEntity();
     }
 
     @Override

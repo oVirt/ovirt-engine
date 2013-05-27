@@ -1109,7 +1109,6 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     public void approve()
     {
-        VDS host = (VDS) getSelectedItem();
         HostModel hostModel = new EditHostModel();
         setWindow(hostModel);
         AsyncQuery _asyncQuery = new AsyncQuery();

@@ -199,7 +199,6 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         Enlistment enlistment = context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
         HostListModel model = enlistmentContext.getModel();
-        ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
         VDS host = context.hostFoundById;
 
@@ -287,7 +286,6 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         Enlistment enlistment = context.enlistment;
         EnlistmentContext enlistmentContext = (EnlistmentContext) enlistment.getContext();
-        VdcReturnValueBase returnValue = context.changeVDSClusterReturnValue;
 
         // Try to remove data center.
         if (enlistmentContext.getDataCenterId() != null) {

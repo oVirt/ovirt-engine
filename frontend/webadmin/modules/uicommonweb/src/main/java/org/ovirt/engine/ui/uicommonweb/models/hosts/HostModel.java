@@ -1189,7 +1189,6 @@ public abstract class HostModel extends Model
         // Validate user input.
     public void test()
         {
-        Boolean isPmEnabled = (Boolean) getIsPm().getEntity();
         boolean isPrimary = isPmPrimarySelected();
             getCluster().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
             validatePmModels(isPrimary);

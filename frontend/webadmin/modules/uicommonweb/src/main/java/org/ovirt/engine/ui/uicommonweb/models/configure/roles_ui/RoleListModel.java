@@ -511,9 +511,6 @@ public class RoleListModel extends ListWithDetailsModel
             return;
         }
 
-        // Check name unicitate.
-        String name = (String) model.getName().getEntity();
-
         // if (!DataProvider.IsRoleNameUnique(name) && name.compareToIgnoreCase(role.getname()) != 0)
         // {
         // model.getName().setIsValid(false);

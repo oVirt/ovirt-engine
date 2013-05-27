@@ -184,7 +184,6 @@ public class AddVmCommandTest {
 
     @Test
     public void canAddCloneVmFromSnapshotSnapshotDoesNotExist() {
-        ArrayList<String> reasons = new ArrayList<String>();
         final int domainSizeGB = 15;
         final int sizeRequired = 4;
         final Guid sourceSnapshotId = Guid.NewGuid();
@@ -193,14 +192,13 @@ public class AddVmCommandTest {
         cmd.getVm().setName("vm1");
         mockNonInterestingMethodsForCloneVmFromSnapshot(cmd);
         assertFalse("Clone vm should have failed due to non existing snapshot id", cmd.canDoAction());
-        reasons = cmd.getReturnValue().getCanDoActionMessages();
+        ArrayList<String> reasons = cmd.getReturnValue().getCanDoActionMessages();
         assertTrue("Clone vm should have failed due to non existing snapshot id",
                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST.toString()));
     }
 
     @Test
     public void canAddCloneVmFromSnapshotNoConfiguration() {
-        ArrayList<String> reasons = new ArrayList<String>();
         final int domainSizeGB = 15;
         final int sizeRequired = 4;
         final Guid sourceSnapshotId = Guid.NewGuid();
@@ -213,7 +211,7 @@ public class AddVmCommandTest {
         doReturn(sv).when(cmd).createSnapshotsValidator();
         when(snapshotDao.get(sourceSnapshotId)).thenReturn(new Snapshot());
         assertFalse("Clone vm should have failed due to non existing vm configuration", cmd.canDoAction());
-        reasons = cmd.getReturnValue().getCanDoActionMessages();
+        ArrayList<String>  reasons = cmd.getReturnValue().getCanDoActionMessages();
         assertTrue("Clone vm should have failed due to no configuration id",
                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION.toString()));
 

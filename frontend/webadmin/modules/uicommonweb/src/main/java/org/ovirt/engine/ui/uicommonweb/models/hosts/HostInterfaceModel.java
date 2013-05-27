@@ -317,7 +317,6 @@ public class HostInterfaceModel extends EntityModel
 
     private void updateCanSpecify()
     {
-        Network network = (Network) getNetwork().getSelectedItem();
         boolean isChangable = bootProtocolsAvailable && getIsStaticAddress();
         getAddress().setIsChangable(isChangable);
         getSubnet().setIsChangable(isChangable);
@@ -330,7 +329,6 @@ public class HostInterfaceModel extends EntityModel
         getAddress().setIsValid(true);
         getSubnet().setIsValid(true);
 
-        Network net = (Network) getNetwork().getSelectedItem();
         if (getIsStaticAddress())
         {
             getAddress().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
