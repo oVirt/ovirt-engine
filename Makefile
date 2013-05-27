@@ -462,6 +462,9 @@ install_misc:
 	install -m 755 packaging/resources/ovirt-cron ${DESTDIR}$(SYSCONF_DIR)/cron.daily/
 	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/ovirt-websocket-proxy.conf.d
 	install -m 644 packaging/conf/ovirt-websocket-proxy.conf.defaults $(DESTDIR)$(DATA_DIR)/conf
+	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d
+	install -m 644 packaging/conf/osinfo-defaults.properties $(DESTDIR)$(DATA_DIR)/conf
+	ln -sf $(DATA_DIR)/conf/osinfo-defaults.properties $(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d/00-defaults.properties
 
 	# Service common
 	install -dm 755 $(DESTDIR)$(DATA_DIR)/services

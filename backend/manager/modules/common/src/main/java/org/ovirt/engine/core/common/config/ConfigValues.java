@@ -1374,6 +1374,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     MemorySnapshotSupported(511),
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("/osinfo.conf.d")
+    OsRepositoryConfDir(512),
+
     Invalid(65535);
 
     private int intValue;

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.nio.file.FileSystems;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -43,6 +44,7 @@ import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
+import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -54,6 +56,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.searchbackend.BaseConditionFieldAutoCompleter;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ErrorTranslatorImpl;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
@@ -61,6 +64,7 @@ import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.osinfo.OsInfoPreferencesLoader;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 // Here we use a Singleton Bean
@@ -208,6 +212,9 @@ public class Backend implements BackendInternal {
                     sessionTimoutInterval,
                     sessionTimoutInterval, TimeUnit.MINUTES);
         }
+
+        initOsRepository();
+
         // Set start-up time
         _startedAt = DateTime.getNow();
 
@@ -565,6 +572,11 @@ public class Backend implements BackendInternal {
     @ExcludeClassInterceptors
     public void triggerPoolMonitoringJob() {
         SchedulerUtilQuartzImpl.getInstance().triggerJob(poolMonitoringJobId);
+    }
+
+    private void initOsRepository() {
+        OsInfoPreferencesLoader.INSTANCE.init(FileSystems.getDefault().getPath(EngineLocalConfig.getInstance().getEtcDir().getAbsolutePath(), Config.<String>GetValue(ConfigValues.OsRepositoryConfDir)));
+        OsRepositoryImpl.INSTANCE.init(OsInfoPreferencesLoader.INSTANCE.getPreferences());
     }
 
     private static final Log log = LogFactory.getLog(Backend.class);

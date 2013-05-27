@@ -676,6 +676,9 @@ fi
 
 # Configuration files
 %{engine_data}/conf/engine.conf.defaults
+%{engine_data}/conf/osinfo-defaults.properties
+%dir %{engine_etc}/osinfo.conf.d
+%{engine_etc}/osinfo.conf.d/00-defaults.properties
 
 # PKI directories are owned by the engine user because it needs to
 # create files inside:
