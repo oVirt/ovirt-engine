@@ -161,8 +161,14 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     }
 
     @Override
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+    }
+
+    @Override
     protected boolean canDoAction() {
-        boolean returnValue = super.canDoAction() && checkStoragePool();
+        boolean returnValue = checkStoragePool();
         _oldStoragePool = getStoragePoolDAO().get(getStoragePool().getId());
         if (returnValue && !StringUtils.equals(_oldStoragePool.getname(), getStoragePool().getname())
                 && getStoragePoolDAO().getByName(getStoragePool().getname()) != null) {
@@ -207,7 +213,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         if (returnValue) {
             returnValue = validate(validator.isGlusterDcAndMatchingCompatiblityVersion());
         }
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         return returnValue;
     }
 
