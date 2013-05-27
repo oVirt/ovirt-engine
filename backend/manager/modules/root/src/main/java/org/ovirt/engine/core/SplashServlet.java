@@ -61,9 +61,12 @@ public class SplashServlet extends HttpServlet {
      * @param userLocale The {@code Locale} to put in the cookie.
      */
     private void setCookie(final HttpServletResponse response, final Locale userLocale) {
-        //Detected locale doesn't match the default locale, set a cookie.
+        // Detected locale doesn't match the default locale, set a cookie.
         Cookie cookie = new Cookie(LocaleFilter.LOCALE, userLocale.toString());
-        cookie.setMaxAge(Integer.MAX_VALUE); //Doesn't expire.
+        // Scope this cookie to the (root) application context URL
+        cookie.setPath("/" + getServletContext().getContextPath());
+        // This cookie never expires
+        cookie.setMaxAge(Integer.MAX_VALUE);
         response.addCookie(cookie);
     }
 
