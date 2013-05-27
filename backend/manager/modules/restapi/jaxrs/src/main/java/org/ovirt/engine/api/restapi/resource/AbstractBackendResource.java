@@ -377,10 +377,6 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
         throw new WebApplicationException(Response.Status.NOT_FOUND);
     }
 
-    protected void badRequest(String message) {
-        throw new WebFaultException(null, message, Response.Status.BAD_REQUEST);
-    }
-
     protected abstract class EntityIdResolver<T> implements IResolver<T, Q> {
 
         public abstract Q lookupEntity(T id) throws BackendFailureException;

@@ -32,9 +32,12 @@ import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.api.restapi.resource.exception.UrlParamException;
 import org.ovirt.engine.api.restapi.resource.validation.Validator;
 
 public class BackendResource extends BaseBackendResource {
+    private static final String FALSE = "false";
+    private static final String TRUE = "true";
     protected static final int NO_LIMIT = -1;
     private static final String CORRELATION_ID = "Correlation-Id";
     private static final String ASYNC_CONSTRAINT = "async";
@@ -145,8 +148,7 @@ public class BackendResource extends BaseBackendResource {
 
     protected Response performAction(VdcActionType task, VdcActionParametersBase params, Action action, boolean getEntityWhenDone) {
         try {
-            if (QueryHelper.hasMatrixParam(getUriInfo(), ASYNC_CONSTRAINT) ||
-                    expectNonBlocking()) {
+            if (isAsync() || expectNonBlocking()) {
                 getCurrent().get(MetaData.class).set("async", true);
                 return performNonBlockingAction(task, params, action);
             } else {
@@ -163,6 +165,29 @@ public class BackendResource extends BaseBackendResource {
         } catch (Exception e) {
             return handleError(Response.class, e, false);
         }
+    }
+
+    protected boolean isAsync() {
+        String value = QueryHelper.getMatrixConstraint(getUriInfo(), ASYNC_CONSTRAINT);
+        if (value == null) {
+            return false; // matrix param does not exist in URL, go with the default value, which is 'false'.
+        } else {
+            if (value.equalsIgnoreCase(TRUE) || value.isEmpty()) {
+                return true;
+            } else if (value.equalsIgnoreCase(FALSE)) {
+                return false;
+            } else {
+                // 'async' param exists but has illegal value (not 'false' or 'true') - throw exception.
+                throw new UrlParamException(this,
+                        null,
+                        "Illegal value '" + value
+                                + "' for matrix param: 'async'. Acceptable values are 'true' or 'false'");
+            }
+        }
+    }
+
+    protected void badRequest(String message) {
+        throw new WebFaultException(null, message, Response.Status.BAD_REQUEST);
     }
 
     protected boolean expectNonBlocking() {

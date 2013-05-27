@@ -185,4 +185,9 @@ public class QueryHelper {
         }
         return params;
     }
+
+    public static String getMatrixConstraint(UriInfo uriInfo, String constraint) {
+        HashMap<String, String> constraints = getMatrixConstraints(uriInfo, constraint);
+        return constraints.containsKey(constraint) ? constraints.get(constraint) : null;
+    }
 }

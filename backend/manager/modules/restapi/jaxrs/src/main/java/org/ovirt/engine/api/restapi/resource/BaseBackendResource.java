@@ -157,7 +157,7 @@ public class BaseBackendResource {
         }
     }
 
-    protected class WebFaultException extends WebApplicationException {
+    public class WebFaultException extends WebApplicationException {
 
         private static final long serialVersionUID = 394735369823915802L;
         private Fault fault;
@@ -218,6 +218,10 @@ public class BaseBackendResource {
         } else if ((e instanceof BackendFailureException) && (!StringUtils.isEmpty(e.getMessage()))) {
             LOG.errorFormat(localize(Messages.BACKEND_FAILED_TEMPLATE), e.getMessage(), null);
             throw new WebFaultException(null, e.getMessage(), Response.Status.BAD_REQUEST);
+        } else if (e instanceof WebFaultException) {
+            WebFaultException e2 = (WebFaultException) e;
+            LOG.errorFormat(localize(Messages.BACKEND_FAILED_TEMPLATE), detail(e2), e2);
+            throw e2;
         } else {
             LOG.errorFormat(localize(Messages.BACKEND_FAILED_TEMPLATE), detail(e), e);
             throw new WebFaultException(e, detail(e), Response.Status.INTERNAL_SERVER_ERROR);
