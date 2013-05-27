@@ -67,7 +67,7 @@ public class Uri {
 
     public void setAuthority(UriAuthority authority) {
         this.authority = (authority == null) ? new UriAuthority(null) : authority;
-        if (!authority.isValid()) {
+        if (!this.authority.isValid()) {
             valid = false;
         }
     }
