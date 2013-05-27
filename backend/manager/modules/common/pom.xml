@@ -106,7 +106,7 @@
          <configuration>
            <xmlOutput>true</xmlOutput>
            <!-- Optional directory to put findbugs xdoc xml report -->
-           <excludeFilterFile>exclude-filters.xml</excludeFilterFile>
+           <excludeFilterFile>${basedir}/exclude-filters.xml</excludeFilterFile>
            <xmlOutputDirectory>target/site</xmlOutputDirectory>
          </configuration>
       </plugin>
