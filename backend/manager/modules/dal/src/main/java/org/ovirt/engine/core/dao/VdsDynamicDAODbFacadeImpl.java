@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
@@ -12,6 +13,8 @@ import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesStat
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
+import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -84,6 +87,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
             entity.setHardwareSerialNumber(rs.getString("hw_serial_number"));
             entity.setHardwareUUID(rs.getString("hw_uuid"));
             entity.setHardwareFamily(rs.getString("hw_family"));
+            entity.setHBAs(new JsonObjectDeserializer().deserialize(rs.getString("hbas"), HashMap.class));
             return entity;
         }
     }
@@ -147,7 +151,8 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("hw_version", vds.getHardwareVersion())
                 .addValue("hw_serial_number", vds.getHardwareSerialNumber())
                 .addValue("hw_uuid", vds.getHardwareUUID())
-                .addValue("hw_family", vds.getHardwareFamily());
+                .addValue("hw_family", vds.getHardwareFamily())
+                .addValue("hbas", new JsonObjectSerializer().serialize(vds.getHBAs()));
 
         getCallsHandler().executeModification("InsertVdsDynamic", parameterSource);
     }
@@ -203,7 +208,8 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("hw_version", vds.getHardwareVersion())
                 .addValue("hw_serial_number", vds.getHardwareSerialNumber())
                 .addValue("hw_uuid", vds.getHardwareUUID())
-                .addValue("hw_family", vds.getHardwareFamily());
+                .addValue("hw_family", vds.getHardwareFamily())
+                .addValue("hbas", new JsonObjectSerializer().serialize(vds.getHBAs()));
 
         getCallsHandler().executeModification("UpdateVdsDynamic", parameterSource);
     }

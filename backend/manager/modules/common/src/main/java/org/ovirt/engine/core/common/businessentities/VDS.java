@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -112,7 +113,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
             String vds_group_cpu_name, String cpu_name, Boolean net_config_dirty, String pm_type, String pm_user,
             String pm_password, Integer pm_port, String pm_options, boolean pm_enabled, String pmSecondaryIp,
             String pmSecondaryType, String pmSecondaryUser, String pmSecondaryPassword, Integer pmSecondaryPort,
-            String pmSecondaryOptions, boolean pmSecondaryConcurrent, String consoleAddress)
+            String pmSecondaryOptions, boolean pmSecondaryConcurrent, String consoleAddress, Map<String, List<Map<String, String>>> HBAs)
     {
         mVdsStatic = new VdsStatic();
         mVdsDynamic = new VdsDynamic();
@@ -177,6 +178,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.setPmSecondaryPassword(pmSecondaryPassword);
         this.setPmSecondaryConcurrent(pmSecondaryConcurrent);
         this.setConsoleAddress(consoleAddress);
+        this.setHBAs(HBAs);
     }
 
     public VDS(VdsStatic vdsStatic, VdsDynamic vdsDynamic, VdsStatistics vdsStatistics) {
@@ -245,7 +247,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                         getPmSecondaryPort(),
                         getPmSecondaryOptions(),
                         isPmSecondaryConcurrent(),
-                        getConsoleAddress());
+                        getConsoleAddress(),
+                        getHBAs());
 
         vds.setCpuFlags(getCpuFlags());
         vds.setVdsSpmPriority(getVdsSpmPriority());
@@ -1092,6 +1095,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     public String getIScsiInitiatorName() {
         return this.mVdsDynamic.getIScsiInitiatorName();
+    }
+
+    public Map<String, List<Map<String, String>>> getHBAs() {
+        return this.mVdsDynamic.getHBAs();
+    }
+
+    public void setHBAs(Map<String, List<Map<String, String>>> HBAs) {
+        this.mVdsDynamic.setHBAs(HBAs);
     }
 
     public void setTransparentHugePagesState(VdsTransparentHugePagesState value) {

@@ -3,6 +3,8 @@ package org.ovirt.engine.core.common.businessentities;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.Size;
 
@@ -65,7 +67,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     private Integer cpu_sockets;
 
     private Boolean net_config_dirty;
-
     private String supported_cluster_levels;
 
     private String supported_engines;
@@ -83,6 +84,17 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     private String iScsiInitiatorName;
 
     private VdsTransparentHugePagesState transparentHugePagesState = VdsTransparentHugePagesState.Never;
+
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
+    private Map<String, List<Map<String, String>>> HBAs; /* Store the list of HBAs */
+
+    public Map<String, List<Map<String, String>>> getHBAs() {
+        return HBAs;
+    }
+
+    public void setHBAs(Map<String, List<Map<String, String>>> HBAs) {
+        this.HBAs = HBAs;
+    }
 
     private int anonymousHugePages;
 
@@ -144,7 +156,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
                       Date cpu_over_commit_time_stamp, Integer pending_vcpus_count,
                       Integer pending_vmem_sizeField, Boolean net_config_dirty, String hwManufacturer,
                       String hwProductName, String hwVersion, String hwSerialNumber,
-                      String hwUUID, String hwFamily) {
+                      String hwUUID, String hwFamily, Map<String, List<Map<String, String>>> HBAs) {
         libvirt_version = new RpmVersion();
         rpmVersion = new RpmVersion();
         this.cpu_cores = cpu_cores;
@@ -176,6 +188,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.hwVersion = hwVersion;
         this.hwProductName = hwProductName;
         this.hwManufacturer = hwManufacturer;
+        this.HBAs = HBAs;
     }
 
     public Integer getcpu_cores() {
@@ -623,6 +636,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         result = prime * result + ((hwSerialNumber == null) ? 0 : hwSerialNumber.hashCode());
         result = prime * result + ((hwUUID == null) ? 0 : hwUUID.hashCode());
         result = prime * result + ((hwFamily == null) ? 0 : hwFamily.hashCode());
+        result = prime * result + ((HBAs == null) ? 0 : HBAs.hashCode());
         return result;
     }
 
@@ -684,6 +698,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
                 && ObjectUtils.objectsEqual(hwVersion, other.hwVersion)
                 && ObjectUtils.objectsEqual(hwSerialNumber, other.hwSerialNumber)
                 && ObjectUtils.objectsEqual(hwUUID, other.hwUUID)
-                && ObjectUtils.objectsEqual(hwFamily, other.hwFamily));
+                && ObjectUtils.objectsEqual(hwFamily, other.hwFamily)
+                && ObjectUtils.objectsEqual(HBAs, other.HBAs));
     }
 }

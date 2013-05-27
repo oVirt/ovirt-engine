@@ -122,6 +122,7 @@ public final class VdsProperties {
     public static final String spicePackageName = "qspice-libs";
     public static final String kernelPackageName = "kernel";
     public static final String iSCSIInitiatorName = "ISCSIInitiatorName";
+    public static final String HBAInventory = "HBAInventory";
     public static final String qemuKvmPackageName = "qemu-kvm";
     public static final String vdsmPackageName = "vdsm";
     public static final String spiceServerPackageName = "spice-server";

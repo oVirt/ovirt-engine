@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -339,6 +341,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setHardwareSerialNumber(rs.getString("hw_serial_number"));
             entity.setHardwareUUID(rs.getString("hw_uuid"));
             entity.setHardwareFamily(rs.getString("hw_family"));
+            entity.setHBAs(new JsonObjectDeserializer().deserialize(rs.getString("hbas"), HashMap.class));
             entity.setConsoleAddress(rs.getString("console_address"));
             entity.calculateFreeVirtualMemory();
             return entity;

@@ -338,6 +338,19 @@ public class VdsBrokerObjectsBuilder {
             hooksStr = xmlRpcStruct.get(VdsProperties.hooks).toString();
         }
         vds.setHooksStr(hooksStr);
+
+        // parse out the HBAs available in this host
+        Map<String, List<Map<String, String>>> hbas = new HashMap<>();
+        for (Map.Entry<String, Object[]> el: ((Map<String, Object[]>)xmlRpcStruct.get(VdsProperties.HBAInventory)).entrySet()) {
+            List<Map<String, String>> devicesList = new ArrayList<Map<String, String>>();
+
+            for (Object device: el.getValue()) {
+                devicesList.add((Map<String,String>)device);
+            }
+
+            hbas.put(el.getKey(), devicesList);
+        }
+        vds.setHBAs(hbas);
     }
 
     public static void checkTimeDrift(VDS vds, Map<String, Object> xmlRpcStruct) {
