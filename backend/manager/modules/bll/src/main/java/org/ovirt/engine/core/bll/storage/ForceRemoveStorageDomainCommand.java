@@ -81,7 +81,6 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
 
     @Override
     protected boolean canDoAction() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DESTROY_DOMAIN);
         boolean returnValue =
                 super.canDoAction()
                         && checkStorageDomain()
@@ -104,5 +103,11 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__DESTROY_DOMAIN);
     }
 }
