@@ -1,0 +1,17 @@
+<FindBugsFilter>
+     <!--
+      findbugs complains that VDS clone() method is not calling it super class clone()
+      method.
+      we cannot call super.close() because this code compile to GWT as well,
+      and GWT does not support CloneNotSupportedException which is thrown
+      when adding this code.
+
+      findbugs reason:
+      CN: clone method does not call super.clone() (CN_IDIOM_NO_SUPER_CALL)
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.core.common.businessentities.VDS" />
+       <Method name="clone"/>
+       <Bug code="CN"/>
+     </Match>
+</FindBugsFilter>
