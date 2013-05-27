@@ -347,13 +347,6 @@ class FileLocations(object):
         DATADIR,
         'vdsm',
     )
-    AIO_HOST_DEPLOY_VDSM_PATH = os.path.join(
-        DATADIR,
-        'ovirt-host-deploy',
-        'plugins',
-        'ovirt-host-deploy',
-        'vdsm'
-    )
     AIO_STORAGE_DOMAIN_DEFAULT_DIR = os.path.join(
         LOCALSTATEDIR,
         'lib',

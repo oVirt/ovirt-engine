@@ -28,6 +28,9 @@ from otopi import util
 from otopi import plugin
 
 
+from ovirt_host_deploy import hardware
+
+
 from ovirt_engine_setup import constants as osetupcons
 
 
@@ -103,19 +106,9 @@ class Plugin(plugin.PluginBase):
         priority=plugin.Stages.PRIORITY_HIGH,
     )
     def _setup(self):
-        supported = False
-        try:
-            hardware = util.loadModule(
-                path=osetupcons.FileLocations.AIO_HOST_DEPLOY_VDSM_PATH,
-                name='hardware'
-            ).Plugin(context=self.context)
-            hardware._validate_virtualization()
-            supported = True
-        except ImportError:
-            self.logger.debug("Can't validate virtualization support")
-        except Exception as e:
-            self.logger.warning(e)
-        if not supported:
+        virtualization = hardware.Virtualization()
+        result = virtualization.detect()
+        if result == virtualization.DETECT_RESULT_UNSUPPORTED:
             self.logger.warning(
                 _(
                     'Disabling all-in-one plugin because hardware '
@@ -123,6 +116,12 @@ class Plugin(plugin.PluginBase):
                 )
             )
             self.environment[osetupcons.AIOEnv.ENABLE] = False
+        elif result == virtualization.DETECT_RESULT_SUPPORTED:
+            self.logger.info(_('Hardware supports virtualization'))
+        else:
+            self.logger.warning(
+                _('Cannot detect if hardware supports virtualization')
+            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
