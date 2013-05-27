@@ -14,4 +14,18 @@
        <Method name="clone"/>
        <Bug code="CN"/>
      </Match>
+
+     <!--
+      findbugs complains that host variable is never used
+      its true but this method parse host and port and we may
+      need the use of host address in the future.
+
+      findbugs reason:
+      DLS: Dead store to local variable (DLS_DEAD_LOCAL_STORE)
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.core.utils.dns.DnsSRVLocator" />
+       <Method name="parseSrvRecord"/>
+       <Bug code="DLS"/>
+     </Match>
 </FindBugsFilter>
