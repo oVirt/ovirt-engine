@@ -64,7 +64,7 @@ class Plugin(plugin.PluginBase):
                         value = self.environment.get(env)
                         if value is not None:
                             self.dialog.note(
-                                text=_('{key:30}: {value}').format(
+                                text=_('{key:35}: {value}').format(
                                     key=(
                                         attrs['description']
                                         if attrs['description'] is not None
