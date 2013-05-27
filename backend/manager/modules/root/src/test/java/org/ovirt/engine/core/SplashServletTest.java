@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +38,12 @@ public class SplashServletTest {
     @Mock
     RequestDispatcher mockDispatcher;
 
+    @Mock
+    ServletConfig mockConfig;
+
+    @Mock
+    ServletContext mockContext;
+
     @Captor
     ArgumentCaptor<Cookie> cookieCaptor;
 
@@ -43,7 +51,10 @@ public class SplashServletTest {
 
     @Before
     public void setUp() throws Exception {
+        when(mockConfig.getServletContext()).thenReturn(mockContext);
+        when(mockContext.getContextPath()).thenReturn(""); // Root webapp context path
         testServlet = new SplashServlet();
+        testServlet.init(mockConfig);
     }
 
     @Test
