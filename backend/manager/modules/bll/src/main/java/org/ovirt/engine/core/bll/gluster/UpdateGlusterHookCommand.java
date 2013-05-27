@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
@@ -32,7 +31,6 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 @NonTransactiveCommandAttribute
 @LockIdNameAttribute(isWait = true)
 public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHookManageParameters> {
-    private GlusterHookEntity entity;
 
     protected List<String> errors = new ArrayList<String>();
 
@@ -44,13 +42,6 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__GLUSTER_HOOK);
-    }
-
-    protected GlusterHookEntity getGlusterHook() {
-        if (entity == null) {
-            entity = getGlusterHooksDao().getById(getParameters().getHookId(),true);
-        }
-        return entity;
     }
 
     private List<GlusterServerHook> getContentConflictServerHooks() {

@@ -15,6 +15,7 @@ import org.ovirt.engine.core.dal.VdcBllMessages;
  * Base class for all Gluster Hook commands
  */
 public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> extends GlusterCommandBase<T> {
+    protected GlusterHookEntity entity;
 
     public GlusterHookCommandBase(T params) {
         super(params);
@@ -23,6 +24,13 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
     @Override
     protected BackendInternal getBackend() {
         return super.getBackend();
+    }
+
+    protected GlusterHookEntity getGlusterHook() {
+        if (entity == null) {
+            entity = getGlusterHooksDao().getById(getParameters().getHookId(),true);
+        }
+        return entity;
     }
 
     @Override

@@ -219,9 +219,17 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     }
 
     @Override
-    public void removeGlusterServerHook(Guid id) {
-        getCallsHandler().executeModification("DeleteGlusterHookById",
-                createIdParameterMapper(id));
+    public void removeGlusterServerHooks(Guid id) {
+        getCallsHandler().executeModification("DeleteGlusterServerHookById",
+                getCustomMapSqlParameterSource().addValue("hook_id", id));
+    }
+
+    @Override
+    public void removeGlusterServerHook(Guid id, Guid serverId) {
+        getCallsHandler().executeModification("DeleteGlusterServerHook",
+                getCustomMapSqlParameterSource()
+                .addValue("hook_id", id)
+                .addValue("server_id", serverId));
     }
 
     private static final class GlusterHookRowMapper implements RowMapper<GlusterHookEntity> {

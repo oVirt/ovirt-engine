@@ -119,8 +119,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.GLUSTER_HOOK_DISABLE_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.GLUSTER_HOOK_LIST_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.GLUSTER_HOOK_CONFLICT_DETECTED, AuditLogSeverity.WARNING);
-        severities.put(AuditLogType.GLUSTER_HOOK_ADDED, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.GLUSTER_HOOK_REMOVED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.GLUSTER_HOOK_DETECTED_NEW, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.GLUSTER_HOOK_DETECTED_DELETE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_HOOK_GETCONTENT_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.GLUSTER_SERVICES_LIST_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.GLUSTER_SERVICE_TYPE_ADDED_TO_CLUSTER, AuditLogSeverity.NORMAL);
@@ -129,6 +129,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.GLUSTER_SERVER_SERVICE_STATUS_CHANGED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_HOOK_UPDATED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_HOOK_UPDATE_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.GLUSTER_HOOK_ADDED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.GLUSTER_HOOK_ADD_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initDefaultSeverities() {

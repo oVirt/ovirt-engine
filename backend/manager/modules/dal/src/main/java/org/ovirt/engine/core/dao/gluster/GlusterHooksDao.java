@@ -69,6 +69,8 @@ public interface GlusterHooksDao extends DAO, SearchDAO<GlusterHookEntity>, Mass
 
     public void updateGlusterServerHook(GlusterServerHook serverHook);
 
-    public void removeGlusterServerHook(Guid hookId);
+    public void removeGlusterServerHooks(Guid hookId);
+
+    public void removeGlusterServerHook(Guid hookId, Guid serverId);
 
 }
