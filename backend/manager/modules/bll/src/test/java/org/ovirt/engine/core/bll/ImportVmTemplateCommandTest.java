@@ -21,15 +21,15 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.DiskImageList;
@@ -109,14 +109,14 @@ public class ImportVmTemplateCommandTest {
             VolumeType volumeType,
             StorageType storageType) {
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(
-                setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType));
+                setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType, 0));
     }
 
     private void assertInvalidVolumeInfoCombination(VolumeFormat volumeFormat,
             VolumeType volumeType,
             StorageType storageType) {
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(
-                setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType),
+                setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType, 0),
                 VdcBllMessages.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
     }
 
@@ -134,8 +134,9 @@ public class ImportVmTemplateCommandTest {
     private ImportVmTemplateCommand setupVolumeFormatAndTypeTest(
             VolumeFormat volumeFormat,
             VolumeType volumeType,
-            StorageType storageType) {
-        mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, 0);
+            StorageType storageType,
+            int freeSpaceCritical) {
+        mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, freeSpaceCritical);
 
         ImportVmTemplateCommand command =
                 spy(new ImportVmTemplateCommand(createParameters()));
@@ -216,8 +217,10 @@ public class ImportVmTemplateCommandTest {
     }
 
     private ImportVmTemplateCommand setupDiskSpaceTest(final int extraDiskSpaceRequired) {
-        mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, extraDiskSpaceRequired);
-        return new TestHelperImportVmTemplateCommand(createParameters());
+        return setupVolumeFormatAndTypeTest(VolumeFormat.RAW,
+                VolumeType.Preallocated,
+                StorageType.NFS,
+                extraDiskSpaceRequired);
     }
 
     protected ImportVmTemplateParameters createParameters() {
