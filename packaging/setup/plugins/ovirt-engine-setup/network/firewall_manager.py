@@ -43,26 +43,13 @@ class Plugin(plugin.PluginBase):
     Firewall manager selection plugin.
     """
 
-    def _isPermanentSupported(self):
-        """
-        check if firewall-cmd support --permanent option
-        """
-        rc, stdout, stderr = self.execute(
-            (
-                self.command.get('firewall-cmd'),
-                '--help',
-            ),
-            raiseOnError=False,
-        )
-        return ''.join(stdout).find('--permanent') != -1
-
     def _parseFirewalld(self, format):
         ret = ''
         for content in [
             content
             for key, content in self.environment.items()
             if key.startswith(
-                osetupcons.NetEnv.FIREWALLD_SERVICE_PREFIX
+                otopicons.NetEnv.FIREWALLD_SERVICE_PREFIX
             )
         ]:
             doc = None
@@ -134,7 +121,6 @@ class Plugin(plugin.PluginBase):
         self._enabled = not self.environment[
             osetupcons.CoreEnv.DEVELOPER_MODE
         ]
-        self.command.detect('firewall-cmd')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -150,9 +136,8 @@ class Plugin(plugin.PluginBase):
     def _customization(self):
         if self.environment[osetupcons.ConfigEnv.FIREWALL_MANAGER] is None:
             managers = []
-            if self.services.exists('firewalld'):
-                if self._isPermanentSupported():
-                    managers.append('firewalld')
+            if self.environment[otopicons.NetEnv.FIREWALLD_AVAILABLE]:
+                managers.append('firewalld')
             if self.services.exists('iptables'):
                 managers.append('iptables')
 
@@ -182,7 +167,7 @@ class Plugin(plugin.PluginBase):
                 osetupcons.ConfigEnv.FIREWALL_MANAGER
             ] == 'iptables'
         )
-        self.environment[osetupcons.NetEnv.FIREWALLD_ENABLE] = (
+        self.environment[otopicons.NetEnv.FIREWALLD_ENABLE] = (
             self.environment[
                 osetupcons.ConfigEnv.FIREWALL_MANAGER
             ] == 'firewalld'
@@ -211,7 +196,7 @@ class Plugin(plugin.PluginBase):
             )
 
             self.environment[
-                osetupcons.NetEnv.FIREWALLD_SERVICE_PREFIX +
+                otopicons.NetEnv.FIREWALLD_SERVICE_PREFIX +
                 service['name']
             ] = content
 
@@ -281,13 +266,13 @@ class Plugin(plugin.PluginBase):
 
         commands = []
         for service in [
-            key[len(osetupcons.NetEnv.FIREWALLD_SERVICE_PREFIX):]
+            key[len(otopicons.NetEnv.FIREWALLD_SERVICE_PREFIX):]
             for key in self.environment
             if key.startswith(
-                osetupcons.NetEnv.FIREWALLD_SERVICE_PREFIX
+                otopicons.NetEnv.FIREWALLD_SERVICE_PREFIX
             )
         ]:
-            commands.append('firewall-cmd --add-service %s' % service)
+            commands.append('firewall-cmd -service %s' % service)
         self.dialog.note(
             text=_(
                 'In order to configure firewalld, copy the '
@@ -299,7 +284,7 @@ class Plugin(plugin.PluginBase):
                 examples=(
                     osetupcons.FileLocations.OVIRT_FIREWALLD_EXAMPLE_DIR
                 ),
-                configdir=osetupcons.FileLocations.FIREWALLD_SERVICE_DIR,
+                configdir='/etc/firewalld/services',
                 commands='\n'.join([
                     '    ' + l
                     for l in commands

@@ -106,12 +106,6 @@ class FileLocations(object):
         'firewalld'
     )
 
-    FIREWALLD_SERVICE_DIR = os.path.join(
-        SYSCONFDIR,
-        'firewalld',
-        'services'
-    )
-
     OVIRT_ENGINE_SYSCTL = os.path.join(
         SYSCONFDIR,
         'sysctl.d',
@@ -569,8 +563,6 @@ class DialogEnv(object):
 @util.export
 @util.codegen
 class NetEnv(object):
-    FIREWALLD_ENABLE = 'OVESETUP_NETWORK/firewalldEnable'
-    FIREWALLD_SERVICE_PREFIX = 'OVESETUP_NETWORK_FIREWALLD_SERVICE/'
     FIREWALLD_SERVICES = 'OVESETUP_NETWORK/firewalldServices'
     FIREWALLD_SUBST = 'OVESETUP_NETWORK/firewalldSubst'
 

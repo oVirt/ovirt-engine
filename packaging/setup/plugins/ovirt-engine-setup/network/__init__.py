@@ -21,14 +21,12 @@
 from otopi import util
 from . import firewall_manager
 from . import firewall
-from . import firewalld
 
 
 @util.export
 def createPlugins(context):
     firewall_manager.Plugin(context=context)
     firewall.Plugin(context=context)
-    firewalld.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
