@@ -244,6 +244,12 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
         return returnValue;
     }
 
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ATTACH_ACTION_TO);
+    }
+
     private boolean checkStorageDomainsInPool() {
         if (!getParameters().getIsInternal()) {
             boolean _hasData = false;
