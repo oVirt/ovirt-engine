@@ -1209,4 +1209,15 @@ public class VdsServerWrapper implements IVdsServer {
             throw new XmlRpcRunTimeException(ute);
         }
     }
+
+    @Override
+    public GlusterServicesReturnForXmlRpc glusterServiceManage(Guid serverId, String [] serviceList, String actionType, boolean failOnError) {
+        try {
+          Map<String, Object> xmlRpcReturnValue = vdsServer.glusterServicesManage(serviceList, actionType, failOnError);
+          GlusterServicesReturnForXmlRpc wrapper = new GlusterServicesReturnForXmlRpc(serverId, xmlRpcReturnValue);
+          return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }

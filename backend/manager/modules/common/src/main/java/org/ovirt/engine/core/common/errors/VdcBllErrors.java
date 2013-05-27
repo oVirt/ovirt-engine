@@ -380,6 +380,11 @@ public enum VdcBllErrors {
     GlusterHookChecksumMismatch(4508),
     GlusterHookAddFailed(4509),
     GlusterHookRemoveFailed(4510),
+    GlusterServicesFailed(4550),
+    GlusterServiceActionNotSupported(4551),
+    GlusterServiceManageFailed(4552),
+    GlusterServiceNotSupported(4553),
+
 
     UnicodeArgumentException(4900),
 

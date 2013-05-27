@@ -140,6 +140,7 @@ public enum VDSCommandType {
     UpdateGlusterHook("org.ovirt.engine.core.vdsbroker.gluster"),
     AddGlusterHook("org.ovirt.engine.core.vdsbroker.gluster"),
     RemoveGlusterHook("org.ovirt.engine.core.vdsbroker.gluster"),
+    ManageGlusterService("org.ovirt.engine.core.vdsbroker.gluster"),
     ;
 
     String packageName;
