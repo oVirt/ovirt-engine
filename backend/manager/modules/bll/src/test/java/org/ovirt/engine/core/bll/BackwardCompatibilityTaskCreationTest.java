@@ -163,7 +163,7 @@ public class BackwardCompatibilityTaskCreationTest {
         assertEquals("wrong task result", AsyncTaskResultEnum.success, spmAsyncTask.getLastTaskStatus().getResult());
         assertEquals("wrong task status", AsyncTaskStatusEnum.init, spmAsyncTask.getLastTaskStatus().getStatus());
         assertEquals("wrong task state", AsyncTaskState.Initializing, spmAsyncTask.getState());
-        assertTrue("wrong task type", spmAsyncTask instanceof EntityAsyncTask);
+        assertTrue("wrong task type", spmAsyncTask instanceof CommandAsyncTask);
     }
 
     /**

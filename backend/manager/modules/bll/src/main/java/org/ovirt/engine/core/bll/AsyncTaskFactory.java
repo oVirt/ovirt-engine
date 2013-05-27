@@ -67,7 +67,7 @@ public final class AsyncTaskFactory {
             if (taskType == AsyncTaskType.unknown) {
                 result = new SPMAsyncTask(asyncTaskParams);
             } else {
-                result = new EntityAsyncTask(asyncTaskParams, duringInit);
+                result = new CommandAsyncTask(asyncTaskParams, duringInit);
             }
             return result;
         }
