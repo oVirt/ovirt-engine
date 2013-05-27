@@ -65,10 +65,14 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     }
 
     @Override
-    protected boolean canDoAction() {
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
-        boolean result = super.canDoAction();
+    }
 
+    @Override
+    protected boolean canDoAction() {
+        boolean result = true;
         StoragePoolValidator storagePoolValidator = new StoragePoolValidator(getStoragePool());
         if (result && DbFacade.getInstance().getStoragePoolDao().getByName(getStoragePool().getname()) != null) {
             result = false;
