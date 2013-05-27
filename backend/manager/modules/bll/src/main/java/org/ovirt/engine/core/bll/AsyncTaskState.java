@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 public enum AsyncTaskState {
     Initializing,
-    WaitForPoll,
     Polling,
     Ended,
     AttemptingEndAction,

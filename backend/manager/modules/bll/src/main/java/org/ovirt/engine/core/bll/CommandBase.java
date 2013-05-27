@@ -1107,6 +1107,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // to the one of the parent command (if its REGULAR_FLOW, the execution
         // reason of the parent command remains REGULAR_FLOW).
         parentParameters.setExecutionReason(parameters.getExecutionReason());
+        parentParameters.setCommandType(parentCommandType);
         return parentParameters;
     }
 

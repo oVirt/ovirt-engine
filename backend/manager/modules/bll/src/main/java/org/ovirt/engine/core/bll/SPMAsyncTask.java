@@ -107,8 +107,8 @@ public class SPMAsyncTask {
         return _lastAccessToStatusSinceEnd;
     }
 
-    public Object getContainerId() {
-        return getParameters().getEntityInfo().getId();
+    public Guid getCommandId() {
+        return getParameters().getDbAsyncTask().getRootCommandId();
     }
 
     public void StartPollingTask() {

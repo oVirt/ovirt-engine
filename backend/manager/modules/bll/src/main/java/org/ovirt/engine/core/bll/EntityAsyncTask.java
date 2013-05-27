@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
@@ -19,37 +20,30 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 /**
- * EntityAsyncTask: Base class for all tasks regarding a specific entity (VM,
- * VmTemplate). The 'OnAfterEntityTaskEnded' method will be executed only if all
- * other tasks regarding the relevant entity have already ended.
+ * Base class for all tasks regarding a specific command.
  */
 public class EntityAsyncTask extends SPMAsyncTask {
     private static final Object _lockObject = new Object();
 
-    private static final Map<Object, EntityMultiAsyncTasks> _multiTasksByEntities =
-            new HashMap<Object, EntityMultiAsyncTasks>();
-
-    private static EntityMultiAsyncTasks GetEntityMultiAsyncTasksByContainerId(Object containerID) {
-        EntityMultiAsyncTasks entityInfo = null;
-        synchronized (_lockObject) {
-            entityInfo = _multiTasksByEntities.get(containerID);
-        }
-
-        return entityInfo;
-    }
+    private static final Map<Guid, EntityMultiAsyncTasks> _multiTasksByCommandIds =
+            new HashMap<Guid, EntityMultiAsyncTasks>();
 
     private EntityMultiAsyncTasks GetEntityMultiAsyncTasks() {
-        return GetEntityMultiAsyncTasksByContainerId(getContainerId());
+        EntityMultiAsyncTasks entityInfo = null;
+        synchronized (_lockObject) {
+            entityInfo = _multiTasksByCommandIds.get(getCommandId());
+        }
+        return entityInfo;
     }
 
     public EntityAsyncTask(AsyncTaskParameters parameters, boolean duringInit) {
         super(parameters);
         boolean isNewCommandAdded = false;
         synchronized (_lockObject) {
-            if (!_multiTasksByEntities.containsKey(getContainerId())) {
-                log.infoFormat("EntityAsyncTask::Adding EntityMultiAsyncTasks object for entity '{0}'",
-                        getContainerId());
-                _multiTasksByEntities.put(getContainerId(), new EntityMultiAsyncTasks(getContainerId()));
+            if (!_multiTasksByCommandIds.containsKey(getCommandId())) {
+                log.infoFormat("EntityAsyncTask::Adding EntityMultiAsyncTasks object for command '{0}'",
+                        getCommandId());
+                _multiTasksByCommandIds.put(getCommandId(), new EntityMultiAsyncTasks(getCommandId()));
                 isNewCommandAdded = true;
             }
         }
@@ -85,7 +79,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
         if (entityInfo == null) {
             log.warnFormat(
                     "EntityAsyncTask::EndActionIfNecessary: No info is available for entity '{0}', current task ('{1}') was probably created while other tasks were in progress, clearing task.",
-                    getContainerId(),
+                    getCommandId(),
                     getVdsmTaskId());
 
             clearAsyncTask();
@@ -94,13 +88,12 @@ public class EntityAsyncTask extends SPMAsyncTask {
         else if (entityInfo.ShouldEndAction()) {
             log.infoFormat(
                     "EntityAsyncTask::EndActionIfNecessary: All tasks of entity '{0}' has ended -> executing 'EndAction'",
-                    getContainerId());
+                    getCommandId());
 
             log.infoFormat(
-                    "EntityAsyncTask::EndAction: Ending action for {0} tasks (entity ID: '{1}'): calling EndAction for action type '{2}'.",
+                    "EntityAsyncTask::EndAction: Ending action for {0} tasks (command ID: '{1}'): calling EndAction '.",
                     entityInfo.getTasksCountCurrentActionType(),
-                    entityInfo.getContainerId(),
-                    entityInfo.getActionType());
+                    entityInfo.getCommandId());
 
             entityInfo.MarkAllWithAttemptingEndAction();
             ThreadPoolUtil.execute(new Runnable() {
@@ -135,7 +128,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
 
         try {
             log.infoFormat("EntityAsyncTask::EndCommandAction [within thread] context: Attempting to EndAction '{0}', executionIndex: '{1}'",
-                    entityInfo.getActionType(),
+                    dbAsyncTask.getActionParameters().getCommandType(),
                     dbAsyncTask.getActionParameters().getExecutionIndex());
 
             try {
@@ -148,15 +141,15 @@ public class EntityAsyncTask extends SPMAsyncTask {
                 }
 
                 vdcReturnValue =
-                        Backend.getInstance().endAction(entityInfo.getActionType(),
+                        Backend.getInstance().endAction(getEndActionType(dbAsyncTask),
                                 dbAsyncTask.getActionParameters(),
                                 new CommandContext(context));
             } catch (VdcBLLException ex) {
-                log.error(getErrorMessage(entityInfo));
+                log.error(getErrorMessage());
                 log.error(ex.toString());
                 log.debug(ex);
             } catch (RuntimeException ex) {
-                log.error(getErrorMessage(entityInfo), ex);
+                log.error(getErrorMessage(), ex);
             }
         }
 
@@ -172,33 +165,40 @@ public class EntityAsyncTask extends SPMAsyncTask {
         }
     }
 
-    private static String getErrorMessage(EntityMultiAsyncTasks entityInfo) {
-        return String.format("[within thread]: EndAction for action type %1$s threw an exception.",
-                entityInfo.getActionType());
+    private VdcActionType getEndActionType(AsyncTasks dbAsyncTask) {
+        VdcActionType commandType = dbAsyncTask.getActionParameters().getCommandType();
+        if (!VdcActionType.Unknown.equals(commandType)) {
+            return commandType;
+        }
+        return dbAsyncTask.getaction_type();
     }
 
-    private static void handleEndActionResult(EntityMultiAsyncTasks entityInfo,
-            VdcReturnValueBase vdcReturnValue,
+    private String getErrorMessage() {
+        return String.format("[within thread]: EndAction for action type %1$s threw an exception.",
+                getParameters().getDbAsyncTask().getActionParameters().getCommandType());
+    }
+
+    private void handleEndActionResult(EntityMultiAsyncTasks commandInfo, VdcReturnValueBase vdcReturnValue,
             ExecutionContext context,
             boolean isTaskGroupSuccess) {
         try {
-            if (entityInfo != null) {
-                log.infoFormat(
-                        "EntityAsyncTask::HandleEndActionResult [within thread]: EndAction for action type '{0}' completed, handling the result.",
-                        entityInfo.getActionType());
+            VdcActionType actionType = getParameters().getDbAsyncTask().getaction_type();
+            log.infoFormat(
+                    "EntityAsyncTask::HandleEndActionResult [within thread]: EndAction for action type '{0}' completed, handling the result.",
+                    actionType);
 
                 if (vdcReturnValue == null || (!vdcReturnValue.getSucceeded() && vdcReturnValue.getEndActionTryAgain())) {
                     log.infoFormat(
                             "EntityAsyncTask::HandleEndActionResult [within thread]: EndAction for action type {0} hasn't succeeded, not clearing tasks, will attempt again next polling.",
-                            entityInfo.getActionType());
+                        actionType);
 
-                    entityInfo.Repoll();
+                    commandInfo.Repoll();
                 }
 
                 else {
                     log.infoFormat(
                             "EntityAsyncTask::HandleEndActionResult [within thread]: EndAction for action type {0} {1}succeeded, clearing tasks.",
-                            entityInfo.getActionType(),
+                        actionType,
                             (vdcReturnValue.getSucceeded() ? "" : "hasn't "));
 
                     /**
@@ -209,21 +209,17 @@ public class EntityAsyncTask extends SPMAsyncTask {
                         ExecutionHandler.endTaskJob(context, vdcReturnValue.getSucceeded() && isTaskGroupSuccess);
                     }
 
-                    entityInfo.ClearTasks();
+                    commandInfo.ClearTasks();
 
                     synchronized (_lockObject) {
-                        if (entityInfo.getAllCleared()) {
+                        if (commandInfo.getAllCleared()) {
                             log.infoFormat(
                                     "EntityAsyncTask::HandleEndActionResult [within thread]: Removing EntityMultiAsyncTasks object for entity '{0}'",
-                                    entityInfo.getContainerId());
-                            _multiTasksByEntities.remove(entityInfo.getContainerId());
-                        } else {
-                            entityInfo.resetActionTypeIfNecessary();
-                            entityInfo.StartPollingNextTask();
+                                    commandInfo.getCommandId());
+                            _multiTasksByCommandIds.remove(commandInfo.getCommandId());
                         }
                     }
                 }
-            }
         }
 
         catch (RuntimeException ex) {
