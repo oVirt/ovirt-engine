@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.host;
 
+
+import java.util.EnumMap;
+
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -16,10 +19,14 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHardwarePresenter;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style.BorderStyle;
+import com.google.gwt.dom.client.Style.Float;
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.Editor;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 
 public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostListModel, HostHardwareGeneralModel> implements SubTabHostHardwarePresenter.ViewDef, Editor<HostHardwareGeneralModel> {
@@ -37,6 +44,10 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
     @UiField(provided = true)
     GeneralFormPanel formPanel;
 
+    @UiField
+    FlowPanel hbaInventory;
+
+    ApplicationConstants constants;
     FormBuilder formBuilder;
 
     private final Driver driver = GWT.create(Driver.class);
@@ -49,6 +60,7 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
     public SubTabHostHardwareView(DetailModelProvider<HostListModel, HostHardwareGeneralModel> modelProvider,
             ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
+        this.constants = constants;
 
         // Init form panel:
         formPanel = new GeneralFormPanel();
@@ -57,20 +69,63 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
         driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 6);
-
+        formBuilder = new FormBuilder(formPanel, 3, 2);
         formBuilder.addFormItem(new FormItem(constants.hardwareManufacturerGeneral(), hardwareManufacturer, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.hardwareProductNameGeneral(), hardwareProductName, 1, 0));
-        formBuilder.addFormItem(new FormItem(constants.hardwareUUIDGeneral(), hardwareUUID, 2, 0));
-        formBuilder.addFormItem(new FormItem(constants.hardwareVersionGeneral(), hardwareVersion, 3, 0));
-        formBuilder.addFormItem(new FormItem(constants.hardwareSerialNumberGeneral(), hardwareSerialNumber, 4, 0));
-        formBuilder.addFormItem(new FormItem(constants.hardwareFamilyGeneral(), hardwareFamily, 5, 0));
+        formBuilder.addFormItem(new FormItem(constants.hardwareFamilyGeneral(), hardwareFamily, 0, 1));
+        formBuilder.addFormItem(new FormItem(constants.hardwareProductNameGeneral(), hardwareProductName, 0, 2));
+        formBuilder.addFormItem(new FormItem(constants.hardwareVersionGeneral(), hardwareVersion, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.hardwareUUIDGeneral(), hardwareUUID, 1, 1));
+        formBuilder.addFormItem(new FormItem(constants.hardwareSerialNumberGeneral(), hardwareSerialNumber, 1, 2));
+
     }
 
     @Override
     public void setMainTabSelectedItem(VDS selectedItem) {
         driver.edit(getDetailModel());
+
+        refreshHBADeviceInfo(selectedItem);
+
         formBuilder.update(getDetailModel());
+    }
+
+    private void refreshHBADeviceInfo(VDS selectedItem) {
+        /* refresh all the information about HBA (FC, iSCSI) devices */
+        hbaInventory.clear();
+
+        if (selectedItem != null && getDetailModel().getHbaDevices() != null) {
+
+            /*
+             * traverse the model and get all the HBAs
+             */
+            for (EnumMap<HostHardwareGeneralModel.HbaDeviceKeys, String> hbaDevice : getDetailModel().getHbaDevices()) {
+                GeneralFormPanel hbaFormPanel = new GeneralFormPanel() {
+                    {
+                        getElement().getStyle().setFloat(Float.LEFT);
+                        getElement().getStyle().setBorderWidth(1, Unit.PX);
+                        getElement().getStyle().setBorderStyle(BorderStyle.SOLID);
+                        getElement().getStyle().setBorderColor("black"); //$NON-NLS-1$
+                        getElement().getStyle().setProperty("width", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
+                    }
+                };
+
+                TextBoxLabel interfaceName = new TextBoxLabel(
+                        hbaDevice.get(HostHardwareGeneralModel.HbaDeviceKeys.MODEL_NAME));
+                TextBoxLabel interfaceType = new TextBoxLabel(
+                        hbaDevice.get(HostHardwareGeneralModel.HbaDeviceKeys.TYPE));
+                TextBoxLabel interfaceWWNN = new TextBoxLabel(
+                        hbaDevice.get(HostHardwareGeneralModel.HbaDeviceKeys.WWNN));
+                TextBoxLabel portWWPNs = new TextBoxLabel(
+                        hbaDevice.get(HostHardwareGeneralModel.HbaDeviceKeys.WWNPS));
+
+                FormBuilder hbaFormBuilder = new FormBuilder(hbaFormPanel, 1, 4);
+                hbaFormBuilder.addFormItem(new FormItem(constants.hbaModelName(), interfaceName, 0, 0));
+                hbaFormBuilder.addFormItem(new FormItem(constants.hbaDeviceType(), interfaceType, 1, 0));
+                hbaFormBuilder.addFormItem(new FormItem(constants.hbaWWNN(), interfaceWWNN, 2, 0));
+                hbaFormBuilder.addFormItem(new FormItem(constants.hbaWWPNs(), portWWPNs, 3, 0));
+
+                hbaInventory.add(hbaFormPanel);
+            }
+        }
     }
 
 }

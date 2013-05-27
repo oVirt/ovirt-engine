@@ -21,5 +21,6 @@
         </ui:style>
         <g:FlowPanel>
                 <f:GeneralFormPanel ui:field="formPanel" addStyleNames="{style.formPanel}"/>
+                <g:FlowPanel ui:field="hbaInventory"/>
         </g:FlowPanel>
 </ui:UiBinder>

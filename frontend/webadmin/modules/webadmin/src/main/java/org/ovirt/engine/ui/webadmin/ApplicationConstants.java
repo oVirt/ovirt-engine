@@ -1170,6 +1170,21 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Family")
     String hardwareFamilyGeneral();
 
+    @DefaultStringValue("HBA Inventory")
+    String hardwareHBAInventory();
+
+    @DefaultStringValue("Model name")
+    String hbaModelName();
+
+    @DefaultStringValue("Device type")
+    String hbaDeviceType();
+
+    @DefaultStringValue("WWNN")
+    String hbaWWNN();
+
+    @DefaultStringValue("WWPNs")
+    String hbaWWPNs();
+
     @DefaultStringValue("Kernel Version")
     String kernelVersionHostGeneral();
 

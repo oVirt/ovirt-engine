@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -103,6 +108,7 @@ public class HostHardwareGeneralModel extends EntityModel
         return hardwareFamily;
     }
 
+    @SuppressWarnings("deprecation")
     public void setHardwareFamily(String value)
     {
         if (!StringHelper.stringsEqual(hardwareFamily, value))
@@ -110,6 +116,22 @@ public class HostHardwareGeneralModel extends EntityModel
             hardwareFamily = value;
             onPropertyChanged(new PropertyChangedEventArgs("family")); //$NON-NLS-1$
         }
+    }
+
+    public enum HbaDeviceKeys { MODEL_NAME, // Model name field
+                                TYPE,       // Device type
+                                WWNN,       // WWNN of the NIC
+                                WWNPS       // Comma separated list of WWNPs (port ids)
+    };
+
+    private List<EnumMap<HbaDeviceKeys, String>> hbaDevices;
+
+    public List<EnumMap<HbaDeviceKeys, String>> getHbaDevices() {
+        return hbaDevices;
+    }
+
+    public void setHbaDevices(List<EnumMap<HbaDeviceKeys, String>> hbaDevices) {
+        this.hbaDevices = hbaDevices;
     }
 
     public HostHardwareGeneralModel()
@@ -134,6 +156,25 @@ public class HostHardwareGeneralModel extends EntityModel
         setHardwareUUID(vds.getHardwareUUID());
         setHardwareSerialNumber(vds.getHardwareSerialNumber());
         setHardwareFamily(vds.getHardwareFamily());
+
+        /* Go through the list of HBA devices and transfer the necessary info
+           to the GWT host hardware model */
+        List<EnumMap<HbaDeviceKeys, String>> hbaDevices = new ArrayList<EnumMap<HbaDeviceKeys, String>>();
+        List<Map<String, String>> fcDevices = vds.getHBAs().get("FC"); //$NON-NLS-1$
+
+        if (fcDevices != null) {
+            for (Map<String, String> device: fcDevices) {
+                EnumMap<HbaDeviceKeys, String> deviceModel = new EnumMap<HbaDeviceKeys, String>(HbaDeviceKeys.class);
+                deviceModel.put(HbaDeviceKeys.MODEL_NAME, device.get("model")); //$NON-NLS-1$
+                deviceModel.put(HbaDeviceKeys.WWNN, device.get("wwnn")); //$NON-NLS-1$
+                deviceModel.put(HbaDeviceKeys.WWNPS, device.get("wwpn")); //$NON-NLS-1$
+                deviceModel.put(HbaDeviceKeys.TYPE, "FC"); //$NON-NLS-1$
+
+                hbaDevices.add(deviceModel);
+            }
+        }
+
+        setHbaDevices(hbaDevices);
     }
 
     @Override
