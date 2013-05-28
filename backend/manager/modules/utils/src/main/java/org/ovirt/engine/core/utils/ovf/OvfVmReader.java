@@ -261,6 +261,10 @@ public class OvfVmReader extends OvfReader {
             snapshot.setType(SnapshotType.valueOf(node.SelectSingleNode("Type", _xmlNS).InnerText));
             snapshot.setStatus(SnapshotStatus.OK);
             snapshot.setDescription(node.SelectSingleNode("Description", _xmlNS).InnerText);
+            XmlNode memory = node.SelectSingleNode("Memory", _xmlNS);
+            if (memory != null) {
+                snapshot.setMemoryVolume(memory.InnerText);
+            }
 
             final Date creationDate = OvfParser.UtcDateStringToLocaDate(node.SelectSingleNode("CreationDate", _xmlNS).InnerText);
             if (creationDate != null) {

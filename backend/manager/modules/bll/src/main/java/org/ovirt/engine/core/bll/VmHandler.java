@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -502,12 +503,33 @@ public class VmHandler {
      *         or null if no such storage domain exists in the pool
      */
     public static StorageDomain findStorageDomainForMemory(Guid storagePoolId, long sizeRequested) {
+        return findStorageDomainForMemory(storagePoolId, sizeRequested, new HashMap<StorageDomain, Integer>());
+    }
+
+    /**
+     * Returns a <code>StorageDomain</code> in the given <code>StoragePool</code> that has
+     * at least as much as requested free space and can be used to store memory images
+     *
+     * @param storagePoolId
+     *           The storage pool where the search for a domain will be made
+     * @param sizeRequested
+     *           The free size we need to have in the domain, in gigabytes
+     * @param domain2reservedSpaceInDomain
+     *           Maps storage domain to size we already reserved on it
+     * @return storage domain in the given pool with at least the required amount of free space,
+     *         or null if no such storage domain exists in the pool
+     */
+    public static StorageDomain findStorageDomainForMemory(Guid storagePoolId, long sizeRequested,
+            Map<StorageDomain, Integer> domain2reservedSpaceInDomain) {
         List<StorageDomain> domainsInPool = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(storagePoolId);
         for (StorageDomain currDomain : domainsInPool) {
+            long reservedSizeForDisks = domain2reservedSpaceInDomain.containsKey(currDomain) ?
+                    domain2reservedSpaceInDomain.get(currDomain) : 0;
+            long sizeNeeded = sizeRequested + reservedSizeForDisks;
             if ((currDomain.getStorageDomainType().equals(StorageDomainType.Master)
                     || currDomain.getStorageDomainType().equals(StorageDomainType.Data))
                     && currDomain.getStatus() == StorageDomainStatus.Active
-                    && doesStorageDomainHaveSpaceForRequest(currDomain, sizeRequested)) {
+                    && doesStorageDomainHaveSpaceForRequest(currDomain, sizeNeeded)) {
                 return currDomain;
             }
         }

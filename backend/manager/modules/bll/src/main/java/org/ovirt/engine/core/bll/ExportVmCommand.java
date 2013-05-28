@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -49,7 +51,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -62,6 +64,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplateCommand<T> {
 
     private List<DiskImage> disksImages;
+    private Collection<Snapshot> snapshotsWithMemory;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -105,8 +108,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         ImagesHandler.fillImagesBySnapshots(getVm());
 
         // check that the target and source domain are in the same storage_pool
-        if (DbFacade.getInstance()
-                .getStoragePoolIsoMapDao()
+        if (getDbFacade().getStoragePoolIsoMapDao()
                 .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
                         getVm().getStoragePoolId())) == null) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
@@ -135,8 +137,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (getParameters().getCopyCollapse()) {
             for (DiskImage img : getDisksBasedOnImage()) {
                 if (images.containsKey(img.getId())) {
-                    // check that no RAW format exists (we are in collapse
-                    // mode)
+                    // check that no RAW format exists (we are in collapse mode)
                     if (((DiskImage) images.get(img.getId())).getVolumeFormat() == VolumeFormat.RAW
                             && img.getVolumeFormat() != VolumeFormat.RAW) {
                         addCanDoActionMessage(VdcBllMessages.VM_CANNOT_EXPORT_RAW_FORMAT);
@@ -151,8 +152,12 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             addCanDoActionMessage(String.format("$storageDomainName %1$s", getStorageDomainName()));
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN);
         }
+
+        // get the snapshot that are going to be exported and have memory
+        snapshotsWithMemory = getSnapshotsToBeExportedWithMemory();
+
         // check destination storage have free space
-        int sizeInGB = (int) getVm().getActualDiskWithSnapshotsSize();
+        int sizeInGB = (int) getVm().getActualDiskWithSnapshotsSize() + getTotalMemoryStatesSizeGb();
         if (!doesStorageDomainhaveSpaceForRequest(getStorageDomain(), sizeInGB)) {
             return false;
         }
@@ -169,6 +174,31 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         }
 
         return true;
+    }
+
+    private Collection<Snapshot> getSnapshotsToBeExportedWithMemory() {
+        if (getParameters().getCopyCollapse()) {
+            Snapshot activeSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
+            return !activeSnapshot.getMemoryVolume().isEmpty() ?
+                    Collections.<Snapshot>singleton(activeSnapshot) : Collections.<Snapshot>emptyList();
+        }
+        else {
+            Map<String, Snapshot> memory2snapshot = new HashMap<String, Snapshot>();
+            for (Snapshot snapshot : getSnapshotDao().getAll(getVmId())) {
+                memory2snapshot.put(snapshot.getMemoryVolume(), snapshot);
+            }
+            memory2snapshot.remove(StringUtils.EMPTY);
+            return memory2snapshot.values();
+        }
+    }
+
+    private int getTotalMemoryStatesSizeGb() {
+        long sizeInBytes = 0;
+        for (Snapshot snapshot : snapshotsWithMemory) {
+            VM vm = getVmFromSnapshot(snapshot);
+            sizeInBytes += vm.getTotalMemorySizeInBytes() + HibernateVmCommand.META_DATA_SIZE_IN_BYTES;
+        }
+        return (int) Math.ceil(1.0 * sizeInBytes / BYTES_IN_GB);
     }
 
     @Override
@@ -188,7 +218,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             endSuccessfullySynchronous();
         } else {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
 
                 @Override
                 public Void runInTransaction() {
@@ -217,7 +246,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (interfaces != null) {
             // TODO remove this when the API changes
             interfaces.clear();
-            interfaces.addAll(DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
+            interfaces.addAll(getDbFacade().getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
         }
         for (Disk disk : vm.getDiskMap().values()) {
             if (DiskStorageType.IMAGE == disk.getDiskStorageType() && !disk.isShareable()) {
@@ -243,8 +272,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             }
         }
         if (StringUtils.isEmpty(vm.getVmtName())) {
-            VmTemplate t = DbFacade.getInstance().getVmTemplateDao()
-                        .get(vm.getVmtGuid());
+            VmTemplate t = getDbFacade().getVmTemplateDao().get(vm.getVmtGuid());
             vm.setVmtName(t.getName());
         }
         getVm().setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
@@ -265,7 +293,10 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
     @Override
     protected void moveOrCopyAllImageGroups() {
+        // Disks
         moveOrCopyAllImageGroups(getVm().getId(), getDisksBasedOnImage());
+        // Memory volumes
+        copyAllMemoryImages(getVm().getId());
     }
 
     private List<DiskImage> getDisksBasedOnImage() {
@@ -275,32 +306,100 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         return disksImages;
     }
 
+    protected void copyAllMemoryImages(Guid containerID) {
+        for (Snapshot snapshot : snapshotsWithMemory) {
+            List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
+
+            // copy the memory dump image
+            VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
+                    VdcActionType.CopyImageGroup,
+                    buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
+                            containerID, guids.get(0), guids.get(2), guids.get(3)),
+                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            if (!vdcRetValue.getSucceeded()) {
+                throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
+            }
+            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
+
+            // copy the memory configuration (of the VM) image
+            vdcRetValue = Backend.getInstance().runInternalAction(
+                    VdcActionType.CopyImageGroup,
+                    buildMoveOrCopyImageGroupParametersForMemoryConfImage(
+                            containerID, guids.get(0), guids.get(4), guids.get(5)),
+                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            if (!vdcRetValue.getSucceeded()) {
+                throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
+            }
+            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getVdsmTaskIdList());
+        }
+    }
+
+    private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
+            Guid containerID, Guid storageDomainId, Guid imageId, Guid volumeId) {
+        MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID, imageId,
+                volumeId, getParameters().getStorageDomainId(), getMoveOrCopyImageOperation());
+        params.setParentCommand(getActionType());
+        params.setCopyVolumeType(CopyVolumeType.LeafVol);
+        params.setForceOverride(getParameters().getForceOverride());
+        params.setSourceDomainId(storageDomainId);
+        params.setEntityInfo(getParameters().getEntityInfo());
+        params.setParentParameters(getParameters());
+
+        // if the data domains are block based storage, the memory volume type is preallocated
+        // so we need to use copy collapse in order to convert it to be sparsed in the export domain
+        if (getStoragePool().getStorageType().isBlockDomain()) {
+            params.setUseCopyCollapse(true);
+            params.setVolumeType(VolumeType.Sparse);
+            params.setVolumeFormat(VolumeFormat.RAW);
+        }
+
+        return params;
+    }
+
+    private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForMemoryConfImage(
+            Guid containerID, Guid storageDomainId, Guid imageId, Guid volumeId) {
+        MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID, imageId,
+                volumeId, getParameters().getStorageDomainId(), getMoveOrCopyImageOperation());
+        params.setParentCommand(getActionType());
+        // This volume is always of type 'sparse' and format 'cow' so no need to convert,
+        // and there're no snapshots for it so no reason to use copy collapse
+        params.setUseCopyCollapse(false);
+        params.setEntityInfo(getParameters().getEntityInfo());
+        params.setCopyVolumeType(CopyVolumeType.LeafVol);
+        params.setForceOverride(getParameters().getForceOverride());
+        params.setParentParameters(getParameters());
+        params.setSourceDomainId(storageDomainId);
+        return params;
+    }
+
     @Override
     protected void moveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         for (DiskImage disk : disks) {
-            MoveOrCopyImageGroupParameters tempVar = new MoveOrCopyImageGroupParameters(containerID, disk
-                    .getId(), disk.getImageId(), getParameters().getStorageDomainId(),
-                    getMoveOrCopyImageOperation());
-            tempVar.setParentCommand(getActionType());
-            tempVar.setEntityInfo(getParameters().getEntityInfo());
-            tempVar.setUseCopyCollapse(getParameters().getCopyCollapse());
-            DiskImage diskForVolumeInfo = getDiskForVolumeInfo(disk);
-            tempVar.setVolumeFormat(diskForVolumeInfo.getVolumeFormat());
-            tempVar.setVolumeType(diskForVolumeInfo.getVolumeType());
-            tempVar.setCopyVolumeType(CopyVolumeType.LeafVol);
-            tempVar.setForceOverride(getParameters().getForceOverride());
-            MoveOrCopyImageGroupParameters p = tempVar;
-            p.setParentParameters(getParameters());
             VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
-                            VdcActionType.CopyImageGroup,
-                            p,
-                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                    VdcActionType.CopyImageGroup,
+                    buildMoveOrCopyImageGroupParametersForDisk(containerID, disk),
+                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             if (!vdcRetValue.getSucceeded()) {
                 throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
 
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
         }
+    }
+
+    private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForDisk(Guid containerID, DiskImage disk) {
+        MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID, disk.getId(),
+                disk.getImageId(), getParameters().getStorageDomainId(), getMoveOrCopyImageOperation());
+        params.setParentCommand(getActionType());
+        params.setEntityInfo(getParameters().getEntityInfo());
+        params.setUseCopyCollapse(getParameters().getCopyCollapse());
+        DiskImage diskForVolumeInfo = getDiskForVolumeInfo(disk);
+        params.setVolumeFormat(diskForVolumeInfo.getVolumeFormat());
+        params.setVolumeType(diskForVolumeInfo.getVolumeType());
+        params.setCopyVolumeType(CopyVolumeType.LeafVol);
+        params.setForceOverride(getParameters().getForceOverride());
+        params.setParentParameters(getParameters());
+        return params;
     }
 
     /**
@@ -429,8 +528,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     private void endCopyCollapseOperations(VM vm) {
         vm.setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
         vm.setVmtName(null);
-        Snapshot activeSnapshot = DbFacade.getInstance().getSnapshotDao().get(
-                DbFacade.getInstance().getSnapshotDao().getId(vm.getId(), SnapshotType.ACTIVE));
+        Snapshot activeSnapshot = getDbFacade().getSnapshotDao().get(
+                getDbFacade().getSnapshotDao().getId(vm.getId(), SnapshotType.ACTIVE));
         vm.setSnapshots(Arrays.asList(activeSnapshot));
         updateCopyVmInSpm(getVm().getStoragePoolId(),
                 vm, getParameters()
@@ -438,7 +537,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     }
 
     private void updateSnapshotOvf(VM vm) {
-        vm.setSnapshots(DbFacade.getInstance().getSnapshotDao().getAllWithConfiguration(getVm().getId()));
+        vm.setSnapshots(getDbFacade().getSnapshotDao().getAllWithConfiguration(getVm().getId()));
         updateVmImSpm();
     }
 

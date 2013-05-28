@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -11,13 +12,16 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.memory.MemoryImageRemover;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
+import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
@@ -30,6 +34,7 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
@@ -53,6 +58,8 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -69,8 +76,10 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -85,7 +94,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 @LockIdNameAttribute
 public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameters>
-        implements QuotaStorageDependent {
+        implements QuotaStorageDependent, TaskHandlerCommand<ImportVmParameters> {
     private static final Log log = LogFactory.getLog(ImportVmCommand.class);
 
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
@@ -130,6 +139,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
         return super.getVmId();
     }
+
     @Override
     public VM getVm() {
         if (getParameters().isImportAsNewEntity()) {
@@ -357,6 +367,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
         Map<StorageDomain, Integer> domainMap = getSpaceRequirementsForStorageDomains(imageList);
 
+        if (!setDomainsForMemoryImages(domainMap)) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
+        }
+
         for (Map.Entry<StorageDomain, Integer> entry : domainMap.entrySet()) {
             if (!doesStorageDomainhaveSpaceForRequest(entry.getKey(), entry.getValue())) {
                 return false;
@@ -372,6 +386,70 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
 
         return true;
+    }
+
+    private Set<String> getMemoryVolumesToBeImported() {
+        Set<String> memories = new HashSet<String>();
+        for (Snapshot snapshot : getVm().getSnapshots()) {
+            memories.add(snapshot.getMemoryVolume());
+        }
+        memories.remove(StringUtils.EMPTY);
+        return memories;
+    }
+
+    /**
+     * This method fills the given map of domain to the required size for storing memory images
+     * within it, and also update the memory volume in each snapshot that has memory volume with
+     * the right storage pool and storage domain where it is going to be imported.
+     *
+     * @param domain2requiredSize
+     *           Maps domain to size required for storing memory volumes in it
+     * @return true if we managed to assign storage domain for every memory volume, false otherwise
+     */
+    private boolean setDomainsForMemoryImages(Map<StorageDomain, Integer> domain2requiredSize) {
+        Map<String, String> handledMemoryVolumes = new HashMap<String, String>();
+        for (Snapshot snapshot : getVm().getSnapshots()) {
+            String memoryVolume = snapshot.getMemoryVolume();
+            if (memoryVolume.isEmpty()) {
+                continue;
+            }
+
+            if (handledMemoryVolumes.containsKey(memoryVolume)) {
+                // replace the volume representation with the one with the correct domain & pool
+                snapshot.setMemoryVolume(handledMemoryVolumes.get(memoryVolume));
+                continue;
+            }
+
+            VM vm = getVmFromSnapshot(snapshot);
+            int requiredSizeForMemory = (int) Math.ceil((vm.getTotalMemorySizeInBytes() +
+                    HibernateVmCommand.META_DATA_SIZE_IN_BYTES) * 1.0 / BYTES_IN_GB);
+            StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(
+                    getParameters().getStoragePoolId(),requiredSizeForMemory, domain2requiredSize);
+            if (storageDomain == null) {
+                return false;
+            }
+            domain2requiredSize.put(storageDomain,
+                    domain2requiredSize.get(storageDomain) + requiredSizeForMemory);
+            String modifiedMemoryVolume = createMemoryVolumeStringWithGivenDomainAndPool(
+                    memoryVolume, storageDomain, getParameters().getStoragePoolId());
+            // replace the volume representation with the one with the correct domain & pool
+            snapshot.setMemoryVolume(modifiedMemoryVolume);
+            // save it in case we'll find other snapshots with the same memory volume
+            handledMemoryVolumes.put(memoryVolume, modifiedMemoryVolume);
+        }
+        return true;
+    }
+
+    /**
+     * Modified the given memory volume String representation to have the given storage
+     * pool and storage domain
+     */
+    private String createMemoryVolumeStringWithGivenDomainAndPool(String originalMemoryVolume,
+            StorageDomain storageDomain, Guid storagePoolId) {
+        List<Guid> guids = GuidUtils.getGuidListFromString(originalMemoryVolume);
+        return String.format("%1$s,%2$s,%3$s,%4$s,%5$s,%6$s",
+                storageDomain.getId().toString(), storagePoolId.toString(),
+                guids.get(2), guids.get(3), guids.get(4), guids.get(5));
     }
 
     /**
@@ -588,39 +666,84 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     protected void moveOrCopyAllImageGroups() {
         moveOrCopyAllImageGroups(getVm().getId(),
                 ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false));
+        copyAllMemoryImages(getVm().getId());
+    }
+
+    private void copyAllMemoryImages(Guid containerId) {
+        for (String memoryVolumes : getMemoryVolumesToBeImported()) {
+            List<Guid> guids = GuidUtils.getGuidListFromString(memoryVolumes);
+
+            // copy the memory dump image
+            VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
+                    VdcActionType.CopyImageGroup,
+                    buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
+                            containerId, guids.get(0), guids.get(2), guids.get(3)),
+                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            if (!vdcRetValue.getSucceeded()) {
+                throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
+            }
+            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
+
+            // copy the memory configuration (of the VM) image
+            vdcRetValue = Backend.getInstance().runInternalAction(
+                    VdcActionType.CopyImageGroup,
+                    buildMoveOrCopyImageGroupParametersForMemoryConfImage(
+                            containerId, guids.get(0), guids.get(4), guids.get(5)),
+                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            if (!vdcRetValue.getSucceeded()) {
+                throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
+            }
+            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
+        }
+    }
+
+    private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForMemoryDumpImage(Guid containerID,
+            Guid storageId, Guid imageId, Guid volumeId) {
+        MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID,
+                imageId, volumeId, imageId, volumeId, storageId, getMoveOrCopyImageOperation());
+        params.setParentCommand(getActionType());
+        params.setCopyVolumeType(CopyVolumeType.LeafVol);
+        params.setForceOverride(getParameters().getForceOverride());
+        params.setSourceDomainId(getParameters().getSourceDomainId());
+        params.setStoragePoolId(getParameters().getStoragePoolId());
+        params.setImportEntity(true);
+        params.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
+        params.setParentParameters(getParameters());
+
+        if (getStoragePool().getStorageType().isBlockDomain()) {
+            params.setUseCopyCollapse(true);
+            params.setVolumeType(VolumeType.Preallocated);
+            params.setVolumeFormat(VolumeFormat.RAW);
+        }
+
+        return params;
+    }
+
+    private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForMemoryConfImage(Guid containerID,
+            Guid storageId, Guid imageId, Guid volumeId) {
+        MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID,
+                imageId, volumeId, imageId, volumeId, storageId, getMoveOrCopyImageOperation());
+        params.setParentCommand(getActionType());
+        // This volume is always of type 'sparse' and format 'cow' so no need to convert,
+        // and there're no snapshots for it so no reason to use copy collapse
+        params.setUseCopyCollapse(false);
+        params.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
+        params.setCopyVolumeType(CopyVolumeType.LeafVol);
+        params.setForceOverride(getParameters().getForceOverride());
+        params.setParentParameters(getParameters());
+        params.setSourceDomainId(getParameters().getSourceDomainId());
+        params.setStoragePoolId(getParameters().getStoragePoolId());
+        params.setImportEntity(true);
+        return params;
     }
 
     @Override
     protected void moveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         int i = 0;
         for (DiskImage disk : disks) {
-            Guid destinationDomain = imageToDestinationDomainMap.get(diskGuidList.get(i));
-            MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID,
-                    diskGuidList.get(i),
-                    imageGuidList.get(i),
-                    disk.getId(),
-                    disk.getImageId(),
-                    destinationDomain, getMoveOrCopyImageOperation());
-            p.setParentCommand(getActionType());
-            p.setUseCopyCollapse(getParameters().getCopyCollapse());
-            p.setCopyVolumeType(CopyVolumeType.LeafVol);
-            p.setForceOverride(getParameters().getForceOverride());
-            p.setSourceDomainId(getParameters().getSourceDomainId());
-            p.setStoragePoolId(getParameters().getStoragePoolId());
-            p.setImportEntity(true);
-            p.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
-            p.setQuotaId(disk.getQuotaId() != null ? disk.getQuotaId() : getParameters().getQuotaId());
-            if (getParameters().getVm().getDiskMap() != null
-                    && getParameters().getVm().getDiskMap().containsKey(diskGuidList.get(i))) {
-                DiskImageBase diskImageBase =
-                        (DiskImageBase) getParameters().getVm().getDiskMap().get(diskGuidList.get(i));
-                p.setVolumeType(diskImageBase.getVolumeType());
-                p.setVolumeFormat(diskImageBase.getVolumeFormat());
-            }
-            p.setParentParameters(getParameters());
             VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
                     VdcActionType.CopyImageGroup,
-                    p,
+                    buildMoveOrCopyImageGroupParametersForDisk(disk, containerID, i++),
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             if (!vdcRetValue.getSucceeded()) {
                 throw new VdcBLLException(vdcRetValue.getFault().getError(),
@@ -628,8 +751,35 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
 
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
-            i++;
         }
+    }
+
+    private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForDisk(DiskImage disk, Guid containerID, int i) {
+        Guid destinationDomain = imageToDestinationDomainMap.get(diskGuidList.get(i));
+        MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID,
+                diskGuidList.get(i),
+                imageGuidList.get(i),
+                disk.getId(),
+                disk.getImageId(),
+                destinationDomain, getMoveOrCopyImageOperation());
+        params.setParentCommand(getActionType());
+        params.setUseCopyCollapse(getParameters().getCopyCollapse());
+        params.setCopyVolumeType(CopyVolumeType.LeafVol);
+        params.setForceOverride(getParameters().getForceOverride());
+        params.setSourceDomainId(getParameters().getSourceDomainId());
+        params.setStoragePoolId(getParameters().getStoragePoolId());
+        params.setImportEntity(true);
+        params.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
+        params.setQuotaId(disk.getQuotaId() != null ? disk.getQuotaId() : getParameters().getQuotaId());
+        if (getParameters().getVm().getDiskMap() != null
+                && getParameters().getVm().getDiskMap().containsKey(diskGuidList.get(i))) {
+            DiskImageBase diskImageBase =
+                    (DiskImageBase) getParameters().getVm().getDiskMap().get(diskGuidList.get(i));
+            params.setVolumeType(diskImageBase.getVolumeType());
+            params.setVolumeFormat(diskImageBase.getVolumeFormat());
+        }
+        params.setParentParameters(getParameters());
+        return params;
     }
 
     protected void addVmImagesAndSnapshots() {
@@ -672,8 +822,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
 
             Snapshot snapshot = addActiveSnapshot(snapshotId);
-            getVm().getSnapshots().clear();
-            getVm().getSnapshots().add(snapshot);
+            getVm().setSnapshots(Arrays.asList(snapshot));
         } else {
             Guid snapshotId = null;
             for (DiskImage disk : getVm().getImages()) {
@@ -741,7 +890,27 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
      * @return The generated snapshot
      */
     protected Snapshot addActiveSnapshot(Guid snapshotId) {
-        return new SnapshotsManager().addActiveSnapshot(snapshotId, getVm(), getCompensationContext());
+        return new SnapshotsManager().
+                addActiveSnapshot(snapshotId, getVm(),
+                        getMemoryVolumeForNewActiveSnapshot(),
+                        getCompensationContext());
+    }
+
+    private String getMemoryVolumeForNewActiveSnapshot() {
+        return getParameters().isImportAsNewEntity() ?
+                // We currently don't support using memory that was
+                // saved when a snapshot was taken for VM with different id
+                StringUtils.EMPTY
+                : getMemoryVolumeFromActiveSnapshotInExportDomain();
+    }
+
+    private String getMemoryVolumeFromActiveSnapshotInExportDomain() {
+        for (Snapshot snapshot : getVm().getSnapshots()) {
+            if (snapshot.getType() == SnapshotType.ACTIVE)
+                return snapshot.getMemoryVolume();
+        }
+        log.warnFormat("VM {0} doesn't have active snapshot in export domain", getVmId());
+        return StringUtils.EMPTY;
     }
 
     /**
@@ -921,23 +1090,28 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     @Override
     protected void endWithFailure() {
-        setVm(null); // Going to try and refresh the VM by re-loading
-        // it form DB
-        VM vmFromParams = getParameters().getVm();
+        // Going to try and refresh the VM by re-loading it form DB
+        setVm(null);
+
         if (getVm() != null) {
             endActionOnAllImageGroups();
             removeVmNetworkInterfaces();
-            new SnapshotsManager().removeSnapshots(getVm().getId());
+            removeVmSnapshots(getVm());
             getVmDynamicDAO().remove(getVmId());
             getVmStatisticsDAO().remove(getVmId());
-            new SnapshotsManager().removeSnapshots(getVmId());
             getVmStaticDAO().remove(getVmId());
             setSucceeded(true);
         } else {
-            setVm(vmFromParams); // Setting VM from params, for logging purposes
+            setVm(getParameters().getVm()); // Setting VM from params, for logging purposes
             // No point in trying to end action again, as the imported VM does not exist in the DB.
             getReturnValue().setEndActionTryAgain(false);
         }
+    }
+
+    private void removeVmSnapshots(VM vm) {
+        Collection<String> memoriesOfRemovedSnapshots =
+                new SnapshotsManager().removeSnapshots(vm.getId());
+        new MemoryImageRemover(vm, this).removeMemoryVolumes(memoriesOfRemovedSnapshots);
     }
 
     protected void removeVmNetworkInterfaces() {
@@ -1036,5 +1210,59 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
         }
         return list;
+    }
+
+    ///////////////////////////////////////
+    // TaskHandlerCommand Implementation //
+    ///////////////////////////////////////
+
+    public ImportVmParameters getParameters() {
+        return super.getParameters();
+    }
+
+    public VdcActionType getActionType() {
+        return super.getActionType();
+    }
+
+    public VdcReturnValueBase getReturnValue() {
+        return super.getReturnValue();
+    }
+
+    public ExecutionContext getExecutionContext() {
+        return super.getExecutionContext();
+    }
+
+    public void setExecutionContext(ExecutionContext executionContext) {
+        super.setExecutionContext(executionContext);
+    }
+
+    public Guid createTask(Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand,
+            VdcObjectType entityType,
+            Guid... entityIds) {
+        return super.createTaskInCurrentTransaction(taskId, asyncTaskCreationInfo, parentCommand, entityType, entityIds);
+    }
+
+    public Guid createTask(Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand) {
+        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
+    }
+
+    public ArrayList<Guid> getTaskIdList() {
+        return super.getTaskIdList();
+    }
+
+    public void preventRollback() {
+        throw new NotImplementedException();
+    }
+
+    public Guid persistAsyncTaskPlaceHolder() {
+        return super.persistAsyncTaskPlaceHolder(getActionType());
+    }
+
+    public Guid persistAsyncTaskPlaceHolder(String taskKey) {
+        return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }
 }

@@ -331,6 +331,11 @@ public class OvfVmWriter extends OvfWriter {
             _writer.writeElement("Type", snapshot.getType().name());
             _writer.writeElement("Description", snapshot.getDescription());
             _writer.writeElement("CreationDate", OvfParser.LocalDateToUtcDateString(snapshot.getCreationDate()));
+
+            if (!snapshot.getMemoryVolume().isEmpty()) {
+                _writer.writeElement("Memory", snapshot.getMemoryVolume());
+            }
+
             if (snapshot.getAppList() != null) {
                 _writer.writeElement("ApplicationList", snapshot.getAppList());
             }

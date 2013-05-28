@@ -421,16 +421,19 @@ public final class ImagesHandler {
 
     public static boolean CheckImageConfiguration(StorageDomainStatic storageDomain,
             DiskImageBase diskInfo, List<String> messages) {
-        boolean result = true;
-        if ((diskInfo.getVolumeType() == VolumeType.Preallocated && diskInfo.getVolumeFormat() == VolumeFormat.COW)
-                || (storageDomain.getStorageType().isBlockDomain() && diskInfo.getVolumeType() == VolumeType.Sparse && diskInfo.getVolumeFormat() == VolumeFormat.RAW)
-                || diskInfo.getVolumeFormat() == VolumeFormat.Unassigned
-                || diskInfo.getVolumeType() == VolumeType.Unassigned) {
+        if (!checkImageConfiguration(storageDomain, diskInfo.getVolumeType(), diskInfo.getVolumeFormat())) {
             // not supported
-            result = false;
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED.toString());
+            return false;
         }
-        return result;
+        return true;
+    }
+
+    public static boolean checkImageConfiguration(StorageDomainStatic storageDomain, VolumeType volumeType, VolumeFormat volumeFormat) {
+        return !((volumeType == VolumeType.Preallocated && volumeFormat == VolumeFormat.COW)
+                || (storageDomain.getStorageType().isBlockDomain() && volumeType == VolumeType.Sparse && volumeFormat == VolumeFormat.RAW)
+                || volumeFormat == VolumeFormat.Unassigned
+                || volumeType == VolumeType.Unassigned);
     }
 
     public static boolean CheckImagesConfiguration(Guid storageDomainId,

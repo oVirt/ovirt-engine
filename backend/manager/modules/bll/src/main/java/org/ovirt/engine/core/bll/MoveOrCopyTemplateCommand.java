@@ -12,6 +12,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -26,9 +27,11 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -186,6 +189,19 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                 return params;
             }
         });
+    }
+
+    protected VM getVmFromSnapshot(Snapshot snapshot) {
+        String vmConfiguration = snapshot.getVmConfiguration();
+        // active snapshot
+        if (vmConfiguration == null) {
+            return getVm();
+        }
+        else {
+            VM vm = new VM();
+            new SnapshotsManager().updateVmFromConfiguration(vm, vmConfiguration);
+            return vm;
+        }
     }
 
     @Override

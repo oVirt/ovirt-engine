@@ -55,7 +55,8 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.CreateImage,
-                        new CreateImageVDSCommandParameters(vm.getStoragePoolId(),
+                        new CreateImageVDSCommandParameters(
+                                storagePool.getId(),
                                 storageDomainId,
                                 vmConfImageGroupId,
                                 HibernateVmCommand.META_DATA_SIZE_IN_BYTES,
@@ -63,8 +64,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                                 VolumeFormat.COW,
                                 vmConfVolumeId,
                                 "",
-                                storagePool.getcompatibility_version()
-                                .toString()));
+                                storagePool.getcompatibility_version().toString()));
 
         if (!retVal.getSucceeded()) {
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError,
