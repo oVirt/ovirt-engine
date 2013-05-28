@@ -53,6 +53,7 @@ public class AddStorageServerConnectionCommandTest {
      public void updatePosixEmptyVFSType() {
         StorageServerConnections newPosixConnection = createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1", StorageType.POSIXFS, null , "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
+        parameters.setStoragePoolId(Guid.Empty);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
     }
@@ -62,6 +63,7 @@ public class AddStorageServerConnectionCommandTest {
         StorageServerConnections newPosixConnection = createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1", StorageType.POSIXFS, "nfs" , "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
+        parameters.setStoragePoolId(Guid.Empty);
         doReturn(true).when(command).InitializeVds();
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }

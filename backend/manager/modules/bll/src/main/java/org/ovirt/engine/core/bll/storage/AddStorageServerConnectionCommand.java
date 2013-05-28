@@ -67,28 +67,30 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = true;
+        if (!super.canDoAction()) {
+            return false;
+        }
+
         StorageServerConnections paramConnection = getParameters().getStorageServerConnection();
         if (paramConnection.getstorage_type() == StorageType.NFS
                 && !new NfsMountPointConstraint().isValid(paramConnection.getconnection(), null)) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID);
+            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID);
         }
-        if (paramConnection.getstorage_type() == StorageType.POSIXFS && (StringUtils.isEmpty(paramConnection.getVfsType()))) {
+        if (paramConnection.getstorage_type() == StorageType.POSIXFS
+                && (StringUtils.isEmpty(paramConnection.getVfsType()))) {
             return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
         }
 
         if (getParameters().getVdsId().equals(Guid.Empty)) {
-            returnValue = InitializeVds();
+            if (!InitializeVds()) {
+                return false;
+            }
         } else if (getVds() == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
-            returnValue = false;
+            return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
         } else if (getVds().getStatus() != VDSStatus.Up) {
-            addCanDoActionMessage(VdcBllMessages.VDS_ADD_STORAGE_SERVER_STATUS_MUST_BE_UP);
-            returnValue = false;
+            return failCanDoAction(VdcBllMessages.VDS_ADD_STORAGE_SERVER_STATUS_MUST_BE_UP);
         }
-
-        return returnValue;
+        return true;
     }
 
     @Override
