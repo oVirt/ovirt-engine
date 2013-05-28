@@ -4,8 +4,6 @@
 	<inherits name='com.google.gwt.core.Core' />
 	<source path="">
 		<!--======================COMPAT====================== -->
-		<include name="compat/Encoding.java" />
-		<include name="compat/Environment.java" />
 		<!--Required by UICommon/Common's business entities -->
 		<include name="compat/Version.java" />
 		<include name="compat/RpmVersion.java" />
@@ -13,24 +11,13 @@
 		<include name="compat/StringHelper.java" />
 		<include name="compat/Guid.java" />
 		<include name="compat/NGuid.java" />
-		<include name="compat/Serializable.java" />
-		<include name="compat/ApplicationException.java" />
-		<!-- Required by common's utils -->
-		<include name="compat/PropertyInfo.java" />
-		<include name="compat/TypeCompat.java" />
 
 		<!-- Referenced directly by UICommon -->
 		<include name="compat/IntegerCompat.java" />
 		<include name="compat/RefObject.java" />
 		<include name="compat/KeyValuePairCompat.java" />
 		<include name="compat/NotImplementedException.java" />
-		<include name="compat/Pipeline.java" />
-		<include name="compat/PipelineCommands.java" />
-		<include name="compat/PipelineReason.java" />
-		<include name="compat/PipelineState.java" />
 		<include name="compat/TimeSpan.java" />
-
-		<include name="compat/XmlRpcStruct.java" />
 
 		<include name="compat/DateTime.java" />
 		<include name="compat/DayOfWeek.java" />
@@ -39,7 +26,6 @@
 		<!-- Required by common->action->VdcActionParametersBase.java -->
 		<include name="compat/TransactionScopeOption.java" />
 		<include name="compat/EnumCompat.java" />
-		<!-- <include name="compat/javax/**" /> -->
 	</source>
 
 	<super-source path="ui/uioverrides" />
