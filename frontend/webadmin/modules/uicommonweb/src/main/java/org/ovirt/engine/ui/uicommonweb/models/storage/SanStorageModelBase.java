@@ -361,7 +361,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         }
 
         ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
-        ArrayList<VdcActionParametersBase> paramerters = new ArrayList<VdcActionParametersBase>();
+        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
 
         IFrontendActionAsyncCallback loginCallback = new IFrontendActionAsyncCallback() {
@@ -384,13 +384,13 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             connection.setport(String.valueOf(model.getPort()));
 
             actionTypes.add(VdcActionType.ConnectStorageToVds);
-            paramerters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
+            parameters.add(new StorageServerConnectionParametersBase(connection, host.getId()));
             callbacks.add(loginCallback);
         }
 
         getContainer().startProgress(null);
 
-        Frontend.RunMultipleActions(actionTypes, paramerters, callbacks, null, this);
+        Frontend.RunMultipleActions(actionTypes, parameters, callbacks, null, this);
     }
 
     private void sanTargetModel_LoggedIn(Object sender, EventArgs args)

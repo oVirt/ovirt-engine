@@ -50,7 +50,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
                         getParameters().getStorageDomainId(), Guid.Empty, getStoragePool()
                                 .getmaster_domain_version()));
         log.info(" Detach storage domain: after detach in vds");
-        diconnectAllHostsInPool();
+        disconnectAllHostsInPool();
 
         log.info(" Detach storage domain: after disconnect storage");
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {

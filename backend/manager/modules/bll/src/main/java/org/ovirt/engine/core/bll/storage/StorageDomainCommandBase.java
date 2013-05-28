@@ -263,7 +263,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         runSynchronizeOperation(new ConnectSingleAsyncOperationFactory());
     }
 
-    protected void diconnectAllHostsInPool() {
+    protected void disconnectAllHostsInPool() {
         runSynchronizeOperation(new RefreshStoragePoolAndDisconnectAsyncOperationFactory());
     }
 
