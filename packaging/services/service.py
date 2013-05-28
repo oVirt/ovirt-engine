@@ -82,31 +82,29 @@ class Base(object):
 
 class ConfigFile(Base):
     """
-    Helper class to simplify getting values from the configuration, specially
-    from the template used to generate the application server configuration
-    file
+    Parsing of shell style config file.
+    Follow closly the java LocalConfig implementaiton.
     """
 
-    # Compile regular expressions:
-    COMMENT_EXPR = re.compile(r'\s*#.*$')
-    BLANK_EXPR = re.compile(r'^\s*$')
-    VALUE_EXPR = re.compile(r'^\s*(?P<key>\w+)\s*=\s*(?P<value>.*?)\s*$')
-    REF_EXPR = re.compile(r'\$\{(?P<ref>\w+)\}')
+    _EMPTY_LINE = re.compile(r'^\s*(#.*|)$')
+    _KEY_VALUE_EXPRESSION = re.compile(r'^\s*(?P<key>\w+)=(?P<value>.*)$')
 
-    def __init__(self, files):
+    def _loadLine(self, line):
+        emptyMatch = self._EMPTY_LINE.search(line)
+        if emptyMatch is None:
+            keyValueMatch = self._KEY_VALUE_EXPRESSION.search(line)
+            if keyValueMatch is None:
+                raise RuntimeError(_('Invalid sytax'))
+            self._values[keyValueMatch.group('key')] = self.expandString(
+                keyValueMatch.group('value')
+            )
+
+    def __init__(self, files=[]):
         super(ConfigFile, self).__init__()
 
-        self._dir = dir
-        # Save the list of files:
-        self.files = files
+        self._values = {}
 
-        # Start with an empty set of values:
-        self.values = {}
-
-        # Merge all the given configuration files, in the same order
-        # given, so that the values in one file are overriden by values
-        # in files appearing later in the list:
-        for file in self.files:
+        for file in files:
             self.loadFile(file)
             for filed in sorted(
                 glob.glob(
@@ -121,77 +119,85 @@ class ConfigFile(Base):
     def loadFile(self, file):
         if os.path.exists(file):
             self._logger.debug("loading config '%s'", file)
-            with open(file, 'r') as f:
-                for line in f:
-                    self.loadLine(line)
+            index = 0
+            try:
+                with open(file, 'r') as f:
+                    for line in f:
+                        index += 1
+                        self._loadLine(line)
+            except Exception as e:
+                self._logger(
+                    "File '%s' index %d error" % (file, index),
+                    exc_info=True,
+                )
+                raise RuntimeError(
+                    _(
+                        "Cannot parse configuration file "
+                        "'{file}' line {line}: {error}"
+                    ).format(
+                        file=file,
+                        line=index,
+                        error=e
+                    )
+                )
 
-    def loadLine(self, line):
-        # Remove comments:
-        commentMatch = self.COMMENT_EXPR.search(line)
-        if commentMatch is not None:
-            line = line[:commentMatch.start()] + line[commentMatch.end():]
+    def expandString(self, value):
+        ret = ""
 
-        # Skip empty lines:
-        emptyMatch = self.BLANK_EXPR.search(line)
-        if emptyMatch is not None:
-            return
+        escape = False
+        inQuotes = False
+        index = 0
+        while (index < len(value)):
+            c = value[index]
+            index += 1
+            if escape:
+                escape = False
+                ret += c
+            else:
+                if c == '\\':
+                    escape = True
+                elif c == '$':
+                    if value[index] != '{':
+                        raise RuntimeError('Malformed variable assignment')
+                    index += 1
+                    i = value.find('}', index)
+                    if i == -1:
+                        raise RuntimeError('Malformed variable assignment')
+                    name = value[index:i]
+                    index = i + 1
+                    ret += self._values.get(name, "")
+                elif c == '"':
+                    inQuotes = not inQuotes
+                elif c in (' ', '#'):
+                    if inQuotes:
+                        ret += c
+                    else:
+                        index = len(value)
+                else:
+                    ret += c
 
-        # Separate name from value:
-        keyValueMatch = self.VALUE_EXPR.search(line)
-        if keyValueMatch is None:
-            return
-        key = keyValueMatch.group('key')
-        value = keyValueMatch.group('value')
+        return ret
 
-        # Strip quotes from value:
-        if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
-            value = value[1:-1]
+    def getstring(self, name, default=None):
+        "alias to get as cheetah.template cannot call get"
+        return self.get(name, default)
 
-        # Expand references to other parameters:
-        while True:
-            refMatch = self.REF_EXPR.search(value)
-            if refMatch is None:
-                break
-            refKey = refMatch.group('ref')
-            refValue = self.values.get(refKey)
-            if refValue is None:
-                break
-            value = '%s%s%s' % (
-                value[:refMatch.start()],
-                refValue,
-                value[refMatch.end():],
-            )
+    def get(self, name, default=None):
+        return self._values.get(name, default)
 
-        # Update the values:
-        self.values[key] = value
-
-    def getString(self, name):
-        text = self.values.get(name)
+    def getboolean(self, name, default=None):
+        text = self.get(name)
         if text is None:
-            raise RuntimeError(
-                _("The parameter '{name}' does not have a value").format(
-                    name=name,
-                )
-            )
-        return text
+            return default
+        else:
+            return text.lower() in ('t', 'true', 'y', 'yes', '1')
 
-    def getBoolean(self, name):
-        return self.getString(name) in ('t', 'true', 'y', 'yes', '1')
-
-    def getInteger(self, name):
-        value = self.getString(name)
-        try:
+    def getinteger(self, name, default=None):
+        value = self.get(name)
+        if value is None:
+            return default
+        else:
             return int(value)
-        except ValueError:
-            raise RuntimeError(
-                _(
-                    "The value '{value}' of parameter '{name}' "
-                    "is not a valid integer"
-                ).format(
-                    name,
-                    value,
-                )
-            )
 
 
 class TempDir(Base):

@@ -38,7 +38,7 @@ class Daemon(service.Daemon):
         # Check that the Java home directory exists and that it contais at
         # least the java executable:
         self.check(
-            name=self._config.getString('JAVA_HOME'),
+            name=self._config.get('JAVA_HOME'),
             directory=True,
         )
         self.check(
@@ -48,7 +48,7 @@ class Daemon(service.Daemon):
 
         # Check the required JBoss directories and files:
         self.check(
-            name=self._config.getString('JBOSS_HOME'),
+            name=self._config.get('JBOSS_HOME'),
             directory=True,
         )
         self.check(
@@ -58,14 +58,14 @@ class Daemon(service.Daemon):
         # Check the required engine directories and files:
         self.check(
             os.path.join(
-                self._config.getString('ENGINE_USR'),
+                self._config.get('ENGINE_USR'),
                 'services',
             ),
             directory=True,
         )
         self.check(
             os.path.join(
-                self._config.getString('ENGINE_LOG'),
+                self._config.get('ENGINE_LOG'),
                 'notifier',
             ),
             directory=True,
@@ -74,7 +74,7 @@ class Daemon(service.Daemon):
         for log in ('notifier.log', 'console.log'):
             self.check(
                 name=os.path.join(
-                    self._config.getString("ENGINE_LOG"),
+                    self._config.get("ENGINE_LOG"),
                     'notifier',
                     log,
                 ),
@@ -113,11 +113,11 @@ class Daemon(service.Daemon):
         )
 
         jbossModulesJar = os.path.join(
-            self._config.getString('JBOSS_HOME'),
+            self._config.get('JBOSS_HOME'),
             'jboss-modules.jar',
         )
         java = os.path.join(
-            self._config.getString('JAVA_HOME'),
+            self._config.get('JAVA_HOME'),
             'bin',
             'java',
         )
@@ -133,7 +133,7 @@ class Daemon(service.Daemon):
         self._engineArgs = [
             'ovirt-engine-notifier',
             '-Dlog4j.configuration=file://%s/notifier/log4j.xml' % (
-                self._config.getString('ENGINE_ETC'),
+                self._config.get('ENGINE_ETC'),
             ),
             '-Djboss.modules.write-indexes=false',
             '-jar', jbossModulesJar,
@@ -149,11 +149,11 @@ class Daemon(service.Daemon):
             'CLASSPATH': '',
             'JAVA_MODULEPATH': ':'.join([
                 os.path.join(
-                    self._config.getString('ENGINE_USR'),
+                    self._config.get('ENGINE_USR'),
                     'modules',
                 ),
                 os.path.join(
-                    self._config.getString('JBOSS_HOME'),
+                    self._config.get('JBOSS_HOME'),
                     'modules',
                 ),
             ]),
@@ -166,7 +166,7 @@ class Daemon(service.Daemon):
     def daemonStdHandles(self):
         consoleLog = open(
             os.path.join(
-                self._config.getString('ENGINE_LOG'),
+                self._config.get('ENGINE_LOG'),
                 'notifier',
                 'console.log'
             ),
@@ -179,10 +179,10 @@ class Daemon(service.Daemon):
             executable=self._executable,
             args=self._engineArgs,
             env=self._engineEnv,
-            stopTime=self._config.getInteger(
+            stopTime=self._config.getinteger(
                 'NOTIFIER_STOP_TIME'
             ),
-            stopInterval=self._config.getInteger(
+            stopInterval=self._config.getinteger(
                 'NOTIFIER_STOP_INTERVAL'
             ),
         )

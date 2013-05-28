@@ -44,7 +44,7 @@
         <formatter>
           <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
         </formatter>
-        <file path="$getString('ENGINE_LOG')/server.log"/>
+        <file path="$getstring('ENGINE_LOG')/server.log"/>
         <rotate-size value="10M"/>
         <max-backup-index value="30"/>
         <append value="true"/>
@@ -56,7 +56,7 @@
         <formatter>
           <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
         </formatter>
-        <file path="$getString('ENGINE_LOG')/engine.log"/>
+        <file path="$getstring('ENGINE_LOG')/engine.log"/>
         <rotate-size value="10M"/>
         <max-backup-index value="30"/>
         <append value="true"/>
@@ -115,17 +115,17 @@
       <datasources>
 
         <datasource jndi-name="java:/ENGINEDataSource" pool-name="ENGINEDataSource" enabled="true">
-          <connection-url><![CDATA[$getString('ENGINE_DB_URL')]]></connection-url>
+          <connection-url><![CDATA[$getstring('ENGINE_DB_URL')]]></connection-url>
           <driver>postgresql</driver>
           <transaction-isolation>TRANSACTION_READ_COMMITTED</transaction-isolation>
           <pool>
-            <min-pool-size>$getInteger('ENGINE_DB_MIN_CONNECTIONS')</min-pool-size>
-            <max-pool-size>$getInteger('ENGINE_DB_MAX_CONNECTIONS')</max-pool-size>
+            <min-pool-size>$getinteger('ENGINE_DB_MIN_CONNECTIONS')</min-pool-size>
+            <max-pool-size>$getinteger('ENGINE_DB_MAX_CONNECTIONS')</max-pool-size>
             <prefill>true</prefill>
           </pool>
           <security>
-            <user-name><![CDATA[$getString('ENGINE_DB_USER')]]></user-name>
-            <password><![CDATA[$getString('ENGINE_DB_PASSWORD')]]></password>
+            <user-name><![CDATA[$getstring('ENGINE_DB_USER')]]></user-name>
+            <password><![CDATA[$getstring('ENGINE_DB_PASSWORD')]]></password>
           </security>
           <statement>
             <prepared-statement-cache-size>100</prepared-statement-cache-size>
@@ -146,7 +146,7 @@
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:deployment-scanner:1.1">
-      <deployment-scanner scan-interval="5000" path="$getString('ENGINE_VAR')/deployments"/>
+      <deployment-scanner scan-interval="5000" path="$getstring('ENGINE_VAR')/deployments"/>
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:ee:1.0"/>
@@ -174,7 +174,7 @@
       </caches>
       <async thread-pool-name="default"/>
       <timer-service thread-pool-name="default">
-        <data-store path="$getString('ENGINE_VAR')/timer-service-data"/>
+        <data-store path="$getstring('ENGINE_VAR')/timer-service-data"/>
       </timer-service>
       <remote connector-ref="remoting-connector" thread-pool-name="default"/>
       <thread-pools>
@@ -270,16 +270,16 @@
     <subsystem xmlns="urn:jboss:domain:threads:1.1"/>
 
     <subsystem xmlns="urn:jboss:domain:web:1.1" native="false" default-virtual-server="default-host">
-      #if $getBoolean('ENGINE_HTTP_ENABLED')
-        <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http" redirect-port="$getInteger('ENGINE_HTTPS_PORT')"/>
+      #if $getboolean('ENGINE_HTTP_ENABLED')
+        <connector name="http" protocol="HTTP/1.1" scheme="http" socket-binding="http" redirect-port="$getinteger('ENGINE_HTTPS_PORT')"/>
       #end if
-      #if $getBoolean('ENGINE_HTTPS_ENABLED')
+      #if $getboolean('ENGINE_HTTPS_ENABLED')
         <connector name="https" protocol="HTTP/1.1" scheme="https" socket-binding="https" secure="true">
-          <ssl name="ssl" password="mypass" certificate-key-file="$getString('ENGINE_PKI')/keys/jboss.p12" keystore-type="PKCS12" key-alias="1" protocol="$getString('ENGINE_HTTPS_PROTOCOLS')" verify-client="false"/>
+          <ssl name="ssl" password="mypass" certificate-key-file="$getstring('ENGINE_PKI')/keys/jboss.p12" keystore-type="PKCS12" key-alias="1" protocol="$getstring('ENGINE_HTTPS_PROTOCOLS')" verify-client="false"/>
         </connector>
       #end if
-      #if $getBoolean('ENGINE_AJP_ENABLED')
-        <connector name="ajp" protocol="AJP/1.3" scheme="http" socket-binding="ajp" redirect-port="$getInteger('ENGINE_PROXY_HTTPS_PORT')"/>
+      #if $getboolean('ENGINE_AJP_ENABLED')
+        <connector name="ajp" protocol="AJP/1.3" scheme="http" socket-binding="ajp" redirect-port="$getinteger('ENGINE_PROXY_HTTPS_PORT')"/>
       #end if
       <virtual-server name="default-host" enable-welcome-root="false">
         <alias name="localhost"/>
@@ -299,14 +299,14 @@
   </interfaces>
 
   <socket-binding-group name="standard-sockets" default-interface="loopback">
-    #if $getBoolean('ENGINE_HTTP_ENABLED')
-      <socket-binding name="http" port="$getInteger('ENGINE_HTTP_PORT')" interface="public"/>
+    #if $getboolean('ENGINE_HTTP_ENABLED')
+      <socket-binding name="http" port="$getinteger('ENGINE_HTTP_PORT')" interface="public"/>
     #end if
-    #if $getBoolean('ENGINE_HTTPS_ENABLED')
-      <socket-binding name="https" port="$getInteger('ENGINE_HTTPS_PORT')" interface="public"/>
+    #if $getboolean('ENGINE_HTTPS_ENABLED')
+      <socket-binding name="https" port="$getinteger('ENGINE_HTTPS_PORT')" interface="public"/>
     #end if
-    #if $getBoolean('ENGINE_AJP_ENABLED')
-      <socket-binding name="ajp" port="$getInteger('ENGINE_AJP_PORT')"/>
+    #if $getboolean('ENGINE_AJP_ENABLED')
+      <socket-binding name="ajp" port="$getinteger('ENGINE_AJP_PORT')"/>
     #end if
     <socket-binding name="remoting" port="8703"/>
     <socket-binding name="txn-recovery-environment" port="8704"/>

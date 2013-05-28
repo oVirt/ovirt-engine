@@ -119,7 +119,7 @@ class Daemon(service.Daemon):
         # Check the required engine directories and files:
         self.check(
             os.path.join(
-                self._config.getString('ENGINE_USR'),
+                self._config.get('ENGINE_USR'),
                 'services',
             ),
             directory=True,
@@ -156,7 +156,7 @@ class Daemon(service.Daemon):
         )
 
     def daemonContext(self):
-        record = self._config.getString('LOG_FILE')
+        record = self._config.get('LOG_FILE')
         if record == 'False':
             record = False # translate to boolean
 
@@ -175,21 +175,21 @@ class Daemon(service.Daemon):
 
         try:
             OvirtWebSocketProxy(
-                listen_host=self._config.getString('PROXY_HOST'),
-                listen_port=self._config.getString('PROXY_PORT'),
-                source_is_ipv6=self._config.getBoolean('SOURCE_IS_IPV6'),
-                verbose=self._config.getBoolean('LOG_VERBOSE'),
+                listen_host=self._config.get('PROXY_HOST'),
+                listen_port=self._config.get('PROXY_PORT'),
+                source_is_ipv6=self._config.getboolean('SOURCE_IS_IPV6'),
+                verbose=self._config.getboolean('LOG_VERBOSE'),
                 ticketDecoder=TicketDecoder(
-                    insecure=not self._config.getBoolean(
+                    insecure=not self._config.getboolean(
                         'FORCE_DATA_VERIFICATION'
                     ),
-                    certificate=self._config.getString(
+                    certificate=self._config.get(
                         'CERT_FOR_DATA_VERIFICATION'
                     )
                 ),
-                cert=self._config.getString('SSL_CERTIFICATE'),
-                key=self._config.getString('SSL_KEY'),
-                ssl_only=self._config.getBoolean('SSL_ONLY'),
+                cert=self._config.get('SSL_CERTIFICATE'),
+                key=self._config.get('SSL_KEY'),
+                ssl_only=self._config.getboolean('SSL_ONLY'),
                 daemon=False,
                 record=record,
                 web=None,

@@ -19,6 +19,7 @@
 """Database plugin."""
 
 
+import re
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -77,7 +78,9 @@ class Plugin(plugin.PluginBase):
                     host=self.environment[osetupcons.DBEnv.HOST],
                     port=self.environment[osetupcons.DBEnv.PORT],
                     user=self.environment[osetupcons.DBEnv.USER],
-                    password=self.environment[osetupcons.DBEnv.PASSWORD],
+                    password=re.escape(
+                        self.environment[osetupcons.DBEnv.PASSWORD]
+                    ),
                     db=self.environment[osetupcons.DBEnv.DATABASE],
                     secured=self.environment[osetupcons.DBEnv.SECURED],
                     securedValidation=self.environment[

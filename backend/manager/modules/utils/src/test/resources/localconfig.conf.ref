@@ -1,0 +1,12 @@
+SENSITIVE_KEYS=
+key01=
+key02=value2
+key03=value31
+key04=value41 value42
+key05=value51"value52"value53
+key06=value61#value62
+key07=value71#value72
+key08=value81#value82
+key09=
+key10=prefix  value2  value31 value41 value42 suffix
+key11=${key02}

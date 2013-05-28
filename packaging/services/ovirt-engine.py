@@ -49,7 +49,7 @@ class Daemon(service.Daemon):
         """Link all the JBoss modules into a temporary directory"""
 
         modulesTmpDir = os.path.join(
-            self._config.getString('ENGINE_TMP'),
+            self._config.get('ENGINE_TMP'),
             'modules',
         )
 
@@ -78,7 +78,7 @@ class Daemon(service.Daemon):
         # Check that the Java home directory exists and that it contais at
         # least the java executable:
         self.check(
-            name=self._config.getString('JAVA_HOME'),
+            name=self._config.get('JAVA_HOME'),
             directory=True,
         )
         self.check(
@@ -88,7 +88,7 @@ class Daemon(service.Daemon):
 
         # Check the required JBoss directories and files:
         self.check(
-            name=self._config.getString('JBOSS_HOME'),
+            name=self._config.get('JBOSS_HOME'),
             directory=True,
         )
         self.check(
@@ -98,18 +98,18 @@ class Daemon(service.Daemon):
         # Check the required engine directories and files:
         self.check(
             os.path.join(
-                self._config.getString('ENGINE_USR'),
+                self._config.get('ENGINE_USR'),
                 'services',
             ),
             directory=True,
         )
         self.check(
-            self._config.getString('ENGINE_CACHE'),
+            self._config.get('ENGINE_CACHE'),
             directory=True,
             writable=True,
         )
         self.check(
-            self._config.getString('ENGINE_TMP'),
+            self._config.get('ENGINE_TMP'),
             directory=True,
             writable=True,
             mustExist=False,
@@ -117,20 +117,20 @@ class Daemon(service.Daemon):
         for dir in ('.', 'content', 'deployments'):
             self.check(
                 os.path.join(
-                    self._config.getString('ENGINE_VAR'),
+                    self._config.get('ENGINE_VAR'),
                     dir
                 ),
                 directory=True,
                 writable=True,
             )
         self.check(
-            self._config.getString('ENGINE_LOG'),
+            self._config.get('ENGINE_LOG'),
             directory=True,
             writable=True,
         )
         self.check(
             name=os.path.join(
-                self._config.getString("ENGINE_LOG"),
+                self._config.get("ENGINE_LOG"),
                 'host-deploy',
             ),
             directory=True,
@@ -138,7 +138,7 @@ class Daemon(service.Daemon):
         )
         for log in ('engine.log', 'console.log', 'server.log'):
             self.check(
-                name=os.path.join(self._config.getString("ENGINE_LOG"), log),
+                name=os.path.join(self._config.get("ENGINE_LOG"), log),
                 mustExist=False,
                 writable=True,
             )
@@ -152,10 +152,10 @@ class Daemon(service.Daemon):
     def _setupEngineApps(self):
 
         # The list of applications to be deployed:
-        for engineApp in self._config.getString('ENGINE_APPS').split():
+        for engineApp in self._config.get('ENGINE_APPS').split():
             # Do nothing if the application is not available:
             engineAppDir = os.path.join(
-                self._config.getString('ENGINE_USR'),
+                self._config.get('ENGINE_USR'),
                 engineApp,
             )
             if not os.path.exists(engineAppDir):
@@ -173,7 +173,7 @@ class Daemon(service.Daemon):
             # Make sure the application is linked in the deployments
             # directory, if not link it now:
             engineAppLink = os.path.join(
-                self._config.getString('ENGINE_VAR'),
+                self._config.get('ENGINE_VAR'),
                 'deployments',
                 engineApp,
             )
@@ -251,11 +251,11 @@ class Daemon(service.Daemon):
         )
 
         jbossModulesJar = os.path.join(
-            self._config.getString('JBOSS_HOME'),
+            self._config.get('JBOSS_HOME'),
             'jboss-modules.jar',
         )
         java = os.path.join(
-            self._config.getString('JAVA_HOME'),
+            self._config.get('JAVA_HOME'),
             'bin',
             'java',
         )
@@ -266,24 +266,24 @@ class Daemon(service.Daemon):
             java=java,
         )
 
-        self._tempDir = service.TempDir(self._config.getString('ENGINE_TMP'))
+        self._tempDir = service.TempDir(self._config.get('ENGINE_TMP'))
         self._tempDir.create()
 
         self._setupEngineApps()
 
         jbossTempDir = os.path.join(
-            self._config.getString('ENGINE_TMP'),
+            self._config.get('ENGINE_TMP'),
             'tmp',
         )
 
         jbossConfigDir = os.path.join(
-            self._config.getString('ENGINE_TMP'),
+            self._config.get('ENGINE_TMP'),
             'config',
         )
 
         jbossModulesTmpDir = self._linkModules(
             os.path.join(
-                self._config.getString('JBOSS_HOME'),
+                self._config.get('JBOSS_HOME'),
                 'modules',
             ),
         )
@@ -294,7 +294,7 @@ class Daemon(service.Daemon):
 
         jbossBootLoggingFile = self._processTemplate(
             template=os.path.join(
-                self._config.getString('ENGINE_USR'),
+                self._config.get('ENGINE_USR'),
                 'services',
                 'ovirt-engine-logging.properties.in'
             ),
@@ -303,7 +303,7 @@ class Daemon(service.Daemon):
 
         jbossConfigFile = self._processTemplate(
             template=os.path.join(
-                self._config.getString('ENGINE_USR'),
+                self._config.get('ENGINE_USR'),
                 'services',
                 'ovirt-engine.xml.in',
             ),
@@ -324,10 +324,10 @@ class Daemon(service.Daemon):
             # Virtual machine options:
             '-server',
             '-XX:+TieredCompilation',
-            '-Xms%s' % self._config.getString('ENGINE_HEAP_MIN'),
-            '-Xmx%s' % self._config.getString('ENGINE_HEAP_MAX'),
-            '-XX:PermSize=%s' % self._config.getString('ENGINE_PERM_MIN'),
-            '-XX:MaxPermSize=%s' % self._config.getString(
+            '-Xms%s' % self._config.get('ENGINE_HEAP_MIN'),
+            '-Xmx%s' % self._config.get('ENGINE_HEAP_MAX'),
+            '-XX:PermSize=%s' % self._config.get('ENGINE_PERM_MIN'),
+            '-XX:MaxPermSize=%s' % self._config.get(
                 'ENGINE_PERM_MAX'
             ),
             '-Djava.net.preferIPv4Stack=true',
@@ -337,14 +337,14 @@ class Daemon(service.Daemon):
         ])
 
         # Add extra system properties provided in the configuration:
-        engineProperties = self._config.getString('ENGINE_PROPERTIES')
+        engineProperties = self._config.get('ENGINE_PROPERTIES')
         for engineProperty in engineProperties.split():
             if not engineProperty.startswith('-D'):
                 engineProperty = '-D' + engineProperty
             self._engineArgs.append(engineProperty)
 
         # Add arguments for remote debugging of the java virtual machine:
-        engineDebugAddress = self._config.getString('ENGINE_DEBUG_ADDRESS')
+        engineDebugAddress = self._config.get('ENGINE_DEBUG_ADDRESS')
         if engineDebugAddress:
             self._engineArgs.append(
                 (
@@ -356,7 +356,7 @@ class Daemon(service.Daemon):
             )
 
         # Enable verbose garbage collection if required:
-        if self._config.getBoolean('ENGINE_VERBOSE_GC'):
+        if self._config.getboolean('ENGINE_VERBOSE_GC'):
             self._engineArgs.extend([
                 '-verbose:gc',
                 '-XX:+PrintGCTimeStamps',
@@ -371,16 +371,16 @@ class Daemon(service.Daemon):
             '-Djboss.modules.system.pkgs=org.jboss.byteman',
             '-Djboss.modules.write-indexes=false',
             '-Djboss.server.default.config=ovirt-engine',
-            '-Djboss.home.dir=%s' % self._config.getString(
+            '-Djboss.home.dir=%s' % self._config.get(
                 'JBOSS_HOME'
             ),
-            '-Djboss.server.base.dir=%s' % self._config.getString(
+            '-Djboss.server.base.dir=%s' % self._config.get(
                 'ENGINE_USR'
             ),
-            '-Djboss.server.data.dir=%s' % self._config.getString(
+            '-Djboss.server.data.dir=%s' % self._config.get(
                 'ENGINE_VAR'
             ),
-            '-Djboss.server.log.dir=%s' % self._config.getString(
+            '-Djboss.server.log.dir=%s' % self._config.get(
                 'ENGINE_LOG'
             ),
             '-Djboss.server.config.dir=%s' % jbossConfigDir,
@@ -393,7 +393,7 @@ class Daemon(service.Daemon):
             # application server if needed:
             '-mp', "%s:%s" % (
                 os.path.join(
-                    self._config.getString('ENGINE_USR'),
+                    self._config.get('ENGINE_USR'),
                     'modules',
                 ),
                 jbossModulesTmpDir,
@@ -411,18 +411,18 @@ class Daemon(service.Daemon):
             'LC_ALL': 'en_US.UTF-8',
             'ENGINE_DEFAULTS': config.ENGINE_DEFAULT_FILE,
             'ENGINE_VARS': config.ENGINE_VARS,
-            'ENGINE_ETC': self._config.getString('ENGINE_ETC'),
-            'ENGINE_LOG': self._config.getString('ENGINE_LOG'),
-            'ENGINE_TMP': self._config.getString('ENGINE_TMP'),
-            'ENGINE_USR': self._config.getString('ENGINE_USR'),
-            'ENGINE_VAR': self._config.getString('ENGINE_VAR'),
-            'ENGINE_CACHE': self._config.getString('ENGINE_CACHE'),
+            'ENGINE_ETC': self._config.get('ENGINE_ETC'),
+            'ENGINE_LOG': self._config.get('ENGINE_LOG'),
+            'ENGINE_TMP': self._config.get('ENGINE_TMP'),
+            'ENGINE_USR': self._config.get('ENGINE_USR'),
+            'ENGINE_VAR': self._config.get('ENGINE_VAR'),
+            'ENGINE_CACHE': self._config.get('ENGINE_CACHE'),
         })
 
     def daemonStdHandles(self):
         consoleLog = open(
             os.path.join(
-                self._config.getString('ENGINE_LOG'),
+                self._config.get('ENGINE_LOG'),
                 'console.log'
             ),
             'w+',
@@ -434,10 +434,10 @@ class Daemon(service.Daemon):
             executable=self._executable,
             args=self._engineArgs,
             env=self._engineEnv,
-            stopTime=self._config.getInteger(
+            stopTime=self._config.getinteger(
                 'ENGINE_STOP_TIME'
             ),
-            stopInterval=self._config.getInteger(
+            stopInterval=self._config.getinteger(
                 'ENGINE_STOP_INTERVAL'
             ),
         )

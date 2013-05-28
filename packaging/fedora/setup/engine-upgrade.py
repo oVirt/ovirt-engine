@@ -3,6 +3,7 @@
 # Imports
 import sys
 import os
+import re
 import signal
 import glob
 import shutil
@@ -1198,7 +1199,7 @@ def updateDatabaseConf():
             if handler.getParam("ENGINE_DB_PASSWORD") is not None:
                 handler.editParam(
                     "ENGINE_DB_PASSWORD",
-                    '"%s"' % utils.getDbPassword(SERVER_ADMIN)
+                    '"%s"' % re.escape(utils.getDbPassword(SERVER_ADMIN))
                 )
                 if handler.getParam("ENGINE_DB_SECURED") is None:
                     handler.editParam(

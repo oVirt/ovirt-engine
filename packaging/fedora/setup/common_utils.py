@@ -1305,7 +1305,7 @@ def editEngineSysconfigDatabase(dbUrl, host, ssl, database, port, user, password
     handler.editParam("ENGINE_DB_PORT", port)
     handler.editParam("ENGINE_DB_DATABASE", database)
     handler.editParam("ENGINE_DB_USER", user)
-    handler.editParam("ENGINE_DB_PASSWORD", password)
+    handler.editParam("ENGINE_DB_PASSWORD", re.escape(password))
     handler.editParam("ENGINE_DB_DRIVER", "org.postgresql.Driver")
     handler.editParam("ENGINE_DB_SECURED", ssl)
     handler.editParam("ENGINE_DB_SECURED_VALIDATION", False)

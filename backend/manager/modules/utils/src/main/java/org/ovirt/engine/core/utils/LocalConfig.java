@@ -29,10 +29,8 @@ public class LocalConfig {
     private static final Logger log = Logger.getLogger(LocalConfig.class);
 
     // Compile regular expressions:
-    private static final Pattern COMMENT_EXPR = Pattern.compile("\\s*#.*$");
-    private static final Pattern BLANK_EXPR = Pattern.compile("^\\s*$");
-    private static final Pattern VALUE_EXPR = Pattern.compile("^\\s*(\\w+)\\s*=\\s*(.*?)\\s*$");
-    private static final Pattern REF_EXPR = Pattern.compile("\\$\\{(\\w+)\\}");
+    private static final Pattern EMPTY_LINE = Pattern.compile("^\\s*(#.*)?$");
+    private static final Pattern KEY_VALUE_EXPRESSION = Pattern.compile("^\\s*(\\w+)=(.*)$");
 
     // The properties object storing the current values of the parameters:
     private Map<String, String> values = new HashMap<String, String>();
@@ -127,17 +125,25 @@ public class LocalConfig {
 
         // Load the file:
         BufferedReader reader = null;
+        int index = 0;
         try {
             reader = new BufferedReader(new FileReader(file));
             String line = null;
             while ((line = reader.readLine()) != null) {
+                index++;
                 loadLine(line);
             }
             log.info("Loaded file \"" + file.getAbsolutePath() + "\".");
         }
-        catch (IOException exception) {
-            log.error("Can't load file \"" + file.getAbsolutePath() + "\".", exception);
-            throw exception;
+        catch (Exception e) {
+            String msg = String.format(
+                "Can't load file '%s' line %d: %s",
+                file.getAbsolutePath(),
+                index,
+                e
+            );
+            log.error(msg, e);
+            throw new RuntimeException(msg, e);
         }
         finally {
             if (reader != null) {
@@ -158,20 +164,57 @@ public class LocalConfig {
      * @param value String.
      */
     public String expandString(String value) {
-        for (;;) {
-            Matcher refMatch = REF_EXPR.matcher(value);
-            if (!refMatch.find()) {
-                break;
+        StringBuilder ret = new StringBuilder();
+
+        boolean escape = false;
+        boolean inQuotes = false;
+        int index = 0;
+        while (index < value.length()) {
+            char c = value.charAt(index++);
+            if (escape) {
+                escape = false;
+                ret.append(c);
             }
-            String refKey = refMatch.group(1);
-            String refValue = values.get(refKey);
-            if (refValue == null) {
-                break;
+            else {
+                switch(c) {
+                    case '\\':
+                        escape = true;
+                    break;
+                    case '$':
+                        if (value.charAt(index++) != '{') {
+                            throw new RuntimeException("Malformed variable assignement");
+                        }
+                        int i = value.indexOf('}', index);
+                        if (i == -1) {
+                            throw new RuntimeException("Malformed variable assignement");
+                        }
+                        String name = value.substring(index, i);
+                        index = i+1;
+                        String v = values.get(name);
+                        if (v != null) {
+                            ret.append(v);
+                        }
+                    break;
+                    case '"':
+                        inQuotes = !inQuotes;
+                    break;
+                    case ' ':
+                    case '#':
+                        if (inQuotes) {
+                            ret.append(c);
+                        }
+                        else {
+                            index = value.length();
+                        }
+                    break;
+                    default:
+                        ret.append(c);
+                    break;
+                }
             }
-            value = value.substring(0, refMatch.start()) + refValue + value.substring(refMatch.end());
         }
 
-        return value;
+        return ret.toString();
     }
 
     /**
@@ -181,36 +224,18 @@ public class LocalConfig {
      * @param line the line from the properties file
      */
     private void loadLine(String line) throws IOException {
-        // Remove comments:
-        Matcher commentMatch = COMMENT_EXPR.matcher(line);
-        if (commentMatch.find()) {
-            line = line.substring(0, commentMatch.start()) + line.substring(commentMatch.end());
+        Matcher blankMatch = EMPTY_LINE.matcher(line);
+        if (!blankMatch.find()) {
+            Matcher keyValueMatch = KEY_VALUE_EXPRESSION.matcher(line);
+            if (!keyValueMatch.find()) {
+                throw new RuntimeException("Invalid line");
+            }
+
+            values.put(
+                keyValueMatch.group(1),
+                expandString(keyValueMatch.group(2))
+            );
         }
-
-        // Skip empty lines:
-        Matcher blankMatch = BLANK_EXPR.matcher(line);
-        if (blankMatch.find()) {
-            return;
-        }
-
-        // Separate name from value:
-        Matcher keyValueMatch = VALUE_EXPR.matcher(line);
-        if (!keyValueMatch.find()) {
-            return;
-        }
-        String key = keyValueMatch.group(1);
-        String value = keyValueMatch.group(2);
-
-        // Strip quotes from value:
-        if (value.length() >= 2 && value.startsWith("\"") && value.endsWith("\"")) {
-            value = value.substring(1, value.length() - 1);
-        }
-
-        // Expand nested variables
-        value = expandString(value);
-
-        // Update the values:
-        values.put(key, value);
     }
 
     /**

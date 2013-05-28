@@ -33,46 +33,23 @@ from otopi import base
 
 
 class ConfigFile(base.Base):
-    _COMMENT_EXPR = re.compile(r'\s*#.*$')
-    _BLANK_EXPR = re.compile(r'^\s*$')
-    _VALUE_EXPR = re.compile(r'^\s*(?P<key>\w+)\s*=\s*(?P<value>.*?)\s*$')
-    _REF_EXPR = re.compile(r'\$\{(?P<ref>\w+)\}')
+    """
+    Parsing of shell style config file.
+    Follow closly the java LocalConfig implementaiton.
+    """
+
+    _EMPTY_LINE = re.compile(r'^\s*(#.*|)$')
+    _KEY_VALUE_EXPRESSION = re.compile(r'^\s*(?P<key>\w+)=(?P<value>.*)$')
 
     def _loadLine(self, line):
-        # Remove comments:
-        commentMatch = self._COMMENT_EXPR.search(line)
-        if commentMatch is not None:
-            line = line[:commentMatch.start()] + line[commentMatch.end():]
-
-        # Skip empty lines:
-        emptyMatch = self._BLANK_EXPR.search(line)
+        emptyMatch = self._EMPTY_LINE.search(line)
         if emptyMatch is None:
-            # Separate name from value:
-            keyValueMatch = self._VALUE_EXPR.search(line)
-            if keyValueMatch is not None:
-                key = keyValueMatch.group('key')
-                value = keyValueMatch.group('value')
-
-                # Strip quotes from value:
-                if len(value) >= 2 and value[0] == '"' and value[-1] == '"':
-                    value = value[1:-1]
-
-                # Expand references to other parameters:
-                while True:
-                    refMatch = self._REF_EXPR.search(value)
-                    if refMatch is None:
-                        break
-                    refKey = refMatch.group('ref')
-                    refValue = self._values.get(refKey)
-                    if refValue is None:
-                        break
-                    value = '%s%s%s' % (
-                        value[:refMatch.start()],
-                        refValue,
-                        value[refMatch.end():],
-                    )
-
-                self._values[key] = value
+            keyValueMatch = self._KEY_VALUE_EXPRESSION.search(line)
+            if keyValueMatch is None:
+                raise RuntimeError(_('Invalid sytax'))
+            self._values[keyValueMatch.group('key')] = self.expandString(
+                keyValueMatch.group('value')
+            )
 
     def __init__(self, files=[]):
         super(ConfigFile, self).__init__()
@@ -94,9 +71,68 @@ class ConfigFile(base.Base):
     def loadFile(self, file):
         if os.path.exists(file):
             self.logger.debug("loading config '%s'", file)
-            with open(file, 'r') as f:
-                for line in f:
-                    self._loadLine(line)
+            index = 0
+            try:
+                with open(file, 'r') as f:
+                    for line in f:
+                        index += 1
+                        self._loadLine(line)
+            except Exception as e:
+                self.logger(
+                    "File '%s' index %d error" % (file, index),
+                    exc_info=True,
+                )
+                raise RuntimeError(
+                    _(
+                        "Cannot parse configuration file "
+                        "'{file}' line {line}: {error}"
+                    ).format(
+                        file=file,
+                        line=index,
+                        error=e
+                    )
+                )
+
+    def expandString(self, value):
+        ret = ""
+
+        escape = False
+        inQuotes = False
+        index = 0
+        while (index < len(value)):
+            c = value[index]
+            index += 1
+            if escape:
+                escape = False
+                ret += c
+            else:
+                if c == '\\':
+                    escape = True
+                elif c == '$':
+                    if value[index] != '{':
+                        raise RuntimeError('Malformed variable assignment')
+                    index += 1
+                    i = value.find('}', index)
+                    if i == -1:
+                        raise RuntimeError('Malformed variable assignment')
+                    name = value[index:i]
+                    index = i + 1
+                    ret += self._values.get(name, "")
+                elif c == '"':
+                    inQuotes = not inQuotes
+                elif c in (' ', '#'):
+                    if inQuotes:
+                        ret += c
+                    else:
+                        index = len(value)
+                else:
+                    ret += c
+
+        return ret
+
+    def getstring(self, name, default=None):
+        "alias to get as cheetah.template cannot call get"
+        return self.get(name, default)
 
     def get(self, name, default=None):
         return self._values.get(name, default)
