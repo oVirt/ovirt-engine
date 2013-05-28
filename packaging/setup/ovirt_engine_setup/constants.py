@@ -530,6 +530,7 @@ class CoreEnv(object):
     UNINSTALL_ENABLED_FILE_GROUPS = 'OVESETUP_CORE/uninstallEnabledFileGroups'
     REGISTER_UNINSTALL_GROUPS = 'OVESETUP_CORE/registerUninstallGroups'
     CONFIRM_UNINSTALL_GROUPS = 'OVESETUP_CORE/confirmUninstallGroups'
+    UPGRADE_SUPPORTED_VERSIONS = 'OVESETUP_CORE/upgradeSupportedVersions'
 
     @osetupattrs(
         answerfile=True,

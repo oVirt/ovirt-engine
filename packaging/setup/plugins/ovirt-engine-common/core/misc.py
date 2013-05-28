@@ -73,6 +73,10 @@ class Plugin(plugin.PluginBase):
             osetupcons.CoreEnv.DEVELOPER_MODE,
             None
         )
+        self.environment.setdefault(
+            osetupcons.CoreEnv.UPGRADE_SUPPORTED_VERSIONS,
+            '3.2,3.3'
+        )
 
         if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] is None:
             self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] = False

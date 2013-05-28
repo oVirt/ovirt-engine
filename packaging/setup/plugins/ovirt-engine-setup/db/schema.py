@@ -40,6 +40,45 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
+    def _checkSupportedVersionsPresent(self):
+        # TODO: figure out a better way to do this for the future
+        statement = database.Statement(environment=self.environment)
+        dcVersions = statement.execute(
+            statement="""
+                SELECT compatibility_version FROM storage_pool;
+            """,
+            ownConnection=True,
+            transaction=False,
+        )
+        clusterVersions = statement.execute(
+            statement="""
+                SELECT compatibility_version FROM vds_groups;;
+            """,
+            ownConnection=True,
+            transaction=False,
+        )
+
+        versions = set([
+            x['compatibility_version']
+            for x in dcVersions + clusterVersions
+        ])
+        supported = set([
+            x.strip()
+            for x in self.environment[
+                osetupcons.CoreEnv.UPGRADE_SUPPORTED_VERSIONS
+            ].split(',')
+            if x.strip()
+        ])
+
+        if versions - supported:
+            raise RuntimeError(
+                _(
+                    'Trying to upgrade from unsupported versions: {versions}'
+                ).format(
+                    versions=' '.join(versions - supported)
+                )
+            )
+
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         name=osetupcons.Stages.DB_SCHEMA,
@@ -108,6 +147,7 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _miscUpgrade(self):
+        self._checkSupportedVersionsPresent()
         dbovirtutils = database.OvirtUtils(plugin=self)
         backupFile = dbovirtutils.backup()
 
