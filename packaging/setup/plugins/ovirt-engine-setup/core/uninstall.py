@@ -234,8 +234,10 @@ class Plugin(plugin.PluginBase):
         )
         if not os.path.exists(os.path.dirname(output)):
             os.makedirs(os.path.dirname(output))
-        with open(output, 'w') as f:
-            config.write(f)
+        if config.sections():
+            #avoid to create empty uninstall files
+            with open(output, 'w') as f:
+                config.write(f)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

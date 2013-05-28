@@ -205,7 +205,8 @@ class Plugin(plugin.PluginBase):
                     self._lines.update(
                         getLines(uninstall_section)
                     )
-            unremovable.update(getFiles('unremovable'))
+            if config.has_section('unremovable'):
+                unremovable.update(getFiles('unremovable'))
 
         self._toremove = set(self._files.keys()) - set(unremovable.keys())
         self._tomodifylines = self._lines.keys()
