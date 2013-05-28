@@ -33,7 +33,7 @@ public class JndiAction implements PrivilegedAction {
     private final LdapProviderType ldapProviderType;
     private final StringBuffer userGuid;
     private List<String> ldapServers;
-    private String defaultLdapServerPort;
+    private final String defaultLdapServerPort;
     private final static Logger log = Logger.getLogger(JndiAction.class);
 
     public JndiAction(String userName, String domainName, StringBuffer userGuid, LdapProviderType ldapProviderType, List<String> ldapServers, String defaultLdapServerPort) {
@@ -105,16 +105,19 @@ public class JndiAction implements PrivilegedAction {
                     NamingEnumeration<SearchResult> answer = executeQuery(ctx, controls, prepareQuery());
 
                     while (answer.hasMoreElements()) {
-                        // Print the objectGUID for the user
+                        // Print the objectGUID for the user as well as URI and query path
                         String guid = guidFromResults(answer.next());
                         if (guid == null) {
                             break;
                         }
                         userGuid.append(guid);
-                        log.debug("User guid is: " + userGuid.toString());
+                        logQueryContext(userGuid.toString(), uri.toString(), currentLdapServer);
                         return AuthenticationResult.OK;
                     }
-
+                    // Print user GUID and another logging info only if it was not printed previously in while loop
+                    if (!answer.hasMoreElements()) {
+                        logQueryContext(userGuid.toString(), uri.toString(), currentLdapServer);
+                    }
                     System.out.println("No user in Directory was found for " + userName
                             + ". Trying next LDAP server in list");
                 } else {
@@ -255,4 +258,11 @@ public class JndiAction implements PrivilegedAction {
         return rootDSEData.getDomainDN();
     }
 
+
+    private void logQueryContext(String actualUserGuid, String actualUri, String actualCurrentLdapServer) {
+        // Log all information about query used for authentication
+        log.debug("User guid is: " + actualUserGuid);
+        log.debug("URI is: " + actualUri);
+        log.debug("Complete query path is: " + actualCurrentLdapServer);
+    }
 }
