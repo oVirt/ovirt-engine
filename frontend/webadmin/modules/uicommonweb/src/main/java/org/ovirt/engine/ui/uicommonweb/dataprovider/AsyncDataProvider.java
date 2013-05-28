@@ -98,6 +98,7 @@ import org.ovirt.engine.core.common.queries.IsVmWithSameNameExistParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByAdElementIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationByRoleIdParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
+import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
@@ -2537,6 +2538,17 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(providerType), aQuery);
+    }
+
+    public static void GetProviderCertificateChain(AsyncQuery aQuery, Provider provider) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetProviderCertificateChain, new ProviderQueryParameters(provider), aQuery);
     }
 
     private static void getAllChildVlanInterfaces(Guid vdsID, List<VdsNetworkInterface> ifaces, IFrontendMultipleQueryAsyncCallback callback)

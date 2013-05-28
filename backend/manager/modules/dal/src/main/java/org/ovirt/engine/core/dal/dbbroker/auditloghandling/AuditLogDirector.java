@@ -66,6 +66,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.PROVIDER_UPDATE_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.PROVIDER_REMOVED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.PROVIDER_REMOVAL_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.PROVIDER_CERTIFICATE_CHAIN_IMPORTED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.PROVIDER_CERTIFICATE_CHAIN_IMPORT_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initGlusterSeverities() {

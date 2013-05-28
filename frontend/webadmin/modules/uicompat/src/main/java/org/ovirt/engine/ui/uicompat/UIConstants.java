@@ -709,6 +709,15 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Are you sure you want to Remove the Storage Domain?")
     String areYouSureYouWantToRemoveTheStorageDomainMsg();
 
+    @DefaultStringValue("The provider has the following certificates:\n")
+    String theProviderHasTheFollowingCertificates();
+
+    @DefaultStringValue("Do you approve importing this chain as trusted? (In case the chain consists of only an end certificate, it will be imported as trusted. Otherwise, all certificates will be trusted except the end certificate).")
+    String doYouApproveImportingTheseCertificates();
+
+    @DefaultStringValue("Import provider certificates")
+    String importProviderCertificatesTitle();
+
     @DefaultStringValue("VM(s)")
     String vmsMsg();
 

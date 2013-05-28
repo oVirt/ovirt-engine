@@ -464,7 +464,23 @@ public class Frontend {
             final VdcActionParametersBase parameters,
             final IFrontendActionAsyncCallback callback,
             final Object state) {
-        runActionImpl(actionType, parameters, callback != null ? callback : NULLABLE_ASYNC_CALLBACK, state);
+        runActionImpl(actionType, parameters, callback != null ? callback : NULLABLE_ASYNC_CALLBACK, state, true);
+    }
+
+    /**
+     * Run an action of the specified action type using the passed in parameters, also pass in a state object
+     * @param actionType The action type of the action to perform.
+     * @param parameters The parameters of the action.
+     * @param callback The callback to call when the action is completed.
+     * @param state The state object.
+     * @param showErrorDialog Whether to show a pop-up dialog with the error or not.
+     */
+    public static void RunAction(final VdcActionType actionType,
+            final VdcActionParametersBase parameters,
+            final IFrontendActionAsyncCallback callback,
+            final Object state,
+            final boolean showErrorDialog) {
+        runActionImpl(actionType, parameters, callback != null ? callback : NULLABLE_ASYNC_CALLBACK, state, showErrorDialog);
     }
 
     /**
@@ -473,11 +489,13 @@ public class Frontend {
      * @param parameters The parameters for the action.
      * @param callback The callback to call on failure.
      * @param state The state object.
+     * @param showErrorDialog Whether to show a pop-up dialog with the error or not.
      */
     private static void runActionImpl(final VdcActionType actionType,
             final VdcActionParametersBase parameters,
             final IFrontendActionAsyncCallback callback,
-            final Object state) {
+            final Object state,
+            final boolean showErrorDialog) {
         logger.finer("Invoking async runAction."); //$NON-NLS-1$
         dumpActionDetails(actionType, parameters);
 
@@ -497,9 +515,19 @@ public class Frontend {
             @Override
             public void onSuccess(final VdcReturnValueBase result) {
                 logger.finer("Frontend: sucessfully executed RunAction, determining result!"); //$NON-NLS-1$
-                handleActionResult(actionType, parameters, result, callback, state);
+                handleActionResult(actionType, parameters, result, callback, state, showErrorDialog);
             }
         });
+    }
+
+    /**
+     * {@code RunAction} without callback.
+     * @param actionType The action type of the action to run.
+     * @param parameters The parameters to the action.
+     * @param showErrorDialog Whether to show a pop-up dialog with the error or not.
+     */
+    public static void RunAction(final VdcActionType actionType, final VdcActionParametersBase parameters, final boolean showErrorDialog) {
+        RunAction(actionType, parameters, Frontend.NULLABLE_ASYNC_CALLBACK, null, showErrorDialog);
     }
 
     /**
@@ -775,7 +803,8 @@ public class Frontend {
             VdcActionParametersBase parameters,
             VdcReturnValueBase result,
             IFrontendActionAsyncCallback callback,
-            final Object state) {
+            final Object state,
+            final boolean showErrorDialog) {
         logger.log(Level.FINER, "Retrieved action result from RunAction."); //$NON-NLS-1$
 
         FrontendActionAsyncResult f = new FrontendActionAsyncResult(actionType, parameters, result, state);
@@ -785,7 +814,7 @@ public class Frontend {
             failed.add(result);
             translateErrors(failed);
             callback.executed(f);
-        } else if (result.getIsSyncronious() && result.getSucceeded() == false) {
+        } else if (showErrorDialog && result.getIsSyncronious() && result.getSucceeded() == false) {
             runActionExecutionFailed(actionType, result.getFault());
             callback.executed(f);
 
@@ -815,12 +844,14 @@ public class Frontend {
     private static void runActionExecutionFailed(VdcActionType actionType, VdcFault fault) {
         if (getEventsHandler() != null) {
             // The VdcFault error property takes precedence, if it's null we try to translate the message property
-            String translatedMessage =
-                    vdsmErrorsTranslator.TranslateErrorTextSingle(fault.getError() == null ? fault.getMessage()
-                            : fault.getError().toString());
+            String translatedMessage = translateVdcFault(fault);
             fault.setMessage(translatedMessage);
             getEventsHandler().runActionExecutionFailed(actionType, fault);
         }
+    }
+
+    public static String translateVdcFault(VdcFault fault) {
+        return vdsmErrorsTranslator.TranslateErrorTextSingle(fault.getError() == null ? fault.getMessage() : fault.getError().toString());
     }
 
     public static void Subscribe(VdcQueryType[] queryTypes)

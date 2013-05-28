@@ -16,7 +16,7 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<ProviderModel> {
         HasUiCommandClickHandlers getTestButton();
-        void setTestResultImage(boolean succeeded);
+        void setTestResultImage(String errorMessage);
     }
 
     @Inject
@@ -40,7 +40,7 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                getView().setTestResultImage((Boolean) model.getTestResult().getEntity());
+                getView().setTestResultImage((String) model.getTestResult().getEntity());
             }
         });
     }

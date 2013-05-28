@@ -411,6 +411,8 @@ public enum VdcBllErrors {
     HOST_ALREADY_EXISTS(5027),
     NO_ACTIVE_ISO_DOMAIN_IN_DATA_CENTER(5028),
     PROVIDER_FAILURE(5050),
+    PROVIDER_IMPORT_CERTIFICATE_CHAIN_ERROR(5051),
+    PROVIDER_SSL_FAILURE(5052),
     // Gluster errors
     NO_UP_SERVER_FOUND(7000),
     // error to indicate backend does not recognize the session

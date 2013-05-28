@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
@@ -27,7 +28,8 @@ public class ProviderModule extends AbstractGinModule {
     @Singleton
     public MainModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel> getProviderListProvider(ClientGinjector ginjector,
             final Provider<ProviderPopupPresenterWidget> providerPopupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
         return new MainTabModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel>(ginjector,
                 ProviderListModel.class) {
             @Override
@@ -48,6 +50,8 @@ public class ProviderModule extends AbstractGinModule {
 
                 if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getAddCommand() || lastExecutedCommand == getModel().getEditCommand()) {
+                    return defaultConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
                 }

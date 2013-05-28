@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.provider;
 
+import java.security.cert.Certificate;
+import java.util.List;
+
 
 public interface ProviderProxy {
 
@@ -8,4 +11,11 @@ public interface ProviderProxy {
      * If the connection is unsuccessful, an exception will be thrown.
      */
     void testConnection();
+
+    /**
+     * Get the certificate chain of the provider.<br>
+     * Useful when the provider is secured.
+     * @return List of Certificate objects
+     */
+    List<? extends Certificate> getCertificateChain();
 }

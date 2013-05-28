@@ -143,8 +143,9 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     }
 
     @Override
-    public void setTestResultImage(boolean succeeded) {
-        testResultImage.setResource(succeeded ? resources.logNormalImage() : resources.logErrorImage());
+    public void setTestResultImage(String errorMessage) {
+        testResultImage.setResource(errorMessage.isEmpty() ? resources.logNormalImage() : resources.logErrorImage());
         testResultImage.setStylePrimaryName(style.testResultImageStyle());
+        testResultImage.setTitle(errorMessage);
     }
 }

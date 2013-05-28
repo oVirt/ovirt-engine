@@ -8,10 +8,16 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.Uri;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -31,6 +37,9 @@ public class ProviderModel extends Model {
     private static final String CMD_SAVE = "OnSave"; //$NON-NLS-1$
     private static final String CMD_TEST = "OnTest"; //$NON-NLS-1$
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
+    private static final String CMD_IMPORT_CHAIN = "ImportChain"; //$NON-NLS-1$
+    private static final String CMD_CANCEL_IMPORT = "CancelImport"; //$NON-NLS-1$
+    private static final String EMPTY_ERROR_MESSAGE = ""; //$NON-NLS-1$
 
     private final ListModel sourceListModel;
     private final VdcActionType action;
@@ -170,7 +179,7 @@ public class ProviderModel extends Model {
             getUrl().setEntity(url.getStringRepresentation());
         }
         getUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
-                new UrlValidation(new String[] { Uri.SCHEME_HTTP }) });
+                new UrlValidation(new String[] { Uri.SCHEME_HTTP, Uri.SCHEME_HTTPS }) });
 
         return getName().getIsValid() && getType().getIsValid() && getUrl().getIsValid() && getUsername().getIsValid()
                 && getPassword().getIsValid();
@@ -213,11 +222,88 @@ public class ProviderModel extends Model {
 
             @Override
             public void executed(FrontendActionAsyncResult result) {
-                stopProgress();
                 VdcReturnValueBase res = result.getReturnValue();
-                getTestResult().setEntity(res != null && res.getSucceeded());
+                // If the connection failed on SSL issues, we try to fetch the provider certificate chain, and import it to the engine
+                if (isFailedOnSSL(res)) {
+                    AsyncQuery getCertChainQuery = new AsyncQuery();
+                    getCertChainQuery.asyncCallback = new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object result)
+                        {
+                            if (result != null) {
+                                ConfirmationModel confirmationModel = getImportChainConfirmationModel((String) result);
+                                sourceListModel.setConfirmWindow(confirmationModel);
+                            } else {
+                                stopProgress();
+                                setTestResultValue((VdcQueryReturnValue) result);
+                            }
+                        }
+                    };
+                    AsyncDataProvider.GetProviderCertificateChain(getCertChainQuery, provider);
+                } else {
+                    stopProgress();
+                    setTestResultValue(res);
+                }
+            }
+        }, null, false);
+    }
+
+    private boolean isFailedOnSSL(VdcReturnValueBase res) {
+        return res != null && !res.getSucceeded() && res.getFault() != null && VdcBllErrors.PROVIDER_SSL_FAILURE.equals(res.getFault().getError());
+    }
+
+    private ConfirmationModel getImportChainConfirmationModel(String certChainString) {
+        ConfirmationModel confirmationModel = new ConfirmationModel();
+        confirmationModel.setMessage(ConstantsManager.getInstance().getConstants().theProviderHasTheFollowingCertificates()
+                + certChainString
+                + ConstantsManager.getInstance().getConstants().doYouApproveImportingTheseCertificates());
+        confirmationModel.setTitle(ConstantsManager.getInstance().getConstants().importProviderCertificatesTitle());
+        confirmationModel.setHashName("import_provider_certificates"); //$NON-NLS-1$
+        UICommand importChainCommand = new UICommand(CMD_IMPORT_CHAIN, this);
+        importChainCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        importChainCommand.setIsDefault(false);
+        confirmationModel.getCommands().add(importChainCommand);
+        UICommand cancelImport = new UICommand(CMD_CANCEL_IMPORT, this);
+        cancelImport.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelImport.setIsCancel(true);
+        cancelImport.setIsDefault(true);
+        confirmationModel.getCommands().add(cancelImport);
+        return confirmationModel;
+    }
+
+    private void importChain() {
+        Frontend.RunAction(VdcActionType.ImportProviderCertificateChain,
+                new ProviderParameters(provider),
+                new IFrontendActionAsyncCallback() {
+
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                VdcReturnValueBase res = result.getReturnValue();
+
+                if (res != null && res.getSucceeded()) {
+                    Frontend.RunAction(VdcActionType.TestProviderConnectivity,
+                            new ProviderParameters(provider),
+                            new IFrontendActionAsyncCallback() {
+
+                        @Override
+                        public void executed(FrontendActionAsyncResult result) {
+                            VdcReturnValueBase res = result.getReturnValue();
+                            setTestResultValue(res);
+                            stopProgress();
+                        }
+                    }, null, false);
+                } else {
+                    setTestResultValue(res);
+                    stopProgress();
+                }
             }
         });
+        sourceListModel.setConfirmWindow(null);
+    }
+
+    private void cancelImport() {
+        stopProgress();
+        sourceListModel.setConfirmWindow(null);
     }
 
     @Override
@@ -230,7 +316,39 @@ public class ProviderModel extends Model {
             onTest();
         } else if (StringHelper.stringsEqual(command.getName(), CMD_CANCEL)) {
             cancel();
+        } else if (StringHelper.stringsEqual(command.getName(), CMD_IMPORT_CHAIN)) {
+            importChain();
+        } else if (StringHelper.stringsEqual(command.getName(), CMD_CANCEL_IMPORT)) {
+            cancelImport();
         }
+    }
+
+    private void setTestResultValue(VdcReturnValueBase result) {
+        String errorMessage = EMPTY_ERROR_MESSAGE;
+        if (result == null) {
+            errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
+        } else if (!result.getSucceeded()) {
+            if (result.getFault() != null) {
+                errorMessage = Frontend.translateVdcFault(result.getFault());
+            } else {
+                errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
+            }
+        }
+        getTestResult().setEntity(errorMessage);
+    }
+
+    private void setTestResultValue(VdcQueryReturnValue result) {
+        String errorMessage = EMPTY_ERROR_MESSAGE;
+        if (result == null) {
+            errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
+        } else if (!result.getSucceeded()) {
+            if (result.getExceptionString() != null && !result.getExceptionString().isEmpty()) {
+                errorMessage = result.getExceptionString();
+            } else {
+                errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
+            }
+        }
+        getTestResult().setEntity(errorMessage);
     }
 
 }

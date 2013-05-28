@@ -1,22 +1,20 @@
-package org.ovirt.engine.core.common.action;
+package org.ovirt.engine.core.common.queries;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 
-public class ProviderParameters extends VdcActionParametersBase {
+public class ProviderQueryParameters extends VdcQueryParametersBase {
 
-    private static final long serialVersionUID = 308877238353433739L;
+    private static final long serialVersionUID = 308877238121233739L;
 
     @Valid
-    @NotNull
     private Provider provider;
 
-    public ProviderParameters() {
+    public ProviderQueryParameters() {
     }
 
-    public ProviderParameters(Provider provider) {
+    public ProviderQueryParameters(Provider provider) {
         this.provider = provider;
     }
 
@@ -27,4 +25,5 @@ public class ProviderParameters extends VdcActionParametersBase {
     public void setProvider(Provider provider) {
         this.provider = provider;
     }
+
 }

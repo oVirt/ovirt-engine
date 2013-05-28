@@ -100,7 +100,7 @@ ENGINE_VERBOSE_GC=false
 #
 #   -Dmy.param=my.value -Dmy.flag -Dyour.param=your.value
 #
-ENGINE_PROPERTIES=
+ENGINE_PROPERTIES=jsse.enableSNIExtension=false
 
 #
 # Additional applications to be deployed in the instance of the

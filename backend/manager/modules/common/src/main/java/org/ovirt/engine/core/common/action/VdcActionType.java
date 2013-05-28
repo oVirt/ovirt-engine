@@ -248,6 +248,7 @@ public enum VdcActionType {
     UpdateProvider(1601, false, QuotaDependency.NONE),
     RemoveProvider(1602, false, QuotaDependency.NONE),
     TestProviderConnectivity(1603, false, QuotaDependency.NONE),
+    ImportProviderCertificateChain(1604, false, QuotaDependency.NONE),
 
     AddWatchdog(1700, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
     UpdateWatchdog(1701, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),

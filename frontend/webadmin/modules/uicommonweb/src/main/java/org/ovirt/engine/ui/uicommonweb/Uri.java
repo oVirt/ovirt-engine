@@ -15,6 +15,7 @@ import com.google.gwt.regexp.shared.RegExp;
 public class Uri {
 
     public static final String SCHEME_HTTP = "http"; //$NON-NLS-1$
+    public static final String SCHEME_HTTPS = "https"; //$NON-NLS-1$
 
     private static final RegExp PATTERN_URI =
             RegExp.compile("^(?:(.*)://)?([^/]*)(/.*)?$", "i"); //$NON-NLS-1$ $NON-NLS-2$
