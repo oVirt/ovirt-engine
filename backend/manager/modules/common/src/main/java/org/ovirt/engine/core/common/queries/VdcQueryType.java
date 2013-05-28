@@ -221,6 +221,7 @@ public enum VdcQueryType implements Serializable {
     GetJobByJobId,
     GetJobsByCorrelationId,
     GetJobsByOffset,
+    GetAllJobs,
 
     // Commands
     GetCommandsCompatibilityVersions(VdcQueryAuthType.User),
