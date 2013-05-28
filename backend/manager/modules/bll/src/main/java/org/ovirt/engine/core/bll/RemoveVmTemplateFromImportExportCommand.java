@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -34,7 +32,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportExportParameters> extends
         RemoveVmTemplateCommand<T> {
 
-    private Map<VmTemplate, DiskImageList> templatesFromExport;
+    private Map<VmTemplate, List<DiskImage>> templatesFromExport;
     // this is needed since overriding getVmTemplate()
     private VmTemplate exportTemplate;
 
@@ -47,7 +45,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
     protected boolean canDoAction() {
         boolean retVal = validate(templateExists());
         if (retVal) {
-            DiskImageList images = templatesFromExport.get(LinqUtils.firstOrNull(templatesFromExport.keySet(),
+            List<DiskImage> images = templatesFromExport.get(LinqUtils.firstOrNull(templatesFromExport.keySet(),
                         new Predicate<VmTemplate>() {
                             @Override
                             public boolean eval(VmTemplate t) {
@@ -56,7 +54,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
                         }));
 
             if (images != null) {
-                getParameters().setImages(Arrays.asList(images.getDiskImages()));
+                getParameters().setImages(images);
             } else {
                 retVal = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
@@ -161,7 +159,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
                     VdcQueryType.GetTemplatesFromExportDomain, tempVar);
 
             if (qretVal.getSucceeded()) {
-                templatesFromExport = (Map<VmTemplate, DiskImageList>) qretVal.getReturnValue();
+                templatesFromExport = (Map<VmTemplate, List<DiskImage>>) qretVal.getReturnValue();
                 exportTemplate = LinqUtils.firstOrNull(templatesFromExport.keySet(), new Predicate<VmTemplate>() {
                     @Override
                     public boolean eval(VmTemplate t) {

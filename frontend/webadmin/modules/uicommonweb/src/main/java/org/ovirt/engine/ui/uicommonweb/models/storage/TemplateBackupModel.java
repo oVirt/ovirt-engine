@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
@@ -14,10 +15,9 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -43,7 +43,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class TemplateBackupModel extends VmBackupModel
 {
-    private ArrayList<Map.Entry<VmTemplate, DiskImageList>> extendedItems;
+    private ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> extendedItems;
 
     public TemplateBackupModel()
     {
@@ -305,20 +305,18 @@ public class TemplateBackupModel extends VmBackupModel
                             public void onSuccess(Object model1, Object ReturnValue1)
                             {
                                 TemplateBackupModel backupModel1 = (TemplateBackupModel) model1;
-                                ArrayList<Map.Entry<VmTemplate, DiskImageList>> items =
-                                        new ArrayList<Map.Entry<VmTemplate, DiskImageList>>();
-                                HashMap<VmTemplate, DiskImageList> dictionary =
-                                        (HashMap<VmTemplate, DiskImageList>) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
+                                ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> items =
+                                        new ArrayList<Map.Entry<VmTemplate, List<DiskImage>>>();
+                                HashMap<VmTemplate, List<DiskImage>> dictionary =
+                                        (HashMap<VmTemplate, List<DiskImage>>) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
 
                                 ArrayList<VmTemplate> list = new ArrayList<VmTemplate>();
-                                for (Map.Entry<VmTemplate, DiskImageList> item : dictionary.entrySet())
+                                for (Map.Entry<VmTemplate, List<DiskImage>> item : dictionary.entrySet())
                                 {
                                     items.add(item);
                                     VmTemplate template = item.getKey();
                                     template.setDiskList(new ArrayList<DiskImage>());
-                                    for (DiskImage diskImage : item.getValue().getDiskImages()) {
-                                        template.getDiskList().add(diskImage);
-                                    }
+                                    template.getDiskList().addAll(item.getValue());
                                     list.add(template);
                                 }
                                 backupModel1.setItems(list);

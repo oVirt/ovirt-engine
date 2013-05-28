@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -104,21 +103,20 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     VdcQueryType.GetTemplatesFromExportDomain, tempVar);
             retVal = qretVal.getSucceeded();
             if (retVal) {
-                Map<VmTemplate, DiskImageList> templates = (Map) qretVal.getReturnValue();
-                DiskImageList images = new DiskImageList();
+                Map<VmTemplate, List<DiskImage>> templates = (Map) qretVal.getReturnValue();
+                ArrayList<DiskImage> images = new ArrayList<DiskImage>();
                 for (VmTemplate t : templates.keySet()) {
                     if (t.getId().equals(getVmTemplate().getId())) {
-                        images = templates.get(t);
+                        images = new ArrayList<DiskImage>(templates.get(t));
                         getVmTemplate().setInterfaces(t.getInterfaces());
                         break;
                     }
                 }
-                ArrayList<DiskImage> list = new ArrayList<DiskImage>(Arrays.asList(images.getDiskImages()));
-                getParameters().setImages(list);
-                getVmTemplate().setImages(list);
+                getParameters().setImages(images);
+                getVmTemplate().setImages(images);
                 ensureDomainMap(getParameters().getImages(), getParameters().getDestDomainId());
                 Map<Guid, DiskImage> imageMap = new HashMap<Guid, DiskImage>();
-                for (DiskImage image : list) {
+                for (DiskImage image : images) {
                     StorageDomain storageDomain =
                             getStorageDomain(imageToDestinationDomainMap.get(image.getId()));
                     StorageDomainValidator validator = new StorageDomainValidator(storageDomain);

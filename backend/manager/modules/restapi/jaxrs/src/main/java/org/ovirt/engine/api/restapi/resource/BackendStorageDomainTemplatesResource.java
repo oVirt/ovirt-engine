@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.core.Response;
@@ -12,8 +13,8 @@ import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
 import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -45,10 +46,10 @@ public class BackendStorageDomainTemplatesResource
         GetAllFromExportDomainQueryParameters params =
             new GetAllFromExportDomainQueryParameters(getDataCenterId(storageDomainId), storageDomainId);
 
-        Map<VmTemplate, DiskImageList> ret = getEntity(HashMap.class,
-                                                       VdcQueryType.GetTemplatesFromExportDomain,
-                                                       params,
-                                                       "Templates under storage domain id : " + storageDomainId.toString());
+        Map<VmTemplate, List<DiskImage>> ret = getEntity(HashMap.class,
+                                                         VdcQueryType.GetTemplatesFromExportDomain,
+                                                         params,
+                                                         "Templates under storage domain id : " + storageDomainId.toString());
         return ret.keySet();
     }
 

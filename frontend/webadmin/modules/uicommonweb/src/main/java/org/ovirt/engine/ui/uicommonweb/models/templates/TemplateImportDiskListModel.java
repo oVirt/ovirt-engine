@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 @SuppressWarnings("unused")
 public class TemplateImportDiskListModel extends SearchableListModel
 {
-    private ArrayList<Map.Entry<VmTemplate, DiskImageList>> extendedItems;
+    private ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> extendedItems;
 
     public TemplateImportDiskListModel() {
         setIsTimerDisabled(true);
@@ -29,12 +29,9 @@ public class TemplateImportDiskListModel extends SearchableListModel
         {
             ArrayList<DiskImage> list = new ArrayList<DiskImage>();
             VmTemplate template = ((ImportTemplateData) getEntity()).getTemplate();
-            for (Map.Entry<VmTemplate, DiskImageList> item : extendedItems) {
+            for (Map.Entry<VmTemplate, List<DiskImage>> item : extendedItems) {
                 if (item.getKey().getQueryableId().equals(template.getQueryableId())) {
-                    DiskImageList diskImageList = item.getValue();
-                    for (DiskImage diskImage : diskImageList.getDiskImages()) {
-                        list.add(diskImage);
-                    }
+                    list.addAll(item.getValue());
                     Linq.sort(list, new DiskByAliasComparer());
                     setItems(list);
                     return;
@@ -47,7 +44,7 @@ public class TemplateImportDiskListModel extends SearchableListModel
         }
     }
 
-    public void setExtendedItems(ArrayList<Map.Entry<VmTemplate, DiskImageList>> arrayList) {
+    public void setExtendedItems(ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> arrayList) {
         this.extendedItems = arrayList;
     }
 

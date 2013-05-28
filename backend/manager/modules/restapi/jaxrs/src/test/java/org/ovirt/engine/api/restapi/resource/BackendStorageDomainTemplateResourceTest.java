@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
@@ -20,11 +21,11 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
@@ -315,13 +316,13 @@ public class BackendStorageDomainTemplateResourceTest
         return setUpEntityExpectations(control.createMock(VmTemplate.class), index);
     }
 
-    protected HashMap<VmTemplate, DiskImageList> setUpTemplates(boolean notFound) {
-        HashMap<VmTemplate, DiskImageList> ret = new HashMap<VmTemplate, DiskImageList>();
+    protected HashMap<VmTemplate, List<DiskImage>> setUpTemplates(boolean notFound) {
+        HashMap<VmTemplate, List<DiskImage>> ret = new HashMap<VmTemplate, List<DiskImage>>();
         if (notFound) {
             return ret;
         }
         for (int i = 0; i < NAMES.length; i++) {
-            ret.put(getEntity(i), new DiskImageList());
+            ret.put(getEntity(i), new ArrayList<DiskImage>());
         }
         return ret;
     }

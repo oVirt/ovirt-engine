@@ -16,9 +16,9 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateImportExportParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -131,10 +131,10 @@ public class BackendStorageDomainTemplatesResourceTest
         return ret;
     }
 
-    protected HashMap<VmTemplate, DiskImageList> setUpExportTemplates() {
-        HashMap<VmTemplate, DiskImageList> ret = new LinkedHashMap<VmTemplate, DiskImageList>();
+    protected HashMap<VmTemplate, List<DiskImage>> setUpExportTemplates() {
+        HashMap<VmTemplate, List<DiskImage>> ret = new LinkedHashMap<VmTemplate, List<DiskImage>>();
         for (int i = 0; i < NAMES.length; i++) {
-            ret.put(getEntity(i), new DiskImageList());
+            ret.put(getEntity(i), new ArrayList<DiskImage>());
         }
         return ret;
     }

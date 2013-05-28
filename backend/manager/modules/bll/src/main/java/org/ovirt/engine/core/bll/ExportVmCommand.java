@@ -38,7 +38,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -366,7 +365,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         if (qretVal.getSucceeded()) {
             if (!VmTemplateHandler.BlankVmTemplateId.equals(tmplId)) {
-                Map<VmTemplate, DiskImageList> templates = (Map) qretVal.getReturnValue();
+                Map<VmTemplate, List<DiskImage>> templates = (Map) qretVal.getReturnValue();
                 VmTemplate tmpl = LinqUtils.firstOrNull(templates.keySet(), new Predicate<VmTemplate>() {
                     @Override
                     public boolean eval(VmTemplate vmTemplate) {

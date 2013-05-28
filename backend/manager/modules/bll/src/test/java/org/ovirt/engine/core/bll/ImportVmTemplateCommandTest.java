@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -189,14 +189,14 @@ public class ImportVmTemplateCommandTest {
             VolumeType volumeType,
             ImportVmTemplateCommand command) {
         final VdcQueryReturnValue result = new VdcQueryReturnValue();
-        Map<VmTemplate, DiskImageList> resultMap = new HashMap<VmTemplate, DiskImageList>();
+        Map<VmTemplate, List<DiskImage>> resultMap = new HashMap<VmTemplate, List<DiskImage>>();
 
         DiskImage image = new DiskImage();
         image.setActualSizeInBytes(2);
         image.setvolumeFormat(volumeFormat);
         image.setVolumeType(volumeType);
 
-        resultMap.put(new VmTemplate(), new DiskImageList(Arrays.asList(image)));
+        resultMap.put(new VmTemplate(), Arrays.asList(image));
         result.setReturnValue(resultMap);
         result.setSucceeded(true);
 

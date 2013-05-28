@@ -11,14 +11,13 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForStorageParameters;
 import org.ovirt.engine.core.common.queries.GetAllRelevantQuotasForVdsGroupParameters;
@@ -382,10 +381,10 @@ public class ImportVmModel extends ListWithDetailsModel {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        Map<VmTemplate, DiskImageList> dictionary =
-                                (HashMap<VmTemplate, DiskImageList>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        Map<VmTemplate, List<DiskImage>> dictionary =
+                                (HashMap<VmTemplate, List<DiskImage>>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                         Map<Guid, Guid> tempMap = new HashMap<Guid, Guid>();
-                        for (Entry<VmTemplate, DiskImageList> entry : dictionary.entrySet()) {
+                        for (Entry<VmTemplate, List<DiskImage>> entry : dictionary.entrySet()) {
                             tempMap.put(entry.getKey().getId(), null);
                         }
                         for (Guid templateId : missingTemplateDiskMap.keySet()) {

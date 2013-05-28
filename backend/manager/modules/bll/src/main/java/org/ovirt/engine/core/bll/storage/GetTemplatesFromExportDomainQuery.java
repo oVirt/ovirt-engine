@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.DiskImageList;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -17,16 +16,16 @@ import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
 public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQueryParameters>
-        extends GetAllFromExportDomainQuery<Map<VmTemplate, DiskImageList>, P> {
+        extends GetAllFromExportDomainQuery<Map<VmTemplate, List<DiskImage>>, P> {
 
     public GetTemplatesFromExportDomainQuery(P parameters) {
         super(parameters);
     }
 
     @Override
-    protected Map<VmTemplate, DiskImageList> buildFromOVFs(List<String> ovfList) {
+    protected Map<VmTemplate, List<DiskImage>> buildFromOVFs(List<String> ovfList) {
         OvfManager ovfManager = new OvfManager();
-        Map<VmTemplate, DiskImageList> templates = new HashMap<VmTemplate, DiskImageList>();
+        Map<VmTemplate, List<DiskImage>> templates = new HashMap<VmTemplate, List<DiskImage>>();
 
         for (String ovf : ovfList) {
             try {
@@ -40,7 +39,7 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
                     for (DiskImage disk : diskImages) {
                         template.getDiskMap().put(disk.getId(), disk);
                     }
-                    templates.put(template, new DiskImageList(diskImages));
+                    templates.put(template, diskImages);
                 }
             } catch (OvfReaderException ex) {
                 AuditLogableBase logable = new AuditLogableBase();
