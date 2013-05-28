@@ -1,6 +1,7 @@
 -- Database FK validation
 SET client_min_messages=ERROR;
 DROP TYPE IF EXISTS fk_info_rs CASCADE;
+DROP FUNCTION IF EXISTS fn_db_validate_fks(boolean);
 CREATE TYPE fk_info_rs AS
     (table_name varchar, table_col varchar, fk_table_name varchar, fk_col varchar, fk_violation varchar, fk_status integer);
 CREATE OR REPLACE FUNCTION fn_db_validate_fks(v_fix_it boolean)
