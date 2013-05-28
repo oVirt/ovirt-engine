@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 @SuppressWarnings("serial")
+@NonTransactiveCommandAttribute
 public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParameters> extends
         StorageDomainCommandBase<T> {
 
