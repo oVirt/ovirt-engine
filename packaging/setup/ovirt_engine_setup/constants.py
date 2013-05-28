@@ -278,6 +278,17 @@ class FileLocations(object):
         OVIRT_ENGINE_SYSCONFDIR,
         'uninstall.d'
     )
+    OVIRT_ENGINE_DEPLOYMENTS_DIR = os.path.join(
+        LOCALSTATEDIR,
+        'lib',
+        'ovirt-engine',
+        'deployments',
+    )
+    OVIRT_ENGINE_TMP_DIR = os.path.join(
+        LOCALSTATEDIR,
+        'tmp',
+        'ovirt-engine',
+    )
 
     ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT = os.path.join(
         LOCALSTATEDIR,
@@ -361,6 +372,7 @@ class Defaults(object):
     DEFAULT_SYSTEM_USER_APACHE = 'apache'
     DEFAULT_SYSTEM_USER_VDSM = 'vdsm'
     DEFAULT_SYSTEM_GROUP_KVM = 'kvm'
+    DEFAULT_SYSTEM_GROUP_ENGINE = 'ovirt'
     DEFAULT_SYSTEM_USER_POSTGRES = 'postgres'
 
     DEFAULT_SYSTEM_SHMMAX = 35554432
@@ -633,6 +645,7 @@ class SystemEnv(object):
     USER_APACHE = 'OVESETUP_SYSTEM/userApache'
     USER_VDSM = 'OVESETUP_SYSTEM/userVdsm'
     GROUP_KVM = 'OVESETUP_SYSTEM/groupKvm'
+    GROUP_ENGINE = 'OVESETUP_SYSTEM/groupEngine'
     USER_POSTGRES = 'OVESETUP_SYSTEM/userPostgres'
 
     SHMMAX = 'OVESETUP_SYSTEM/shmmax'

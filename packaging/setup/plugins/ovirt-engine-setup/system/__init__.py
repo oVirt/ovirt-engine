@@ -27,6 +27,7 @@ from . import memcheck
 from . import nfs
 from . import exportfs
 from . import selinux
+from . import localstate
 
 
 @util.export
@@ -36,6 +37,7 @@ def createPlugins(context):
     nfs.Plugin(context=context)
     exportfs.Plugin(context=context)
     selinux.Plugin(context=context)
+    localstate.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

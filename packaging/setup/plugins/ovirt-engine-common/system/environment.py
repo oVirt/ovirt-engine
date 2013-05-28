@@ -19,6 +19,7 @@
 """Environment plugin."""
 
 
+import grp
 import os
 import pwd
 import gettext
@@ -45,10 +46,12 @@ class Plugin(plugin.PluginBase):
     def _init(self):
         if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
             rootUser = engineUser = apacheUser = pwd.getpwuid(os.geteuid())[0]
+            engineGroup = grp.getgrgid(os.getegid())[0]
         else:
             rootUser = osetupcons.Defaults.DEFAULT_SYSTEM_USER_ROOT
             engineUser = osetupcons.Defaults.DEFAULT_SYSTEM_USER_ENGINE
             apacheUser = osetupcons.Defaults.DEFAULT_SYSTEM_USER_APACHE
+            engineGroup = osetupcons.Defaults.DEFAULT_SYSTEM_GROUP_ENGINE
 
         self.environment.setdefault(
             osetupcons.SystemEnv.USER_ROOT,
@@ -69,6 +72,10 @@ class Plugin(plugin.PluginBase):
         self.environment.setdefault(
             osetupcons.SystemEnv.GROUP_KVM,
             osetupcons.Defaults.DEFAULT_SYSTEM_GROUP_KVM
+        )
+        self.environment.setdefault(
+            osetupcons.SystemEnv.GROUP_ENGINE,
+            engineGroup
         )
         self.environment.setdefault(
             osetupcons.SystemEnv.USER_POSTGRES,
