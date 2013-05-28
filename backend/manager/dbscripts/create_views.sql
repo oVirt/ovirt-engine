@@ -1500,9 +1500,11 @@ CREATE OR REPLACE VIEW gluster_server_services_view
 AS
 SELECT gluster_server_services.*,
        gluster_services.service_name,
-       gluster_services.service_type
+       gluster_services.service_type,
+       vds_static.vds_name
 FROM gluster_server_services
-INNER JOIN gluster_services ON gluster_server_services.service_id = gluster_services.id;
+INNER JOIN gluster_services ON gluster_server_services.service_id = gluster_services.id
+INNER JOIN vds_static ON gluster_server_services.server_id = vds_static.vds_id;
 
 CREATE OR REPLACE VIEW gluster_server_hooks_view
 AS

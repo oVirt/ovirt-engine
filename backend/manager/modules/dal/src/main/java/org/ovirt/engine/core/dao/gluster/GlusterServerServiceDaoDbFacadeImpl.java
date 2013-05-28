@@ -65,6 +65,26 @@ public class GlusterServerServiceDaoDbFacadeImpl extends MassOperationsGenericDa
                 serviceRowMapper, getCustomMapSqlParameterSource().addValue("server_id", serverId));
     }
 
+    @Override
+    public List<GlusterServerService> getByClusterIdAndServiceType(Guid clusterId, ServiceType serviceType) {
+        MapSqlParameterSource paramSource = getCustomMapSqlParameterSource();
+        paramSource.addValue("cluster_id", clusterId);
+        paramSource.addValue("service_type", EnumUtils.nameOrNull(serviceType));
+
+        return getCallsHandler().executeReadList("GetGlusterServerServicesByClusterIdAndServiceType",
+                serviceRowMapper, paramSource);
+    }
+
+    @Override
+    public List<GlusterServerService> getByServerIdAndServiceType(Guid serverId, ServiceType serviceType) {
+        MapSqlParameterSource paramSource = getCustomMapSqlParameterSource();
+        paramSource.addValue("server_id", serverId);
+        paramSource.addValue("service_type", EnumUtils.nameOrNull(serviceType));
+
+        return getCallsHandler().executeReadList("GetGlusterServerServicesByServerIdAndServiceType",
+                serviceRowMapper, paramSource);
+    }
+
     private static final class GlusterServerServiceRowMapper implements ParameterizedRowMapper<GlusterServerService> {
         @Override
         public GlusterServerService mapRow(ResultSet rs, int rowNum)
@@ -78,6 +98,7 @@ public class GlusterServerServiceDaoDbFacadeImpl extends MassOperationsGenericDa
             entity.setMessage(rs.getString("message"));
             entity.setPid(rs.getInt("pid"));
             entity.setStatus(GlusterServiceStatus.valueOf(rs.getString("status")));
+            entity.setHostName(rs.getString("vds_name"));
             return entity;
         }
     }

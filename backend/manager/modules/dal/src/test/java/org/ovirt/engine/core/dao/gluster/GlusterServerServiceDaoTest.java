@@ -26,11 +26,13 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
     private static final String CLUSTER_ID = "ae956031-6be2-43d6-bb8f-5191c9253314";
     private static final String SERVICE1_ID = "c83c9ee3-b7d8-4709-ae4b-5d86a152e6b1";
     private static final String SERVICE1_NAME = "gluster-swift-test-1";
+    private static final String VDS_NAME1 = "gluster-server1";
     private static final ServiceType SERVICE1_TYPE = ServiceType.GLUSTER_SWIFT;
     private static final String SERVICE2_ID = "fc00df54-4fcd-4495-8756-b217780bdad7";
     private static final String SERVICE2_NAME = "gluster-test";
     private static final ServiceType SERVICE2_TYPE = ServiceType.GLUSTER;
     private static final String SERVER1_SERVICE_ID = "c77b4d6a-a2c9-4c9f-a873-3dbff8a34720";
+    private static final String VDS_NAME2 = "gluster-server2";
 
     private static final Integer PID_1 = 11111;
     private static final Integer PID_2 = 22222;
@@ -65,6 +67,22 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
     @Test
     public void testGetByServerId() {
         List<GlusterServerService> services = dao.getByServerId(Guid.createGuidFromString(SERVER1_ID));
+        assertNotNull(services);
+        assertEquals(1, services.size());
+        verifyServiceOnServer1(services.get(0));
+    }
+
+    @Test
+    public void testGetByClusterIdAndServiceType() {
+        List<GlusterServerService> services = dao.getByClusterIdAndServiceType(Guid.createGuidFromString(CLUSTER_ID), SERVICE1_TYPE);
+        assertNotNull(services);
+        assertEquals(1, services.size());
+        verifyServiceOnServer1(services.get(0));
+    }
+
+    @Test
+    public void testGetByServerIdAndServiceType() {
+        List<GlusterServerService> services = dao.getByServerIdAndServiceType(Guid.createGuidFromString(SERVER1_ID), SERVICE1_TYPE);
         assertNotNull(services);
         assertEquals(1, services.size());
         verifyServiceOnServer1(services.get(0));
@@ -119,6 +137,7 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
         service.setStatus(GlusterServiceStatus.UNKNOWN);
         service.setMessage("test message");
         service.setPid(NEW_PID);
+        service.setHostName(VDS_NAME1);
 
         dao.save(service);
         return service;
@@ -130,6 +149,7 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
         assertEquals(SERVICE2_TYPE, service.getServiceType());
         assertEquals(PID_2, service.getPid());
         assertEquals(GlusterServiceStatus.STOPPED, service.getStatus());
+        assertEquals(VDS_NAME2, service.getHostName());
     }
 
     private void verifyServiceOnServer1(GlusterServerService service) {
@@ -138,5 +158,6 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
         assertEquals(SERVICE1_TYPE, service.getServiceType());
         assertEquals(PID_1, service.getPid());
         assertEquals(GlusterServiceStatus.RUNNING, service.getStatus());
+        assertEquals(VDS_NAME1, service.getHostName());
     }
 }

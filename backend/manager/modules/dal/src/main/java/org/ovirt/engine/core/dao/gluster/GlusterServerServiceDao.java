@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao.gluster;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
+import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DAO;
 import org.ovirt.engine.core.dao.MassOperationsDao;
@@ -16,6 +17,10 @@ public interface GlusterServerServiceDao extends DAO, SearchDAO<GlusterServerSer
     public List<GlusterServerService> getByClusterId(Guid clusterId);
 
     public List<GlusterServerService> getByServerId(Guid serverId);
+
+    public List<GlusterServerService> getByClusterIdAndServiceType(Guid clusterId, ServiceType serviceType);
+
+    public List<GlusterServerService> getByServerIdAndServiceType(Guid serverId, ServiceType serviceType);
 
     @Override
     public List<GlusterServerService> getAllWithQuery(String query);

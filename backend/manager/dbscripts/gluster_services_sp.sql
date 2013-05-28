@@ -75,6 +75,31 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- Fetch services of given cluster
+Create or replace FUNCTION GetGlusterServerServicesByClusterIdAndServiceType(v_cluster_id UUID, v_service_type VARCHAR(100))
+    RETURNS SETOF gluster_server_services_view
+    AS $procedure$
+BEGIN
+    RETURN  QUERY SELECT s.*
+    FROM    gluster_server_services_view s, vds_static v
+    WHERE   s.server_id = v.vds_id
+    AND     v.vds_group_id = v_cluster_id
+    AND     s.service_type = v_service_type;
+END; $procedure$
+LANGUAGE plpgsql;
+
+-- Fetch services of given server
+Create or replace FUNCTION GetGlusterServerServicesByServerIdAndServiceType(v_server_id UUID, v_service_type VARCHAR(100))
+    RETURNS SETOF gluster_server_services_view
+    AS $procedure$
+BEGIN
+    RETURN  QUERY SELECT *
+    FROM    gluster_server_services_view
+    WHERE   server_id = v_server_id
+    AND     service_type = v_service_type;
+END; $procedure$
+LANGUAGE plpgsql;
+
 -- Fetch a service by it's ID
 Create or replace FUNCTION GetGlusterServiceByGlusterServiceId(v_id UUID)
 RETURNS SETOF gluster_services
