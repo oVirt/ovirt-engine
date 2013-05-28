@@ -610,7 +610,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Storage")
     String VAR__TYPE__STORAGE__DOMAIN();
 
-    @DefaultStringValue("$type Repository")
+    @DefaultStringValue("$type Data Center")
     String VAR__TYPE__STORAGE__POOL();
 
     @DefaultStringValue("$type User to VM")
