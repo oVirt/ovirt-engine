@@ -16,6 +16,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
     private static EnumMap<SearchLangageLDAPTokens, String> ipaSearchSyntaxMap;
     private static EnumMap<SearchLangageLDAPTokens, String> dsSearchSyntaxMap;
     private static EnumMap<SearchLangageLDAPTokens, String> itdsSearchSyntaxMap;
+    private static EnumMap<SearchLangageLDAPTokens, String> openLdapSearchSyntaxMap;
 
     @Override
     public LdapQueryMetadata getLdapQueryMetadata(LdapProviderType providerType, LdapQueryData queryData) {
@@ -38,6 +39,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
         Map<LdapQueryType, LdapQueryMetadata> ipaHashMap = setIPAMap();
         Map<LdapQueryType, LdapQueryMetadata> dsHashMap = setDSMap();
         Map<LdapQueryType, LdapQueryMetadata> itdsHashMap = setITDSMap();
+        Map<LdapQueryType, LdapQueryMetadata> openLdapHashMap = setOpenLdapMap();
         Map<LdapQueryType, LdapQueryMetadata> generalHashMap = setGeneralProviderMap();
 
         queryMetadataMap = new HashMap<LdapProviderType, Map<LdapQueryType, LdapQueryMetadata>>();
@@ -45,6 +47,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
         queryMetadataMap.put(LdapProviderType.ipa, ipaHashMap);
         queryMetadataMap.put(LdapProviderType.rhds, dsHashMap);
         queryMetadataMap.put(LdapProviderType.itds, itdsHashMap);
+        queryMetadataMap.put(LdapProviderType.openLdap, openLdapHashMap);
         queryMetadataMap.put(LdapProviderType.general, generalHashMap);
 
         instance = new LdapQueryMetadataFactoryImpl();
@@ -466,6 +469,104 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
 
     }
 
+    private static HashMap<LdapQueryType, LdapQueryMetadata> setOpenLdapMap() {
+        HashMap<LdapQueryType, LdapQueryMetadata> openLdapHashMap = new HashMap<LdapQueryType, LdapQueryMetadata>();
+        openLdapHashMap.put(LdapQueryType.getGroupByDN, new LdapQueryMetadataImpl(
+                        "(cn=*)",
+                        "%1$s",
+                        new OpenLdapGroupContextMapper(),
+                        SearchControls.OBJECT_SCOPE,
+                        OpenLdapGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
+                        new SimpleLdapQueryExecutionFormatter(),
+                        new DefaultGuidEncoder()));
+        openLdapHashMap.put(LdapQueryType.getGroupByGuid, new LdapQueryMetadataImpl(
+                        "(entryUUID=%1$s)",
+                        "",
+                        new OpenLdapGroupContextMapper(),
+                        SearchControls.SUBTREE_SCOPE,
+                        OpenLdapGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
+                        new SimpleLdapQueryExecutionFormatter(),
+                        new DefaultGuidEncoder()));
+        openLdapHashMap.put(LdapQueryType.getUserByGuid, new LdapQueryMetadataImpl(
+                        "(entryUUID=%1$s)",
+                        "",
+                        new OpenLdapUserContextMapper(),
+                        SearchControls.SUBTREE_SCOPE,
+                        OpenLdapUserContextMapper.USERS_ATTRIBUTE_FILTER,
+                        new SimpleLdapQueryExecutionFormatter(),
+                        new DefaultGuidEncoder()));
+        openLdapHashMap.put(LdapQueryType.getGroupByName, new LdapQueryMetadataImpl(
+                        "(&(objectClass=groupOfNames)(cn=%1$s))",
+                        "",
+                        new OpenLdapGroupContextMapper(),
+                        SearchControls.SUBTREE_SCOPE,
+                        OpenLdapGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
+                        new SimpleLdapQueryExecutionFormatter(),
+                        new DefaultGuidEncoder()));
+        openLdapHashMap.put(LdapQueryType.getUserByPrincipalName, new LdapQueryMetadataImpl(
+                        "(uid=%1$s)",
+                        "",
+                        new OpenLdapUserContextMapper(),
+                        SearchControls.SUBTREE_SCOPE,
+                        OpenLdapUserContextMapper.USERS_ATTRIBUTE_FILTER,
+                        new SimpleLdapQueryExecutionFormatter(),
+                        new DefaultGuidEncoder()));
+        openLdapHashMap.put(LdapQueryType.getUserByName, new LdapQueryMetadataImpl(
+                        "(uid=%1$s)",
+                        "",
+                        new OpenLdapUserContextMapper(),
+                        SearchControls.SUBTREE_SCOPE,
+                        OpenLdapUserContextMapper.USERS_ATTRIBUTE_FILTER,
+                        new SimpleLdapQueryExecutionFormatter(),
+                        new DefaultGuidEncoder()));
+        openLdapHashMap.put(LdapQueryType.rootDSE, new LdapQueryMetadataImpl(
+                        "(objectClass=*)",
+                        "",
+                        new DefaultRootDSEContextMapper(),
+                        SearchControls.OBJECT_SCOPE,
+                        DefaultRootDSEContextMapper.ROOTDSE_ATTRIBUTE_FILTER,
+                        new SimpleLdapQueryExecutionFormatter(),
+                        new DefaultGuidEncoder()));
+        openLdapHashMap.put(LdapQueryType.getGroupsByGroupNames, new LdapQueryMetadataImpl(
+                        "(&(objectClass=groupOfNames)(cn=%1$s))",
+                        "",
+                        new OpenLdapGroupContextMapper(),
+                        SearchControls.SUBTREE_SCOPE,
+                        OpenLdapGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
+                        new MultipleLdapQueryExecutionFormatter("(|", ")"),
+                        new DefaultGuidEncoder()));
+        openLdapHashMap.put(LdapQueryType.getUsersByUserGuids, new LdapQueryMetadataImpl(
+                        "(uid=%1$s)",
+                        "",
+                        new OpenLdapUserContextMapper(),
+                        SearchControls.SUBTREE_SCOPE,
+                        OpenLdapUserContextMapper.USERS_ATTRIBUTE_FILTER,
+                        new MultipleLdapQueryExecutionFormatter("(|", ")"),
+                        new DefaultGuidEncoder()));
+        LdapQueryMetadataImpl OpenLdapSearchUsersMetadata = new LdapQueryMetadataImpl(
+                        "this string is replaced by user input meta-query",
+                        "",
+                        new OpenLdapUserContextMapper(),
+                        SearchControls.SUBTREE_SCOPE,
+                        OpenLdapUserContextMapper.USERS_ATTRIBUTE_FILTER,
+                        new SearchQueryFotmatter(openLdapSearchSyntaxMap),
+                        new DefaultGuidEncoder());
+        openLdapHashMap.put(LdapQueryType.searchUsers, OpenLdapSearchUsersMetadata);
+
+        LdapQueryMetadataImpl OpenLdapSearchGroupsMetadata = new LdapQueryMetadataImpl(
+                        "this string is replaced by user input meta-query",
+                        "",
+                        new OpenLdapGroupContextMapper(),
+                        SearchControls.SUBTREE_SCOPE,
+                        OpenLdapGroupContextMapper.GROUP_ATTRIBUTE_FILTER,
+                        new SearchQueryFotmatter(openLdapSearchSyntaxMap),
+                        new DefaultGuidEncoder());
+        openLdapHashMap.put(LdapQueryType.searchGroups, OpenLdapSearchGroupsMetadata);
+
+        return openLdapHashMap;
+
+    }
+
     private static void prepareQueryFormatters() {
         activeDirectorySearchSyntaxMap = new EnumMap<SearchLangageLDAPTokens, String>(SearchLangageLDAPTokens.class);
         activeDirectorySearchSyntaxMap.put(SearchLangageLDAPTokens.$GIVENNAME, "givenname");
@@ -500,5 +601,13 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
         itdsSearchSyntaxMap.put(SearchLangageLDAPTokens.$LDAP_GROUP_CATEGORY, "objectClass=groupOfUniqueNames");
         itdsSearchSyntaxMap.put(SearchLangageLDAPTokens.$CN, "cn");
         itdsSearchSyntaxMap.put(SearchLangageLDAPTokens.$USER_ACCOUNT_NAME, "uid");
+
+        openLdapSearchSyntaxMap = new EnumMap<SearchLangageLDAPTokens, String>(SearchLangageLDAPTokens.class);
+        openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$GIVENNAME, "givenname");
+        openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$USER_ACCOUNT_TYPE, "&(objectClass=person)");
+        openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$PRINCIPAL_NAME, "uid");
+        openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$LDAP_GROUP_CATEGORY, "objectClass=groupOfNames");
+        openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$CN, "cn");
+        openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$USER_ACCOUNT_NAME, "uid");
     }
 }

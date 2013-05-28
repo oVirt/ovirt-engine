@@ -94,7 +94,7 @@ public class JndiAction implements PrivilegedAction {
                     SearchControls controls = new SearchControls();
                     controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
                     // Adding all the three attributes possible, as RHDS doesn't return the nsUniqueId by default
-                    controls.setReturningAttributes(new String[]{"nsUniqueId", "ipaUniqueId","objectGuid","uniqueIdentifier"});
+                    controls.setReturningAttributes(new String[]{"nsUniqueId", "ipaUniqueId","objectGuid","uniqueIdentifier","entryuuid"});
                     // Added this in order to prevent a warning saying: "the returning obj flag wasn't set, setting it to true"
                     controls.setReturningObjFlag(true);
                     currentLdapServer = ldapQueryPath.toString();
@@ -195,6 +195,9 @@ public class JndiAction implements PrivilegedAction {
             } else if (ldapProviderType.equals(LdapProviderType.itds)) {
                 String uniqueId = (String) sr.getAttributes().get("uniqueIdentifier").get();
                 guidString += uniqueId;
+            } else if (ldapProviderType.equals(LdapProviderType.openLdap)) {
+                String uniqueId = (String) sr.getAttributes().get("entryUUID").get();
+                guidString += uniqueId;
             } else {
                 Object objectGuid = sr.getAttributes().get("objectGUID").get();
                 byte[] guid = (byte[]) objectGuid;
@@ -218,6 +221,9 @@ public class JndiAction implements PrivilegedAction {
         } else if (ldapProviderType.equals(LdapProviderType.itds)) {
             userName = userName.split("@")[0];
             query = "(&(objectClass=person)(uid=" + userName + "))";
+        } else if (ldapProviderType.equals(LdapProviderType.openLdap)) {
+            userName = userName.split("@")[0];
+            query = "(uid=" + userName + ")";
         }
         else {
             StringBuilder queryBase = new StringBuilder("(&(sAMAccountType=805306368)(");

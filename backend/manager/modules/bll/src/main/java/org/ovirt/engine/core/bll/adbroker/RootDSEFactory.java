@@ -18,6 +18,8 @@ public class RootDSEFactory {
             return new RHDSRootDSE(rootDseRecords);
         case itds:
             return new ITDSRootDSE(rootDseRecords);
+        case openLdap:
+            return new DefaultRootDSE(rootDseRecords);
         case general:
         default:
             return new GeneralRootDSE(rootDseRecords);

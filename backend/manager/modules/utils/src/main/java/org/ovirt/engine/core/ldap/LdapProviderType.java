@@ -5,6 +5,7 @@ public enum LdapProviderType {
     ipa("389 Project"),
     rhds("Red Hat"),
     itds("IBM Tivoli Directory Server"),
+    openLdap("OpenLDAP"),
     general("Deprecated - for auto-detection usages"); // for rootDSE purpose
 
     private String vendorName;

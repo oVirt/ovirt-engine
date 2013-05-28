@@ -21,8 +21,10 @@ public class RootDSEQueryInfo {
      * @return
      */
     public static SearchControls createSearchControls() {
+        String[] returnAttributes = {NAMING_CONTEXTS_RESULT_ATTRIBUTE, DEFAULT_NAMING_CONTEXT_RESULT_ATTRIBUTE};
         SearchControls searchControls = new SearchControls();
         searchControls.setSearchScope(SearchControls.OBJECT_SCOPE);
+        searchControls.setReturningAttributes(returnAttributes);
         // Added this in order to prevent a warning saying: "the returning obj flag wasn't set, setting it to true"
         searchControls.setReturningObjFlag(true);
         return searchControls;
