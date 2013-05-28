@@ -14,11 +14,14 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 
 import com.woorea.openstack.base.client.HttpMethod;
 import com.woorea.openstack.base.client.OpenStackRequest;
+import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
 import com.woorea.openstack.quantum.Quantum;
 import com.woorea.openstack.quantum.model.NetworkForCreate;
 import com.woorea.openstack.quantum.model.Networks;
@@ -46,6 +49,15 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     private Quantum getClient() {
         if (client == null) {
             client = new Quantum(provider.getUrl() + API_VERSION);
+            if (provider.isRequiringAuthentication()) {
+                final String tenantName = provider.getAdditionalProperties().getTenantName();
+                final KeystoneTokenProvider keystoneTokenProvider =
+                        new KeystoneTokenProvider(Config.<String> GetValue(ConfigValues.KeystoneAuthUrl),
+                                provider.getUsername(),
+                                provider.getPassword());
+
+                client.setTokenProvider(keystoneTokenProvider.getProviderByTenant(tenantName));
+            }
         }
 
         return client;
