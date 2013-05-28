@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.table.column.LinkColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlWithSafeHtmlTooltipColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -22,6 +23,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkRoleColumnHelper;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
@@ -42,6 +44,8 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
     private final SafeHtml mgmtImage;
     private final SafeHtml vmImage;
     private final SafeHtml emptyImage;
+
+    private LinkColumnWithTooltip<NetworkView> providerColumn;
 
     @Inject
     public MainTabNetworkView(MainModelProvider<NetworkView, NetworkListModel> modelProvider,
@@ -138,10 +142,10 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         };
         getTable().addColumn(vlanColumn, constants.vlanNetwork(), "200px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<NetworkView> providerColumn = new TextColumnWithTooltip<NetworkView>() {
+        providerColumn = new LinkColumnWithTooltip<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
-                return object.getProvidedBy() == null ? "-" : object.getProviderName(); // $NON-NLS-1$
+                return object.getProvidedBy() == null ? new String() : object.getProviderName();
             }
         };
         getTable().addColumn(providerColumn, constants.providerNetwork(), "200px"); //$NON-NLS-1$
@@ -172,4 +176,15 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         });
     }
 
+    @Override
+    public void setProviderClickHandler(final FieldUpdater<NetworkView, String> fieldUpdater) {
+        providerColumn.setFieldUpdater(new FieldUpdater<NetworkView, String>() {
+
+            @Override
+            public void update(int index, NetworkView object, String value) {
+                getTable().getSelectionModel().clear(); // this to avoid problems with a null active details model
+                fieldUpdater.update(index, object, value);
+            }
+        });
+    }
 }

@@ -571,6 +571,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             providerItem.setTitle(provider.getName());
             providerItem.setEntity(provider);
             providersItem.addChild(providerItem);
+            treeItemById.put(provider.getId(), providerItem);
         }
 
         if (!ApplicationModeHelper.getUiMode().equals(ApplicationMode.AllModes)) {

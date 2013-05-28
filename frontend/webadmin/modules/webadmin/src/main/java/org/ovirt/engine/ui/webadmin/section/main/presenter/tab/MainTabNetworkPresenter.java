@@ -11,7 +11,9 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.dispatch.annotation.GenEvent;
@@ -24,6 +26,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter<NetworkView, NetworkListModel, MainTabNetworkPresenter.ViewDef, MainTabNetworkPresenter.ProxyDef> {
+
+    private SystemTreeModelProvider systemTreeModelProvider;
 
     @GenEvent
     public class NetworkSelectionChange {
@@ -38,6 +42,7 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
     }
 
     public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<NetworkView> {
+        void setProviderClickHandler(FieldUpdater<NetworkView, String> fieldUpdater);
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
@@ -47,9 +52,15 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
     }
 
     @Inject
-    public MainTabNetworkPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<NetworkView, NetworkListModel> modelProvider) {
+    public MainTabNetworkPresenter(EventBus eventBus,
+            ViewDef view,
+            ProxyDef proxy,
+            PlaceManager placeManager,
+            MainModelProvider<NetworkView, NetworkListModel> modelProvider,
+            SystemTreeModelProvider systemTreeModelProvider) {
+
         super(eventBus, view, proxy, placeManager, modelProvider);
+        this.systemTreeModelProvider = systemTreeModelProvider;
     }
 
     @Override
@@ -61,5 +72,16 @@ public class MainTabNetworkPresenter extends AbstractMainTabWithDetailsPresenter
     protected PlaceRequest getMainTabRequest() {
         return PlaceRequestFactory.get(ApplicationPlaces.networkMainTabPlace);
     }
-}
 
+    @Override
+    protected void onBind() {
+        super.onBind();
+        getView().setProviderClickHandler(new FieldUpdater<NetworkView, String> () {
+
+            @Override
+            public void update(int index, NetworkView network, String value) {
+                systemTreeModelProvider.setSelectedItem(network.getProvidedBy().getProviderId());
+            }
+        });
+    }
+}
