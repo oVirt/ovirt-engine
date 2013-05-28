@@ -11,7 +11,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -190,10 +190,10 @@ public class BackendFilesResourceTest
         control.replay();
     }
 
-    private List<RepoFileMetaData> setUpFiles() {
-        List<RepoFileMetaData> isos = new ArrayList<RepoFileMetaData>();
+    private List<RepoImage> setUpFiles() {
+        List<RepoImage> isos = new ArrayList<RepoImage>();
         for (int i = 0; i < NAMES.length; i++) {
-            RepoFileMetaData file = new RepoFileMetaData();
+            RepoImage file = new RepoImage();
             file.setRepoImageId(NAMES[i]);
             isos.add(file);
         }

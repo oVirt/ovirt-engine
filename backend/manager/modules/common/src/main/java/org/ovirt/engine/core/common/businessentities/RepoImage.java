@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * An entity class for repository files meta data. Using for caching VDSM list fetching results.
  */
-public class RepoFileMetaData extends IVdcQueryable implements Serializable {
+public class RepoImage extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = 566928138057530047L;
     private Guid storagePoolId = Guid.Empty;
     private StoragePoolStatus storagePoolStatus;
@@ -25,11 +25,11 @@ public class RepoFileMetaData extends IVdcQueryable implements Serializable {
     /**
      * Empty constructor for retrieving new clean entity
      */
-    public RepoFileMetaData() {
+    public RepoImage() {
     }
 
     /**
-     * @param StoragePoolId
+     * @param storagePoolId
      *            the storage pool id to set
      */
     public void setStoragePoolId(Guid storagePoolId) {
@@ -116,6 +116,11 @@ public class RepoFileMetaData extends IVdcQueryable implements Serializable {
      */
     public String getRepoImageId() {
         return repoImageId;
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return getRepoImageId();
     }
 
     /**

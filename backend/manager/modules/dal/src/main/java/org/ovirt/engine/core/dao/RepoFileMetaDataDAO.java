@@ -2,7 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.util.List;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 /**
  * <code>RepoFileMetaDataDao</code> defines a type for performing CRUD operations on instances of
- * {@link RepoFileMetaData}.
+ * {@link org.ovirt.engine.core.common.businessentities.RepoImage}.
  *
  */
 public interface RepoFileMetaDataDAO extends DAO {
@@ -28,13 +28,13 @@ public interface RepoFileMetaDataDAO extends DAO {
      *
      * @param map - The repository file meta data to insert.
      */
-    public void addRepoFileMap(RepoFileMetaData map);
+    public void addRepoFileMap(RepoImage map);
 
     /**
      * Returns a list of repository files with specific file extension from storage domain id.<BR/>
      * If no repository found, will return an empty list.
      */
-    public List<RepoFileMetaData> getRepoListForStorageDomain(Guid storageDomainId,
+    public List<RepoImage> getRepoListForStorageDomain(Guid storageDomainId,
             ImageFileType fileType);
 
     /**
@@ -42,7 +42,7 @@ public interface RepoFileMetaDataDAO extends DAO {
      * for each storage pool, storage domain and file type in all System,
      * which meets the same storage domain status, type and SPM status.
      */
-    public List<RepoFileMetaData> getAllRepoFilesForAllStoragePools(StorageDomainType storageDomainType,
+    public List<RepoImage> getAllRepoFilesForAllStoragePools(StorageDomainType storageDomainType,
             StoragePoolStatus storagePoolStatus, StorageDomainStatus storageDomainStatus,
             VDSStatus vdsStatus);
 }

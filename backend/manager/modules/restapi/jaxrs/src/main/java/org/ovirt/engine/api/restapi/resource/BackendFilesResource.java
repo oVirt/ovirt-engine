@@ -13,7 +13,7 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.FileResource;
 import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -74,10 +74,10 @@ public class BackendFilesResource
         GetImagesListParameters queryParams = new GetImagesListParameters(asGuid(storageDomainId), ImageFileType.All);
         queryParams.setForceRefresh(true);
 
-        List<RepoFileMetaData> files = getBackendCollection(RepoFileMetaData.class, VdcQueryType.GetImagesList,
+        List<RepoImage> files = getBackendCollection(RepoImage.class, VdcQueryType.GetImagesList,
                                     queryParams);
         List<String> fileNames = new LinkedList<String>();
-        for (RepoFileMetaData file : files) {
+        for (RepoImage file : files) {
             fileNames.add(file.getRepoImageId());
         }
         return fileNames;

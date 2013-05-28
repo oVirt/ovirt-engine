@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -60,7 +60,7 @@ public class GetImagesListByStoragePoolIdQueryTest
     @Override
     protected void setUpSpyQuery() throws Exception {
         super.setUpSpyQuery();
-        RepoFileMetaData rfmd = new RepoFileMetaData();
+        RepoImage rfmd = new RepoImage();
         rfmd.setFileType(expectedType);
         doReturn(Collections.singletonList(rfmd)).when(getQuery()).getUserRequestForStorageDomainRepoFileList();
     }

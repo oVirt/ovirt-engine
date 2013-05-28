@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -154,9 +154,9 @@ public class RunVmValidator {
                     getBackend().runInternalQuery(VdcQueryType.GetImagesList,
                             new GetImagesListParameters(storageDomainId, ImageFileType.ISO));
             if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {
-                List<RepoFileMetaData> repoFileNameList = (List<RepoFileMetaData>) ret.getReturnValue();
+                List<RepoImage> repoFileNameList = (List<RepoImage>) ret.getReturnValue();
                 if (repoFileNameList != null) {
-                    for (RepoFileMetaData isoFileMetaData : (List<RepoFileMetaData>) ret.getReturnValue()) {
+                    for (RepoImage isoFileMetaData : (List<RepoImage>) ret.getReturnValue()) {
                         if (isoFileMetaData.getRepoImageId().equals(diskPath)) {
                             retValForIso = true;
                             break;
@@ -175,10 +175,10 @@ public class RunVmValidator {
                     getBackend().runInternalQuery(VdcQueryType.GetImagesList,
                             new GetImagesListParameters(storageDomainId, ImageFileType.Floppy));
             if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {
-                List<RepoFileMetaData> repoFileNameList = (List<RepoFileMetaData>) ret.getReturnValue();
+                List<RepoImage> repoFileNameList = (List<RepoImage>) ret.getReturnValue();
                 if (repoFileNameList != null) {
 
-                    for (RepoFileMetaData isoFileMetaData : (List<RepoFileMetaData>) ret.getReturnValue()) {
+                    for (RepoImage isoFileMetaData : (List<RepoImage>) ret.getReturnValue()) {
                         if (isoFileMetaData.getRepoImageId().equals(floppyPath)) {
                             retValForFloppy = true;
                             break;

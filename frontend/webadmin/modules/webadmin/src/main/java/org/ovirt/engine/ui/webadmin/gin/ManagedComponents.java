@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -33,7 +34,6 @@ import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGlusterHookListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterHostListModel;
@@ -401,7 +401,7 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabStorageIsoPresenter> getSubTabStorageIsoPresenter();
 
-    SearchableDetailModelProvider<EntityModel, StorageListModel, StorageIsoListModel> getSubTabStorageIsoModelProvider();
+    SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> getSubTabStorageIsoModelProvider();
 
     AsyncProvider<SubTabStorageDiskPresenter> getSubTabStorageDiskPresenter();
 

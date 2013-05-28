@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -13,79 +13,12 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
 public class StorageIsoListModel extends SearchableListModel
 {
-    @Override
-    public Iterable getItems()
-    {
-        return items;
-    }
-
-    @Override
-    public void setItems(Iterable value)
-    {
-        if (items != value)
-        {
-            EntityModel lastSelectedItem = (EntityModel) getSelectedItem();
-            ArrayList<EntityModel> lastSelectedItems = (ArrayList<EntityModel>) getSelectedItems();
-
-            itemsChanging(value, items);
-            items = value;
-            getItemsChangedEvent().raise(this, EventArgs.Empty);
-            onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
-
-            selectedItem = null;
-            if (getSelectedItems() != null)
-            {
-                getSelectedItems().clear();
-            }
-
-            if (lastSelectedItem != null)
-            {
-                EntityModel newSelectedItem = null;
-                ArrayList<EntityModel> newItems = (ArrayList<EntityModel>) value;
-
-                if (newItems != null)
-                {
-                    for (EntityModel newItem : newItems)
-                    {
-                        // Search for selected item
-                        if (newItem.getHashName().equals(lastSelectedItem.getHashName()))
-                        {
-                            newSelectedItem = newItem;
-                            break;
-                        }
-                        else
-                        {
-                            // Search for selected items
-                            for (EntityModel item : lastSelectedItems)
-                            {
-                                if (newItem.getHashName().equals(item.getHashName()))
-                                {
-                                    selectedItems.add(newItem);
-                                }
-                            }
-                        }
-                    }
-                }
-
-                if (newSelectedItem != null)
-                {
-                    selectedItem = newSelectedItem;
-                    selectedItems.add(newSelectedItem);
-                }
-            }
-            onSelectedItemChanged();
-        }
-    }
 
     public StorageIsoListModel()
     {
@@ -164,65 +97,22 @@ public class StorageIsoListModel extends SearchableListModel
                     return;
                 }
 
-                ArrayList<RepoFileMetaData> repoFileList = (ArrayList<RepoFileMetaData>)
+                ArrayList<RepoImage> repoFileList = (ArrayList<RepoImage>)
                         returnValue.getReturnValue();
 
-                Collections.sort(repoFileList, new Comparator<RepoFileMetaData>() {
+                Collections.sort(repoFileList, new Comparator<RepoImage>() {
                     @Override
-                    public int compare(RepoFileMetaData a, RepoFileMetaData b) {
+                    public int compare(RepoImage a, RepoImage b) {
                         return a.getRepoImageId().compareToIgnoreCase(b.getRepoImageId());
                     }
                 });
 
-                ArrayList<EntityModel> entityList = new ArrayList<EntityModel>();
-
-                for (RepoFileMetaData repoFileItem : repoFileList) {
-                    EntityModel entityItem = new EntityModel();
-                    entityItem.setHashName(repoFileItem.getRepoImageId());
-                    entityItem.setTitle(repoFileItem.getRepoImageTitle());
-                    entityItem.setEntity(repoFileItem.getFileType());
-                    entityList.add(entityItem);
-                }
-
-                updateIsoModels(entityList);
-                setIsEmpty(entityList.isEmpty());
+                setItems(repoFileList);
+                setIsEmpty(repoFileList.isEmpty());
             }
         };
 
         Frontend.RunQuery(VdcQueryType.GetImagesList, imagesListParams, _asyncQuery);
-    }
-
-    private void updateIsoModels(ArrayList<EntityModel> items)
-    {
-        ArrayList<EntityModel> newItems = new ArrayList<EntityModel>();
-
-        if (getItems() != null)
-        {
-            ArrayList<EntityModel> oldItems = Linq.toList((Iterable<EntityModel>) getItems());
-
-            for (EntityModel newItem : items)
-            {
-                boolean isItemUpdated = false;
-                for (EntityModel item : oldItems)
-                {
-                    if (newItem.getHashName().equals(item.getHashName()))
-                    {
-                        item.setTitle(newItem.getTitle());
-                        item.setEntity(newItem.getEntity());
-                        newItems.add(item);
-                        isItemUpdated = true;
-                        break;
-                    }
-                }
-
-                if (!isItemUpdated)
-                {
-                    newItems.add(newItem);
-                }
-            }
-        }
-
-        setItems(newItems.isEmpty() ? items : newItems);
     }
 
     @Override

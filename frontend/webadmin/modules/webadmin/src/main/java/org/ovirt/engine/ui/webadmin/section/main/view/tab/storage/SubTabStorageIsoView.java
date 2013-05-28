@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -13,11 +13,11 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
 import com.google.inject.Inject;
 
-public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain, EntityModel, StorageListModel, StorageIsoListModel>
+public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain, RepoImage, StorageListModel, StorageIsoListModel>
         implements SubTabStorageIsoPresenter.ViewDef {
 
     @Inject
-    public SubTabStorageIsoView(SearchableDetailModelProvider<EntityModel, StorageListModel, StorageIsoListModel> modelProvider,
+    public SubTabStorageIsoView(SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> modelProvider,
             ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
         initTable(resources, constants);
@@ -27,18 +27,18 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
     void initTable(ApplicationResources resources, final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<EntityModel> fileNameColumn = new TextColumnWithTooltip<EntityModel>() {
+        TextColumnWithTooltip<RepoImage> fileNameColumn = new TextColumnWithTooltip<RepoImage>() {
             @Override
-            public String getValue(EntityModel object) {
-                return object.getTitle();
+            public String getValue(RepoImage object) {
+                return object.getRepoImageTitle();
             }
         };
         getTable().addColumn(fileNameColumn, constants.fileNameIso(), "500px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<EntityModel> typeColumn = new TextColumnWithTooltip<EntityModel>() {
+        TextColumnWithTooltip<RepoImage> typeColumn = new TextColumnWithTooltip<RepoImage>() {
             @Override
-            public String getValue(EntityModel object) {
-                return object.getEntity().toString();
+            public String getValue(RepoImage object) {
+                return object.getFileType().toString();
             }
         };
         getTable().addColumn(typeColumn, constants.typeIso(), "200px"); //$NON-NLS-1$

@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
@@ -42,7 +42,7 @@ public class SubTabStorageIsoPresenter extends AbstractSubTabPresenter<StorageDo
     @Inject
     public SubTabStorageIsoPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<EntityModel, StorageListModel, StorageIsoListModel> modelProvider) {
+            SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

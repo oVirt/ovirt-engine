@@ -41,7 +41,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -697,12 +697,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             }
 
             // Fetch cached Iso files from active Iso domain.
-            List<RepoFileMetaData> repoFilesMap =
+            List<RepoImage> repoFilesMap =
                     getIsoDomainListSyncronizer().getCachedIsoListByDomainId(isoDomain.getId(),
                             ImageFileType.ISO);
             Version bestClusterVer = null;
             int bestToolVer = 0;
-            for (RepoFileMetaData map : repoFilesMap) {
+            for (RepoImage map : repoFilesMap) {
                 String fileName = StringUtils.defaultString(map.getRepoImageId(), "");
                 Matcher matchToolPattern =
                         Pattern.compile(IsoDomainListSyncronizer.REGEX_TOOL_PATTERN).matcher(fileName);

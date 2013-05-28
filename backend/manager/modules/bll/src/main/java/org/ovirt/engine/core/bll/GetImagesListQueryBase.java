@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.GetImagesListParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,7 +29,7 @@ public abstract class GetImagesListQueryBase<P extends GetImagesListParametersBa
      */
     protected abstract Guid getStorageDomainId();
 
-    protected List<RepoFileMetaData> getUserRequestForStorageDomainRepoFileList() {
+    protected List<RepoImage> getUserRequestForStorageDomainRepoFileList() {
         return IsoDomainListSyncronizer.getInstance().getUserRequestForStorageDomainRepoFileList
                 (getStorageDomainId(), getParameters().getImageType(), getParameters().getForceRefresh());
     }

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
@@ -18,7 +19,6 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvide
 import org.ovirt.engine.ui.uicommonweb.ReportCommand;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportCloneModel;
@@ -184,8 +184,8 @@ public class StorageModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<EntityModel, StorageListModel, StorageIsoListModel> getStorageIsoListProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<EntityModel, StorageListModel, StorageIsoListModel>(ginjector,
+    public SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> getStorageIsoListProvider(ClientGinjector ginjector) {
+        return new SearchableDetailTabModelProvider<RepoImage, StorageListModel, StorageIsoListModel>(ginjector,
                 StorageListModel.class,
                 StorageIsoListModel.class);
     }

@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -441,10 +441,10 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         ArrayList<String> isos = new ArrayList<String>();
 
         if (returnValues.size() > 8) {
-            ArrayList<RepoFileMetaData> repoList =
-                    (ArrayList<RepoFileMetaData>) returnValues.get(8).getReturnValue();
-            for (RepoFileMetaData RepoFileMetaData : repoList) {
-                isos.add(RepoFileMetaData.getRepoImageId());
+            ArrayList<RepoImage> repoList =
+                    (ArrayList<RepoImage>) returnValues.get(8).getReturnValue();
+            for (RepoImage repoImage : repoList) {
+                isos.add(repoImage.getRepoImageId());
             }
         }
 

@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -263,11 +263,11 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    ArrayList<RepoFileMetaData> repoList = (ArrayList<RepoFileMetaData>) source;
+                    ArrayList<RepoImage> repoList = (ArrayList<RepoImage>) source;
                     ArrayList<String> fileNameList = new ArrayList<String>();
-                    for (RepoFileMetaData RepoFileMetaData : repoList)
+                    for (RepoImage repoImage : repoList)
                     {
-                        fileNameList.add(RepoFileMetaData.getRepoImageId());
+                        fileNameList.add(repoImage.getRepoImageId());
                     }
 
                     Collections.sort(fileNameList, String.CASE_INSENSITIVE_ORDER);
@@ -289,11 +289,11 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    ArrayList<RepoFileMetaData> repoList = (ArrayList<RepoFileMetaData>) source;
+                    ArrayList<RepoImage> repoList = (ArrayList<RepoImage>) source;
                     ArrayList<String> fileNameList = new ArrayList<String>();
-                    for (RepoFileMetaData RepoFileMetaData : repoList)
+                    for (RepoImage repoImage : repoList)
                     {
-                        fileNameList.add(RepoFileMetaData.getRepoImageId());
+                        fileNameList.add(repoImage.getRepoImageId());
                     }
 
                     Collections.sort(fileNameList, String.CASE_INSENSITIVE_ORDER);

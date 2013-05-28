@@ -6,7 +6,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
-import org.ovirt.engine.core.common.businessentities.RepoFileMetaData;
+import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -37,7 +37,7 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
     }
 
     @Override
-    public void addRepoFileMap(RepoFileMetaData map) {
+    public void addRepoFileMap(RepoImage map) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource().addValue("repo_domain_id", map.getRepoDomainId())
                         .addValue("repo_image_id", map.getRepoImageId())
@@ -55,7 +55,7 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
      * If no repository is found, the method will return an empty list.
      */
     @Override
-    public List<RepoFileMetaData> getRepoListForStorageDomain(Guid storageDomainId,
+    public List<RepoImage> getRepoListForStorageDomain(Guid storageDomainId,
             ImageFileType fileType) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_domain_id", storageDomainId);
@@ -67,7 +67,7 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
         }
 
         return getCallsHandler().executeReadList("GetRepo_files_by_storage_domain",
-                RepoFileMetaDataMapper.instance, parameterSource);
+                RepoImageMapper.instance, parameterSource);
     }
 
     /**
@@ -75,7 +75,7 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
      * which meet the same status, type and SPM status.
      */
     @Override
-    public List<RepoFileMetaData> getAllRepoFilesForAllStoragePools(StorageDomainType storageDomainType,
+    public List<RepoImage> getAllRepoFilesForAllStoragePools(StorageDomainType storageDomainType,
             StoragePoolStatus storagePoolStatus, StorageDomainStatus storageDomainStatus,
             VDSStatus vdsStatus) {
         MapSqlParameterSource parameterSource =
@@ -85,16 +85,16 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
         parameterSource.addValue("storage_domain_status", storageDomainStatus.getValue());
 
         return getCallsHandler().executeReadList("GetRepo_files_in_all_storage_pools",
-                ThinRepoFileMetaDataMapper.instance,
+                ThinRepoImageMapper.instance,
                 parameterSource);
     }
 
-    private static class ThinRepoFileMetaDataMapper implements RowMapper<RepoFileMetaData> {
-        public static final ThinRepoFileMetaDataMapper instance = new ThinRepoFileMetaDataMapper();
+    private static class ThinRepoImageMapper implements RowMapper<RepoImage> {
+        public static final ThinRepoImageMapper instance = new ThinRepoImageMapper();
 
         @Override
-        public RepoFileMetaData mapRow(ResultSet rs, int rowNum) throws SQLException {
-            RepoFileMetaData entity = new RepoFileMetaData();
+        public RepoImage mapRow(ResultSet rs, int rowNum) throws SQLException {
+            RepoImage entity = new RepoImage();
             entity.setRepoDomainId(Guid.createGuidFromStringDefaultEmpty(rs.getString("storage_domain_id")));
             entity.setLastRefreshed(rs.getLong("last_refreshed"));
             entity.setFileType(ImageFileType.forValue(rs.getInt("file_type")));
@@ -102,12 +102,12 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
         }
     }
 
-    private static class RepoFileMetaDataMapper implements RowMapper<RepoFileMetaData> {
-        public static final RepoFileMetaDataMapper instance = new RepoFileMetaDataMapper();
+    private static class RepoImageMapper implements RowMapper<RepoImage> {
+        public static final RepoImageMapper instance = new RepoImageMapper();
 
         @Override
-        public RepoFileMetaData mapRow(ResultSet rs, int rowNum) throws SQLException {
-            RepoFileMetaData entity = new RepoFileMetaData();
+        public RepoImage mapRow(ResultSet rs, int rowNum) throws SQLException {
+            RepoImage entity = new RepoImage();
             entity.setRepoDomainId(Guid.createGuidFromStringDefaultEmpty(rs.getString("repo_domain_id")));
             entity.setRepoImageId(rs.getString("repo_image_id"));
             entity.setRepoImageName(rs.getString("repo_image_name"));
