@@ -266,8 +266,9 @@ public enum VdcActionType {
     // External Tasks
     AddExternalJob(1800, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE),
     EndExternalJob(1801, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE),
-    AddExternalStep(1802, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE),
-    EndExternalStep(1803, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE);
+    ClearExternalJob(1802, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE),
+    AddExternalStep(1803, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE),
+    EndExternalStep(1804, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;
