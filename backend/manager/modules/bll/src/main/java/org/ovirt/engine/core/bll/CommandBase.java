@@ -1546,11 +1546,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(taskId);
         }
         if (asyncTask != null) {
+            VdcActionParametersBase parentParameters = getParentParameters(parentCommand);
             asyncTask.setaction_type(parentCommand);
             asyncTask.setVdsmTaskId(asyncTaskCreationInfo.getVdsmTaskId());
-            asyncTask.setActionParameters(getParentParameters(parentCommand));
+            asyncTask.setActionParameters(parentParameters);
             asyncTask.setTaskParameters(getParameters());
             asyncTask.setStepId(asyncTaskCreationInfo.getStepId());
+            asyncTask.setCommandId(getCommandId());
+            asyncTask.setRootCommandId(parentParameters.getCommandId());
             asyncTask.setStoragePoolId(asyncTaskCreationInfo.getStoragePoolID());
             asyncTask.setTaskType(asyncTaskCreationInfo.getTaskType());
         } else {
@@ -1570,14 +1573,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private AsyncTasks createAsyncTask(
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
+        VdcActionParametersBase parentParameters = getParentParameters(parentCommand);
         return new AsyncTasks(parentCommand,
                 AsyncTaskResultEnum.success,
                 AsyncTaskStatusEnum.running,
                 asyncTaskCreationInfo.getVdsmTaskId(),
-                getParentParameters(parentCommand),
+                parentParameters,
                 getParameters(),
                 asyncTaskCreationInfo.getStepId(),
-                getCommandId(), asyncTaskCreationInfo.getStoragePoolID(),
+                getCommandId(),
+                parentParameters.getCommandId(),
+                asyncTaskCreationInfo.getStoragePoolID(),
                 asyncTaskCreationInfo.getTaskType());
     }
 

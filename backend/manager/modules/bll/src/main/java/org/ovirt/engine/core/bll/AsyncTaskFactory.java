@@ -39,6 +39,7 @@ public final class AsyncTaskFactory {
                             new VdcActionParametersBase(),
                             creationInfo.getStepId(),
                             asyncTask == null ? Guid.newGuid() : asyncTask.getCommandId(),
+                            asyncTask == null ? Guid.newGuid() : asyncTask.getRootCommandId(),
                             creationInfo.getStoragePoolID(),
                             creationInfo.getTaskType());
             creationInfo.setTaskType(AsyncTaskType.unknown);

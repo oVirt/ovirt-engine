@@ -57,6 +57,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             entity.setTaskParameters(deserializeParameters(rs.getString("task_parameters"),rs.getString("task_params_class")));
             entity.setStepId(Guid.createGuidFromString(rs.getString("step_id")));
             entity.setCommandId(Guid.createGuidFromStringDefaultEmpty(rs.getString("command_id")));
+            entity.setRootCommandId(Guid.createGuidFromStringDefaultEmpty(rs.getString("root_command_id")));
             entity.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("started_at")));
             entity.setTaskType(AsyncTaskType.forValue(rs.getInt("task_type")));
             entity.setStoragePoolId(Guid.createGuidFromStringDefaultEmpty(rs.getString("storage_pool_id")));
@@ -89,6 +90,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             addValue("task_params_class",task.getTaskParameters().getClass().getName());
             addValue("step_id", task.getStepId());
             addValue("command_id", task.getCommandId());
+            addValue("root_command_id", task.getRootCommandId());
         }
 
         private static String serializeParameters(VdcActionParametersBase params) {

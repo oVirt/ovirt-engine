@@ -62,6 +62,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         newAsyncTask.setActionParameters(params);
         newAsyncTask.setTaskParameters(taskParams);
         newAsyncTask.setCommandId(Guid.newGuid());
+        newAsyncTask.setRootCommandId(Guid.newGuid());
         newAsyncTask.setTaskType(AsyncTaskType.copyImage);
         newAsyncTask.setStoragePoolId(Guid.newGuid());
 
