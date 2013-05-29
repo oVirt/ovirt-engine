@@ -414,8 +414,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         dataCentersItem.setType(SystemTreeItemType.DataCenters);
         dataCentersItem.setApplicationMode(ApplicationMode.VirtOnly);
         dataCentersItem.setTitle(ConstantsManager.getInstance().getConstants().dataCentersTitle());
-        dataCentersItem.setParent(systemItem);
-        systemItem.getChildren().add(dataCentersItem);
+        systemItem.addChild(dataCentersItem);
 
         // Populate everything under Data Centers
         for (VdcQueryReturnValue returnValue : result.getReturnValues())
@@ -431,17 +430,15 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             dataCenterItem.setType(SystemTreeItemType.DataCenter);
             dataCenterItem.setApplicationMode(ApplicationMode.VirtOnly);
             dataCenterItem.setTitle(getDataCenters().get(count).getName());
-            dataCenterItem.setParent(systemItem);
             dataCenterItem.setEntity(getDataCenters().get(count));
-            dataCentersItem.getChildren().add(dataCenterItem);
+            dataCentersItem.addChild(dataCenterItem);
 
             SystemTreeItemModel storagesItem = new SystemTreeItemModel();
             storagesItem.setType(SystemTreeItemType.Storages);
             storagesItem.setApplicationMode(ApplicationMode.VirtOnly);
             storagesItem.setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
-            storagesItem.setParent(dataCenterItem);
             storagesItem.setEntity(getDataCenters().get(count));
-            dataCenterItem.getChildren().add(storagesItem);
+            dataCenterItem.addChild(storagesItem);
 
             if (storages != null && storages.size() > 0)
             {
@@ -451,9 +448,8 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                     storageItem.setType(SystemTreeItemType.Storage);
                     storageItem.setApplicationMode(ApplicationMode.VirtOnly);
                     storageItem.setTitle(storage.getStorageName());
-                    storageItem.setParent(storagesItem);
                     storageItem.setEntity(storage);
-                    storagesItem.getChildren().add(storageItem);
+                    storagesItem.addChild(storageItem);
                 }
             }
 
@@ -461,9 +457,8 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             networksItem.setType(SystemTreeItemType.Networks);
             networksItem.setApplicationMode(ApplicationMode.VirtOnly);
             networksItem.setTitle(ConstantsManager.getInstance().getConstants().networksTitle());
-            networksItem.setParent(dataCenterItem);
             networksItem.setEntity(getDataCenters().get(count));
-            dataCenterItem.getChildren().add(networksItem);
+            dataCenterItem.addChild(networksItem);
 
             List<Network> dcNetworks = getNetworkMap().get(getDataCenters().get(count).getId());
             if (dcNetworks != null)
@@ -474,9 +469,8 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                     networkItem.setType(SystemTreeItemType.Network);
                     networkItem.setApplicationMode(ApplicationMode.VirtOnly);
                     networkItem.setTitle(network.getName());
-                    networkItem.setParent(networksItem);
                     networkItem.setEntity(network);
-                    networksItem.getChildren().add(networkItem);
+                    networksItem.addChild(networkItem);
                 }
             }
 
@@ -484,16 +478,14 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             templatesItem.setType(SystemTreeItemType.Templates);
             templatesItem.setApplicationMode(ApplicationMode.VirtOnly);
             templatesItem.setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
-            templatesItem.setParent(dataCenterItem);
             templatesItem.setEntity(getDataCenters().get(count));
-            dataCenterItem.getChildren().add(templatesItem);
+            dataCenterItem.addChild(templatesItem);
 
             SystemTreeItemModel clustersItem = new SystemTreeItemModel();
             clustersItem.setType(SystemTreeItemType.Clusters);
             clustersItem.setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
-            clustersItem.setParent(dataCenterItem);
             clustersItem.setEntity(getDataCenters().get(count));
-            dataCenterItem.getChildren().add(clustersItem);
+            dataCenterItem.addChild(clustersItem);
 
             if (getClusterMap().containsKey(getDataCenters().get(count).getId()))
             {
@@ -504,16 +496,14 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                     clusterItem.setType(cluster.supportsGlusterService() ? SystemTreeItemType.Cluster_Gluster
                             : SystemTreeItemType.Cluster);
                     clusterItem.setTitle(cluster.getName());
-                    clusterItem.setParent(clustersItem);
                     clusterItem.setEntity(cluster);
-                    clustersItem.getChildren().add(clusterItem);
+                    clustersItem.addChild(clusterItem);
 
                     SystemTreeItemModel hostsItem = new SystemTreeItemModel();
                     hostsItem.setType(SystemTreeItemType.Hosts);
                     hostsItem.setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
-                    hostsItem.setParent(clusterItem);
                     hostsItem.setEntity(cluster);
-                    clusterItem.getChildren().add(hostsItem);
+                    clusterItem.addChild(hostsItem);
 
                     if (getHostMap().containsKey(cluster.getId()))
                     {
@@ -522,9 +512,8 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                             SystemTreeItemModel hostItem = new SystemTreeItemModel();
                             hostItem.setType(SystemTreeItemType.Host);
                             hostItem.setTitle(host.getName());
-                            hostItem.setParent(hostsItem);
                             hostItem.setEntity(host);
-                            hostsItem.getChildren().add(hostItem);
+                            hostsItem.addChild(hostItem);
                         }
                     }
                     if (cluster.supportsGlusterService())
@@ -533,9 +522,8 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                         volumesItem.setType(SystemTreeItemType.Volumes);
                         volumesItem.setApplicationMode(ApplicationMode.GlusterOnly);
                         volumesItem.setTitle(ConstantsManager.getInstance().getConstants().volumesTitle());
-                        volumesItem.setParent(clusterItem);
                         volumesItem.setEntity(cluster);
-                        clusterItem.getChildren().add(volumesItem);
+                        clusterItem.addChild(volumesItem);
 
                         if (getVolumeMap().containsKey(cluster.getId())) {
                             for (GlusterVolumeEntity volume : getVolumeMap().get(cluster.getId())) {
@@ -543,9 +531,8 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                                 volumeItem.setType(SystemTreeItemType.Volume);
                                 volumeItem.setApplicationMode(ApplicationMode.GlusterOnly);
                                 volumeItem.setTitle(volume.getName());
-                                volumeItem.setParent(volumesItem);
                                 volumeItem.setEntity(volume);
-                                volumesItem.getChildren().add(volumeItem);
+                                volumesItem.addChild(volumeItem);
                             }
                         }
                     }
@@ -556,9 +543,8 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                         vmsItem.setType(SystemTreeItemType.VMs);
                         vmsItem.setApplicationMode(ApplicationMode.VirtOnly);
                         vmsItem.setTitle(ConstantsManager.getInstance().getConstants().vmsTitle());
-                        vmsItem.setParent(clusterItem);
                         vmsItem.setEntity(cluster);
-                        clusterItem.getChildren().add(vmsItem);
+                        clusterItem.addChild(vmsItem);
                     }
                 }
             }
@@ -569,7 +555,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         providersItem.setType(SystemTreeItemType.Providers);
         providersItem.setApplicationMode(ApplicationMode.VirtOnly);
         providersItem.setTitle(ConstantsManager.getInstance().getConstants().externalProvidersTitle());
-        systemItem.getChildren().add(providersItem);
+        systemItem.addChild(providersItem);
 
         // Populate with providers
         for (Provider provider : getProviders()) {
@@ -578,7 +564,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             providerItem.setApplicationMode(ApplicationMode.VirtOnly);
             providerItem.setTitle(provider.getName());
             providerItem.setEntity(provider);
-            providersItem.getChildren().add(providerItem);
+            providersItem.addChild(providerItem);
         }
 
         if (!ApplicationModeHelper.getUiMode().equals(ApplicationMode.AllModes)) {

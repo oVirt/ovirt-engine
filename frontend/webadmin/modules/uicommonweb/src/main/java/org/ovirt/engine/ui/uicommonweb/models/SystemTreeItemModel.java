@@ -46,6 +46,13 @@ public class SystemTreeItemModel extends EntityModel implements TreeNodeInfo {
         privateChildren = value;
     }
 
+    public void addChild(SystemTreeItemModel value) {
+        privateChildren.add(value);
+        if (value != null) {
+            value.setParent(this);
+        }
+    }
+
     private SystemTreeItemModel privateParent;
 
     public SystemTreeItemModel getParent()
@@ -53,7 +60,7 @@ public class SystemTreeItemModel extends EntityModel implements TreeNodeInfo {
         return privateParent;
     }
 
-    public void setParent(SystemTreeItemModel value)
+    private void setParent(SystemTreeItemModel value)
     {
         privateParent = value;
     }
