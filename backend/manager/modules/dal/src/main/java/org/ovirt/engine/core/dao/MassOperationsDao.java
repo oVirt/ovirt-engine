@@ -50,4 +50,13 @@ public interface MassOperationsDao<T extends BusinessEntity<?>, ID extends Seria
      * @param entities
      */
     void updateAllInBatch(String procedureName, Collection<T> paramValues, MapSqlParameterMapper<T> mapper);
+
+    /**
+     * Saves the given entities using a more efficient method to save all of them at once, rather than each at a time.
+     * The procedure name to be used is "InsertEntityName" where EntityName stands for the name of the entity
+     *
+     * @param entities
+     *            The entities to insert
+     */
+    void saveAll(Collection<T> entities);
 }

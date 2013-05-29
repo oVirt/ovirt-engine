@@ -59,4 +59,11 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
             remove(id);
         }
     }
+
+    @Override
+    public void saveAll(Collection<T> entities) {
+        for (T entity : entities) {
+            save(entity);
+        }
+    }
 }

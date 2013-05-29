@@ -139,14 +139,14 @@ public class GlusterSyncJobTest {
     private VDSGroup existingCluster;
     private VDS existingServer1;
     private VDS existingServer2;
-    private List<VDS> existingServers = new ArrayList<VDS>();
+    private final List<VDS> existingServers = new ArrayList<VDS>();
     private GlusterVolumeEntity existingDistVol;
     private GlusterVolumeEntity existingReplVol;
     private GlusterVolumeEntity newVolume;
-    private List<GlusterVolumeEntity> existingVolumes = new ArrayList<GlusterVolumeEntity>();
-    private List<Guid> removedBrickIds = new ArrayList<Guid>();
-    private List<Guid> addedBrickIds = new ArrayList<Guid>();
-    private List<GlusterBrickEntity> bricksWithChangedStatus = new ArrayList<GlusterBrickEntity>();
+    private final List<GlusterVolumeEntity> existingVolumes = new ArrayList<GlusterVolumeEntity>();
+    private final List<Guid> removedBrickIds = new ArrayList<Guid>();
+    private final List<Guid> addedBrickIds = new ArrayList<Guid>();
+    private final List<GlusterBrickEntity> bricksWithChangedStatus = new ArrayList<GlusterBrickEntity>();
 
     @Before
     public void createObjects() {
@@ -313,10 +313,22 @@ public class GlusterSyncJobTest {
         inOrder.verify(brickDao, times(1)).removeAll(argThat(containsRemovedBricks()));
         // add new bricks
         inOrder.verify(brickDao, times(2)).save(argThat(isAddedBrick()));
-        // update modified options
-        inOrder.verify(optionDao, times(1)).updateVolumeOption(argThat(isUpdatedOptionId()), eq(OPTION_VALUE_ON));
+
         // add new options
-        inOrder.verify(optionDao, times(1)).save(argThat(isNewOption()));
+        Map<String, GlusterVolumeOptionEntity> newOptions = new HashMap<String, GlusterVolumeOptionEntity>();
+        newOptions.put(OPTION_AUTH_REJECT, existingReplVol.getOption(OPTION_AUTH_REJECT));
+        List<GlusterVolumeOptionEntity> list1 = new ArrayList<GlusterVolumeOptionEntity>(newOptions.values());
+        Collections.sort(list1);
+        inOrder.verify(optionDao, times(1)).saveAll(list1);
+
+        // update modified options
+        Map<String, GlusterVolumeOptionEntity> existingOptions = new HashMap<String, GlusterVolumeOptionEntity>();
+        existingReplVol.getOption(OPTION_NFS_DISABLE).setValue(OPTION_VALUE_ON);
+        existingOptions.put(OPTION_NFS_DISABLE, existingReplVol.getOption(OPTION_NFS_DISABLE));
+        List<GlusterVolumeOptionEntity> list = new ArrayList<GlusterVolumeOptionEntity>(existingOptions.values());
+        Collections.sort(list);
+        inOrder.verify(optionDao, times(1)).updateAll("UpdateGlusterVolumeOption", list);
+
         // delete removed options
         inOrder.verify(optionDao, times(1)).removeAll(argThat(areRemovedOptions()));
 
@@ -349,6 +361,7 @@ public class GlusterSyncJobTest {
         doReturn(existingVolumes).when(volumeDao).getByClusterId(CLUSTER_ID);
         doNothing().when(volumeDao).removeAll(argThat(areRemovedVolumes()));
         doNothing().when(brickDao).updateBrickStatuses(argThat(hasBricksWithChangedStatus()));
+        doNothing().when(optionDao).saveAll(argThat(areAddedOptions()));
     }
 
     private ArgumentMatcher<Collection<Guid>> areRemovedVolumes() {
@@ -378,6 +391,23 @@ public class GlusterSyncJobTest {
                 ArrayList<Guid> optionsToRemove = (ArrayList<Guid>) argument;
                 return (optionsToRemove.size() == 1 && optionsToRemove.get(0)
                         .equals(existingReplVol.getOption(OPTION_AUTH_ALLOW).getId()));
+            }
+        };
+    }
+
+    private ArgumentMatcher<Collection<GlusterVolumeOptionEntity>> areAddedOptions() {
+        return new ArgumentMatcher<Collection<GlusterVolumeOptionEntity>>() {
+
+            @Override
+            public boolean matches(Object argument) {
+                if (!(argument instanceof ArrayList)) {
+                    return false;
+                }
+                @SuppressWarnings("unchecked")
+                ArrayList<GlusterVolumeOptionEntity> optionsToAdd = (ArrayList<GlusterVolumeOptionEntity>) argument;
+                // set the added option to volume
+                existingReplVol.setOption(optionsToAdd.get(0));
+                return (optionsToAdd.size() == 1 && (optionsToAdd.get(0).getKey().equals(OPTION_AUTH_REJECT)));
             }
         };
     }

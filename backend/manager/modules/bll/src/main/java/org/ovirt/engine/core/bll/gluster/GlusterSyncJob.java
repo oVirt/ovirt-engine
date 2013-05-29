@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeAdvancedDetailsVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumesListVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -561,6 +562,7 @@ public class GlusterSyncJob extends GlusterJob {
                             new HashMap<String, String>() {
                                 {
                                     put(GlusterConstants.OPTION_KEY, existingOption.getKey());
+                                    put(GlusterConstants.OPTION_VALUE, existingOption.getValue());
                                 }
                             });
                 }
@@ -575,56 +577,89 @@ public class GlusterSyncJob extends GlusterJob {
         }
     }
 
-    @SuppressWarnings("serial")
-    private void updateExistingAndNewOptions(GlusterVolumeEntity existingVolume,
+    private void updateExistingAndNewOptions(final GlusterVolumeEntity existingVolume,
             Collection<GlusterVolumeOptionEntity> fetchedOptions) {
+
+        Map<String, GlusterVolumeOptionEntity> existingOptions = new HashMap<>();
+        Map<String, GlusterVolumeOptionEntity> newOptions = new HashMap<>();
+
         for (final GlusterVolumeOptionEntity fetchedOption : fetchedOptions) {
             final GlusterVolumeOptionEntity existingOption = existingVolume.getOption(fetchedOption.getKey());
             if (existingOption == null) {
-                logUtil.logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
-                        AuditLogType.GLUSTER_VOLUME_OPTION_SET_FROM_CLI,
-                        new HashMap<String, String>() {
-                            {
-                                put(GlusterConstants.OPTION_KEY, fetchedOption.getKey());
-                                put(GlusterConstants.OPTION_VALUE, fetchedOption.getValue());
-                            }
-                        });
-                log.infoFormat("New option {0}={1} set on volume {2} from gluster CLI. Updating engine DB accordingly.",
-                        fetchedOption.getKey(),
-                        fetchedOption.getValue(),
-                        existingVolume.getName());
-                try {
-                    getOptionDao().save(fetchedOption);
-                } catch (Exception e) {
-                    log.errorFormat("Could not save option {0} of volume {1) to database!",
-                            fetchedOption,
-                            existingVolume.getName(),
-                            e);
-                }
+                newOptions.put(fetchedOption.getKey(), fetchedOption);
             } else if (!existingOption.getValue().equals(fetchedOption.getValue())) {
-                logUtil.logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
-                        AuditLogType.GLUSTER_VOLUME_OPTION_CHANGED_FROM_CLI,
-                        new HashMap<String, String>() {
-                            {
-                                put(GlusterConstants.OPTION_KEY, existingOption.getKey());
-                                put(GlusterConstants.OPTION_OLD_VALUE, existingOption.getValue());
-                                put(GlusterConstants.OPTION_NEW_VALUE, fetchedOption.getValue());
-                            }
-                        });
-                log.infoFormat("Detected change in value of option {0} of volume {1} from {2} to {3}. Updating engine DB accordingly.",
-                        existingOption.getKey(),
-                        existingVolume.getName(),
-                        existingOption.getValue(),
-                        fetchedOption.getValue());
-                try {
-                    getOptionDao().updateVolumeOption(existingOption.getId(), fetchedOption.getValue());
-                } catch (Exception e) {
-                    log.errorFormat("Error while updating option {0} of volume {1} in database!",
-                            fetchedOption,
-                            existingVolume.getName(),
-                            e);
-                }
+                fetchedOption.setId(existingOption.getId());
+                existingOptions.put(fetchedOption.getKey(), fetchedOption);
             }
+        }
+
+        final List<GlusterVolumeOptionEntity> newOptionsSortedList =
+                new ArrayList<GlusterVolumeOptionEntity>(newOptions.values());
+        final List<GlusterVolumeOptionEntity> existingOptionsSortedList =
+                new ArrayList<GlusterVolumeOptionEntity>(existingOptions.values());
+        Collections.sort(newOptionsSortedList);
+        Collections.sort(existingOptionsSortedList);
+
+        // Insert the new options in a single transaction
+        if (!newOptionsSortedList.isEmpty()) {
+            TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                    new TransactionMethod<Void>() {
+                        @Override
+                        public Void runInTransaction() {
+                            saveNewOptions(existingVolume, newOptionsSortedList);
+                            return null;
+                        }
+                    });
+        }
+
+        // Update the existing options in a single transaction
+        if (!existingOptionsSortedList.isEmpty()) {
+            TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                    new TransactionMethod<Void>() {
+                        @Override
+                        public Void runInTransaction() {
+                            updateExistingOptions(existingVolume, existingOptionsSortedList);
+                            return null;
+                        }
+                    });
+        }
+    }
+
+    private void saveNewOptions(GlusterVolumeEntity volume, Collection<GlusterVolumeOptionEntity> entities) {
+        getOptionDao().saveAll(entities);
+        for (final GlusterVolumeOptionEntity entity : entities) {
+            logUtil.logAuditMessage(volume.getClusterId(), volume, null,
+                    AuditLogType.GLUSTER_VOLUME_OPTION_SET_FROM_CLI,
+                    new HashMap<String, String>() {
+                        {
+                            put(GlusterConstants.OPTION_KEY, entity.getKey());
+                            put(GlusterConstants.OPTION_VALUE, entity.getValue());
+                        }
+                    });
+            log.infoFormat("New option {0}={1} set on volume {2} from gluster CLI. Updating engine DB accordingly.",
+                    entity.getKey(),
+                    entity.getValue(),
+                    volume.getName());
+        }
+    }
+
+    private void updateExistingOptions(final GlusterVolumeEntity volume, Collection<GlusterVolumeOptionEntity> entities) {
+        getOptionDao().updateAll("UpdateGlusterVolumeOption", entities);
+        for (final GlusterVolumeOptionEntity entity : entities) {
+            logUtil.logAuditMessage(volume.getClusterId(), volume, null,
+                    AuditLogType.GLUSTER_VOLUME_OPTION_CHANGED_FROM_CLI,
+                    new HashMap<String, String>() {
+                        {
+                            put(GlusterConstants.OPTION_KEY, entity.getKey());
+                            put(GlusterConstants.OPTION_OLD_VALUE, volume.getOption(entity.getKey()).getValue());
+                            put(GlusterConstants.OPTION_NEW_VALUE, entity.getValue());
+                        }
+                    });
+            log.infoFormat("Detected change in value of option {0} of volume {1} from {2} to {3}. Updating engine DB accordingly.",
+                    volume.getOption(entity.getKey()),
+                    volume.getName(),
+                    volume.getOption(entity.getKey()).getValue(),
+                    entity.getValue());
         }
     }
 
