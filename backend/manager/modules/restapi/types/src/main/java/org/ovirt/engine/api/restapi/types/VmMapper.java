@@ -229,7 +229,7 @@ public class VmMapper {
         if (vm.isSetTimezone()) {
             staticVm.setTimeZone(vm.getTimezone());
         }
-        if (vm.isSetCustomProperties() && vm.getCustomProperties().isSetCustomProperty()) {
+        if (vm.isSetCustomProperties()) {
             staticVm.setCustomProperties(CustomPropertiesParser.parse(vm.getCustomProperties().getCustomProperty()));
         }
         if (vm.isSetQuota() && vm.getQuota().isSetId()) {
@@ -458,7 +458,7 @@ public class VmMapper {
                 params.setFloppyPath(file);
             }
         }
-        if (vm.isSetCustomProperties() && vm.getCustomProperties().isSetCustomProperty()) {
+        if (vm.isSetCustomProperties()) {
             params.setCustomProperties(CustomPropertiesParser.parse(vm.getCustomProperties().getCustomProperty()));
         }
         if (vm.isSetOs()) {
