@@ -1,0 +1,14 @@
+<FindBugsFilter>
+       <!--
+        findbugs complain that the code is using absolute path in File object,
+        the FileServletTest is using it to test input path
+
+        findbugs reason:
+        DMI: Code contains a hard coded reference to an absolute pathname (DMI_HARDCODED_ABSOLUTE_FILENAME)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.core.FileServletTest" />
+       <Method name="testInitServletConfig_BaseSet"/>
+       <Bug code="DMI"/>
+     </Match>
+ </FindBugsFilter>
