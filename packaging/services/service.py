@@ -479,7 +479,9 @@ class Daemon(Base):
 
         self.daemonSetup()
 
-        stdout, stderr = self.daemonStdHandles()
+        stdout, stderr = (sys.stdout, sys.stderr)
+        if self._options.redirectOutput:
+            stdout, stderr = self.daemonStdHandles()
 
         def _myterm(signum, frame):
             raise self.TerminateException()
@@ -534,10 +536,33 @@ class Daemon(Base):
             default=False,
             help=_('Go into the background'),
         )
+        parser.add_option(
+            '--redirect-output',
+            dest='redirectOutput',
+            action='store_true',
+            default=False,
+            help=_('Redirect output of daemon'),
+        )
         (self._options, args) = parser.parse_args()
 
         if self._options.debug:
             logging.getLogger('ovirt').setLevel(logging.DEBUG)
+
+        if not self._options.redirectOutput:
+            h = logging.StreamHandler()
+            h.setLevel(logging.DEBUG)
+            h.setFormatter(
+                logging.Formatter(
+                    fmt=(
+                        os.path.splitext(os.path.basename(sys.argv[0]))[0] +
+                        '[%(process)s] '
+                        '%(levelname)s '
+                        '%(funcName)s:%(lineno)d '
+                        '%(message)s'
+                    ),
+                ),
+            )
+            logging.getLogger('ovirt').addHandler(h)
 
         if len(args) != 1:
             parser.error(_('Action is missing'))

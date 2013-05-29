@@ -62,6 +62,14 @@
         <append value="true"/>
       </size-rotating-file-handler>
 
+      <!-- Console -->
+      <console-handler name="CONSOLE" autoflush="true">
+        <level name="INFO"/>
+        <formatter>
+          <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
+        </formatter>
+      </console-handler>
+
       <!-- Loggers for the application server: -->
       <logger category="com.arjuna">
         <level name="WARN"/>
@@ -78,6 +86,9 @@
         <level name="INFO"/>
         <handlers>
           <handler name="ENGINE"/>
+          #if $getBoolean('ENGINE_LOG_TO_CONSOLE')
+              <handler name="CONSOLE"/>
+          #end if
         </handlers>
       </logger>
       <logger category="org.ovirt.engine.core.bll">

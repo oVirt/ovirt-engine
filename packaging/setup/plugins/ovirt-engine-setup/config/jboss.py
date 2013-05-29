@@ -80,16 +80,21 @@ class Plugin(plugin.PluginBase):
                 OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG_JBOSS
             ),
         ):
+            content = [
+                'JBOSS_HOME="{jbossHome}"'.format(
+                    jbossHome=self.environment[
+                        osetupcons.ConfigEnv.JBOSS_HOME
+                    ],
+                ),
+            ]
+            if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
+                content.append(
+                    'ENGINE_LOG_TO_CONSOLE=true'
+                )
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
                 filetransaction.FileTransaction(
                     name=f,
-                    content=(
-                        'JBOSS_HOME="{jbossHome}"\n'
-                    ).format(
-                        jbossHome=self.environment[
-                            osetupcons.ConfigEnv.JBOSS_HOME
-                        ],
-                    ),
+                    content=content,
                     modifiedList=self.environment[
                         otopicons.CoreEnv.MODIFIED_FILES
                     ],
