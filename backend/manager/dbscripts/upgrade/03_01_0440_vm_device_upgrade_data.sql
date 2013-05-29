@@ -198,7 +198,7 @@ BEGIN
 END; $function$
 LANGUAGE plpgsql;
 
-SELECT * FROM __temp_vm_device_upgrade_data();
+--SELECT * FROM __temp_vm_device_upgrade_data();
 
 
 DROP FUNCTION __temp_vm_device_upgrade_data();

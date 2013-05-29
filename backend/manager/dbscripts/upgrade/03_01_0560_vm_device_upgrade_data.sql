@@ -46,7 +46,10 @@ CREATE OR REPLACE FUNCTION __temp_set_vm_device_boot_order(v_vm_id UUID, v_type 
 RETURNS void
 AS $function$
 DECLARE
-    v_sql text := 'SELECT device_id FROM vm_device where vm_id=''' || v_vm_id || ''' and type=''' || v_type || ''' and device=''' ||  v_device || '''';
+    v_sql text := 'SELECT device_id FROM vm_device
+    left outer join images on vm_device.device_id = images.image_group_id
+    where is_managed = true and vm_id=''' || v_vm_id || ''' and type=''' || v_type || ''' and device=''' ||  v_device || '''
+    order by images.boot desc';
     v_cur refcursor ;
     v_boot_order int;
     v_device_id UUID;
