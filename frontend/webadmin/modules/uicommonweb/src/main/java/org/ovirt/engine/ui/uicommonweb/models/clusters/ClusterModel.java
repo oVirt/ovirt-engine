@@ -755,7 +755,6 @@ public class ClusterModel extends EntityModel
         getCPU().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
         setVersion(new ListModel());
         getVersion().getSelectedItemChangedEvent().addListener(this);
-        getVersion().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
         setMigrateOnErrorOption(MigrateOnErrorOptions.YES);
 
         setIsGeneralTabValid(true);
