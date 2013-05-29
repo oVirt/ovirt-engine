@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -413,7 +413,9 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         // Add Data Centers node under System
         SystemTreeItemModel dataCentersItem = new SystemTreeItemModel();
         dataCentersItem.setType(SystemTreeItemType.DataCenters);
+        dataCentersItem.setApplicationMode(ApplicationMode.VirtOnly);
         dataCentersItem.setTitle(ConstantsManager.getInstance().getConstants().dataCentersTitle());
+        dataCentersItem.setParent(systemItem);
         systemItem.getChildren().add(dataCentersItem);
 
         // Populate everything under Data Centers
@@ -566,6 +568,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         // Add Providers node under System
         SystemTreeItemModel providersItem = new SystemTreeItemModel();
         providersItem.setType(SystemTreeItemType.Providers);
+        providersItem.setApplicationMode(ApplicationMode.VirtOnly);
         providersItem.setTitle(ConstantsManager.getInstance().getConstants().externalProvidersTitle());
         systemItem.getChildren().add(providersItem);
 
@@ -573,6 +576,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         for (Provider provider : getProviders()) {
             SystemTreeItemModel providerItem = new SystemTreeItemModel();
             providerItem.setType(SystemTreeItemType.Provider);
+            providerItem.setApplicationMode(ApplicationMode.VirtOnly);
             providerItem.setTitle(provider.getName());
             providersItem.getChildren().add(providerItem);
         }

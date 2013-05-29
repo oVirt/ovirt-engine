@@ -65,11 +65,12 @@ public class ApplicationModeHelper {
                 list.add(item);
             }
         }
-        if (list.size() == 1
-                && list.size() == systemItem.getChildren().size()
-                && (systemItem.getChildren().get(0).getApplicationMode().getValue() & ApplicationModeHelper.getUiMode()
-                        .getValue()) == 0) {
-            systemItem.setChildren(systemItem.getChildren().get(0).getChildren());
+        if (list.size() > 0 && list.size() == systemItem.getChildren().size()) {
+            List<SystemTreeItemModel> childItems = new ArrayList<SystemTreeItemModel>();
+            for (SystemTreeItemModel item : list) {
+                childItems.addAll(item.getChildren());
+            }
+            systemItem.setChildren(childItems);
         }
 
         for (SystemTreeItemModel systemTreeItemModel : list) {
