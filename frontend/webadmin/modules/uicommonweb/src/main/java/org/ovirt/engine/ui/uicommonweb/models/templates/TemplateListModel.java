@@ -648,7 +648,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     private boolean isBlankTemplate(Object selectedItem) {
         return selectedItem != null &&
                 selectedItem instanceof VmTemplate &&
-                Guid.OpEquality(((VmTemplate) selectedItem).getId(), NGuid.Empty);
+                NGuid.Empty.equals(((VmTemplate) selectedItem).getId());
     }
 
     @Override

@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -72,7 +71,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 
         for (VDSGroup cluster : clusters) {
             if (cluster.getStoragePoolId() != null) {
-                if (Guid.OpEquality(cluster.getId(), vm.getVdsGroupId().getValue())) {
+                if (vm.getVdsGroupId().getValue().equals(cluster.getId())) {
                     return true;
                 }
             }

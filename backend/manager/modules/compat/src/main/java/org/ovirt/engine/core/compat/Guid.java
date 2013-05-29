@@ -35,9 +35,4 @@ public class Guid extends NGuid {
             return new Guid(candidate);
         }
     }
-
-    public static boolean OpEquality(Guid g1, Guid g2) {
-        return (g1 == null && g2 == null) || (g1 != null && g1.equals(g2));
-    }
-
 }
