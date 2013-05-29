@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class BackendGroupsResourceTest
     extends AbstractBackendCollectionResourceTest<Group, LdapGroup, BackendGroupsResource> {
@@ -311,7 +310,7 @@ public class BackendGroupsResourceTest
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(NAMES[index], model.getName());
         assertNotNull(model.getDomain());
-        assertEquals(new NGuid(DOMAIN.getBytes(),true).toString(), model.getDomain().getId());
+        assertEquals(new Guid(DOMAIN.getBytes(), true).toString(), model.getDomain().getId());
         verifyLinks(model);
     }
 

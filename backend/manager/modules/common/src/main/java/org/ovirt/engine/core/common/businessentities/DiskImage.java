@@ -5,7 +5,6 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class DiskImage extends DiskImageBase implements IImage {
 
@@ -24,7 +23,7 @@ public class DiskImage extends DiskImageBase implements IImage {
 
     private String appList;
     // TODO from storage_domain_static
-    private NGuid storagePoolId;
+    private Guid storagePoolId;
     // TODO from storage_domain_static
     private ArrayList<String> storagePath;
     private int readRateKbPerSec;
@@ -251,11 +250,11 @@ public class DiskImage extends DiskImageBase implements IImage {
         this.storageIds = storageIds;
     }
 
-    public NGuid getVmSnapshotId() {
+    public Guid getVmSnapshotId() {
         return getImage().getSnapshotId();
     }
 
-    public void setVmSnapshotId(NGuid snapshotId) {
+    public void setVmSnapshotId(Guid snapshotId) {
         getImage().setSnapshotId(snapshotId == null ? null : snapshotId.getValue());
     }
 
@@ -285,11 +284,11 @@ public class DiskImage extends DiskImageBase implements IImage {
         setId(value);
     }
 
-    public NGuid getStoragePoolId() {
+    public Guid getStoragePoolId() {
         return storagePoolId;
     }
 
-    public void setStoragePoolId(NGuid storagePoolId) {
+    public void setStoragePoolId(Guid storagePoolId) {
         this.storagePoolId = storagePoolId;
     }
 
@@ -389,7 +388,7 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.setDiskAlias(diskImage.getDiskAlias());
         di.setDiskDescription(diskImage.getDiskDescription());
         di.setShareable(diskImage.isShareable());
-        di.storagePoolId = new NGuid(diskImage.storagePoolId.getUuid());
+        di.storagePoolId = new Guid(diskImage.storagePoolId.getUuid());
         di.actualSize = diskImage.actualSize;
         di.readRateKbPerSec = diskImage.readRateKbPerSec;
         di.writeRateKbPerSec = diskImage.writeRateKbPerSec;

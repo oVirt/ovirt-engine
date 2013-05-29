@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 
 public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, Commented {
@@ -37,7 +36,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, 
 
     private int masterDomainVersion;
 
-    private NGuid spmVdsId = new NGuid();
+    private Guid spmVdsId = new Guid();
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_VERSION_SIZE)
     private String compatibilityVersion;
@@ -172,11 +171,11 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, 
         recovery_mode = value;
     }
 
-    public NGuid getspm_vds_id() {
+    public Guid getspm_vds_id() {
         return spmVdsId;
     }
 
-    public void setspm_vds_id(NGuid value) {
+    public void setspm_vds_id(Guid value) {
         spmVdsId = value;
     }
 

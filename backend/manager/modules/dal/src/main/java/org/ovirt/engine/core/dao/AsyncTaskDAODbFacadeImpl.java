@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -38,7 +37,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
 
         @Override
         public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return Guid.createGuidFromString(rs.getString("id"));
+            return Guid.createGuidFromStringDefaultEmpty(rs.getString("id"));
         }
 
     }
@@ -52,14 +51,14 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             entity.setaction_type(VdcActionType.forValue(rs.getInt("action_type")));
             entity.setresult(AsyncTaskResultEnum.forValue(rs.getInt("result")));
             entity.setstatus(AsyncTaskStatusEnum.forValue(rs.getInt("status")));
-            entity.settask_id(Guid.createGuidFromString(rs.getString("task_id")));
+            entity.settask_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("task_id")));
             entity.setActionParameters(deserializeParameters(rs.getString("action_parameters"),rs.getString("action_params_class")));
             entity.setTaskParameters(deserializeParameters(rs.getString("task_parameters"),rs.getString("task_params_class")));
-            entity.setStepId(NGuid.createGuidFromString(rs.getString("step_id")));
-            entity.setCommandId(Guid.createGuidFromString(rs.getString("command_id")));
+            entity.setStepId(Guid.createGuidFromString(rs.getString("step_id")));
+            entity.setCommandId(Guid.createGuidFromStringDefaultEmpty(rs.getString("command_id")));
             entity.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("started_at")));
             entity.setTaskType(AsyncTaskType.forValue(rs.getInt("task_type")));
-            entity.setStoragePoolId(Guid.createGuidFromString(rs.getString("storage_pool_id")));
+            entity.setStoragePoolId(Guid.createGuidFromStringDefaultEmpty(rs.getString("storage_pool_id")));
             return entity;
         }
 

@@ -88,7 +88,7 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
     protected VDSGroup lookupClusterById(String id) {
         return getEntity(VDSGroup.class,
                          VdcQueryType.GetVdsGroupById,
-                         new IdQueryParameters(Guid.createGuidFromString(id)),
+                         new IdQueryParameters(Guid.createGuidFromStringDefaultEmpty(id)),
                          id);
     }
 
@@ -98,8 +98,8 @@ public abstract class AbstractBackendStorageDomainContentResource<C extends Base
             for (Disk disk : action.getVm().getDisks().getDisks()) {
                 if (disk.isSetId() && disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains()
                         && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
-                    diskToDestinationMap.put(Guid.createGuidFromString(disk.getId()),
-                            Guid.createGuidFromString(disk.getStorageDomains().getStorageDomains().get(0).getId()));
+                    diskToDestinationMap.put(Guid.createGuidFromStringDefaultEmpty(disk.getId()),
+                            Guid.createGuidFromStringDefaultEmpty(disk.getStorageDomains().getStorageDomains().get(0).getId()));
                 }
             }
         }

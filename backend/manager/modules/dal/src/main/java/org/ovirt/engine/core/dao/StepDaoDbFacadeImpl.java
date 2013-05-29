@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -84,9 +83,9 @@ public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> i
         @Override
         public Step mapRow(ResultSet rs, int rowNum) throws SQLException {
             Step step = new Step();
-            step.setId(Guid.createGuidFromString(rs.getString("step_id")));
-            step.setParentStepId(NGuid.createGuidFromString(rs.getString("parent_step_id")));
-            step.setJobId(Guid.createGuidFromString(rs.getString("job_id")));
+            step.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("step_id")));
+            step.setParentStepId(Guid.createGuidFromString(rs.getString("parent_step_id")));
+            step.setJobId(Guid.createGuidFromStringDefaultEmpty(rs.getString("job_id")));
             step.setStepType(StepEnum.valueOf(rs.getString("step_type")));
             step.setDescription(rs.getString("description"));
             step.setStepNumber(rs.getInt("step_number"));
@@ -94,7 +93,7 @@ public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> i
             step.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
             step.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
             step.setCorrelationId(rs.getString("correlation_id"));
-            step.getExternalSystem().setId(NGuid.createGuidFromString(rs.getString("external_id")));
+            step.getExternalSystem().setId(Guid.createGuidFromString(rs.getString("external_id")));
             step.getExternalSystem().setType(ExternalSystemType.safeValueOf(rs.getString("external_system_type")));
             return step;
         }

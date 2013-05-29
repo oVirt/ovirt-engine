@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.AbstractVmRowMapper;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.springframework.jdbc.core.RowMapper;
@@ -180,16 +179,16 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             final VmStatic entity = new VmStatic();
             map(rs, entity);
 
-            entity.setId(Guid.createGuidFromString(rs.getString("vm_guid")));
+            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_guid")));
             entity.setMemSizeMb(rs.getInt("mem_size_mb"));
-            entity.setVdsGroupId(Guid.createGuidFromString(rs.getString("vds_group_id")));
+            entity.setVdsGroupId(Guid.createGuidFromStringDefaultEmpty(rs.getString("vds_group_id")));
 
             entity.setName(rs.getString("vm_name"));
-            entity.setVmtGuid(Guid.createGuidFromString(rs.getString("vmt_guid")));
+            entity.setVmtGuid(Guid.createGuidFromStringDefaultEmpty(rs.getString("vmt_guid")));
             entity.setDomain(rs.getString("domain"));
             entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
             entity.setInitialized(rs.getBoolean("is_initialized"));
-            entity.setDedicatedVmForVds(NGuid.createGuidFromString(rs.getString("dedicated_vm_for_vds")));
+            entity.setDedicatedVmForVds(Guid.createGuidFromString(rs.getString("dedicated_vm_for_vds")));
             entity.setDefaultDisplayType(DisplayType.forValue(rs.getInt("default_display_type")));
             entity.setMigrationSupport(MigrationSupport.forValue(rs.getInt("migration_support")));
             String predefinedProperties = rs.getString("predefined_properties");
@@ -199,7 +198,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             entity.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(predefinedProperties,
                     userDefinedProperties));
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
-            entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
+            entity.setQuotaId(Guid.createGuidFromStringDefaultEmpty(rs.getString("quota_id")));
             entity.setCpuPinning(rs.getString("cpu_pinning"));
             entity.setUseHostCpuFlags(rs.getBoolean("host_cpu_flags"));
             entity.setTunnelMigration((Boolean) rs.getObject("tunnel_migration"));

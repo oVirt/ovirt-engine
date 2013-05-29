@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -20,8 +19,8 @@ public class StoragePoolIsoMapDAODbFacadeImpl extends BaseDAODbFacade implements
         @Override
         public StoragePoolIsoMap mapRow(ResultSet rs, int rowNum) throws SQLException {
             StoragePoolIsoMap entity = new StoragePoolIsoMap();
-            entity.setstorage_id(Guid.createGuidFromString(rs.getString("storage_id")));
-            entity.setstorage_pool_id(NGuid.createGuidFromString(rs.getString("storage_pool_id")));
+            entity.setstorage_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("storage_id")));
+            entity.setstorage_pool_id(Guid.createGuidFromString(rs.getString("storage_pool_id")));
             entity.setstatus(StorageDomainStatus.forValue(rs.getInt("status")));
             return entity;
         }

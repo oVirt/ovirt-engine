@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.SerializationExeption;
 import org.ovirt.engine.core.utils.SerializationFactory;
@@ -33,8 +32,7 @@ public class JsonObjectDeserializer implements Deserializer {
     private static final ObjectMapper formattedMapper;
     static {
         formattedMapper = new ObjectMapper();
-        formattedMapper.getDeserializationConfig().addMixInAnnotations(NGuid.class, JsonNGuidMixIn.class);
-        formattedMapper.getDeserializationConfig().addMixInAnnotations(Guid.class, JsonNGuidMixIn.class);
+        formattedMapper.getDeserializationConfig().addMixInAnnotations(Guid.class, JsonGuidMixIn.class);
         formattedMapper.getDeserializationConfig().addMixInAnnotations(VdcActionParametersBase.class,
                 JsonVdcActionParametersBaseMixIn.class);
         formattedMapper.getDeserializationConfig().addMixInAnnotations(IVdcQueryable.class,

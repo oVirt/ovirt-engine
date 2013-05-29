@@ -7,14 +7,14 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Domains;
 import org.ovirt.engine.api.model.Domain;
-import org.ovirt.engine.api.resource.DomainsResource;
+import org.ovirt.engine.api.model.Domains;
 import org.ovirt.engine.api.resource.DomainResource;
+import org.ovirt.engine.api.resource.DomainsResource;
+import org.ovirt.engine.api.restapi.model.Directory;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.api.restapi.model.Directory;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendDomainsResource extends AbstractBackendCollectionResource<Domain, Directory>
     implements DomainsResource {
@@ -51,7 +51,7 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
         for(String domain : getDomainList()){
             Directory ds = new Directory();
             ds.setDomain(domain);
-            NGuid guid = new NGuid(domain.getBytes(),true);
+            Guid guid = new Guid(domain.getBytes(), true);
             ds.setId(guid.toString());
             dsl.add(ds);
         }

@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 
@@ -23,7 +22,7 @@ import org.ovirt.engine.core.dao.StorageDomainDAO;
 public class MultipleStorageDomainsValidator {
 
     /** The ID of the storage pool all the domains belong to */
-    private NGuid storagePoolId;
+    private Guid storagePoolId;
 
     /** A map from the ids of each domain being validated to its validator */
     private Map<Guid, StorageDomainValidator> domainValidators;
@@ -32,7 +31,7 @@ public class MultipleStorageDomainsValidator {
      * Constructor from Guids
      * @param sdIds A {@link Collection} of storage domain IDs to be validated
      */
-    public MultipleStorageDomainsValidator(NGuid storagePoolId, Collection<Guid> sdIds) {
+    public MultipleStorageDomainsValidator(Guid storagePoolId, Collection<Guid> sdIds) {
         this.storagePoolId = storagePoolId;
         domainValidators = new HashMap<Guid, StorageDomainValidator>();
         for (Guid id : sdIds) {

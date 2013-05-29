@@ -109,7 +109,6 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetails
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -1528,7 +1527,7 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void getDataCenterVersions(AsyncQuery aQuery, NGuid dataCenterId) {
+    public static void getDataCenterVersions(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -1741,7 +1740,7 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.Search, sp, aQuery);
     }
 
-    public static void getStorageDomainsByConnection(AsyncQuery aQuery, NGuid storagePoolId, String connectionPath) {
+    public static void getStorageDomainsByConnection(AsyncQuery aQuery, Guid storagePoolId, String connectionPath) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)

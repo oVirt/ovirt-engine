@@ -70,7 +70,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
@@ -805,7 +804,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             final Guid object,
             final VdcObjectType type) {
         // Grant if there is matching permission in the database:
-        final NGuid permId =
+        final Guid permId =
                 getDbFacade().getEntityPermissions(userId, actionGroup, object, type);
         if (permId != null) {
             if (log.isDebugEnabled()) {
@@ -853,7 +852,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             final VdcObjectType type,
             final boolean ignoreEveryone) {
         // Grant if there is matching permission in the database:
-        final NGuid permId =
+        final Guid permId =
                 getDbFacade().getEntityPermissionsForUserAndGroups(userId, groupIds, actionGroup, object, type, ignoreEveryone);
         if (permId != null) {
             if (log.isDebugEnabled()) {

@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 /**
  * Represents the Job entity which encapsulates a client action in the system. The Job contains a collection
@@ -47,7 +46,7 @@ public class Job extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * The user id which invoked the job
      */
-    private NGuid ownerId;
+    private Guid ownerId;
 
     /**
      * Determines whether the Job should be presented
@@ -157,11 +156,11 @@ public class Job extends IVdcQueryable implements BusinessEntity<Guid> {
         return jobSubjectEntities;
     }
 
-    public void setOwnerId(NGuid ownerId) {
+    public void setOwnerId(Guid ownerId) {
         this.ownerId = ownerId;
     }
 
-    public NGuid getOwnerId() {
+    public Guid getOwnerId() {
         return ownerId;
     }
 

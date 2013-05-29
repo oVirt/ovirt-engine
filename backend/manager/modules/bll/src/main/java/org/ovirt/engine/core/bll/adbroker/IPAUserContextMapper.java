@@ -54,7 +54,7 @@ public class IPAUserContextMapper implements ContextMapper {
         String objectGuid;
         try {
             objectGuid = (String)attributes.get(ipaUniqueId.name()).get(0);
-            user.setUserId(Guid.createGuidFromString(objectGuid));
+            user.setUserId(Guid.createGuidFromStringDefaultEmpty(objectGuid));
 
             // Getting other string properties
             Attribute att = attributes.get(krbPrincipalname.name());

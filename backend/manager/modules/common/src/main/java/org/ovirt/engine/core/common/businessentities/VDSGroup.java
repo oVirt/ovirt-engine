@@ -11,11 +11,10 @@ import org.ovirt.engine.core.common.validation.annotation.ValidVdsGroup;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 
 @ValidVdsGroup(groups = { CreateEntity.class })
-public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<NGuid> {
+public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
 
 
     private static final long serialVersionUID = 5659359762655478095L;
@@ -45,7 +44,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private int cpu_over_commit_duration_minutes = 0;
 
-    private NGuid storagePoolId;
+    private Guid storagePoolId;
 
     @Size(max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
     private String storagePoolName;
@@ -156,12 +155,12 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     }
 
     @Override
-    public NGuid getStoragePoolId() {
+    public Guid getStoragePoolId() {
         return storagePoolId;
     }
 
     @Override
-    public void setStoragePoolId(NGuid storagePool) {
+    public void setStoragePoolId(Guid storagePool) {
         this.storagePoolId = storagePool;
     }
 

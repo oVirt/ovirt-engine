@@ -7,7 +7,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 /**
  * represents a meaningful phase of the Job. A Step could be a parent of other steps (e.g. step named EXECUTION could
@@ -33,7 +32,7 @@ public class Step extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * The direct parent step of the current step
      */
-    private NGuid parentStepId;
+    private Guid parentStepId;
 
     /**
      * The step type
@@ -119,11 +118,11 @@ public class Step extends IVdcQueryable implements BusinessEntity<Guid> {
         return jobId;
     }
 
-    public void setParentStepId(NGuid parentStepId) {
+    public void setParentStepId(Guid parentStepId) {
         this.parentStepId = parentStepId;
     }
 
-    public NGuid getParentStepId() {
+    public Guid getParentStepId() {
         return parentStepId;
     }
 

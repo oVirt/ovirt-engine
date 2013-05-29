@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 public class StorageDomainDAOTest extends BaseDAOTestCase {
@@ -158,7 +157,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetForStoragePoolWithInvalidPool() {
         StorageDomain result = dao.getForStoragePool(existingDomain.getId(),
-                NGuid.NewGuid());
+                Guid.NewGuid());
 
         assertNull(result);
     }

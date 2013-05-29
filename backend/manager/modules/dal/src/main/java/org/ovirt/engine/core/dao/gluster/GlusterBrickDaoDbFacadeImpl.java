@@ -106,10 +106,10 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
         public GlusterBrickEntity mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             GlusterBrickEntity brick = new GlusterBrickEntity();
-            brick.setId(Guid.createGuidFromString(rs.getString("id")));
-            brick.setVolumeId(Guid.createGuidFromString(rs.getString("volume_id")));
+            brick.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
+            brick.setVolumeId(Guid.createGuidFromStringDefaultEmpty(rs.getString("volume_id")));
 
-            Guid serverId = Guid.createGuidFromString(rs.getString("server_id"));
+            Guid serverId = Guid.createGuidFromStringDefaultEmpty(rs.getString("server_id"));
             brick.setServerId(serverId);
             // Update the brick with server name. This is useful as the brick is typically represented in the form
             // serverName:brickDirectory though the database table (gluster_volume_bricks) stores just the server id

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -125,18 +124,18 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                         .getString("guest_cur_user_name"));
                 entity.setConsoleCurrentUserName(rs
                         .getString("console_cur_user_name"));
-                entity.setConsoleUserId(NGuid.createGuidFromString(rs.getString("console_user_id")));
+                entity.setConsoleUserId(Guid.createGuidFromString(rs.getString("console_user_id")));
                 entity.setGuestLastLoginTime(DbFacadeUtils.fromDate(rs
                         .getTimestamp("guest_last_login_time")));
                 entity.setGuestLastLogoutTime(DbFacadeUtils.fromDate(rs
                         .getTimestamp("guest_last_logout_time")));
                 entity.setGuestOs(rs.getString("guest_os"));
-                entity.setMigratingToVds(NGuid.createGuidFromString(rs
+                entity.setMigratingToVds(Guid.createGuidFromString(rs
                         .getString("migrating_to_vds")));
-                entity.setRunOnVds(NGuid.createGuidFromString(rs
+                entity.setRunOnVds(Guid.createGuidFromString(rs
                         .getString("run_on_vds")));
                 entity.setStatus(VMStatus.forValue(rs.getInt("status")));
-                entity.setId(Guid.createGuidFromString(rs
+                entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
                         .getString("vm_guid")));
                 entity.setVmHost(rs.getString("vm_host"));
                 entity.setVmIp(rs.getString("vm_ip"));
@@ -155,7 +154,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 entity.setDisplaySecurePort((Integer) rs
                         .getObject("display_secure_port"));
                 entity.setUtcDiff((Integer) rs.getObject("utc_diff"));
-                entity.setLastVdsRunOn(NGuid.createGuidFromString(rs
+                entity.setLastVdsRunOn(Guid.createGuidFromString(rs
                         .getString("last_vds_run_on")));
                 entity.setClientIp(rs.getString("client_ip"));
                 entity.setGuestRequestedMemory((Integer) rs

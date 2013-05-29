@@ -52,7 +52,7 @@ public class BackendStorageDomainVmsResource
     @Override
     public Response performRemove(String id) {
         org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
-        vm.setId(Guid.createGuidFromString(id));
+        vm.setId(Guid.createGuidFromStringDefaultEmpty(id));
         RemoveVmFromImportExportParamenters params = new RemoveVmFromImportExportParamenters(
                 vm,
                 storageDomainId,

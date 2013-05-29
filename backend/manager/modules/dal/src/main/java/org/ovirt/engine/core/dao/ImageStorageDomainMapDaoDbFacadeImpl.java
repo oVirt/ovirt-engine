@@ -72,8 +72,8 @@ public class ImageStorageDomainMapDaoDbFacadeImpl extends BaseDAODbFacade implem
                 @Override
                 public image_storage_domain_map mapRow(ResultSet rs, int rowNum) throws SQLException {
                     image_storage_domain_map entity = new image_storage_domain_map();
-                    entity.setimage_id(Guid.createGuidFromString(rs.getString("image_id")));
-                    entity.setstorage_domain_id(Guid.createGuidFromString(rs.getString("storage_domain_id")));
+                    entity.setimage_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("image_id")));
+                    entity.setstorage_domain_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("storage_domain_id")));
                     return entity;
                 }
             };

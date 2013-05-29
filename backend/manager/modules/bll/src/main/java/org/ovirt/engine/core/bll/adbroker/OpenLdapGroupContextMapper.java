@@ -54,7 +54,7 @@ public class OpenLdapGroupContextMapper implements ContextMapper {
             String distinguishedName = searchResult.getNameInNamespace();
             distinguishedName = LdapBrokerUtils.hadleNameEscaping(distinguishedName);
             GroupSearchResult groupSearchResult =
-                    new GroupSearchResult(Guid.createGuidFromString(objectGuid), memberOf, distinguishedName);
+                    new GroupSearchResult(Guid.createGuidFromStringDefaultEmpty(objectGuid), memberOf, distinguishedName);
             return groupSearchResult;
         } catch (Exception ex) {
             log.error("Failed populating group", ex);

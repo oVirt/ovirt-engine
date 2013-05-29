@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 
@@ -24,7 +24,7 @@ public class UserPortalTemplateVmModelBehavior extends TemplateVmModelBehavior {
      * Pattern).
      */
     @Override
-    protected void doChangeDefautlHost(NGuid hostGuid) {
+    protected void doChangeDefautlHost(Guid hostGuid) {
         if (hostGuid != null) {
             VDS vds = new VDS();
             vds.setId(hostGuid.getValue());

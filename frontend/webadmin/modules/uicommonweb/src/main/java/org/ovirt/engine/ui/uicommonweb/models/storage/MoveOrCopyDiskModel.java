@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
@@ -155,7 +154,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             destStorageDomains = filterStoragesByDatacenterId(destStorageDomains, diskImage.getStoragePoolId());
 
             // Filter storage domains with missing template disk
-            boolean isDiskBasedOnTemplate = !diskImage.getParentId().equals(NGuid.Empty);
+            boolean isDiskBasedOnTemplate = !diskImage.getParentId().equals(Guid.Empty);
             if (isDiskBasedOnTemplate) {
                 destStorageDomains = Linq.except(destStorageDomains, getMissingStorages(destStorageDomains, disk));
             }
@@ -227,7 +226,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
     }
 
     protected ArrayList<StorageDomain> filterStoragesByDatacenterId(ArrayList<StorageDomain> storageDomains,
-            NGuid diskDatacenterId) {
+            Guid diskDatacenterId) {
 
         ArrayList<StorageDomain> storages = new ArrayList<StorageDomain>();
         for (StorageDomain storage : storageDomains) {

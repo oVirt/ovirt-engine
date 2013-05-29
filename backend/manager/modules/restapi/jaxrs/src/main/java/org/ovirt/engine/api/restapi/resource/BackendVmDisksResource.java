@@ -73,7 +73,7 @@ public class BackendVmDisksResource
         getEntity(id); //verifies that entity exists, returns 404 otherwise.
         if (action.isSetDetach() && action.isDetach()) {
             return performAction(VdcActionType.DetachDiskFromVm,
-                    new AttachDettachVmDiskParameters(parentId, Guid.createGuidFromString(id), true));
+                    new AttachDettachVmDiskParameters(parentId, Guid.createGuidFromStringDefaultEmpty(id), true));
         } else {
             return remove(id);
         }
@@ -182,7 +182,7 @@ public class BackendVmDisksResource
     private Response attachDiskToVm(Disk disk) {
         boolean isDiskActive = disk.isSetActive() ? disk.isActive() : false;
         AttachDettachVmDiskParameters params =
-                new AttachDettachVmDiskParameters(parentId, Guid.createGuidFromString(disk.getId()), isDiskActive);
+                new AttachDettachVmDiskParameters(parentId, Guid.createGuidFromStringDefaultEmpty(disk.getId()), isDiskActive);
         return performAction(VdcActionType.AttachDiskToVm, params);
     }
 

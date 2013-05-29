@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class AsyncTasks implements Serializable {
     private static final long serialVersionUID = 5913365704117183118L;
@@ -19,7 +18,12 @@ public class AsyncTasks implements Serializable {
     }
 
     public AsyncTasks(VdcActionType action_type, AsyncTaskResultEnum result, AsyncTaskStatusEnum status, Guid task_id,
-            VdcActionParametersBase parentParameters, VdcActionParametersBase taskParameters, NGuid stepId, Guid commandId, Guid storagePoolId, AsyncTaskType taskType) {
+            VdcActionParametersBase parentParameters,
+            VdcActionParametersBase taskParameters,
+            Guid stepId,
+            Guid commandId,
+            Guid storagePoolId,
+            AsyncTaskType taskType) {
         this.actionType = action_type;
         this.result = result;
         this.status = status;
@@ -105,13 +109,13 @@ public class AsyncTasks implements Serializable {
         this.taskParameters = taskParameters;
     }
 
-    private NGuid stepId;
+    private Guid stepId;
 
-    public NGuid getStepId() {
+    public Guid getStepId() {
         return this.stepId;
     }
 
-    public void setStepId(NGuid stepId) {
+    public void setStepId(Guid stepId) {
         this.stepId = stepId;
     }
 

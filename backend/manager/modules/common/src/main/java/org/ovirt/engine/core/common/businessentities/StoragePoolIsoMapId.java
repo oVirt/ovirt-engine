@@ -4,19 +4,18 @@ import java.io.Serializable;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class StoragePoolIsoMapId implements Serializable {
     private static final long serialVersionUID = -3579958698510291360L;
 
     private Guid storageId;
 
-    private NGuid storagePoolId;
+    private Guid storagePoolId;
 
     public StoragePoolIsoMapId() {
     }
 
-    public StoragePoolIsoMapId(Guid storageId, NGuid storagePoolId) {
+    public StoragePoolIsoMapId(Guid storageId, Guid storagePoolId) {
         this.storageId = storageId;
         this.storagePoolId = storagePoolId;
     }
@@ -62,11 +61,11 @@ public class StoragePoolIsoMapId implements Serializable {
         this.storageId = storageId;
     }
 
-    public NGuid getStoragePoolId() {
+    public Guid getStoragePoolId() {
         return storagePoolId;
     }
 
-    public void setStoragePoolId(NGuid storagePoolId) {
+    public void setStoragePoolId(Guid storagePoolId) {
         this.storagePoolId = storagePoolId;
     }
 }

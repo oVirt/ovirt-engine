@@ -1,11 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.tags;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.action.TagsActionParametersBase;
 import org.ovirt.engine.core.common.action.TagsOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -24,10 +27,6 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
 
 @SuppressWarnings("unused")
 public class TagListModel extends SearchableListModel
@@ -60,6 +59,7 @@ public class TagListModel extends SearchableListModel
 
     private UICommand privateEditCommand;
 
+    @Override
     public UICommand getEditCommand()
     {
         return privateEditCommand;
@@ -328,7 +328,7 @@ public class TagListModel extends SearchableListModel
         model.setType((tag.getIsReadonly() == null ? false : tag.getIsReadonly()) ? TagModelType.ReadOnly
                 : TagModelType.Regular);
         model.setSelection(false);
-        model.setParentId(tag.getparent_id() == null ? NGuid.Empty : tag.getparent_id().getValue());
+        model.setParentId(tag.getparent_id() == null ? Guid.Empty : tag.getparent_id().getValue());
         model.setChildren(children);
 
         for (TagModel child : children) {
@@ -542,7 +542,7 @@ public class TagListModel extends SearchableListModel
 
         org.ovirt.engine.core.common.businessentities.tags tempVar =
                 new org.ovirt.engine.core.common.businessentities.tags();
-        tempVar.settag_id(model.getIsNew() ? NGuid.Empty : getSelectedItem().getId());
+        tempVar.settag_id(model.getIsNew() ? Guid.Empty : getSelectedItem().getId());
         tempVar.setparent_id(model.getIsNew() ? getSelectedItem().getId() : getSelectedItem().getParentId());
         tempVar.settag_name((String) model.getName().getEntity());
         tempVar.setdescription((String) model.getDescription().getEntity());

@@ -7,11 +7,10 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -30,14 +29,14 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
             StoragePool entity = new StoragePool();
             entity.setdescription(rs.getString("description"));
             entity.setComment(rs.getString("free_text_comment"));
-            entity.setId(Guid.createGuidFromString(rs.getString("id")));
+            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
             entity.setname(rs.getString("name"));
             entity.setstorage_pool_type(StorageType.forValue(rs
                     .getInt("storage_pool_type")));
             entity.setstatus(StoragePoolStatus.forValue(rs.getInt("status")));
             entity.setmaster_domain_version(rs
                     .getInt("master_domain_version"));
-            entity.setspm_vds_id(NGuid.createGuidFromString(rs
+            entity.setspm_vds_id(Guid.createGuidFromString(rs
                     .getString("spm_vds_id")));
             entity.setcompatibility_version(new Version(rs
                     .getString("compatibility_version")));

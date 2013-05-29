@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = 1078548170257965614L;
@@ -182,7 +181,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private MigrationSupport migrationSupport = MigrationSupport.MIGRATABLE;
 
     @EditableField
-    private NGuid dedicatedVmForVds;
+    private Guid dedicatedVmForVds;
 
     @EditableOnVmStatusField
     protected DisplayType defaultDisplayType = DisplayType.qxl;
@@ -682,11 +681,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.migrationSupport = migrationSupport;
     }
 
-    public NGuid getDedicatedVmForVds() {
+    public Guid getDedicatedVmForVds() {
         return dedicatedVmForVds;
     }
 
-    public void setDedicatedVmForVds(NGuid value) {
+    public void setDedicatedVmForVds(Guid value) {
         dedicatedVmForVds = value;
     }
 

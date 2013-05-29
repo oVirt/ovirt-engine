@@ -73,7 +73,7 @@ There are four parts to each Java method:
 
  1) The parameter source:
 
-      public VDS get(NGuid id) {
+      public VDS get(Guid id) {
           MapSqlParameterSource parameterSource = new CustomMapSqlParameterSource()
                   .addValue("vds_id", vds_id);
 

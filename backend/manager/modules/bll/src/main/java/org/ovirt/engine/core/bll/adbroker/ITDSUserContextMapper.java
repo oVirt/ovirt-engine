@@ -47,7 +47,7 @@ public class ITDSUserContextMapper implements ContextMapper {
         String objectGuid;
         try {
             objectGuid = (String)attributes.get(uniqueIdentifier.name()).get(0);
-            user.setUserId(Guid.createGuidFromString(objectGuid));
+            user.setUserId(Guid.createGuidFromStringDefaultEmpty(objectGuid));
 
             // Getting other string properties
             Attribute att = attributes.get(uid.name());

@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -179,7 +178,7 @@ public class MoveDisksCommandTest {
 
     /** Initialize Entities */
 
-    private void initVm(VMStatus vmStatus, NGuid runOnVds, Guid diskImageId) {
+    private void initVm(VMStatus vmStatus, Guid runOnVds, Guid diskImageId) {
         VM vm = new VM();
         vm.setStatus(vmStatus);
         vm.setRunOnVds(runOnVds);

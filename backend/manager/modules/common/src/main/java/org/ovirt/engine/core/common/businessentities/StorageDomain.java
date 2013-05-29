@@ -5,7 +5,6 @@ import java.util.Set;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = -6162192446628804305L;
@@ -128,11 +127,11 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
         getStorageStaticData().setDescription(description);
     }
 
-    public NGuid getStoragePoolId() {
+    public Guid getStoragePoolId() {
         return getStoragePoolIsoMapData().getstorage_pool_id();
     }
 
-    public void setStoragePoolId(NGuid storagePoolId) {
+    public void setStoragePoolId(Guid storagePoolId) {
         getStoragePoolIsoMapData().setstorage_pool_id(storagePoolId);
     }
 

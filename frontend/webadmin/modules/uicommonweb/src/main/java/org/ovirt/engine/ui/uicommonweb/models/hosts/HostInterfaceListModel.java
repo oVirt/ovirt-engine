@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -59,6 +58,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
     private UICommand privateEditCommand;
 
+    @Override
     public UICommand getEditCommand()
     {
         return privateEditCommand;
@@ -889,7 +889,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 if (!StringHelper.isNullOrEmpty(item.getNetworkName()))
                 {
                     Network tempVar = new Network();
-                    tempVar.setId(NGuid.Empty);
+                    tempVar.setId(Guid.Empty);
                     tempVar.setName("None"); //$NON-NLS-1$
                     networksToAdd.add(0, tempVar);
                 }
@@ -1848,7 +1848,7 @@ public class HostInterfaceListModel extends SearchableListModel
         Network network = (Network) model.getNetwork().getSelectedItem();
 
         // Save changes.
-        if (network.getId().equals(NGuid.Empty))
+        if (network.getId().equals(Guid.Empty))
         {
             if (nic.getIsManagement())
             {

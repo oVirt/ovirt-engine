@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -142,7 +142,7 @@ public class EntityAsyncTask extends SPMAsyncTask {
                 /**
                  * Creates context for the job which monitors the action
                  */
-                NGuid stepId = dbAsyncTask.getStepId();
+                Guid stepId = dbAsyncTask.getStepId();
                 if (stepId != null) {
                     context = ExecutionHandler.createFinalizingContext(stepId.getValue());
                 }

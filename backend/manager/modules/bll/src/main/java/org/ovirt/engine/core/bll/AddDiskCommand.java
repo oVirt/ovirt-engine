@@ -51,7 +51,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -277,7 +276,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     @Override
-    public NGuid getStorageDomainId() {
+    public Guid getStorageDomainId() {
         if (super.getStorageDomainId() == null) {
             Guid storageDomainId = getParameters().getStorageDomainId();
             if (Guid.Empty.equals(storageDomainId) &&

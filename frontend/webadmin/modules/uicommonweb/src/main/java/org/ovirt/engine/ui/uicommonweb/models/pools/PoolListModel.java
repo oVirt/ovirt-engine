@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -457,7 +456,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         EntityModel poolTypeSelectedItem = (EntityModel) model.getPoolType().getSelectedItem();
                         pool.setVmPoolType((VmPoolType) poolTypeSelectedItem.getEntity());
 
-                        NGuid default_host;
+                        Guid default_host;
                         VDS defaultHost = (VDS) model.getDefaultHost().getSelectedItem();
                         if ((Boolean) model.getIsAutoAssign().getEntity())
                         {

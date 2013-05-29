@@ -22,17 +22,16 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -196,7 +195,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     public StorageDomainStatic storageDomain;
     public TaskContext context;
     public IStorageModel storageModel;
-    public NGuid storageId;
+    public Guid storageId;
     public StorageServerConnections fileConnection;
     public StorageServerConnections connection;
     public Guid hostId = new Guid();
@@ -1293,13 +1292,13 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 StorageListModel storageListModel = (StorageListModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                storageListModel.storageId = (NGuid) vdcReturnValueBase.getActionReturnValue();
+                storageListModel.storageId = (Guid) vdcReturnValueBase.getActionReturnValue();
 
                 // Attach storage to data center as necessary.
                 StorageModel storageModel = (StorageModel) storageListModel.getWindow();
                 StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                    storageListModel.attachStorageToDataCenter((Guid) storageListModel.storageId, dataCenter.getId());
+                    storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId());
                 }
 
                 storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
@@ -1404,13 +1403,13 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 StorageListModel storageListModel = (StorageListModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                storageListModel.storageId = (NGuid) vdcReturnValueBase.getActionReturnValue();
+                storageListModel.storageId = (Guid) vdcReturnValueBase.getActionReturnValue();
 
                 // Attach storage to data center as necessary.
                 StorageModel storageModel = (StorageModel) storageListModel.getWindow();
                 StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                    storageListModel.attachStorageToDataCenter((Guid) storageListModel.storageId, dataCenter.getId());
+                    storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId());
                 }
 
                 storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
@@ -1592,7 +1591,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
                 StorageListModel storageListModel = (StorageListModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                storageListModel.storageId = (NGuid) vdcReturnValueBase.getActionReturnValue();
+                storageListModel.storageId = (Guid) vdcReturnValueBase.getActionReturnValue();
 
             }
         };
@@ -1607,7 +1606,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
                 {
-                    storageListModel.attachStorageToDataCenter((Guid) storageListModel.storageId, dataCenter.getId());
+                    storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId());
                 }
 
                 storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
@@ -1664,8 +1663,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
                         if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                             VdcReturnValueBase returnValue = result.getReturnValue();
-                            NGuid storageId = (NGuid) returnValue.getActionReturnValue();
-                            storageListModel.attachStorageToDataCenter((Guid) storageId, dataCenter.getId());
+                            Guid storageId = (Guid) returnValue.getActionReturnValue();
+                            storageListModel.attachStorageToDataCenter(storageId, dataCenter.getId());
                         }
 
                     storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);

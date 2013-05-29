@@ -55,7 +55,6 @@ import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetVmStatsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -1616,7 +1615,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void handOverVM(VM vmToRemove) {
-        NGuid destinationHostId = vmToRemove.getMigratingToVds();
+        Guid destinationHostId = vmToRemove.getMigratingToVds();
 
         // when the destination VDS is NonResponsive put the VM to Uknown like the rest of its VMs, else MigratingTo
         VMStatus newVmStatus =

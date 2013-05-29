@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.restapi.types;
 
-import static org.ovirt.engine.core.compat.NGuid.createGuidFromString;
+import static org.ovirt.engine.core.compat.Guid.createGuidFromString;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -60,7 +60,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class VmMapper {
@@ -73,7 +73,7 @@ public class VmMapper {
     @Mapping(from = VmTemplate.class, to = VmStatic.class)
     public static VmStatic map(VmTemplate entity, VmStatic template) {
         VmStatic staticVm = template != null ? template : new VmStatic();
-        staticVm.setId(NGuid.Empty);
+        staticVm.setId(Guid.Empty);
         staticVm.setVmtGuid(entity.getId());
         staticVm.setDomain(entity.getDomain());
         staticVm.setVdsGroupId(entity.getVdsGroupId());

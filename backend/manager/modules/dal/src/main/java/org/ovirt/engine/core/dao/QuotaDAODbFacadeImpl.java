@@ -359,9 +359,9 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
             public QuotaVdsGroup mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
                 QuotaVdsGroup entity = new QuotaVdsGroup();
-                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
-                entity.setQuotaVdsGroupId(Guid.createGuidFromString(rs.getString("quota_vds_group_id")));
-                entity.setVdsGroupId(Guid.createGuidFromString(rs.getString("vds_group_id")));
+                entity.setQuotaId(Guid.createGuidFromStringDefaultEmpty(rs.getString("quota_id")));
+                entity.setQuotaVdsGroupId(Guid.createGuidFromStringDefaultEmpty(rs.getString("quota_vds_group_id")));
+                entity.setVdsGroupId(Guid.createGuidFromStringDefaultEmpty(rs.getString("vds_group_id")));
                 entity.setVdsGroupName(rs.getString("vds_group_name"));
                 entity.setMemSizeMB((Long) rs.getObject("mem_size_mb"));
                 entity.setMemSizeMBUsage((Long) rs.getObject("mem_size_mb_usage"));
@@ -383,9 +383,9 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
             public QuotaStorage mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
                 QuotaStorage entity = new QuotaStorage();
-                entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
-                entity.setQuotaStorageId(Guid.createGuidFromString(rs.getString("quota_storage_id")));
-                entity.setStorageId(Guid.createGuidFromString(rs.getString("storage_id")));
+                entity.setQuotaId(Guid.createGuidFromStringDefaultEmpty(rs.getString("quota_id")));
+                entity.setQuotaStorageId(Guid.createGuidFromStringDefaultEmpty(rs.getString("quota_storage_id")));
+                entity.setStorageId(Guid.createGuidFromStringDefaultEmpty(rs.getString("storage_id")));
                 entity.setStorageName(rs.getString("storage_name"));
                 entity.setStorageSizeGB((Long) rs.getObject("storage_size_gb"));
                 entity.setStorageSizeGBUsage((Double) rs.getObject("storage_size_gb_usage"));
@@ -450,8 +450,8 @@ public class QuotaDAODbFacadeImpl extends BaseDAODbFacade implements QuotaDAO {
 
     private Quota getQuotaMetaDataFromResultSet(ResultSet rs) throws SQLException {
         Quota entity = new Quota();
-        entity.setId(Guid.createGuidFromString(rs.getString("quota_id")));
-        entity.setStoragePoolId(Guid.createGuidFromString(rs.getString("storage_pool_id")));
+        entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("quota_id")));
+        entity.setStoragePoolId(Guid.createGuidFromStringDefaultEmpty(rs.getString("storage_pool_id")));
         entity.setStoragePoolName(rs.getString("storage_pool_name"));
         entity.setQuotaName((String) rs.getObject("quota_name"));
         entity.setDescription((String) rs.getObject("description"));

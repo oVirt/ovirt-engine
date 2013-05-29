@@ -43,8 +43,8 @@ public class GlusterServerDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Glus
         public GlusterServer mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             GlusterServer glusterServer = new GlusterServer();
-            glusterServer.setId(Guid.createGuidFromString(rs.getString("server_id")));
-            glusterServer.setGlusterServerUuid(Guid.createGuidFromString(rs.getString("gluster_server_uuid")));
+            glusterServer.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("server_id")));
+            glusterServer.setGlusterServerUuid(Guid.createGuidFromStringDefaultEmpty(rs.getString("gluster_server_uuid")));
             return glusterServer;
         }
     }

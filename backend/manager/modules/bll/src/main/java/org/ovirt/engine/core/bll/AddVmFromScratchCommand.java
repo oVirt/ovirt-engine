@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -38,8 +37,8 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
     }
 
     @Override
-    public NGuid getStorageDomainId() {
-        NGuid storageDomainId = super.getStorageDomainId();
+    public Guid getStorageDomainId() {
+        Guid storageDomainId = super.getStorageDomainId();
         if (Guid.Empty.equals(storageDomainId) || storageDomainId == null) {
             List<StorageDomain> storagesInPool =
                     LinqUtils.filter(DbFacade.getInstance()

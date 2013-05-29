@@ -323,7 +323,7 @@ public class BackendVmsResource extends
     private void addInlineStatistics(VM vm) {
         EntityIdResolver<Guid> resolver = new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class);
         VmStatisticalQuery query = new VmStatisticalQuery(resolver, newModel(vm.getId()));
-        BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM> statisticsResource = inject(new BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM>(entityType, Guid.createGuidFromString(vm.getId()), query));
+        BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM> statisticsResource = inject(new BackendStatisticsResource<VM, org.ovirt.engine.core.common.businessentities.VM>(entityType, Guid.createGuidFromStringDefaultEmpty(vm.getId()), query));
         Statistics statistics = statisticsResource.list();
         vm.setStatistics(statistics);
     }
@@ -341,9 +341,9 @@ public class BackendVmsResource extends
     }
 
     private void addInlineDisks(VM vm) {
-        BackendVmDisksResource disksResource = inject(new BackendVmDisksResource(Guid.createGuidFromString(vm.getId()),
+        BackendVmDisksResource disksResource = inject(new BackendVmDisksResource(Guid.createGuidFromStringDefaultEmpty(vm.getId()),
                 VdcQueryType.GetAllDisksByVmId,
-                new IdQueryParameters(Guid.createGuidFromString(vm.getId()))));
+                new IdQueryParameters(Guid.createGuidFromStringDefaultEmpty(vm.getId()))));
         Disks disks = disksResource.list();
         vm.setDisks(disks);
     }

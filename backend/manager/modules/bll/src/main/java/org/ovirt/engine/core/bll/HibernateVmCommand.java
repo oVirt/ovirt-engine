@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -68,7 +67,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
      * return Guid.Empty if no domain found
      */
     @Override
-    public NGuid getStorageDomainId() {
+    public Guid getStorageDomainId() {
         if (_storageDomainId.equals(Guid.Empty) && getVm() != null) {
             long sizeNeeded = (getVm().getTotalMemorySizeInBytes()
                     + META_DATA_SIZE_IN_BYTES) / BYTES_IN_GB;

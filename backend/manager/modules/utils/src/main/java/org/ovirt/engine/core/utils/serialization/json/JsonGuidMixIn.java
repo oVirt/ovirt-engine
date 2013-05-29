@@ -6,17 +6,15 @@ import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.annotate.JsonTypeInfo;
 import org.codehaus.jackson.annotate.JsonTypeInfo.As;
 import org.codehaus.jackson.annotate.JsonTypeInfo.Id;
-
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 /**
- * This mix-in annotations class is used for annotating the {@link NGuid} class not to recursively try to
- * {@link NGuid#getValue()}, otherwise Jackson can't serialize & deserialize it.
+ * This mix-in annotations class is used for annotating the {@link Guid} class not to recursively try to
+ * {@link Guid#getValue()}, otherwise Jackson can't serialize & deserialize it.
  */
 @SuppressWarnings("serial")
 @JsonTypeInfo(use = Id.CLASS, include = As.WRAPPER_ARRAY)
-public abstract class JsonNGuidMixIn extends NGuid {
+public abstract class JsonGuidMixIn extends Guid {
 
     /**
      * Tells Jackson that the constructor with the {@link String} argument is to be used to deserialize the entity,
@@ -25,7 +23,7 @@ public abstract class JsonNGuidMixIn extends NGuid {
      * @param candidate
      */
     @JsonCreator
-    public JsonNGuidMixIn(@JsonProperty("uuid") String candidate) {
+    public JsonGuidMixIn(@JsonProperty("uuid") String candidate) {
         super(candidate);
     }
 

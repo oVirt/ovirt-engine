@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -35,13 +34,13 @@ public class VdsSelector {
     private boolean displayNetworkInitialized;
     private Network displayNetwork;
 
-    private NGuid privateDestinationVdsId;
+    private Guid privateDestinationVdsId;
 
-    public NGuid getDestinationVdsId() {
+    public Guid getDestinationVdsId() {
         return privateDestinationVdsId;
     }
 
-    public void setDestinationVdsId(NGuid value) {
+    public void setDestinationVdsId(Guid value) {
         privateDestinationVdsId = value;
     }
 
@@ -56,7 +55,7 @@ public class VdsSelector {
         privateVm = value;
     }
 
-    public VdsSelector(VM vm, NGuid destinationVdsId, VdsFreeMemoryChecker memoryChecker) {
+    public VdsSelector(VM vm, Guid destinationVdsId, VdsFreeMemoryChecker memoryChecker) {
         setVm(vm);
         setDestinationVdsId(destinationVdsId);
         this.memoryChecker = memoryChecker;

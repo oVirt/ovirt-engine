@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
@@ -164,7 +163,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             VDSGroup entity = new VDSGroup();
             entity.setdescription(rs.getString("description"));
             entity.setname(rs.getString("name"));
-            entity.setId(Guid.createGuidFromString(rs
+            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("vds_group_id")));
             entity.setcpu_name(rs.getString("cpu_name"));
             entity.setselection_algorithm(VdsSelectionAlgorithm.forValue(rs
@@ -173,7 +172,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setlow_utilization(rs.getInt("low_utilization"));
             entity.setcpu_over_commit_duration_minutes(rs
                     .getInt("cpu_over_commit_duration_minutes"));
-            entity.setStoragePoolId(NGuid.createGuidFromString(rs
+            entity.setStoragePoolId(Guid.createGuidFromString(rs
                     .getString("storage_pool_id")));
             entity.setStoragePoolName(rs
                     .getString("storage_pool_name"));

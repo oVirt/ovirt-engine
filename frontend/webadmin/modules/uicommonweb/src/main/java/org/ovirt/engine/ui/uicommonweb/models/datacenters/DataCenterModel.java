@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -39,14 +39,14 @@ public class DataCenterModel extends Model
         privateEntity = value;
     }
 
-    private NGuid privateDataCenterId;
+    private Guid privateDataCenterId;
 
-    public NGuid getDataCenterId()
+    public Guid getDataCenterId()
     {
         return privateDataCenterId;
     }
 
-    public void setDataCenterId(NGuid value)
+    public void setDataCenterId(Guid value)
     {
         privateDataCenterId = value;
     }

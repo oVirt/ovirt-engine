@@ -30,7 +30,7 @@ public final class AutoLoginData extends JavaScriptObject {
     }-*/;
 
     public VdcUser getVdcUser() {
-        return new VdcUser(Guid.createGuidFromString(getId()), getUserName(), getDomain());
+        return new VdcUser(Guid.createGuidFromStringDefaultEmpty(getId()), getUserName(), getDomain());
     }
 
 }

@@ -25,8 +25,8 @@ public class BusinessEntitySnapshotDAODbFacadeImpl extends BaseDAODbFacade imple
         @Override
         public BusinessEntitySnapshot mapRow(ResultSet rs, int rowNum) throws SQLException {
             BusinessEntitySnapshot result = new BusinessEntitySnapshot();
-            result.setId(Guid.createGuidFromString(rs.getString("id")));
-            result.setCommandId(Guid.createGuidFromString(rs.getString("command_id")));
+            result.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
+            result.setCommandId(Guid.createGuidFromStringDefaultEmpty(rs.getString("command_id")));
             result.setCommandType(rs.getString("command_type"));
             result.setEntityId(rs.getString("entity_id"));
             result.setEntityType(rs.getString("entity_type"));
@@ -43,7 +43,7 @@ public class BusinessEntitySnapshotDAODbFacadeImpl extends BaseDAODbFacade imple
         @Override
         public DefaultKeyValue mapRow(ResultSet rs, int rowNum) throws SQLException {
             DefaultKeyValue result = new DefaultKeyValue();
-            result.setKey(Guid.createGuidFromString(rs.getString("command_id")));
+            result.setKey(Guid.createGuidFromStringDefaultEmpty(rs.getString("command_id")));
             result.setValue(rs.getString("command_type"));
             return result;
         }

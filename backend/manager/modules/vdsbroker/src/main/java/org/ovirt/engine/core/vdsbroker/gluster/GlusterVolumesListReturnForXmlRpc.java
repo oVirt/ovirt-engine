@@ -63,7 +63,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         GlusterVolumeEntity volume = new GlusterVolumeEntity();
 
         volume.setClusterId(clusterId);
-        volume.setId(Guid.createGuidFromString((String)map.get(UUID)));
+        volume.setId(Guid.createGuidFromStringDefaultEmpty((String)map.get(UUID)));
         volume.setName((String)map.get(VOLUME_NAME));
         volume.setVolumeType((String)map.get(VOLUME_TYPE));
 

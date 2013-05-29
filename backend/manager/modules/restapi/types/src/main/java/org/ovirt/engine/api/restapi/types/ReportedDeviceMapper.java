@@ -11,7 +11,7 @@ import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 public class ReportedDeviceMapper {
 
@@ -103,8 +103,8 @@ public class ReportedDeviceMapper {
         }
     }
 
-    public static NGuid generateDeviceId(VmGuestAgentInterface vmGuestAgentInterface) {
-        return new NGuid((vmGuestAgentInterface.getInterfaceName() + vmGuestAgentInterface.getMacAddress()).getBytes(),
+    public static Guid generateDeviceId(VmGuestAgentInterface vmGuestAgentInterface) {
+        return new Guid((vmGuestAgentInterface.getInterfaceName() + vmGuestAgentInterface.getMacAddress()).getBytes(),
                 true);
     }
 }

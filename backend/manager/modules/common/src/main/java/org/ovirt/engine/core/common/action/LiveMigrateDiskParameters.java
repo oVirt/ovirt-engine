@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class LiveMigrateDiskParameters extends MoveOrCopyImageGroupParameters {
     private static final long serialVersionUID = 962820715327420896L;
@@ -11,14 +10,14 @@ public class LiveMigrateDiskParameters extends MoveOrCopyImageGroupParameters {
         // Empty constructor for serializing / deserializing
     }
 
-    public LiveMigrateDiskParameters(Guid imageId, NGuid sourceDomainId, Guid destDomainId, Guid vmId, Guid quotaId) {
+    public LiveMigrateDiskParameters(Guid imageId, Guid sourceDomainId, Guid destDomainId, Guid vmId, Guid quotaId) {
         super(imageId, sourceDomainId, destDomainId, ImageOperation.Move);
         setVmId(vmId);
         setQuotaId(quotaId);
     }
 
     public Guid getSourceStorageDomainId() {
-        return getSourceDomainId().getValue();
+        return getSourceDomainId();
     }
 
     public Guid getTargetStorageDomainId() {

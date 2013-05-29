@@ -179,9 +179,9 @@ public abstract class StorageHelperBase implements IStorageHelper {
     private String getConnectionDescription(List<StorageServerConnections> connections, String connectionId) {
         // Using Guid in order to handle nulls. This can happened when we trying
         // to import an existing domain
-        Guid connectionIdGuid = Guid.createGuidFromString(connectionId);
+        Guid connectionIdGuid = Guid.createGuidFromStringDefaultEmpty(connectionId);
         for (StorageServerConnections connection : connections) {
-            Guid connectionGuid = Guid.createGuidFromString(connection.getid());
+            Guid connectionGuid = Guid.createGuidFromStringDefaultEmpty(connection.getid());
             if (connectionGuid.equals(connectionIdGuid)) {
                 String desc = connection.getconnection();
                 if (connection.getiqn() != null) {

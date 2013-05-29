@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.job;
 
 import java.io.Serializable;
 
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Represents an external system task associated with a Step.
@@ -17,18 +17,18 @@ public class ExternalSystem implements Serializable{
     /**
      * An external Id which associated with the step (e.g. VDSM Task Id)
      */
-    private NGuid externalId;
+    private Guid externalId;
 
     /**
      * An external system type (e.g. VDSM) which its execution unit is identified by {@link #externalId}
      */
     private ExternalSystemType externalSystemType;
 
-    public NGuid getId() {
+    public Guid getId() {
         return externalId;
     }
 
-    public void setId(NGuid externalId) {
+    public void setId(Guid externalId) {
         this.externalId = externalId;
     }
 

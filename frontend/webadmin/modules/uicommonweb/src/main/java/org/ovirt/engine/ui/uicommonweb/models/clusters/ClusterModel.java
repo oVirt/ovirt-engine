@@ -4,11 +4,11 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -69,6 +69,7 @@ public class ClusterModel extends EntityModel
 
     private VDSGroup privateEntity;
 
+    @Override
     public VDSGroup getEntity()
     {
         return privateEntity;
@@ -117,14 +118,14 @@ public class ClusterModel extends EntityModel
         privateOriginalName = value;
     }
 
-    private NGuid privateClusterId;
+    private Guid privateClusterId;
 
-    public NGuid getClusterId()
+    public Guid getClusterId()
     {
         return privateClusterId;
     }
 
-    public void setClusterId(NGuid value)
+    public void setClusterId(Guid value)
     {
         privateClusterId = value;
     }
@@ -840,7 +841,7 @@ public class ClusterModel extends EntityModel
         getDescription().setEntity(getEntity().getdescription());
         setMemoryOverCommit(getEntity().getmax_vds_memory_over_commit());
 
-        getCountThreadsAsCores().setEntity((boolean) getEntity().getCountThreadsAsCores());
+        getCountThreadsAsCores().setEntity(getEntity().getCountThreadsAsCores());
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);

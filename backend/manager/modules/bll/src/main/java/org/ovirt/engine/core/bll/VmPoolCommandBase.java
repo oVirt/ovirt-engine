@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmPoolDAO;
@@ -48,11 +47,11 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         mVmPool = value;
     }
 
-    protected NGuid getVmPoolId() {
+    protected Guid getVmPoolId() {
         return getParameters().getVmPoolId();
     }
 
-    protected void setVmPoolId(NGuid value) {
+    protected void setVmPoolId(Guid value) {
         getParameters().setVmPoolId(value);
     }
 
@@ -78,7 +77,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     }
 
-    protected static int getNumOfPrestartedVmsInPool(NGuid poolId) {
+    protected static int getNumOfPrestartedVmsInPool(Guid poolId) {
         List<VM> vmsInPool = DbFacade.getInstance().getVmDao().getAllForVmPool(poolId);
         int numOfPrestartedVmsInPool = 0;
         if (vmsInPool != null) {
@@ -90,7 +89,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         return numOfPrestartedVmsInPool;
     }
 
-    protected static List<VmPoolMap> getListOfVmsInPool(NGuid poolId) {
+    protected static List<VmPoolMap> getListOfVmsInPool(Guid poolId) {
         return DbFacade.getInstance().getVmPoolDao().getVmPoolsMapByVmPoolId(poolId);
     }
 

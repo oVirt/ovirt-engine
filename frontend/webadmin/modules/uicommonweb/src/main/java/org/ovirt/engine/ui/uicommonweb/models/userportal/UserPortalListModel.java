@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -1046,12 +1045,12 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         if (model.getIsNew())
         {
-            if (gettempVm().getVmtGuid().equals(NGuid.Empty))
+            if (gettempVm().getVmtGuid().equals(Guid.Empty))
             {
                 AddVmFromScratchParameters parameters =
                         new AddVmFromScratchParameters(gettempVm(),
                                 new ArrayList<DiskImage>(),
-                                NGuid.Empty);
+                                Guid.Empty);
                 parameters.setMakeCreatorExplicitOwner(true);
                 parameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                 Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters,
@@ -1226,7 +1225,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             {
                 VDS a = (VDS) item;
                 if (a.getId().equals(((vm.getDedicatedVmForVds() != null) ? vm.getDedicatedVmForVds()
-                        : NGuid.Empty)))
+                        : Guid.Empty)))
                 {
                     host = a;
                     break;

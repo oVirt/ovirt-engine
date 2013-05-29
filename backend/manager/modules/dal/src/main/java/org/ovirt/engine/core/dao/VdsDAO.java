@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 /**
  * <code>VdsDAO</code> defines a type that performs CRUD operations on instances of {@link VDS}.
@@ -21,7 +20,7 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
      *            the id
      * @return the VDS instance
      */
-    VDS get(NGuid id);
+    VDS get(Guid id);
 
     /**
      * Retrieves the instance with the given id, with optional permission filtering.
@@ -34,7 +33,7 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
      *            Whether the results should be filtered according to the user's permissions
      * @return the VDS instance
      */
-    VDS get(NGuid id, Guid userID, boolean isFiltered);
+    VDS get(Guid id, Guid userID, boolean isFiltered);
 
     /**
      * Finds an instance with the given name.

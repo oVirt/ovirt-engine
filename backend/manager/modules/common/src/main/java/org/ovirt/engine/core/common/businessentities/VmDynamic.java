@@ -6,7 +6,6 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityGuidComparator;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     private static final long serialVersionUID = 7789482445091432555L;
@@ -19,12 +18,12 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     private Date lastStartTime;
     private String guestCurUserName;
     private String consoleCurUserName;
-    private NGuid consoleUserId;
+    private Guid consoleUserId;
     private Date guestLastLoginTime;
     private Date guestLastLogoutTime;
     private String guestOs;
-    private NGuid migratingToVds;
-    private NGuid runOnVds;
+    private Guid migratingToVds;
+    private Guid runOnVds;
     private String appList;
     private Integer display;
     private Boolean acpiEnabled;
@@ -34,7 +33,7 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     private Boolean kvmEnable;
     private Integer displaySecurePort;
     private Integer utcDiff;
-    private NGuid lastVdsRunOn;
+    private Guid lastVdsRunOn;
     private String clientIp;
     private Integer guestRequestedMemory;
     private String hibernationVolHandle;
@@ -221,11 +220,11 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         this.guestCurUserName = value;
     }
 
-    public NGuid getConsoleUserId() {
+    public Guid getConsoleUserId() {
         return this.consoleUserId;
     }
 
-    public void setConsoleUserId(NGuid value) {
+    public void setConsoleUserId(Guid value) {
         this.consoleUserId = value;
     }
 
@@ -253,19 +252,19 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         this.guestLastLogoutTime = value;
     }
 
-    public NGuid getMigratingToVds() {
+    public Guid getMigratingToVds() {
         return this.migratingToVds;
     }
 
-    public void setMigratingToVds(NGuid value) {
+    public void setMigratingToVds(Guid value) {
         this.migratingToVds = value;
     }
 
-    public NGuid getRunOnVds() {
+    public Guid getRunOnVds() {
         return this.runOnVds;
     }
 
-    public void setRunOnVds(NGuid value) {
+    public void setRunOnVds(Guid value) {
         this.runOnVds = value;
     }
 
@@ -391,11 +390,11 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         this.utcDiff = value;
     }
 
-    public NGuid getLastVdsRunOn() {
+    public Guid getLastVdsRunOn() {
         return this.lastVdsRunOn;
     }
 
-    public void setLastVdsRunOn(NGuid value) {
+    public void setLastVdsRunOn(Guid value) {
         this.lastVdsRunOn = value;
     }
 

@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 
 public class VmMapperTest extends
@@ -182,7 +181,7 @@ public class VmMapperTest extends
         org.ovirt.engine.core.common.businessentities.VM entity =
                 new org.ovirt.engine.core.common.businessentities.VM();
         entity.setStatus(VMStatus.Up);
-        Guid guid = NGuid.NewGuid();
+        Guid guid = Guid.NewGuid();
         entity.setRunOnVds(guid);
         VM model = VmMapper.map(entity, null);
         assertEquals(guid.toString(), model.getHost().getId());

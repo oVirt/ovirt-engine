@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -198,22 +197,22 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                 public VdsNetworkInterface mapRow(ResultSet rs, int rowNum)
                         throws SQLException {
                     VdsNetworkInterface entity = createInterface(rs);
-                    entity.getStatistics().setId(Guid.createGuidFromString(rs.getString("id")));
+                    entity.getStatistics().setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
                     entity.getStatistics().setReceiveRate(rs.getDouble("rx_rate"));
                     entity.getStatistics().setTransmitRate(rs.getDouble("tx_rate"));
                     entity.getStatistics().setReceiveDropRate(rs.getDouble("rx_drop"));
                     entity.getStatistics().setTransmitDropRate(rs.getDouble("tx_drop"));
                     entity.getStatistics().setStatus(InterfaceStatus.forValue(rs.getInt("iface_status")));
-                    entity.getStatistics().setVdsId(Guid.createGuidFromString(rs.getString("vds_id")));
+                    entity.getStatistics().setVdsId(Guid.createGuidFromStringDefaultEmpty(rs.getString("vds_id")));
                     entity.setType((Integer) rs.getObject("type"));
                     entity.setGateway(rs.getString("gateway"));
                     entity.setSubnet(rs.getString("subnet"));
                     entity.setAddress(rs.getString("addr"));
                     entity.setNetworkName(rs.getString("network_name"));
                     entity.setName(rs.getString("name"));
-                    entity.setVdsId(NGuid.createGuidFromString(rs.getString("vds_id")));
+                    entity.setVdsId(Guid.createGuidFromString(rs.getString("vds_id")));
                     entity.setVdsName(rs.getString("vds_name"));
-                    entity.setId(Guid.createGuidFromString(rs.getString("id")));
+                    entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
                     entity.setBootProtocol(NetworkBootProtocol.forValue(rs.getInt("boot_protocol")));
                     entity.setMtu(rs.getInt("mtu"));
                     entity.setBridged(rs.getBoolean("bridged"));

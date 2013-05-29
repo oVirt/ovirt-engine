@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class BackendUsersResourceBase extends AbstractBackendCollectionResource<User, DbUser> {
 
@@ -66,7 +65,7 @@ public class BackendUsersResourceBase extends AbstractBackendCollectionResource<
                VdcQueryType.GetDomainList,
                new VdcQueryParametersBase());
             for (String domain :domains) {
-                NGuid domainId = new NGuid(domain.getBytes(), true);
+                Guid domainId = new Guid(domain.getBytes(), true);
                 if (domainId.toString().equals(user.getDomain().getId())) {
                    return domain;
                 }

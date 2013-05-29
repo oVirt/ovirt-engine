@@ -40,7 +40,7 @@ public class RHDSUserContextMapper implements ContextMapper {
 
         try {
             String objectGuid = (String) attributes.get("nsUniqueId").get(0);
-            return Guid.createGuidFromString(getGuidFromNsUniqueId(objectGuid));
+            return Guid.createGuidFromStringDefaultEmpty(getGuidFromNsUniqueId(objectGuid));
         } catch (NamingException e) {
             System.err.println(ERROR_PREFIX + "Failed getting user GUID");
             return null;

@@ -21,20 +21,19 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -116,7 +115,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     private StorageDomainStatic storageDomain;
     private TaskContext context;
     private IStorageModel storageModel;
-    private NGuid storageId;
+    private Guid storageId;
     private StorageServerConnections connection;
     private Guid hostId = new Guid();
     private String path;
@@ -986,7 +985,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
                 DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) result.getState();
                 VdcReturnValueBase vdcReturnValueBase = result.getReturnValue();
-                dataCenterGuideModel.storageId = (NGuid) vdcReturnValueBase.getActionReturnValue();
+                dataCenterGuideModel.storageId = (Guid) vdcReturnValueBase.getActionReturnValue();
 
             }
         };
@@ -1001,7 +1000,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 StoragePool dataCenter = (StoragePool) storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
                 {
-                    dataCenterGuideModel.attachStorageToDataCenter((Guid) dataCenterGuideModel.storageId,
+                    dataCenterGuideModel.attachStorageToDataCenter(dataCenterGuideModel.storageId,
                             dataCenter.getId());
                 }
 
@@ -1134,8 +1133,8 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
                         {
                             VdcReturnValueBase returnValue = result.getReturnValue();
-                            NGuid storageId = (NGuid) returnValue.getActionReturnValue();
-                            dataCenterGuideModel.attachStorageToDataCenter((Guid) storageId, dataCenter.getId());
+                            Guid storageId = (Guid) returnValue.getActionReturnValue();
+                            dataCenterGuideModel.attachStorageToDataCenter(storageId, dataCenter.getId());
                         }
                         dataCenterGuideModel.onFinish(dataCenterGuideModel.context,
                                 true,

@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class VmTemplate extends VmBase {
     private static final long serialVersionUID = -5238366659716600486L;
@@ -32,7 +31,7 @@ public class VmTemplate extends VmBase {
 
     private String vdsGroupName;
 
-    private NGuid storagePoolId;
+    private Guid storagePoolId;
 
     private String storagePoolName;
 
@@ -136,11 +135,11 @@ public class VmTemplate extends VmBase {
         interfaces = value;
     }
 
-    public NGuid getStoragePoolId() {
+    public Guid getStoragePoolId() {
         return storagePoolId;
     }
 
-    public void setStoragePoolId(NGuid value) {
+    public void setStoragePoolId(Guid value) {
         storagePoolId = value;
     }
 

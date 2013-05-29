@@ -50,7 +50,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -352,7 +351,7 @@ public class AddVmCommandTest {
     }
 
     private void mockStorageDomainDAOGetForStoragePool(int domainSpaceGB) {
-        when(sdDAO.getForStoragePool(Matchers.<Guid> any(Guid.class), Matchers.<NGuid> any(NGuid.class))).thenReturn(createStorageDomain(domainSpaceGB));
+        when(sdDAO.getForStoragePool(Matchers.<Guid> any(Guid.class), Matchers.<Guid> any(Guid.class))).thenReturn(createStorageDomain(domainSpaceGB));
     }
 
     private void mockStorageDomainDAOGet(final int domainSpaceGB) {

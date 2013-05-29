@@ -21,11 +21,11 @@ public class GlusterBrickMapper {
         GlusterBrickEntity brick = (toBrick == null) ? new GlusterBrickEntity() : toBrick;
 
         if(fromBrick.isSetId()) {
-            brick.setId(Guid.createGuidFromString(fromBrick.getId()));
+            brick.setId(Guid.createGuidFromStringDefaultEmpty(fromBrick.getId()));
         }
 
         if(fromBrick.isSetServerId()) {
-            brick.setServerId(Guid.createGuidFromString(fromBrick.getServerId()));
+            brick.setServerId(Guid.createGuidFromStringDefaultEmpty(fromBrick.getServerId()));
         }
 
         if(fromBrick.isSetBrickDir()) {

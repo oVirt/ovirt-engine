@@ -5,7 +5,7 @@ import java.io.Serializable;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 public class LUNs implements Serializable {
     private static final long serialVersionUID = 3026455643639610091L;
@@ -229,15 +229,15 @@ public class LUNs implements Serializable {
     }
 
     /**
-     * Disk ID - using NGuid since diskId is nullable
+     * Disk ID - using Guid since diskId is nullable
      */
-    private NGuid diskId;
+    private Guid diskId;
 
-    public NGuid getDiskId() {
+    public Guid getDiskId() {
         return diskId;
     }
 
-    public void setDiskId(NGuid value) {
+    public void setDiskId(Guid value) {
         diskId = value;
     }
 
@@ -254,13 +254,13 @@ public class LUNs implements Serializable {
     /**
      * Storage Domain ID - using storageDomainId since diskId is nullable
      */
-    private NGuid storageDomainId;
+    private Guid storageDomainId;
 
-    public NGuid getStorageDomainId() {
+    public Guid getStorageDomainId() {
         return storageDomainId;
     }
 
-    public void setStorageDomainId(NGuid value) {
+    public void setStorageDomainId(Guid value) {
         storageDomainId = value;
     }
 

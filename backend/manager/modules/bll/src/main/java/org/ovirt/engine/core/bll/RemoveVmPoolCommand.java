@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolCommandBase<T> {
@@ -36,12 +36,12 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
         return getSucceeded() ? AuditLogType.USER_REMOVE_VM_POOL : AuditLogType.USER_REMOVE_VM_POOL_FAILED;
     }
 
-    public static boolean CanRemoveVmPoolWithoutReasons(NGuid vmPoolId) {
+    public static boolean CanRemoveVmPoolWithoutReasons(Guid vmPoolId) {
         java.util.ArrayList<String> reasons = new java.util.ArrayList<String>();
         return (CanRemoveVmPool(vmPoolId, reasons));
     }
 
-    public static boolean CanRemoveVmPool(NGuid vmPoolId, java.util.ArrayList<String> reasons) {
+    public static boolean CanRemoveVmPool(Guid vmPoolId, java.util.ArrayList<String> reasons) {
         boolean returnValue = true;
         if (DbFacade.getInstance().getVmPoolDao().getVmPoolsMapByVmPoolId(vmPoolId).size() != 0) {
             returnValue = false;

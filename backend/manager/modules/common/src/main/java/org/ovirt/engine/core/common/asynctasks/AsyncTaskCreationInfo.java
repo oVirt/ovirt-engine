@@ -3,7 +3,6 @@ package org.ovirt.engine.core.common.asynctasks;
 import java.io.Serializable;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class AsyncTaskCreationInfo implements Serializable {
 
@@ -14,7 +13,7 @@ public class AsyncTaskCreationInfo implements Serializable {
     /**
      * The id of the step which monitors the task execution
      */
-    private NGuid stepId = null;
+    private Guid stepId = null;
 
     public AsyncTaskCreationInfo() {
     }
@@ -49,11 +48,11 @@ public class AsyncTaskCreationInfo implements Serializable {
         privateStoragePoolID = value;
     }
 
-    public NGuid getStepId() {
+    public Guid getStepId() {
         return stepId;
     }
 
-    public void setStepId(NGuid stepId) {
+    public void setStepId(Guid stepId) {
         this.stepId = stepId;
     }
 

@@ -16,7 +16,7 @@ public class RolesRowMapper implements RowMapper<Role> {
     public Role mapRow(ResultSet rs, int rowNum) throws SQLException {
         Role entity = new Role();
         entity.setdescription(rs.getString("description"));
-        entity.setId(Guid.createGuidFromString(rs.getString("id")));
+        entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
         entity.setname(rs.getString("name"));
         entity.setis_readonly(rs.getBoolean("is_readonly"));
         entity.setType(RoleType.getById(rs.getInt("role_type")));

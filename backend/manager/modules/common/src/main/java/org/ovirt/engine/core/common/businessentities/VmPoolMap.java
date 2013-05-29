@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class VmPoolMap implements Serializable {
     private static final long serialVersionUID = 5876397644156138863L;
@@ -12,7 +11,7 @@ public class VmPoolMap implements Serializable {
     public VmPoolMap() {
     }
 
-    public VmPoolMap(Guid vm_guid, NGuid vm_pool_id) {
+    public VmPoolMap(Guid vm_guid, Guid vm_pool_id) {
         this.vmId = vm_guid;
         this.vmPoolId = vm_pool_id;
     }
@@ -27,9 +26,9 @@ public class VmPoolMap implements Serializable {
         this.vmId = value;
     }
 
-    private NGuid vmPoolId;
+    private Guid vmPoolId;
 
-    public NGuid getvm_pool_id() {
+    public Guid getvm_pool_id() {
         return this.vmPoolId;
     }
 

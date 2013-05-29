@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -52,7 +51,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     private VM sourceVmFromDb;
     private VM vmFromConfiguration;
     private Collection<DiskImage> diskImagesFromConfiguration;
-    private NGuid storageDomainId;
+    private Guid storageDomainId;
 
     protected AddVmFromSnapshotCommand(Guid commandId) {
         super(commandId);
@@ -64,12 +63,12 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     }
 
     @Override
-    public NGuid getStoragePoolId() {
+    public Guid getStoragePoolId() {
         return (getSourceVmFromDb() != null) ? getSourceVmFromDb().getStoragePoolId() : null;
     }
 
     @Override
-    public NGuid getStorageDomainId() {
+    public Guid getStorageDomainId() {
         if (storageDomainId == null) {
             // This is needed for logging the command using CommandBase.logCommand
             List<DiskImage> images = getDiskImageDao().getAllSnapshotsForVmSnapshot(sourceSnapshotId);

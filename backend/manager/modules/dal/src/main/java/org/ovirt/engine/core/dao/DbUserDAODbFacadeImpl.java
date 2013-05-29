@@ -33,7 +33,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             entity.setrole(rs.getString("role"));
             entity.setstatus(rs.getInt("status"));
             entity.setsurname(rs.getString("surname"));
-            entity.setuser_id(Guid.createGuidFromString(rs.getString("user_id")));
+            entity.setuser_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("user_id")));
             entity.setusername(rs.getString("username"));
             entity.setLastAdminCheckStatus(rs.getBoolean("last_admin_check_status"));
             entity.setGroupIds(rs.getString("group_ids"));

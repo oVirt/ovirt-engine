@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -325,7 +324,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     }
 
-    protected void doChangeDefautlHost(NGuid hostGuid) {
+    protected void doChangeDefautlHost(Guid hostGuid) {
         if (hostGuid != null)
         {
             Guid vdsId = hostGuid.getValue();
@@ -526,7 +525,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         VmTemplate template = (VmTemplate) getModel().getTemplate().getSelectedItem();
 
-        if (template != null && !template.getId().equals(NGuid.Empty))
+        if (template != null && !template.getId().equals(Guid.Empty))
         {
             postInitStorageDomains();
         }

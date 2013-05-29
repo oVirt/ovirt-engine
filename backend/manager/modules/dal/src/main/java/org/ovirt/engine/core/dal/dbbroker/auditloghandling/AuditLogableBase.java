@@ -13,15 +13,14 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AdGroupDAO;
 import org.ovirt.engine.core.dao.AsyncTaskDAO;
@@ -49,27 +48,27 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class AuditLogableBase extends TimeoutBase {
     private static final long serialVersionUID = -4764813076922800727L;
-    private NGuid mVmId = Guid.Empty;
+    private Guid mVmId = Guid.Empty;
     private IVdcUser mVdcUser;
-    private NGuid mUserId = Guid.Empty;
+    private Guid mUserId = Guid.Empty;
     private String mUserName;
     private String mVmName;
     private Map<String, String> customValues = Collections.emptyMap();
-    private NGuid mVdsId;
+    private Guid mVdsId;
     private String mVdsName;
-    private NGuid mVmTemplateId;
+    private Guid mVmTemplateId;
     private String mVmTemplateName;
     private VDS mVds;
     private VM mVm;
     private VmTemplate mVmTemplate;
-    private NGuid _storageDomainId;
-    private NGuid _storagePoolId;
+    private Guid _storageDomainId;
+    private Guid _storagePoolId;
     private Guid mVdsGroupId;
     private VDSGroup mVdsGroup;
     private String correlationId;
-    private NGuid jobId;
+    private Guid jobId;
     private boolean isInternalExecution = false;
-    private NGuid glusterVolumeId;
+    private Guid glusterVolumeId;
     private String glusterVolumeName;
     private GlusterVolumeEntity glusterVolume;
     private Integer customId = null;
@@ -88,11 +87,11 @@ public class AuditLogableBase extends TimeoutBase {
     public AuditLogableBase() {
     }
 
-    public AuditLogableBase(final NGuid vdsId) {
+    public AuditLogableBase(final Guid vdsId) {
         mVdsId = vdsId;
     }
 
-    public AuditLogableBase(final NGuid vdsId, final Guid vmId) {
+    public AuditLogableBase(final Guid vdsId, final Guid vmId) {
         this(vdsId);
         mVmId = vmId;
     }
@@ -109,7 +108,7 @@ public class AuditLogableBase extends TimeoutBase {
         this.jobId = auditLog.getJobId();
         this.mUserId = auditLog.getuser_id();
         this.mUserName = auditLog.getuser_name();
-        this.mVdsGroupId = (Guid) auditLog.getvds_group_id();
+        this.mVdsGroupId = auditLog.getvds_group_id();
         this.mVdsId = auditLog.getvds_id();
         this.mVdsName = auditLog.getvds_name();
         this.mVmId = auditLog.getvm_id();
@@ -120,14 +119,15 @@ public class AuditLogableBase extends TimeoutBase {
         this.external = auditLog.isExternal();
         this.callStack = auditLog.getCallStack();
     }
-    public NGuid getUserId() {
+
+    public Guid getUserId() {
         if (mUserId != null && mUserId.equals(Guid.Empty) && getCurrentUser() != null) {
             mUserId = getCurrentUser().getUserId();
         }
         return mUserId;
     }
 
-    public void setUserId(final NGuid value) {
+    public void setUserId(final Guid value) {
         mUserId = value.getValue();
     }
 
@@ -158,7 +158,7 @@ public class AuditLogableBase extends TimeoutBase {
         mVmTemplateId = value;
     }
 
-    public NGuid getVmTemplateIdRef() {
+    public Guid getVmTemplateIdRef() {
         if (mVmTemplateId == null && getVmTemplate() != null) {
             mVmTemplateId = getVmTemplate().getId();
         }
@@ -194,7 +194,7 @@ public class AuditLogableBase extends TimeoutBase {
         privateSnapshotName = value;
     }
 
-    public NGuid getVmIdRef() {
+    public Guid getVmIdRef() {
         if (mVmId == null && getVm() != null) {
             mVmId = getVm().getId();
         }
@@ -212,14 +212,14 @@ public class AuditLogableBase extends TimeoutBase {
         mVmName = value;
     }
 
-    public NGuid getVdsIdRef() {
+    public Guid getVdsIdRef() {
         if (mVdsId == null && getVds() != null) {
             mVdsId = getVds().getId();
         }
         return mVdsId;
     }
 
-    protected void setVdsIdRef(final NGuid value) {
+    protected void setVdsIdRef(final Guid value) {
         mVdsId = value;
     }
 
@@ -271,14 +271,14 @@ public class AuditLogableBase extends TimeoutBase {
         _storageDomain = value;
     }
 
-    public NGuid getStorageDomainId() {
+    public Guid getStorageDomainId() {
         if (_storageDomain != null) {
             return _storageDomain.getId();
         }
         return _storageDomainId;
     }
 
-    public void setStorageDomainId(final NGuid value) {
+    public void setStorageDomainId(final Guid value) {
         _storageDomainId = value;
     }
 
@@ -302,7 +302,7 @@ public class AuditLogableBase extends TimeoutBase {
         _storagePool = value;
     }
 
-    public NGuid getStoragePoolId() {
+    public Guid getStoragePoolId() {
         if (_storagePoolId == null) {
             if (_storagePool != null) {
                 _storagePoolId = _storagePool.getId();
@@ -313,7 +313,7 @@ public class AuditLogableBase extends TimeoutBase {
         return _storagePoolId;
     }
 
-    public void setStoragePoolId(final NGuid value) {
+    public void setStoragePoolId(final Guid value) {
         _storagePoolId = value;
     }
 
@@ -491,11 +491,11 @@ public class AuditLogableBase extends TimeoutBase {
         return correlationId;
     }
 
-    public void setJobId(NGuid jobId) {
+    public void setJobId(Guid jobId) {
         this.jobId = jobId;
     }
 
-    public NGuid getJobId() {
+    public Guid getJobId() {
         return jobId;
     }
 
@@ -507,11 +507,11 @@ public class AuditLogableBase extends TimeoutBase {
         this.isInternalExecution = isInternalExecution;
     }
 
-    public NGuid getGlusterVolumeId() {
+    public Guid getGlusterVolumeId() {
         return glusterVolumeId != null ? glusterVolumeId : Guid.Empty;
     }
 
-    public void setGlusterVolumeId(NGuid value) {
+    public void setGlusterVolumeId(Guid value) {
         glusterVolumeId = value;
     }
 

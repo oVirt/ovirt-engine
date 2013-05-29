@@ -4,7 +4,7 @@ import static org.ovirt.engine.api.restapi.types.MappingTestHelper.populate;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Application;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 public class ApplicationMapperTest extends AbstractInvertibleMappingTest<Application, VM, VM> {
 
@@ -22,7 +22,7 @@ public class ApplicationMapperTest extends AbstractInvertibleMappingTest<Applica
         Application model = Application.class.cast(populate(Application.class));
         model = postPopulate(model);
         model.setName(NAMES[0]);
-        model.setId(new NGuid(NAMES[0].getBytes(), true).toString());
+        model.setId(new Guid(NAMES[0].getBytes(), true).toString());
         Mapper<String, Application> back = getMappingLocator().getMapper(String.class, Application.class);
         Application transform = back.map(NAMES[0], null);
         verify(model, transform);

@@ -16,7 +16,7 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.restapi.utils.TypeConversionHelper;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 public class EventMapper {
 
@@ -31,42 +31,42 @@ public class EventMapper {
         model.setDescription(entity.getmessage());
 
         if (entity.getuser_id() != null
-                && !entity.getuser_id().equals(NGuid.Empty)) {
+                && !entity.getuser_id().equals(Guid.Empty)) {
             User user = new User();
             user.setId(entity.getuser_id().toString());
             model.setUser(user);
         }
-        if (entity.getvm_id() != null && !entity.getvm_id().equals(NGuid.Empty)) {
+        if (entity.getvm_id() != null && !entity.getvm_id().equals(Guid.Empty)) {
             VM vm = new VM();
             vm.setId(entity.getvm_id().toString());
             model.setVm(vm);
         }
         if (entity.getstorage_domain_id() != null
-                && !entity.getstorage_domain_id().equals(NGuid.Empty)) {
+                && !entity.getstorage_domain_id().equals(Guid.Empty)) {
             StorageDomain sd = new StorageDomain();
             sd.setId(entity.getstorage_domain_id().toString());
             model.setStorageDomain(sd);
         }
         if (entity.getvds_id() != null
-                && !entity.getvds_id().equals(NGuid.Empty)) {
+                && !entity.getvds_id().equals(Guid.Empty)) {
             Host host = new Host();
             host.setId(entity.getvds_id().toString());
             model.setHost(host);
         }
         if (entity.getvm_template_id() != null
-                && !entity.getvm_template_id().equals(NGuid.Empty)) {
+                && !entity.getvm_template_id().equals(Guid.Empty)) {
             Template template = new Template();
             template.setId(entity.getvm_template_id().toString());
             model.setTemplate(template);
         }
         if (entity.getvds_group_id() != null
-                && !entity.getvds_group_id().equals(NGuid.Empty)) {
+                && !entity.getvds_group_id().equals(Guid.Empty)) {
             Cluster cluster = new Cluster();
             cluster.setId(entity.getvds_group_id().toString());
             model.setCluster(cluster);
         }
         if (entity.getstorage_pool_id() != null
-                && !entity.getstorage_pool_id().equals(NGuid.Empty)) {
+                && !entity.getstorage_pool_id().equals(Guid.Empty)) {
             DataCenter dataCenter = new DataCenter();
             dataCenter.setId(entity.getstorage_pool_id().toString());
             model.setDataCenter(dataCenter);
@@ -92,32 +92,32 @@ public class EventMapper {
         auditLog.setlog_time(event.isSetTime() ? event.getTime().toGregorianCalendar().getTime()
                 : new Date((Calendar.getInstance().getTimeInMillis())));
         auditLog.setmessage(event.getDescription());
-        NGuid guid = (event.isSetUser()) ? new NGuid(event.getUser().getId()) : NGuid.Empty;
-        if (!guid.equals(NGuid.Empty)) {
+        Guid guid = (event.isSetUser()) ? new Guid(event.getUser().getId()) : Guid.Empty;
+        if (!guid.equals(Guid.Empty)) {
             auditLog.setuser_id(guid);
         }
-        guid = (event.isSetVm()) ? new NGuid(event.getVm().getId()) : NGuid.Empty;
-        if (!guid.equals(NGuid.Empty)) {
+        guid = (event.isSetVm()) ? new Guid(event.getVm().getId()) : Guid.Empty;
+        if (!guid.equals(Guid.Empty)) {
             auditLog.setvm_id(guid);
         }
-        guid = (event.isSetStorageDomain()) ? new NGuid(event.getStorageDomain().getId()) : NGuid.Empty;
-        if (!guid.equals(NGuid.Empty)) {
+        guid = (event.isSetStorageDomain()) ? new Guid(event.getStorageDomain().getId()) : Guid.Empty;
+        if (!guid.equals(Guid.Empty)) {
             auditLog.setstorage_domain_id(guid);
         }
-        guid = (event.isSetHost()) ? new NGuid(event.getHost().getId()) : NGuid.Empty;
-        if (!guid.equals(NGuid.Empty)) {
+        guid = (event.isSetHost()) ? new Guid(event.getHost().getId()) : Guid.Empty;
+        if (!guid.equals(Guid.Empty)) {
             auditLog.setvds_id(guid);
         }
-        guid = (event.isSetTemplate()) ? new NGuid(event.getTemplate().getId()) : NGuid.Empty;
-        if (!guid.equals(NGuid.Empty)) {
+        guid = (event.isSetTemplate()) ? new Guid(event.getTemplate().getId()) : Guid.Empty;
+        if (!guid.equals(Guid.Empty)) {
             auditLog.setvm_template_id(guid);
         }
-        guid = (event.isSetCluster()) ? new NGuid(event.getCluster().getId()) : NGuid.Empty;
-        if (!guid.equals(NGuid.Empty)) {
+        guid = (event.isSetCluster()) ? new Guid(event.getCluster().getId()) : Guid.Empty;
+        if (!guid.equals(Guid.Empty)) {
             auditLog.setvds_group_id(guid);
         }
-        guid = (event.isSetDataCenter()) ? new NGuid(event.getDataCenter().getId()) : NGuid.Empty;
-        if (!guid.equals(NGuid.Empty)) {
+        guid = (event.isSetDataCenter()) ? new Guid(event.getDataCenter().getId()) : Guid.Empty;
+        if (!guid.equals(Guid.Empty)) {
             auditLog.setstorage_pool_id(guid);
         }
         if (event.isSetCorrelationId()) {

@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.notifier.methods.EventMethodFiller;
 import org.ovirt.engine.core.notifier.methods.NotificationMethodMapBuilder;
 import org.ovirt.engine.core.notifier.methods.NotificationMethodMapBuilder.NotificationMethodFactoryMapper;
@@ -114,6 +113,7 @@ public class NotificationService implements Runnable {
     /**
      * Executes event notification to subscribers
      */
+    @Override
     public void run() {
         try {
             log.debug("Start event notification service iteration");
@@ -374,23 +374,23 @@ public class NotificationService implements Runnable {
     private EventAuditLogSubscriber getEventAuditLogSubscriber(ResultSet rs) throws SQLException {
         EventAuditLogSubscriber eals = new EventAuditLogSubscriber();
         eals.setevent_type(rs.getInt("event_type"));
-        eals.setsubscriber_id(Guid.createGuidFromString(rs.getString("subscriber_id")));
+        eals.setsubscriber_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("subscriber_id")));
         eals.setevent_up_name(rs.getString("event_up_name"));
         eals.setmethod_id(rs.getInt("method_id"));
         eals.setmethod_address(rs.getString("method_address"));
         eals.settag_name(rs.getString("tag_name"));
         eals.setaudit_log_id(rs.getLong("audit_log_id"));
-        eals.setuser_id(NGuid.createGuidFromString(rs.getString("user_id")));
+        eals.setuser_id(Guid.createGuidFromString(rs.getString("user_id")));
         eals.setuser_name(rs.getString("user_name"));
-        eals.setvm_id(NGuid.createGuidFromString(rs.getString("vm_id")));
+        eals.setvm_id(Guid.createGuidFromString(rs.getString("vm_id")));
         eals.setvm_name(rs.getString("vm_name"));
-        eals.setvm_template_id(NGuid.createGuidFromString(rs.getString("vm_template_id")));
+        eals.setvm_template_id(Guid.createGuidFromString(rs.getString("vm_template_id")));
         eals.setvm_template_name(rs.getString("vm_template_name"));
-        eals.setvds_id(NGuid.createGuidFromString(rs.getString("vds_id")));
+        eals.setvds_id(Guid.createGuidFromString(rs.getString("vds_id")));
         eals.setvds_name(rs.getString("vds_name"));
-        eals.setstorage_pool_id(Guid.createGuidFromString(rs.getString("storage_pool_id")));
+        eals.setstorage_pool_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("storage_pool_id")));
         eals.setstorage_pool_name(rs.getString("storage_pool_name"));
-        eals.setstorage_domain_id(Guid.createGuidFromString(rs.getString("storage_domain_id")));
+        eals.setstorage_domain_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("storage_domain_id")));
         eals.setstorage_domain_name(rs.getString("storage_domain_name"));
         eals.setlog_time(rs.getTimestamp("log_time"));
         eals.setseverity(rs.getInt("severity"));

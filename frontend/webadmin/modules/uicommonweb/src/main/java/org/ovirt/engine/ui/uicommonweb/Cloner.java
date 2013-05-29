@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
@@ -141,7 +141,7 @@ public final class Cloner
         vm.setKernelParams(instance.getKernelParams());
         vm.setKernelUrl(instance.getKernelUrl());
         vm.setKvmEnable(instance.getKvmEnable());
-        // TODO: Guid/NGuid is an object, but code should treat it as immutable, and not change it's uuid directly.
+        // TODO: Guid is an object, but code should treat it as immutable, and not change it's uuid directly.
         // (quick skim of code shows this should be safe with current code)
         vm.setLastVdsRunOn(instance.getLastVdsRunOn());
         vm.setMigratingToVds(instance.getMigratingToVds());

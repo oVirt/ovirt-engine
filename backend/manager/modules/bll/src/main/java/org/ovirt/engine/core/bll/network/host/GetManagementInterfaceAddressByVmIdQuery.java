@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class GetManagementInterfaceAddressByVmIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
@@ -20,7 +19,7 @@ public class GetManagementInterfaceAddressByVmIdQuery<P extends IdQueryParameter
         if (vmId != null) {
             VM vm = getDbFacade().getVmDao().get(vmId);
             if (vm != null) {
-                NGuid vdsId = vm.getRunOnVds();
+                Guid vdsId = vm.getRunOnVds();
                 if (vdsId != null) {
                     nic =
                         getDbFacade().getInterfaceDao().getManagedInterfaceForVds(vdsId.getValue(),

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.StepDao;
@@ -161,7 +160,7 @@ public class JobRepositoryImpl implements JobRepository {
         List<Step> jobDirectSteps = new ArrayList<Step>();
 
         // a map of parent step id and a list of child-steps
-        Map<NGuid, List<Step>> parentStepMap = new HashMap<NGuid, List<Step>>();
+        Map<Guid, List<Step>> parentStepMap = new HashMap<Guid, List<Step>>();
 
         for (Step step : steps) {
             if (step.getParentStepId() == null) {

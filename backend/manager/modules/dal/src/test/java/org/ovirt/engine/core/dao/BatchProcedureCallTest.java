@@ -11,7 +11,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -47,8 +46,8 @@ public class BatchProcedureCallTest extends BaseDAOTestCase {
             dao.remove(tag.gettag_id());
         }
         List<tags> data = new ArrayList<>();
-        data.add(new tags("a", NGuid.Empty, true, Guid.NewGuid(), "a"));
-        data.add(new tags("b", NGuid.Empty, true, Guid.NewGuid(), "b"));
+        data.add(new tags("a", Guid.Empty, true, Guid.NewGuid(), "a"));
+        data.add(new tags("b", Guid.Empty, true, Guid.NewGuid(), "b"));
         List<MapSqlParameterSource> executions = new ArrayList<MapSqlParameterSource>();
         for (tags tag : data) {
             executions.add(getParamsSource(tag));

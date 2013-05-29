@@ -196,11 +196,11 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
         @Override
         public permissions mapRow(ResultSet rs, int rowNum) throws SQLException {
             permissions entity = new permissions();
-            entity.setad_element_id(Guid.createGuidFromString(rs
+            entity.setad_element_id(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("ad_element_id")));
-            entity.setId(Guid.createGuidFromString(rs.getString("id")));
-            entity.setrole_id(Guid.createGuidFromString(rs.getString("role_id")));
-            entity.setObjectId(Guid.createGuidFromString(rs
+            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
+            entity.setrole_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("role_id")));
+            entity.setObjectId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString(("object_id"))));
             entity.setObjectType(VdcObjectType.forValue(rs
                     .getInt(("object_type_id"))));

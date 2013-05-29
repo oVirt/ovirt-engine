@@ -104,7 +104,7 @@ public class BackendHostNicResource
         org.ovirt.engine.core.common.businessentities.network.Network oldNetwork = getOldNetwork(originalInter);
         org.ovirt.engine.core.common.businessentities.network.Network newNetwork = getNewNetwork(nic);
         UpdateNetworkToVdsParameters params =
-            new UpdateNetworkToVdsParameters(Guid.createGuidFromString(parent.getHostId()),
+            new UpdateNetworkToVdsParameters(Guid.createGuidFromStringDefaultEmpty(parent.getHostId()),
                                              newNetwork!=null ? newNetwork : oldNetwork ,
                                              new ArrayList<VdsNetworkInterface>(){{add(inter);}});
 

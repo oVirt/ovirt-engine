@@ -14,15 +14,14 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -47,7 +46,7 @@ public class AuditLogableBaseTest {
 
     @Test
     public void nGuidCtorNull() {
-        final NGuid n = null;
+        final Guid n = null;
         final AuditLogableBase b = new AuditLogableBase(n);
         final Guid g = b.getVdsId();
         assertEquals(Guid.Empty, g);
@@ -92,7 +91,7 @@ public class AuditLogableBaseTest {
     @Test
     public void getUserIdDefault() {
         final AuditLogableBase b = new AuditLogableBase();
-        final NGuid g = b.getUserId();
+        final Guid g = b.getUserId();
         assertEquals(Guid.Empty, g);
     }
 
@@ -100,7 +99,7 @@ public class AuditLogableBaseTest {
     public void getUserIdIdSet() {
         final AuditLogableBase b = new AuditLogableBase();
         b.setUserId(GUID);
-        final NGuid g = b.getUserId();
+        final Guid g = b.getUserId();
         assertEquals(GUID, g);
     }
 
@@ -109,7 +108,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new AuditLogableBase();
         final VdcUser u = new VdcUser();
         b.setCurrentUser(u);
-        final NGuid g = b.getUserId();
+        final Guid g = b.getUserId();
         assertEquals(Guid.Empty, g);
     }
 
@@ -119,7 +118,7 @@ public class AuditLogableBaseTest {
         final VdcUser u = new VdcUser();
         u.setUserId(GUID);
         b.setCurrentUser(u);
-        final NGuid g = b.getUserId();
+        final Guid g = b.getUserId();
         assertEquals(GUID, g);
     }
 
@@ -199,7 +198,7 @@ public class AuditLogableBaseTest {
     @Test
     public void vmTemplateIdRefDefault() {
         final AuditLogableBase b = new AuditLogableBase();
-        final NGuid g = b.getVmTemplateIdRef();
+        final Guid g = b.getVmTemplateIdRef();
         assertNull(g);
     }
 
@@ -207,7 +206,7 @@ public class AuditLogableBaseTest {
     public void vmTemplateIdRef() {
         final AuditLogableBase b = new AuditLogableBase();
         b.setVmTemplateId(GUID);
-        final NGuid g = b.getVmTemplateIdRef();
+        final Guid g = b.getVmTemplateIdRef();
         assertEquals(GUID, g);
     }
 
@@ -216,7 +215,7 @@ public class AuditLogableBaseTest {
         final AuditLogableBase b = new TestAuditLogableBase();
         final VM v = new VM();
         b.setVm(v);
-        final NGuid g = b.getVmTemplateIdRef();
+        final Guid g = b.getVmTemplateIdRef();
         assertEquals(GUID, g);
     }
 
@@ -302,7 +301,7 @@ public class AuditLogableBaseTest {
     @Test
     public void vmIdRefDefault() {
         final AuditLogableBase b = new AuditLogableBase();
-        final NGuid g = b.getVmIdRef();
+        final Guid g = b.getVmIdRef();
         assertEquals(Guid.Empty, g);
     }
 
@@ -310,7 +309,7 @@ public class AuditLogableBaseTest {
     public void vmIdRefNullVmId() {
         final AuditLogableBase b = new AuditLogableBase();
         b.setVmId(null);
-        final NGuid g = b.getVmIdRef();
+        final Guid g = b.getVmIdRef();
         assertNull(g);
     }
 
@@ -321,7 +320,7 @@ public class AuditLogableBaseTest {
         final VM v = new VM();
         v.setId(GUID);
         b.setVm(v);
-        final NGuid g = b.getVmIdRef();
+        final Guid g = b.getVmIdRef();
         assertEquals(GUID, g);
     }
 
@@ -362,7 +361,7 @@ public class AuditLogableBaseTest {
     @Test
     public void vdsIdRefDefault() {
         final AuditLogableBase b = new AuditLogableBase();
-        final NGuid g = b.getVdsIdRef();
+        final Guid g = b.getVdsIdRef();
         assertNull(g);
     }
 
@@ -370,7 +369,7 @@ public class AuditLogableBaseTest {
     public void vdsIdRefNull() {
         final AuditLogableBase b = new AuditLogableBase();
         b.setVdsIdRef(null);
-        final NGuid g = b.getVdsIdRef();
+        final Guid g = b.getVdsIdRef();
         assertNull(g);
     }
 
@@ -378,7 +377,7 @@ public class AuditLogableBaseTest {
     public void vdsIdRef() {
         final AuditLogableBase b = new AuditLogableBase();
         b.setVdsIdRef(GUID);
-        final NGuid g = b.getVdsIdRef();
+        final Guid g = b.getVdsIdRef();
         assertEquals(GUID, g);
     }
 
@@ -389,7 +388,7 @@ public class AuditLogableBaseTest {
         final VDS v = new VDS();
         v.setId(GUID);
         b.setVds(v);
-        final NGuid g = b.getVdsIdRef();
+        final Guid g = b.getVdsIdRef();
         assertEquals(GUID, g);
     }
 
@@ -503,7 +502,7 @@ public class AuditLogableBaseTest {
     @Test
     public void storageDomainIdDefault() {
         final AuditLogableBase b = new AuditLogableBase();
-        final NGuid g = b.getStorageDomainId();
+        final Guid g = b.getStorageDomainId();
         assertNull(g);
     }
 
@@ -511,7 +510,7 @@ public class AuditLogableBaseTest {
     public void storageDomainIdNull() {
         final AuditLogableBase b = new AuditLogableBase();
         b.setStorageDomainId(null);
-        final NGuid g = b.getStorageDomainId();
+        final Guid g = b.getStorageDomainId();
         assertNull(g);
     }
 
@@ -519,7 +518,7 @@ public class AuditLogableBaseTest {
     public void storageDomainId() {
         final AuditLogableBase b = new AuditLogableBase();
         b.setStorageDomainId(GUID);
-        final NGuid g = b.getStorageDomainId();
+        final Guid g = b.getStorageDomainId();
         assertEquals(GUID, g);
     }
 
@@ -529,7 +528,7 @@ public class AuditLogableBaseTest {
         final StorageDomain s = new StorageDomain();
         s.setId(GUID);
         b.setStorageDomain(s);
-        final NGuid g = b.getStorageDomainId();
+        final Guid g = b.getStorageDomainId();
         assertEquals(GUID, g);
     }
 
@@ -577,7 +576,7 @@ public class AuditLogableBaseTest {
     @Test
     public void storagePoolIdDefault() {
         final AuditLogableBase b = new AuditLogableBase();
-        final NGuid n = b.getStoragePoolId();
+        final Guid n = b.getStoragePoolId();
         assertNull(n);
     }
 
@@ -585,7 +584,7 @@ public class AuditLogableBaseTest {
     public void storagePoolIdNull() {
         final AuditLogableBase b = new AuditLogableBase();
         b.setStoragePoolId(null);
-        final NGuid n = b.getStoragePoolId();
+        final Guid n = b.getStoragePoolId();
         assertNull(n);
     }
 
@@ -593,7 +592,7 @@ public class AuditLogableBaseTest {
     public void storagePoolId() {
         final AuditLogableBase b = new AuditLogableBase();
         b.setStoragePoolId(GUID);
-        final NGuid n = b.getStoragePoolId();
+        final Guid n = b.getStoragePoolId();
         assertEquals(GUID, n);
     }
 
@@ -604,7 +603,7 @@ public class AuditLogableBaseTest {
         final StoragePool p = new StoragePool();
         p.setId(GUID);
         b.setStoragePool(p);
-        final NGuid n = b.getStoragePoolId();
+        final Guid n = b.getStoragePoolId();
         assertEquals(GUID, n);
     }
 
@@ -616,7 +615,7 @@ public class AuditLogableBaseTest {
         final StorageDomain s = new StorageDomain();
         s.setStoragePoolId(GUID);
         b.setStorageDomain(s);
-        final NGuid n = b.getStoragePoolId();
+        final Guid n = b.getStoragePoolId();
         assertEquals(GUID, n);
     }
 

@@ -19,7 +19,7 @@ public class DiskLunMapDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<DiskLun
         public DiskLunMap mapRow(ResultSet rs, int rowNum) throws SQLException {
             DiskLunMap diskLunMap = new DiskLunMap();
 
-            diskLunMap.setDiskId(Guid.createGuidFromString(rs.getString("disk_id")));
+            diskLunMap.setDiskId(Guid.createGuidFromStringDefaultEmpty(rs.getString("disk_id")));
             diskLunMap.setLunId(rs.getString("lun_id"));
 
             return diskLunMap;

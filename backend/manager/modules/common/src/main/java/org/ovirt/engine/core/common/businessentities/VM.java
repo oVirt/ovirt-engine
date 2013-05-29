@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
@@ -273,11 +272,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         vmStatic.setAutoStartup(value);
     }
 
-    public NGuid getDedicatedVmForVds() {
+    public Guid getDedicatedVmForVds() {
         return vmStatic.getDedicatedVmForVds();
     }
 
-    public void setDedicatedVmForVds(NGuid value) {
+    public void setDedicatedVmForVds(Guid value) {
         vmStatic.setDedicatedVmForVds(value);
     }
 
@@ -385,7 +384,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         vmStatic.setKernelParams(value);
     }
 
-    private NGuid vmPoolId;
+    private Guid vmPoolId;
     private String vmPoolName;
 
     public VMStatus getStatus() {
@@ -469,11 +468,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         this.vmDynamic.setGuestLastLoginTime(value);
     }
 
-    public NGuid getConsoleUserId() {
+    public Guid getConsoleUserId() {
         return this.vmDynamic.getConsoleUserId();
     }
 
-    public void setConsoleUserId(NGuid value) {
+    public void setConsoleUserId(Guid value) {
         this.vmDynamic.setConsoleUserId(value);
     }
 
@@ -493,19 +492,19 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         this.vmDynamic.setGuestOs(value);
     }
 
-    public NGuid getRunOnVds() {
+    public Guid getRunOnVds() {
         return this.vmDynamic.getRunOnVds();
     }
 
-    public void setRunOnVds(NGuid value) {
+    public void setRunOnVds(Guid value) {
         this.vmDynamic.setRunOnVds(value);
     }
 
-    public NGuid getMigratingToVds() {
+    public Guid getMigratingToVds() {
         return this.vmDynamic.getMigratingToVds();
     }
 
-    public void setMigratingToVds(NGuid value) {
+    public void setMigratingToVds(Guid value) {
         this.vmDynamic.setMigratingToVds(value);
     }
 
@@ -605,11 +604,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         this.vmDynamic.setUtcDiff(value);
     }
 
-    public NGuid getLastVdsRunOn() {
+    public Guid getLastVdsRunOn() {
         return this.vmDynamic.getLastVdsRunOn();
     }
 
-    public void setLastVdsRunOn(NGuid value) {
+    public void setLastVdsRunOn(Guid value) {
         this.vmDynamic.setLastVdsRunOn(value);
     }
 
@@ -1290,11 +1289,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         vmPoolName = value;
     }
 
-    public NGuid getVmPoolId() {
+    public Guid getVmPoolId() {
         return vmPoolId;
     }
 
-    public void setVmPoolId(NGuid value) {
+    public void setVmPoolId(Guid value) {
         vmPoolId = value;
     }
 

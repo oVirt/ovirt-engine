@@ -11,7 +11,7 @@ import java.util.UUID;
 import org.apache.commons.lang.RandomStringUtils;
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 /** A test case for the {@link CustomMapSqlParameterSource} */
@@ -79,8 +79,8 @@ public class CustomMapSqlParameterSourceTest {
     }
 
     @Test
-    public void testAddValueNGuid() {
-        NGuid guid = new NGuid(UUID.randomUUID());
+    public void testAddValueGuid() {
+        Guid guid = new Guid(UUID.randomUUID());
 
         paramSource.addValue(paramName, guid);
         assertEquals("wrong value returned from parameter source",

@@ -8,7 +8,7 @@ import javax.validation.constraints.Size;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * <code>VdsNetworkInterface</code> defines a type of {@link BaseNetworkInterface} for instances of {@link VDS}.
@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.NGuid;
 public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> {
     private static final long serialVersionUID = -6347816237220936283L;
 
-    private NGuid vdsId;
+    private Guid vdsId;
     private String vdsName;
     private NetworkBootProtocol bootProtocol;
 
@@ -66,7 +66,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      * @param vdsId
      *            the id
      */
-    public void setVdsId(NGuid vdsId) {
+    public void setVdsId(Guid vdsId) {
         this.vdsId = vdsId;
         this.statistics.setVdsId(vdsId != null ? vdsId.getValue() : null);
     }
@@ -76,7 +76,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      *
      * @return the id
      */
-    public NGuid getVdsId() {
+    public Guid getVdsId() {
         return vdsId;
     }
 

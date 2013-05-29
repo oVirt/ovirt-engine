@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -75,6 +74,7 @@ public class BookmarkListModel extends SearchableListModel
 
     private UICommand privateEditCommand;
 
+    @Override
     public UICommand getEditCommand()
     {
         return privateEditCommand;
@@ -278,7 +278,7 @@ public class BookmarkListModel extends SearchableListModel
 
         org.ovirt.engine.core.common.businessentities.Bookmark tempVar =
                 new org.ovirt.engine.core.common.businessentities.Bookmark();
-        tempVar.setbookmark_id(model.getIsNew() ? (Guid) NGuid.Empty
+        tempVar.setbookmark_id(model.getIsNew() ? Guid.Empty
                 : ((org.ovirt.engine.core.common.businessentities.Bookmark) getSelectedItem()).getbookmark_id());
         tempVar.setbookmark_name((String) model.getName().getEntity());
         tempVar.setbookmark_value((String) model.getSearchString().getEntity());

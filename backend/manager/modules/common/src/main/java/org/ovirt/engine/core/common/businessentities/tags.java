@@ -9,7 +9,6 @@ import javax.validation.constraints.Size;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class tags implements Serializable {
     private static final long serialVersionUID = -6566155246916011274L;
@@ -23,7 +22,7 @@ public class tags implements Serializable {
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String description;
 
-    private NGuid parent;
+    private Guid parent;
 
     private Boolean readonly;
 
@@ -35,7 +34,7 @@ public class tags implements Serializable {
         _children = new java.util.ArrayList<tags>();
     }
 
-    public tags(String description, NGuid parent_id, Boolean isReadonly, Guid tag_id, String tag_name) {
+    public tags(String description, Guid parent_id, Boolean isReadonly, Guid tag_id, String tag_name) {
         _children = new java.util.ArrayList<tags>();
         this.description = description;
         this.parent = parent_id;
@@ -87,11 +86,11 @@ public class tags implements Serializable {
         this.description = description;
     }
 
-    public NGuid getparent_id() {
+    public Guid getparent_id() {
         return this.parent;
     }
 
-    public void setparent_id(NGuid parent) {
+    public void setparent_id(Guid parent) {
         this.parent = parent;
     }
 

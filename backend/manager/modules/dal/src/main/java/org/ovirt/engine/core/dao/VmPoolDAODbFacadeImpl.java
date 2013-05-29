@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.VmDAODbFacadeImpl.VMRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -30,12 +29,12 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public VmPool get(NGuid id) {
+    public VmPool get(Guid id) {
         return get(id, null, false);
     }
 
     @Override
-    public VmPool get(NGuid id, Guid userID, boolean isFiltered) {
+    public VmPool get(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
         return getCallsHandler().executeRead("GetVm_poolsByvm_pool_id", VmPoolFullRowMapper.instance, parameterSource);
@@ -105,7 +104,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public void remove(NGuid id) {
+    public void remove(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_id", id);
 
@@ -120,8 +119,8 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
             @Override
             public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 VmPoolMap entity = new VmPoolMap();
-                entity.setvm_guid(Guid.createGuidFromString(rs.getString("vm_guid")));
-                entity.setvm_pool_id(Guid.createGuidFromString(rs.getString("vm_pool_id")));
+                entity.setvm_guid(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_guid")));
+                entity.setvm_pool_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_pool_id")));
                 return entity;
             }
         };
@@ -138,15 +137,15 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public List<VmPoolMap> getVmPoolsMapByVmPoolId(NGuid vmPoolId) {
+    public List<VmPoolMap> getVmPoolsMapByVmPoolId(Guid vmPoolId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId);
 
         RowMapper<VmPoolMap> mapper = new RowMapper<VmPoolMap>() {
             @Override
             public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 VmPoolMap entity = new VmPoolMap();
-                entity.setvm_guid(Guid.createGuidFromString(rs.getString("vm_guid")));
-                entity.setvm_pool_id(Guid.createGuidFromString(rs.getString("vm_pool_id")));
+                entity.setvm_guid(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_guid")));
+                entity.setvm_pool_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_pool_id")));
                 return entity;
             }
         };
@@ -155,7 +154,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     }
 
     @Override
-    public List<VmPoolMap> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus) {
+    public List<VmPoolMap> getVmMapsInVmPoolByVmPoolIdAndStatus(Guid vmPoolId, VMStatus vmStatus) {
         MapSqlParameterSource parameterSource =
                 getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId).addValue("status",
                         vmStatus.getValue());
@@ -164,8 +163,8 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
             @Override
             public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 VmPoolMap entity = new VmPoolMap();
-                entity.setvm_guid(Guid.createGuidFromString(rs.getString("vm_guid")));
-                entity.setvm_pool_id(Guid.createGuidFromString(rs.getString("vm_pool_id")));
+                entity.setvm_guid(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_guid")));
+                entity.setvm_pool_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_pool_id")));
                 return entity;
             }
         };
@@ -182,14 +181,14 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
             final VmPool entity = new VmPool();
             entity.setVmPoolDescription(rs
                     .getString("vm_pool_description"));
-            entity.setVmPoolId(Guid.createGuidFromString(rs
+            entity.setVmPoolId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("vm_pool_id")));
             entity.setName(rs.getString("vm_pool_name"));
             entity.setVmPoolType(VmPoolType.forValue(rs
                     .getInt("vm_pool_type")));
             entity.setParameters(rs.getString("parameters"));
             entity.setPrestartedVms(rs.getInt("prestarted_vms"));
-            entity.setVdsGroupId(Guid.createGuidFromString(rs
+            entity.setVdsGroupId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("vds_group_id")));
             entity.setVdsGroupName(rs.getString("vds_group_name"));
             entity.setAssignedVmsCount(rs.getInt("assigned_vm_count"));
@@ -207,14 +206,14 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
             final VmPool entity = new VmPool();
             entity.setVmPoolDescription(rs
                     .getString("vm_pool_description"));
-            entity.setVmPoolId(Guid.createGuidFromString(rs
+            entity.setVmPoolId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("vm_pool_id")));
             entity.setName(rs.getString("vm_pool_name"));
             entity.setVmPoolType(VmPoolType.forValue(rs
                     .getInt("vm_pool_type")));
             entity.setParameters(rs.getString("parameters"));
             entity.setPrestartedVms(rs.getInt("prestarted_vms"));
-            entity.setVdsGroupId(Guid.createGuidFromString(rs
+            entity.setVdsGroupId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("vds_group_id")));
             entity.setVdsGroupName(rs.getString("vds_group_name"));
             entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));

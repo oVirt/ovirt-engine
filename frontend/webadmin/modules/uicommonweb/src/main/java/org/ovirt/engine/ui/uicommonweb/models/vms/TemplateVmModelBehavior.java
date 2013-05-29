@@ -1,16 +1,16 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -36,7 +36,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getIsSoundcardEnabled().setIsChangable(true);
         getModel().getVmType().setIsChangable(true);
 
-        if (template.getStoragePoolId() != null && !template.getStoragePoolId().getValue().equals(NGuid.Empty))
+        if (template.getStoragePoolId() != null && !template.getStoragePoolId().getValue().equals(Guid.Empty))
         {
             AsyncDataProvider.getDataCenterById(new AsyncQuery(getModel(),
                     new INewAsyncCallback() {

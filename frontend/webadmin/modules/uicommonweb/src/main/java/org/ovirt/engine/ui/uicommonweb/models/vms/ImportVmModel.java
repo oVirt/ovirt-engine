@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -311,7 +310,7 @@ public class ImportVmModel extends ListWithDetailsModel {
         for (Object item : getItems()) {
             ImportVmData importVmData = (ImportVmData) item;
             VM vm = importVmData.getVm();
-            if (!NGuid.Empty.equals(vm.getVmtGuid())) {
+            if (!Guid.Empty.equals(vm.getVmtGuid())) {
                 if (!templateDiskMap.containsKey(vm.getVmtGuid())) {
                     templateDiskMap.put(vm.getVmtGuid(), new ArrayList<Disk>());
                 }
@@ -348,7 +347,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                     for (Guid templateId : templateDiskMap.keySet()) {
                         for (Disk disk : templateDiskMap.get(templateId)) {
                             DiskImage diskImage = (DiskImage) disk;
-                            if (diskImage.getParentId() != null && !NGuid.Empty.equals(diskImage.getParentId())) {
+                            if (diskImage.getParentId() != null && !Guid.Empty.equals(diskImage.getParentId())) {
                                 ArrayList<StorageDomain> storageDomains =
                                         templateDisksStorageDomains.get(diskImage.getParentId());
                                 if (storageDomains == null) {
@@ -405,7 +404,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                                 .importMissingStorages());
 
                         for (ImportVmData vmData : (List<ImportVmData>) getItems()) {
-                            if (!NGuid.Empty.equals(vmData.getVm().getVmtGuid())
+                            if (!Guid.Empty.equals(vmData.getVm().getVmtGuid())
                                     && missingTemplateDiskMap.containsKey(vmData.getVm().getVmtGuid())) {
                                 vmData.setTemplateExistsInSetup(false);
                             }

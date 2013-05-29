@@ -39,7 +39,7 @@ public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParam
 
         if(getVDSReturnValue().getSucceeded()) {
             // set the volume updated with id as the return value
-            volume.setId(Guid.createGuidFromString(uuidReturn.mUuid));
+            volume.setId(Guid.createGuidFromStringDefaultEmpty(uuidReturn.mUuid));
             setReturnValue(volume);
         }
     }

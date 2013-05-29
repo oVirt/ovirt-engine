@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -128,7 +128,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
             getModel().getKernel_parameters().setEntity(template.getKernelParams());
             getModel().getInitrd_path().setEntity(template.getInitrdUrl());
 
-            if (!template.getId().equals(NGuid.Empty))
+            if (!template.getId().equals(Guid.Empty))
             {
                 getModel().getStorageDomain().setIsChangable(true);
                 getModel().getProvisioning().setIsChangable(true);
@@ -245,7 +245,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
                                                     (ArrayList<VmTemplate>) returnValue2;
                                             VmTemplate blankTemplate =
                                                     Linq.firstOrDefault(templatesByDataCenter,
-                                                            new Linq.TemplatePredicate(NGuid.Empty));
+                                                            new Linq.TemplatePredicate(Guid.Empty));
                                             if (blankTemplate != null)
                                             {
                                                 templatesByStorage.add(0, blankTemplate);
@@ -284,7 +284,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase
 
         getModel().getTemplate().setSelectedItem(Linq.firstOrDefault(templates,
                 oldTemplate != null ? new Linq.TemplatePredicate(oldTemplate.getId())
-                        : new Linq.TemplatePredicate(NGuid.Empty)));
+                        : new Linq.TemplatePredicate(Guid.Empty)));
 
         updateIsDisksAvailable();
     }

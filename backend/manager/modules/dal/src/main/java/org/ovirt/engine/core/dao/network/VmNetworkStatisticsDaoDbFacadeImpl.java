@@ -48,7 +48,7 @@ public class VmNetworkStatisticsDaoDbFacadeImpl extends MassOperationsGenericDao
             public VmNetworkStatistics mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
                 VmNetworkStatistics entity = new VmNetworkStatistics();
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
+                entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
                 entity.setReceiveRate(rs.getDouble("rx_rate"));
                 entity.setTransmitRate(rs.getDouble("tx_rate"));
                 entity.setReceiveDropRate(rs.getDouble("rx_drop"));

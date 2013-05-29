@@ -122,9 +122,9 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
             entity.setManagementIp(rs.getString("ip"));
             entity.setUniqueID(rs.getString("vds_unique_id"));
             entity.setPort(rs.getInt("port"));
-            entity.setVdsGroupId(Guid.createGuidFromString(rs
+            entity.setVdsGroupId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("vds_group_id")));
-            entity.setId(Guid.createGuidFromString(rs
+            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("vds_id")));
             entity.setVdsName(rs.getString("vds_name"));
             entity.setServerSslEnabled(rs

@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.TagDAO;
@@ -57,7 +56,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     @Override
-    public NGuid getStoragePoolId() {
+    public Guid getStoragePoolId() {
         if (super.getStoragePoolId() == null) {
             VM vm = getVm();
             if (vm != null) {

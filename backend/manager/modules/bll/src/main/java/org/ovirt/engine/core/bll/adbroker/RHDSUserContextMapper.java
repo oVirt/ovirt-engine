@@ -53,7 +53,7 @@ public class RHDSUserContextMapper implements ContextMapper {
         String objectGuid;
         try {
             objectGuid = (String) attributes.get(nsUniqueId.name()).get(0);
-            user.setUserId(Guid.createGuidFromString(LdapBrokerUtils.getGuidFromNsUniqueId(objectGuid)));
+            user.setUserId(Guid.createGuidFromStringDefaultEmpty(LdapBrokerUtils.getGuidFromNsUniqueId(objectGuid)));
 
             // Getting other string properties
             Attribute att = attributes.get(uid.name());

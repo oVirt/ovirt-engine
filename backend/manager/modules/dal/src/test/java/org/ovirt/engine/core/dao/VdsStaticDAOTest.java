@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 
 public class VdsStaticDAOTest extends BaseDAOTestCase {
@@ -42,7 +42,7 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        VdsStatic result = dao.get(NGuid.NewGuid());
+        VdsStatic result = dao.get(Guid.NewGuid());
 
         assertNull(result);
     }

@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.users.VdcUser;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 public class UserMapper {
 
@@ -33,7 +33,7 @@ public class UserMapper {
         if (!StringUtils.isEmpty(entity.getdomain())) {
             Domain dom = new Domain();
             dom.setName(entity.getdomain());
-            dom.setId(new NGuid(entity.getdomain().getBytes(), true).toString());
+            dom.setId(new Guid(entity.getdomain().getBytes(), true).toString());
             model.setDomain(dom);
         }
         return model;
@@ -69,7 +69,7 @@ public class UserMapper {
         if (!StringUtils.isEmpty(entity.getDomainControler())) {
             Domain dom = new Domain();
             dom.setName(entity.getDomainControler());
-            dom.setId(new NGuid(entity.getDomainControler().getBytes(), true).toString());
+            dom.setId(new Guid(entity.getDomainControler().getBytes(), true).toString());
             model.setDomain(dom);
         }
         return model;

@@ -3,7 +3,6 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class EventAuditLogSubscriber implements Serializable {
     private static final long serialVersionUID = 2766057261065080144L;
@@ -12,8 +11,8 @@ public class EventAuditLogSubscriber implements Serializable {
     }
 
     public EventAuditLogSubscriber(int event_type, Guid subscriber_id, String event_up_name, int method_id,
-            String method_address, String tag_name, long audit_log_id, NGuid user_id, String user_name, NGuid vm_id,
-            String vm_name, NGuid vm_template_id, String vm_template_name, NGuid vds_id, String vds_name,
+            String method_address, String tag_name, long audit_log_id, Guid user_id, String user_name, Guid vm_id,
+            String vm_name, Guid vm_template_id, String vm_template_name, Guid vds_id, String vds_name,
             Guid storage_pool_id, String storage_pool_name, Guid storage_domain_id, String storage_domain_name,
             java.util.Date log_time, int severity, String message) {
         this.event_typeField = event_type;
@@ -106,13 +105,13 @@ public class EventAuditLogSubscriber implements Serializable {
         this.audit_log_idField = value;
     }
 
-    private NGuid user_idField;
+    private Guid user_idField;
 
-    public NGuid getuser_id() {
+    public Guid getuser_id() {
         return this.user_idField;
     }
 
-    public void setuser_id(NGuid value) {
+    public void setuser_id(Guid value) {
         this.user_idField = value;
     }
 
@@ -126,13 +125,13 @@ public class EventAuditLogSubscriber implements Serializable {
         this.user_nameField = value;
     }
 
-    private NGuid vm_idField;
+    private Guid vm_idField;
 
-    public NGuid getvm_id() {
+    public Guid getvm_id() {
         return this.vm_idField;
     }
 
-    public void setvm_id(NGuid value) {
+    public void setvm_id(Guid value) {
         this.vm_idField = value;
     }
 
@@ -146,13 +145,13 @@ public class EventAuditLogSubscriber implements Serializable {
         this.vm_nameField = value;
     }
 
-    private NGuid vm_template_idField;
+    private Guid vm_template_idField;
 
-    public NGuid getvm_template_id() {
+    public Guid getvm_template_id() {
         return this.vm_template_idField;
     }
 
-    public void setvm_template_id(NGuid value) {
+    public void setvm_template_id(Guid value) {
         this.vm_template_idField = value;
     }
 
@@ -166,13 +165,13 @@ public class EventAuditLogSubscriber implements Serializable {
         this.vm_template_nameField = value;
     }
 
-    private NGuid vds_idField;
+    private Guid vds_idField;
 
-    public NGuid getvds_id() {
+    public Guid getvds_id() {
         return this.vds_idField;
     }
 
-    public void setvds_id(NGuid value) {
+    public void setvds_id(Guid value) {
         this.vds_idField = value;
     }
 

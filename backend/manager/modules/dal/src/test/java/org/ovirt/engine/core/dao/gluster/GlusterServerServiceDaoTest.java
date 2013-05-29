@@ -47,7 +47,7 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testGetByClusterId() {
-        List<GlusterServerService> services = dao.getByClusterId(Guid.createGuidFromString(CLUSTER_ID));
+        List<GlusterServerService> services = dao.getByClusterId(Guid.createGuidFromStringDefaultEmpty(CLUSTER_ID));
         assertNotNull(services);
         assertEquals(2, services.size());
         for (GlusterServerService service : services) {
@@ -66,7 +66,7 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testGetByServerId() {
-        List<GlusterServerService> services = dao.getByServerId(Guid.createGuidFromString(SERVER1_ID));
+        List<GlusterServerService> services = dao.getByServerId(Guid.createGuidFromStringDefaultEmpty(SERVER1_ID));
         assertNotNull(services);
         assertEquals(1, services.size());
         verifyServiceOnServer1(services.get(0));
@@ -101,11 +101,11 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testSaveAndGet() {
-        GlusterServerService service = dao.get(Guid.createGuidFromString(NEW_SERVICE_ID));
+        GlusterServerService service = dao.get(Guid.createGuidFromStringDefaultEmpty(NEW_SERVICE_ID));
         assertNull(service);
 
         GlusterServerService newService = insertTestService();
-        service = dao.get(Guid.createGuidFromString(NEW_SERVICE_ID));
+        service = dao.get(Guid.createGuidFromStringDefaultEmpty(NEW_SERVICE_ID));
 
         assertNotNull(service);
         assertEquals(newService, service);
@@ -113,15 +113,15 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testUpdate() {
-        GlusterServerService existingService = dao.get(Guid.createGuidFromString(SERVER1_SERVICE_ID));
+        GlusterServerService existingService = dao.get(Guid.createGuidFromStringDefaultEmpty(SERVER1_SERVICE_ID));
         assertNotNull(existingService);
         assertEquals(GlusterServiceStatus.RUNNING, existingService.getStatus());
 
-        GlusterServerService serviceToModify = dao.get(Guid.createGuidFromString(SERVER1_SERVICE_ID));
+        GlusterServerService serviceToModify = dao.get(Guid.createGuidFromStringDefaultEmpty(SERVER1_SERVICE_ID));
         serviceToModify.setStatus(GlusterServiceStatus.STOPPED);
         dao.update(serviceToModify);
 
-        GlusterServerService modifiedService = dao.get(Guid.createGuidFromString(SERVER1_SERVICE_ID));
+        GlusterServerService modifiedService = dao.get(Guid.createGuidFromStringDefaultEmpty(SERVER1_SERVICE_ID));
         assertNotNull(modifiedService);
         assertEquals(GlusterServiceStatus.STOPPED, modifiedService.getStatus());
         assertEquals(GlusterServiceStatus.RUNNING, existingService.getStatus());
@@ -147,9 +147,9 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
 
     private GlusterServerService insertTestService() {
         GlusterServerService service = new GlusterServerService();
-        service.setId(Guid.createGuidFromString(NEW_SERVICE_ID));
-        service.setServerId(Guid.createGuidFromString(SERVER1_ID));
-        service.setServiceId(Guid.createGuidFromString(SERVICE2_ID));
+        service.setId(Guid.createGuidFromStringDefaultEmpty(NEW_SERVICE_ID));
+        service.setServerId(Guid.createGuidFromStringDefaultEmpty(SERVER1_ID));
+        service.setServiceId(Guid.createGuidFromStringDefaultEmpty(SERVICE2_ID));
         service.setServiceType(SERVICE2_TYPE);
         service.setStatus(GlusterServiceStatus.UNKNOWN);
         service.setMessage("test message");

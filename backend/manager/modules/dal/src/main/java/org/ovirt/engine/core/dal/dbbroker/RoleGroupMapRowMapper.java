@@ -14,7 +14,7 @@ public class RoleGroupMapRowMapper implements RowMapper<RoleGroupMap> {
     @Override
     public RoleGroupMap mapRow(ResultSet rs, int rowNum) throws SQLException {
         RoleGroupMap entity = new RoleGroupMap(ActionGroup.forValue(rs.getInt("action_group_id")),
-                Guid.createGuidFromString(rs.getString("role_id")));
+                Guid.createGuidFromStringDefaultEmpty(rs.getString("role_id")));
         return entity;
     }
 }

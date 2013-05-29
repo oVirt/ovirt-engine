@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -114,11 +113,11 @@ public class JobDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Job, Guid> imp
         public Job mapRow(ResultSet rs, int rowNum) throws SQLException {
             Job job = new Job();
 
-            job.setId(Guid.createGuidFromString(rs.getString("job_id")));
+            job.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("job_id")));
             job.setActionType(VdcActionType.valueOf(rs.getString("action_type")));
             job.setDescription(rs.getString("description"));
             job.setStatus(JobExecutionStatus.valueOf(rs.getString("status")));
-            job.setOwnerId(NGuid.createGuidFromString(rs.getString("owner_id")));
+            job.setOwnerId(Guid.createGuidFromString(rs.getString("owner_id")));
             job.setVisible(rs.getBoolean("visible"));
             job.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
             job.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));

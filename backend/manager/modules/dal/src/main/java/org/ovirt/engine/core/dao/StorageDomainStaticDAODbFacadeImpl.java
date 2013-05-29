@@ -67,7 +67,7 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
         RowMapper<Guid> mapper = new RowMapper<Guid>() {
             @Override
             public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return Guid.createGuidFromString(rs.getString("storage_id"));
+                return Guid.createGuidFromStringDefaultEmpty(rs.getString("storage_id"));
             }
         };
 
@@ -106,7 +106,7 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
         public StorageDomainStatic mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             StorageDomainStatic entity = new StorageDomainStatic();
-            entity.setId(Guid.createGuidFromString(rs.getString("id")));
+            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
             entity.setStorage(rs.getString("storage"));
             entity.setStorageName(rs.getString("storage_name"));
             entity.setDescription(rs.getString("storage_description"));

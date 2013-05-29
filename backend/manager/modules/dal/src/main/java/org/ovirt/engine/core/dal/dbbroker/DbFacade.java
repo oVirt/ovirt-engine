@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.ActionGroupDAO;
 import org.ovirt.engine.core.dao.AdGroupDAO;
 import org.ovirt.engine.core.dao.AsyncTaskDAO;
@@ -99,10 +98,10 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
+import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -225,7 +224,7 @@ public class DbFacade {
     }
 
     // tags_vm_map
-    public NGuid getEntityPermissions(Guid adElementId, ActionGroup actionGroup, Guid objectId,
+    public Guid getEntityPermissions(Guid adElementId, ActionGroup actionGroup, Guid objectId,
             VdcObjectType vdcObjectType) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("user_id", adElementId)
                 .addValue("action_group_id", actionGroup.getId()).addValue("object_id", objectId).addValue(
@@ -237,10 +236,10 @@ public class DbFacade {
                         .declareParameters(new SqlOutParameter(resultKey, Types.VARCHAR))
                         .execute(parameterSource);
 
-        return dbResults.get(resultKey) != null ? new NGuid(dbResults.get(resultKey).toString()) : null;
+        return dbResults.get(resultKey) != null ? new Guid(dbResults.get(resultKey).toString()) : null;
     }
 
-    public NGuid getEntityPermissionsForUserAndGroups(Guid userId,
+    public Guid getEntityPermissionsForUserAndGroups(Guid userId,
             String groupIds,
             ActionGroup actionGroup,
             Guid objectId,
@@ -261,7 +260,7 @@ public class DbFacade {
                         .declareParameters(new SqlOutParameter(resultKey, Types.VARCHAR))
                         .execute(parameterSource);
 
-        return dbResults.get(resultKey) != null ? new NGuid(dbResults.get(resultKey).toString()) : null;
+        return dbResults.get(resultKey) != null ? new Guid(dbResults.get(resultKey).toString()) : null;
     }
 
     public String getEntityNameByIdAndType(Guid objectId, VdcObjectType vdcObjectType) {
@@ -336,7 +335,7 @@ public class DbFacade {
         RowMapper<Guid> mapper = new RowMapper<Guid>() {
             @Override
             public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return Guid.createGuidFromString(rs.getString("vm_guid"));
+                return Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_guid"));
             }
         };
 

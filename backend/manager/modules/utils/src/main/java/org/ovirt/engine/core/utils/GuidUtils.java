@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class GuidUtils {
 
@@ -55,7 +54,7 @@ public class GuidUtils {
 
     }
 
-    public static Guid getGuidValue(NGuid id) {
+    public static Guid getGuidValue(Guid id) {
         return id == null ? null : id.getValue();
     }
 
@@ -88,7 +87,7 @@ public class GuidUtils {
         ArrayList<Guid> guidList = new ArrayList<Guid>();
         if (strings != null && !strings.isEmpty()) {
             for (String guidString : strings) {
-                guidList.add(Guid.createGuidFromString(guidString));
+                guidList.add(Guid.createGuidFromStringDefaultEmpty(guidString));
             }
         }
         return guidList;

@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
@@ -92,7 +91,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         return returnValue;
     }
 
-    private Guid getVmToAttach(NGuid poolId) {
+    private Guid getVmToAttach(Guid poolId) {
         if (vmToAttach == null) {
             Guid vmGuid = getPrestartedVmToAttach(poolId);
             if (vmGuid == null || Guid.Empty.equals(vmGuid)) {
@@ -103,7 +102,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         return vmToAttach;
     }
 
-    private Guid getPrestartedVmToAttach(NGuid vmPoolId) {
+    private Guid getPrestartedVmToAttach(Guid vmPoolId) {
         List<VmPoolMap> vmPoolMaps = getVmPoolDAO().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Up);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
@@ -115,7 +114,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         return Guid.Empty;
     }
 
-    private Guid getNonPrestartedVmToAttach(NGuid vmPoolId) {
+    private Guid getNonPrestartedVmToAttach(Guid vmPoolId) {
         List<VmPoolMap> vmPoolMaps = getVmPoolDAO().getVmMapsInVmPoolByVmPoolIdAndStatus(vmPoolId, VMStatus.Down);
         if (vmPoolMaps != null) {
             for (VmPoolMap map : vmPoolMaps) {
@@ -138,12 +137,12 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
     }
 
     @Override
-    protected NGuid getVmPoolId() {
+    protected Guid getVmPoolId() {
         return getParameters().getVmPoolId();
     }
 
     @Override
-    protected void setVmPoolId(NGuid value) {
+    protected void setVmPoolId(Guid value) {
         getParameters().setVmPoolId(value);
     }
 

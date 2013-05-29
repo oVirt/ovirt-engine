@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParame
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -218,7 +217,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         List<Snapshot> result = new LinkedList<Snapshot>();
         List<DiskImage> snapshotDisks = getDiskImageDao().getAllSnapshotsForImageGroup(imageGroupToRemove);
         for (DiskImage snapshotDisk : snapshotDisks) {
-            NGuid vmSnapshotId = snapshotDisk.getVmSnapshotId();
+            Guid vmSnapshotId = snapshotDisk.getVmSnapshotId();
             if (vmSnapshotId != null && !Guid.Empty.equals(vmSnapshotId.getValue())) {
                 Snapshot updated =
                         prepareSnapshotConfigWithoutImageSingleImage(vmSnapshotId.getValue(),

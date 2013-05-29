@@ -4,7 +4,7 @@ import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.TagParent;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.tags;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 public class TagMapper {
 
@@ -34,13 +34,13 @@ public class TagMapper {
         return model;
     }
 
-    private static NGuid parent(Tag model, NGuid current) {
+    private static Guid parent(Tag model, Guid current) {
         if (model.isSetParent() &&
             model.getParent().isSetTag() &&
             model.getParent().getTag().isSetId()) {
             return GuidUtils.asGuid(model.getParent().getTag().getId());
         } else {
-            return current == null ? NGuid.Empty : current;
+            return current == null ? Guid.Empty : current;
         }
     }
 

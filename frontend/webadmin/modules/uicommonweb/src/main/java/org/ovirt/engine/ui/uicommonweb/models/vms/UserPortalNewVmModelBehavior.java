@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -121,9 +120,9 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         for (VmTemplate template : templates)
         {
             Guid datacenterId =
-                    template.getStoragePoolId() == null ? NGuid.Empty : template.getStoragePoolId().getValue();
+                    template.getStoragePoolId() == null ? Guid.Empty : template.getStoragePoolId().getValue();
 
-            if (template.getId().equals(NGuid.Empty))
+            if (template.getId().equals(Guid.Empty))
             {
                 blankTemplate = template;
             }
@@ -151,7 +150,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
 
         getModel().getTemplate().setSelectedItem(Linq.firstOrDefault(templatesList,
                 oldTemplate != null ? new Linq.TemplatePredicate(oldTemplate.getId())
-                        : new Linq.TemplatePredicate(NGuid.Empty)));
+                        : new Linq.TemplatePredicate(Guid.Empty)));
 
         updateIsDisksAvailable();
     }
@@ -167,7 +166,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
      * Disabled to change this in userportal
      */
     @Override
-    protected void doChangeDefautlHost(NGuid hostGuid) {
+    protected void doChangeDefautlHost(Guid hostGuid) {
     }
 
     @Override

@@ -31,11 +31,10 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 @DisableInPrepareMode
@@ -180,7 +179,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * any of the domains image will be used
      */
     protected boolean validateSourceStorageDomain() {
-        NGuid sourceDomainId = getParameters().getSourceDomainId();
+        Guid sourceDomainId = getParameters().getSourceDomainId();
         if (sourceDomainId == null || Guid.Empty.equals(sourceDomainId)) {
             sourceDomainId = getImage().getStorageIds().get(0);
             getParameters().setSourceDomainId(sourceDomainId);

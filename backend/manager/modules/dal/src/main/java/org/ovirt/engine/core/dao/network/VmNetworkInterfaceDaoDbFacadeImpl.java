@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.comparators.InterfaceCompar
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
@@ -26,7 +25,7 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
                 public VmNetworkInterface mapRow(ResultSet rs, int rowNum)
                         throws SQLException {
                     VmNetworkInterface entity = new VmNetworkInterface();
-                    entity.getStatistics().setId(Guid.createGuidFromString(rs.getString("id")));
+                    entity.getStatistics().setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
                     entity.getStatistics().setReceiveRate(rs.getDouble("rx_rate"));
                     entity.getStatistics().setTransmitRate(rs.getDouble("tx_rate"));
                     entity.getStatistics().setReceiveDropRate(rs.getDouble("rx_drop"));
@@ -36,10 +35,10 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
                     entity.setMacAddress(rs.getString("mac_addr"));
                     entity.setNetworkName(rs.getString("network_name"));
                     entity.setName(rs.getString("name"));
-                    entity.setVmId(NGuid.createGuidFromString(rs.getString("vm_guid")));
-                    entity.setVmTemplateId(NGuid.createGuidFromString(rs.getString("vmt_guid")));
+                    entity.setVmId(Guid.createGuidFromString(rs.getString("vm_guid")));
+                    entity.setVmTemplateId(Guid.createGuidFromString(rs.getString("vmt_guid")));
                     entity.setVmName(rs.getString("vm_name"));
-                    entity.setId(Guid.createGuidFromString(rs.getString("id")));
+                    entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
                     entity.setSpeed((Integer) rs.getObject("speed"));
                     entity.setPlugged(rs.getBoolean("is_plugged"));
                     entity.setCustomProperties(SerializationFactory.getDeserializer()

@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -273,7 +272,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
-    public List<VM> getAllForVmPool(NGuid vmPoolId) {
+    public List<VM> getAllForVmPool(Guid vmPoolId) {
         return getCallsHandler().executeReadList("GetVmsByVmPoolId",
                 VMRowMapper.instance,
                 getCustomMapSqlParameterSource()
@@ -295,16 +294,16 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
         public VM mapRow(ResultSet rs, int rowNum) throws SQLException {
 
             VM entity = new VM();
-            entity.setId(Guid.createGuidFromString(rs.getString("vm_guid")));
+            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_guid")));
             entity.setName(rs.getString("vm_name"));
-            entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
+            entity.setQuotaId(Guid.createGuidFromStringDefaultEmpty(rs.getString("quota_id")));
             entity.setQuotaName(rs.getString("quota_name"));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));
             entity.setVmMemSizeMb(rs.getInt("vm_mem_size_mb"));
-            entity.setVmtGuid(Guid.createGuidFromString(rs.getString("vmt_guid")));
+            entity.setVmtGuid(Guid.createGuidFromStringDefaultEmpty(rs.getString("vmt_guid")));
             entity.setVmOs(rs.getInt("vm_os"));
             entity.setVmDescription(rs.getString("vm_description"));
-            entity.setVdsGroupId(Guid.createGuidFromString(rs.getString("vds_group_id")));
+            entity.setVdsGroupId(Guid.createGuidFromStringDefaultEmpty(rs.getString("vds_group_id")));
             entity.setVmDomain(rs.getString("vm_domain"));
             entity.setVmCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("vm_creation_date")));
             entity.setVdsGroupName(rs.getString("vds_group_name"));
@@ -328,7 +327,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setConsoleCurrentUserName(rs.getString("console_cur_user_name"));
             entity.setGuestLastLoginTime(DbFacadeUtils.fromDate(rs.getTimestamp("guest_last_login_time")));
             entity.setGuestLastLogoutTime(DbFacadeUtils.fromDate(rs.getTimestamp("guest_last_logout_time")));
-            entity.setConsoleUserId(NGuid.createGuidFromString(rs.getString("console_user_id")));
+            entity.setConsoleUserId(Guid.createGuidFromString(rs.getString("console_user_id")));
             entity.setGuestOs(rs.getString("guest_os"));
             entity.setCpuUser(rs.getDouble("cpu_user"));
             entity.setCpuSys(rs.getDouble("cpu_sys"));
@@ -336,12 +335,12 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setUsageNetworkPercent((Integer) rs.getObject("usage_network_percent"));
             entity.setUsageMemPercent((Integer) rs.getObject("usage_mem_percent"));
             entity.setUsageCpuPercent((Integer) rs.getObject("usage_cpu_percent"));
-            entity.setRunOnVds(NGuid.createGuidFromString(rs.getString("run_on_vds")));
-            entity.setMigratingToVds(NGuid.createGuidFromString(rs.getString("migrating_to_vds")));
+            entity.setRunOnVds(Guid.createGuidFromString(rs.getString("run_on_vds")));
+            entity.setMigratingToVds(Guid.createGuidFromString(rs.getString("migrating_to_vds")));
             entity.setAppList(rs.getString("app_list"));
             entity.setDisplay((Integer) rs.getObject("display"));
             entity.setVmPoolName(rs.getString("vm_pool_name"));
-            entity.setVmPoolId(NGuid.createGuidFromString(rs.getString("vm_pool_id")));
+            entity.setVmPoolId(Guid.createGuidFromString(rs.getString("vm_pool_id")));
             entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
             entity.setAllowConsoleReconnect(rs.getBoolean("allow_console_reconnect"));
             entity.setInitialized(rs.getBoolean("is_initialized"));
@@ -363,14 +362,14 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setStateless(rs.getBoolean("is_stateless"));
             entity.setSmartcardEnabled(rs.getBoolean("is_smartcard_enabled"));
             entity.setDeleteProtected(rs.getBoolean("is_delete_protected"));
-            entity.setDedicatedVmForVds(NGuid.createGuidFromString(rs.getString("dedicated_vm_for_vds")));
+            entity.setDedicatedVmForVds(Guid.createGuidFromString(rs.getString("dedicated_vm_for_vds")));
             entity.setFailBack(rs.getBoolean("fail_back"));
-            entity.setLastVdsRunOn(NGuid.createGuidFromString(rs.getString("last_vds_run_on")));
+            entity.setLastVdsRunOn(Guid.createGuidFromString(rs.getString("last_vds_run_on")));
             entity.setClientIp(rs.getString("client_ip"));
             entity.setGuestRequestedMemory((Integer) rs.getObject("guest_requested_memory"));
             entity.setVdsGroupCpuName(rs.getString("vds_group_cpu_name"));
             entity.setVmType(VmType.forValue(rs.getInt("vm_type")));
-            entity.setStoragePoolId(Guid.createGuidFromString(rs.getString("storage_pool_id")));
+            entity.setStoragePoolId(Guid.createGuidFromStringDefaultEmpty(rs.getString("storage_pool_id")));
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
             entity.setSelectionAlgorithm(VdsSelectionAlgorithm.forValue(rs.getInt("selection_algorithm")));
             entity.setTransparentHugePages(rs.getBoolean("transparent_hugepages"));

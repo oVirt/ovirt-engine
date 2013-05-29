@@ -46,7 +46,7 @@ public class GlusterClusterServiceDaoDbFacadeImpl extends BaseDAODbFacade implem
         @Override
         public GlusterClusterService mapRow(ResultSet rs, int rownum) throws SQLException {
             GlusterClusterService entity = new GlusterClusterService();
-            entity.setClusterId(Guid.createGuidFromString(rs.getString("cluster_id")));
+            entity.setClusterId(Guid.createGuidFromStringDefaultEmpty(rs.getString("cluster_id")));
             entity.setServiceType(ServiceType.valueOf(rs.getString("service_type")));
             entity.setStatus(GlusterServiceStatus.valueOf(rs.getString("status")));
             return entity;

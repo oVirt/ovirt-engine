@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.TagsVmMap;
 import org.ovirt.engine.core.common.businessentities.TagsVmPoolMap;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 /**
  * <code>TagDAO</code> defines a type for performing CRUD operations on instances of {@link tags}.
@@ -186,5 +185,5 @@ public interface TagDAO extends DAO {
 
     List<TagsVmMap> getTimeLeasedUserVmsByAdGroupAndVmPoolId(Guid adGroupId, Guid vmPoolId);
 
-    List<TagsVmPoolMap> getVmPoolTagsByVmPoolIdAndAdElementId(NGuid vmPoolId, Guid adElementId);
+    List<TagsVmPoolMap> getVmPoolTagsByVmPoolIdAndAdElementId(Guid vmPoolId, Guid adElementId);
 }

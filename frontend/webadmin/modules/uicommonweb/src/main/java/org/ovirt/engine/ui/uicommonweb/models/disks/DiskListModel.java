@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -457,7 +457,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
-        NGuid datacenterId = ((DiskImage) disks.get(0)).getStoragePoolId();
+        Guid datacenterId = ((DiskImage) disks.get(0)).getStoragePoolId();
 
         for (Disk disk : disks) {
             if ((!isCopyAllowed && !isMoveAllowed) || disk.getDiskStorageType() != DiskStorageType.IMAGE) {

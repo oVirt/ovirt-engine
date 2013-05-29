@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 
@@ -20,7 +19,7 @@ public class GetManagementInterfaceAddressByVmIdQueryTest extends AbstractUserQu
     public void testExecuteQuery() {
         Guid vmID = Guid.NewGuid();
         VM vm = new VM();
-        NGuid vdsID = NGuid.NewGuid();
+        Guid vdsID = Guid.NewGuid();
         vm.setRunOnVds(vdsID.getValue());
 
         VDS vds = new VDS();

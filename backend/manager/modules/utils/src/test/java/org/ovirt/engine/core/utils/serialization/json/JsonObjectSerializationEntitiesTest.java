@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 /**
@@ -121,7 +120,6 @@ public class JsonObjectSerializationEntitiesTest {
                         { new IdContainerClass<vds_spm_id_map>(new vds_spm_id_map(Guid.NewGuid(),
                                 Guid.NewGuid(),
                                 random.nextInt())) },
-                        { new IdContainerClass<NGuid>(new NGuid(NGuid.NewGuid().toString())) },
                         { new IdContainerClass<Guid>(Guid.NewGuid()) }
                 };
         return Arrays.asList(data);

@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -167,11 +166,11 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     {
         ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
 
-        Map<NGuid, ArrayList<VmTemplate>> t =
-                new HashMap<NGuid, ArrayList<VmTemplate>>();
+        Map<Guid, ArrayList<VmTemplate>> t =
+                new HashMap<Guid, ArrayList<VmTemplate>>();
         for (VmTemplate a : templates)
         {
-            if (!a.getId().equals(NGuid.Empty))
+            if (!a.getId().equals(Guid.Empty))
             {
                 if (!t.containsKey(a.getStoragePoolId()))
                 {
@@ -221,7 +220,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         for (Object item : getSelectedItems())
         {
             VmTemplate a = (VmTemplate) item;
-            if (a.getId().equals(NGuid.Empty))
+            if (a.getId().equals(Guid.Empty))
             {
                 continue;
             }
@@ -337,7 +336,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
         for (VmTemplate template : templates)
         {
-            if (!template.getId().equals(NGuid.Empty))
+            if (!template.getId().equals(Guid.Empty))
             {
                 items.add(template.getName());
             }
@@ -573,7 +572,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
             ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
             for (VmTemplate template : templates)
             {
-                if (template != null && template.getId().equals(NGuid.Empty))
+                if (template != null && template.getId().equals(Guid.Empty))
                 {
                     return true;
                 }
@@ -648,7 +647,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     private boolean isBlankTemplate(Object selectedItem) {
         return selectedItem != null &&
                 selectedItem instanceof VmTemplate &&
-                NGuid.Empty.equals(((VmTemplate) selectedItem).getId());
+                Guid.Empty.equals(((VmTemplate) selectedItem).getId());
     }
 
     @Override

@@ -103,7 +103,7 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendCapabilitiesResource extends BackendResource implements CapabilitiesResource {
 
@@ -266,7 +266,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
     }
 
     public String generateId(Version v) {
-        NGuid guid = new NGuid((v.getMajor()+"."+v.getMinor()).getBytes(),true);
+        Guid guid = new Guid((v.getMajor()+"."+v.getMinor()).getBytes(),true);
         return guid.toString();
     }
 

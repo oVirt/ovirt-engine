@@ -332,7 +332,7 @@ public class BackendHostNicsResource
 
     @SuppressWarnings("unchecked")
     protected List<org.ovirt.engine.core.common.businessentities.network.Network> getClusterNetworks(){
-        VDS vds = getEntity(VDS.class, VdcQueryType.GetVdsByVdsId, new IdQueryParameters(Guid.createGuidFromString(getHostId())), "Host");
+        VDS vds = getEntity(VDS.class, VdcQueryType.GetVdsByVdsId, new IdQueryParameters(Guid.createGuidFromStringDefaultEmpty(getHostId())), "Host");
         return getEntity(List.class, VdcQueryType.GetAllNetworksByClusterId, new IdQueryParameters(vds.getVdsGroupId()), "Networks");
     }
 
@@ -362,7 +362,7 @@ public class BackendHostNicsResource
     private SetupNetworksParameters toParameters(Action action) {
         SetupNetworksParameters parameters = new SetupNetworksParameters();
         parameters.setInterfaces(nicsToInterfaces(action.getHostNics().getHostNics()));
-        parameters.setVdsId(Guid.createGuidFromString(getHostId()));
+        parameters.setVdsId(Guid.createGuidFromStringDefaultEmpty(getHostId()));
         parameters.setForce(action.isSetForce() ? action.isForce() : false);
         parameters.setCheckConnectivity(action.isSetCheckConnectivity() ? action.isCheckConnectivity() : false);
         if (action.isSetConnectivityTimeout()) {

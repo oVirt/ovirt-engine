@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 public class VdsDynamicDAOTest extends BaseDAOTestCase {
     private VdsDynamicDAO dao;
@@ -38,7 +38,7 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        VdsDynamic result = dao.get(NGuid.NewGuid());
+        VdsDynamic result = dao.get(Guid.NewGuid());
 
         assertNull(result);
     }

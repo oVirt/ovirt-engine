@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityGuidComparator;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * <code>VmNetworkStatistics</code> defines a type of {@link BaseNetworkStatistics} for instances of
@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.NGuid;
 public class VmNetworkStatistics extends NetworkStatistics implements Comparable<VmNetworkStatistics> {
     private static final long serialVersionUID = -423834938475712247L;
 
-    private NGuid vmId;
+    private Guid vmId;
 
     /**
      * Sets the VM id.
@@ -19,7 +19,7 @@ public class VmNetworkStatistics extends NetworkStatistics implements Comparable
      * @param vmId
      *            the id
      */
-    public void setVmId(NGuid vmId) {
+    public void setVmId(Guid vmId) {
         this.vmId = vmId;
     }
 
@@ -28,7 +28,7 @@ public class VmNetworkStatistics extends NetworkStatistics implements Comparable
      *
      * @return the id
      */
-    public NGuid getVmId() {
+    public Guid getVmId() {
         return vmId;
     }
 

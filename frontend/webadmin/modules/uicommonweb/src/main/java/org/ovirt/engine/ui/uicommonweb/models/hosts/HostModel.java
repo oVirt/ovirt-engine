@@ -8,17 +8,17 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetNewVdsFenceStatusParameters;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -86,14 +86,14 @@ public abstract class HostModel extends Model
         return getHostId() == null;
     }
 
-    private NGuid privateHostId;
+    private Guid privateHostId;
 
-    public NGuid getHostId()
+    public Guid getHostId()
     {
         return privateHostId;
     }
 
-    public void setHostId(NGuid value)
+    public void setHostId(Guid value)
     {
         privateHostId = value;
     }
@@ -1228,7 +1228,7 @@ public abstract class HostModel extends Model
         param.setPassword(isPrimary ? (String) getPmPassword().getEntity() : (String) getPmSecondaryPassword().getEntity());
         param.setStoragePoolId(cluster.getStoragePoolId().getValue() != null ? cluster.getStoragePoolId()
             .getValue()
-            .getValue() : NGuid.Empty);
+                .getValue() : Guid.Empty);
         param.setFencingOptions(new ValueObjectMap(getPmOptionsMap(), false));
         param.setPmProxyPreferences(getPmProxyPreferences());
 

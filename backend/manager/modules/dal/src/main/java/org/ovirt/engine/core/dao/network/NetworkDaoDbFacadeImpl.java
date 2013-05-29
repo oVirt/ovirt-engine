@@ -146,7 +146,7 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
         @Override
         public T mapRow(ResultSet rs, int rowNum) throws SQLException {
             T entity = createNetworkEntity();
-            entity.setId(Guid.createGuidFromString(rs.getString("id")));
+            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
             entity.setName(rs.getString("name"));
             entity.setDescription(rs.getString("description"));
             entity.setType((Integer) rs.getObject("type"));
@@ -155,7 +155,7 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
             entity.setGateway(rs.getString("gateway"));
             entity.setVlanId((Integer) rs.getObject("vlan_id"));
             entity.setStp(rs.getBoolean("stp"));
-            entity.setDataCenterId(Guid.createGuidFromString(rs
+            entity.setDataCenterId(Guid.createGuidFromStringDefaultEmpty(rs
                  .getString("storage_pool_id")));
             entity.setMtu(rs.getInt("mtu"));
             entity.setVmNetwork(rs.getBoolean("vm_network"));

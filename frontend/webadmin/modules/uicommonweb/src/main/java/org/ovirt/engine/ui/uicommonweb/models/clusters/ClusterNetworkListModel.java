@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -157,7 +156,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         }
 
         Guid storagePoolId =
-                (getEntity().getStoragePoolId() != null) ? getEntity().getStoragePoolId().getValue() : NGuid.Empty;
+                (getEntity().getStoragePoolId() != null) ? getEntity().getStoragePoolId().getValue() : Guid.Empty;
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);

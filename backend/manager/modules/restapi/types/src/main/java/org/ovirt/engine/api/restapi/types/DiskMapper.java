@@ -118,7 +118,7 @@ public class DiskMapper {
                 && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
             StorageDomain storageDomain = disk.getStorageDomains().getStorageDomains().get(0);
             diskImage.setStorageIds(new ArrayList<Guid>());
-            diskImage.getStorageIds().add(Guid.createGuidFromString(storageDomain.getId()));
+            diskImage.getStorageIds().add(Guid.createGuidFromStringDefaultEmpty(storageDomain.getId()));
         }
         if (disk.isSetQuota() && disk.getQuota().isSetId()) {
             diskImage.setQuotaId(GuidUtils.asGuid(disk.getQuota().getId()));

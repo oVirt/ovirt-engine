@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.PreRun;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
@@ -143,7 +142,7 @@ public class ExecutionHandler {
      * @param exitStatus
      *            The status which the step should be ended with.
      */
-    public static void endTaskStep(NGuid stepId, JobExecutionStatus exitStatus) {
+    public static void endTaskStep(Guid stepId, JobExecutionStatus exitStatus) {
         try {
             if (stepId != null) {
                 Step step = JobRepositoryFactory.getJobRepository().getStep(stepId.getValue());
@@ -496,7 +495,7 @@ public class ExecutionHandler {
                 Step executionStep = JobRepositoryFactory.getJobRepository().getStep(step.getParentStepId().getValue());
 
                 // indicates if a step is monitored at Job level or as an inner step
-                NGuid parentStepId = executionStep.getParentStepId();
+                Guid parentStepId = executionStep.getParentStepId();
                 if (parentStepId == null) {
                     context.setExecutionMethod(ExecutionMethod.AsJob);
                     context.setJob(JobRepositoryFactory.getJobRepository().getJobWithSteps(step.getJobId()));

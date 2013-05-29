@@ -13,23 +13,22 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
+import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendUsersResourceTest
     extends AbstractBackendCollectionResourceTest<User, DbUser, BackendUsersResource> {
@@ -143,7 +142,7 @@ public class BackendUsersResourceTest
         User model = new User();
         model.setUserName(NAMES[0]);
         Domain domain = new Domain();
-        domain.setId(new NGuid(DOMAIN.getBytes(), true).toString());
+        domain.setId(new Guid(DOMAIN.getBytes(), true).toString());
         model.setDomain(domain);
         Response response = collection.add(model);
         verifyAddUser(response);
@@ -209,7 +208,7 @@ public class BackendUsersResourceTest
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(NAMES[index], model.getUserName());
         assertNotNull(model.getDomain());
-        assertEquals(new NGuid(DOMAIN.getBytes(),true).toString(), model.getDomain().getId());
+        assertEquals(new Guid(DOMAIN.getBytes(), true).toString(), model.getDomain().getId());
         assertTrue(model.isSetGroups());
         assertEquals(PARSED_GROUPS.length, model.getGroups().getGroups().size());
         for (int i = 0 ; i < PARSED_GROUPS.length ; i++) {
@@ -255,6 +254,7 @@ public class BackendUsersResourceTest
         setUpQueryExpectations(query, null);
     }
 
+    @Override
     @Test
     public void testQuery() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(SEARCH_QUERY);
@@ -264,6 +264,7 @@ public class BackendUsersResourceTest
         verifyCollection(getCollection());
     }
 
+    @Override
     @Test
     public void testList() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
@@ -273,6 +274,7 @@ public class BackendUsersResourceTest
         verifyCollection(getCollection());
     }
 
+    @Override
     @Test
     public void testListFailure() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
@@ -288,6 +290,7 @@ public class BackendUsersResourceTest
         }
     }
 
+    @Override
     @Test
     public void testListCrash() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
@@ -303,6 +306,7 @@ public class BackendUsersResourceTest
         }
     }
 
+    @Override
     @Test
     public void testListCrashClientLocale() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);

@@ -42,7 +42,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
             entity.setphysical_mem_mb((Integer) rs
                     .getObject("physical_mem_mb"));
             entity.setstatus(VDSStatus.forValue(rs.getInt("status")));
-            entity.setId(Guid.createGuidFromString(rs
+            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("vds_id")));
             entity.setvm_active((Integer) rs.getObject("vm_active"));
             entity.setvm_count(rs.getInt("vm_count"));

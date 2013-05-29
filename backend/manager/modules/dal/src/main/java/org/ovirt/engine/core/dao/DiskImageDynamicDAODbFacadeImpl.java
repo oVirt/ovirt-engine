@@ -22,7 +22,7 @@ public class DiskImageDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbF
         public DiskImageDynamic mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             DiskImageDynamic entity = new DiskImageDynamic();
-            entity.setId(Guid.createGuidFromString(rs
+            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("image_id")));
             entity.setread_rate((Integer) rs.getObject("read_rate"));
             entity.setwrite_rate((Integer) rs.getObject("write_rate"));

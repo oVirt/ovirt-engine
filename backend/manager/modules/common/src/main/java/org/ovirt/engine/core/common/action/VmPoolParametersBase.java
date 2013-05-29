@@ -1,21 +1,20 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class VmPoolParametersBase extends VdcActionParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = -4244908570752388901L;
-    private NGuid _vmPoolId;
+    private Guid _vmPoolId;
 
-    public VmPoolParametersBase(NGuid vmPoolId) {
+    public VmPoolParametersBase(Guid vmPoolId) {
         _vmPoolId = vmPoolId;
     }
 
-    public NGuid getVmPoolId() {
+    public Guid getVmPoolId() {
         return _vmPoolId;
     }
 
-    public void setVmPoolId(NGuid value) {
+    public void setVmPoolId(Guid value) {
         _vmPoolId = value;
     }
 

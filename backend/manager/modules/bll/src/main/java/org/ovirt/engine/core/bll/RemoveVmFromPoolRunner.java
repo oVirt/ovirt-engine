@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveVmFromPoolRunner extends MultipleActionsRunner {
@@ -31,7 +31,7 @@ public class RemoveVmFromPoolRunner extends MultipleActionsRunner {
             return;
         }
 
-        NGuid poolId = getPoolId();
+        Guid poolId = getPoolId();
 
         if (poolId == null) {
             return;
@@ -56,7 +56,7 @@ public class RemoveVmFromPoolRunner extends MultipleActionsRunner {
         return getFirstParam() != null ? getFirstParam().getSessionId() : null;
     }
 
-    private NGuid getPoolId() {
+    private Guid getPoolId() {
         return getFirstParam() != null ? getFirstParam().getVmPoolId() : null;
     }
 

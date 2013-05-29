@@ -41,7 +41,7 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.queries.ValueObjectPair;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 public class HostMapper {
 
@@ -508,15 +508,15 @@ public class HostMapper {
     }
 
     private static void setHookId(Hook hook, String hookName, String eventName, String md5) {
-        NGuid guid = generateHookId(eventName, hookName, md5);
+        Guid guid = generateHookId(eventName, hookName, md5);
         hook.setId(guid.toString());
     }
 
-    public static NGuid generateHookId(String eventName, String hookName, String md5) {
+    public static Guid generateHookId(String eventName, String hookName, String md5) {
         String idString = eventName + hookName + md5;
         try {
             byte[] hash = MessageDigest.getInstance(MD5_SECURITY_ALGORITHM).digest(idString.getBytes());
-            NGuid guid = new NGuid(hash, true);
+            Guid guid = new Guid(hash, true);
             return guid;
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException(e); // never happens, MD5 algorithm exists

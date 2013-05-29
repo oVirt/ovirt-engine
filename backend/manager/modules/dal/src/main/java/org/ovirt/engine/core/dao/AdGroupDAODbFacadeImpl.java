@@ -74,7 +74,7 @@ public class AdGroupDAODbFacadeImpl extends BaseDAODbFacade implements AdGroupDA
         @Override
         public LdapGroup mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             LdapGroup entity = new LdapGroup();
-            entity.setid(Guid.createGuidFromString(rs.getString("id")));
+            entity.setid(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
             entity.setname(rs.getString("name"));
             entity.setstatus(LdapRefStatus.forValue(rs.getInt("status")));
             entity.setdomain(rs.getString("domain"));

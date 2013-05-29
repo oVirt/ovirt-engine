@@ -6,7 +6,7 @@ import java.util.Date;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 public class AuditLog extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = -2808392095455280186L;
@@ -14,28 +14,28 @@ public class AuditLog extends IVdcQueryable implements Serializable {
     private long auditLogId;
     private Date logTime;
     private String message;
-    private NGuid userId;
+    private Guid userId;
     private String userName;
-    private NGuid quotaId;
+    private Guid quotaId;
     private String quotaName;
-    private NGuid vdsId;
+    private Guid vdsId;
     private String vdsName;
-    private NGuid vmTemplateId;
+    private Guid vmTemplateId;
     private String vmTemplateName;
-    private NGuid vmId;
+    private Guid vmId;
     private String vmName;
-    private NGuid storagePoolId;
+    private Guid storagePoolId;
     private String storagePoolName;
-    private NGuid storageDomainId;
+    private Guid storageDomainId;
     private String storageDomainName;
-    private NGuid vdsGroupId;
+    private Guid vdsGroupId;
     private String vdsGroupName;
     private int logType = AuditLogType.UNASSIGNED.getValue();
     private int severity = AuditLogSeverity.NORMAL.getValue();
     private boolean processed = false;
     private String correlationId;
-    private NGuid jobId;
-    private NGuid glusterVolumeId;
+    private Guid jobId;
+    private Guid glusterVolumeId;
     private String glusterVolumeName;
     private String origin = "oVirt";
     private int customEventId = -1;
@@ -51,9 +51,9 @@ public class AuditLog extends IVdcQueryable implements Serializable {
     public AuditLog() {
     }
 
-    public AuditLog(AuditLogType al_type, AuditLogSeverity al_severity, String al_msg, NGuid al_user_id,
-            String al_user_name, NGuid al_vm_id, String al_vm_name, NGuid al_vds_id, String al_vds_name,
-            NGuid al_vmt_id, String al_vmt_name) {
+    public AuditLog(AuditLogType al_type, AuditLogSeverity al_severity, String al_msg, Guid al_user_id,
+            String al_user_name, Guid al_vm_id, String al_vm_name, Guid al_vds_id, String al_vds_name,
+            Guid al_vmt_id, String al_vmt_name) {
         logTime = new Date();
         logType = al_type.getValue();
         severity = al_severity.getValue();
@@ -71,13 +71,13 @@ public class AuditLog extends IVdcQueryable implements Serializable {
     public AuditLog(AuditLogType al_type,
             AuditLogSeverity al_severity,
             String al_msg,
-            NGuid al_user_id,
+            Guid al_user_id,
             String al_user_name,
-            NGuid al_vm_id,
+            Guid al_vm_id,
             String al_vm_name,
-            NGuid al_vds_id,
+            Guid al_vds_id,
             String al_vds_name,
-            NGuid al_vmt_id,
+            Guid al_vmt_id,
             String al_vmt_name,
             String origin,
             int customEventId,
@@ -124,11 +124,11 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         this.message = value;
     }
 
-    public NGuid getuser_id() {
+    public Guid getuser_id() {
         return this.userId;
     }
 
-    public void setuser_id(NGuid value) {
+    public void setuser_id(Guid value) {
         this.userId = value;
     }
 
@@ -140,11 +140,11 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         this.userName = value;
     }
 
-    public NGuid getQuotaId() {
+    public Guid getQuotaId() {
         return this.quotaId;
     }
 
-    public void setQuotaId(NGuid value) {
+    public void setQuotaId(Guid value) {
         this.quotaId = value;
     }
 
@@ -156,11 +156,11 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         this.quotaName = value;
     }
 
-    public NGuid getvds_id() {
+    public Guid getvds_id() {
         return this.vdsId;
     }
 
-    public void setvds_id(NGuid value) {
+    public void setvds_id(Guid value) {
         this.vdsId = value;
     }
 
@@ -172,11 +172,11 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         this.vdsName = value;
     }
 
-    public NGuid getvm_template_id() {
+    public Guid getvm_template_id() {
         return this.vmTemplateId;
     }
 
-    public void setvm_template_id(NGuid value) {
+    public void setvm_template_id(Guid value) {
         this.vmTemplateId = value;
     }
 
@@ -188,11 +188,11 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         this.vmTemplateName = value;
     }
 
-    public NGuid getvm_id() {
+    public Guid getvm_id() {
         return this.vmId;
     }
 
-    public void setvm_id(NGuid value) {
+    public void setvm_id(Guid value) {
         this.vmId = value;
     }
 
@@ -204,11 +204,11 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         this.vmName = value;
     }
 
-    public NGuid getstorage_pool_id() {
+    public Guid getstorage_pool_id() {
         return storagePoolId;
     }
 
-    public void setstorage_pool_id(NGuid value) {
+    public void setstorage_pool_id(Guid value) {
         storagePoolId = value;
     }
 
@@ -220,11 +220,11 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         storagePoolName = value;
     }
 
-    public NGuid getstorage_domain_id() {
+    public Guid getstorage_domain_id() {
         return storageDomainId;
     }
 
-    public void setstorage_domain_id(NGuid value) {
+    public void setstorage_domain_id(Guid value) {
         storageDomainId = value;
     }
 
@@ -240,11 +240,11 @@ public class AuditLog extends IVdcQueryable implements Serializable {
 
 
 
-    public NGuid getvds_group_id() {
+    public Guid getvds_group_id() {
         return vdsGroupId;
     }
 
-    public void setvds_group_id(NGuid value) {
+    public void setvds_group_id(Guid value) {
         vdsGroupId = value;
     }
 
@@ -309,19 +309,19 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         return correlationId;
     }
 
-    public void setJobId(NGuid jobId) {
+    public void setJobId(Guid jobId) {
         this.jobId = jobId;
     }
 
-    public NGuid getJobId() {
+    public Guid getJobId() {
         return jobId;
     }
 
-    public NGuid getGlusterVolumeId() {
+    public Guid getGlusterVolumeId() {
         return glusterVolumeId;
     }
 
-    public void setGlusterVolumeId(NGuid value) {
+    public void setGlusterVolumeId(Guid value) {
         glusterVolumeId = value;
     }
 

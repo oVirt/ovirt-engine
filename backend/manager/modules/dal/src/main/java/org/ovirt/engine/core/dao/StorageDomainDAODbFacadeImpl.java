@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.springframework.jdbc.core.RowMapper;
 
 /**
@@ -57,7 +56,7 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
-    public StorageDomain getForStoragePool(Guid id, NGuid storagepool) {
+    public StorageDomain getForStoragePool(Guid id, Guid storagepool) {
         return getCallsHandler().executeRead("Getstorage_domains_By_id_and_by_storage_pool_id",
                 StorageDomainRowMapper.instance,
                 getCustomMapSqlParameterSource()
@@ -142,11 +141,11 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
         public StorageDomain mapRow(final ResultSet rs, final int rowNum)
                 throws SQLException {
             final StorageDomain entity = new StorageDomain();
-            entity.setId(Guid.createGuidFromString(rs.getString("id")));
+            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
             entity.setStorage(rs.getString("storage"));
             entity.setStorageName(rs.getString("storage_name"));
             entity.setDescription(rs.getString("storage_description"));
-            entity.setStoragePoolId(NGuid.createGuidFromString(rs.getString("storage_pool_id")));
+            entity.setStoragePoolId(Guid.createGuidFromString(rs.getString("storage_pool_id")));
             entity.setStorageType(StorageType.forValue(rs.getInt("storage_type")));
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
             entity.setStorageDomainType(StorageDomainType.forValue(rs.getInt("storage_domain_type")));

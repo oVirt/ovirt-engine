@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.utils.Ticketing;
@@ -73,8 +73,8 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
 
         // If this is not the first user to connect to the console then it does need
         // additional permissions:
-        final NGuid currentId = getCurrentUser().getUserId();
-        final NGuid previousId = vm.getConsoleUserId();
+        final Guid currentId = getCurrentUser().getUserId();
+        final Guid previousId = vm.getConsoleUserId();
         if (previousId != null && !previousId.equals(currentId)) {
             log.warnFormat("User \"{0}\" is trying to take the console of virtual machine \"{1}\", but the console is already taken by user \"{2}\".", currentId, vm.getId(), previousId);
             return true;

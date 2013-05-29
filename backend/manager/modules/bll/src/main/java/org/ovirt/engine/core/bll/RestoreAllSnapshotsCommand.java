@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 
 /**
@@ -259,7 +258,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
         for (DiskImage image : images) {
             DiskImage parentImage = getDiskImageDao().getSnapshotById(image.getParentId());
-            NGuid snapshotToRemove = (parentImage == null) ? null : parentImage.getVmSnapshotId();
+            Guid snapshotToRemove = (parentImage == null) ? null : parentImage.getVmSnapshotId();
 
             while (parentImage != null && snapshotToRemove != null && !snapshotToRemove.equals(previewedSnapshotId)) {
                 snapshotsToRemove.add(snapshotToRemove.getValue());

@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBase {
     private static final long serialVersionUID = -5874446297123213719L;
@@ -16,14 +15,14 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
     private CopyVolumeType copyVolumeType = CopyVolumeType.SharedVol;
     private boolean addImageDomainMapping;
     private boolean forceOverride;
-    private NGuid sourceDomainId;
+    private Guid sourceDomainId;
     private Guid destImageGroupId;
 
     public MoveOrCopyImageGroupParameters() {
     }
 
     public MoveOrCopyImageGroupParameters(Guid imageId,
-            NGuid sourceDomainId,
+            Guid sourceDomainId,
             Guid destDomainId,
             ImageOperation operation) {
         super(imageId);
@@ -121,11 +120,11 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
         forceOverride = value;
     }
 
-    public NGuid getSourceDomainId() {
+    public Guid getSourceDomainId() {
         return sourceDomainId;
     }
 
-    public void setSourceDomainId(NGuid value) {
+    public void setSourceDomainId(Guid value) {
         sourceDomainId = value;
     }
 }

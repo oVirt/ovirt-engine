@@ -53,7 +53,7 @@ public class RHDSGroupContextMapper implements ContextMapper {
             String distinguishedName = searchResult.getNameInNamespace();
             distinguishedName = LdapBrokerUtils.hadleNameEscaping(distinguishedName);
             GroupSearchResult groupSearchResult =
-                    new GroupSearchResult(Guid.createGuidFromString(LdapBrokerUtils.getGuidFromNsUniqueId(objectGuid)),
+                    new GroupSearchResult(Guid.createGuidFromStringDefaultEmpty(LdapBrokerUtils.getGuidFromNsUniqueId(objectGuid)),
                             memberOf,
                             distinguishedName);
             return groupSearchResult;

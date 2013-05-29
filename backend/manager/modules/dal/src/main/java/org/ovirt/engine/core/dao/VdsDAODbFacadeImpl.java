@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -29,12 +28,12 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
 
     @Override
-    public VDS get(NGuid id) {
+    public VDS get(Guid id) {
         return get(id, null, false);
     }
 
     @Override
-    public VDS get(NGuid id, Guid userID, boolean isFiltered) {
+    public VDS get(Guid id, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeRead("GetVdsByVdsId",
                 VdsRowMapper.instance,
                 getCustomMapSqlParameterSource()
@@ -217,9 +216,9 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
         @Override
         public VDS mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             final VDS entity = new VDS();
-            entity.setId(Guid.createGuidFromString(rs
+            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("vds_id")));
-            entity.setVdsGroupId(Guid.createGuidFromString(rs
+            entity.setVdsGroupId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("vds_group_id")));
             entity.setVdsGroupName(rs.getString("vds_group_name"));
             entity.setVdsGroupDescription(rs
@@ -269,7 +268,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
             entity.setCpuFlags(rs.getString("cpu_flags"));
             entity.setVdsGroupCpuName(rs.getString("vds_group_cpu_name"));
-            entity.setStoragePoolId(Guid.createGuidFromString(rs
+            entity.setStoragePoolId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("storage_pool_id")));
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
             entity.setSelectionAlgorithm(VdsSelectionAlgorithm.forValue(rs

@@ -82,7 +82,7 @@ public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements Jo
         @Override
         public JobSubjectEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
             JobSubjectEntity entity = new JobSubjectEntity();
-            entity.setEntityId(Guid.createGuidFromString(rs.getString("entity_id")));
+            entity.setEntityId(Guid.createGuidFromStringDefaultEmpty(rs.getString("entity_id")));
             entity.setEntityType(VdcObjectType.valueOf(rs.getString("entity_type")));
             return entity;
         }
@@ -92,7 +92,7 @@ public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements Jo
 
         @Override
         public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return Guid.createGuidFromString(rs.getString(1));
+            return Guid.createGuidFromStringDefaultEmpty(rs.getString(1));
         }
     }
 

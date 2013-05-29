@@ -66,7 +66,7 @@ public class OvfParser {
 
     public static Guid GetImageGrupIdFromImageFile(String imageFile) {
         if (!StringUtils.isBlank(imageFile)) {
-            return Guid.createGuidFromString(imageFile.split("[/]", -1)[0]);
+            return Guid.createGuidFromStringDefaultEmpty(imageFile.split("[/]", -1)[0]);
         }
         return null;
     }

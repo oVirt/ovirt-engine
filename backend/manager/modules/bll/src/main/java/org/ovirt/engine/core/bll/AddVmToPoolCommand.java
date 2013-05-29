@@ -3,11 +3,10 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolCommandBase<T> {
@@ -28,7 +27,7 @@ public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolC
      * @return <c>true</c> if this instance [can add vm to pool] the specified
      *         vm id; otherwise, <c>false</c>.
      */
-    public static boolean canAddVmToPool(Guid vmId, java.util.ArrayList<String> messages, NGuid poolId) {
+    public static boolean canAddVmToPool(Guid vmId, java.util.ArrayList<String> messages, Guid poolId) {
         boolean returnValue = true;
 
         boolean isRunning = RemoveVmCommand.IsVmRunning(vmId);

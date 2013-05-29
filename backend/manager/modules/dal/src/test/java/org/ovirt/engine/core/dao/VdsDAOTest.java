@@ -15,7 +15,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
+
 public class VdsDAOTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
     private static final Guid EXISTING_VDS_ID_2 = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
@@ -38,7 +38,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        VDS result = dao.get(NGuid.NewGuid());
+        VDS result = dao.get(Guid.NewGuid());
 
         assertNull(result);
     }
@@ -94,7 +94,8 @@ public class VdsDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Asserts the result from {@link VdsDAO#get(NGuid)} is correct.
+     * Asserts the result from {@link VdsDAO#get(Guid)} is correct.
+     *
      * @param result
      */
     private void assertCorrectGetResult(VDS result) {
@@ -103,8 +104,9 @@ public class VdsDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Asserts the result from a call to {@link VdsDAO#get(NGuid)}
+     * Asserts the result from a call to {@link VdsDAO#get(Guid)}
      * that isn't supposed to return any data is indeed empty.
+     *
      * @param result
      */
     private static void assertIncorrectGetResult(List<VDS> result) {

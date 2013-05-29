@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.SerializationExeption;
 import org.ovirt.engine.core.utils.Serializer;
 
@@ -35,8 +34,7 @@ public class JsonObjectSerializer implements Serializer {
     private static final ObjectMapper formattedMapper;
     static {
         formattedMapper = new ObjectMapper();
-        formattedMapper.getSerializationConfig().addMixInAnnotations(NGuid.class, JsonNGuidMixIn.class);
-        formattedMapper.getSerializationConfig().addMixInAnnotations(Guid.class, JsonNGuidMixIn.class);
+        formattedMapper.getSerializationConfig().addMixInAnnotations(Guid.class, JsonGuidMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(VdcActionParametersBase.class,
                 JsonVdcActionParametersBaseMixIn.class);
         formattedMapper.getSerializationConfig().addMixInAnnotations(IVdcQueryable.class, JsonIVdcQueryableMixIn.class);

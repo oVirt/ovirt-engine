@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 /**
  * <code>StorageDomainDAO</code> defines a type for performing CRUD operations on instances of {@link StorageDomain}.
@@ -74,7 +73,7 @@ public interface StorageDomainDAO extends DAO, SearchDAO<StorageDomain>, AutoRec
      *            the storage pool
      * @return the storage domain
      */
-    StorageDomain getForStoragePool(Guid id, NGuid storagepool);
+    StorageDomain getForStoragePool(Guid id, Guid storagepool);
 
     /**
      * Retrieves all storage domains for the specified connection.

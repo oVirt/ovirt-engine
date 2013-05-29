@@ -20,8 +20,8 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
                 public NetworkCluster mapRow(ResultSet rs, int rowNum)
                         throws SQLException {
                     NetworkCluster entity = new NetworkCluster();
-                    entity.setClusterId(Guid.createGuidFromString(rs.getString("cluster_id")));
-                    entity.setNetworkId(Guid.createGuidFromString(rs.getString("network_id")));
+                    entity.setClusterId(Guid.createGuidFromStringDefaultEmpty(rs.getString("cluster_id")));
+                    entity.setNetworkId(Guid.createGuidFromStringDefaultEmpty(rs.getString("network_id")));
                     entity.setStatus(NetworkStatus.forValue(rs.getInt("status")));
                     entity.setDisplay(rs.getBoolean("is_display"));
                     entity.setRequired(rs.getBoolean("required"));

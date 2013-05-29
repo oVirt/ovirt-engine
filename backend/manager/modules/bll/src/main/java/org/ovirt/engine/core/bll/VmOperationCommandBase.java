@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.compat.NGuid;
 
 public abstract class VmOperationCommandBase<T extends VmOperationParameterBase> extends VmCommand<T> {
 
@@ -54,7 +53,7 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
         }
 
         // Find the id of the host where the machine is running:
-        NGuid hostId = vm.getRunOnVds();
+        Guid hostId = vm.getRunOnVds();
         if (hostId == null) {
             log.warnFormat("Strange, according to the status \"{0}\" virtual machine \"{1}\" should be running in a host but it isn't.", status, vm.getId());
             return false;

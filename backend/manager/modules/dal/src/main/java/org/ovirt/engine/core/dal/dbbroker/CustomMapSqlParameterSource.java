@@ -2,7 +2,7 @@ package org.ovirt.engine.core.dal.dbbroker;
 
 import java.lang.reflect.Method;
 
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -26,7 +26,7 @@ public class CustomMapSqlParameterSource extends MapSqlParameterSource {
             // lets check if we need to translate value
             if (tmpValue.getClass().isEnum()) {
                 tmpValue = extractEnumValue(tmpValue);
-            } else if (tmpValue instanceof NGuid || tmpValue instanceof Version) {
+            } else if (tmpValue instanceof Guid || tmpValue instanceof Version) {
                 tmpValue = value.toString();
             }
         }

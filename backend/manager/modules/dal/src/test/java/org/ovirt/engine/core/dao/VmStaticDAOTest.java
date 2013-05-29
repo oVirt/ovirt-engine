@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 /**
  * @author yzaslavs
@@ -91,7 +90,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllStaticByStoragePool() {
-        NGuid spID = dbFacade.getVdsGroupDao().get(newVmStatic.getVdsGroupId()).getStoragePoolId();
+        Guid spID = dbFacade.getVdsGroupDao().get(newVmStatic.getVdsGroupId()).getStoragePoolId();
 
         assertNotNull(spID.getValue());
 

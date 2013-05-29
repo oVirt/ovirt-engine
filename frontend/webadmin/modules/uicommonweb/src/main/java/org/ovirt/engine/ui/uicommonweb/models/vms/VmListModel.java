@@ -51,7 +51,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
@@ -800,7 +799,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             EntityModel removeDisksCheckbox = new EntityModel(true);
             removeDisksCheckbox.setTitle(ConstantsManager.getInstance().getConstants().removeDisksTitle());
             removeDisksCheckbox.setMessage(vm.getName());
-            if (!NGuid.Empty.equals(vm.getVmtGuid())) {
+            if (!Guid.Empty.equals(vm.getVmtGuid())) {
                 updateRemoveDisksCheckBox(removeDisksCheckbox, true, false, ConstantsManager.getInstance()
                         .getConstants()
                         .removeVmDisksTemplateMsg());
@@ -956,7 +955,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             vms.add(a);
         }
 
-        Map<NGuid, ArrayList<VM>> t = new HashMap<NGuid, ArrayList<VM>>();
+        Map<Guid, ArrayList<VM>> t = new HashMap<Guid, ArrayList<VM>>();
         for (VM a : vms)
         {
             if (!t.containsKey(a.getStoragePoolId()))
@@ -1043,7 +1042,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     }
                                 }
 
-                                if (!vm.getVmtGuid().equals(NGuid.Empty) && !hasMatch)
+                                if (!vm.getVmtGuid().equals(Guid.Empty) && !hasMatch)
                                 {
                                     if (!templateDic.containsKey(vm.getVmtName()))
                                     {
@@ -1466,7 +1465,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     private void postMigrateGetUpHosts(ArrayList<VDS> hosts)
     {
         MigrateModel model = (MigrateModel) getWindow();
-        NGuid run_on_vds = null;
+        Guid run_on_vds = null;
         boolean allRunOnSameVds = true;
 
         for (Object item : getSelectedItems())
@@ -1979,7 +1978,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         if (model.getIsNew())
         {
-            if (getcurrentVm().getVmtGuid().equals(NGuid.Empty))
+            if (getcurrentVm().getVmtGuid().equals(Guid.Empty))
             {
                 if (model.getProgress() != null)
                 {
@@ -1990,7 +1989,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                 AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(getcurrentVm(),
                         new ArrayList<DiskImage>(),
-                        NGuid.Empty);
+                        Guid.Empty);
                 parameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
 
                 setVmWatchdogToParams(model, parameters);

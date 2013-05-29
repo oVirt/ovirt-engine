@@ -34,7 +34,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
         AddDiskParameters params = new AddDiskParameters();
         params.setDiskInfo(getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(disk, null));
         if (disk.isSetStorageDomains() && disk.getStorageDomains().isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetId()) {
-            params.setStorageDomainId(Guid.createGuidFromString(disk.getStorageDomains().getStorageDomains().get(0).getId()));
+            params.setStorageDomainId(Guid.createGuidFromStringDefaultEmpty(disk.getStorageDomains().getStorageDomains().get(0).getId()));
         } else if (disk.isSetStorageDomains() && disk.getStorageDomains().getStorageDomains().get(0).isSetName()) {
             Guid storageDomainId = getStorageDomainId(disk.getStorageDomains().getStorageDomains().get(0).getName());
             if (storageDomainId == null) {

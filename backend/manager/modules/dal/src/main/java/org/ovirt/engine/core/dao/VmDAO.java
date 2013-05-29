@@ -5,7 +5,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 /**
  * <code>VmDAO</code> defines a type for performing CRUD operations on instances of {@link VM}.
@@ -248,7 +247,7 @@ public interface VmDAO extends DAO {
      *             the pool id
      * @return
      */
-    List<VM> getAllForVmPool(NGuid vmPoolId);
+    List<VM> getAllForVmPool(Guid vmPoolId);
 
     /**
      * Retrieves all VMS that are migrating to a certain Host

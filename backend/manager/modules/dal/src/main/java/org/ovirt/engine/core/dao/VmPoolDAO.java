@@ -4,10 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 /**
  * <code>VmPoolDAO</code> defines a type that performs CRUD operations on instances of {@link vm_pool}.
@@ -29,7 +28,7 @@ public interface VmPoolDAO extends DAO, SearchDAO<VmPool> {
      *            the pool id
      * @return the VM pool
      */
-    VmPool get(NGuid id);
+    VmPool get(Guid id);
 
     /**
     * Retrieves the VM pool with the specified ID with optional filtering
@@ -42,7 +41,7 @@ public interface VmPoolDAO extends DAO, SearchDAO<VmPool> {
     *            Whether the results should be filtered according to the user's permissions
     * @return the VM pool
     */
-    VmPool get(NGuid id, Guid userID, boolean isFiltered);
+    VmPool get(Guid id, Guid userID, boolean isFiltered);
 
     /**
      * Retrieves the VM pool with the given name.
@@ -91,20 +90,20 @@ public interface VmPoolDAO extends DAO, SearchDAO<VmPool> {
      * @param vmPool
      *            the pool id
      */
-    void remove(NGuid vmPool);
+    void remove(Guid vmPool);
 
     VmPoolMap getVmPoolMapByVmGuid(Guid vmId);
 
     void addVmToPool(VmPoolMap map);
 
-    List<VmPoolMap> getVmPoolsMapByVmPoolId(NGuid vmPoolId);
+    List<VmPoolMap> getVmPoolsMapByVmPoolId(Guid vmPoolId);
 
     /**
      * Gets the maps of the given pool, for the Vms that are in the given status
      * @param vmPoolId
      * @return
      */
-    List<VmPoolMap> getVmMapsInVmPoolByVmPoolIdAndStatus(NGuid vmPoolId, VMStatus vmStatus);
+    List<VmPoolMap> getVmMapsInVmPoolByVmPoolIdAndStatus(Guid vmPoolId, VMStatus vmStatus);
 
     /**
      * Returns a single VM from the vm pool with the specified id, with optional filtering.

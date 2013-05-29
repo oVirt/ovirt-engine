@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public abstract class AbstractBackendResource<R extends BaseResource, Q /* extends IVdcQueryable */>
     extends BackendResource {
@@ -137,8 +136,8 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
     }
 
     private CreationStatus getJobIdStatus(VdcReturnValueBase result) {
-        NGuid jobId = result.getJobId();
-        if (jobId ==null || jobId.getValue().equals(NGuid.Empty)) {
+        Guid jobId = result.getJobId();
+        if (jobId == null || jobId.getValue().equals(Guid.Empty)) {
             return CreationStatus.COMPLETE;
         } else {
             IdQueryParameters params = new IdQueryParameters(jobId.getValue());

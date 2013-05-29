@@ -6,7 +6,7 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 public class GroupMapper {
 
@@ -18,7 +18,7 @@ public class GroupMapper {
         if (!StringUtils.isEmpty(entity.getdomain())) {
             Domain dom = new Domain();
             dom.setName(entity.getdomain());
-            dom.setId(new NGuid(entity.getdomain().getBytes(), true).toString());
+            dom.setId(new Guid(entity.getdomain().getBytes(), true).toString());
             model.setDomain(dom);
         }
         return model;
@@ -32,7 +32,7 @@ public class GroupMapper {
         if (!StringUtils.isEmpty(entity.getdomain())) {
             Domain dom = new Domain();
             dom.setName(entity.getdomain());
-            dom.setId(new NGuid(entity.getdomain().getBytes(), true).toString());
+            dom.setId(new Guid(entity.getdomain().getBytes(), true).toString());
             model.setDomain(dom);
         }
         return model;

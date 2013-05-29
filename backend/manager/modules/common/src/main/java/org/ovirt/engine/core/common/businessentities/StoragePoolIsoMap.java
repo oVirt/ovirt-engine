@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
 
@@ -37,11 +36,11 @@ public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
         id.setStorageId(value);
     }
 
-    public NGuid getstorage_pool_id() {
+    public Guid getstorage_pool_id() {
         return this.id.getStoragePoolId();
     }
 
-    public void setstorage_pool_id(NGuid value) {
+    public void setstorage_pool_id(Guid value) {
         this.id.setStoragePoolId(value);
     }
 

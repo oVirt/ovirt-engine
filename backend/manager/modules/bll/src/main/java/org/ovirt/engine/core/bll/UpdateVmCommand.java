@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -420,7 +419,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             quotaSanityOnly = true;
         } else {
             if (getParameters().getVmStaticData().getQuotaId() == null
-                    || getParameters().getVmStaticData().getQuotaId().equals(NGuid.Empty)
+                    || getParameters().getVmStaticData().getQuotaId().equals(Guid.Empty)
                     || !getParameters().getVmStaticData().getQuotaId().equals(getVm().getQuotaId())) {
                 list.add(new QuotaVdsGroupConsumptionParameter(getVm().getQuotaId(),
                         null,

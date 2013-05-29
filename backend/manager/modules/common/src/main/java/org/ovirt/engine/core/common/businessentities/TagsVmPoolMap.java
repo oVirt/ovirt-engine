@@ -5,7 +5,6 @@ import java.util.Date;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class TagsVmPoolMap implements Serializable {
     private static final long serialVersionUID = 1110697686039279639L;
@@ -16,7 +15,7 @@ public class TagsVmPoolMap implements Serializable {
     public TagsVmPoolMap() {
     }
 
-    public TagsVmPoolMap(Guid tag_id, NGuid vm_pool_id) {
+    public TagsVmPoolMap(Guid tag_id, Guid vm_pool_id) {
         this.id.tagId = tag_id;
         this.id.vmPoolId = vm_pool_id;
     }
@@ -29,7 +28,7 @@ public class TagsVmPoolMap implements Serializable {
         this.id.tagId = value;
     }
 
-    public NGuid getvm_pool_id() {
+    public Guid getvm_pool_id() {
         return this.id.vmPoolId;
     }
 

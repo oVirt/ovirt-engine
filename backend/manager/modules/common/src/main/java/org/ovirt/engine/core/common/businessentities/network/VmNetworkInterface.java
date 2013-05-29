@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 /**
  * <code>VmNetworkInterface</code> defines a type of {@link BaseNetworkInterface} for instances of {@link VM}.
@@ -25,9 +25,9 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     protected static final String VALIDATION_MESSAGE_NAME_NOT_NULL = "VALIDATION.VM.NETWORK.NAME.NOT_NULL";
     protected static final String VALIDATION_MESSAGE_MAC_ADDRESS_INVALID = "VALIDATION.VM.NETWORK.MAC.ADDRESS.INVALID";
 
-    private NGuid vmId;
+    private Guid vmId;
     private String vmName;
-    private NGuid vmTemplateId;
+    private Guid vmTemplateId;
     private boolean plugged = true;
 
     /**
@@ -52,7 +52,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
      * @param vmId
      *            the id
      */
-    public void setVmId(NGuid vmId) {
+    public void setVmId(Guid vmId) {
         this.vmId = vmId;
         this.statistics.setVmId(vmId);
     }
@@ -62,7 +62,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
      *
      * @return the id
      */
-    public NGuid getVmId() {
+    public Guid getVmId() {
         return vmId;
     }
 
@@ -91,7 +91,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
      * @param vmTemplateId
      *            the id
      */
-    public void setVmTemplateId(NGuid vmTemplateId) {
+    public void setVmTemplateId(Guid vmTemplateId) {
         this.vmTemplateId = vmTemplateId;
     }
 
@@ -100,7 +100,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
      *
      * @return the id
      */
-    public NGuid getVmTemplateId() {
+    public Guid getVmTemplateId() {
         return vmTemplateId;
     }
 

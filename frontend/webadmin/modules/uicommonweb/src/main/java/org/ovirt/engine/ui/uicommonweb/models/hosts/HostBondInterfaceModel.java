@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -233,7 +233,7 @@ public class HostBondInterfaceModel extends Model
     private void updateCanSpecify()
     {
         Network network = (Network) getNetwork().getSelectedItem();
-        boolean isChangeble = getIsStaticAddress() && network != null && !network.getId().equals(NGuid.Empty);
+        boolean isChangeble = getIsStaticAddress() && network != null && !network.getId().equals(Guid.Empty);
         getAddress().setIsChangable(isChangeble);
         getSubnet().setIsChangable(isChangeble);
         getGateway().setIsChangable(isChangeble);

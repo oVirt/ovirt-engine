@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 public class BackendClusterNetworksResource
     extends AbstractBackendNetworksResource
@@ -123,7 +123,7 @@ public class BackendClusterNetworksResource
     }
 
     private List<org.ovirt.engine.core.common.businessentities.network.Network> getNetworks(String clusterId) {
-        NGuid dataCenterId =
+        Guid dataCenterId =
                 getEntity(VDSGroup.class,
                         VdcQueryType.GetVdsGroupById,
                         new IdQueryParameters(asGuid(clusterId)),

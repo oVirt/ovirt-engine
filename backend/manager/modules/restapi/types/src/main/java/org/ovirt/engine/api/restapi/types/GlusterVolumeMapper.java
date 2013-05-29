@@ -23,7 +23,7 @@ public class GlusterVolumeMapper {
         GlusterVolumeEntity volume = toVolume != null ? toVolume : new GlusterVolumeEntity();
 
         if(fromVolume.isSetId()) {
-            volume.setId(Guid.createGuidFromString(fromVolume.getId()));
+            volume.setId(Guid.createGuidFromStringDefaultEmpty(fromVolume.getId()));
         }
 
         if(fromVolume.isSetName()) {

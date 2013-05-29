@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -262,8 +261,8 @@ public class BaseBackendResource {
         }
     }
 
-    protected Guid asGuid(NGuid nGuid) {
-        return new Guid(nGuid.getUuid());
+    protected Guid asGuid(Guid guid) {
+        return guid;
     }
 
     protected Long asLong(String id) {

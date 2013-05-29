@@ -200,7 +200,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
             Guid vdsGroupId;
             if (Guid.Empty.equals(getParameters().getVdsGroupId())) {
-                vdsGroupId = Guid.createGuidFromString(
+                vdsGroupId = Guid.createGuidFromStringDefaultEmpty(
                         Config.<String> GetValue(ConfigValues.AutoRegistrationDefaultVdsGroupID));
                 log.debugFormat(
                         "RegisterVdsQuery::ExecuteCommand - VdsGroupId received as -1, using AutoRegistrationDefaultVdsGroupID: {0}",

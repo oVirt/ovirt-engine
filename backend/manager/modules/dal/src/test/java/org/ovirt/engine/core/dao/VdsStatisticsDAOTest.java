@@ -7,7 +7,7 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
-import org.ovirt.engine.core.compat.NGuid;
+import org.ovirt.engine.core.compat.Guid;
 
 public class VdsStatisticsDAOTest extends BaseDAOTestCase {
     private VdsStatisticsDAO dao;
@@ -38,7 +38,7 @@ public class VdsStatisticsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        VdsStatistics result = dao.get(NGuid.NewGuid());
+        VdsStatistics result = dao.get(Guid.NewGuid());
 
         assertNull(result);
     }

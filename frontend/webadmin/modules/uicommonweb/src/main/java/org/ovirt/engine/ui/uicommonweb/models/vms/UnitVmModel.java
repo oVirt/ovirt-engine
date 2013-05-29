@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -1772,7 +1771,7 @@ public class UnitVmModel extends Model {
     public void setDataCentersAndClusters(UnitVmModel model,
             List<StoragePool> dataCenters,
             List<VDSGroup> clusters,
-            NGuid selectedCluster) {
+            Guid selectedCluster) {
 
         if (model.getBehavior().getSystemTreeSelectedItem() != null
                 && model.getBehavior().getSystemTreeSelectedItem().getType() != SystemTreeItemType.System) {
@@ -1786,7 +1785,7 @@ public class UnitVmModel extends Model {
     protected void setupDataCenterWithClustersFromSystemTree(UnitVmModel model,
             List<StoragePool> dataCenters,
             List<VDSGroup> clusters,
-            NGuid selectedCluster) {
+            Guid selectedCluster) {
 
         StoragePool dataCenter = getDataCenterAccordingSystemTree(model, dataCenters);
         List<VDSGroup> possibleClusters = getClusterAccordingSystemTree(model, clusters);
@@ -1811,9 +1810,9 @@ public class UnitVmModel extends Model {
     protected void setupDataCenterWithClusters(UnitVmModel model,
             List<StoragePool> dataCenters,
             List<VDSGroup> clusters,
-            NGuid selectedCluster) {
+            Guid selectedCluster) {
 
-        Map<NGuid, List<VDSGroup>> dataCenterToCluster = new HashMap<NGuid, List<VDSGroup>>();
+        Map<Guid, List<VDSGroup>> dataCenterToCluster = new HashMap<Guid, List<VDSGroup>>();
         for (VDSGroup cluster : clusters) {
             if (!dataCenterToCluster.containsKey(cluster.getStoragePoolId())) {
                 dataCenterToCluster.put(cluster.getStoragePoolId(), new ArrayList<VDSGroup>());
@@ -1835,7 +1834,7 @@ public class UnitVmModel extends Model {
     }
 
     protected void selectDataCenterWithCluster(UnitVmModel model,
-            NGuid selectedCluster,
+            Guid selectedCluster,
             List<DataCenterWithCluster> dataCentersWithClusters) {
         if (selectedCluster == null) {
             getDataCenterWithClustersList().setSelectedItem(Linq.firstOrDefault(dataCentersWithClusters));
