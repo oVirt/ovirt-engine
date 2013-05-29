@@ -90,20 +90,9 @@
                 s.innerHTML = msg;
             }
         }
-        function extractConnectionData(obj) {
-            var chunks = obj.split(',');
-
-            var retval = {
-                ticket: chunks[0],
-                host: chunks[1],
-                port: chunks[2]
-            };
-
-            return retval;
-        }
 
         function connectToConsole (evt) {
-            if (evt.data === null || evt.data.vncTicket === null || evt.data.connectionTicket === null) {
+            if (evt.data === null || evt.data.password === null || evt.data.connectionTicket === null) {
                 alert("Incorrect connection data");
                 return;
             }
@@ -111,7 +100,7 @@
             try {
                 var host = WebUtil.getQueryVar('host', window.location.hostname);
                 var port = WebUtil.getQueryVar('port', window.location.port);
-                var ticket = evt.data.vncTicket; //password
+                var password = evt.data.password;
                 var path = evt.data.connectionTicket;
 
                 if ((!host) || (!port)) {
@@ -129,7 +118,7 @@
                            'view_only':    WebUtil.getQueryVar('view_only', false),
                            'updateState':  updateState,
                            'onPasswordRequired':  passwordRequired});
-                           rfb.connect(host, port, ticket, path);
+                           rfb.connect(host, port, password, path);
             }catch(e) {alert(e);}
         }
 

@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.vms.INoVnc;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpPlugin;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceHtml5;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpiceNative;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpicePlugin;
 import org.ovirt.engine.ui.uicommonweb.models.vms.IVncNative;
@@ -52,6 +53,8 @@ public class UiCommonDefaultTypeResolver implements ITypeResolver {
             return new SpicePluginImpl();
         } else if (type == ISpiceNative.class) {
             return new SpiceNativeImpl();
+        } else if (type == ISpiceHtml5.class) {
+            return new SpiceHtml5Impl();
         } else if (type == IRdpPlugin.class) {
             return new RdpPluginImpl();
         } else if (type == IRdpNative.class) {

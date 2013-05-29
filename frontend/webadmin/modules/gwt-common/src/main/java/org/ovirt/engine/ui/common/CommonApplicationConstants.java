@@ -1199,6 +1199,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("noVNC")
     String noVnc();
 
+    @DefaultStringValue("SPICE HTML5 browser client")
+    String spiceHtml5();
+
     @DefaultStringValue("Pass Ctrl-Alt-Del to virtual machine")
     String ctrlAltDel();
 
@@ -1222,6 +1225,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("No SPICE proxy defined on system level")
     String spiceProxyCanBeEnabledOnlyWhenDefined();
+
+    @DefaultStringValue("SPICE HTML5 client can be used only if websocket proxy is configured in the engine.")
+    String spiceHtml5OnlyWhenWebsocketProxySet();
 
     @DefaultStringValue("Enable WAN Options")
     String enableWanOptions();
@@ -1255,6 +1261,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Uses SPICE browser plugin for invoking console session. For this you must have SPICE console plugin installed in your browser.")
     String spiceInvokePlugin();
+
+    @DefaultStringValue("Uses SPICE HTML5 client that runs inside your browser.")
+    String spiceInvokeHtml5();
 
     @DefaultStringValue("Console Invocation")
     String consoleInvocation();

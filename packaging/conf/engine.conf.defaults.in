@@ -35,6 +35,7 @@ ENGINE_VAR="@ENGINE_VAR@"
 ENGINE_CACHE="@ENGINE_CACHE@"
 SPICE_DIR="@SPICE_DIR@"
 ENGINE_NOVNC_DIR="/usr/share/novnc"
+ENGINE_SPICE_HTML5_DIR="/usr/share/spice-html5"
 
 #
 # Intervals for stoping the engine:

@@ -48,6 +48,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         HasValueChangeHandlers<Boolean> getSpiceAutoImplRadioButton();
         HasValueChangeHandlers<Boolean> getSpiceNativeImplRadioButton();
         HasValueChangeHandlers<Boolean> getSpicePluginImplRadioButton();
+        HasValueChangeHandlers<Boolean> getSpiceHtml5ImplRadioButton();
 
         HasValueChangeHandlers<Boolean> getNoVncImplRadioButton();
         HasValueChangeHandlers<Boolean> getVncNativeImplRadioButton();
@@ -77,6 +78,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         void selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode consoleMode);
 
         void setSpicePluginImplEnabled(boolean enabled, String reason);
+
+        void setSpiceHtml5ImplEnabled(boolean enabled, String reason);
 
         void setRdpPluginImplEnabled(boolean enabled, String reason);
 
@@ -216,6 +219,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         if (!consoleUtils.isBrowserPluginSupported(ConsoleProtocol.SPICE)) {
             getView().setSpicePluginImplEnabled(false, constants.spicePluginNotSupportedByBrowser());
         }
+
+        getView().setSpiceHtml5ImplEnabled(consoleUtils.isWebSocketProxyDefined(), constants.spiceHtml5OnlyWhenWebsocketProxySet());
 
         getView().setNoVncEnabled(consoleUtils.isWebSocketProxyDefined(), constants.webSocketProxyNotSet());
 

@@ -21,6 +21,7 @@ import gettext
 import base64
 import json
 import datetime
+import urllib
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine')
 
 
@@ -47,12 +48,14 @@ class OvirtWebSocketProxy(websockify.WebSocketProxy):
     def get_target(self, target_cfg, path):
         """
         Parses the path, extracts a token, and looks for a valid
-        target for that token in the configuration file(s). Sets
-        target_host and target_port if successful
+        target for that token in the configuration file(s). Returns
+        target_host and target_port if successful and sets an ssl_target
+        flag.
         """
-        connection_data = self._ticketDecoder.decode(path[1:]).split(':')
-        target_host = connection_data[0].encode('utf8')
-        target_port = connection_data[1].encode('utf8')
+        connection_data = json.loads(urllib.unquote(self._ticketDecoder.decode(path[1:])))
+        target_host = connection_data['host'].encode('utf8')
+        target_port = connection_data['port'].encode('utf8')
+        self.ssl_target = connection_data['ssl_target']
         return (target_host, target_port)
 
 

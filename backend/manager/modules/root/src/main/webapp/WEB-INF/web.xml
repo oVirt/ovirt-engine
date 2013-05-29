@@ -85,6 +85,20 @@
     <url-pattern>/ovirt-engine-novnc/*</url-pattern>
   </servlet-mapping>
 
+  <!-- SPICE-HTML5: -->
+  <servlet>
+    <servlet-name>spicehtml5</servlet-name>
+    <servlet-class>org.ovirt.engine.core.DocsServlet</servlet-class>
+    <init-param>
+      <param-name>file</param-name>
+      <param-value>%{ENGINE_SPICE_HTML5_DIR}</param-value>
+    </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>spicehtml5</servlet-name>
+    <url-pattern>/ovirt-engine-spicehtml5/*</url-pattern>
+  </servlet-mapping>
+
   <!-- SpiceX.cab -->
   <servlet>
     <servlet-name>SpiceX.cab</servlet-name>

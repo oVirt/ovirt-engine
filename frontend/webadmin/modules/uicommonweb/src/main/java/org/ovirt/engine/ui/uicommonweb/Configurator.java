@@ -376,4 +376,9 @@ public abstract class Configurator {
         return spiceProxy != null && !"".equals(spiceProxy); //$NON-NLS-1$
     }
 
+    public boolean isWebsocketProxySet() {
+        String websocketProxy = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.WebSocketProxy);
+        return websocketProxy != null && !"".equals(websocketProxy) && !"Off".equals(websocketProxy); //$NON-NLS-1$
+    }
+
 }

@@ -50,7 +50,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
 public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultipleQueryAsyncCallback {
 
-    public enum ClientConsoleMode { Native, Plugin, Auto }
+    public enum ClientConsoleMode { Native, Plugin, Auto, Html5 }
 
     public static EventDefinition SpiceDisconnectedEventDefinition;
     public static EventDefinition SpiceConnectedEventDefinition;
@@ -109,6 +109,9 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 break;
             case Plugin:
                 setspice((ISpice) TypeResolver.getInstance().resolve(ISpicePlugin.class));
+                break;
+            case Html5:
+                setspice((ISpice) TypeResolver.getInstance().resolve(ISpiceHtml5.class));
                 break;
             default:
                 ISpicePlugin pluginSpice = (ISpicePlugin) TypeResolver.getInstance().resolve(ISpicePlugin.class);
