@@ -55,12 +55,12 @@ class Plugin(plugin.PluginBase):
         gid = osetuputil.getGid(
             self.environment[osetupcons.SystemEnv.GROUP_ENGINE]
         )
-        if os.path.exists(osetupcons.FileLocations.OVIRT_ENGINE_TMP_DIR):
+        if os.path.exists(osetupcons.FileLocations.OVIRT_ENGINE_TMPDIR):
             # clean the directory only if it contains at least one file
             # not owned by engine
             rm_tmp_dir = False
             for root, dirs, files in os.walk(
-                top=osetupcons.FileLocations.OVIRT_ENGINE_TMP_DIR,
+                top=osetupcons.FileLocations.OVIRT_ENGINE_TMPDIR,
                 followlinks=False,
             ):
                 for name in dirs + files:
@@ -72,10 +72,10 @@ class Plugin(plugin.PluginBase):
             if rm_tmp_dir:
                 self.logger.debug(
                     'Cleaning {tmpdir}'.format(
-                        tmpdir=osetupcons.FileLocations.OVIRT_ENGINE_TMP_DIR,
+                        tmpdir=osetupcons.FileLocations.OVIRT_ENGINE_TMPDIR,
                     )
                 )
-                shutil.rmtree(osetupcons.FileLocations.OVIRT_ENGINE_TMP_DIR)
+                shutil.rmtree(osetupcons.FileLocations.OVIRT_ENGINE_TMPDIR)
 
         for root, dirs, files in os.walk(
             top=osetupcons.FileLocations.OVIRT_ENGINE_DEPLOYMENTS_DIR,

@@ -68,6 +68,7 @@ class FileLocations(object):
     OVIRT_ENGINE_PKIDIR = config.ENGINE_PKIDIR
     OVIRT_ENGINE_DATADIR = config.ENGINE_DATADIR
     OVIRT_ENGINE_LOCALSTATEDIR = config.ENGINE_LOCALSTATEDIR
+    OVIRT_ENGINE_TMPDIR = config.ENGINE_TMP
     OVIRT_ENGINE_SERVICE_CONFIG = config.ENGINE_SERVICE_CONFIG
     OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG = \
         config.ENGINE_NOTIFIER_SERVICE_CONFIG
@@ -142,6 +143,10 @@ class FileLocations(object):
     OVIRT_ENGINE_DB_MD5_DIR = os.path.join(
         OVIRT_ENGINE_LOCALSTATEDIR,
         'dbmd5',
+    )
+    OVIRT_ENGINE_DEPLOYMENTS_DIR = os.path.join(
+        OVIRT_ENGINE_LOCALSTATEDIR,
+        'deployments',
     )
 
     OVIRT_ENGINE_PKIKEYSDIR = os.path.join(
@@ -278,17 +283,6 @@ class FileLocations(object):
     OVIRT_ENGINE_UNINSTALL_DIR = os.path.join(
         OVIRT_ENGINE_SYSCONFDIR,
         'uninstall.d'
-    )
-    OVIRT_ENGINE_DEPLOYMENTS_DIR = os.path.join(
-        LOCALSTATEDIR,
-        'lib',
-        'ovirt-engine',
-        'deployments',
-    )
-    OVIRT_ENGINE_TMP_DIR = os.path.join(
-        LOCALSTATEDIR,
-        'tmp',
-        'ovirt-engine',
     )
 
     ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT = os.path.join(
