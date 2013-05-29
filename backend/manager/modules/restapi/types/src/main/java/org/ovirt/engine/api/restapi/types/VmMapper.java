@@ -405,7 +405,7 @@ public class VmMapper {
             model.setDomain(domain);
         }
         MemoryPolicy policy = new MemoryPolicy();
-        policy.setGuaranteed(Long.valueOf(entity.getMinAllocatedMem() * BYTES_PER_MB));
+        policy.setGuaranteed((long)entity.getMinAllocatedMem() * (long)BYTES_PER_MB);
         model.setMemoryPolicy(policy);
         model.setTimezone(entity.getTimeZone());
         if (!StringUtils.isEmpty(entity.getCustomProperties())) {

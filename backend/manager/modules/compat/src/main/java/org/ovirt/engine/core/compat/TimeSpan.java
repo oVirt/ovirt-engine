@@ -41,9 +41,9 @@ public class TimeSpan implements Comparable<TimeSpan>, Serializable {
     public TimeSpan(int days, int hours, int minutes, int seconds, int milliseconds) {
         TotalMilliseconds = milliseconds;
         TotalMilliseconds += seconds * MS_PER_SECOND;
-        TotalMilliseconds += minutes * MS_PER_MINUTE;
-        TotalMilliseconds += hours * MS_PER_HOUR;
-        TotalMilliseconds += days * MS_PER_DAY;
+        TotalMilliseconds += (long)minutes * (long)MS_PER_MINUTE;
+        TotalMilliseconds += (long)hours * (long)MS_PER_HOUR;
+        TotalMilliseconds += (long)days * (long)MS_PER_DAY;
         computeProperties();
     }
 

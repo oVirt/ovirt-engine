@@ -35,8 +35,8 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
             public boolean eval(VDS p) {
                 return p.getUsageCpuPercent() >= p.getHighUtilization()
                         && p.getCpuOverCommitTimestamp() != null
-                        && (new Date().getTime() - p.getCpuOverCommitTimestamp().getTime()) >= p
-                                .getCpuOverCommitDurationMinutes() * 1000 * 60;
+                        && (new Date().getTime() - p.getCpuOverCommitTimestamp().getTime()) >= (long)p
+                                .getCpuOverCommitDurationMinutes() * 1000L * 60L;
             }
         });
 
@@ -102,8 +102,8 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
                 public boolean eval(VDS p) {
                     return p.getUsageCpuPercent() <= p.getLowUtilization()
                             && p.getCpuOverCommitTimestamp() != null
-                            && (new Date().getTime() - p.getCpuOverCommitTimestamp().getTime()) >= p
-                                    .getCpuOverCommitDurationMinutes() * 60 * 1000;
+                            && (new Date().getTime() - p.getCpuOverCommitTimestamp().getTime()) >= (long)p
+                                    .getCpuOverCommitDurationMinutes() * 60L * 1000L;
                 }
             });
             // The order of sorting will be from smallest to biggest. The vm will be
