@@ -23,7 +23,7 @@ public class UriTest {
     public void runTest() {
         Uri uri = new Uri(uriCandidate);
         assertTrue(uri.isValid());
-        assertEquals(uriCandidate.toLowerCase(), uri.toString());
+        assertEquals(uriCandidate.toLowerCase(), uri.getStringRepresentation());
     }
 
     @Parameterized.Parameters

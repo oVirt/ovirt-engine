@@ -26,8 +26,7 @@ public class UriAuthority {
         }
     }
 
-    @Override
-    public String toString() {
+    public String getStringRepresentation() {
         if (!valid) {
             return null;
         }

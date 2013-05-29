@@ -167,7 +167,7 @@ public class ProviderModel extends Model {
         Uri url = new Uri((String) getUrl().getEntity());
         if (url.getScheme().isEmpty()) {
             url.setScheme(Uri.SCHEME_HTTP);
-            getUrl().setEntity(url.toString());
+            getUrl().setEntity(url.getStringRepresentation());
         }
         getUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
                 new UrlValidation(new String[] { Uri.SCHEME_HTTP }) });

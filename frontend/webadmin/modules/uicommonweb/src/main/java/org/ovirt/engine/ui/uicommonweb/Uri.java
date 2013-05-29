@@ -8,9 +8,9 @@ import com.google.gwt.regexp.shared.RegExp;
  * generally speaking it is not as picky about the characters it accepts, and its partition into components is not as
  * fine. It should be extended as better parsing is needed.<br>
  * <br>
- * Usage: The constructor is to be passed the candidate URI as argument. Before any URI component is accessed (including
- * toString()), the URI should be checked for validity. In case an optional capturing group wasn't matched, its getter
- * will return an empty String. The return value of the getters and toString() will be null iff the URI is invalid.
+ * Usage: The constructor is to be passed the candidate URI as argument. Before any URI component is accessed, the URI
+ * should be checked for validity. In case an optional capturing group wasn't matched, its getter will return an empty
+ * String. The return value of the getters will be null iff the URI is invalid.
  */
 public class Uri {
 
@@ -34,8 +34,7 @@ public class Uri {
         }
     }
 
-    @Override
-    public String toString() {
+    public String getStringRepresentation() {
         if (!valid) {
             return null;
         }
@@ -44,7 +43,7 @@ public class Uri {
         if (!scheme.isEmpty()) {
             uri += scheme + "://"; //$NON-NLS-1$
         }
-        uri += authority.toString();
+        uri += authority.getStringRepresentation();
         uri += path;
         return uri;
     }
