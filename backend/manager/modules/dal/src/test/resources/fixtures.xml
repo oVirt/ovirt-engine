@@ -704,6 +704,8 @@
         <column>auth_required</column>
         <column>auth_username</column>
         <column>auth_password</column>
+        <column>tenant_name</column>
+        <column>plugin_type</column>
         <row>
             <value>1115c1c6-cb15-4832-b2a4-023770607111</value>
             <value>provider</value>
@@ -713,6 +715,8 @@
             <value>false</value>
             <null/>
             <null/>
+            <value>bubu</value>
+            <value>LINUX_BRIDGE</value>
         </row>
     </table>
 

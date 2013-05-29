@@ -24,7 +24,7 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
         super(parameters);
     }
 
-    private Provider getProvider() {
+    private Provider<?> getProvider() {
         return getParameters().getProvider();
     }
 

@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.GenericDao;
 import org.ovirt.engine.core.dao.SearchDAO;
 
-public interface ProviderDao extends GenericDao<Provider, Guid>, SearchDAO<Provider> {
+public interface ProviderDao extends GenericDao<Provider<?>, Guid>, SearchDAO<Provider<?>> {
 
     /**
      * Query for the provider by name.
@@ -17,7 +17,7 @@ public interface ProviderDao extends GenericDao<Provider, Guid>, SearchDAO<Provi
      *            The name of the provider.
      * @return The provider, or <code>null</code> if not found.
      */
-    Provider getByName(String name);
+    Provider<?> getByName(String name);
 
     /**
      * Query for the providers by type.
@@ -26,6 +26,5 @@ public interface ProviderDao extends GenericDao<Provider, Guid>, SearchDAO<Provi
      *            The type of the provider.
      * @return All providers of that type, or <code>null</code> if none exist found.
      */
-    List<Provider> getAllByType(ProviderType providerType);
-
+    List<Provider<?>> getAllByType(ProviderType providerType);
 }

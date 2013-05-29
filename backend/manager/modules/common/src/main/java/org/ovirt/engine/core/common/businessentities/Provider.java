@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.io.Serializable;
 import java.util.Map;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
@@ -14,8 +17,11 @@ import org.ovirt.engine.core.compat.Guid;
  * A provider can provide external services to be consumed by the system.<br>
  * The provider will be responsible for managing the provided services, and the interaction with it would be done
  * through an API which will be accessible via the URL.
+ *
+ * @param P
+ *            The type of additional properties this provider holds.
  */
-public class Provider extends IVdcQueryable implements BusinessEntity<Guid>, Nameable {
+public class Provider<P extends AdditionalProperties> extends IVdcQueryable implements BusinessEntity<Guid>, Nameable {
 
     private static final long serialVersionUID = 8279455368568715758L;
 
@@ -41,6 +47,9 @@ public class Provider extends IVdcQueryable implements BusinessEntity<Guid>, Nam
     private String password;
 
     private Map<String, String> customProperties;
+
+    @Valid
+    private P additionalProperties;
 
     @Override
     public String getName() {
@@ -117,6 +126,14 @@ public class Provider extends IVdcQueryable implements BusinessEntity<Guid>, Nam
         this.customProperties = customProperties;
     }
 
+    public P getAdditionalProperties() {
+        return additionalProperties;
+    }
+
+    public void setAdditionalProperties(P additionalProperties) {
+        this.additionalProperties = additionalProperties;
+    }
+
     @Override
     public Object getQueryableId() {
         return getId();
@@ -135,6 +152,7 @@ public class Provider extends IVdcQueryable implements BusinessEntity<Guid>, Nam
         result = prime * result + ((getUrl() == null) ? 0 : getUrl().hashCode());
         result = prime * result + ((getUsername() == null) ? 0 : getUsername().hashCode());
         result = prime * result + ((getCustomProperties() == null) ? 0 : getCustomProperties().hashCode());
+        result = prime * result + ((getAdditionalProperties() == null) ? 0 : getAdditionalProperties().hashCode());
         return result;
     }
 
@@ -149,7 +167,7 @@ public class Provider extends IVdcQueryable implements BusinessEntity<Guid>, Nam
         if (!(obj instanceof Provider)) {
             return false;
         }
-        Provider other = (Provider) obj;
+        Provider<?> other = (Provider<?>) obj;
         if (isRequiringAuthentication() != other.isRequiringAuthentication()) {
             return false;
         }
@@ -205,6 +223,13 @@ public class Provider extends IVdcQueryable implements BusinessEntity<Guid>, Nam
         } else if (!getCustomProperties().equals(other.getCustomProperties())) {
             return false;
         }
+        if (getAdditionalProperties() == null) {
+            if (other.getAdditionalProperties() != null) {
+                return false;
+            }
+        } else if (!getAdditionalProperties().equals(other.getAdditionalProperties())) {
+            return false;
+        }
         return true;
     }
 
@@ -229,7 +254,15 @@ public class Provider extends IVdcQueryable implements BusinessEntity<Guid>, Nam
                 .append(getPassword() == null ? null : "******")
                 .append(", customProperties=")
                 .append(getCustomProperties())
+                .append(", additionalProperties=")
+                .append(getAdditionalProperties())
                 .append("]");
         return builder.toString();
+    }
+
+    /**
+     * Tag interface for classes that add additional properties to providers.
+     */
+    public static interface AdditionalProperties extends Serializable {
     }
 }

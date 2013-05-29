@@ -21,7 +21,8 @@ public class ProviderProxyFactory {
      *            The provider to create the proxy for.
      * @return The proxy for communicating with the provider
      */
-    public <P extends ProviderProxy> P create(Provider provider) {
+    @SuppressWarnings("unchecked")
+    public <P extends ProviderProxy> P create(Provider<?> provider) {
         return (P) new ForemanHostProviderProxy(provider);
     }
 

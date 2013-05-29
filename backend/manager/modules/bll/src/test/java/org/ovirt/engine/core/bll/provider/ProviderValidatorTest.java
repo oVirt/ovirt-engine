@@ -14,13 +14,14 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ProviderValidatorTest {
 
-    private Provider provider = createProvider("provider");
+    private Provider<AdditionalProperties> provider = createProvider("provider");
 
     @Mock
     private ProviderDao providerDao;
@@ -51,14 +52,16 @@ public class ProviderValidatorTest {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void nameNotAvailable() throws Exception {
-        Provider otherProvider = createProvider(provider.getName());
-        when(providerDao.getByName(provider.getName())).thenReturn(otherProvider);
+        Provider<AdditionalProperties> otherProvider = createProvider(provider.getName());
+        when((Provider<AdditionalProperties>) providerDao.getByName(provider.getName())).thenReturn(otherProvider);
         assertThat(validator.nameAvailable(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
     }
 
-    private Provider createProvider(String name) {
-        Provider p = mock(Provider.class);
+    @SuppressWarnings("unchecked")
+    private Provider<AdditionalProperties> createProvider(String name) {
+        Provider<AdditionalProperties> p = mock(Provider.class);
         when(p.getName()).thenReturn(name);
         return p;
     }

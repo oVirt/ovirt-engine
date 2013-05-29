@@ -20,7 +20,7 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 public class UpdateProviderCommand<P extends ProviderParameters> extends CommandBase<P>
         implements RenamedEntityInfoProvider {
 
-    private Provider oldProvider;
+    private Provider<?> oldProvider;
 
     public UpdateProviderCommand(Guid commandId) {
         super(commandId);
@@ -30,11 +30,11 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
         super(parameters);
     }
 
-    private Provider getProvider() {
+    private Provider<?> getProvider() {
         return getParameters().getProvider();
     }
 
-    private Provider getOldProvider() {
+    private Provider<?> getOldProvider() {
         if (oldProvider == null) {
             oldProvider = getProviderDao().get(getProvider().getId());
         }

@@ -8,9 +8,9 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 public class ProviderValidator {
 
-    private Provider provider;
+    private Provider<?> provider;
 
-    public ProviderValidator(Provider provider) {
+    public ProviderValidator(Provider<?> provider) {
         this.provider = provider;
     }
 

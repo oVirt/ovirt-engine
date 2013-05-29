@@ -5,21 +5,28 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkPluginType;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseGenericDaoTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
-public class ProviderDaoTest extends BaseGenericDaoTestCase<Guid, Provider, ProviderDao> {
+public class ProviderDaoTest extends BaseGenericDaoTestCase<Guid, Provider<?>, ProviderDao> {
 
     @Override
-    protected Provider generateNewEntity() {
-        Provider provider = new Provider();
+    protected Provider<?> generateNewEntity() {
+        Provider<AdditionalProperties> provider = new Provider<AdditionalProperties>();
         provider.setId(generateNonExistingId());
         provider.setName("brovider");
         provider.setUrl("http://brovider.com/");
         provider.setType(ProviderType.OPENSTACK_NETWORK);
+        OpenstackNetworkProviderProperties additionalProperties = new OpenstackNetworkProviderProperties();
+        additionalProperties.setTenantName("10ant");
+        additionalProperties.setPluginType(OpenstackNetworkPluginType.LINUX_BRIDGE);
+        provider.setAdditionalProperties(additionalProperties);
         return provider;
     }
 

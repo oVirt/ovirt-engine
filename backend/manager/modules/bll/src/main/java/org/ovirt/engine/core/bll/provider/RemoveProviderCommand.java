@@ -17,7 +17,7 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 public class RemoveProviderCommand<P extends ProviderParameters> extends CommandBase<P> {
 
-    private Provider deletedProvider;
+    private Provider<?> deletedProvider;
 
     public RemoveProviderCommand(Guid commandId) {
         super(commandId);
@@ -27,7 +27,7 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
         super(parameters);
     }
 
-    private Provider getDeletedProvider() {
+    private Provider<?> getDeletedProvider() {
         if (deletedProvider == null) {
             deletedProvider = getProviderDao().get(getParameters().getProvider().getId());
         }
@@ -36,7 +36,7 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
     }
 
     public String getProviderName() {
-        Provider provider = getDeletedProvider();
+        Provider<?> provider = getDeletedProvider();
         return provider == null ? null : provider.getName();
     }
 

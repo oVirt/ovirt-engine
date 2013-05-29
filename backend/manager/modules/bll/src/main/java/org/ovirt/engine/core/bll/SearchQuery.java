@@ -263,7 +263,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return genericSearch(getDbFacade().getNetworkViewDao(), true, null);
     }
 
-    private List<Provider> searchProviders() {
+    private List<Provider<?>> searchProviders() {
         return genericSearch(getDbFacade().getProviderDao(), true, null);
     }
 

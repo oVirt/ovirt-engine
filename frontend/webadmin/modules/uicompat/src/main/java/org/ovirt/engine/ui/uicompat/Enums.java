@@ -319,6 +319,10 @@ public interface Enums extends LocalizedEnums {
 
     String ProviderType___OPENSTACK_NETWORK();
 
+    String OpenstackNetworkPluginType___LINUX_BRIDGE();
+
+    String OpenstackNetworkPluginType___OPEN_VSWITCH();
+
     // Gluster enums
     String GlusterVolumeType___DISTRIBUTE();
 

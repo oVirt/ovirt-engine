@@ -5,7 +5,10 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkPluginType;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,14 +18,38 @@ import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
-public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider, Guid> implements ProviderDao {
+public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<?>, Guid> implements ProviderDao {
 
     public ProviderDaoDbFacadeImpl() {
         super("Provider");
     }
 
     @Override
-    protected MapSqlParameterSource createFullParametersMapper(Provider entity) {
+    protected MapSqlParameterSource createFullParametersMapper(Provider<?> entity) {
+        MapSqlParameterSource mapper = createBaseProviderParametersMapper(entity);
+        String tenantName = null;
+        String pluginType = null;
+
+        if (entity.getAdditionalProperties() != null) {
+            switch (entity.getType()) {
+            case OPENSTACK_NETWORK:
+                OpenstackNetworkProviderProperties properties =
+                        (OpenstackNetworkProviderProperties) entity.getAdditionalProperties();
+                tenantName = properties.getTenantName();
+                pluginType = properties.getPluginType().name();
+                break;
+            default:
+                break;
+            }
+        }
+
+        // We always add the values since JdbcTeplate expects them to be set, otherwise it throws an exception.
+        mapper.addValue("tenant_name", tenantName);
+        mapper.addValue("plugin_type", pluginType);
+        return mapper;
+    }
+
+    protected MapSqlParameterSource createBaseProviderParametersMapper(Provider<?> entity) {
         return createIdParameterMapper(entity.getId())
                 .addValue("name", entity.getName())
                 .addValue("description", entity.getDescription())
@@ -41,18 +68,18 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider,
     }
 
     @Override
-    protected ParameterizedRowMapper<Provider> createEntityRowMapper() {
+    protected ParameterizedRowMapper<Provider<?>> createEntityRowMapper() {
         return ProviderRowMapper.INSTANCE;
     }
 
     @Override
-    public Provider getByName(String name) {
+    public Provider<?> getByName(String name) {
         return getCallsHandler().executeRead("GetProviderByName",
                 createEntityRowMapper(),
                 getCustomMapSqlParameterSource().addValue("name", name));
     }
 
-    private static class ProviderRowMapper implements ParameterizedRowMapper<Provider> {
+    private static class ProviderRowMapper implements ParameterizedRowMapper<Provider<?>> {
 
         public final static ProviderRowMapper INSTANCE = new ProviderRowMapper();
 
@@ -61,8 +88,8 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider,
 
         @Override
         @SuppressWarnings("unchecked")
-        public Provider mapRow(ResultSet rs, int index) throws SQLException {
-            Provider entity = new Provider();
+        public Provider<?> mapRow(ResultSet rs, int index) throws SQLException {
+            Provider<AdditionalProperties> entity = new Provider<AdditionalProperties>();
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
             entity.setName(rs.getString("name"));
             entity.setDescription(rs.getString("description"));
@@ -73,18 +100,32 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider,
             entity.setPassword(DbFacadeUtils.decryptPassword(rs.getString("auth_password")));
             entity.setCustomProperties(SerializationFactory.getDeserializer()
                     .deserialize(rs.getString("custom_properties"), HashMap.class));
+            entity.setAdditionalProperties(mapAdditionalProperties(rs, entity));
+
             return entity;
+        }
+
+        private AdditionalProperties mapAdditionalProperties(ResultSet rs, Provider<?> entity) throws SQLException {
+            switch (entity.getType()) {
+            case OPENSTACK_NETWORK:
+                OpenstackNetworkProviderProperties properties = new OpenstackNetworkProviderProperties();
+                properties.setTenantName(rs.getString("tenant_name"));
+                properties.setPluginType(OpenstackNetworkPluginType.valueOf(rs.getString("plugin_type")));
+                return properties;
+            default:
+                return null;
+            }
         }
     }
 
     @Override
-    public List<Provider> getAllByType(ProviderType providerType) {
+    public List<Provider<?>> getAllByType(ProviderType providerType) {
         return getCallsHandler().executeReadList("GetAllFromProvidersByType",
                                                  ProviderRowMapper.INSTANCE,
                                                  getCustomMapSqlParameterSource().addValue("provider_type", providerType.toString()));
     }
 
-    public List<Provider> getAllWithQuery(String query) {
+    public List<Provider<?>> getAllWithQuery(String query) {
         return jdbcTemplate.query(query, ProviderRowMapper.INSTANCE);
     }
 }

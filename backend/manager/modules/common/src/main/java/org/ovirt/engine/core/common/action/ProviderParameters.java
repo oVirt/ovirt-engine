@@ -11,20 +11,20 @@ public class ProviderParameters extends VdcActionParametersBase {
 
     @Valid
     @NotNull
-    private Provider provider;
+    private Provider<?> provider;
 
     public ProviderParameters() {
     }
 
-    public ProviderParameters(Provider provider) {
+    public ProviderParameters(Provider<?> provider) {
         this.provider = provider;
     }
 
-    public Provider getProvider() {
+    public Provider<?> getProvider() {
         return provider;
     }
 
-    public void setProvider(Provider provider) {
+    public void setProvider(Provider<?> provider) {
         this.provider = provider;
     }
 }
