@@ -126,6 +126,8 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
         dao.remove(FixturesTool.HOOK_ID);
         GlusterHookEntity hook = dao.getById(FixturesTool.HOOK_ID);
         assertNull(hook);
+        GlusterServerHook serverhook = dao.getGlusterServerHook(FixturesTool.HOOK_ID, SERVER_ID);
+        assertNull(serverhook);
     }
 
     @Test

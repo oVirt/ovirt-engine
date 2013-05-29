@@ -33,7 +33,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class GlusterHookCommandTest<T extends GlusterHookCommandBase> {
 
-    private static final Guid[] GUIDS = {Guid.createGuidFromString("afce7a39-8e8c-4819-ba9c-796d316592e6"),
+    protected static final Guid[] GUIDS = {Guid.createGuidFromString("afce7a39-8e8c-4819-ba9c-796d316592e6"),
                                              Guid.createGuidFromString("afce7a39-8e8c-4819-ba9c-796d316592e7"),
                                              Guid.createGuidFromString("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3"),
                                              Guid.createGuidFromString("2001751e-549b-4e7a-aff6-32d36856c125")};
