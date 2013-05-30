@@ -96,7 +96,6 @@ public class TestHelper {
     protected static class ActionParametersEquals implements IArgumentMatcher {
         Class<? extends VdcActionParametersBase> clz;
         String[] names;
-        Class<?>[] types;
         Object[] values;
 
         public ActionParametersEquals(Class<? extends VdcActionParametersBase> clz, String[] names,
@@ -181,7 +180,6 @@ public class TestHelper {
     protected static class QueryParametersEquals implements IArgumentMatcher {
         Class<? extends VdcQueryParametersBase> clz;
         String[] names;
-        Class<?>[] types;
         Object[] values;
 
         public QueryParametersEquals(Class<? extends VdcQueryParametersBase> clz, String[] names,

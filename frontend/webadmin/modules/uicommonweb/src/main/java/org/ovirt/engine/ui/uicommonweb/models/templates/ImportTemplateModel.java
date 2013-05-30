@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -11,7 +10,6 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -26,7 +24,6 @@ import org.ovirt.engine.ui.uicompat.ObservableCollection;
 public class ImportTemplateModel extends ImportVmModel
 {
 
-    private HashMap<Guid, VmTemplate> alreadyInSystem;
     private TemplateImportDiskListModel templateImportDiskListModel;
 
     public ImportTemplateModel() {

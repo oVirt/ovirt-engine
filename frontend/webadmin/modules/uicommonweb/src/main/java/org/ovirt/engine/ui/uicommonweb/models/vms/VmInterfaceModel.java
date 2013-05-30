@@ -39,7 +39,6 @@ public abstract class VmInterfaceModel extends Model
 {
     public static String ENGINE_NETWORK_NAME;
 
-    private boolean privateIsNew;
     private EntityModel privateName;
     private ListModel privateNetwork;
     private EntityModel linked;

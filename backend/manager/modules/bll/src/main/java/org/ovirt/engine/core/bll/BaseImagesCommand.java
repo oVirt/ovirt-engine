@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -34,7 +33,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     private DiskImage _destinationImage;
     private DiskImage mImage;
     private Guid mImageId = Guid.Empty;
-    VM vm;
 
     public BaseImagesCommand(T parameters) {
         super(parameters);

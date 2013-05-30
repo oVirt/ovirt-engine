@@ -18,7 +18,6 @@ import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
-import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.gluster.GlusterParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -31,11 +30,9 @@ public class GetGlusterVolumeOptionsInfoQueryTest extends AbstractQueryTest<Glus
     List<GlusterVolumeOptionInfo> expected;
     GlusterParameters parameters;
     private Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
-    VDSBrokerFrontend vdsBrokerFrontend;
 
     VdsDAO vdsDao;
     ClusterUtils clusterUtils;
-    VDS vds;
 
     private List<VDS> mockGetAllVdsForwithStatus(VDSStatus status) {
         List<VDS> vdsList = new ArrayList<VDS>();
