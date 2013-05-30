@@ -128,6 +128,7 @@ ARTIFACTS = \
 	-e "s|@ENGINE_NOTIFIER_DEFAULTS@|$(DATA_DIR)/conf/notifier.conf.defaults|g" \
 	-e "s|@ENGINE_NOTIFIER_VARS@|$(PKG_SYSCONF_DIR)/notifier/notifier.conf|g" \
 	-e "s|@ENGINE_WSPROXY_DEFAULT_FILE@|$(DATA_DIR)/conf/ovirt-websocket-proxy.conf.defaults|g" \
+	-e "s|@ENGINE_WSPROXY_VARS@|$(PKG_SYSCONF_DIR)/ovirt-websocket-proxy.conf|g" \
 	-e "s|@ENGINE_USER@|$(PKG_USER)|g" \
 	-e "s|@ENGINE_GROUP@|$(PKG_GROUP)|g" \
 	-e "s|@ENGINE_ETC@|$(PKG_SYSCONF_DIR)|g" \
@@ -448,6 +449,7 @@ install_misc:
 	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine.conf.d
 	install -m 755 packaging/resources/ovirtlogrot.sh ${DESTDIR}$(DATA_DIR)/scripts/
 	install -m 755 packaging/resources/ovirt-cron ${DESTDIR}$(SYSCONF_DIR)/cron.daily/
+	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/ovirt-websocket-proxy.conf.d
 	install -m 644 packaging/conf/ovirt-websocket-proxy.conf.defaults $(DESTDIR)$(DATA_DIR)/conf
 
 	# Service common
