@@ -176,6 +176,7 @@ all: \
 
 generated-files:	$(GENERATED)
 	chmod a+x packaging/services/ovirt-engine.sysv
+	chmod a+x packaging/services/ovirt-websocket-proxy.sysv
 
 $(BUILD_FILE):
 	-[ "$(MAVEN_OUTPUT_DIR_DEFAULT)" = "$(MAVEN_OUTPUT_DIR)" ] && rm -fr "$(MAVEN_OUTPUT_DIR)"
