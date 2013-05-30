@@ -114,13 +114,7 @@ public class JndiAction implements PrivilegedAction {
                         log.debug("User guid is: " + userGuid.toString());
                         return AuthenticationResult.OK;
                     }
-                    // Print user GUID only if it was not printed previously in while loop
-                    if (answer.hasMorElements() != true) {
-                       log.debug("User guid is: " + userGuid.toString());
-                    }
-                    // Print also URI and complete query path
-                    log.debug("URI is: " + uri.toString());
-                    log.debug("Complete query path is: " + currentLdapServer);
+
                     System.out.println("No user in Directory was found for " + userName
                             + ". Trying next LDAP server in list");
                 } else {
