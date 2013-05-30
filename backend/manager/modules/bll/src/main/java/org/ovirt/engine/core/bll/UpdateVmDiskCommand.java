@@ -130,7 +130,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         }
 
         // Validate update boot disk.
-        if (newDisk.isBoot()) {
+        if (newDisk.isBoot() && !oldDisk.isBoot()) {
             if (!validate(noVmsContainBootableDisks(vmsDiskPluggedTo))) {
                 return false;
             }
