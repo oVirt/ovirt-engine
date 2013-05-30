@@ -74,6 +74,7 @@ public class VmBackupModel extends ManageBackupModel {
         setHashName("vm_import"); // //$NON-NLS-1$
 
         setAppListModel(new VmAppListModel());
+        setIsTimerDisabled(true);
     }
 
     @Override

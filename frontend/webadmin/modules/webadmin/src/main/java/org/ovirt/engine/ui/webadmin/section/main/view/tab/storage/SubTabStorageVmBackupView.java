@@ -150,6 +150,8 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
                 return getDetailModel().getRemoveCommand();
             }
         });
+
+        getTable().showRefreshButton();
     }
 
     private void initApplicationsTable(ApplicationConstants constants) {

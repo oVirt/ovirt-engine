@@ -111,6 +111,8 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
                 return getDetailModel().getRemoveCommand();
             }
         });
+
+        getTable().showRefreshButton();
     }
 
 }
