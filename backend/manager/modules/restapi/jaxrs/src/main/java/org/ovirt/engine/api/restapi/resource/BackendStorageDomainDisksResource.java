@@ -60,7 +60,7 @@ public class BackendStorageDomainDisksResource extends BackendDisksResource {
             unregisteredDisk =
                     (DiskImage) getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(disk,
                             unregisteredDisk);
-            RegisterDiskParameters registerDiskParams = new RegisterDiskParameters(unregisteredDisk);
+            RegisterDiskParameters registerDiskParams = new RegisterDiskParameters(unregisteredDisk, storageDomainId);
             return performCreate(VdcActionType.RegisterDisk, registerDiskParams, ID_RESOLVER);
         } else {
             validateDiskForCreation(disk);

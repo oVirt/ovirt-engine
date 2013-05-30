@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.compat.Guid;
 
 public class RegisterDiskParameters extends ImagesActionsParametersBase {
 
@@ -8,9 +9,10 @@ public class RegisterDiskParameters extends ImagesActionsParametersBase {
 
     private DiskImage diskImage;
 
-    public RegisterDiskParameters(DiskImage diskImage) {
+    public RegisterDiskParameters(DiskImage diskImage, Guid storageDomainId) {
         super(diskImage.getId());
         this.diskImage = diskImage;
+        setStorageDomainId(storageDomainId);
     }
 
     public DiskImage getDiskImage() {

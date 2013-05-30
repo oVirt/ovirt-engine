@@ -21,7 +21,6 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
 
     public RegisterDiskCommand(T parameters) {
         super(parameters);
-        setStorageDomainId(parameters.getDiskImage().getStorageIds().get(0));
         setStoragePoolId(parameters.getDiskImage().getStoragePoolId());
         parameters.setEntityId(parameters.getDiskImage().getId());
     }
@@ -56,6 +55,9 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
         final DiskImage newDiskImage = getParameters().getDiskImage();
         newDiskImage.setDiskAlias(ImagesHandler.getDiskAliasWithDefault(newDiskImage,
                 generateDefaultAliasForRegiteredDisk(Calendar.getInstance())));
+        ArrayList<Guid> storageIds = new ArrayList<>();
+        storageIds.add(getParameters().getStorageDomainId());
+        newDiskImage.setStorageIds(storageIds);
         addDiskImageToDb(newDiskImage, getCompensationContext());
         getReturnValue().setActionReturnValue(newDiskImage.getId());
         getReturnValue().setSucceeded(true);
