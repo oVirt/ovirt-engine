@@ -188,3 +188,6 @@ if __name__ == '__main__':
     service.setupLogger()
     d = Daemon()
     d.run()
+
+
+# vim: expandtab tabstop=4 shiftwidth=4
