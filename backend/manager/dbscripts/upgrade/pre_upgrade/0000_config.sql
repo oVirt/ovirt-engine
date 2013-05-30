@@ -322,7 +322,6 @@ select fn_db_add_config_value('NonVmNetworkSupported','true','3.2');
 select fn_db_add_config_value('NonVmNetworkSupported','true','3.3');
 select fn_db_add_config_value('NumberOfFailedRunsOnVds','3','general');
 select fn_db_add_config_value('NumberOfUSBSlots','4','general');
-select fn_db_add_config_value('NumberOfVmsForTopSizeVms','10','general');
 select fn_db_add_config_value('NumberVmRefreshesBeforeSave','5','general');
 select fn_db_add_config_value('SupportBridgesReportByVDSM','false','3.0');
 select fn_db_add_config_value('SupportBridgesReportByVDSM','false','3.1');
@@ -764,6 +763,7 @@ select fn_db_delete_config_value('LiveStorageMigrationEnabled','3.1');
 select fn_db_delete_config_value('LiveStorageMigrationEnabled','3.2');
 select fn_db_delete_config_value('DiskConfigurationList','general');
 select fn_db_delete_config_value('DefaultTimeZone','general');
+select fn_db_delete_config_value('NumberOfVmsForTopSizeVms','general');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

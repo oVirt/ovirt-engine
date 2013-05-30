@@ -103,6 +103,5 @@ public abstract class AbstractBackendStorageDomainContentsResource<C extends Bas
         return collection;
     }
 
-    protected abstract Collection<Q> getEntitiesFromDataDomain();
     protected abstract Collection<Q> getEntitiesFromExportDomain();
 }

@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryTopSizeVmsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -107,12 +106,6 @@ public class BackendStorageDomainVmsResourceTest
 
         switch (domainType) {
         case Data:
-            setUpEntityQueryExpectations(VdcQueryType.GetTopSizeVmsFromStorageDomain,
-                                         StorageDomainQueryTopSizeVmsParameters.class,
-                                         new String[] { "StorageDomainId", "MaxVmsToReturn" },
-                                         new Object[] { STORAGE_DOMAIN_ID, -1 },
-                                         setUpVms(),
-                                         failure);
             break;
         case ImportExport:
             setUpEntityQueryExpectations(VdcQueryType.GetVmsFromExportDomain,

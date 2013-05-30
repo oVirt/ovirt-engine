@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryTopSizeVmsParameters;
+import org.ovirt.engine.core.common.queries.StorageDomainQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -86,10 +86,10 @@ public class StorageVmListModel extends SearchableListModel
             }
         };
 
-        StorageDomainQueryTopSizeVmsParameters tempVar =
-                new StorageDomainQueryTopSizeVmsParameters(getEntity().getId(), 0);
+        StorageDomainQueryParametersBase tempVar =
+                new StorageDomainQueryParametersBase(getEntity().getId());
         tempVar.setRefresh(getIsQueryFirstTime());
-        Frontend.RunQuery(VdcQueryType.GetTopSizeVmsFromStorageDomain, tempVar, _asyncQuery);
+        Frontend.RunQuery(VdcQueryType.GetVmsByStorageDomain, tempVar, _asyncQuery);
     }
 
     @Override

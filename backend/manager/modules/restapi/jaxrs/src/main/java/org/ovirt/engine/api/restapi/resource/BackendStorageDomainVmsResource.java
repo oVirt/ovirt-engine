@@ -11,7 +11,6 @@ import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.common.queries.StorageDomainQueryTopSizeVmsParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -34,12 +33,6 @@ public class BackendStorageDomainVmsResource
     protected VM addParents(VM vm) {
         vm.setStorageDomain(getStorageDomainModel());
         return vm;
-    }
-
-    @Override
-    protected Collection<org.ovirt.engine.core.common.businessentities.VM> getEntitiesFromDataDomain() {
-        return getBackendCollection(VdcQueryType.GetTopSizeVmsFromStorageDomain,
-                                    new StorageDomainQueryTopSizeVmsParameters(storageDomainId, -1));
     }
 
     @Override
