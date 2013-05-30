@@ -222,7 +222,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "all_disks",
                             "all_disks",
                             "disk_id",
-                            "disk_alias ASC "));
+                            "disk_alias ASC, disk_id ASC "));
                     put(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME,
                             new EntitySearchInfo(new StorageDomainCrossRefAutoCompleter(),
                                     new StorageDomainFieldAutoCompleter(),
@@ -236,7 +236,7 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                                     null,
                                     "vm_images_storage_domains_view",
                                     "image_guid",
-                                    "disk_alias ASC "));
+                                    "disk_alias ASC, disk_id ASC "));
                     put(SearchObjects.GLUSTER_VOLUME_OBJ_NAME,
                             new EntitySearchInfo(GlusterVolumeCrossRefAutoCompleter.INSTANCE,
                                     GlusterVolumeConditionFieldAutoCompleter.INSTANCE,
