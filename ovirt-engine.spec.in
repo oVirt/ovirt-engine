@@ -314,7 +314,7 @@ Summary: %{product_name_short} Websocket Proxy
 Group: Virtualization/Management
 Requires: python-websockify
 Requires: m2crypto
-Requires: ovirt-engine
+Requires: %{name}
 
 %if %{install_systemd}
 Requires(post): systemd
