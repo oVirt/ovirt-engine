@@ -448,7 +448,7 @@ cp "%{buildroot}%{engine_data}/services/ovirt-websocket-proxy.systemd" "%{buildr
 install -dm 755 "%{buildroot}%{_initddir}"
 cp "%{buildroot}%{engine_data}/services/ovirt-engine.sysv" "%{buildroot}%{_initddir}/ovirt-engine"
 cp "%{buildroot}%{engine_data}/services/ovirt-engine-notifier.sysv" "%{buildroot}%{_initddir}/ovirt-engine-notifier"
-cp "%{buildroot}%{engine_data}/services/ovirt-websocket-proxy.sysv" "%{buildroot}%{_unitdir}/ovirt-websocket-proxy"
+cp "%{buildroot}%{engine_data}/services/ovirt-websocket-proxy.sysv" "%{buildroot}%{_initddir}/ovirt-websocket-proxy"
 %endif
 
 # backward compatibly (pre-3.3.0)
