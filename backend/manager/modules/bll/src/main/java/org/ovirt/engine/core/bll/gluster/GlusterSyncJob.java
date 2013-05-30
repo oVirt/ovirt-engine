@@ -140,7 +140,6 @@ public class GlusterSyncJob extends GlusterJob {
                 log.debugFormat("Server {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
                         server.getName());
                 logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI);
-
                 try {
                     removeServerFromDb(server);
                     // remove the server from resource manager

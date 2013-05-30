@@ -31,7 +31,11 @@ public class GlusterAuditLogUtil {
     }
 
     public void logServerMessage(final VDS server, final AuditLogType logType) {
-        logAuditMessage(null, null, server, logType, Collections.<String, String> emptyMap());
+        logAuditMessage(server == null ? Guid.Empty : server.getVdsGroupId(),
+                null,
+                server,
+                logType,
+                Collections.<String, String> emptyMap());
     }
 
     public void logClusterMessage(final Guid clusterId, final AuditLogType logType) {
@@ -47,7 +51,7 @@ public class GlusterAuditLogUtil {
         AuditLogableBase logable = new AuditLogableBase();
         logable.setVds(server);
         logable.setGlusterVolume(volume);
-        logable.setVdsGroupId(clusterId == null ? Guid.Empty : clusterId);
+        logable.setVdsGroupId(clusterId);
 
         if (customValues != null) {
             for (Entry<String, String> entry : customValues.entrySet()) {
