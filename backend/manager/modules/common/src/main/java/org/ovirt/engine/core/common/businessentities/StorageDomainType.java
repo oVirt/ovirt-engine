@@ -16,4 +16,7 @@ public enum StorageDomainType {
         return values()[value];
     }
 
+    public boolean isDataDomain() {
+        return (this == Data || this == Master);
+    }
 }

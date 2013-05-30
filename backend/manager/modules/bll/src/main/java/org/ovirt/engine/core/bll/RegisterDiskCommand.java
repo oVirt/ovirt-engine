@@ -1,9 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -11,9 +7,12 @@ import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
 
 public class RegisterDiskCommand <T extends RegisterDiskParameters> extends BaseImagesCommand<T> implements QuotaStorageDependent {
 
@@ -37,16 +36,22 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
             addCanDoActionMessage("$storageType " + getParameters().getDiskImage().getDiskStorageType());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_UNSUPPORTED_DISK_STORAGE_TYPE);
             return false;
-        } else if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive())) {
+        }
+
+        if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive())) {
             addCanDoActionMessage("$diskId " + getParameters().getDiskImage().getId());
             addCanDoActionMessage("$domainId " + getStorageDomainId());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_UNAVAILABLE);
             return false;
-        } else if (getStorageDomain().getStorageDomainType() != StorageDomainType.Data) {
+        }
+
+        if (!getStorageDomain().getStorageDomainType().isDataDomain()) {
             addCanDoActionMessage("$domainId " + getParameters().getStorageDomainId());
             addCanDoActionMessage("$domainType " + getStorageDomain().getStorageDomainType());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_UNSUPPORTED);
+            return false;
         }
+
         return true;
     }
 
