@@ -80,8 +80,12 @@ class Plugin(plugin.PluginBase):
                 mode='w:gz',
                 fileobj=fileobj
             ) as f:
-                f.add(osetupcons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_PKI)
-                f.add(osetupcons.FileLocations.OVIRT_ENGINE_PKIDIR)
+                for n in (
+                    osetupcons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_PKI,
+                    osetupcons.FileLocations.OVIRT_ENGINE_PKIDIR,
+                ):
+                    if os.path.exists(n):
+                        f.add(n)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
