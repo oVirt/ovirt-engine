@@ -78,7 +78,7 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
         for (GlusterServerHook serverHook: getContentConflictServerHooks()) {
             VDS vds = getVdsDAO().get(serverHook.getServerId());
             if (vds == null || vds.getStatus() != VDSStatus.Up) {
-                setVdsName(vds.getName() !=null ? vds.getName() : "NO SERVER");
+                setVdsName(vds != null ? vds.getName() : "NO SERVER");
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP);
                 return false;
             }
