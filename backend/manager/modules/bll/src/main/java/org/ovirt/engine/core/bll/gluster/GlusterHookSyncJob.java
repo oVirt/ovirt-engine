@@ -17,6 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -44,32 +46,47 @@ public class GlusterHookSyncJob extends GlusterJob {
         List<VDSGroup> clusters = getClusterDao().getAll();
 
         for (VDSGroup cluster : clusters) {
-            if (!supportsGlusterHookFeature(cluster))
-            {
-                continue;
-            }
+            refreshHooksInCluster(cluster, false);
+        }
+    }
 
-            log.debugFormat("Syncing hooks for cluster {0}", cluster.getname());
-            List<VDS> upServers = getClusterUtils().getAllUpServers(cluster.getId());
+    /**
+     *
+     * @param cluster - the VDSGroup for which the gluster hook data is refreshed
+     * @param throwError - set to true if this method should throw exception.
+     */
+    public void refreshHooksInCluster(VDSGroup cluster, boolean throwError) {
+        if (!supportsGlusterHookFeature(cluster))
+        {
+            return;
+        }
 
-            if (upServers == null || upServers.isEmpty()) {
-                continue;
-            }
+        log.debugFormat("Syncing hooks for cluster {0}", cluster.getname());
+        List<VDS> upServers = getClusterUtils().getAllUpServers(cluster.getId());
 
-            List<Callable<Pair<VDS, VDSReturnValue>>> taskList = new ArrayList<Callable<Pair<VDS, VDSReturnValue>>>();
-            for (final VDS upServer : upServers) {
-                taskList.add(new Callable<Pair<VDS, VDSReturnValue>>() {
-                    @Override
-                    public Pair<VDS, VDSReturnValue> call() throws Exception {
-                        VDSReturnValue returnValue =runVdsCommand(VDSCommandType.GlusterHooksList,
-                                new VdsIdVDSCommandParametersBase(upServer.getId()));
-                        return new Pair<VDS, VDSReturnValue>(upServer, returnValue);
-                    }
-                });
-            }
-            List<Pair<VDS, VDSReturnValue>> pairResults = ThreadPoolUtil.invokeAll(taskList);
+        if (upServers == null || upServers.isEmpty()) {
+            return;
+        }
 
+        List<Callable<Pair<VDS, VDSReturnValue>>> taskList = new ArrayList<Callable<Pair<VDS, VDSReturnValue>>>();
+        for (final VDS upServer : upServers) {
+            taskList.add(new Callable<Pair<VDS, VDSReturnValue>>() {
+                @Override
+                public Pair<VDS, VDSReturnValue> call() throws Exception {
+                    VDSReturnValue returnValue =runVdsCommand(VDSCommandType.GlusterHooksList,
+                            new VdsIdVDSCommandParametersBase(upServer.getId()));
+                    return new Pair<VDS, VDSReturnValue>(upServer, returnValue);
+                }
+            });
+        }
+        List<Pair<VDS, VDSReturnValue>> pairResults = ThreadPoolUtil.invokeAll(taskList);
+        try {
             addOrUpdateHooks(cluster.getId(), pairResults);
+        } catch (VdcBLLException e) {
+            if (throwError) {
+                //propogate error to calling application.
+                throw e;
+            }
         }
     }
 
@@ -203,6 +220,7 @@ public class GlusterHookSyncJob extends GlusterJob {
             }
         } catch (Exception e) {
             log.error("Exception in sync", e);
+            throw new VdcBLLException(VdcBllErrors.GlusterHookListException, e.getLocalizedMessage());
         }
 
     }
@@ -294,7 +312,7 @@ public class GlusterHookSyncJob extends GlusterJob {
         });
     }
 
-   private void updateHookServerMap(Map<Guid, Set<VDS>> existingHookServersMap,
+    private void updateHookServerMap(Map<Guid, Set<VDS>> existingHookServersMap,
             Guid hookId,
             VDS server) {
         Set<VDS> hookServers =  existingHookServersMap.get(hookId);

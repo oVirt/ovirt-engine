@@ -769,6 +769,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action assign")
     String VAR__ACTION__ASSIGN();
 
+    @DefaultStringValue("$action refresh")
+    String VAR__ACTION__REFRESH();
+
     @DefaultStringValue("$hostStatus Up")
     String VAR__HOST_STATUS__UP();
 

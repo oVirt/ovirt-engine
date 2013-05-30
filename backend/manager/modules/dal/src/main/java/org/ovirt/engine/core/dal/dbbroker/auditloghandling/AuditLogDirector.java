@@ -135,6 +135,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.GLUSTER_HOOK_ADD_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.GLUSTER_HOOK_REMOVED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.GLUSTER_HOOK_REMOVE_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.GLUSTER_HOOK_REFRESH, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.GLUSTER_HOOK_REFRESH_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initDefaultSeverities() {

@@ -77,6 +77,7 @@ public enum VdcBllMessages {
     VAR__ACTION__STOP_PROFILE,
     VAR__ACTION__ENABLE,
     VAR__ACTION__DISABLE,
+    VAR__ACTION__REFRESH,
 
     // Host statuses replacements
     VAR__HOST_STATUS__UP,
