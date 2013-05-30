@@ -56,6 +56,7 @@ public class FeaturesHelper {
             addFeatureVirtioScsi(features);
             addFeatureComment(features);
             addFeatureRefreshHostCapabilities(features);
+            addFeatureMemorySnapshot(features);
         }
         return features;
     }
@@ -261,6 +262,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Refresh Host Capabilities");
         feature.setDescription("Getting host data synchronized with getVdsCaps (GET .../hosts/{host:id};force");
+        features.getFeature().add(feature);
+    }
+
+    private void addFeatureMemorySnapshot(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Memory Snapshot");
+        feature.setDescription("Ability to save memory state as part of snapshot.");
         features.getFeature().add(feature);
     }
 }

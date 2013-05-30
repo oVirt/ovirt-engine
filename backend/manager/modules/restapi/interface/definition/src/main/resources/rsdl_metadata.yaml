@@ -585,6 +585,8 @@ actions:
       parameterType: Snapshot
       signatures:
       - mandatoryArguments: {snapshot.description: 'xs:string'}
+        optionalArguments:
+          snapshot.persist_memorystate: xs:boolean
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -594,7 +596,9 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.restore_memory: 'xs:boolean'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -603,7 +607,9 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {action.restore_memory: 'xs:boolean'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}

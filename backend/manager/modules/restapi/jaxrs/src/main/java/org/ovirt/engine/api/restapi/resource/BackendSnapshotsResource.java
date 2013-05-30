@@ -43,6 +43,9 @@ public class BackendSnapshotsResource
         validateParameters(snapshot, "description");
         CreateAllSnapshotsFromVmParameters snapshotParams =
             new CreateAllSnapshotsFromVmParameters(parentId, snapshot.getDescription());
+        if (snapshot.isSetPersistMemorystate()) {
+            snapshotParams.setSaveMemory(snapshot.isPersistMemorystate());
+        }
         return performCreate(VdcActionType.CreateAllSnapshotsFromVm,
                                snapshotParams,
                                new SnapshotIdResolver(),

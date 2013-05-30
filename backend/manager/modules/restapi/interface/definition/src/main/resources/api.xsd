@@ -179,6 +179,8 @@
       <xs:element name="detach" type="xs:boolean" minOccurs="0"/>
       <!-- import Vm/Template as new entity -->
       <xs:element name="clone" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <!-- indicates whether to restore snapshot's memory on preview/restore snapshot -->
+      <xs:element name="restore_memory" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <!-- ... etc., explicitly enumerate all the parameter types -->
     </xs:sequence>
   </xs:group>
@@ -2552,6 +2554,7 @@
           <xs:element ref="vm" minOccurs="0"/>
           <xs:element name="date" type="xs:dateTime" minOccurs="0"/>
           <xs:element name="snapshot_status" type="xs:string" minOccurs="0"/>
+          <xs:element name="persist_memorystate" type="xs:boolean" minOccurs="0"/>
           <!-- Also a rel="prev" link -->
         </xs:sequence>
       </xs:extension>

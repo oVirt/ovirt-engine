@@ -50,6 +50,9 @@ public class BackendSnapshotResource extends AbstractBackendActionableResource<S
     public Response restore(Action action) {
         action.setAsync(false);
         TryBackToAllSnapshotsOfVmParameters tryBackParams = new TryBackToAllSnapshotsOfVmParameters(parentId, guid);
+        if (action.isSetRestoreMemory()) {
+            tryBackParams.setRestoreMemory(action.isRestoreMemory());
+        }
         tryBackParams.setCorrelationId(RESTORE_SNAPSHOT_CORRELATION_ID); //TODO: if user supplied, override with user value
         Response response = doAction(VdcActionType.TryBackToAllSnapshotsOfVm,
                 tryBackParams,
@@ -89,6 +92,9 @@ public class BackendSnapshotResource extends AbstractBackendActionableResource<S
     @Override
     public Response preview(Action action) {
         TryBackToAllSnapshotsOfVmParameters tryBackParams = new TryBackToAllSnapshotsOfVmParameters(parentId, guid);
+        if (action.isSetRestoreMemory()) {
+            tryBackParams.setRestoreMemory(action.isRestoreMemory());
+        }
         Response response = doAction(VdcActionType.TryBackToAllSnapshotsOfVm,
                 tryBackParams,
                 action);
