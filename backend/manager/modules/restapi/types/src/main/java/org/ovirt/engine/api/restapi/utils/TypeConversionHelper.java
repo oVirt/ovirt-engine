@@ -13,7 +13,7 @@ import org.ovirt.engine.api.restapi.types.SnapshotMapper;
 
 public class TypeConversionHelper {
 
-    private static DatatypeFactory datatypeFactory;
+    private volatile static DatatypeFactory datatypeFactory;
     protected static final Log LOG = LogFactory.getLog(SnapshotMapper.class);
     protected static final String DATATYPE_FACTORY_CREATION_FAILED = "DatatypeFactory creation failed";
 

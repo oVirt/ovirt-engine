@@ -2805,8 +2805,8 @@ public final class AsyncDataProvider {
         return false;
     }
 
-    private static ArrayList<VmOsType> linuxOsTypes;
-    private static ArrayList<VmOsType> x64OsTypes;
+    private volatile static ArrayList<VmOsType> linuxOsTypes;
+    private volatile static ArrayList<VmOsType> x64OsTypes;
 
     public static boolean isLinuxOsType(VmOsType osType)
     {
