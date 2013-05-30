@@ -1,0 +1,49 @@
+<FindBugsFilter>
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChanged" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.presenter.RedrawDynamicTabContainer" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.uicommon.model.MainModelSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.system.ApplicationFocusChange" />
+       <Bug code="UuF"/>
+     </Match>
+ </FindBugsFilter>

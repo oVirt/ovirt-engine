@@ -9,4 +9,220 @@
         <Method name="getResultAsBoolean"/>
         <Bug code="NP"/>
     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.plugin.restapi.RestApiSessionAcquired" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.UpdateMainContentLayout" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CloseDynamicPopup" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter.ClusterSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter.DataCenterSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresenter.DiskSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabEventPresenter.EventSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter.HostSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabNetworkPresenter.NetworkSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresenter.PoolSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabProviderPresenter.ProviderSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabQuotaPresenter.QuotaSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter.StorageSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabTemplatePresenter.TemplateSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabUserPresenter.UserSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVirtualMachinePresenter.VirtualMachineSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePresenter.VolumeSelectionChange" />
+       <Bug code="UuF"/>
+     </Match>
+
+       <!--
+        findbugs complain of unused field in class.
+        This is a GWT class and use to generate code
+
+        findbugs reason:
+        UuF: Unused field (UUF_UNUSED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.system.MessageReceived" />
+       <Bug code="UuF"/>
+     </Match>
 </FindBugsFilter>

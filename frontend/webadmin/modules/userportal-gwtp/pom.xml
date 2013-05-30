@@ -196,6 +196,17 @@
           <propertyExpansion>runNlsCheck=true</propertyExpansion>
         </configuration>
       </plugin>
+      <plugin>
+         <groupId>org.codehaus.mojo</groupId>
+         <artifactId>findbugs-maven-plugin</artifactId>
+         <version>${findbugs.version}</version>
+         <configuration>
+           <xmlOutput>true</xmlOutput>
+           <!-- Optional directory to put findbugs xdoc xml report -->
+           <excludeFilterFile>exclude-filters.xml</excludeFilterFile>
+           <xmlOutputDirectory>target/site</xmlOutputDirectory>
+         </configuration>
+      </plugin>
     </plugins>
   </build>
   <profiles>
@@ -218,6 +229,17 @@
                 </goals>
               </execution>
             </executions>
+          </plugin>
+          <plugin>
+             <groupId>org.codehaus.mojo</groupId>
+             <artifactId>findbugs-maven-plugin</artifactId>
+             <version>${findbugs.version}</version>
+             <configuration>
+               <xmlOutput>true</xmlOutput>
+               <!-- Optional directory to put findbugs xdoc xml report -->
+               <excludeFilterFile>exclude-filters.xml</excludeFilterFile>
+               <xmlOutputDirectory>target/site</xmlOutputDirectory>
+             </configuration>
           </plugin>
         </plugins>
       </build>
@@ -274,6 +296,17 @@
                 </configuration>
               </execution>
             </executions>
+          </plugin>
+          <plugin>
+             <groupId>org.codehaus.mojo</groupId>
+             <artifactId>findbugs-maven-plugin</artifactId>
+             <version>${findbugs.version}</version>
+             <configuration>
+               <xmlOutput>true</xmlOutput>
+               <!-- Optional directory to put findbugs xdoc xml report -->
+               <excludeFilterFile>exclude-filters.xml</excludeFilterFile>
+               <xmlOutputDirectory>target/site</xmlOutputDirectory>
+             </configuration>
           </plugin>
         </plugins>
       </build>
