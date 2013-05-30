@@ -45,6 +45,7 @@ __pycache__
 packaging/bin/engine-prolog.sh
 packaging/conf/engine.conf.defaults
 packaging/conf/notifier.conf.defaults
+packaging/conf/ovirt-websocket-proxy.conf.defaults
 packaging/etc/engine-config/log4j.xml
 packaging/etc/engine-manage-domains/log4j.xml
 packaging/etc/engine-manage-domains/engine-manage-domains.conf
