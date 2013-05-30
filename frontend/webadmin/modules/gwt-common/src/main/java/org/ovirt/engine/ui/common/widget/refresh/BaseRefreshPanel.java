@@ -293,7 +293,9 @@ public abstract class BaseRefreshPanel extends FocusPanel implements HasClickHan
     public void showStatus(String status) {
         // for debugging
         // statusLabel.setText(status);
-        setTitle(status);
+        if (refreshManager.getModelTimer().isActive()) {
+            setTitle(status);
+        }
     }
 
     private void createRefreshButton() {
