@@ -104,20 +104,17 @@ public class JndiAction implements PrivilegedAction {
                     ctx = new InitialDirContext(env);
                     NamingEnumeration<SearchResult> answer = executeQuery(ctx, controls, prepareQuery());
 
-                    while (answer.hasMoreElements()) {
+                    if (answer.hasMoreElements()) {
                         // Print the objectGUID for the user as well as URI and query path
                         String guid = guidFromResults(answer.next());
-                        if (guid == null) {
-                            break;
+                        if (guid != null) {
+                            userGuid.append(guid);
+                            logQueryContext(userGuid.toString(), uri.toString(), currentLdapServer);
+                            return AuthenticationResult.OK;
                         }
-                        userGuid.append(guid);
-                        logQueryContext(userGuid.toString(), uri.toString(), currentLdapServer);
-                        return AuthenticationResult.OK;
                     }
-                    // Print user GUID and another logging info only if it was not printed previously in while loop
-                    if (!answer.hasMoreElements()) {
-                        logQueryContext(userGuid.toString(), uri.toString(), currentLdapServer);
-                    }
+                    // Print user GUID and another logging info only if it was not printed previously already
+                    logQueryContext(userGuid.toString(), uri.toString(), currentLdapServer);
                     System.out.println("No user in Directory was found for " + userName
                             + ". Trying next LDAP server in list");
                 } else {
