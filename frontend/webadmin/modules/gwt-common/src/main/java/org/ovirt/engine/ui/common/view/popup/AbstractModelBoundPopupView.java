@@ -58,7 +58,7 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
         this.popupContent = widget.getContent();
     }
 
-    protected AbstractUiCommandButton createCommandButton(String label) {
+    protected AbstractUiCommandButton createCommandButton(String label, String uniqueId) {
         return new UiCommandButton(label);
     }
 
@@ -93,7 +93,7 @@ public abstract class AbstractModelBoundPopupView<T extends Model> extends Abstr
 
     @Override
     public HasUiCommandClickHandlers addFooterButton(String label, String uniqueId) {
-        AbstractUiCommandButton button = createCommandButton(label);
+        AbstractUiCommandButton button = createCommandButton(label, uniqueId);
         asWidget().addFooterButton(button);
 
         // Set button element ID for better accessibility

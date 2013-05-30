@@ -1196,8 +1196,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // ==General Tab==
         nextTabIndex = generalTab.setTabIndexes(nextTabIndex);
         quotaEditor.setTabIndex(nextTabIndex++);
+        oSTypeEditor.setTabIndex(nextTabIndex++);
+        templateEditor.setTabIndex(nextTabIndex++);
+
         nameEditor.setTabIndex(nextTabIndex++);
         descriptionEditor.setTabIndex(nextTabIndex++);
+        isStatelessEditor.setTabIndex(nextTabIndex++);
+        isRunAndPauseEditor.setTabIndex(nextTabIndex++);
+        isDeleteProtectedEditor.setTabIndex(nextTabIndex++);
 
         numOfVmsEditor.setTabIndex(nextTabIndex++);
         prestartedVmsEditor.setTabIndex(nextTabIndex++);
@@ -1206,7 +1212,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         maxAssignedVmsPerUserEditor.setTabIndex(nextTabIndex++);
         editMaxAssignedVmsPerUserEditor.setTabIndex(nextTabIndex++);
 
-        templateEditor.setTabIndex(nextTabIndex++);
+        // ==System Tab==
+        nextTabIndex = systemTab.setTabIndexes(nextTabIndex);
         memSizeEditor.setTabIndex(nextTabIndex++);
         totalvCPUsEditor.setTabIndex(nextTabIndex++);
 

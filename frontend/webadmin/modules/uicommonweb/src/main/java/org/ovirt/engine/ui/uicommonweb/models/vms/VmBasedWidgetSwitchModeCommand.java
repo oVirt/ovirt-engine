@@ -6,10 +6,12 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class VmBasedWidgetSwitchModeCommand extends UICommand {
 
+    public static final String NAME = "OnAdvanced"; //$NON-NLS-1$
+
     private UnitVmModel model;
 
     public VmBasedWidgetSwitchModeCommand() {
-        super("OnAdvanced", new AdvancedButtonTarget()); //$NON-NLS-1$
+        super(NAME, new AdvancedButtonTarget());
         setIsDefault(false);
     }
 

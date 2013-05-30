@@ -1,9 +1,12 @@
 package org.ovirt.engine.ui.common.view.popup;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
+import org.ovirt.engine.ui.common.widget.LeftAlignedUiCommandButton;
 import org.ovirt.engine.ui.common.widget.popup.AbstractVmBasedPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -26,5 +29,14 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
         if (getContentWidget() instanceof AbstractVmPopupWidget) {
             ((AbstractVmPopupWidget) getContentWidget()).switchMode(isAdvanced);
         }
+    }
+
+    @Override
+    protected AbstractUiCommandButton createCommandButton(String label, String uniqueId) {
+        if (VmBasedWidgetSwitchModeCommand.NAME.equals(uniqueId)) {
+            return new LeftAlignedUiCommandButton(label);
+        }
+
+        return super.createCommandButton(label, uniqueId);
     }
 }

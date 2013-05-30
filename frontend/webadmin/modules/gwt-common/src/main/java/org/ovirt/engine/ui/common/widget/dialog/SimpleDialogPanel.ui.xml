@@ -49,7 +49,7 @@
 			position: absolute;
 			right: 16px;
 			bottom: 9px;
-			width: 95%;
+			width: 97%;
 		}
 
 		.footerButton {
