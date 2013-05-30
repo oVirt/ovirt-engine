@@ -1275,8 +1275,12 @@ def main(options):
     stopEngineService = [stopEngine]
     startEngineService = [startEngine]
     preupgradeFunc = [preupgradeUUIDCheck]
-    upgradeFunc = [rhyum.update, updateDatabaseConf, generateEngineConf,
-        setupVarPrivileges, updateHttpdConf,
+    upgradeFunc = [
+        rhyum.update,
+        generateEngineConf,
+        updateDatabaseConf,
+        setupVarPrivileges,
+        updateHttpdConf,
     ]
     postFunc = [modifyUUIDs, ca.commit, runPost, deleteEngineSysconfig]
     engineService = basedefs.ENGINE_SERVICE_NAME
