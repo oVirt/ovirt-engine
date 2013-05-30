@@ -15,6 +15,8 @@
 # limitations under the License.
 
 import os
+import sys
+import signal
 import gettext
 import socket
 import base64
@@ -158,30 +160,53 @@ class Daemon(service.Daemon):
         if record == 'False':
             record = False # translate to boolean
 
-        OvirtWebSocketProxy(
-            listen_host=self._config.getString('PROXY_HOST'),
-            listen_port=self._config.getString('PROXY_PORT'),
-            source_is_ipv6=self._config.getBoolean('SOURCE_IS_IPV6'),
-            verbose=self._config.getBoolean('LOG_VERBOSE'),
-            ticketDecoder=TicketDecoder(
-                insecure=not self._config.getBoolean(
-                    'FORCE_DATA_VERIFICATION'
+        #
+        # WORKAROUND-BEGIN
+        # set temrinate exception as
+        # the websockify library assumes interactive
+        # mode only (SIGINT).
+        # it also expect exit at the middle of procesing.
+        # so we comply.
+        def myterm(signo, frame):
+            sys.exit(0)
+        oldterm = signal.getsignal(signal.SIGTERM)
+        signal.signal(signal.SIGTERM, myterm)
+        # WORKAROUND-END
+
+        try:
+            OvirtWebSocketProxy(
+                listen_host=self._config.getString('PROXY_HOST'),
+                listen_port=self._config.getString('PROXY_PORT'),
+                source_is_ipv6=self._config.getBoolean('SOURCE_IS_IPV6'),
+                verbose=self._config.getBoolean('LOG_VERBOSE'),
+                ticketDecoder=TicketDecoder(
+                    insecure=not self._config.getBoolean(
+                        'FORCE_DATA_VERIFICATION'
+                    ),
+                    certificate=self._config.getString(
+                        'CERT_FOR_DATA_VERIFICATION'
+                    )
                 ),
-                certificate=self._config.getString(
-                    'CERT_FOR_DATA_VERIFICATION'
-                )
-            ),
-            cert=self._config.getString('SSL_CERTIFICATE'),
-            key=self._config.getString('SSL_KEY'),
-            ssl_only=self._config.getBoolean('SSL_ONLY'),
-            daemon=False,
-            record=record,
-            web=None,
-            target_host='ignore',
-            target_port='ignore',
-            wrap_mode='exit',
-            wrap_cmd=None
-        ).start_server()
+                cert=self._config.getString('SSL_CERTIFICATE'),
+                key=self._config.getString('SSL_KEY'),
+                ssl_only=self._config.getBoolean('SSL_ONLY'),
+                daemon=False,
+                record=record,
+                web=None,
+                target_host='ignore',
+                target_port='ignore',
+                wrap_mode='exit',
+                wrap_cmd=None
+            ).start_server()
+        # WORKAROUND-BEGIN
+        # websockify exit because of signals.
+        # redurect it to expected termination sequence.
+        except SystemExit:
+            self.logger.debug('SystemExit', exc_info=True)
+            raise Service.TerminateException()
+        finally:
+            signal.signal(signal.SIGTERM, oldterm)
+        # WORKAROUND-END
 
 
 if __name__ == '__main__':
