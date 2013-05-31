@@ -5,6 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
@@ -24,6 +25,14 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
     @Override
     protected BackendInternal getBackend() {
         return super.getBackend();
+    }
+
+    @Override
+    protected VDSGroup getVdsGroup() {
+        if (getGlusterHook() != null) {
+            setVdsGroupId(getGlusterHook().getClusterId());
+        }
+        return super.getVdsGroup();
     }
 
     protected GlusterHookEntity getGlusterHook() {
