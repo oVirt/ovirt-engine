@@ -162,10 +162,10 @@ class Daemon(service.Daemon):
 
         #
         # WORKAROUND-BEGIN
-        # set temrinate exception as
+        # set terminate exception as
         # the websockify library assumes interactive
         # mode only (SIGINT).
-        # it also expect exit at the middle of procesing.
+        # it also expect exit at the middle of processing.
         # so we comply.
         def myterm(signo, frame):
             sys.exit(0)
@@ -200,7 +200,7 @@ class Daemon(service.Daemon):
             ).start_server()
         # WORKAROUND-BEGIN
         # websockify exit because of signals.
-        # redurect it to expected termination sequence.
+        # redirect it to expected termination sequence.
         except SystemExit:
             self.logger.debug('SystemExit', exc_info=True)
             raise Service.TerminateException()
