@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -64,6 +63,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private final List<DiskImage> mImages = new ArrayList<DiskImage>();
     private List<PermissionSubject> permissionCheckSubject;
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
+    protected Map<Guid, List<DiskImage>> sourceImageDomainsImageMap;
     private boolean isVmInDb;
 
     /**
@@ -104,14 +104,34 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             setVm(vm);
             setStoragePoolId(getVdsGroup().getStoragePoolId());
         }
-        diskInfoDestinationMap = parameters.getDiskInfoDestinationMap();
+        updateDiskInfoDestinationMap();
+    }
+
+    protected void updateDiskInfoDestinationMap() {
+        diskInfoDestinationMap = getParameters().getDiskInfoDestinationMap();
         if (diskInfoDestinationMap == null) {
             diskInfoDestinationMap = new HashMap<Guid, DiskImage>();
+        }
+        sourceImageDomainsImageMap = new HashMap<Guid, List<DiskImage>>();
+        for (DiskImage image : mImages) {
+            MultiValueMapUtils.addToMap(image.getStorageIds().get(0), image, sourceImageDomainsImageMap);
+            if (!diskInfoDestinationMap.containsKey(image.getId())) {
+                Guid destStorageId =
+                        getParameters().getDestinationStorageDomainId() != null ? getParameters().getDestinationStorageDomainId()
+                                : image.getStorageIds().get(0);
+                ArrayList<Guid> storageIds = new ArrayList<Guid>();
+                storageIds.add(destStorageId);
+                image.setStorageIds(storageIds);
+                diskInfoDestinationMap.put(image.getId(), image);
+            }
         }
     }
 
     protected void updateVmDisks() {
         VmHandler.updateDisksFromDb(getVm());
+        for (DiskImage diskImage : getVm().getDiskList()) {
+            mImages.add(diskImage);
+        }
     }
 
     @Override
@@ -127,6 +147,29 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         default:
             return AuditLogType.USER_ADD_VM_TEMPLATE_FINISHED_FAILURE;
         }
+    }
+
+    @Override
+    protected void buildChildCommandInfos() {
+        Guid vmSnapshotId = Guid.newGuid();
+        for (DiskImage diskImage : mImages) {
+            addChildCommandInfo(diskImage.getImageId(), VdcActionType.CreateImageTemplate, buildChildCommandParameters(diskImage, vmSnapshotId));
+        }
+    }
+
+    private CreateImageTemplateParameters buildChildCommandParameters(DiskImage diskImage, Guid vmSnapshotId) {
+        CreateImageTemplateParameters createParams = new CreateImageTemplateParameters(diskImage.getImageId(),
+                getVmTemplateId(), getVmTemplateName(), getVmId());
+        createParams.setStorageDomainId(diskImage.getStorageIds().get(0));
+        createParams.setVmSnapshotId(vmSnapshotId);
+        createParams.setEntityId(getParameters().getEntityId());
+        createParams.setDestinationStorageDomainId(diskInfoDestinationMap.get(diskImage.getId())
+                .getStorageIds()
+                .get(0));
+        createParams.setDiskAlias(diskInfoDestinationMap.get(diskImage.getId()).getDiskAlias());
+        createParams.setParentParameters(getParameters());
+        createParams.setQuotaId(getQuotaIdForDisk(diskImage));
+        return createParams;
     }
 
     @Override
@@ -196,9 +239,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_IS_NOT_VALID);
             return false;
         }
-        for (DiskImage diskImage : getVm().getDiskList()) {
-            mImages.add(diskImage);
-        }
         if (!VmHandler.isMemorySizeLegal(getParameters().getMasterVm().getOsId(),
                 getParameters().getMasterVm().getMemSizeMb(),
                 getReturnValue().getCanDoActionMessages(), getVdsGroup().getcompatibility_version())) {
@@ -241,20 +281,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
             if (!validateVmNotDuringSnapshot()) {
                 return false;
-            }
-
-            Map<Guid, List<DiskImage>> sourceImageDomainsImageMap = new HashMap<Guid, List<DiskImage>>();
-            for (DiskImage image : mImages) {
-                MultiValueMapUtils.addToMap(image.getStorageIds().get(0), image, sourceImageDomainsImageMap);
-                if (!diskInfoDestinationMap.containsKey(image.getId())) {
-                    Guid destStorageId =
-                            getParameters().getDestinationStorageDomainId() != null ? getParameters().getDestinationStorageDomainId()
-                                    : image.getStorageIds().get(0);
-                    ArrayList<Guid> storageIds = new ArrayList<Guid>();
-                    storageIds.add(destStorageId);
-                    image.setStorageIds(storageIds);
-                    diskInfoDestinationMap.put(image.getId(), image);
-                }
             }
 
             if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
@@ -407,24 +433,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
     protected void AddVmTemplateImages() {
         Guid vmSnapshotId = Guid.newGuid();
-
         for (DiskImage diskImage : mImages) {
-            CreateImageTemplateParameters createParams = new CreateImageTemplateParameters(diskImage.getImageId(),
-                    getVmTemplateId(), getVmTemplateName(), getVmId());
-            createParams.setStorageDomainId(diskImage.getStorageIds().get(0));
-            createParams.setVmSnapshotId(vmSnapshotId);
-            createParams.setEntityId(getParameters().getEntityId());
-            createParams.setDestinationStorageDomainId(diskInfoDestinationMap.get(diskImage.getId())
-                    .getStorageIds()
-                    .get(0));
-            createParams.setDiskAlias(diskInfoDestinationMap.get(diskImage.getId()).getDiskAlias());
-            createParams.setParentParameters(getParameters());
-            createParams.setQuotaId(getQuotaIdForDisk(diskImage));
             // The return value of this action is the 'copyImage' task GUID:
-            VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(
-                    VdcActionType.CreateImageTemplate,
-                    createParams,
-                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            VdcReturnValueBase retValue = executeChildCommand(diskImage.getImageId());
 
             if (!retValue.getSucceeded()) {
                 throw new VdcBLLException(retValue.getFault().getError(), retValue.getFault().getMessage());

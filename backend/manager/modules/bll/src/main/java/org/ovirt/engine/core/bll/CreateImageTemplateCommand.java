@@ -31,6 +31,11 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
     }
 
     @Override
+    protected void insertAsyncTaskPlaceHolders() {
+        persistAsyncTaskPlaceHolder(VdcActionType.AddVmTemplate);
+    }
+
+    @Override
     protected void executeCommand() {
         Guid storagePoolId = getDiskImage().getStoragePoolId() != null ? getDiskImage().getStoragePoolId()
                 : Guid.Empty;
@@ -47,7 +52,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         DiskImage newImage = cloneDiskImage(getDestinationImageId());
         fillVolumeInformation(newImage);
 
-        Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.AddVmTemplate);
+        Guid taskId = getAsyncTaskId();
 
         VDSReturnValue vdsReturnValue = Backend
                 .getInstance()
