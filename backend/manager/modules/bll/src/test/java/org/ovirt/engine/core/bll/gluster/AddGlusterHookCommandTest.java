@@ -39,7 +39,7 @@ import org.ovirt.engine.core.dao.VdsDAO;
 
 
 @RunWith(MockitoJUnitRunner.class)
-public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGlusterHookCommand> {
+public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGlusterHookCommand<GlusterHookManageParameters>> {
     /**
      * The command under test.
      */

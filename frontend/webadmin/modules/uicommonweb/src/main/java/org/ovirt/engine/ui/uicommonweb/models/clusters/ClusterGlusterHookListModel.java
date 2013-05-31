@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.gluster.GlusterHookStatusChangeParameters;
+import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
@@ -82,7 +82,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (Object item : getSelectedItems()) {
             GlusterHookEntity hook = (GlusterHookEntity) item;
-            list.add(new GlusterHookStatusChangeParameters(getEntity().getId(), hook.getId()));
+            list.add(new GlusterHookParameters(hook.getId()));
         }
         Frontend.RunMultipleAction(VdcActionType.EnableGlusterHook, list, null, null);
     }
@@ -134,7 +134,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
 
         for (Object item : getSelectedItems()) {
             GlusterHookEntity hook = (GlusterHookEntity) item;
-            list.add(new GlusterHookStatusChangeParameters(getEntity().getId(), hook.getId()));
+            list.add(new GlusterHookParameters(hook.getId()));
         }
 
         model.startProgress(null);

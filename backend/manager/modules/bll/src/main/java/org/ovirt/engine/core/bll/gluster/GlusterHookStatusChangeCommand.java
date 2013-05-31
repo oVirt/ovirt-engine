@@ -9,16 +9,14 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.common.action.gluster.GlusterHookStatusChangeParameters;
+import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcBllMessages;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
@@ -27,12 +25,20 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
  */
 @NonTransactiveCommandAttribute
 @LockIdNameAttribute(isWait = true)
-public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandBase<GlusterHookStatusChangeParameters> {
+public abstract class GlusterHookStatusChangeCommand<T extends GlusterHookParameters> extends GlusterHookCommandBase<T> {
     protected List<String> errors = new ArrayList<String>();
 
-    public GlusterHookStatusChangeCommand(GlusterHookStatusChangeParameters params) {
+    private List<VDS> upServers = null;
+
+    public GlusterHookStatusChangeCommand(T params) {
         super(params);
-        setVdsGroupId(params.getClusterId());
+     }
+
+    private List<VDS> getAllUpServers() {
+        if (upServers == null) {
+            upServers = getAllUpServers(getGlusterHook().getClusterId());
+        }
+        return upServers;
     }
 
     @Override
@@ -40,13 +46,8 @@ public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandB
         if (!super.canDoAction()) {
             return false;
         }
-        if (getParameters().getClusterId() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID);
-            return false;
-        }
 
-        List <VDS> servers = getAllUpServers(getParameters().getClusterId());
-        if (servers == null || servers.isEmpty()) {
+        if (getAllUpServers() == null || getAllUpServers().isEmpty()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
             return false;
         }
@@ -58,15 +59,13 @@ public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandB
     protected void executeCommand() {
         entity = getGlusterHook();
         addCustomValue(GlusterConstants.HOOK_NAME, entity.getName());
-        List <VDS> servers = getAllUpServers(getParameters().getClusterId());
-        List<GlusterServerHook> serverHooks = entity.getServerHooks();
 
-        if (servers.size() < getClusterUtils().getServerCount(getParameters().getClusterId())) {
+        if (getAllUpServers().size() < getClusterUtils().getServerCount(getGlusterHook().getClusterId())) {
             errors.add(VdcBllMessages.CLUSTER_ALL_SERVERS_NOT_UP.toString());
         }
 
         List<Callable<Pair<VDS, VDSReturnValue>>> taskList = new ArrayList<Callable<Pair<VDS, VDSReturnValue>>>();
-        for (final VDS upServer : servers) {
+        for (final VDS upServer : getAllUpServers()) {
             taskList.add(new Callable<Pair<VDS, VDSReturnValue>>() {
                 @Override
                 public Pair<VDS, VDSReturnValue> call() throws Exception {
@@ -89,7 +88,7 @@ public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandB
             if (retValue.getSucceeded() ) {
                 atLeastOneSuccess = true;
                 // update status in database
-                addOrUpdateServerHook(serverHooks, pairResult);
+                updateServerHookStatusInDb(getGlusterHook().getId(), pairResult.getFirst().getId(), getNewStatus());
             } else {
                 errors.add(retValue.getVdsError().getMessage());
              }
@@ -107,37 +106,16 @@ public abstract class GlusterHookStatusChangeCommand extends GlusterHookCommandB
         //The intention was to enable/disable hook. So we update the entity with new status if command succeeded
         if (getSucceeded()) {
             entity.setStatus(getNewStatus());
+            //no longer conflicts as all hooks have same status
+            entity.removeStatusConflict();
             updateHookInDb(entity);
-        }
-
-    }
-
-    private void addOrUpdateServerHook(List<GlusterServerHook> serverHooks, Pair<VDS, VDSReturnValue> pairResult) {
-        if (getServerHookFromList(serverHooks, pairResult.getFirst().getId()) == null) {
-           // if a new server has been detected, the hook entry needs to be added
-            addServerHook(pairResult.getFirst().getId());
-        } else {
-            updateServerHookStatusInDb(getGlusterHook().getId(), pairResult.getFirst().getId(), getNewStatus());
-        }
-    }
-
-    private void addServerHook(Guid serverId) {
-        GlusterServerHook newServerHook = new GlusterServerHook();
-        newServerHook.setHookId(getGlusterHook().getId());
-        newServerHook.setStatus(getNewStatus());
-        newServerHook.setServerId(serverId);
-        addServerHookInDb(newServerHook);
-    }
-
-    private GlusterServerHook getServerHookFromList(List<GlusterServerHook> serverHooks, Guid serverId) {
-        for (GlusterServerHook serverHook: serverHooks) {
-            if (serverHook.getServerId().equals(serverId)) {
-                return serverHook;
+            if (entity.getConflictStatus() == 0) {
+                //all conflicts have been resolved, remove server hooks
+                getGlusterHooksDao().removeGlusterServerHooks(entity.getId());
             }
         }
-        return null;
-    }
 
+    }
 
     @Override
     public Map<String, String> getJobMessageProperties() {

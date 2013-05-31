@@ -12,6 +12,7 @@ import org.junit.ClassRule;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -31,7 +32,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 
-public class GlusterHookCommandTest<T extends GlusterHookCommandBase> {
+public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends GlusterHookParameters>> {
 
     protected static final Guid[] GUIDS = {Guid.createGuidFromString("afce7a39-8e8c-4819-ba9c-796d316592e6"),
                                              Guid.createGuidFromString("afce7a39-8e8c-4819-ba9c-796d316592e7"),
