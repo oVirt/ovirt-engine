@@ -694,6 +694,33 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("No. Of Volumes Down")
     String clusterVolumesDownLabel();
 
+    @DefaultStringValue("Gluster Swift Status: ")
+    String clusterGlusterSwiftLabel();
+
+    @DefaultStringValue("Manage")
+    String clusterGlusterSwiftManageLabel();
+
+    @DefaultStringValue("Start")
+    String startGlusterSwift();
+
+    @DefaultStringValue("Stop")
+    String stopGlusterSwift();
+
+    @DefaultStringValue("Restart")
+    String restartGlusterSwift();
+
+    @DefaultStringValue("Manage swift on individual servers")
+    String manageServerLevelGlusterSwift();
+
+    @DefaultStringValue("Server")
+    String hostGlusterSwift();
+
+    @DefaultStringValue("Service")
+    String serviceNameGlusterSwift();
+
+    @DefaultStringValue("Status")
+    String serviceStatusGlusterSwift();
+
     @DefaultStringValue("Policy:")
     String clusterPolicyPolicyLabel();
 

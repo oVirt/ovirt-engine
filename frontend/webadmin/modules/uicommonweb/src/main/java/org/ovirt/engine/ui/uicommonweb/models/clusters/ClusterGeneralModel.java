@@ -1,21 +1,29 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.gluster.GlusterServiceParameters;
 import org.ovirt.engine.core.common.action.gluster.RemoveGlusterServerParameters;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -27,7 +35,9 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.DetachGlusterHostsModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostDetailModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MultipleHostsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -62,6 +72,26 @@ public class ClusterGeneralModel extends EntityModel {
 
     public void setNoOfVolumesDown(Integer noOfVolumesDown) {
         this.noOfVolumesDown = noOfVolumesDown;
+    }
+
+    private GlusterServiceStatus glusterSwiftStatus;
+
+    public GlusterServiceStatus getGlusterSwiftStatus() {
+        return glusterSwiftStatus;
+    }
+
+    public void setGlusterSwiftStatus(GlusterServiceStatus glusterSwiftStatus) {
+        this.glusterSwiftStatus = glusterSwiftStatus;
+    }
+
+    private UICommand manageGlusterSwiftCommand;
+
+    public UICommand getManageGlusterSwiftCommand() {
+        return manageGlusterSwiftCommand;
+    }
+
+    public void setManageGlusterSwiftCommand(UICommand manageGlusterSwiftCommand) {
+        this.manageGlusterSwiftCommand = manageGlusterSwiftCommand;
     }
 
     private boolean hasAnyAlert;
@@ -161,10 +191,14 @@ public class ClusterGeneralModel extends EntityModel {
         setNoOfVolumesTotal(0);
         setNoOfVolumesUp(0);
         setNoOfVolumesDown(0);
+        setGlusterSwiftStatus(GlusterServiceStatus.UNKNOWN);
 
         setConsoleAddressPartiallyOverridden(false);
+        setManageGlusterSwiftCommand(new UICommand("ManageGlusterSwift", this)); //$NON-NLS-1$
         setImportNewGlusterHostsCommand(new UICommand("ImportGlusterHosts", this)); //$NON-NLS-1$
         setDetachNewGlusterHostsCommand(new UICommand("DetachGlusterHosts", this)); //$NON-NLS-1$
+
+        getManageGlusterSwiftCommand().setIsExecutionAllowed(false);
     }
 
     @Override
@@ -174,7 +208,7 @@ public class ClusterGeneralModel extends EntityModel {
 
         if (getEntity() != null)
         {
-            updateVolumeDetails();
+            updateGlusterDetails();
             updateAlerts();
             updateConsoleAddressPartiallyOverridden(getEntity());
             updateProperties();
@@ -212,6 +246,171 @@ public class ClusterGeneralModel extends EntityModel {
                 new IdQueryParameters(cluster.getId()),
                 query
                 );
+    }
+
+    private void manageGlusterSwiftServices() {
+        if (getWindow() != null || getEntity() == null) {
+            return;
+        }
+
+        VDSGroup cluster = getEntity();
+        ManageGlusterSwiftModel glusterSwiftModel = new ManageGlusterSwiftModel();
+        glusterSwiftModel.setTitle(ConstantsManager.getInstance().getConstants().manageGlusterSwiftTitle());
+        glusterSwiftModel.setHashName("manage_gluster_swift"); //$NON-NLS-1$
+        setWindow(glusterSwiftModel);
+
+        glusterSwiftModel.startProgress(null);
+        glusterSwiftModel.getSwiftStatus().setEntity(getGlusterSwiftStatus());
+        glusterSwiftModel.getStartSwift().setIsChangable(getGlusterSwiftStatus() == GlusterServiceStatus.STOPPED
+                || getGlusterSwiftStatus() == GlusterServiceStatus.MIXED
+                || getGlusterSwiftStatus() == GlusterServiceStatus.UNKNOWN);
+        glusterSwiftModel.getStopSwift().setIsChangable(getGlusterSwiftStatus() == GlusterServiceStatus.RUNNING
+                || getGlusterSwiftStatus() == GlusterServiceStatus.MIXED
+                || getGlusterSwiftStatus() == GlusterServiceStatus.UNKNOWN);
+        glusterSwiftModel.getRestartSwift().setIsChangable(getGlusterSwiftStatus() == GlusterServiceStatus.RUNNING
+                || getGlusterSwiftStatus() == GlusterServiceStatus.STOPPED
+                || getGlusterSwiftStatus() == GlusterServiceStatus.MIXED
+                || getGlusterSwiftStatus() == GlusterServiceStatus.UNKNOWN);
+
+        AsyncDataProvider.getGlusterSwiftServerServices(new AsyncQuery(glusterSwiftModel, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                ManageGlusterSwiftModel innerGlusterSwiftModel = (ManageGlusterSwiftModel) model;
+                List<GlusterSwiftServiceModel> serviceList =
+                        getGroupedGlusterSwiftServices((List<GlusterServerService>) returnValue);
+                innerGlusterSwiftModel.getHostServicesList().setItems(serviceList);
+
+                innerGlusterSwiftModel.stopProgress();
+
+                UICommand command = new UICommand("OnManageGlusterSwift", ClusterGeneralModel.this); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                command.setIsDefault(true);
+                innerGlusterSwiftModel.getCommands().add(command);
+
+                command = new UICommand("Cancel", ClusterGeneralModel.this); //$NON-NLS-1$
+                command.setTitle(ConstantsManager.getInstance().getConstants().close());
+                command.setIsCancel(true);
+                innerGlusterSwiftModel.getCommands().add(command);
+            }
+        }), cluster.getId());
+    }
+
+    private List<GlusterSwiftServiceModel> getGroupedGlusterSwiftServices(List<GlusterServerService> serviceList) {
+        Map<Guid, GlusterSwiftServiceModel> serverSwiftMap = new HashMap<Guid, GlusterSwiftServiceModel>();
+        for (GlusterServerService service : serviceList) {
+            GlusterSwiftServiceModel serverSwiftModel = serverSwiftMap.get(service.getServerId());
+            if (serverSwiftModel == null) {
+                GlusterServerService serverSwift = new GlusterServerService();
+                serverSwift.setHostName(service.getHostName());
+                serverSwift.setServerId(service.getServerId());
+                serverSwift.setServiceType(ServiceType.GLUSTER_SWIFT);
+                serverSwift.setStatus(service.getStatus());
+                serverSwiftModel = new GlusterSwiftServiceModel(service);
+                serverSwiftMap.put(service.getServerId(), serverSwiftModel);
+            }
+            serverSwiftModel.getInternalServiceList().add(service);
+        }
+        return new ArrayList<GlusterSwiftServiceModel>(serverSwiftMap.values());
+    }
+
+    private void onManageGlusterSwiftServices() {
+        if (getWindow() == null) {
+            return;
+        }
+
+        ManageGlusterSwiftModel glusterSwiftModel = (ManageGlusterSwiftModel) getWindow();
+        glusterSwiftModel.startProgress(null);
+        if ((Boolean) glusterSwiftModel.getIsManageServerLevel().getEntity()) {
+            ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>();
+            for (Object model : glusterSwiftModel.getHostServicesList().getItems()) {
+                GlusterSwiftServiceModel swiftServiceModel = (GlusterSwiftServiceModel) model;
+                GlusterSwiftAction action =
+                        getGlusterSwiftAction(swiftServiceModel.getEntity().getStatus(),
+                                (Boolean) swiftServiceModel.getStartSwift().getEntity(),
+                                (Boolean) swiftServiceModel.getStopSwift().getEntity(),
+                                (Boolean) swiftServiceModel.getRestartSwift().getEntity());
+                if (action != null) {
+                    GlusterServiceParameters parameters =
+                            new GlusterServiceParameters(getEntity().getId(),
+                                    swiftServiceModel.getEntity().getServerId(),
+                                    ServiceType.GLUSTER_SWIFT,
+                                    action.name().toLowerCase());
+                    parametersList.add(parameters);
+                }
+            }
+            if (!parametersList.isEmpty()) {
+                Frontend.RunMultipleAction(VdcActionType.ManageGlusterService,
+                        parametersList,
+                        true,
+                        new IFrontendMultipleActionAsyncCallback() {
+                            @Override
+                            public void executed(FrontendMultipleActionAsyncResult result) {
+                                ManageGlusterSwiftModel innerGlusterSwiftModel = (ManageGlusterSwiftModel) result.getState();
+                                innerGlusterSwiftModel.stopProgress();
+                                for (VdcReturnValueBase returnValueBase : result.getReturnValue()) {
+                                }
+                                cancel();
+                                updateGlusterDetails();
+                            }
+                        },
+                        glusterSwiftModel);
+            }
+            else {
+                glusterSwiftModel.stopProgress();
+                glusterSwiftModel.setMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .noActionSelectedManageGlusterSwift());
+            }
+        }
+        else {
+            GlusterServiceStatus swiftStatus = (GlusterServiceStatus) glusterSwiftModel.getSwiftStatus().getEntity();
+            GlusterSwiftAction action =
+                    getGlusterSwiftAction(swiftStatus,
+                            (Boolean) glusterSwiftModel.getStartSwift().getEntity(),
+                            (Boolean) glusterSwiftModel.getStopSwift().getEntity(),
+                            (Boolean) glusterSwiftModel.getRestartSwift().getEntity());
+            if (action != null) {
+                GlusterServiceParameters parameters =
+                        new GlusterServiceParameters(getEntity().getId(),
+                                null,
+                                ServiceType.GLUSTER_SWIFT,
+                                action.name().toLowerCase());
+                Frontend.RunAction(VdcActionType.ManageGlusterService, parameters, new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        ManageGlusterSwiftModel innerGlusterSwiftModel = (ManageGlusterSwiftModel) result.getState();
+                        innerGlusterSwiftModel.stopProgress();
+                        if (result.getReturnValue().getSucceeded()) {
+                            cancel();
+                            updateGlusterDetails();
+                        }
+                    }
+                }, glusterSwiftModel);
+            }
+            else {
+                glusterSwiftModel.stopProgress();
+                glusterSwiftModel.setMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .noActionSelectedManageGlusterSwift());
+            }
+        }
+    }
+
+    private GlusterSwiftAction getGlusterSwiftAction(GlusterServiceStatus currentStatus,
+            boolean isStart,
+            boolean isStop,
+            boolean isRestart) {
+        GlusterSwiftAction action = null;
+        if (isStart) {
+            action = GlusterSwiftAction.START;
+        }
+        else if (isStop) {
+            action = GlusterSwiftAction.STOP;
+        }
+        else if (isRestart) {
+            action = GlusterSwiftAction.RESTART;
+        }
+        return action;
     }
 
     public void fetchAndImportNewGlusterHosts() {
@@ -408,7 +607,7 @@ public class ClusterGeneralModel extends EntityModel {
     }
 
 
-    private void updateVolumeDetails()
+    private void updateGlusterDetails()
     {
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -436,6 +635,21 @@ public class ClusterGeneralModel extends EntityModel {
             }
         };
         AsyncDataProvider.getVolumeList(_asyncQuery, getEntity().getname());
+
+        getManageGlusterSwiftCommand().setIsExecutionAllowed(getGlusterSwiftStatus() != GlusterServiceStatus.NOT_AVAILABLE);
+
+        AsyncDataProvider.getClusterGlusterSwiftService(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                GlusterClusterService swiftService = (GlusterClusterService) returnValue;
+                if(swiftService != null) {
+                    setGlusterSwiftStatus(swiftService.getStatus());
+                }
+                else {
+                    setGlusterSwiftStatus(GlusterServiceStatus.UNKNOWN);
+                }
+            }
+        }), getEntity().getId());
     }
 
     private void updateAlerts()
@@ -476,7 +690,11 @@ public class ClusterGeneralModel extends EntityModel {
     {
         super.executeCommand(command);
 
-        if (command == getImportNewGlusterHostsCommand())
+        if (command == getManageGlusterSwiftCommand())
+        {
+            manageGlusterSwiftServices();
+        }
+        else if (command == getImportNewGlusterHostsCommand())
         {
             fetchAndImportNewGlusterHosts();
         }
@@ -491,6 +709,10 @@ public class ClusterGeneralModel extends EntityModel {
         else if (StringHelper.stringsEqual(command.getName(), "OnDetachGlusterHosts")) //$NON-NLS-1$
         {
             onDetachNewGlusterHosts();
+        }
+        else if (StringHelper.stringsEqual(command.getName(), "OnManageGlusterSwift")) //$NON-NLS-1$
+        {
+            onManageGlusterSwiftServices();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {
@@ -581,5 +803,11 @@ public class ClusterGeneralModel extends EntityModel {
 
     public static enum ClusterType {
         GLUSTER, VIRT, BOTH
+    }
+
+    public static enum GlusterSwiftAction {
+        START,
+        STOP,
+        RESTART
     }
 }

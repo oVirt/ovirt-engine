@@ -36,6 +36,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.Cluster
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookContentPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookResolveConflictsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ManageGlusterSwiftPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.NewClusterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.DetachGlusterHostsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
@@ -101,7 +102,8 @@ public class ClusterModule extends AbstractGinModule {
     @Singleton
     public DetailModelProvider<ClusterListModel, ClusterGeneralModel> getClusterGeneralProvider(ClientGinjector ginjector,
             final Provider<MultipleHostsPopupPresenterWidget> multipleHostsProvider,
-            final Provider<DetachGlusterHostsPopupPresenterWidget> detachHostsProvider) {
+            final Provider<DetachGlusterHostsPopupPresenterWidget> detachHostsProvider,
+            final Provider<ManageGlusterSwiftPopupPresenterWidget> manageGlusterSwiftProvider) {
         return new DetailTabModelProvider<ClusterListModel, ClusterGeneralModel>(ginjector,
                 ClusterListModel.class,
                 ClusterGeneralModel.class) {
@@ -110,8 +112,12 @@ public class ClusterModule extends AbstractGinModule {
                     UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand == getModel().getImportNewGlusterHostsCommand()) {
                     return multipleHostsProvider.get();
-                } else if (lastExecutedCommand == getModel().getDetachNewGlusterHostsCommand()) {
+                }
+                else if (lastExecutedCommand == getModel().getDetachNewGlusterHostsCommand()) {
                     return detachHostsProvider.get();
+                }
+                else if (lastExecutedCommand == getModel().getManageGlusterSwiftCommand()) {
+                    return manageGlusterSwiftProvider.get();
                 }
                 else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);

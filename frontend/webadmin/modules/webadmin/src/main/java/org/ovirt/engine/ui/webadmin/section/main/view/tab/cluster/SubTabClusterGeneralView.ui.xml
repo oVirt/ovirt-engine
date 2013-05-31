@@ -3,11 +3,12 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form"
 	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-	xmlns:c="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster">
+	xmlns:c="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-	<ui:style>
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterGeneralView.WidgetStyle">
 		@external alertsPanel;
 		.alertsPanel {
 			padding-top: 5px;
@@ -18,10 +19,24 @@
 			color: black;
 			text-decoration: underline;
 		}
+		.glusterSwiftPanel {
+			padding-left: 15px;
+			padding-top: 15px;
+		}
+		.glusterSwiftStatus{
+			width: 120px;
+		}
+		.manageGlusterSwift{
+			padding-top: 5px;
+		}
 	</ui:style>
 
 	<g:FlowPanel>
 		<c:ClusterGeneralModelForm ui:field="form"/>
+		<g:HorizontalPanel ui:field="glusterSwiftPanel" addStyleNames="{style.glusterSwiftPanel}">
+			<e:EntityModelLabelEditor ui:field="glusterSwiftStatusEditor"/>
+			<w:UiCommandButton ui:field="manageGlusterSwiftButton" addStyleNames="{style.manageGlusterSwift}"/>
+		</g:HorizontalPanel>
 		<g:HTMLPanel ui:field="alertsPanel" addStyleNames="{style.alertsPanel}">
 			<div>
 				<b>

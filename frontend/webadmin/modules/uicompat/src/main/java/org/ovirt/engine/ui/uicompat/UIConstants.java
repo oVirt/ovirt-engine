@@ -1742,6 +1742,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Fingerprint needs to be verified before importing the gluster configuration")
     String fingerprintNotVerified();
 
+    // Gluster Swift
+    @DefaultStringValue("Manage Gluster Swift")
+    String manageGlusterSwiftTitle();
+
     @DefaultStringValue("Unable to fetch the gluster hosts. Please try again")
     String emptyGlusterHosts();
 
@@ -1891,4 +1895,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     // Gluster Hook
     @DefaultStringValue("Please select a resolve action to continue")
     String noResolveActionSelectedGlusterHook();
+
+    @DefaultStringValue("Please select an action to continue")
+    String noActionSelectedManageGlusterSwift();
 }
