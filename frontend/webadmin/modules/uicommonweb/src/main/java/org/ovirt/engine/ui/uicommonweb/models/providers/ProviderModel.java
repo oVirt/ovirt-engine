@@ -45,9 +45,9 @@ public class ProviderModel extends Model {
     private static final String CMD_CANCEL_IMPORT = "CancelImport"; //$NON-NLS-1$
     private static final String EMPTY_ERROR_MESSAGE = ""; //$NON-NLS-1$
 
-    private final ListModel sourceListModel;
+    protected final ListModel sourceListModel;
     private final VdcActionType action;
-    private final Provider provider;
+    protected final Provider provider;
 
     private EntityModel name = new EntityModel();
     private ListModel type = new ListModel();
@@ -215,14 +215,21 @@ public class ProviderModel extends Model {
         }
     }
 
+    protected void preSave() {
+        actualSave();
+    }
+
+    protected void actualSave() {
+        flush();
+        Frontend.RunAction(action, new ProviderParameters(provider));
+        cancel();
+    }
+
     private void onSave() {
         if (!validate()) {
             return;
         }
-
-        flush();
-        Frontend.RunAction(action, new ProviderParameters(provider));
-        cancel();
+        preSave();
     }
 
     private void onTest() {

@@ -1907,6 +1907,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Provider(s)")
     String providersMsg();
 
+    @DefaultStringValue("Change Provider URL")
+    String providerUrlWarningTitle();
+
     @DefaultStringValue("Discover Networks")
     String discoverNetworksTitle();
 

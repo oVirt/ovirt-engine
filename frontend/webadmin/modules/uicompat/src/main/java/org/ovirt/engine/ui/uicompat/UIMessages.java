@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.uicompat;
 import java.util.Date;
 import java.util.List;
 
+import com.google.gwt.i18n.client.Constants.DefaultStringValue;
+
 public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("One of the parameters isn''t supported (available parameter(s): {0})")
@@ -263,6 +265,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Given URL contains invalid scheme ''{0}'', only the following schemes are allowed:\n\n{1}")
     String urlSchemeInvalidScheme(String passedScheme, String allowedSchemes);
+
+    @DefaultMessage("Changing the URL of this provider might hurt the proper functioning of the following entities provided by it.\n\n{0}")
+    String providerUrlWarningText(String providedEntities);
 
     // Vnic
     @DefaultMessage("Hot Plug is not supported on cluster version {0}")
