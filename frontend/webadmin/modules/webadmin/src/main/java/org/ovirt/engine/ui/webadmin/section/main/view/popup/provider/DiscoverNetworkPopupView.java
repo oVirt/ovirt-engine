@@ -3,14 +3,13 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.provider;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.ListModelListBoxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -27,7 +26,6 @@ import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -44,47 +42,20 @@ public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<Discov
     }
 
     @UiField(provided = true)
-    @Path(value = "dataCenters.selectedItem")
-    @WithElementId("dataCenter")
-    public ListModelListBoxEditor<Object> dataCenterEditor;
-
-    @UiField(provided = true)
     @Ignore
     public final EntityModelCellTable<ListModel> networksTable;
 
-    @UiField
-    public WidgetStyle style;
+    private ListModelListBoxColumn<EntityModel, StoragePool> dcColumn;
 
     @Inject
     public DiscoverNetworkPopupView(EventBus eventBus, ApplicationResources resources,
             ApplicationConstants constants, ApplicationTemplates templates) {
         super(eventBus, resources);
         // Initialize Editors
-        dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((StoragePool) object).getName();
-            }
-        });
         this.networksTable = new EntityModelCellTable<ListModel>(SelectionMode.NONE, true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTable(constants, templates);
-        localize(constants);
-        addStyles();
         driver.initialize(this);
-    }
-
-    private void addStyles() {
-        dataCenterEditor.addWrapperStyleName(style.dcEditor());
-    }
-
-    protected void localize(ApplicationConstants constants) {
-        dataCenterEditor.setLabel(constants.networkPopupDataCenterLabel());
-    }
-
-    @Override
-    public void focusInput() {
-        dataCenterEditor.setFocus(true);
     }
 
     @SuppressWarnings("unchecked")
@@ -129,6 +100,7 @@ public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<Discov
             public void update(int index, EntityModel model, Boolean value) {
                 ExternalNetwork externalNetwork = (ExternalNetwork) model;
                 externalNetwork.setAttached(value);
+                externalNetwork.getDataCenters().setIsChangable(value);
                 refreshNetworksTable();
             }
         }) {
@@ -149,6 +121,20 @@ public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<Discov
             }
 
         }, assignAllHeader, "80px"); //$NON-NLS-1$
+
+        dcColumn = new ListModelListBoxColumn<EntityModel, StoragePool>(new NullSafeRenderer<StoragePool>() {
+            @Override
+            public String renderNullSafe(StoragePool dc) {
+                return dc.getName();
+            }
+        })
+        {
+            @Override
+            public ListModel getValue(EntityModel network) {
+                return ((ExternalNetwork) network).getDataCenters();
+            }
+        };
+        networksTable.addColumn(dcColumn);
 
         networksTable.addEntityModelColumn(new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -218,22 +204,15 @@ public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<Discov
     }
 
     @Override
-    public void edit(DiscoverNetworksModel object) {
-        driver.edit(object);
+    public void edit(DiscoverNetworksModel model) {
+        networksTable.edit(model.getNetworkList());
+        dcColumn.edit(model.getDataCenters());
+        driver.edit(model);
     }
 
     @Override
     public DiscoverNetworksModel flush() {
         return driver.flush();
-    }
-
-    @Override
-    public void setNetworkList(ListModel networkList) {
-        networksTable.edit(networkList);
-    }
-
-    interface WidgetStyle extends CssResource {
-        String dcEditor();
     }
 
 }

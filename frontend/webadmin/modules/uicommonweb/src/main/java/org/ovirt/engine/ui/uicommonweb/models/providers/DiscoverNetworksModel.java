@@ -73,6 +73,10 @@ public class DiscoverNetworksModel extends Model {
                     ExternalNetwork externalNetwork = new ExternalNetwork();
                     externalNetwork.setNetwork(network);
                     externalNetwork.setAttached(false);
+                    externalNetwork.getDataCenters().setIsChangable(false);
+                    Iterable<StoragePool> dcList = getDataCenters().getItems();
+                    externalNetwork.getDataCenters().setItems(dcList);
+                    externalNetwork.getDataCenters().setSelectedItem(Linq.firstOrDefault(dcList));
                     externalNetwork.setPublicUse(false);
                     items.add(externalNetwork);
                 }
@@ -110,10 +114,10 @@ public class DiscoverNetworksModel extends Model {
     public void onDiscover() {
         ArrayList<VdcActionParametersBase> mulipleActionParameters =
                 new ArrayList<VdcActionParametersBase>();
-        Guid dcId = ((StoragePool) (getDataCenters().getSelectedItem())).getId();
 
         for (ExternalNetwork externalNetwork : (Iterable<ExternalNetwork>) getNetworkList().getItems()) {
             if (externalNetwork.isAttached()) {
+                Guid dcId = ((StoragePool) externalNetwork.getDataCenters().getSelectedItem()).getId();
                 externalNetwork.getNetwork().setDataCenterId(dcId);
                 AddNetworkStoragePoolParameters params =
                         new AddNetworkStoragePoolParameters(dcId, externalNetwork.getNetwork());

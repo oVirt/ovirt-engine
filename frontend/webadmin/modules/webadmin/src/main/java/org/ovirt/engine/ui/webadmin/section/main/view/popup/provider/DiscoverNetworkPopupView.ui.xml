@@ -6,29 +6,11 @@
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.DiscoverNetworkPopupView.WidgetStyle">
-		.indent {
-			padding-left: 8px;
-			width: 100%;
-		}
-
-		.dcEditor {
-			width: 340px;
-		}
-	</ui:style>
-
-	<d:SimpleDialogPanel ui:field="mainPanel" width="570px" height="520px">
+	<d:SimpleDialogPanel ui:field="mainPanel" width="620px" height="520px">
 		<d:content>
-		    <g:VerticalPanel>
-				<e:ListModelListBoxEditor ui:field="dataCenterEditor"/>
-				<g:VerticalPanel>
-					<g:HTMLPanel addStyleNames="{style.indent}">
-						<g:ScrollPanel height="160px" width="100%">
-							<e:EntityModelCellTable ui:field="networksTable" />
-						</g:ScrollPanel>
-					</g:HTMLPanel>
-				</g:VerticalPanel>
-		    </g:VerticalPanel>
+			<g:ScrollPanel>
+				<e:EntityModelCellTable ui:field="networksTable" />
+			</g:ScrollPanel>
 		</d:content>
 	</d:SimpleDialogPanel>
 
