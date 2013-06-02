@@ -35,7 +35,7 @@ public class BackendVmDisksResource
         extends AbstractBackendDevicesResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>
         implements VmDisksResource {
 
-    public static final String[] SUB_COLLECTIONS = {"permissions", "statistics"};
+    protected static final String[] SUB_COLLECTIONS = {"permissions", "statistics"};
 
     public BackendVmDisksResource(Guid parentId,
                                 VdcQueryType queryType,

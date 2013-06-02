@@ -29,7 +29,7 @@ public class ADUserContextMapper implements ContextMapper {
 
     private static Log log = LogFactory.getLog(LdapBrokerImpl.class);
 
-    public final static String[] USERS_ATTRIBUTE_FILTER = { objectguid.name(), userprincipalname.name(),
+    protected final static String[] USERS_ATTRIBUTE_FILTER = { objectguid.name(), userprincipalname.name(),
         givenname.name(), department.name(), title.name(), mail.name(), memberof.name(),
         sn.name() };
 

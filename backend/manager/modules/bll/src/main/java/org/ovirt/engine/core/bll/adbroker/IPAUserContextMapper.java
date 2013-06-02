@@ -29,7 +29,7 @@ public class IPAUserContextMapper implements ContextMapper {
 
     private static Log log = LogFactory.getLog(LdapBrokerImpl.class);
 
-    public final static String[] USERS_ATTRIBUTE_FILTER = { ipaUniqueId.name(), krbPrincipalname.name(),
+    protected final static String[] USERS_ATTRIBUTE_FILTER = { ipaUniqueId.name(), krbPrincipalname.name(),
         givenname.name(), department.name(), title.name(), mail.name(), memberof.name(),
         sn.name() };
 

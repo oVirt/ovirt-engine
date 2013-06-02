@@ -21,7 +21,7 @@ public class IPAGroupContextMapper implements ContextMapper {
 
     private static Log log = LogFactory.getLog(LdapBrokerImpl.class);
 
-    public final static String[] GROUP_ATTRIBUTE_FILTER = { memberof.name(), ipaUniqueId.name() };
+    protected final static String[] GROUP_ATTRIBUTE_FILTER = { memberof.name(), ipaUniqueId.name() };
 
     @Override
     public Object mapFromContext(Object ctx) {

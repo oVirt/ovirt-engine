@@ -33,7 +33,7 @@ public class BackendGlusterVolumesResource
         extends AbstractBackendCollectionResource<GlusterVolume, GlusterVolumeEntity>
         implements GlusterVolumesResource {
 
-    public static final String[] SUB_COLLECTIONS = { "bricks" };
+    protected static final String[] SUB_COLLECTIONS = { "bricks" };
     private ClusterResource parent;
     private String clusterId;
 

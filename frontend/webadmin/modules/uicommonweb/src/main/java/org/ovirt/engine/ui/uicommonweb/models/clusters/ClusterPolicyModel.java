@@ -14,9 +14,9 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 @SuppressWarnings("unused")
 public class ClusterPolicyModel extends EntityModel {
 
-    public static Integer lowLimitPowerSaving = null;
-    public static Integer highLimitPowerSaving = null;
-    public static Integer highLimitEvenlyDistributed = null;
+    protected static Integer lowLimitPowerSaving = null;
+    protected static Integer highLimitPowerSaving = null;
+    protected static Integer highLimitEvenlyDistributed = null;
 
     private EntityModel privateOverCommitTime;
     private boolean editClusterPolicyFirst;

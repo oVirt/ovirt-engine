@@ -28,7 +28,7 @@ public class OpenLdapUserContextMapper implements ContextMapper {
 
     private static Log log = LogFactory.getLog(LdapBrokerImpl.class);
 
-    public final static String[] USERS_ATTRIBUTE_FILTER = { entryuuid.name(),
+    protected final static String[] USERS_ATTRIBUTE_FILTER = { entryuuid.name(),
         givenname.name(), uid.name(), title.name(), mail.name(), memberof.name(),
         sn.name() };
 

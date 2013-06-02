@@ -44,7 +44,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 @SuppressWarnings("unused")
 public abstract class VmInterfaceModel extends Model
 {
-    public static String ENGINE_NETWORK_NAME;
+    protected static String ENGINE_NETWORK_NAME;
 
     private EntityModel privateName;
     private ListModel privateNetwork;
