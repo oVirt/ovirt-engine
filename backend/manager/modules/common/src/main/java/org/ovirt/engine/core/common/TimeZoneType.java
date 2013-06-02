@@ -7,6 +7,6 @@ public enum TimeZoneType {
     GENERAL_TIMEZONE;
 
     public static TimeZoneType getTimeZoneByOs(VmOsType vmOsType) {
-        return vmOsType.isWindows() ? WINDOWS_TIMEZONE : GENERAL_TIMEZONE;
+        return vmOsType != null && vmOsType.isWindows() ? WINDOWS_TIMEZONE : GENERAL_TIMEZONE;
     }
 }
