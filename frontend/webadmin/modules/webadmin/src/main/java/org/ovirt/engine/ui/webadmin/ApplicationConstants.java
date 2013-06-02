@@ -364,6 +364,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Host Hooks")
     String hostHookSubTabLabel();
 
+    @DefaultStringValue("Gluster Swift")
+    String hostGlusterSwiftSubTabLabel();
+
     @DefaultStringValue("Permissions")
     String hostPermissionSubTabLabel();
 
@@ -1849,6 +1852,22 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Property Value")
     String propertyValueHook();
+
+    // Host Gluster Swift
+    @DefaultStringValue("Service")
+    String serviceGlusterSwift();
+
+    @DefaultStringValue("Status")
+    String statusGlusterSwift();
+
+    @DefaultStringValue("Start Swift")
+    String startGlusterSwiftInHost();
+
+    @DefaultStringValue("Stop Swift")
+    String stopGlusterSwiftInHost();
+
+    @DefaultStringValue("Restart Swift")
+    String restartGlusterSwiftInHost();
 
     // Group
     @DefaultStringValue("Group Name")

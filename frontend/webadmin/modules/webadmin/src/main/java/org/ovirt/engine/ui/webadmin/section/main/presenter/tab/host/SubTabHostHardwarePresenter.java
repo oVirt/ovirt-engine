@@ -34,7 +34,7 @@ public class SubTabHostHardwarePresenter extends AbstractSubTabPresenter<VDS, Ho
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().hostHardwareSubTabLabel(), 5,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().hostHardwareSubTabLabel(), 6,
                 ginjector.getSubTabHostHardwareModelProvider());
     }
 

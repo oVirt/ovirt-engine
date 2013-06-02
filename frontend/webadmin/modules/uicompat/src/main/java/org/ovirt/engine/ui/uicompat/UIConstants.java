@@ -93,6 +93,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Gluster Hooks")
     String glusterHooksTitle();
 
+    @DefaultStringValue("Gluster Swift")
+    String glusterSwiftTitle();
+
     @DefaultStringValue("Policy")
     String clusterPolicyTitle();
 

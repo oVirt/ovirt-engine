@@ -50,7 +50,9 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
@@ -98,6 +100,7 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterHookContentQueryParam
 import org.ovirt.engine.core.common.queries.gluster.GlusterHookQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
+import org.ovirt.engine.core.common.queries.gluster.GlusterServiceQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IntegerCompat;
@@ -1194,6 +1197,18 @@ public final class AsyncDataProvider {
         GlusterHookContentQueryParameters parameters = new GlusterHookContentQueryParameters(hookId);
         parameters.setGlusterServerId(serverId);
         Frontend.RunQuery(VdcQueryType.GetGlusterHookContent, parameters, aQuery);
+    }
+
+    public static void getGlusterSwiftServices(AsyncQuery aQuery, Guid serverId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? source : new ArrayList<GlusterServerService>();
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetGlusterServerServicesByServerId, new GlusterServiceQueryParameters(serverId,
+                ServiceType.GLUSTER_SWIFT), aQuery);
     }
 
     public static void getRpmVersionViaPublic(AsyncQuery aQuery) {

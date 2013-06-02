@@ -134,6 +134,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeSub
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGlusterSwiftPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHardwarePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHookPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostInterfacePresenter;
@@ -326,6 +327,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.VolumeSubTabPa
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGlusterSwiftView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostHardwareView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostHookView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostInterfaceView;
@@ -642,6 +644,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabHostHookPresenter.ViewDef.class,
                 SubTabHostHookView.class,
                 SubTabHostHookPresenter.ProxyDef.class);
+        bindPresenter(SubTabHostGlusterSwiftPresenter.class,
+                SubTabHostGlusterSwiftPresenter.ViewDef.class,
+                SubTabHostGlusterSwiftView.class,
+                SubTabHostGlusterSwiftPresenter.ProxyDef.class);
         bindPresenter(SubTabHostPermissionPresenter.class,
                 SubTabHostPermissionPresenter.ViewDef.class,
                 SubTabHostPermissionView.class,

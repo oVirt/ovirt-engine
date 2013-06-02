@@ -167,6 +167,9 @@ public class ApplicationPlaces {
     public static final String hostHookSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "host_hooks"; //$NON-NLS-1$
 
+    public static final String hostGlusterSwiftSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
+            + "gluster_swift"; //$NON-NLS-1$
+
     public static final String hostPermissionSubTabPlace = hostMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$
 

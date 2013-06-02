@@ -60,6 +60,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -1413,6 +1414,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         setHostEventListModel(new HostEventListModel());
         list.add(getHostEventListModel());
         list.add(new HostHooksListModel());
+        list.add(new HostGlusterSwiftListModel());
         list.add(new PermissionListModel());
         setDetailModels(list);
     }

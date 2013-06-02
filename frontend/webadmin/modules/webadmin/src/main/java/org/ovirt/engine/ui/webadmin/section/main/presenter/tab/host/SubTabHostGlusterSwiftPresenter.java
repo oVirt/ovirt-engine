@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
-import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
@@ -23,11 +23,11 @@ import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabHostPermissionPresenter extends AbstractSubTabPresenter<VDS, HostListModel, PermissionListModel, SubTabHostPermissionPresenter.ViewDef, SubTabHostPermissionPresenter.ProxyDef> {
+public class SubTabHostGlusterSwiftPresenter extends AbstractSubTabPresenter<VDS, HostListModel, HostGlusterSwiftListModel, SubTabHostGlusterSwiftPresenter.ViewDef, SubTabHostGlusterSwiftPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.hostPermissionSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<SubTabHostPermissionPresenter> {
+    @NameToken(ApplicationPlaces.hostGlusterSwiftSubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<SubTabHostGlusterSwiftPresenter> {
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDS> {
@@ -35,14 +35,14 @@ public class SubTabHostPermissionPresenter extends AbstractSubTabPresenter<VDS, 
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().hostPermissionSubTabLabel(), 5,
-                ginjector.getSubTabHostPermissionModelProvider());
+        return new ModelBoundTabData(ginjector.getApplicationConstants().hostGlusterSwiftSubTabLabel(), 4,
+                ginjector.getSubTabHostGlusterSwiftModelProvider());
     }
 
     @Inject
-    public SubTabHostPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+    public SubTabHostGlusterSwiftPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<permissions, HostListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 
@@ -53,7 +53,7 @@ public class SubTabHostPermissionPresenter extends AbstractSubTabPresenter<VDS, 
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.dataCenterMainTabPlace);
+        return new PlaceRequest(ApplicationPlaces.hostMainTabPlace);
     }
 
     @ProxyEvent

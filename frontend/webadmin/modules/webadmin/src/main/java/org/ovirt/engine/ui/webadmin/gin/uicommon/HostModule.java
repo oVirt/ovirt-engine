@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
@@ -22,10 +23,11 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHardwareGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHardwareGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHooksListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
@@ -241,6 +243,14 @@ public class HostModule extends AbstractGinModule {
                 return super.getModelPopup(source, lastExecutedCommand, windowModel);
             }
         };
+    }
+
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel> getHostGlusterSwiftListProvider(ClientGinjector ginjector) {
+        return new SearchableDetailTabModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel>(ginjector,
+                HostListModel.class,
+                HostGlusterSwiftListModel.class);
     }
 
     @Provides
