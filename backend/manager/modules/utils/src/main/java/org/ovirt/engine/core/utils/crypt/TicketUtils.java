@@ -31,6 +31,7 @@ public class TicketUtils {
 
     PrivateKey key;
     private final int lifetime;
+    protected Random random = new Random();
 
     /**
      * Creates a TicketUtils instance for
@@ -82,7 +83,7 @@ public class TicketUtils {
          * Add signed fields
          */
         byte[] random = new byte[8];
-        new Random().nextBytes(random);
+        this.random.nextBytes(random);
         map.put("salt", base64.encodeToString(random));
 
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
