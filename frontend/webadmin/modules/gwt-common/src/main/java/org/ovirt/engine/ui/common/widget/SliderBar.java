@@ -816,7 +816,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
         int lineWidth = lineElement.getOffsetWidth();
         int knobWidth = knobElement.getOffsetWidth();
         int knobLeftOffset = (int) (lineLeftOffset
-                + (getKnobPercent() * lineWidth) - (knobWidth / 2));
+                + ((int) getKnobPercent() * lineWidth) - (knobWidth / 2));
         knobLeftOffset = Math.min(knobLeftOffset, lineLeftOffset + lineWidth
                 - (knobWidth / 2) - 1);
         DOM.setStyleAttribute(knobElement, "left", knobLeftOffset + "px"); //$NON-NLS-1$ //$NON-NLS-2$

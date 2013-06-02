@@ -25,7 +25,7 @@ public class IntegerSlider extends SliderBar {
         super(minValue, maxValue, formatter, resources);
         this.setNumLabels(9);
         this.setNumTicks(9);
-        this.setStepSize((maxValue - minValue + 1) / 10);
+        this.setStepSize(((double) maxValue - (double) minValue + 1f) / 10f);
         this.setPixelSize(166, 30);
     }
 
