@@ -225,4 +225,17 @@
        <Class name="org.ovirt.engine.ui.webadmin.system.MessageReceived" />
        <Bug code="UuF"/>
      </Match>
+
+       <!--
+        findbugs complain of using Boolean constructor instead of Boolean.valueOf
+        This calss is GWT generated code
+
+        findbugs reason:
+        Dm: Method invokes inefficient Boolean constructor; use Boolean.valueOf(...) instead (DM_BOOLEAN_CTOR)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.webadmin.section.main.presenter.UpdateMainContentLayoutEvent" />
+       <Method name="hashCode"/>
+       <Bug code="DM"/>
+     </Match>
 </FindBugsFilter>
