@@ -86,7 +86,7 @@
         <level name="INFO"/>
         <handlers>
           <handler name="ENGINE"/>
-          #if $getBoolean('ENGINE_LOG_TO_CONSOLE')
+          #if $getboolean('ENGINE_LOG_TO_CONSOLE')
               <handler name="CONSOLE"/>
           #end if
         </handlers>
