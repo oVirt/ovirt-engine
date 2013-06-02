@@ -1853,7 +1853,9 @@ actions:
   request:
     body:
       parameterType: Action
-      signatures: []
+      signatures:
+      - mandatoryArguments: {action.fence_type: 'xs:string'}
+        optionalArguments: {}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
