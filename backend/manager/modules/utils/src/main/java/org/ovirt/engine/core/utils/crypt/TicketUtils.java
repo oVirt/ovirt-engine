@@ -10,6 +10,7 @@ import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.SecureRandom;
 import java.security.Signature;
 import java.security.SignatureException;
 import java.security.UnrecoverableKeyException;
@@ -19,7 +20,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 import java.util.TimeZone;
 
 import org.apache.commons.codec.binary.Base64;
@@ -29,9 +29,8 @@ import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 public class TicketUtils {
 
-    PrivateKey key;
+    private PrivateKey key;
     private final int lifetime;
-    protected Random random = new Random();
 
     /**
      * Creates a TicketUtils instance for
@@ -83,7 +82,7 @@ public class TicketUtils {
          * Add signed fields
          */
         byte[] random = new byte[8];
-        this.random.nextBytes(random);
+        SecureRandom.getInstance("SHA1PRNG").nextBytes(random);
         map.put("salt", base64.encodeToString(random));
 
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");
