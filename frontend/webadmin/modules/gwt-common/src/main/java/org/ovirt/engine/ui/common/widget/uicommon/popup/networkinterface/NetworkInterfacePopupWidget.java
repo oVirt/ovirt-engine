@@ -12,10 +12,15 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -135,6 +140,10 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @Ignore
     public Panel expanderContent;
 
+    @UiField
+    @Ignore
+    public KeyValueWidget customPropertiesSheetEditor;
+
     private final Driver driver = GWT.create(Driver.class);
 
     public NetworkInterfacePopupWidget(EventBus eventBus, CommonApplicationConstants constants) {
@@ -205,6 +214,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         driver.edit(iface);
 
         hideMacWhenNotEnabled(iface);
+        initCustomPropertySheet(iface);
     }
 
     private void hideMacWhenNotEnabled(VmInterfaceModel iface) {
@@ -213,6 +223,29 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
             MACEditor.setVisible(false);
             macExample.setVisible(false);
         }
+    }
+
+    private void initCustomPropertySheet(final VmInterfaceModel iface) {
+        iface.getCustomPropertySheet().getKeyValueLines().getItemsChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                customPropertiesSheetEditor.edit(iface.getCustomPropertySheet());
+            }
+        });
+
+        iface.getCustomPropertySheet().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                String propName = ((PropertyChangedEventArgs) args).PropertyName;
+
+                // IsChangable
+                if ("IsChangable".equals(propName)) { //$NON-NLS-1$
+                    customPropertiesSheetEditor.setEnabled(false);
+                }
+
+            }
+        });
     }
 
     @Override

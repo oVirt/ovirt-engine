@@ -3,16 +3,22 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.GetDeviceCustomPropertiesParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -23,6 +29,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.MacAddressValidation;
@@ -61,6 +68,8 @@ public abstract class VmInterfaceModel extends Model
 
     private final EntityModel sourceModel;
     private final Version clusterCompatibilityVersion;
+
+    private KeyValueModel customPropertySheet;
 
     protected VmInterfaceModel(VmBase vm,
             Version clusterCompatibilityVersion,
@@ -123,6 +132,8 @@ public abstract class VmInterfaceModel extends Model
 
         setUnplugged_IsSelected(new EntityModel());
         getUnplugged_IsSelected().getEntityChangedEvent().addListener(this);
+
+        setCustomPropertySheet(new KeyValueModel());
     }
 
     protected abstract void init();
@@ -263,6 +274,14 @@ public abstract class VmInterfaceModel extends Model
         unplugged_IsSelected = value;
     }
 
+    public KeyValueModel getCustomPropertySheet() {
+        return customPropertySheet;
+    }
+
+    public void setCustomPropertySheet(KeyValueModel customPropertySheet) {
+        this.customPropertySheet = customPropertySheet;
+    }
+
     @Override
     public void eventRaised(Event ev, Object sender, EventArgs args)
     {
@@ -364,10 +383,11 @@ public abstract class VmInterfaceModel extends Model
         }
 
         return getName().getIsValid() && getNetwork().getIsValid() && getNicType().getIsValid()
-                && getMAC().getIsValid();
+                && getMAC().getIsValid() && getCustomPropertySheet().validate();
     }
 
     protected abstract VmNetworkInterface createBaseNic();
+
     private void onSave()
     {
         VmNetworkInterface nic = createBaseNic();
@@ -399,6 +419,9 @@ public abstract class VmInterfaceModel extends Model
         onSaveMAC(nic);
 
         nic.setPlugged((Boolean) getPlugged().getEntity());
+
+        nic.setCustomProperties(KeyValueModel
+                .convertProperties(getCustomPropertySheet().getEntity()));
 
         startProgress(null);
 
@@ -455,7 +478,7 @@ public abstract class VmInterfaceModel extends Model
 
                 Collections.sort(networks, new Comparator<Network>() {
 
-                    private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+                    private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
                     @Override
                     public int compare(Network net1, Network net2) {
@@ -552,4 +575,34 @@ public abstract class VmInterfaceModel extends Model
     protected void updateNetworkChangability() {
         getNetwork().setIsChangable(true);
     }
+
+    protected void initCustomPropertySheet() {
+        GetDeviceCustomPropertiesParameters params = new GetDeviceCustomPropertiesParameters();
+        params.setVersion(getClusterCompatibilityVersion());
+        params.setDeviceType(VmDeviceGeneralType.INTERFACE);
+        Frontend.RunQuery(VdcQueryType.GetDeviceCustomProperties,
+                params,
+                new AsyncQuery(this,
+                        new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object target, Object returnValue) {
+                                if (returnValue != null) {
+                                    Map<String, String> customPropertiesList =
+                                            ((Map<String, String>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+
+                                    List<String> lines = new ArrayList<String>();
+
+                                    for (Map.Entry<String, String> keyValue : customPropertiesList.entrySet()) {
+                                        lines.add(keyValue.getKey() + '=' + keyValue.getValue());
+                                    }
+                                    getCustomPropertySheet().setKeyValueString(lines);
+                                    getCustomPropertySheet().setIsChangable(!lines.isEmpty());
+
+                                    setCustomPropertyFromVm();
+                                }
+                            }
+                        }));
+    }
+
+    protected abstract void setCustomPropertyFromVm();
 }

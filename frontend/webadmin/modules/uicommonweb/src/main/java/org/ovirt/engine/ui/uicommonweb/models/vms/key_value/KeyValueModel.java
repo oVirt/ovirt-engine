@@ -3,9 +3,10 @@ package org.ovirt.engine.ui.uicommonweb.models.vms.key_value;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -20,6 +21,8 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
 
     public final static String SELECT_KEY = ConstantsManager.getInstance().getConstants().pleaseSelectKey();
     public final static String NO_KEYS = ConstantsManager.getInstance().getConstants().noKeyAvailable();
+    public final static String PROPERTIES_DELIMETER = ";"; //$NON-NLS-1$
+    public final static String KEY_VALUE_DELIMETER = "="; //$NON-NLS-1$
 
     ListModel keyValueLines;
     Map<String, String> allKeyValueMap;
@@ -96,7 +99,7 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
             if (split.isEmpty()) {
                 return;
             }
-            String[] lines = split.split(";"); //$NON-NLS-1$
+            String[] lines = split.split(PROPERTIES_DELIMETER);
 
             keyValueMap_used = new HashMap<String, String>();
             String[] splitLine;
@@ -105,7 +108,7 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
                     continue;
                 }
 
-                splitLine = line.split("=", 2); //$NON-NLS-1$
+                splitLine = line.split(KEY_VALUE_DELIMETER, 2);
                 String key = splitLine[0];
                 if (allKeyValueMap.containsKey(key)) {
                     keyValueMap_used.put(key, splitLine[1]);
@@ -151,7 +154,7 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
             if (line.isEmpty()) {
                 continue;
             }
-            splitLine = line.split("=", 2); //$NON-NLS-1$
+            splitLine = line.split(KEY_VALUE_DELIMETER, 2);
             String key = splitLine[0];
             allKeyValueMap.put(key, splitLine[1]);
             ValidationResult valid = regexValidation.validate(allKeyValueMap.get(key));
@@ -168,10 +171,22 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
 
     public List<String> getAvailbleKeys(String key) {
         List<String> list = getAvailbleKeys();
-        if (!list.contains(key)) {
+        boolean realKey = !key.equals(SELECT_KEY) && !key.equals(NO_KEYS);
+        if (realKey && !list.contains(key)) {
             list.add(0, key);
         }
+
         list.remove(SELECT_KEY);
+        list.remove(NO_KEYS);
+
+        if (!realKey) {
+            if (list.size() > 0) {
+                list.add(0, SELECT_KEY);
+            } else {
+                list.add(NO_KEYS);
+            }
+        }
+
         return list;
     }
 
@@ -248,11 +263,10 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
                 String key = (String) keyValueLineModel.getKeys()
                         .getSelectedItem();
                 keyValueLineModel.getKeys().setItems(getAvailbleKeys(key));
-                if (!key.equals(NO_KEYS)) {
-                    keyValueLineModel.getKeys().setSelectedItem(key);
-                } else if (((List<KeyValueLineModel>) getKeyValueLines().getItems()).size() > 1) {
-                    keyValueLineModel.getKeys().setSelectedItem(SELECT_KEY);
-                }
+
+                keyValueLineModel.getKeys()
+                        .setSelectedItem(((List<String>) keyValueLineModel.getKeys().getItems()).iterator().next());
+
             }
             disableEvent = false;
         }
@@ -270,13 +284,13 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
                 continue;
             }
             builder.append(key);
-            builder.append("="); //$NON-NLS-1$
+            builder.append(KEY_VALUE_DELIMETER);
             if (keyValueLineModel.getValue().getIsAvailable()) {
                 builder.append(keyValueLineModel.getValue().getEntity());
             } else if (keyValueLineModel.getValues().getIsAvailable()) {
                 builder.append(keyValueLineModel.getValues().getSelectedItem());
             }
-            builder.append(";"); //$NON-NLS-1$
+            builder.append(PROPERTIES_DELIMETER);
         }
         return builder.toString();
     }
@@ -303,5 +317,50 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
             isValid &= keyValueLineModel.getValue().getIsValid();
         }
         return isValid;
+    }
+
+    /**
+     * Converts properties from string to map. Method assumes, that properties are syntactically valid
+     *
+     * @param properties
+     *            specified properties
+     * @return map containing all properties ({@code LinkedHashMap} is used to ensure properties order is
+     *         constant)
+     */
+    public static Map<String, String> convertProperties(String properties) {
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        if (!StringHelper.isNullOrEmpty(properties)) {
+            String keyValuePairs[] = properties.split(PROPERTIES_DELIMETER);
+            for (String keyValuePairStr : keyValuePairs) {
+                String[] pairParts = keyValuePairStr.split(KEY_VALUE_DELIMETER, 2);
+                String key = pairParts[0];
+                // property value may be null
+                String value = pairParts[1];
+                map.put(key, value);
+            }
+        }
+        return map;
+    }
+
+    /**
+     * Converts properties from map to string.
+     *
+     * @param properties
+     *            specified properties
+     * @return string containing all properties in map
+     */
+    public static String convertProperties(Map<String, String> map) {
+        StringBuilder sb = new StringBuilder();
+        if (map != null && !map.isEmpty()) {
+            for (Map.Entry<String, String> e : map.entrySet()) {
+                sb.append(e.getKey());
+                sb.append(KEY_VALUE_DELIMETER);
+                sb.append(e.getValue());
+                sb.append(PROPERTIES_DELIMETER);
+            }
+            // remove last PROPERTIES_DELIMETER
+            sb.deleteCharAt(sb.length() - 1);
+        }
+        return sb.toString();
     }
 }

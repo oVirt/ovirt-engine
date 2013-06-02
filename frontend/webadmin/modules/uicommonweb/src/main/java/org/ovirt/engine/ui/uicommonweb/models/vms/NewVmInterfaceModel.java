@@ -54,6 +54,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
         initPortMirroring();
         initNetworks();
+        initCustomPropertySheet();
         initCommands();
     }
 
@@ -115,5 +116,10 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
     @Override
     protected VdcActionParametersBase createVdcActionParameters(VmNetworkInterface nicToSave) {
         return new AddVmInterfaceParameters(getVm().getId(), nicToSave);
+    }
+
+    @Override
+    protected void setCustomPropertyFromVm() {
+        // Do nothing
     }
 }
