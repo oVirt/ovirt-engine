@@ -18,7 +18,7 @@ public class UriAuthority {
     private String port;
 
     public UriAuthority(String authority) {
-        MatchResult matcher = PATTERN_AUTHORITY.exec(authority == null ? new String() : authority);
+        MatchResult matcher = PATTERN_AUTHORITY.exec(authority == null ? "" : authority); //$NON-NLS-1$
         valid = matcher != null;
         if (valid) {
             setHost(matcher.getGroup(1));
@@ -31,7 +31,7 @@ public class UriAuthority {
             return null;
         }
 
-        String authority = new String();
+        String authority = ""; //$NON-NLS-1$
         authority += host;
         if (!port.isEmpty()) {
             authority += ':' + port;
@@ -48,7 +48,7 @@ public class UriAuthority {
     }
 
     public void setHost(String host) {
-        this.host = (host == null) ? new String() : host;
+        this.host = (host == null) ? "" : host; //$NON-NLS-1$
     }
 
     public String getPort() {
@@ -56,7 +56,7 @@ public class UriAuthority {
     }
 
     public void setPort(String port) {
-        this.port = (port == null) ? new String() : port;
+        this.port = (port == null) ? "" : port; //$NON-NLS-1$
     }
 
 }

@@ -25,7 +25,7 @@ public class Uri {
     private String path;
 
     public Uri(String uri) {
-        MatchResult matcher = PATTERN_URI.exec(uri == null ? new String() : uri);
+        MatchResult matcher = PATTERN_URI.exec(uri == null ? "" : uri); //$NON-NLS-1$
         valid = matcher != null;
         if (valid) {
             setScheme(matcher.getGroup(1));
@@ -39,7 +39,7 @@ public class Uri {
             return null;
         }
 
-        String uri = new String();
+        String uri = ""; //$NON-NLS-1$
         if (!scheme.isEmpty()) {
             uri += scheme + "://"; //$NON-NLS-1$
         }
@@ -57,7 +57,7 @@ public class Uri {
     }
 
     public void setScheme(String scheme) {
-        this.scheme = (scheme == null) ? new String() : scheme;
+        this.scheme = (scheme == null) ? "" : scheme; //$NON-NLS-1$
     }
 
     public UriAuthority getAuthority() {
@@ -76,7 +76,7 @@ public class Uri {
     }
 
     public void setPath(String path) {
-        this.path = (path == null) ? new String() : path;
+        this.path = (path == null) ? "" : path; //$NON-NLS-1$
     }
 
 }

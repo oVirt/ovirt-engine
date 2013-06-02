@@ -12,7 +12,7 @@ public class UrlValidation implements IValidation {
 
     public UrlValidation(String[] allowedSchemes) {
         if (allowedSchemes == null) {
-            this.allowedSchemes.add(new String());
+            this.allowedSchemes.add(""); //$NON-NLS-1$
         } else {
             for (String scheme : allowedSchemes) {
                 this.allowedSchemes.add(scheme.toLowerCase());
