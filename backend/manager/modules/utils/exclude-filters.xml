@@ -21,4 +21,18 @@
        <Method name="tearDown"/>
        <Bug code="DE"/>
      </Match>
+
+     <!--
+      findbugs warns about using System.exit() only in appropriate places.
+      in this case the tool KrbConfCreator exit with exit code 1 on parsing
+      arguments error
+
+      findbugs reason:
+      Dm: Method invokes System.exit(...) (DM_EXIT)
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.core.utils.kerberos.KrbConfCreator" />
+       <Method name="parseOptions"/>
+       <Bug code="Dm"/>
+     </Match>
 </FindBugsFilter>
