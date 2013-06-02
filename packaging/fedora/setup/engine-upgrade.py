@@ -524,13 +524,14 @@ class CA():
         ):
             logging.debug("PKI: dup cert for apache")
             try:
-                utils.copyFile(
-                    src,
-                    dst,
-                    utils.getUsernameId("root"),
-                    utils.getGroupId("root"),
-                    0640
-                )
+                if not os.path.exists(dst):
+                    utils.copyFile(
+                        src,
+                        dst,
+                        utils.getUsernameId("root"),
+                        utils.getGroupId("root"),
+                        0640
+                    )
             except OSError:
                 logging.error("PKI: Cannot dup cert for apache")
                 raise
