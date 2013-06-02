@@ -973,14 +973,23 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. No active data Storage Domain with enough storage was found in the Data Center.")
     String ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Storage connection id is empty.")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY();
+
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection already exists.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS();
 
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters can be edited only for NFS, Posix or local data domains in maintenance.")
     String  ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters are related to more than one storage domain")
+    @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters are used by the following storage domains : ${domainNames}.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters are used by the following storage domains : ${domainNames} and disks: ${diskNames}.")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS_AND_DISKS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters are used by the following disks : ${diskNames}.")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_DISKS();
 
     @DefaultStringValue("Cannot ${action} ${type}. Connection parameters are invalid for this storage type.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_WRONG_PARAMETERS_FOR_STORAGE_TYPE();

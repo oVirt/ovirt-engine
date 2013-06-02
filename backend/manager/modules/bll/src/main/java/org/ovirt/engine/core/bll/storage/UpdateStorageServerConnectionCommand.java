@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.StorageDomainDAO;
+
 import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
@@ -243,10 +243,6 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         return newConnectionParametersForVdsm;
     }
 
-    protected StorageDomainDAO getStorageDomainDao() {
-        return getDbFacade().getStorageDomainDao();
-    }
-
     protected StorageServerConnectionDAO getStorageConnDao() {
         return getDbFacade().getStorageServerConnectionDao();
     }
@@ -259,9 +255,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         return getDbFacade().getStoragePoolIsoMapDao();
     }
 
-    protected List<StorageDomain> getStorageDomainsByConnId(String connectionId) {
-        return getStorageDomainDao().getAllByConnectionId(Guid.createGuidFromString(connectionId));
-    }
+
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
