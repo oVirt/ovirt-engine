@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
@@ -61,7 +62,7 @@ public class FenceExecutor {
         VDS proxyHost = null;
         boolean proxyFound = false;
         // get PM Proxy preferences or use defaults if not defined
-        String pmProxyPreferences = (_vds.getPmProxyPreferences() == null)
+        String pmProxyPreferences = (StringUtils.isEmpty(_vds.getPmProxyPreferences()))
                 ?
                 Config.<String> GetValue(ConfigValues.FenceProxyDefaultPreferences)
                 : _vds.getPmProxyPreferences();
