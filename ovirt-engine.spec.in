@@ -584,6 +584,8 @@ fi
 # 3.4
 %{engine_data}/conf/engine-config-install.properties
 %{engine_data}/conf/ovirt-engine-proxy.conf.in
+%{engine_data}/conf/iptables.default
+%{engine_data}/conf/nfs.sysconfig
 
 # Documentation:
 %doc LICENSE
@@ -733,8 +735,6 @@ fi
 %{_mandir}/man8/engine-upgrade.*
 
 # Configuration files
-%{engine_data}/conf/iptables.default
-%{engine_data}/conf/nfs.sysconfig
 %{engine_data}/conf/ovirt-engine-root-redirect.conf.in
 %{engine_data}/conf/version
 
