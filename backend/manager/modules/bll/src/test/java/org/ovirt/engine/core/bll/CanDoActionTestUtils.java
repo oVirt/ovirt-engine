@@ -28,7 +28,7 @@ public class CanDoActionTestUtils {
         boolean canDoAction = command.canDoAction();
         List<String> canDoActionMessages = command.getReturnValue().getCanDoActionMessages();
 
-        assertFalse("Command''s canDoAction expected to fail but succeed", canDoAction);
+        assertFalse("Command's canDoAction expected to fail, but succeeded", canDoAction);
         assertTrue(MessageFormat.format("canDoAction messages doesn''t contain expected message: {0}, messages are: {1}",
                 message.name(),
                 canDoActionMessages),
@@ -45,7 +45,7 @@ public class CanDoActionTestUtils {
      */
     public static void runAndAssertCanDoActionSuccess(CommandBase<?> command) {
         boolean canDoAction = command.canDoAction();
-        assertTrue(MessageFormat.format("Command''s canDoAction expected to succeed but failed, messages are: {0}",
+        assertTrue(MessageFormat.format("Command''s canDoAction expected to succeed, but failed, messages are: {0}",
                 command.getReturnValue().getCanDoActionMessages()), canDoAction);
     }
 }
