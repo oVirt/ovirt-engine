@@ -290,12 +290,14 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         if (imageTemplates != null) {
             for (DiskImage disk : imageTemplates) {
                 if (disk.getQuotaId() != null && !Guid.Empty.equals(disk.getQuotaId())) {
-                    list.add(new QuotaStorageConsumptionParameter(
-                            disk.getQuotaId(),
-                            null,
-                            QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
-                            disk.getStorageIds().get(0),
-                            (double) disk.getSizeInGigabytes()));
+                    for (Guid storageId : disk.getStorageIds()) {
+                        list.add(new QuotaStorageConsumptionParameter(
+                                disk.getQuotaId(),
+                                null,
+                                QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
+                                storageId,
+                                (double) disk.getSizeInGigabytes()));
+                    }
                 }
             }
         }
