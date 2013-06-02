@@ -44,6 +44,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
     TextBoxLabel template = new TextBoxLabel();
     TextBoxLabel timeZone = new TextBoxLabel();
     TextBoxLabel usbPolicy = new TextBoxLabel();
+    TextBoxLabel quotaName = new TextBoxLabel();
 
     @Ignore
     // TODO: primitive field
@@ -78,6 +79,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         formBuilder.addFormItem(new FormItem(constants.templatePoolGeneral(), template, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.osPoolGeneral(), oS, 3, 0));
         formBuilder.addFormItem(new FormItem(constants.defaultDisplayTypePoolGeneral(), defaultDisplayType, 4, 0));
+        formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 5, 0));
 
         formBuilder.addFormItem(new FormItem(constants.definedMemPoolGeneral(), definedMemory, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.physMemGaurPoolGeneral(), minAllocatedMemory, 1, 1));

@@ -396,6 +396,19 @@ public class PoolGeneralModel extends EntityModel
         }
     }
 
+    private String quotaName;
+
+    public void setQuotaName(String value) {
+        if (!StringHelper.stringsEqual(defaultHost, value)) {
+            this.quotaName = value;
+            onPropertyChanged(new PropertyChangedEventArgs("QuotaName")); //$NON-NLS-1$
+        }
+    }
+
+    public String getQuotaName() {
+        return quotaName;
+    }
+
     static
     {
         UpdateCompleteEventDefinition = new EventDefinition("UpdateComplete", PoolGeneralModel.class); //$NON-NLS-1$
@@ -478,6 +491,8 @@ public class PoolGeneralModel extends EntityModel
                     poolGeneralModel.setTimeZone(getvm().getTimeZone());
 
                     poolGeneralModel.setIsStateless(getvm().isStateless());
+
+                    poolGeneralModel.setQuotaName(getvm().getQuotaName());
 
                     poolGeneralModel.setHasDefaultHost(getvm().getDedicatedVmForVds() != null);
                     if (poolGeneralModel.getHasDefaultHost())
