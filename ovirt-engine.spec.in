@@ -798,6 +798,7 @@ fi
 %{_bindir}/engine-setup
 %{_bindir}/engine-upgrade
 %{_bindir}/engine-cleanup
+%{_bindir}/engine-backup
 
 # Python scripts:
 %{engine_data}/scripts/basedefs.py*
@@ -817,6 +818,9 @@ fi
 
 # Log setup event script
 %{engine_data}/bin/ovirt-engine-log-setup-event.sh
+
+# Backup and restore script
+%{engine_data}/bin/engine-backup.sh
 
 # Setup
 %{engine_data}/setup
