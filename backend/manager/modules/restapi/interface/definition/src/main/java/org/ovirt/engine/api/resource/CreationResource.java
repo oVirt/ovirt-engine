@@ -23,7 +23,7 @@ import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Creation;
 
 
-@Produces(MediaType.APPLICATION_XML)
+@Produces(ApiMediaType.APPLICATION_XML)
 public interface CreationResource {
 
     @GET

@@ -29,7 +29,7 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.VmPool;
 
 
-@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface VmPoolResource extends UpdatableResource<VmPool>, AsynchronouslyCreatedResource {
 
     @Path("{action: (allocatevm)}/{oid}")
@@ -37,7 +37,7 @@ public interface VmPoolResource extends UpdatableResource<VmPool>, Asynchronousl
 
     @POST
     @Formatted
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Actionable
     @Path("allocatevm")
     public Response allocatevm(Action action);

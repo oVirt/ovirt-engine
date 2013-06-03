@@ -17,7 +17,7 @@ public interface VmDisksResource extends DevicesResource<Disk, Disks>{
     public VmDiskResource getDeviceSubResource(@PathParam("iden") String id);
 
     @DELETE
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Path("{iden}")
     public Response remove(@PathParam("iden") String id, Action action);
 }

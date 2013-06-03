@@ -30,7 +30,7 @@ import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Tags;
 
 @Path("/tags")
-@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface TagsResource {
 
     @GET
@@ -39,7 +39,7 @@ public interface TagsResource {
 
     @POST
     @Formatted
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     public Response add(Tag tag);
 
     @DELETE

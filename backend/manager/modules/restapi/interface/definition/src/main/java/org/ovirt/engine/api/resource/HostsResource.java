@@ -32,7 +32,7 @@ import org.ovirt.engine.api.model.Hosts;
 
 
 @Path("/hosts")
-@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface HostsResource {
 
     @GET
@@ -52,7 +52,7 @@ public interface HostsResource {
      */
     @POST
     @Formatted
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     public Response add(Host host);
 
     @DELETE
@@ -60,7 +60,7 @@ public interface HostsResource {
     public Response remove(@PathParam("id") String id);
 
     @DELETE
-    @Consumes({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Path("{id}")
     public Response remove(@PathParam("id") String id, Action action);
 

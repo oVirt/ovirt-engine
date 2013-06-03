@@ -14,12 +14,12 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.GlusterBrick;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.MeasurableResource;
-import org.ovirt.engine.api.resource.MediaType;
+import org.ovirt.engine.api.resource.ApiMediaType;
 
 /**
  * Resource interface for the "clusters/{cluster_id}/glustervolumes/{volume_id}/bricks/{brick_id}" resource
  */
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface GlusterBrickResource extends MeasurableResource{
 
     @Path("{action: (replace)}/{oid}")
@@ -37,7 +37,7 @@ public interface GlusterBrickResource extends MeasurableResource{
      */
     @POST
     @Formatted
-    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     @Actionable
     @Path("replace")
     public Response replace(Action action);

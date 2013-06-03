@@ -15,12 +15,12 @@ import javax.ws.rs.core.Response;
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.GlusterVolumes;
-import org.ovirt.engine.api.resource.MediaType;
+import org.ovirt.engine.api.resource.ApiMediaType;
 
 /**
  * Resource interface for the "clusters/{cluster_id}/glustervolumes" resource
  */
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface GlusterVolumesResource {
     @GET
     @Formatted
@@ -37,7 +37,7 @@ public interface GlusterVolumesResource {
      */
     @POST
     @Formatted
-    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     public Response add(GlusterVolume volume);
 
     /**

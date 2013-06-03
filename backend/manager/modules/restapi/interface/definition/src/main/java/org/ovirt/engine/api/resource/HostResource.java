@@ -28,7 +28,7 @@ import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Host;
 
 
-@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface HostResource extends UpdatableResource<Host>, MeasurableResource {
 
     @Path("{action: (approve|install|fence|activate|deactivate|commitnetconfig|iscsidiscover|iscsilogin)}/{oid}")

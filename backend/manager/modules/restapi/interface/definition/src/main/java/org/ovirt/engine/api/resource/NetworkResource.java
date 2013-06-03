@@ -22,7 +22,7 @@ import javax.ws.rs.Produces;
 import org.ovirt.engine.api.model.Network;
 
 
-@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface NetworkResource extends UpdatableResource<Network> {
 
     @Path("permissions")

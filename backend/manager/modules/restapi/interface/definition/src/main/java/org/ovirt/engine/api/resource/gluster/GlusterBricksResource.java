@@ -14,13 +14,13 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.GlusterBricks;
-import org.ovirt.engine.api.resource.MediaType;
+import org.ovirt.engine.api.resource.ApiMediaType;
 import org.ovirt.engine.api.resource.RsdlIgnore;
 
 /**
  * Resource interface for the "clusters/{cluster_id}/glustervolumes/{volume_id}/bricks" resource
  */
-@Produces({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
+@Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface GlusterBricksResource {
     @GET
     @Formatted
@@ -37,7 +37,7 @@ public interface GlusterBricksResource {
      */
     @POST
     @Formatted
-    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     public Response add(GlusterBricks bricks);
 
     /**

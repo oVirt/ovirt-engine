@@ -13,7 +13,7 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 
 @Path("/disks")
-@Produces({MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML})
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface DisksResource extends ReadOnlyDevicesResource<Disk, Disks> {
 
     @Path("{identity}")
@@ -22,7 +22,7 @@ public interface DisksResource extends ReadOnlyDevicesResource<Disk, Disks> {
 
     @POST
     @Formatted
-    @Consumes({ MediaType.APPLICATION_XML, MediaType.APPLICATION_JSON, MediaType.APPLICATION_X_YAML })
+    @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     public Response add(Disk device);
 
     @DELETE
