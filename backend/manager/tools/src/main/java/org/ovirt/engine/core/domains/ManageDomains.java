@@ -1107,17 +1107,16 @@ public class ManageDomains {
     }
 
     private static void copyFile(String srcFilePath, String dstFilePath) throws IOException {
-        InputStream in = new FileInputStream(srcFilePath);
-        OutputStream out = new FileOutputStream(dstFilePath);
-
-        // Transfer bytes from in to out
-        byte[] buf = new byte[1024];
-        int len;
-        while ((len = in.read(buf)) > 0) {
-            out.write(buf, 0, len);
+        try (FileInputStream in = new FileInputStream(srcFilePath)) {
+            try (FileOutputStream out = new FileOutputStream(dstFilePath)) {
+                // Transfer bytes from in to out
+                byte[] buf = new byte[1024];
+                int len;
+                while ((len = in.read(buf)) > 0) {
+                    out.write(buf, 0, len);
+                }
+            }
         }
-        in.close();
-        out.close();
     }
 
     private static void deleteFile(String filePath) {

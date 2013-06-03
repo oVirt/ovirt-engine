@@ -114,12 +114,13 @@ public class StandaloneDataSource implements DataSource {
             rs.next();
         }
         finally {
-            if (rs != null) {
-                rs.close();
-            }
-
+            // Statement should be close first
             if (statement != null) {
                 statement.close();
+            }
+
+            if (rs != null) {
+                rs.close();
             }
         }
     }

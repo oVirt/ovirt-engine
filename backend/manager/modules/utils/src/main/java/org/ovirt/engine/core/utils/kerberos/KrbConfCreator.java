@@ -165,10 +165,9 @@ public class KrbConfCreator {
     }
 
     public void toFile(String krb5ConfPath, StringBuffer sb) throws FileNotFoundException, IOException {
-
-        FileOutputStream fos = new FileOutputStream(krb5ConfPath);
-        fos.write(sb.toString().getBytes());
-        fos.close();
+        try (FileOutputStream fos = new FileOutputStream(krb5ConfPath)) {
+            fos.write(sb.toString().getBytes());
+        }
     }
 
     private String appendRealms(List<String> realms) throws AuthenticationException {
