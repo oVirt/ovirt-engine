@@ -30,6 +30,8 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 
 public class FenceExecutor {
+    private static Log log = LogFactory.getLog(FenceExecutor.class);
+
     private final VDS _vds;
     private FenceActionType _action = FenceActionType.forValue(0);
     private Guid proxyHostId;
@@ -127,7 +129,7 @@ public class FenceExecutor {
                     _vds.getName());
         }
         else {
-            logProxySelection(proxyHost.getName(), proxyOption.name(), _action.name());
+            logProxySelection(proxyHost.getName(), proxyOption.createLogEntry(proxyHost), _action.name());
         }
         return !NO_VDS.equals(proxyHostId);
     }
@@ -334,6 +336,33 @@ public class FenceExecutor {
         });
         return proxyHost;
     }
-    private static Log log = LogFactory.getLog(FenceExecutor.class);
-    private enum PMProxyOptions {CLUSTER,DC;};
+
+    private enum PMProxyOptions {
+        CLUSTER("cluster "),
+        DC("data center ");
+
+        private final String logEntry;
+
+        private PMProxyOptions(String logEntry) {
+            this.logEntry = logEntry;
+        }
+
+        public String createLogEntry(VDS vds) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(logEntry);
+            switch (this) {
+            case CLUSTER:
+                sb.append(vds.getVdsGroupName());
+                break;
+
+            case DC:
+                sb.append(vds.getStoragePoolName());
+                break;
+
+            default:
+                break;
+            }
+            return sb.toString();
+        }
+     };
 }
