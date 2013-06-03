@@ -434,7 +434,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                     windowModel.setMessage(ConstantsManager.getInstance()
                             .getConstants()
                             .thereAreNoCompatibleStorageDomainsAttachThisDcMsg());
-
+                    windowModel.getLatch().setIsAvailable(false);
                     UICommand tempVar2 = new UICommand("Cancel", DataCenterListModel.this); //$NON-NLS-1$
                     tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
                     tempVar2.setIsDefault(true);
