@@ -41,6 +41,8 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
      */
     private Boolean soundDeviceEnabled;
 
+    private Boolean consoleEnabled;
+
     public AddVmTemplateParameters(VmStatic masterVm, String name, String description) {
         _masterVm = masterVm;
         _name = name;
@@ -119,4 +121,13 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
     public void setSoundDeviceEnabled(boolean soundDeviceEnabled) {
         this.soundDeviceEnabled = soundDeviceEnabled;
     }
+
+    public Boolean isConsoleEnabled() {
+        return consoleEnabled;
+    }
+
+    public void setConsoleEnabled(Boolean consoleEnabled) {
+        this.consoleEnabled = consoleEnabled;
+    }
+
 }

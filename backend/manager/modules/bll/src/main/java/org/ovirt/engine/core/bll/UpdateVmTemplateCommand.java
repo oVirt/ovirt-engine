@@ -159,6 +159,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                 getVmTemplate(),
                 getVdsGroup().getcompatibility_version(),
                 getParameters().isSoundDeviceEnabled());
+        VmDeviceUtils.updateConsoleDevice(getVmTemplateId(), getParameters().isConsoleEnabled());
     }
 
     @Override

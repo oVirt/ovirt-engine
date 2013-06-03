@@ -6,8 +6,8 @@ import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
@@ -19,6 +19,7 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
     private int _diskSize;
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private Boolean soundDeviceEnabled;
+    private Boolean consoleEnabled;
 
     public AddVmPoolWithVmsParameters() {
     }
@@ -57,6 +58,15 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
 
     public void setSoundDeviceEnabled(boolean soundDeviceEnabled) {
         this.soundDeviceEnabled = soundDeviceEnabled;
+    }
+
+
+    public Boolean isConsoleEnabled() {
+        return consoleEnabled;
+    }
+
+    public void setConsoleEnabled(Boolean consoleEnabled) {
+        this.consoleEnabled = consoleEnabled;
     }
 
 }

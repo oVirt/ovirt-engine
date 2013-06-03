@@ -247,7 +247,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 devices,
                 newDiskImages,
                 _vmInterfaces,
-                getParameters().isSoundDeviceEnabled());
+                getParameters().isSoundDeviceEnabled(),
+                getParameters().isConsoleEnabled());
     }
 
     @Override

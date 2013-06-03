@@ -233,6 +233,8 @@ public abstract class VmInfoBuilderBase {
 
     protected abstract void buildVmSoundDevices();
 
+    protected abstract void buildVmConsoleDevice();
+
     protected abstract void buildUnmanagedDevices();
 
     protected abstract void buildVmBootSequence();

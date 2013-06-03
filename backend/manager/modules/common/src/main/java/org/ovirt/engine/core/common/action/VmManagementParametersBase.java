@@ -26,9 +26,9 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private VM vm = null;
     private VmWatchdog watchdog = null;
     /*
-     * This parameter is needed at update to make sure that when we get a null watchdog from rest-api
-     * it is not meant to be removing the watchdog, rest-api will simply call watchdog commands directly.
-     * Default is false so to avoid breaking rest-api.
+     * This parameter is needed at update to make sure that when we get a null watchdog from rest-api it is not meant to
+     * be removing the watchdog, rest-api will simply call watchdog commands directly. Default is false so to avoid
+     * breaking rest-api.
      */
     private boolean updateWatchdog = false;
     /*
@@ -38,6 +38,13 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
      * for update the current configuration will remain
      */
     private Boolean soundDeviceEnabled;
+    /*
+     * This parameter is used to decide if to create console device or not
+     * if it is null then:
+     * for add vm don't add console device
+     * for update the current configuration will remain
+     */
+    private Boolean consoleEnabled = false;
 
     public VmManagementParametersBase() {
     }
@@ -143,6 +150,14 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
 
     public void setUpdateWatchdog(boolean updateWatchdog) {
         this.updateWatchdog = updateWatchdog;
+    }
+
+    public Boolean isConsoleEnabled() {
+        return consoleEnabled;
+    }
+
+    public void setConsoleEnabled(Boolean consoleEnabled) {
+        this.consoleEnabled = consoleEnabled;
     }
 
     public Boolean isSoundDeviceEnabled() {

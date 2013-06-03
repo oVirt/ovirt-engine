@@ -69,6 +69,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         builder.buildVmBootSequence();
         builder.buildVmBootOptions();
         builder.buildVmSoundDevices();
+        builder.buildVmConsoleDevice();
         builder.buildVmTimeZone();
         builder.buildVmUsbDevices();
         builder.buildVmMemoryBalloon();

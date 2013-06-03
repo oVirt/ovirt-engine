@@ -61,6 +61,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         parameters.setDontAttachToDefaultTag(true);
         parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
         parameters.setSoundDeviceEnabled(getParameters().isSoundDeviceEnabled());
+        parameters.setConsoleEnabled(getParameters().isConsoleEnabled());
 
         return Backend.getInstance().runInternalAction(VdcActionType.AddVm,
                         parameters,

@@ -100,6 +100,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             if (parameters.isSoundDeviceEnabled() == null) {
                 parameters.setSoundDeviceEnabled(parameters.getVmStaticData().getVmType() == VmType.Desktop);
             }
+
+            if (parameters.isConsoleEnabled() == null) {
+                parameters.setConsoleEnabled(false);
+            }
         }
 
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
@@ -589,7 +593,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 getVmId(),
                 newDiskImages,
                 _vmInterfaces,
-                getParameters().isSoundDeviceEnabled());
+                getParameters().isSoundDeviceEnabled(),
+                getParameters().isConsoleEnabled());
     }
 
     protected static boolean IsLegalClusterId(Guid clusterId, List<String> reasons) {

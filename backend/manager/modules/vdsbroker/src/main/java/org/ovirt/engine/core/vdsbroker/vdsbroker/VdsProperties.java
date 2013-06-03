@@ -207,6 +207,7 @@ public final class VdsProperties {
     public static final String Floppy = "floppy"; // Optional
     public static final String Snapshot = "snapshotFile"; // Optional
     public static final String soundDevice = "soundDevice";
+    public static final String virtioConsole = "console";
     public static final String cpuType = "cpuType";
     public static final String niceLevel = "nice";
     public static final String hiberVolHandle = "hiberVolHandle";

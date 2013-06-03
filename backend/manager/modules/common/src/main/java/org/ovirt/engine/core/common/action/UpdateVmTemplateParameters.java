@@ -14,6 +14,12 @@ public class UpdateVmTemplateParameters extends VmTemplateParametersBase {
      */
     private Boolean soundDeviceEnabled;
 
+    /*
+     * This parameter is used to decide if to create or remove console device
+     * if it is null then the current configuration will remain
+     */
+    private Boolean consoleEnabled;
+
     public UpdateVmTemplateParameters(VmTemplate vmTemplate) {
         _vmTemplate = vmTemplate;
     }
@@ -32,4 +38,13 @@ public class UpdateVmTemplateParameters extends VmTemplateParametersBase {
     public void setSoundDeviceEnabled(boolean soundDeviceEnabled) {
         this.soundDeviceEnabled = soundDeviceEnabled;
     }
+
+    public Boolean isConsoleEnabled() {
+        return consoleEnabled;
+    }
+
+    public void setConsoleEnabled(Boolean consoleEnabled) {
+        this.consoleEnabled = consoleEnabled;
+    }
+
 }

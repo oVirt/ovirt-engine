@@ -93,6 +93,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             if (parameters.isSoundDeviceEnabled() == null) {
                 parameters.setSoundDeviceEnabled(parameterMasterVm.getVmType() == VmType.Desktop);
             }
+
+            if (getParameters().isConsoleEnabled() == null) {
+                parameters.setConsoleEnabled(false);
+            }
         }
         if (getVm() != null) {
             updateVmDisks();
@@ -207,7 +211,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 AddVmTemplateImages();
                 List<VmNetworkInterface> vmInterfaces = addVmInterfaces();
                 if (isVmInDb) {
-                    VmDeviceUtils.copyVmDevices(getVmId(), getVmTemplateId(), newDiskImages, vmInterfaces, getParameters().isSoundDeviceEnabled());
+                    VmDeviceUtils.copyVmDevices(getVmId(), getVmTemplateId(), newDiskImages, vmInterfaces, getParameters().isSoundDeviceEnabled(), getParameters().isConsoleEnabled());
                 } else {
                     // sending true for isVm in order to create basic devices needed
                     VmDeviceUtils.copyVmDevices(getVmId(),
@@ -218,7 +222,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             Collections.<VmDevice> emptyList(),
                             newDiskImages,
                             vmInterfaces,
-                            getParameters().isSoundDeviceEnabled());
+                            getParameters().isSoundDeviceEnabled(),
+                            getParameters().isConsoleEnabled());
                 }
 
                 setSucceeded(true);

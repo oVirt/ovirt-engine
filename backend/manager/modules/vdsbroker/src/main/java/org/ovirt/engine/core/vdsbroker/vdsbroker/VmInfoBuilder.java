@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -359,19 +358,30 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmSoundDevices() {
-        // get vm device for Sound device from DB
+        buildVmDevicesFromDb(VmDeviceGeneralType.SOUND, true);
+    }
+
+    @Override
+    protected void buildVmConsoleDevice() {
+        buildVmDevicesFromDb(VmDeviceGeneralType.CONSOLE, false);
+    }
+
+    private void buildVmDevicesFromDb(VmDeviceGeneralType generalType, boolean addAddress) {
         List<VmDevice> vmDevices =
                 DbFacade.getInstance()
                         .getVmDeviceDao()
                         .getVmDeviceByVmIdAndType(vm.getId(),
-                                VmDeviceGeneralType.SOUND);
+                                generalType);
+
         for (VmDevice vmDevice : vmDevices) {
             Map struct = new HashMap();
             struct.put(VdsProperties.Type, vmDevice.getType().getValue());
             struct.put(VdsProperties.Device, vmDevice.getDevice());
             struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
             struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
-            addAddress(vmDevice, struct);
+            if (addAddress) {
+                addAddress(vmDevice, struct);
+            }
             devices.add(struct);
         }
     }

@@ -114,6 +114,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             addVmAndAttachToPoolParams.setSessionId(getParameters().getSessionId());
             addVmAndAttachToPoolParams.setParentCommand(VdcActionType.AddVmPoolWithVms);
             addVmAndAttachToPoolParams.setSoundDeviceEnabled(getParameters().isSoundDeviceEnabled());
+            addVmAndAttachToPoolParams.setConsoleEnabled(getParameters().isConsoleEnabled());
             VdcReturnValueBase returnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.AddVmAndAttachToPool,
                             addVmAndAttachToPoolParams,

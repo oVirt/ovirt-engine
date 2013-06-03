@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -324,7 +323,18 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(VdcBllMessages.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
         }
 
+        if (getParameters().isConsoleEnabled() != null && !getVm().isDown() && consoleDeviceChanged()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+        }
+
         return true;
+    }
+
+    private boolean consoleDeviceChanged() {
+        List<VmDevice> consoleDevices = getVmDeviceDao().getVmDeviceByVmIdAndType(getParameters().getVmId(),
+                VmDeviceGeneralType.CONSOLE);
+
+        return getParameters().isConsoleEnabled() == consoleDevices.isEmpty();
     }
 
     private boolean isVmExist() {

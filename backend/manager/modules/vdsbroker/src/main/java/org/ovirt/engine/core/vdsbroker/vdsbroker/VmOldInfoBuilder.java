@@ -186,6 +186,11 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
     }
 
     @Override
+    protected void buildVmConsoleDevice() {
+        // Not supported in old code
+    }
+
+    @Override
     protected void buildVmBootSequence() {
         // get device list for the VM
         List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDao()

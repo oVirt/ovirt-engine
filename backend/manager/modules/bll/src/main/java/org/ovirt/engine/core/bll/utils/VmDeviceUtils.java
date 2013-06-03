@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -85,6 +84,7 @@ public class VmDeviceUtils {
             updateMemoryBalloon(oldVmBase, entity, params.isBalloonEnabled());
             updateAudioDevice(oldVm.getStaticData(), entity, oldVm.getVdsGroupCompatibilityVersion(), params.isSoundDeviceEnabled());
             updateSmartcardDevice(oldVm, entity);
+            updateConsoleDevice(entity, params.isConsoleEnabled());
         }
     }
 
@@ -118,6 +118,41 @@ public class VmDeviceUtils {
                 VmDeviceGeneralType.SMARTCARD,
                 VmDeviceType.SMARTCARD,
                 new SmartcardSpecParams(),
+                true,
+                false,
+                null);
+    }
+
+    private static void updateConsoleDevice(VmBase newVmBase, Boolean consoleEnabled) {
+            updateConsoleDevice(newVmBase.getId(), consoleEnabled);
+    }
+
+    public static void updateConsoleDevice(Guid vmId, Boolean consoleEnabled) {
+        if (consoleEnabled == null) {
+            return; //we don't want to update the device
+        }
+
+        List<VmDevice> consoles = DbFacade.getInstance()
+                    .getVmDeviceDao()
+                    .getVmDeviceByVmIdTypeAndDevice(vmId,
+                            VmDeviceGeneralType.CONSOLE, VmDeviceType.CONSOLE.getName());
+
+        if (consoleEnabled) {
+            if (consoles.isEmpty()) {
+                addConsoleDevice(vmId);
+            }
+        } else {
+            for (VmDevice device : consoles) {
+                dao.remove(device.getId());
+            }
+        }
+    }
+
+    private static void addConsoleDevice(Guid vmId) {
+        VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), vmId),
+                VmDeviceGeneralType.CONSOLE,
+                VmDeviceType.CONSOLE,
+                new HashMap<String, Object>(),
                 true,
                 false,
                 null);
@@ -185,7 +220,7 @@ public class VmDeviceUtils {
     /**
      * Copy related data from the given VM/VmBase/VmDevice list to the destination VM/VmTemplate.
      */
-    public static void copyVmDevices(Guid srcId, Guid dstId, VM vm, VmBase vmBase, boolean isVm, List<VmDevice> devicesDataToUse, List<DiskImage> disks, List<VmNetworkInterface> ifaces, boolean soundDeviceEnabled) {
+    public static void copyVmDevices(Guid srcId, Guid dstId, VM vm, VmBase vmBase, boolean isVm, List<VmDevice> devicesDataToUse, List<DiskImage> disks, List<VmNetworkInterface> ifaces, boolean soundDeviceEnabled, boolean isConsoleEnabled) {
         Guid id;
         int diskCount = 0;
         int ifaceCount = 0;
@@ -196,6 +231,7 @@ public class VmDeviceUtils {
         boolean hasAlreadyCD = (!(DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(vmBase.getId(), VmDeviceGeneralType.DISK, VmDeviceType.CDROM.getName())).isEmpty());
         boolean addCD = (!hasAlreadyCD && shouldHaveCD);
         boolean hasSoundDevice = false;
+        boolean hasAlreadyConsoleDevice = false;
 
         for (VmDevice device : devicesDataToUse) {
             id = Guid.newGuid();
@@ -264,6 +300,14 @@ public class VmDeviceUtils {
                 case WATCHDOG:
                     specParams.putAll(device.getSpecParams());
                     break;
+
+                case CONSOLE:
+                    hasAlreadyConsoleDevice = true;
+                    if (!isConsoleEnabled) {
+                        continue;
+                    }
+                    break;
+
                 case SOUND:
                     hasSoundDevice = true;
                     if (!soundDeviceEnabled) {
@@ -292,6 +336,10 @@ public class VmDeviceUtils {
                     addSoundCard(vmBase, cluster.getcompatibility_version());
                 }
             }
+        }
+
+        if (isConsoleEnabled && !hasAlreadyConsoleDevice) {
+            addConsoleDevice(dstId);
         }
 
         if (isVm) {
@@ -329,7 +377,7 @@ public class VmDeviceUtils {
      * @param disks
      *            The disks which were saved for the destination VM.
      */
-    public static void copyVmDevices(Guid srcId, Guid dstId, List<DiskImage> disks, List<VmNetworkInterface> ifaces, boolean soundDeviceEnabled) {
+    public static void copyVmDevices(Guid srcId, Guid dstId, List<DiskImage> disks, List<VmNetworkInterface> ifaces, boolean soundDeviceEnabled, boolean isConsoleEnabled) {
         VM vm = DbFacade.getInstance().getVmDao().get(dstId);
         VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
         boolean isVm = (vmBase != null);
@@ -337,7 +385,7 @@ public class VmDeviceUtils {
             vmBase = DbFacade.getInstance().getVmTemplateDao().get(dstId);
         }
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
-        copyVmDevices(srcId, dstId, vm, vmBase, isVm, devices, disks, ifaces, soundDeviceEnabled);
+        copyVmDevices(srcId, dstId, vm, vmBase, isVm, devices, disks, ifaces, soundDeviceEnabled,  isConsoleEnabled);
     }
 
     private static void addVideoDevice(VmBase vm) {
