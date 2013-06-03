@@ -56,7 +56,7 @@ public class ObjectIdentityChecker {
         if (type != null) {
             return CanUpdateField(type, fieldName, status, fieldContainer);
         } else {
-            throw new RuntimeException(String.format("status type %1$s not exist", type));
+            throw new RuntimeException("status type [null] not exist");
         }
     }
 

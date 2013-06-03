@@ -31,8 +31,12 @@ public class LocaleUtils {
     public static Locale getLocaleFromString(String localeString, boolean returnDefaultLocale) {
         Locale result = returnDefaultLocale ? null : LocaleFilter.DEFAULT_LOCALE;
         try {
-            result = org.apache.commons.lang.LocaleUtils.toLocale(localeString != null ?
-                    localeString.replaceAll("\\-", "_") : localeString);
+            if (localeString != null) {
+                result = org.apache.commons.lang.LocaleUtils.toLocale(localeString.replaceAll("\\-", "_"));
+            }
+            else {
+                result = null;
+            }
             if(result == null && returnDefaultLocale) {
                 result = LocaleFilter.DEFAULT_LOCALE;
             }

@@ -19,7 +19,7 @@ public class VmTypeImage extends AbstractDynamicImage<UserPortalItemModel, Appli
     @Override
     protected String imageName(UserPortalItemModel value) {
         if (value == null) {
-            return defaultImageName(value);
+            return defaultImageName(null);
         }
         if (value.isPool()) {
             return "poolVmIcon"; //$NON-NLS-1$

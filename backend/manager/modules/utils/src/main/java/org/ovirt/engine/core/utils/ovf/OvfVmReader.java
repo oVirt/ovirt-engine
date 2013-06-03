@@ -92,7 +92,7 @@ public class OvfVmReader extends OvfReader {
                 }
                 final Date creationDate = OvfParser.UtcDateStringToLocaDate(
                         node.SelectSingleNode("rasd:CreationDate", _xmlNS).InnerText);
-                if (creationDate == null) {
+                if (creationDate != null) {
                     image.setCreationDate(creationDate);
                 }
                 final Date lastModified = OvfParser.UtcDateStringToLocaDate(

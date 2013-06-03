@@ -848,7 +848,7 @@ public class VdsBrokerObjectsBuilder {
                 for (Object app : apps) {
                     String appString = (String) ((app instanceof String) ? app : null);
                     if (app == null) {
-                        log.warnFormat("Failed to convert app: {0} to string", app);
+                        log.warn("Failed to convert app: [null] to string");
                     }
                     if (!firstTime) {
                         builder.append(",");
