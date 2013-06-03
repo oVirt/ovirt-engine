@@ -16,6 +16,7 @@ public class BackendHostHookResourceTest extends AbstractBackendSubResourceTest<
     private static final String HOOK_1_NAME = "hook_1";
     private static final String EVENT_1_NAME = "event_1";
     private static final String EVENT2_HOOK2_MD52_HASH = "a9affe45-5cc4-148f-ce4d-f585c7999e05";
+    private static final String SOME_ID = "b9af3e45-5ic4-128f-ce4d-a585c7888ecf";
 
     public BackendHostHookResourceTest() {
         super(new BackendHostHookResource(EVENT2_HOOK2_MD52_HASH, null));
@@ -29,16 +30,8 @@ public class BackendHostHookResourceTest extends AbstractBackendSubResourceTest<
     }
 
     /**
-     * This method tests get() in the following way:
-     *
-     * A mock of the parent resource is injected into the resource. In response to list() the mock returns two 'Hook'
-     * objects: one with ["event_1", "hook_1", "md5_1"], and the other with ["event_2", "hook_2", "md5_2"].
-     *
-     * It's been predetermined that the GUID generated for ["event_2", "hook_2", "md5_2"] is
-     * "a9affe45-5cc4-148f-ce4d-f585c7999e05". This ID was given to the constructor of the resource.
-     *
-     * In response to get(), this resource is supposed to return the hook with the ID
-     * "a9affe45-5cc4-148f-ce4d-f585c7999e05", which is the hook with values ["event_2", "hook_2", "md5_2"].
+     * Resource was initialized with ID = "a9affe45-5cc4-148f-ce4d-f585c7999e05". The test verifies the Hook with this
+     * ID is returned out of all hooks returned by parent.list();
      */
     @Test
     public void testGet() {
@@ -52,11 +45,13 @@ public class BackendHostHookResourceTest extends AbstractBackendSubResourceTest<
     private Hooks getHooks() {
         Hooks hooks = new Hooks();
         Hook hook = new Hook();
+        hook.setId(SOME_ID);
         hook.setEventName(EVENT_1_NAME);
         hook.setName(HOOK_1_NAME);
         hook.setMd5(MD5_1);
         hooks.getHooks().add(hook);
         hook = new Hook();
+        hook.setId(EVENT2_HOOK2_MD52_HASH);
         hook.setEventName(EVENT_2_NAME);
         hook.setName(HOOK_2_NAME);
         hook.setMd5(MD5_2);

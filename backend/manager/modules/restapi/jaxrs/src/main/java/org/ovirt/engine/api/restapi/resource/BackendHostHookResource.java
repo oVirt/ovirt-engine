@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.resource;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.api.resource.HostHookResource;
-import org.ovirt.engine.api.restapi.types.HostMapper;
 
 public class BackendHostHookResource extends AbstractBackendSubResource<Hook, Object> implements HostHookResource {
 
@@ -22,7 +21,7 @@ public class BackendHostHookResource extends AbstractBackendSubResource<Hook, Ob
 
     public Hook getHook(Hooks hooks) {
         for (Hook hook : hooks.getHooks()) {
-            if (HostMapper.generateHookId(hook.getEventName(), hook.getName(), hook.getMd5()).equals(guid)) {
+            if (hook.getId().equals(guid)) {
                 return hook;
             }
         }
