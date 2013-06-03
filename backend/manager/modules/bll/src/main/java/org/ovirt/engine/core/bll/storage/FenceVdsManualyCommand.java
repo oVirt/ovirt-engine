@@ -18,12 +18,12 @@ import org.ovirt.engine.core.common.businessentities.SpmStatusResult;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -217,7 +217,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         if (getStoragePool().getspm_vds_id() != null) {
             ResetIrsVDSCommandParameters tempVar =
                     new ResetIrsVDSCommandParameters(getStoragePool()
-                            .getId(), getStoragePool().getspm_vds_id().getValue());
+                            .getId(), getStoragePool().getspm_vds_id());
             tempVar.setIgnoreStopFailed(true);
             Backend.getInstance()
                     .getResourceManager()

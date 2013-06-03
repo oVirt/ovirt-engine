@@ -20,7 +20,7 @@ public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends 
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.CancelMigrate,
-                        new VdsAndVmIDVDSParametersBase(getVm().getRunOnVds().getValue(),
+                        new VdsAndVmIDVDSParametersBase(getVm().getRunOnVds(),
                                 getParameters().getVmId()));
 
         setSucceeded(retVal.getSucceeded());

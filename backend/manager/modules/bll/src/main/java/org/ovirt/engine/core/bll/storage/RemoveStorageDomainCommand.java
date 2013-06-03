@@ -10,11 +10,11 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -165,7 +165,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         }
 
         Guid storageDomainId = storageDomain.getId();
-        Guid storagePoolId = storageDomain.getStoragePoolId().getValue();
+        Guid storagePoolId = storageDomain.getStoragePoolId();
 
         return getDbFacade().getStoragePoolIsoMapDao()
                 .get(new StoragePoolIsoMapId(storageDomainId, storagePoolId)) != null;
@@ -173,7 +173,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
     protected boolean detachStorage(StorageDomain dom) {
         Guid domId = dom.getId();
-        Guid poolId = dom.getStoragePoolId().getValue();
+        Guid poolId = dom.getStoragePoolId();
         DetachStorageDomainFromPoolParameters params = new DetachStorageDomainFromPoolParameters(domId, poolId);
         params.setDestroyingPool(getParameters().getDestroyingPool());
 

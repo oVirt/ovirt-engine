@@ -112,7 +112,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         DataCenterWithCluster dataCenterWithCluster =
                 (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool selectedDataCenter = dataCenterWithCluster.getDataCenter();
-        Guid selectedDataCenterId = selectedDataCenter.getId().getValue();
+        Guid selectedDataCenterId = selectedDataCenter.getId();
         if (selectedDataCenterId == null) {
             return;
         }
@@ -120,7 +120,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         for (VmTemplate template : templates)
         {
             Guid datacenterId =
-                    template.getStoragePoolId() == null ? Guid.Empty : template.getStoragePoolId().getValue();
+                    template.getStoragePoolId() == null ? Guid.Empty : template.getStoragePoolId();
 
             if (template.getId().equals(Guid.Empty))
             {

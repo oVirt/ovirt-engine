@@ -302,7 +302,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                     new ChangeQuotaParameters(((Quota) itemModel.getQuota().getSelectedItem()).getId(),
                             disk.getId(),
                             disk.getStorageIds().get(0),
-                            disk.getStoragePoolId().getValue());
+                            disk.getStoragePoolId());
             paramerterList.add(parameters);
         }
 
@@ -702,7 +702,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                         vm.getVdsGroupCompatibilityVersion(),
                         dcCompatibilityVersion);
             }
-        }), vm.getStoragePoolId().getValue());
+        }), vm.getStoragePoolId());
     }
 
     @Override

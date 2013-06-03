@@ -116,7 +116,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected void initStoragePoolId() {
         if (getVdsGroup() != null) {
-            setStoragePoolId(getVdsGroup().getStoragePoolId() != null ? getVdsGroup().getStoragePoolId().getValue()
+            setStoragePoolId(getVdsGroup().getStoragePoolId() != null ? getVdsGroup().getStoragePoolId()
                     : Guid.Empty);
         }
     }
@@ -161,8 +161,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean canAddVm(ArrayList<String> reasons, Collection<StorageDomain> destStorages) {
         VmStatic vmStaticFromParams = getParameters().getVmStaticData();
-        boolean returnValue = canAddVm(reasons, vmStaticFromParams.getName(), getStoragePoolId()
-                .getValue(), vmStaticFromParams.getPriority());
+        boolean returnValue =
+                canAddVm(reasons, vmStaticFromParams.getName(), getStoragePoolId(), vmStaticFromParams.getPriority());
 
         if (returnValue) {
             List<ValidationError> validationErrors = validateCustomProperties(vmStaticFromParams);
@@ -201,7 +201,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected Guid getStoragePoolIdFromSourceImageContainer() {
-        return getVmTemplate().getStoragePoolId().getValue();
+        return getVmTemplate().getStoragePoolId();
     }
 
     protected int getNeededDiskSize(Guid domainId) {
@@ -415,7 +415,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected void fillImagesMapBasedOnTemplate() {
         ImagesHandler.fillImagesMapBasedOnTemplate(getVmTemplate(),
-                getStorageDomainDAO().getAllForStoragePool(getVmTemplate().getStoragePoolId().getValue()),
+                getStorageDomainDAO().getAllForStoragePool(getVmTemplate().getStoragePoolId()),
                 diskInfoDestinationMap,
                 destStorages, false);
     }

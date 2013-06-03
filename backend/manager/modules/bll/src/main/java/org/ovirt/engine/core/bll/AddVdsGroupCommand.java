@@ -75,8 +75,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                     .getInstance()
                     .getNetworkDao()
                     .getAllForDataCenter(
-                            getParameters().getVdsGroup().getStoragePoolId()
-                                    .getValue());
+                            getParameters().getVdsGroup().getStoragePoolId());
 
             Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override
@@ -133,7 +132,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
 
         if (result && getVdsGroup().getStoragePoolId() != null) {
             StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
-                    getVdsGroup().getStoragePoolId().getValue());
+                    getVdsGroup().getStoragePoolId());
             // Making sure the given SP ID is valid to prevent
             // breaking Fk_vds_groups_storage_pool_id
             if (storagePool == null) {
@@ -144,7 +143,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
             } else if (storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
                 // we allow only one cluster in localfs data center
                 if (!DbFacade.getInstance()
-                        .getVdsGroupDao().getAllForStoragePool(getVdsGroup().getStoragePoolId().getValue())
+                        .getVdsGroupDao().getAllForStoragePool(getVdsGroup().getStoragePoolId())
                         .isEmpty()) {
                     getReturnValue().getCanDoActionMessages().add(
                             VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE
@@ -189,8 +188,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getVdsGroup().getStoragePoolId() == null ? null
-                : getVdsGroup().getStoragePoolId().getValue(),
+        return Collections.singletonList(new PermissionSubject(getVdsGroup().getStoragePoolId(),
                 VdcObjectType.StoragePool,
                 getActionType().getActionGroup()));
     }

@@ -110,7 +110,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                         UnitVmModel model = (UnitVmModel) target;
                         model.setDataCentersAndClusters(model,
                                 dataCenters,
-                                (List<VDSGroup>) returnValue, vm.getVdsGroupId().getValue());
+                                (List<VDSGroup>) returnValue, vm.getVdsGroupId());
                         initTemplate();
                         initCdImage();
                         initSoundCard(vm.getId());

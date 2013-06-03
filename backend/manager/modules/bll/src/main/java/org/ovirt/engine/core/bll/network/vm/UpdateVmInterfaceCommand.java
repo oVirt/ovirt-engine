@@ -106,7 +106,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
     private boolean updateHost() {
         if (getVm().getStatus() == VMStatus.Up) {
-            setVdsId(getVm().getRunOnVds().getValue());
+            setVdsId(getVm().getRunOnVds());
         }
 
         if (getRequiredAction() != null){

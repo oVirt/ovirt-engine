@@ -36,7 +36,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getIsSoundcardEnabled().setIsChangable(true);
         getModel().getVmType().setIsChangable(true);
 
-        if (template.getStoragePoolId() != null && !template.getStoragePoolId().getValue().equals(Guid.Empty))
+        if (template.getStoragePoolId() != null && !template.getStoragePoolId().equals(Guid.Empty))
         {
             AsyncDataProvider.getDataCenterById(new AsyncQuery(getModel(),
                     new INewAsyncCallback() {
@@ -61,7 +61,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                                             model.setDataCentersAndClusters(model,
                                                     new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCenter })),
                                                     filteredClusters,
-                                                    template.getVdsGroupId().getValue());
+                                                    template.getVdsGroupId());
 
                                             AsyncDataProvider.isSoundcardEnabled(new AsyncQuery(getModel(),
                                                     new INewAsyncCallback() {
@@ -80,7 +80,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                         }
                     },
                     getModel().getHash()),
-                    template.getStoragePoolId().getValue());
+                    template.getStoragePoolId());
         }
 
         AsyncDataProvider.GetWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {

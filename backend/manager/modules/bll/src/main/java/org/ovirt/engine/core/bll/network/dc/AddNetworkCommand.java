@@ -75,8 +75,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getStoragePoolId() == null ? null
-                : getStoragePoolId().getValue(),
+        return Collections.singletonList(new PermissionSubject(getStoragePoolId(),
                 VdcObjectType.StoragePool, getActionType().getActionGroup()));
     }
 

@@ -13,12 +13,12 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
@@ -280,7 +280,7 @@ public class OvfDataUpdater {
                 templateMeta, LinqUtils.foreach(allTemplateImages, new Function<DiskImage, Guid>() {
                     @Override
                     public Guid eval(DiskImage diskImage) {
-                        return diskImage.getId().getValue();
+                        return diskImage.getId();
                     }
                 })));
     }

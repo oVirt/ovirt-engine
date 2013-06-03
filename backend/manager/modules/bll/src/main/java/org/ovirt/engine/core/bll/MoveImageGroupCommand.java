@@ -44,7 +44,7 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected void endSuccessfully() {
-        removeImage(getParameters().getSourceDomainId().getValue());
+        removeImage(getParameters().getSourceDomainId());
         super.endSuccessfully();
     }
 

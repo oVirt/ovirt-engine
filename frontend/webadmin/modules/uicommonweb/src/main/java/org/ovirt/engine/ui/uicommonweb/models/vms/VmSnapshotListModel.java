@@ -758,7 +758,7 @@ public class VmSnapshotListModel extends SearchableListModel
                     }
                 }), VdcActionType.AddVmFromSnapshot, minClusterVersion, minDcVersion);
             }
-        }), vm.getStoragePoolId().getValue());
+        }), vm.getStoragePoolId());
     }
 
     @Override

@@ -84,7 +84,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
             StorageDomain storage_domains =
                     LinqUtils.firstOrNull(getStorageDomainDAO().getAllForStoragePool
-                            (getStorageDomain().getStoragePoolId().getValue()),
+                            (getStorageDomain().getStoragePoolId()),
                             new Predicate<StorageDomain>() {
                                 @Override
                                 public boolean eval(StorageDomain a) {

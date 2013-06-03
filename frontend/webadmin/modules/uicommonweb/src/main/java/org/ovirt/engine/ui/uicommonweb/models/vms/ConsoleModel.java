@@ -222,8 +222,8 @@ public abstract class ConsoleModel extends EntityModel {
 
         //now we ask if the currently connected user has permission to reconnect (async)
         HasAdElementReconnectPermissionParameters params =
-                new HasAdElementReconnectPermissionParameters(vm.getConsoleUserId().getValue(),
-                        vm.getId().getValue());
+                new HasAdElementReconnectPermissionParameters(vm.getConsoleUserId(),
+                        vm.getId());
 
         AsyncQuery query = new AsyncQuery();
         query.setModel(this);

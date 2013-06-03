@@ -41,7 +41,7 @@ public class BackendNetworkResource extends AbstractBackendNetworkResource imple
         @Override
         public VdcActionParametersBase getParameters(Network incoming, org.ovirt.engine.core.common.businessentities.network.Network entity) {
             org.ovirt.engine.core.common.businessentities.network.Network updated = getMapper(modelType, org.ovirt.engine.core.common.businessentities.network.Network.class).map(incoming, entity);
-            return new AddNetworkStoragePoolParameters(entity.getDataCenterId().getValue(), updated);
+            return new AddNetworkStoragePoolParameters(entity.getDataCenterId(), updated);
         }
     }
 

@@ -26,7 +26,7 @@ public class VmReplicateDiskStartTaskHandler extends AbstractSPMAsyncTaskHandler
         VmReplicateDiskParameters migrationStartParams = new VmReplicateDiskParameters
                 (getEnclosingCommand().getParameters().getVdsId(),
                         getEnclosingCommand().getParameters().getVmId(),
-                        getEnclosingCommand().getParameters().getStoragePoolId().getValue(),
+                        getEnclosingCommand().getParameters().getStoragePoolId(),
                         getEnclosingCommand().getParameters().getSourceStorageDomainId(),
                         getEnclosingCommand().getParameters().getTargetStorageDomainId(),
                         getEnclosingCommand().getParameters().getImageGroupID(),
@@ -56,7 +56,7 @@ public class VmReplicateDiskStartTaskHandler extends AbstractSPMAsyncTaskHandler
     @Override
     protected VDSParametersBase getVDSParameters() {
         return new SyncImageGroupDataVDSCommandParameters(
-                getEnclosingCommand().getParameters().getStoragePoolId().getValue(),
+                getEnclosingCommand().getParameters().getStoragePoolId(),
                 getEnclosingCommand().getParameters().getSourceStorageDomainId(),
                 getEnclosingCommand().getParameters().getImageGroupID(),
                 getEnclosingCommand().getParameters().getTargetStorageDomainId(),
@@ -69,7 +69,7 @@ public class VmReplicateDiskStartTaskHandler extends AbstractSPMAsyncTaskHandler
         VmReplicateDiskParameters migrationStartParams = new VmReplicateDiskParameters
                 (getEnclosingCommand().getParameters().getVdsId(),
                         getEnclosingCommand().getParameters().getVmId(),
-                        getEnclosingCommand().getParameters().getStoragePoolId().getValue(),
+                        getEnclosingCommand().getParameters().getStoragePoolId(),
                         getEnclosingCommand().getParameters().getSourceStorageDomainId(),
                         getEnclosingCommand().getParameters().getSourceStorageDomainId(),
                         getEnclosingCommand().getParameters().getImageGroupID(),

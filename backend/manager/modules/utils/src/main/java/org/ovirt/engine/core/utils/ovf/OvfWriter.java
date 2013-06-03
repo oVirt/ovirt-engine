@@ -119,7 +119,7 @@ public abstract class OvfWriter implements IOvfBuilder {
                     "actual_size",
                     String.valueOf(BytesToGigabyte(image.getActualSizeInBytes())));
             _writer.WriteAttributeString(OVF_URI, "vm_snapshot_id", (image.getVmSnapshotId() != null) ? image
-                    .getVmSnapshotId().getValue().toString() : "");
+                    .getVmSnapshotId().toString() : "");
 
             if (image.getParentId().equals(Guid.Empty)) {
                 _writer.WriteAttributeString(OVF_URI, "parentRef", "");

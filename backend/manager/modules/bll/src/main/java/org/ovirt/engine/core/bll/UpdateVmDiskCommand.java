@@ -209,8 +209,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
             // If disk is not floating, then update its vm snapshot id to the active VM snapshot.
             ((DiskImage) oldDisk).setVmSnapshotId(getSnapshotDao()
-                    .getId(getVmId(), SnapshotType.ACTIVE)
-                    .getValue());
+                    .getId(getVmId(), SnapshotType.ACTIVE));
 
         }
         return true;

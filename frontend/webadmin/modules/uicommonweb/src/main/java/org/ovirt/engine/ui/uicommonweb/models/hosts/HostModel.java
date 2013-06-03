@@ -966,8 +966,7 @@ public abstract class HostModel extends Model
                             || clusters.size() > 0
                             && clusters.get(0)
                                     .getStoragePoolId()
-                                    .getValue()
-                                    .equals(selectedDataCenter.getId().getValue()))
+                                    .equals(selectedDataCenter.getId()))
                     {
                         hostModel.getCluster().setItems(clusters);
 
@@ -1219,16 +1218,14 @@ public abstract class HostModel extends Model
         GetNewVdsFenceStatusParameters param = new GetNewVdsFenceStatusParameters();
         if (getHostId() != null)
         {
-            param.setVdsId(getHostId().getValue());
+            param.setVdsId(getHostId());
         }
         param.setOrder(isPrimary ? FenceAgentOrder.Primary : FenceAgentOrder.Secondary);
         param.setManagementIp(isPrimary ? (String) getManagementIp().getEntity() : (String) getPmSecondaryIp().getEntity());
         param.setPmType(isPrimary ? (String) getPmType().getSelectedItem() : (String) getPmSecondaryType().getSelectedItem());
         param.setUser(isPrimary ? (String) getPmUserName().getEntity() : (String) getPmSecondaryUserName().getEntity());
         param.setPassword(isPrimary ? (String) getPmPassword().getEntity() : (String) getPmSecondaryPassword().getEntity());
-        param.setStoragePoolId(cluster.getStoragePoolId().getValue() != null ? cluster.getStoragePoolId()
-            .getValue()
-                .getValue() : Guid.Empty);
+        param.setStoragePoolId(cluster.getStoragePoolId() != null ? cluster.getStoragePoolId() : Guid.Empty);
         param.setFencingOptions(new ValueObjectMap(getPmOptionsMap(), false));
         param.setPmProxyPreferences(getPmProxyPreferences());
 

@@ -8,11 +8,11 @@ import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -238,7 +238,7 @@ public class ClusterGuideModel extends GuideModel
                                 model.updateOptionsLocalFSData();
                             }
                         }
-                    }), getEntity().getStoragePoolId().getValue());
+                    }), getEntity().getStoragePoolId());
         }
     }
 
@@ -299,7 +299,7 @@ public class ClusterGuideModel extends GuideModel
                         model.getCommands().add(tempVar2);
 
                     }
-                }), getEntity().getStoragePoolId().getValue());
+                }), getEntity().getStoragePoolId());
     }
 
     public void onSelectHost()
@@ -397,8 +397,7 @@ public class ClusterGuideModel extends GuideModel
                         {
                             model.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
                                     new Linq.DataCenterPredicate(clusterGuideModel.getEntity()
-                                            .getStoragePoolId()
-                                            .getValue())));
+                                            .getStoragePoolId())));
                         }
                         model.getDataCenter().setIsChangable(false);
 

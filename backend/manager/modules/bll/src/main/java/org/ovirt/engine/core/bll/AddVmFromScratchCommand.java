@@ -42,7 +42,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
         if (Guid.Empty.equals(storageDomainId) || storageDomainId == null) {
             List<StorageDomain> storagesInPool =
                     LinqUtils.filter(DbFacade.getInstance()
-                            .getStorageDomainDao().getAllForStoragePool(getStoragePoolId().getValue()),
+                            .getStorageDomainDao().getAllForStoragePool(getStoragePoolId()),
                             new Predicate<StorageDomain>() {
                                 @Override
                                 public boolean eval(StorageDomain a) {
@@ -52,8 +52,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                             });
             storageDomainId = (storagesInPool.size() > 0) ? storagesInPool.get(0).getId() : Guid.Empty;
 
-            getParameters()
-                    .setStorageDomainId(storageDomainId.getValue());
+            getParameters().setStorageDomainId(storageDomainId);
             setStorageDomainId(storageDomainId);
         }
         return storageDomainId;
@@ -92,7 +91,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                 VdcReturnValueBase tmpRetValue = null;
                 AddImageFromScratchParameters tempVar = new AddImageFromScratchParameters(itGuid, getParameters()
                             .getVmStaticData().getId(), (DiskImage) diskInfo);
-                tempVar.setStorageDomainId(this.getStorageDomainId().getValue());
+                tempVar.setStorageDomainId(this.getStorageDomainId());
                 tempVar.setVmSnapshotId(getVmSnapshotId());
                 tempVar.setParentCommand(VdcActionType.AddVmFromScratch);
                 tempVar.setEntityId(getParameters().getEntityId());
@@ -127,9 +126,8 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
         if (!result) {
             addCanDoActionMessage(VdcBllMessages.VM_CLUSTER_IS_NOT_VALID);
         } else {
-            result = ImagesHandler.CheckImagesConfiguration(getStorageDomainId().getValue(),
-                                                            getParameters()
-                                                                           .getDiskInfoList(),
+            result = ImagesHandler.CheckImagesConfiguration(getStorageDomainId(),
+                                                            getParameters().getDiskInfoList(),
                                                             getReturnValue().getCanDoActionMessages());
         }
 

@@ -62,7 +62,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     protected void initStoragePoolId() {
         if (getStoragePoolId() == null || Guid.Empty.equals(getStoragePoolId())) {
             setStoragePoolId(getDiskImage() != null && getDiskImage().getStoragePoolId() != null ? getDiskImage()
-                    .getStoragePoolId().getValue() : Guid.Empty);
+                    .getStoragePoolId() : Guid.Empty);
         }
     }
 
@@ -82,7 +82,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                         createTask(vdsReturnValue.getCreationInfo(),
                                 getParameters().getParentCommand(),
                                 VdcObjectType.Storage,
-                                getStorageDomainId().getValue()));
+                                getStorageDomainId()));
             } catch (VdcBLLException e) {
                 if (e.getErrorCode() != VdcBllErrors.ImageDoesNotExistInDomainError) {
                     throw e;
@@ -218,9 +218,9 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         List<DiskImage> snapshotDisks = getDiskImageDao().getAllSnapshotsForImageGroup(imageGroupToRemove);
         for (DiskImage snapshotDisk : snapshotDisks) {
             Guid vmSnapshotId = snapshotDisk.getVmSnapshotId();
-            if (vmSnapshotId != null && !Guid.Empty.equals(vmSnapshotId.getValue())) {
+            if (vmSnapshotId != null && !Guid.Empty.equals(vmSnapshotId)) {
                 Snapshot updated =
-                        prepareSnapshotConfigWithoutImageSingleImage(vmSnapshotId.getValue(),
+                        prepareSnapshotConfigWithoutImageSingleImage(vmSnapshotId,
                                 snapshotDisk.getImageId());
                 if (updated != null) {
                     result.add(updated);
@@ -314,9 +314,9 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             lockImageWithCompensation();
         }
         VDSReturnValue returnValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
-                new DeleteImageGroupVDSCommandParameters(getDiskImage().getStoragePoolId().getValue(),
-                        getStorageDomainId().getValue(), getDiskImage().getId()
-                                .getValue(), getDiskImage().isWipeAfterDelete(), getParameters()
+                new DeleteImageGroupVDSCommandParameters(getDiskImage().getStoragePoolId(),
+                        getStorageDomainId(), getDiskImage().getId(),
+                                getDiskImage().isWipeAfterDelete(), getParameters()
                                 .getForceDelete(), getStoragePool().getcompatibility_version().toString()));
         return returnValue;
     }

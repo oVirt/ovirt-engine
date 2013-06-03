@@ -191,7 +191,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     private boolean isStoragePoolMatching(VM vm) {
         if (getStoragePoolIsoMapDao().get(new StoragePoolIsoMapId(
-            getStorageDomainId().getValue(), vm.getStoragePoolId())) == null) {
+            getStorageDomainId(), vm.getStoragePoolId())) == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_OF_VM_NOT_MATCH);
         }
         return true;
@@ -381,10 +381,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                         getDiskImageInfo());
         parameters.setQuotaId(getQuotaId());
         parameters.setDiskAlias(getDiskAlias());
-        parameters.setStorageDomainId(getStorageDomainId().getValue());
+        parameters.setStorageDomainId(getStorageDomainId());
         parameters.setParentCommand(VdcActionType.AddDisk);
         parameters.setEntityId(getParameters().getEntityId());
-        parameters.setStoragePoolId(getStorageDomain().getStoragePoolId().getValue());
+        parameters.setStoragePoolId(getStorageDomain().getStoragePoolId());
         parameters.setParentParameters(getParameters());
         if (getVm() != null) {
             setVmSnapshotIdForDisk(parameters);
@@ -537,7 +537,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 getQuotaId(),
                 null,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
-                getStorageDomainId().getValue(),
+                getStorageDomainId(),
                 getRequestDiskSpace()));
         }
         return list;

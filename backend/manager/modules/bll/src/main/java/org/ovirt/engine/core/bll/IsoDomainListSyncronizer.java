@@ -271,7 +271,7 @@ public class IsoDomainListSyncronizer {
 
         while (iter.hasNext() && !refreshSucceeded) {
             StoragePoolIsoMap storagePoolIsoMap = iter.next();
-            Guid storagePoolId = storagePoolIsoMap.getstorage_pool_id().getValue();
+            Guid storagePoolId = storagePoolIsoMap.getstorage_pool_id();
             StorageDomainStatus status = storagePoolIsoMap.getstatus();
 
             if (status != StorageDomainStatus.Active) {

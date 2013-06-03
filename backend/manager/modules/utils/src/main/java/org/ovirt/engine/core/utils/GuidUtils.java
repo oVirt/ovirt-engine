@@ -55,7 +55,7 @@ public class GuidUtils {
     }
 
     public static Guid getGuidValue(Guid id) {
-        return id == null ? null : id.getValue();
+        return id;
     }
 
     private static final String SEPARATOR = ",";

@@ -185,7 +185,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
             getParameters().setSourceDomainId(sourceDomainId);
         }
         StorageDomainValidator validator =
-                new StorageDomainValidator(getStorageDomainDAO().getForStoragePool(sourceDomainId.getValue(),
+                new StorageDomainValidator(getStorageDomainDAO().getForStoragePool(sourceDomainId,
                         getImage().getStoragePoolId()));
         return validate(validator.isDomainExistAndActive());
     }
@@ -414,7 +414,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                         getImage().getQuotaId(),
                         null,
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
-                        getParameters().getSourceDomainId().getValue(),
+                        getParameters().getSourceDomainId(),
                         (double)getImage().getSizeInGigabytes()));
             }
         }
@@ -427,7 +427,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     public Map<String, String> getJobMessageProperties() {
-        List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStorageDomain(getParameters().getSourceDomainId().getValue());
+        List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStorageDomain(getParameters().getSourceDomainId());
         String sourceSDName = StringUtils.EMPTY;
 
         if (storageDomains.size() > 0) {

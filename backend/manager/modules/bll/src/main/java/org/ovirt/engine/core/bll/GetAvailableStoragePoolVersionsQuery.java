@@ -21,7 +21,7 @@ public class GetAvailableStoragePoolVersionsQuery<P extends IdQueryParameters>
         if (getParameters().getId() != null) {
             java.util.ArrayList<Version> result = new java.util.ArrayList<Version>();
             StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().get(
-                    getParameters().getId().getValue());
+                    getParameters().getId());
             if (storagePool != null) {
                 List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDao().getAllForStoragePool(
                         storagePool.getId(), getUserID(), getParameters().isFiltered());

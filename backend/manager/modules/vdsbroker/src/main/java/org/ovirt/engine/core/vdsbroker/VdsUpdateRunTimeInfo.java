@@ -1893,7 +1893,7 @@ public class VdsUpdateRunTimeInfo {
         if (list.size() <= 0) {
             return;
         }
-        _vmInterfaceStatisticsToSave.put(list.get(0).getVmId().getValue(), list);
+        _vmInterfaceStatisticsToSave.put(list.get(0).getVmId(), list);
     }
 
     /**

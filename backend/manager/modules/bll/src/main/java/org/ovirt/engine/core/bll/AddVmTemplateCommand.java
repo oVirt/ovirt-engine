@@ -511,8 +511,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     public List<PermissionSubject> getPermissionCheckSubjects() {
         if (permissionCheckSubject == null) {
             permissionCheckSubject = new ArrayList<PermissionSubject>();
-            Guid storagePoolId = getVdsGroup() == null || getVdsGroup().getStoragePoolId() == null ? null
-                    : getVdsGroup().getStoragePoolId().getValue();
+            Guid storagePoolId = getVdsGroup() == null ? null : getVdsGroup().getStoragePoolId();
             permissionCheckSubject.add(new PermissionSubject(storagePoolId,
                     VdcObjectType.StoragePool,
                     getActionType().getActionGroup()));

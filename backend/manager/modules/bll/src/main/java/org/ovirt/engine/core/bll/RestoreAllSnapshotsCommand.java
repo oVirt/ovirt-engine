@@ -261,7 +261,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             Guid snapshotToRemove = (parentImage == null) ? null : parentImage.getVmSnapshotId();
 
             while (parentImage != null && snapshotToRemove != null && !snapshotToRemove.equals(previewedSnapshotId)) {
-                snapshotsToRemove.add(snapshotToRemove.getValue());
+                snapshotsToRemove.add(snapshotToRemove);
 
                 parentImage = getDiskImageDao().getSnapshotById(parentImage.getParentId());
                 snapshotToRemove = (parentImage == null) ? null : parentImage.getVmSnapshotId();

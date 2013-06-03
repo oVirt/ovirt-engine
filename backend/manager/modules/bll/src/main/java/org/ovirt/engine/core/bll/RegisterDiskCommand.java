@@ -86,7 +86,7 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
                 getParameters().getDiskImage().getQuotaId(),
                 null,
                 QuotaConsumptionParameter.QuotaAction.CONSUME,
-                getStorageDomainId().getValue(),
+                getStorageDomainId(),
                 getParameters().getDiskImage().getActualSize()));
 
         return list;

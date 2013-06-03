@@ -24,17 +24,17 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.SpmStatus;
 import org.ovirt.engine.core.common.businessentities.SpmStatusResult;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -313,7 +313,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         && domainPoolMap.getstatus() != StorageDomainStatus.Locked) {
                     // and the domain is not master in the VDSM
                     if (!((data.getStorageDomainType() == StorageDomainType.Master) || (data.getStorageDomainType() == StorageDomainType.Unknown))) {
-                        reconstructMasterDomainNotInSync(data.getStoragePoolId().getValue(),
+                        reconstructMasterDomainNotInSync(data.getStoragePoolId(),
                                 domainFromDb.getId(),
                                 "Mismatch between master in DB and VDSM",
                                 MessageFormat.format("Master domain is not in sync between DB and VDSM. "
@@ -322,7 +322,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     } // or master in DB and VDSM but there is a version
                       // mismatch
                     else if (dataMasterVersion != storagePool.getmaster_domain_version()) {
-                        reconstructMasterDomainNotInSync(data.getStoragePoolId().getValue(),
+                        reconstructMasterDomainNotInSync(data.getStoragePoolId(),
                                 domainFromDb.getId(),
                                 "Mismatch between master version in DB and VDSM",
                                 MessageFormat.format("Master domain version is not in sync between DB and VDSM. "
@@ -347,7 +347,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     if (data.getStatus() != null && data.getStatus() == StorageDomainStatus.InActive
                             && domainFromDb.getStorageDomainType() == StorageDomainType.Master) {
                         StoragePool pool = DbFacade.getInstance().getStoragePoolDao()
-                                .get(domainPoolMap.getstorage_pool_id().getValue());
+                                .get(domainPoolMap.getstorage_pool_id());
                         if (pool != null) {
                             DbFacade.getInstance().getStoragePoolDao().updateStatus(pool.getId(),StoragePoolStatus.Maintenance);
                             pool.setstatus(StoragePoolStatus.Maintenance);

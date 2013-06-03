@@ -193,7 +193,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
             List<StorageDomain> domains =
                     DbFacade.getInstance()
                             .getStorageDomainDao()
-                            .getAllForStoragePool(getStoragePoolId().getValue());
+                            .getAllForStoragePool(getStoragePoolId());
             Map<Guid, StorageDomain> storageDomainsMap = new HashMap<Guid, StorageDomain>();
             for (StorageDomain storageDomain : domains) {
                 StorageDomainValidator validator = new StorageDomainValidator(storageDomain);

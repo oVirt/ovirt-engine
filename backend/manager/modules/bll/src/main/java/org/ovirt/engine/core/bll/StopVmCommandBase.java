@@ -144,7 +144,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
             Backend.getInstance()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
-                            new UpdateVmDynamicDataVDSCommandParameters(getVm().getRunOnVds().getValue(),
+                            new UpdateVmDynamicDataVDSCommandParameters(getVm().getRunOnVds(),
                                     vmDynamicData));
         } else {
             DbFacade.getInstance().getVmDynamicDao().update(vmDynamicData);

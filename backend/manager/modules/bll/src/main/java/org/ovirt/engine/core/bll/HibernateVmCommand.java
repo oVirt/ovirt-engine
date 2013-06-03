@@ -118,7 +118,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                                     VDSCommandType.CreateImage,
                                     new CreateImageVDSCommandParameters(
                                             getVm().getStoragePoolId(),
-                                            getStorageDomainId().getValue(),
+                                            getStorageDomainId(),
                                             image1GroupId,
                                             getVm().getTotalMemorySizeInBytes(),
                                             getVolumeType(),
@@ -140,7 +140,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                                     ret1.getCreationInfo(),
                                     VdcActionType.HibernateVm,
                                     VdcObjectType.Storage,
-                                    getStorageDomainId().getValue());
+                                    getStorageDomainId());
                         }
                     });
 
@@ -157,8 +157,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                             .RunVdsCommand(
                                     VDSCommandType.CreateImage,
                                     new CreateImageVDSCommandParameters(getVm().getStoragePoolId(),
-                                            getStorageDomainId()
-                                                    .getValue(),
+                                            getStorageDomainId(),
                                             image2GroupId,
                                             META_DATA_SIZE_IN_BYTES,
                                             VolumeType.Sparse,

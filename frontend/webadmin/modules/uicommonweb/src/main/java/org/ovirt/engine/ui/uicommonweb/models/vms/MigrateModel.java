@@ -176,7 +176,7 @@ public class MigrateModel extends Model
             sethasSameVdsMessage(false);
             for (VM vm : getVmList())
             {
-                if (selectedHost.getId().getValue().equals(vm.getRunOnVds().getValue()))
+                if (selectedHost.getId().equals(vm.getRunOnVds()))
                 {
                     sethasSameVdsMessage(true);
                     break;

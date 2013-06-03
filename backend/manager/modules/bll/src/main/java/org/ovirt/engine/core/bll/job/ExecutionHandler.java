@@ -145,7 +145,7 @@ public class ExecutionHandler {
     public static void endTaskStep(Guid stepId, JobExecutionStatus exitStatus) {
         try {
             if (stepId != null) {
-                Step step = JobRepositoryFactory.getJobRepository().getStep(stepId.getValue());
+                Step step = JobRepositoryFactory.getJobRepository().getStep(stepId);
 
                 if (step != null) {
                     step.markStepEnded(exitStatus);
@@ -492,7 +492,7 @@ public class ExecutionHandler {
             Step step = JobRepositoryFactory.getJobRepository().getStep(stepId);
             if (step != null && step.getParentStepId() != null) {
                 context = new ExecutionContext();
-                Step executionStep = JobRepositoryFactory.getJobRepository().getStep(step.getParentStepId().getValue());
+                Step executionStep = JobRepositoryFactory.getJobRepository().getStep(step.getParentStepId());
 
                 // indicates if a step is monitored at Job level or as an inner step
                 Guid parentStepId = executionStep.getParentStepId();
@@ -501,7 +501,7 @@ public class ExecutionHandler {
                     context.setJob(JobRepositoryFactory.getJobRepository().getJobWithSteps(step.getJobId()));
                 } else {
                     context.setExecutionMethod(ExecutionMethod.AsStep);
-                    Step parentStep = JobRepositoryFactory.getJobRepository().getStep(parentStepId.getValue());
+                    Step parentStep = JobRepositoryFactory.getJobRepository().getStep(parentStepId);
                     parentStep.setSteps(DbFacade.getInstance().getStepDao().getStepsByParentStepId(parentStep.getId()));
                     context.setStep(parentStep);
                 }

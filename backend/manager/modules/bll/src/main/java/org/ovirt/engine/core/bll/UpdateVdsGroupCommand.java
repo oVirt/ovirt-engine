@@ -71,7 +71,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
             if (oldGroup.getStoragePoolId() != null) {
                 for (VDS vds : allForVdsGroup) {
-                    getVdsSpmIdMapDAO().removeByVdsAndStoragePool(vds.getId(), oldGroup.getStoragePoolId().getValue());
+                    getVdsSpmIdMapDAO().removeByVdsAndStoragePool(vds.getId(), oldGroup.getStoragePoolId());
                 }
             }
         }
@@ -92,8 +92,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 List<Network> storagePoolNets =
                         getNetworkDAO()
                                 .getAllForDataCenter(
-                                        getVdsGroup().getStoragePoolId()
-                                                .getValue());
+                                        getVdsGroup().getStoragePoolId());
                 for (Network net : storagePoolNets) {
                     if (StringUtils.equals(net.getName(), managementNetwork)) {
                         getNetworkClusterDAO().save(new NetworkCluster(getVdsGroup().getId(), net.getId(),
@@ -238,10 +237,10 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             }
         }
         if (result && getVdsGroup().getStoragePoolId() != null) {
-            StoragePool storagePool = getStoragePoolDAO().get(getVdsGroup().getStoragePoolId().getValue());
+            StoragePool storagePool = getStoragePoolDAO().get(getVdsGroup().getStoragePoolId());
             if (oldGroup.getStoragePoolId() == null && storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
                 // we allow only one cluster in localfs data center
-                if (!getVdsGroupDAO().getAllForStoragePool(getVdsGroup().getStoragePoolId().getValue()).isEmpty()) {
+                if (!getVdsGroupDAO().getAllForStoragePool(getVdsGroup().getStoragePoolId()).isEmpty()) {
                     getReturnValue()
                             .getCanDoActionMessages()
                             .add(VdcBllMessages.VDS_GROUP_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE

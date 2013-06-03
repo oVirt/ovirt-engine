@@ -128,7 +128,7 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public void setUserId(final Guid value) {
-        mUserId = value.getValue();
+        mUserId = value;
     }
 
     public String getUserName() {
@@ -151,7 +151,7 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public Guid getVmTemplateId() {
-        return getVmTemplateIdRef() != null ? getVmTemplateIdRef().getValue() : Guid.Empty;
+        return getVmTemplateIdRef() != null ? getVmTemplateIdRef() : Guid.Empty;
     }
 
     public void setVmTemplateId(final Guid value) {
@@ -177,7 +177,7 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public Guid getVmId() {
-        return getVmIdRef() != null ? getVmIdRef().getValue() : Guid.Empty;
+        return getVmIdRef() != null ? getVmIdRef() : Guid.Empty;
     }
 
     public void setVmId(final Guid value) {
@@ -224,7 +224,7 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public Guid getVdsId() {
-        return mVdsId != null ? mVdsId.getValue() : Guid.Empty;
+        return mVdsId != null ? mVdsId : Guid.Empty;
     }
 
     public void setVdsId(final Guid value) {
@@ -248,11 +248,11 @@ public class AuditLogableBase extends TimeoutBase {
         if (_storageDomain == null && getStorageDomainId() != null) {
             if (_storagePoolId != null && getStoragePool() != null) {
                 _storageDomain = getStorageDomainDAO().getForStoragePool(
-                        getStorageDomainId().getValue(), getStoragePool().getId());
+                        getStorageDomainId(), getStoragePool().getId());
             }
             if (_storageDomain == null) {
                 final List<StorageDomain> storageDomainList =
-                        getStorageDomainDAO().getAllForStorageDomain(getStorageDomainId().getValue());
+                        getStorageDomainDAO().getAllForStorageDomain(getStorageDomainId());
                 if (storageDomainList.size() != 0) {
                     _storageDomain = storageDomainList.get(0);
                     for (final StorageDomain storageDomainFromList : storageDomainList) {
@@ -293,7 +293,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public StoragePool getStoragePool() {
         if (_storagePool == null && getStoragePoolId() != null && !Guid.Empty.equals(getStoragePoolId())) {
-            _storagePool = getStoragePoolDAO().get(getStoragePoolId().getValue());
+            _storagePool = getStoragePoolDAO().get(getStoragePoolId());
         }
         return _storagePool;
     }
@@ -332,7 +332,7 @@ public class AuditLogableBase extends TimeoutBase {
         if (mVds == null
                 && ((mVdsId != null && !Guid.Empty.equals(mVdsId)) || (getVm() != null && getVm().getRunOnVds() != null))) {
             if (mVdsId == null || Guid.Empty.equals(mVdsId)) {
-                mVdsId = getVm().getRunOnVds().getValue();
+                mVdsId = getVm().getRunOnVds();
             }
             try {
                 mVds = getVdsDAO().get(getVdsId());
@@ -354,12 +354,12 @@ public class AuditLogableBase extends TimeoutBase {
     public VM getVm() {
         if (mVm == null && mVmId != null && !mVmId.equals(Guid.Empty)) {
             try {
-                mVm = getVmDAO().get(mVmId.getValue());
+                mVm = getVmDAO().get(mVmId);
 
                 // TODO: This is done for backwards compatibility with VMDAO.getById(Guid)
                 // It should probably be removed, but some research is required
                 if (mVm != null) {
-                    mVm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(mVmId.getValue()));
+                    mVm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(mVmId));
                 }
             } catch (final Exception e) {
                 log.infoFormat("Failed to get vm {0}", mVmId);
@@ -533,7 +533,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     protected GlusterVolumeEntity getGlusterVolume() {
         if (glusterVolume == null && glusterVolumeId != null) {
-            glusterVolume = getGlusterVolumeDao().getById(glusterVolumeId.getValue());
+            glusterVolume = getGlusterVolumeDao().getById(glusterVolumeId);
         }
         return glusterVolume;
     }

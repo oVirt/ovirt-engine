@@ -91,7 +91,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (!getParameters().getIsInternal()
                 && getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
             List<StorageDomain> domains =
-                    getStorageDomainDAO().getAllForStoragePool(getStorageDomain().getStoragePoolId().getValue());
+                    getStorageDomainDAO().getAllForStoragePool(getStorageDomain().getStoragePoolId());
 
             List<StorageDomain> activeDomains = filterDomainsByStatus(domains, StorageDomainStatus.Active);
 
@@ -122,7 +122,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (getStoragePool().getspm_vds_id() != null) {
             // In case there are running tasks in the pool, it is impossible to deactivate the master storage domain
             if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master &&
-            getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(getStorageDomain().getStoragePoolId().getValue()).size() > 0) {
+                    getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(getStorageDomain().getStoragePoolId()).size() > 0) {
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_DOMAIN_WITH_TASKS_ON_POOL);
                 return false;
             } else if (getStorageDomain().getStorageDomainType() != StorageDomainType.ISO &&

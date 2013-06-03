@@ -39,7 +39,7 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
         VmReplicateDiskParameters migrationCompleteParams = new VmReplicateDiskParameters
                 (getEnclosingCommand().getParameters().getVdsId(),
                         getEnclosingCommand().getParameters().getVmId(),
-                        getEnclosingCommand().getParameters().getStoragePoolId().getValue(),
+                        getEnclosingCommand().getParameters().getStoragePoolId(),
                         getEnclosingCommand().getParameters().getSourceStorageDomainId(),
                         getEnclosingCommand().getParameters().getTargetStorageDomainId(),
                         getEnclosingCommand().getParameters().getImageGroupID(),
@@ -136,7 +136,7 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
     @Override
     protected VDSParametersBase getVDSParameters() {
         return new DeleteImageGroupVDSCommandParameters(
-                getEnclosingCommand().getParameters().getStoragePoolId().getValue(),
+                getEnclosingCommand().getParameters().getStoragePoolId(),
                 getEnclosingCommand().getParameters().getSourceStorageDomainId(),
                 getEnclosingCommand().getParameters().getImageGroupID(),
                 DbFacade.getInstance()

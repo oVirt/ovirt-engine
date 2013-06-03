@@ -498,7 +498,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     protected boolean checkImagesGUIDsLegal() {
         for (DiskImage image : getVm().getImages()) {
             Guid imageGUID = image.getImageId();
-            Guid storagePoolId = image.getStoragePoolId() != null ? image.getStoragePoolId().getValue()
+            Guid storagePoolId = image.getStoragePoolId() != null ? image.getStoragePoolId()
                     : Guid.Empty;
             Guid storageDomainId = getParameters().getSourceDomainId();
             Guid imageGroupId = image.getId() != null ? image.getId() : Guid.Empty;
@@ -682,7 +682,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 setDiskStorageDomainInfo(disk);
 
                 saveImage(disk);
-                snapshotId = disk.getVmSnapshotId().getValue();
+                snapshotId = disk.getVmSnapshotId();
                 saveSnapshotIfNotExists(snapshotId, disk);
                 saveDiskImageDynamic(disk);
             }
@@ -692,7 +692,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 DiskImage disk = diskList.get(diskList.size() - 1);
                 diskGuidList.add(disk.getId());
                 imageGuidList.add(disk.getImageId());
-                snapshotId = disk.getVmSnapshotId().getValue();
+                snapshotId = disk.getVmSnapshotId();
                 disk.setActive(true);
                 ImagesHandler.setDiskAlias(disk, getVm(), ++aliasCounter);
                 updateImage(disk);

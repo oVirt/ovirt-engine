@@ -43,7 +43,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         boolean result = true;
         if (vm.getDedicatedVmForVds() != null) {
             // get dedicated host id
-            Guid guid = vm.getDedicatedVmForVds().getValue();
+            Guid guid = vm.getDedicatedVmForVds();
             // get dedicated host cluster and comparing it to VM cluster
             VDS vds = getVdsDAO().get(guid);
             result = vds != null && (vm.getVdsGroupId().equals(vds.getVdsGroupId()));
@@ -115,7 +115,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
             // can not check if no dedicated vds was configured
             if (vmStatic.getDedicatedVmForVds() != null) {
-                VDS dedicatedVds = getVds(vmStatic.getDedicatedVmForVds().getValue());
+                VDS dedicatedVds = getVds(vmStatic.getDedicatedVmForVds());
                 // check only from cluster version 3.2
                 if (dedicatedVds != null &&
                         dedicatedVds.getVdsGroupCompatibilityVersion() != null &&

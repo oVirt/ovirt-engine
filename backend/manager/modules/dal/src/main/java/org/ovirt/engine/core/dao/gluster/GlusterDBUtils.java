@@ -90,7 +90,7 @@ public class GlusterDBUtils {
                 // not found
                 return null;
             case 1:
-                return getVdsStaticDao().get(ifaces.get(0).getVdsId().getValue());
+                return getVdsStaticDao().get(ifaces.get(0).getVdsId());
             default:
                 // multiple servers in the DB having this ip address!
                 throw new RuntimeException("There are multiple servers in DB having same IP address " + hostnameOrIp);

@@ -55,6 +55,6 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends IdQueryParameters>
     protected StorageDomain getStorageDomain(Guid domainId) {
         return DbFacade.getInstance()
                 .getStorageDomainDao()
-                .getForStoragePool(domainId, vmTemplate.getStoragePoolId().getValue());
+                .getForStoragePool(domainId, vmTemplate.getStoragePoolId());
     }
 }

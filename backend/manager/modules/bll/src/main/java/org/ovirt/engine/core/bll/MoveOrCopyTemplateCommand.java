@@ -126,7 +126,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     && DbFacade.getInstance()
                             .getStoragePoolIsoMapDao()
                             .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
-                                    getVmTemplate().getStoragePoolId().getValue())) == null) {
+                                    getVmTemplate().getStoragePoolId())) == null) {
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
             }
@@ -214,8 +214,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.GetImageDomainsList,
-                            new GetImageDomainsListVDSCommandParameters(getStoragePool().getId()
-                                    .getValue(), disk.getId()));
+                            new GetImageDomainsListVDSCommandParameters(getStoragePool().getId(), disk.getId()));
             if (runVdsCommand.getSucceeded()) {
                 ArrayList<Guid> domains = (ArrayList<Guid>) runVdsCommand.getReturnValue();
                 if (domains.contains(imageToDestinationDomainMap.get(disk.getId()))) {

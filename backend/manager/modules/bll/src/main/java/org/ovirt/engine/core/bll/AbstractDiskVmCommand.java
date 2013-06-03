@@ -56,7 +56,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                         StorageHelperBase.filterConnectionsByStorageType(lun);
                 for (StorageType storageType : lunsByStorageType.keySet()) {
                     if (!getStorageHelper(storageType).connectStorageToLunByVdsId(null,
-                            getVm().getRunOnVds().getValue(),
+                            getVm().getRunOnVds(),
                             lun,
                             getVm().getStoragePoolId())) {
                         throw new VdcBLLException(VdcBllErrors.StorageServerConnectionError);
@@ -64,7 +64,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 }
             }
         }
-        runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds().getValue(),
+        runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds(),
                 getVm().getId(), disk, vmDevice));
     }
 

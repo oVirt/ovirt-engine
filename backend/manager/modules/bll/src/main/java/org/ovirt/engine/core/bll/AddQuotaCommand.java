@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -43,8 +43,7 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getStoragePoolId() == null ? null
-                : getStoragePoolId().getValue(),
+        return Collections.singletonList(new PermissionSubject(getStoragePoolId(),
                 VdcObjectType.StoragePool,
                 getActionType().getActionGroup()));
     }

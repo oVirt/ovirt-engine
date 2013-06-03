@@ -214,7 +214,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                         (ArrayList<StorageDomain>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 for (StorageDomain domain : domains) {
                     String guid =
-                            domain.getStoragePoolId() != null ? domain.getStoragePoolId().getValue().toString()
+                            domain.getStoragePoolId() != null ? domain.getStoragePoolId().toString()
                                     : Guid.Empty.toString();
                     domain.setQueryableId(domain.getId() + "_" + guid); //$NON-NLS-1$
                 }
@@ -504,7 +504,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                 param.setStorageDomainId(getEntity().getId());
                 if (storageDomain.getStoragePoolId() != null)
                 {
-                    param.setStoragePoolId(storageDomain.getStoragePoolId().getValue());
+                    param.setStoragePoolId(storageDomain.getStoragePoolId());
                 }
 
                 getdetachPrms().add(param);
@@ -558,7 +558,7 @@ public class StorageDataCenterListModel extends SearchableListModel
             parameters.setStorageDomainId(getEntity().getId());
             if (a.getStoragePoolId() != null)
             {
-                parameters.setStoragePoolId(a.getStoragePoolId().getValue());
+                parameters.setStoragePoolId(a.getStoragePoolId());
             }
 
             list.add(parameters);
@@ -584,7 +584,7 @@ public class StorageDataCenterListModel extends SearchableListModel
             parameters.setStorageDomainId(getEntity().getId());
             if (a.getStoragePoolId() != null)
             {
-                parameters.setStoragePoolId(a.getStoragePoolId().getValue());
+                parameters.setStoragePoolId(a.getStoragePoolId());
             }
 
             list.add(parameters);

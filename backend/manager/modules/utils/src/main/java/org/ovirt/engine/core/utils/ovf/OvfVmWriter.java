@@ -219,7 +219,7 @@ public class OvfVmWriter extends OvfWriter {
             }
             if (image.getStoragePoolId() != null) {
                 _writer.WriteStartElement(RASD_URI, "StoragePoolId");
-                _writer.WriteRaw(image.getStoragePoolId().getValue().toString());
+                _writer.WriteRaw(image.getStoragePoolId().toString());
                 _writer.WriteEndElement();
             }
             _writer.WriteStartElement(RASD_URI, "CreationDate");

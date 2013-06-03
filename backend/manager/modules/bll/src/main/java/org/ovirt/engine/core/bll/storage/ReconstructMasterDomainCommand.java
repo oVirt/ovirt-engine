@@ -82,6 +82,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         // To issue a reconstructMaster you need to set the domain inactive
         if (getParameters().isInactive()) {
             executeInNewTransaction(new TransactionMethod<Void>() {
+                @Override
                 public Void runInTransaction() {
                     setStorageDomainStatus(StorageDomainStatus.InActive, getCompensationContext());
                     calcStoragePoolStatusByDomainsStatus();
@@ -136,7 +137,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             // all vms/templates metadata should be copied to the new master domain, so we need
             // to perform increment of the db version for all the vms in the storage pool.
             // currently this method is used for both templates and vms.
-            getVmStaticDAO().incrementDbGenerationForAllInStoragePool(getStoragePoolId().getValue());
+            getVmStaticDAO().incrementDbGenerationForAllInStoragePool(getStoragePoolId());
         }
         if (_isLastMaster) {
             getCompensationContext().resetCompensation();
@@ -148,8 +149,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.MarkPoolInReconstructMode,
-                            new IrsBaseVDSCommandParameters(getStoragePoolId()
-                                    .getValue()));
+                            new IrsBaseVDSCommandParameters(getStoragePoolId()));
         }
     }
 

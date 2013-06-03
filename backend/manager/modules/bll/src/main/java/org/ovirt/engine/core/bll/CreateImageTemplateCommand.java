@@ -33,7 +33,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
     @Override
     protected void executeCommand() {
         Guid storagePoolId = getDiskImage().getStoragePoolId() != null ? getDiskImage().getStoragePoolId()
-                .getValue() : Guid.Empty;
+                : Guid.Empty;
         Guid imageGroupId = getDiskImage().getId() != null ? getDiskImage().getId()
                 : Guid.Empty;
         Guid snapshotId = getDiskImage().getImageId();

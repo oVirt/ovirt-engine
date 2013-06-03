@@ -143,7 +143,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             List<Guid> quotasToRemoveFromCache = new ArrayList<Guid>();
             quotasToRemoveFromCache.add(source.getQuotaId());
             quotasToRemoveFromCache.add(dest.getQuotaId());
-            QuotaManager.getInstance().removeQuotaFromCache(getStoragePoolId().getValue(), quotasToRemoveFromCache);
+            QuotaManager.getInstance().removeQuotaFromCache(getStoragePoolId(), quotasToRemoveFromCache);
         }
     }
 

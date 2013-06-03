@@ -156,7 +156,7 @@ public class ClusterNetworkListModel extends SearchableListModel
         }
 
         Guid storagePoolId =
-                (getEntity().getStoragePoolId() != null) ? getEntity().getStoragePoolId().getValue() : Guid.Empty;
+                (getEntity().getStoragePoolId() != null) ? getEntity().getStoragePoolId() : Guid.Empty;
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -343,7 +343,7 @@ public class ClusterNetworkListModel extends SearchableListModel
 
                 }
             };
-            AsyncDataProvider.getDataCenterById(_asyncQuery, getEntity().getStoragePoolId().getValue());
+            AsyncDataProvider.getDataCenterById(_asyncQuery, getEntity().getStoragePoolId());
         }
     }
 

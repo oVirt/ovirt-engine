@@ -255,7 +255,7 @@ public class DiskImage extends DiskImageBase implements IImage {
     }
 
     public void setVmSnapshotId(Guid snapshotId) {
-        getImage().setSnapshotId(snapshotId == null ? null : snapshotId.getValue());
+        getImage().setSnapshotId(snapshotId);
     }
 
     public ArrayList<String> getStoragePath() {

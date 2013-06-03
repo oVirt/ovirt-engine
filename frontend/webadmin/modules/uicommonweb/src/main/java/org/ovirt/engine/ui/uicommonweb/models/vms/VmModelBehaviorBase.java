@@ -327,7 +327,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void doChangeDefautlHost(Guid hostGuid) {
         if (hostGuid != null)
         {
-            Guid vdsId = hostGuid.getValue();
+            Guid vdsId = hostGuid;
             if (getModel().getDefaultHost().getItems() != null)
             {
                 getModel().getDefaultHost().setSelectedItem(Linq.firstOrDefault(getModel().getDefaultHost().getItems(),

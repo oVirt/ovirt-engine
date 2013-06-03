@@ -320,7 +320,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         for (VmNetworkInterface vmInterface : vm.getInterfaces()) {
             // get vm device for this disk from DB
             VmDevice vmDevice =
-                    devicesByDeviceId.get(new VmDeviceId(vmInterface.getId(), vmInterface.getVmId().getValue()));
+                    devicesByDeviceId.get(new VmDeviceId(vmInterface.getId(), vmInterface.getVmId()));
 
             if (vmDevice != null && vmDevice.getIsManaged() && vmDevice.getIsPlugged()) {
 

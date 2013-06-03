@@ -68,7 +68,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      */
     public void setVdsId(Guid vdsId) {
         this.vdsId = vdsId;
-        this.statistics.setVdsId(vdsId != null ? vdsId.getValue() : null);
+        this.statistics.setVdsId(vdsId);
     }
 
     /**

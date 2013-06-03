@@ -49,7 +49,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     protected void initContainerDetails(ImagesContainterParametersBase parameters) {
         super.setVmId(parameters.getContainerId());
         if (getDiskImage() != null && getDiskImage().getStoragePoolId() != null) {
-            setStoragePoolId(getDiskImage().getStoragePoolId().getValue());
+            setStoragePoolId(getDiskImage().getStoragePoolId());
         }
     }
 
@@ -135,7 +135,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
 
     protected Guid getImageGroupId() {
         if (_imageGroupId.equals(Guid.Empty)) {
-            _imageGroupId = getDiskImage().getId() != null ? getDiskImage().getId().getValue()
+            _imageGroupId = getDiskImage().getId() != null ? getDiskImage().getId()
                     : Guid.Empty;
         }
         return _imageGroupId;
@@ -324,10 +324,10 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     protected void endSuccessfully() {
         if (getDestinationDiskImage() != null) {
             Guid storagePoolId = getDestinationDiskImage().getStoragePoolId() != null ? getDestinationDiskImage()
-                    .getStoragePoolId().getValue() : Guid.Empty;
+                    .getStoragePoolId() : Guid.Empty;
 
             Guid newImageGroupId = getDestinationDiskImage().getId() != null ? getDestinationDiskImage()
-                    .getId().getValue() : Guid.Empty;
+                    .getId() : Guid.Empty;
             Guid newImageId = getDestinationDiskImage().getImageId();
             Guid newStorageDomainID = getDestinationDiskImage().getStorageIds().get(0);
 

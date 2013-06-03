@@ -320,7 +320,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 public Void runInTransaction() {
 
                     runVdsCommand(VDSCommandType.Snapshot, buildLiveSnapshotParameters(snapshot));
-
                     return null;
                 }
             });
@@ -333,13 +332,13 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         List<Disk> pluggedDisks = getDiskDao().getAllForVm(getVm().getId(), true);
         List<DiskImage> filteredPluggedDisks = ImagesHandler.filterImageDisks(pluggedDisks, false, true);
         if (FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion())) {
-            return new SnapshotVDSCommandParameters(getVm().getRunOnVds().getValue(),
+            return new SnapshotVDSCommandParameters(getVm().getRunOnVds(),
                     getVm().getId(),
                     filteredPluggedDisks,
                     snapshot.getMemoryVolume());
         }
         else {
-            return new SnapshotVDSCommandParameters(getVm().getRunOnVds().getValue(),
+            return new SnapshotVDSCommandParameters(getVm().getRunOnVds(),
                     getVm().getId(),
                     filteredPluggedDisks);
         }

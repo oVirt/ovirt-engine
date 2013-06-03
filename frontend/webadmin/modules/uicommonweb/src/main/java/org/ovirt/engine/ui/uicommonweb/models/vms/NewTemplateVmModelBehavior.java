@@ -74,7 +74,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                             model.setDataCentersAndClusters(model,
                                                     Arrays.asList(dataCenter),
                                                     clusters,
-                                                    vm.getVdsGroupId().getValue());
+                                                    vm.getVdsGroupId());
 
                                             initTemplate();
 

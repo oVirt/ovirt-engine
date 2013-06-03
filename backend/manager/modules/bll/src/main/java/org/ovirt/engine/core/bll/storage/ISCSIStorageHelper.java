@@ -8,10 +8,10 @@ import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUNs;
-import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -48,7 +48,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             }
             Guid poolId = storagePoolId;
             if (storageDomain != null && storageDomain.getStoragePoolId() != null) {
-                poolId = storageDomain.getStoragePoolId().getValue();
+                poolId = storageDomain.getStoragePoolId();
             }
             VDSReturnValue returnValue = Backend
                     .getInstance()

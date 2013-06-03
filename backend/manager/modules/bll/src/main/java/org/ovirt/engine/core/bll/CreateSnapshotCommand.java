@@ -68,7 +68,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     }
 
     protected Guid getDestinationStorageDomainId() {
-        return mNewCreatedDiskImage.getStorageIds() != null ? mNewCreatedDiskImage.getStorageIds().get(0).getValue()
+        return mNewCreatedDiskImage.getStorageIds() != null ? mNewCreatedDiskImage.getStorageIds().get(0)
                 : Guid.Empty;
     }
 
@@ -78,8 +78,8 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         mNewCreatedDiskImage = cloneDiskImage(getDestinationImageId());
         mNewCreatedDiskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
         setStoragePoolId(mNewCreatedDiskImage.getStoragePoolId() != null ? mNewCreatedDiskImage.getStoragePoolId()
-                .getValue() : Guid.Empty);
-        getParameters().setStoragePoolId(getStoragePoolId().getValue());
+                : Guid.Empty);
+        getParameters().setStoragePoolId(getStoragePoolId());
 
         // override volume type and volume format to sparse and cow according to
         // storage team request
@@ -94,14 +94,14 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                             .getResourceManager()
                             .RunVdsCommand(
                                     VDSCommandType.CreateSnapshot,
-                                    new CreateSnapshotVDSCommandParameters(getStoragePoolId().getValue(),
+                                    new CreateSnapshotVDSCommandParameters(getStoragePoolId(),
                                             getDestinationStorageDomainId(),
                                             getImageGroupId(),
                                             getImage().getImageId(),
                                             getDiskImage().getSize(),
                                             mNewCreatedDiskImage.getVolumeType(),
                                             mNewCreatedDiskImage.getVolumeFormat(),
-                                            getDiskImage().getimage_group_id().getValue(),
+                                            getDiskImage().getimage_group_id(),
                                             getDestinationImageId(),
                                             "",
                                             getStoragePool().getcompatibility_version().toString()));

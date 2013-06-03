@@ -8,11 +8,11 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.compat.IntegerCompat;
@@ -277,7 +277,7 @@ public class ConfigureLocalStorageModel extends Model {
             // If we use current settings there is no need to create cluster.
             if (useCurrentSettings) {
 
-                getCluster().setClusterId(host.getVdsGroupId().getValue());
+                getCluster().setClusterId(host.getVdsGroupId());
                 getCluster().getName().setEntity(host.getVdsGroupName());
 
                 VDSGroup cluster = context.hostCluster;
@@ -321,7 +321,7 @@ public class ConfigureLocalStorageModel extends Model {
 
                     cluster =
                             Linq.firstOrDefault(context.clusterList,
-                                    new Linq.ClusterPredicate(getCluster().getClusterId().getValue()));
+                                    new Linq.ClusterPredicate(getCluster().getClusterId()));
                     if (cluster != null) {
 
                         ServerCpu cpu = new ServerCpu();

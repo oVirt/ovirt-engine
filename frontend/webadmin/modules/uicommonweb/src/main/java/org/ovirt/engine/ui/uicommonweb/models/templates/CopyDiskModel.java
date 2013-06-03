@@ -58,7 +58,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
 
                 copyDiskModel.onInitStorageDomains(storageDomains);
             }
-        }), ((DiskImage) disk).getStoragePoolId().getValue());
+        }), ((DiskImage) disk).getStoragePoolId());
     }
 
     @Override

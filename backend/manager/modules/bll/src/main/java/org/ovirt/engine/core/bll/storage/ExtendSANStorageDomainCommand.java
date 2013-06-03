@@ -44,7 +44,7 @@ public class ExtendSANStorageDomainCommand<T extends ExtendSANStorageDomainParam
                 ConfigValues.SupportForceExtendVG, getStoragePool().getcompatibility_version().toString());
 
         runVdsCommand(VDSCommandType.ExtendStorageDomain,
-                new ExtendStorageDomainVDSCommandParameters(getStoragePoolId().getValue(), getStorageDomain()
+                new ExtendStorageDomainVDSCommandParameters(getStoragePoolId(), getStorageDomain()
                         .getId(), getParameters().getLunIds(), getParameters().isForce(), supportForceExtendVG));
         executeInNewTransaction(new TransactionMethod<Void>() {
             public Void runInTransaction() {

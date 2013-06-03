@@ -79,7 +79,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     protected Guid getStoragePoolIdFromSourceImageContainer() {
-        return sourceVmFromDb.getStoragePoolId().getValue();
+        return sourceVmFromDb.getStoragePoolId();
     }
 
     @Override
@@ -334,7 +334,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         int result = 0;
         for (DiskImage img : getDiskImagesFromConfiguration()) {
             if (img.getImageStatus() != ImageStatus.ILLEGAL) {
-                if (img.getStorageIds().get(0).getValue().equals(storageDomainId)) {
+                if (img.getStorageIds().get(0).equals(storageDomainId)) {
                     result = result + (int) Math.ceil(img.getActualSize());
                 }
             }

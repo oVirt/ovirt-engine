@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
-import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
+import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MoveImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -52,13 +52,11 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         VDSReturnValue vdsReturnValue = null;
 
         Guid sourceDomainId = getParameters().getSourceDomainId() != null ? getParameters().getSourceDomainId()
-                .getValue()
                 : getDiskImage().getStorageIds().get(0);
         if (getParameters().getUseCopyCollapse()) {
             vdsReturnValue = runVdsCommand(
                     VDSCommandType.CopyImage,
-                    new CopyImageVDSCommandParameters(getStorageDomain().getStoragePoolId()
-                            .getValue(),
+                    new CopyImageVDSCommandParameters(getStorageDomain().getStoragePoolId(),
                             sourceDomainId,
                             getParameters()
                                     .getContainerId(),
@@ -81,8 +79,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         } else {
             vdsReturnValue = runVdsCommand(
                     VDSCommandType.MoveImageGroup,
-                    new MoveImageGroupVDSCommandParameters(getDiskImage().getStoragePoolId()
-                            .getValue(),
+                    new MoveImageGroupVDSCommandParameters(getDiskImage().getStoragePoolId(),
                             sourceDomainId,
                             getDiskImage()
                                     .getId(),

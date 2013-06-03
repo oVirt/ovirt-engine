@@ -27,7 +27,7 @@ public class UserPortalTemplateVmModelBehavior extends TemplateVmModelBehavior {
     protected void doChangeDefautlHost(Guid hostGuid) {
         if (hostGuid != null) {
             VDS vds = new VDS();
-            vds.setId(hostGuid.getValue());
+            vds.setId(hostGuid);
             getModel().getDefaultHost().setItems(Arrays.asList(vds));
         }
 

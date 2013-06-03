@@ -264,7 +264,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
-        permissionList.add(new PermissionSubject(getVmPoolId() == null ? null : getVmPoolId().getValue(),
+        permissionList.add(new PermissionSubject(getVmPoolId(),
                 VdcObjectType.VmPool,
                 getActionType().getActionGroup()));
         return permissionList;

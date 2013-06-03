@@ -39,7 +39,7 @@ public class CreateImagePlaceholderTaskHandler extends AbstractSPMAsyncTaskHandl
     @Override
     protected VDSParametersBase getVDSParameters() {
         return new TargetDomainImageGroupVDSCommandParameters(
-                getEnclosingCommand().getParameters().getStoragePoolId().getValue(),
+                getEnclosingCommand().getParameters().getStoragePoolId(),
                 getEnclosingCommand().getParameters().getSourceStorageDomainId(),
                 getEnclosingCommand().getParameters().getImageGroupID(),
                 getEnclosingCommand().getParameters().getTargetStorageDomainId());
@@ -81,7 +81,7 @@ public class CreateImagePlaceholderTaskHandler extends AbstractSPMAsyncTaskHandl
     @Override
     protected VDSParametersBase getRevertVDSParameters() {
         return new DeleteImageGroupVDSCommandParameters(
-                getEnclosingCommand().getParameters().getStoragePoolId().getValue(),
+                getEnclosingCommand().getParameters().getStoragePoolId(),
                 getEnclosingCommand().getParameters().getTargetStorageDomainId(),
                 getEnclosingCommand().getParameters().getImageGroupID(),
                 DbFacade.getInstance()

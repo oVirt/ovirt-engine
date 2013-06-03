@@ -6,11 +6,11 @@ import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -114,7 +114,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                         });
             }
         } else {
-            enlistmentContext.setDataCenterId(configureModel.getDataCenter().getDataCenterId().getValue());
+            enlistmentContext.setDataCenterId(configureModel.getDataCenter().getDataCenterId());
 
             context.enlistment = null;
             enlistment.Prepared();

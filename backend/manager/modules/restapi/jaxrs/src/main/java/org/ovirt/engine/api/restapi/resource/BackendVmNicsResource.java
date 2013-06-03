@@ -144,7 +144,7 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
     }
 
     void addReportedDevices(NIC model, VmNetworkInterface entity) {
-        List<ReportedDevice> devices = getDevices(entity.getVmId().getValue(), entity.getMacAddress());
+        List<ReportedDevice> devices = getDevices(entity.getVmId(), entity.getMacAddress());
         if (!devices.isEmpty()) {
             ReportedDevices reportedDevices = new ReportedDevices();
             reportedDevices.getReportedDevices().addAll(devices);

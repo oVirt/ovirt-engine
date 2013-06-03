@@ -21,7 +21,7 @@ public class GetVdsCertificateSubjectByVmIdQuery <P extends IdQueryParameters> e
             if (vm != null) {
                 Guid vdsId = vm.getRunOnVds();
                 if (vdsId != null) {
-                    returnValue = Backend.getInstance().runInternalQuery(VdcQueryType.GetVdsCertificateSubjectByVdsId, new IdQueryParameters(vdsId.getValue()));
+                    returnValue = Backend.getInstance().runInternalQuery(VdcQueryType.GetVdsCertificateSubjectByVdsId, new IdQueryParameters(vdsId));
                 }
             }
         }

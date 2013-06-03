@@ -22,7 +22,7 @@ public class GetManagementInterfaceAddressByVmIdQuery<P extends IdQueryParameter
                 Guid vdsId = vm.getRunOnVds();
                 if (vdsId != null) {
                     nic =
-                        getDbFacade().getInterfaceDao().getManagedInterfaceForVds(vdsId.getValue(),
+                        getDbFacade().getInterfaceDao().getManagedInterfaceForVds(vdsId,
                                 getUserID(),
                                 getParameters().isFiltered());
                 }

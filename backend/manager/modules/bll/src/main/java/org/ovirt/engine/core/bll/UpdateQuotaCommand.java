@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.quota.QuotaManager;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.QuotaCRUDParameters;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -56,8 +56,7 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getQuota().getId() == null ? null
-                : getQuota().getId().getValue(),
+        return Collections.singletonList(new PermissionSubject(getQuota().getId(),
                 VdcObjectType.Quota, getActionType().getActionGroup()));
     }
 

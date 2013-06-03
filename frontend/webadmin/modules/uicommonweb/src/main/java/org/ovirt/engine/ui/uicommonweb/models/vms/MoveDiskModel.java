@@ -59,7 +59,7 @@ public class MoveDiskModel extends MoveOrCopyDiskModel
                 ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
                 moveDiskModel.onInitStorageDomains(storageDomains);
             }
-        }), ((DiskImage) disk).getStoragePoolId().getValue());
+        }), ((DiskImage) disk).getStoragePoolId());
     }
 
     @Override

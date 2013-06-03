@@ -26,7 +26,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         super(parameters);
 
         setStoragePoolId(getVm().getStoragePoolId());
-        getParameters().setStoragePoolId(getStoragePoolId().getValue());
+        getParameters().setStoragePoolId(getStoragePoolId());
 
         getParameters().setVdsId(getVdsId());
         getParameters().setDiskAlias(getDiskAlias());
@@ -65,7 +65,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     @Override
     public Guid getVdsId() {
-        return getVm().getRunOnVds() != null ? getVm().getRunOnVds().getValue() : Guid.Empty;
+        return getVm().getRunOnVds() != null ? getVm().getRunOnVds() : Guid.Empty;
     }
 
     /* Overridden stubs declared as public in order to implement ITaskHandlerCommand */

@@ -51,8 +51,7 @@ public class RemoveQuotaCommand extends QuotaCRUDCommand {
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(getParameters().getQuotaId() == null ? null
-                : getParameters().getQuotaId().getValue(),
+        return Collections.singletonList(new PermissionSubject(getParameters().getQuotaId(),
                 VdcObjectType.Quota, getActionType().getActionGroup()));
     }
 

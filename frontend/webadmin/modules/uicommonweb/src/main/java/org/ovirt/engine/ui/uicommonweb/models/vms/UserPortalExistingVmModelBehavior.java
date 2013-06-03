@@ -51,7 +51,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 
                         if (containsVmCluster(clusters)) {
                             Collections.sort(clusters, new Linq.VdsGroupByNameComparer());
-                            model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getVdsGroupId().getValue());
+                            model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getVdsGroupId());
                         } else {
                             // Add VM's cluster if not contained in the cluster list
                             addVmCluster(dataCenters, clusters);
@@ -71,7 +71,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 
         for (VDSGroup cluster : clusters) {
             if (cluster.getStoragePoolId() != null) {
-                if (vm.getVdsGroupId().getValue().equals(cluster.getId())) {
+                if (vm.getVdsGroupId().equals(cluster.getId())) {
                     return true;
                 }
             }
@@ -101,8 +101,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                             clusterList.add(cluster);
                         }
                         Collections.sort(clusterList, new Linq.VdsGroupByNameComparer());
-                        model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getVdsGroupId().getValue());
-
+                        model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getVdsGroupId());
                     }
                 }, getModel().getHash()), vm.getVdsGroupId());
     }
@@ -117,7 +116,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
     protected void doChangeDefautlHost(Guid hostGuid) {
         if (hostGuid != null) {
             VDS vds = new VDS();
-            vds.setId(hostGuid.getValue());
+            vds.setId(hostGuid);
             getModel().getDefaultHost().setItems(Arrays.asList(vds));
         }
 

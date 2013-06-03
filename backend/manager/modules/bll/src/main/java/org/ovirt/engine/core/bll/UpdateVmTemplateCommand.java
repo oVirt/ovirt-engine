@@ -43,7 +43,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         setVdsGroupId(getVmTemplate().getVdsGroupId());
         if (getVdsGroup() != null) {
             setStoragePoolId(getVdsGroup().getStoragePoolId() != null ? getVdsGroup().getStoragePoolId()
-                        .getValue() : Guid.Empty);
+                    : Guid.Empty);
         }
     }
 

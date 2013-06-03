@@ -212,7 +212,7 @@ public class VmItemBehavior extends ItemBehavior
                             behavior.updateCommandsAccordingToPoolType(isManualPool);
 
                         }
-                    }), entity.getVmPoolId().getValue());
+                    }), entity.getVmPoolId());
         }
         else
         {

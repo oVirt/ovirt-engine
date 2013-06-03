@@ -1477,9 +1477,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             }
             if (run_on_vds == null)
             {
-                run_on_vds = a.getRunOnVds().getValue();
+                run_on_vds = a.getRunOnVds();
             }
-            else if (allRunOnSameVds && !run_on_vds.equals(a.getRunOnVds().getValue()))
+            else if (allRunOnSameVds && !run_on_vds.equals(a.getRunOnVds()))
             {
                 allRunOnSameVds = false;
             }
@@ -1569,7 +1569,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             {
                 VM a = (VM) item;
 
-                if (a.getRunOnVds().getValue().equals(((VDS) model.getHosts().getSelectedItem()).getId()))
+                if (a.getRunOnVds().equals(((VDS) model.getHosts().getSelectedItem()).getId()))
                 {
                     continue;
                 }

@@ -5,10 +5,10 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -541,8 +541,7 @@ public class VolumeModel extends Model {
                             || clusters.size() > 0
                             && clusters.get(0)
                                     .getStoragePoolId()
-                                    .getValue()
-                                    .equals(selectedDataCenter.getId().getValue()))
+                                    .equals(selectedDataCenter.getId()))
                     {
                         volumeModel.getCluster().setItems(clusters);
 

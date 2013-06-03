@@ -342,21 +342,19 @@ public class UserPortalLoginModel extends LoginModel
                     }
 
                     private boolean isEveyoneNetworUserPermission(permissions permission) {
-                        return permission.getad_element_id().getValue().equals(ApplicationGuids.everyone.asGuid()) &&
-                                permission.getrole_id().getValue().equals(ApplicationGuids.networkUser.asGuid());
+                        return permission.getad_element_id().equals(ApplicationGuids.everyone.asGuid()) &&
+                                permission.getrole_id().equals(ApplicationGuids.networkUser.asGuid());
                     }
 
                     private boolean isEveyoneUserPortalBasedVmPermission(permissions permission) {
-                        return permission.getad_element_id().getValue().equals(ApplicationGuids.everyone.asGuid())
+                        return permission.getad_element_id().equals(ApplicationGuids.everyone.asGuid())
                                 &&
-                                permission.getrole_id()
-                                        .getValue()
-                                        .equals(ApplicationGuids.userTemplateBasedVM.asGuid());
+                                permission.getrole_id().equals(ApplicationGuids.userTemplateBasedVM.asGuid());
                     }
 
                     private boolean isEveryoneQuotaConsumerPermission(permissions permission) {
-                        return permission.getad_element_id().getValue().equals(ApplicationGuids.everyone.asGuid()) &&
-                                permission.getrole_id().getValue().equals(ApplicationGuids.quotaConsumer.asGuid());
+                        return permission.getad_element_id().equals(ApplicationGuids.everyone.asGuid()) &&
+                                permission.getrole_id().equals(ApplicationGuids.quotaConsumer.asGuid());
                     }
                 }), loginModel.getLoggedUser().getUserId());
     }

@@ -137,10 +137,10 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
 
     private CreationStatus getJobIdStatus(VdcReturnValueBase result) {
         Guid jobId = result.getJobId();
-        if (jobId == null || jobId.getValue().equals(Guid.Empty)) {
+        if (jobId == null || jobId.equals(Guid.Empty)) {
             return CreationStatus.COMPLETE;
         } else {
-            IdQueryParameters params = new IdQueryParameters(jobId.getValue());
+            IdQueryParameters params = new IdQueryParameters(jobId);
             VdcQueryReturnValue queryResult = runQuery(VdcQueryType.GetJobByJobId, params);
             if (queryResult != null && queryResult.getSucceeded() && queryResult.getReturnValue() != null) {
                 Job job = (Job)queryResult.getReturnValue();

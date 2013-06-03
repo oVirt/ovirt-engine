@@ -328,7 +328,7 @@ public class TagListModel extends SearchableListModel
         model.setType((tag.getIsReadonly() == null ? false : tag.getIsReadonly()) ? TagModelType.ReadOnly
                 : TagModelType.Regular);
         model.setSelection(false);
-        model.setParentId(tag.getparent_id() == null ? Guid.Empty : tag.getparent_id().getValue());
+        model.setParentId(tag.getparent_id() == null ? Guid.Empty : tag.getparent_id());
         model.setChildren(children);
 
         for (TagModel child : children) {

@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -41,7 +41,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                 ImagesContainterParametersBase tempVar = new ImagesContainterParametersBase(template.getImageId(),
                         getVmTemplateId());
                 tempVar.setStorageDomainId(domain);
-                tempVar.setStoragePoolId(template.getStoragePoolId().getValue());
+                tempVar.setStoragePoolId(template.getStoragePoolId());
                 tempVar.setImageGroupID(template.getId());
                 tempVar.setEntityId(getParameters().getEntityId());
                 tempVar.setWipeAfterDelete(template.isWipeAfterDelete());

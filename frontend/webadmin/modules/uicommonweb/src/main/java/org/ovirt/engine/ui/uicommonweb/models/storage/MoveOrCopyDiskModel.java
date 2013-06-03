@@ -130,7 +130,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                     model.setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
                     model.postInitStorageDomains();
                 }
-            }), getActiveStorageDomains().get(0).getStoragePoolId().getValue());
+            }), getActiveStorageDomains().get(0).getStoragePoolId());
         }
         else {
             postInitStorageDomains();

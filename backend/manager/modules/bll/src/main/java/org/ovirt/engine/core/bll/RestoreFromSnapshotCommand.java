@@ -96,13 +96,13 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         VDSReturnValue vdsReturnValue = null;
         try {
             Guid storagePoolId = getDiskImage().getStoragePoolId() != null ? getDiskImage().getStoragePoolId()
-                    .getValue() : Guid.Empty;
+                    : Guid.Empty;
             Guid storageDomainId =
                     getDiskImage().getStorageIds() != null && !getDiskImage().getStorageIds().isEmpty() ? getDiskImage().getStorageIds()
                             .get(0)
                             : Guid.Empty;
             Guid imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id()
-                    .getValue() : Guid.Empty;
+                    : Guid.Empty;
 
             vdsReturnValue = runVdsCommand(
                             VDSCommandType.DestroyImage,

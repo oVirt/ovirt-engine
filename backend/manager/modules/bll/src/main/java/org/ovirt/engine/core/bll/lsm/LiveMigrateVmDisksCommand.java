@@ -195,7 +195,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
                         diskImage.getQuotaId(),
                         null,
                         QuotaConsumptionParameter.QuotaAction.RELEASE,
-                        parameters.getSourceDomainId().getValue(),
+                        parameters.getSourceDomainId(),
                         (double) diskImage.getSizeInGigabytes()));
             }
         }
@@ -266,13 +266,13 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     private boolean validateSourceStorageDomain(Guid imageId) {
         DiskImage diskImage = getDiskImageById(imageId);
         Guid domainId = diskImage.getStorageIds().get(0);
-        StorageDomainValidator validator = getValidator(domainId, getStoragePoolId().getValue());
+        StorageDomainValidator validator = getValidator(domainId, getStoragePoolId());
 
         return validate(validator.isDomainExistAndActive());
     }
 
     private boolean validateDestStorage(Guid imageId, Guid destDomainId) {
-        StorageDomainValidator validator = getValidator(destDomainId, getStoragePoolId().getValue());
+        StorageDomainValidator validator = getValidator(destDomainId, getStoragePoolId());
 
         return validate(validator.isDomainExistAndActive()) && validate(validator.domainIsValidDestination());
     }
@@ -293,7 +293,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         for (Map.Entry<Guid, List<DiskImage>> entry : storageDomainsImagesMap.entrySet()) {
             Guid destDomainId = entry.getKey();
             List<DiskImage> disksList = entry.getValue();
-            Guid storagePoolId = disksList.get(0).getStoragePoolId().getValue();
+            Guid storagePoolId = disksList.get(0).getStoragePoolId();
             StorageDomain destDomain = getStorageDomainById(destDomainId, storagePoolId);
 
             if (!isStorageDomainWithinThresholds(destDomain)) {

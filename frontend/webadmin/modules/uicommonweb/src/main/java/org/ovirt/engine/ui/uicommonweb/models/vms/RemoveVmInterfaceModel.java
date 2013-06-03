@@ -86,7 +86,7 @@ public class RemoveVmInterfaceModel extends ConfirmationModel {
     }
 
     protected VdcActionParametersBase getRemoveVmInterfaceParams(VmNetworkInterface vnic) {
-        return new RemoveVmInterfaceParameters(vnic.getVmId().getValue(), vnic.getId());
+        return new RemoveVmInterfaceParameters(vnic.getVmId(), vnic.getId());
     }
 
     protected VdcActionType getActionType() {

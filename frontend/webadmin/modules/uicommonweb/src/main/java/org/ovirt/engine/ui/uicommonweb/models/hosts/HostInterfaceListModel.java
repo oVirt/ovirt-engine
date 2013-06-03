@@ -187,8 +187,8 @@ public class HostInterfaceListModel extends SearchableListModel
             VDS currentItem = ((VDS) super.getEntity());
             VDS newItem = value;
 
-            Guid currentItemId = currentItem.getId().getValue();
-            Guid newItemId = newItem.getId().getValue();
+            Guid currentItemId = currentItem.getId();
+            Guid newItemId = newItem.getId();
 
             if (currentItemId.equals(newItemId))
             {
@@ -1951,7 +1951,7 @@ public class HostInterfaceListModel extends SearchableListModel
             {
                 for (HostInterfaceLineModel item : (ArrayList<HostInterfaceLineModel>) getItems())
                 {
-                    if (item.getInterface() != null && item.getInterface().getId().getValue().equals(nic.getId()))
+                    if (item.getInterface() != null && item.getInterface().getId().equals(nic.getId()))
                     {
                         if (item.getVLans() != null && item.getVLans().size() > 0)
                         {

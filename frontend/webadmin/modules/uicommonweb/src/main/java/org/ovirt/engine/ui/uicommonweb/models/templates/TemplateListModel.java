@@ -158,7 +158,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
     @Override
     protected Guid extractStoragePoolIdNullSafe(VmTemplate entity) {
-        return entity.getStoragePoolId().getValue();
+        return entity.getStoragePoolId();
     }
 
     @Override

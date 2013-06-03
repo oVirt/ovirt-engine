@@ -1544,7 +1544,7 @@ public final class AsyncDataProvider {
                 }
             }
         };
-        IdQueryParameters tempVar = new IdQueryParameters(dataCenterId == null ? null : dataCenterId.getValue());
+        IdQueryParameters tempVar = new IdQueryParameters(dataCenterId);
         Frontend.RunQuery(VdcQueryType.GetAvailableClusterVersionsByStoragePool, tempVar, aQuery);
     }
 
@@ -1752,7 +1752,7 @@ public final class AsyncDataProvider {
         GetStorageDomainsByConnectionParameters param = new GetStorageDomainsByConnectionParameters();
         param.setConnection(connectionPath);
         if (storagePoolId != null) {
-            param.setStoragePoolId(storagePoolId.getValue());
+            param.setStoragePoolId(storagePoolId);
         }
 
         Frontend.RunQuery(VdcQueryType.GetStorageDomainsByConnection, param, aQuery);

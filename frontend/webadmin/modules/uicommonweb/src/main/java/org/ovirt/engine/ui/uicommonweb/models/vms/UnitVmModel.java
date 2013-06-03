@@ -1861,7 +1861,7 @@ public class UnitVmModel extends Model {
             case VMs:
                 VDSGroup cluster = (VDSGroup) model.getBehavior().getSystemTreeSelectedItem().getEntity();
                 if (cluster.supportsVirtService()) {
-                    return findDataCenterById(list, cluster.getStoragePoolId().getValue());
+                    return findDataCenterById(list, cluster.getStoragePoolId());
                 }
                 break;
 
@@ -1871,7 +1871,7 @@ public class UnitVmModel extends Model {
 
             case Storage:
                 StorageDomain storage = (StorageDomain) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-                return findDataCenterById(list, storage.getStoragePoolId().getValue());
+                return findDataCenterById(list, storage.getStoragePoolId());
             }
         }
         return null;

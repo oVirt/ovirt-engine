@@ -326,7 +326,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
                     new ChangeQuotaParameters(((Quota) itemModel.getQuota().getSelectedItem()).getId(),
                             disk.getId(),
                             disk.getStorageIds().get(0),
-                            disk.getStoragePoolId().getValue());
+                            disk.getStoragePoolId());
             paramerterList.add(parameters);
         }
 

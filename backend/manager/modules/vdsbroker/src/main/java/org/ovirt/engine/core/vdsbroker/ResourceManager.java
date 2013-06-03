@@ -74,7 +74,7 @@ public class ResourceManager {
         for (VM vm : vms) {
             if (!vm.isNotRunning()) {
                 if (vm.getRunOnVds() != null) {
-                    MultiValueMapUtils.addToMap(vm.getRunOnVds().getValue(),
+                    MultiValueMapUtils.addToMap(vm.getRunOnVds(),
                             vm.getId(),
                             _vdsAndVmsList,
                             new MultiValueMapUtils.HashSetCreator<Guid>());

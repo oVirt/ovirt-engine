@@ -122,7 +122,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
                 if (networkModel instanceof EditNetworkModel) {
                     StoragePool currentDc =
-                            findDc(networkModel.getNetwork().getDataCenterId().getValue(), dataCenters);
+                            findDc(networkModel.getNetwork().getDataCenterId(), dataCenters);
                     networkModel.getDataCenters().setSelectedItem(currentDc);
                 } else {
                     networkModel.getDataCenters().setSelectedItem(Linq.firstOrDefault(dataCenters));
@@ -256,6 +256,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         newCommand = value;
     }
 
+    @Override
     public UICommand getEditCommand() {
         return editCommand;
     }

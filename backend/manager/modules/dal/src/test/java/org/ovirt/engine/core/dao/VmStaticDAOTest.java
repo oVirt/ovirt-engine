@@ -92,9 +92,9 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
     public void testGetAllStaticByStoragePool() {
         Guid spID = dbFacade.getVdsGroupDao().get(newVmStatic.getVdsGroupId()).getStoragePoolId();
 
-        assertNotNull(spID.getValue());
+        assertNotNull(spID);
 
-        List<VmStatic> result = dao.getAllByStoragePoolId(spID.getValue());
+        List<VmStatic> result = dao.getAllByStoragePoolId(spID);
 
         assertNotNull(result);
         assertFalse(result.isEmpty());

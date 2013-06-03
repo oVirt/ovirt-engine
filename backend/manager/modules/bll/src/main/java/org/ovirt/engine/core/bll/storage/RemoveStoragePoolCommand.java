@@ -17,15 +17,15 @@ import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -95,7 +95,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             @Override
             public Void runInTransaction() {
                 final List<Network> networks = DbFacade.getInstance().getNetworkDao()
-                        .getAllForDataCenter(getStoragePoolId().getValue());
+                        .getAllForDataCenter(getStoragePoolId());
                 for (final Network net : networks) {
                     getCompensationContext().snapshotEntity(net);
                     DbFacade.getInstance().getNetworkDao().remove(net.getId());

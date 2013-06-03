@@ -191,7 +191,7 @@ public class VmInterfaceManager {
 
     private AuditLogableBase createAuditLog(final VmNetworkInterface iface) {
         AuditLogableBase logable = new AuditLogableBase();
-        logable.setVmId(iface.getVmId().getValue());
+        logable.setVmId(iface.getVmId());
         logable.addCustomValue("MACAddr", iface.getMacAddress());
         logable.addCustomValue("IfaceName", iface.getName());
         return logable;

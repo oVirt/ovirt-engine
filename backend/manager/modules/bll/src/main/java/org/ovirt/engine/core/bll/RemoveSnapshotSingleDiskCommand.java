@@ -25,12 +25,12 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
     @Override
     protected void executeCommand() {
         Guid storagePoolId = getDiskImage().getStoragePoolId() != null ? getDiskImage().getStoragePoolId()
-                .getValue() : Guid.Empty;
+                : Guid.Empty;
         Guid storageDomainId =
                 getDiskImage().getStorageIds() != null && getDiskImage().getStorageIds().size() > 0 ? getDiskImage().getStorageIds()
                         .get(0)
                         : Guid.Empty;
-        Guid imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id().getValue()
+        Guid imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id()
                 : Guid.Empty;
 
         VDSReturnValue vdsReturnValue = Backend
@@ -92,7 +92,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
     private void updateDiskImageDynamic() {
         VDSReturnValue ret = runVdsCommand(
                 VDSCommandType.GetImageInfo,
-                new GetImageInfoVDSCommandParameters(getDestinationDiskImage().getStoragePoolId().getValue(),
+                new GetImageInfoVDSCommandParameters(getDestinationDiskImage().getStoragePoolId(),
                         getDestinationDiskImage().getStorageIds().get(0),
                         getDestinationDiskImage().getId(),
                         getDestinationDiskImage().getImageId()));
