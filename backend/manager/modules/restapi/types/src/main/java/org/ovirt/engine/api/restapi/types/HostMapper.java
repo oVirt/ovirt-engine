@@ -45,7 +45,7 @@ import org.ovirt.engine.core.compat.NGuid;
 
 public class HostMapper {
 
-    public static Long BYTES_IN_MEGABYTE = 1024L * 1024L;
+    public final static Long BYTES_IN_MEGABYTE = 1024L * 1024L;
     // REVISIT retrieve from configuration
     private static final int DEFAULT_VDSM_PORT = 54321;
     private static final String MD5_FILE_SIGNATURE = "md5";

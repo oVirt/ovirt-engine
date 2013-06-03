@@ -90,11 +90,11 @@ public class Frontend {
 
     private static VdcQueryType[] subscribedQueryTypes;
 
-    public static EventDefinition QueryStartedEventDefinition = new EventDefinition("QueryStarted", Frontend.class); //$NON-NLS-1$
-    public static Event QueryStartedEvent = new Event(QueryStartedEventDefinition);
+    public final static EventDefinition QueryStartedEventDefinition = new EventDefinition("QueryStarted", Frontend.class); //$NON-NLS-1$
+    public final static Event QueryStartedEvent = new Event(QueryStartedEventDefinition);
 
-    public static EventDefinition QueryCompleteEventDefinition = new EventDefinition("QueryComplete", Frontend.class); //$NON-NLS-1$
-    public static Event QueryCompleteEvent = new Event(QueryCompleteEventDefinition);
+    public final static EventDefinition QueryCompleteEventDefinition = new EventDefinition("QueryComplete", Frontend.class); //$NON-NLS-1$
+    public final static Event QueryCompleteEvent = new Event(QueryCompleteEventDefinition);
 
     private static Event frontendFailureEvent = new Event("FrontendFailure", Frontend.class); //$NON-NLS-1$
 

@@ -15,11 +15,11 @@ import org.apache.commons.logging.LogFactory;
  * This class contains useful session utils
  */
 public class SessionUtils {
-    public static String ENGINE_SESSION_ID_KEY = "engineSessionId";
-    public static String PREFER_HEADER_FIELD = "Prefer";
-    public static String SESSION_TTL_HEADER_FIELD = "Session-TTL";
-    public static String PERSIST_FIELD_VALUE = "persistent-auth";
-    public static String JSESSIONID_HEADER = "JSESSIONID";
+    public final static String ENGINE_SESSION_ID_KEY = "engineSessionId";
+    public final static String PREFER_HEADER_FIELD = "Prefer";
+    public final static String SESSION_TTL_HEADER_FIELD = "Session-TTL";
+    public final static String PERSIST_FIELD_VALUE = "persistent-auth";
+    public final static String JSESSIONID_HEADER = "JSESSIONID";
     private static final Log log = LogFactory.getLog(SessionUtils.class);
 
     /*

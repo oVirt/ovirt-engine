@@ -25,7 +25,7 @@ public final class RegistrationResult
         privateRetrievedEvent = value;
     }
 
-    public static EventDefinition RetrievedEventDefinition;
+    public final static EventDefinition RetrievedEventDefinition;
 
     private Guid privateId = new Guid();
 

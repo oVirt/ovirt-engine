@@ -54,7 +54,8 @@ import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 public class HostInterfaceListModel extends SearchableListModel
 {
 
-    public static String ENGINE_NETWORK_NAME;
+    public static final String ENGINE_NETWORK_NAME =
+            (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     private UICommand privateEditCommand;
 
@@ -332,10 +333,6 @@ public class HostInterfaceListModel extends SearchableListModel
 
     public HostInterfaceListModel()
     {
-        // get management network name
-        ENGINE_NETWORK_NAME =
-                (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
-
         setIsTimerDisabled(true);
         setTitle(ConstantsManager.getInstance().getConstants().networkInterfacesTitle());
         setHashName("network_interfaces"); //$NON-NLS-1$

@@ -129,8 +129,8 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @Path(value = "unlinked_IsSelected.entity")
     public EntityModelRadioButtonEditor unlinkedEditor;
 
-    public static CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
-    public static CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
+    public final static CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+    public final static CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
 
     @UiField
     @Ignore
