@@ -28,7 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NoTrimmingWhitespacesValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.Constants;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -869,7 +869,7 @@ public abstract class RunOnceModel extends Model
 
             // initrd path and kernel params require kernel path to be filled
             if (StringHelper.isNullOrEmpty((String) getKernel_path().getEntity())) {
-                final Constants constants = ConstantsManager.getInstance().getConstants();
+                final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
                 if (!StringHelper.isNullOrEmpty((String) getInitrd_path().getEntity())) {
                     getInitrd_path().getInvalidityReasons().add(constants.initrdPathInvalid());

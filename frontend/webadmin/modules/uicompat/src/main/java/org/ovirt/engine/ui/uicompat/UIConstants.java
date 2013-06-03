@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 
 
 
-public interface Constants extends com.google.gwt.i18n.client.Constants {
+public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("OK")
     String ok();

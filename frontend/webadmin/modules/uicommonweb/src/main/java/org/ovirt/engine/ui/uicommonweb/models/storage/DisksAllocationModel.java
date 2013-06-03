@@ -24,7 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-import org.ovirt.engine.ui.uicompat.Constants;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -33,7 +33,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class DisksAllocationModel extends EntityModel
 {
-    protected static Constants constants = ConstantsManager.getInstance().getConstants();
+    protected static UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private final IEventListener quota_storageEventListener = new IEventListener() {
         @Override

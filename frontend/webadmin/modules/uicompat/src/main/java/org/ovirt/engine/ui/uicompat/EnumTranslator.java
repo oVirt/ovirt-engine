@@ -9,7 +9,7 @@ import com.google.gwt.core.client.GWT;
 
 public class EnumTranslator<T> extends Translator {
     private static final Logger logger = Logger.getLogger(EnumTranslator.class.getName());
-    private static final Constants constants = GWT.create(Constants.class);
+    private static final UIConstants constants = GWT.create(UIConstants.class);
 
     private static Map<Class<?>, EnumTranslator> translatorsMap = new HashMap<Class<?>, EnumTranslator>();
 

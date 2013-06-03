@@ -43,14 +43,14 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyQuotaValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
-import org.ovirt.engine.ui.uicompat.Constants;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 
 public abstract class AbstractDiskModel extends DiskModel
 {
-    protected static final Constants CONSTANTS = ConstantsManager.getInstance().getConstants();
+    protected static final UIConstants CONSTANTS = ConstantsManager.getInstance().getConstants();
 
     private EntityModel isWipeAfterDelete;
     private EntityModel isBootable;

@@ -25,7 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicompat.Constants;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -40,7 +40,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 @SuppressWarnings("unused")
 public class HostGeneralModel extends EntityModel
 {
-    private static final Constants constants = ConstantsManager.getInstance().getConstants();
+    private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     private static final Messages messages = ConstantsManager.getInstance().getMessages();
 
     public static EventDefinition RequestEditEventDefinition;

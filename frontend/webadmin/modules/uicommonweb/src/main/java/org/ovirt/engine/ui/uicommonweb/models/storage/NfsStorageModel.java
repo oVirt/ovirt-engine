@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LinuxMountPointValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NonUtfValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.Constants;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -147,7 +147,7 @@ public class NfsStorageModel extends Model implements IStorageModel {
         setPath(new EntityModel());
         getPath().getEntityChangedEvent().addListener(this);
 
-        Constants constants = ConstantsManager.getInstance().getConstants();
+        UIConstants constants = ConstantsManager.getInstance().getConstants();
 
         // Initialize version list.
         setVersion(new ListModel());

@@ -32,7 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
-import org.ovirt.engine.ui.uicompat.Constants;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import java.util.ArrayList;
@@ -42,7 +42,7 @@ import java.util.List;
 
 public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
-    private final Constants constants = ConstantsManager.getInstance().getConstants();
+    private final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     private TModel privateModel;
 

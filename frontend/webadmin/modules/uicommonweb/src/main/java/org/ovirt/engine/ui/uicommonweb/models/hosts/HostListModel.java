@@ -62,7 +62,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
-import org.ovirt.engine.ui.uicompat.Constants;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -1145,7 +1145,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     public void restart()
     {
-        final Constants constants = ConstantsManager.getInstance().getConstants();
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
         final Messages messages = ConstantsManager.getInstance().getMessages();
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);

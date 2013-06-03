@@ -5,7 +5,7 @@ import com.google.gwt.core.client.GWT;
 public final class ConstantsManager {
 
     private static final ConstantsManager INSTANCE = new ConstantsManager();
-    private static final Constants constants = GWT.create(Constants.class);
+    private static final UIConstants constants = GWT.create(UIConstants.class);
     private static final Messages messages = GWT.create(Messages.class);
 
     private ConstantsManager() {
@@ -15,7 +15,7 @@ public final class ConstantsManager {
         return INSTANCE;
     }
 
-    public Constants getConstants() {
+    public UIConstants getConstants() {
         return constants;
     }
 

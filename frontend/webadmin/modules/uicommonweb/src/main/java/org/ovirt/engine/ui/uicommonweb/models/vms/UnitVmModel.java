@@ -50,7 +50,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.PoolNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
-import org.ovirt.engine.ui.uicompat.Constants;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -2018,7 +2018,7 @@ public class UnitVmModel extends Model {
 
             // initrd path and kernel params require kernel path to be filled
             if (StringHelper.isNullOrEmpty((String) getKernel_path().getEntity())) {
-                final Constants constants = ConstantsManager.getInstance().getConstants();
+                final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
                 if (!StringHelper.isNullOrEmpty((String) getInitrd_path().getEntity())) {
                     getInitrd_path().getInvalidityReasons().add(constants.initrdPathInvalid());

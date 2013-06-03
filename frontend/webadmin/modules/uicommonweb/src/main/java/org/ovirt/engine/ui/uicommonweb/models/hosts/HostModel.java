@@ -39,7 +39,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.KeyValuePairValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.Constants;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -57,7 +57,7 @@ public abstract class HostModel extends Model
     public static final String EndTestStage = "EndTest"; //$NON-NLS-1$
 
     private UICommand privateTestCommand;
-    Constants constants = ConstantsManager.getInstance().getConstants();
+    UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     public UICommand getTestCommand()
     {

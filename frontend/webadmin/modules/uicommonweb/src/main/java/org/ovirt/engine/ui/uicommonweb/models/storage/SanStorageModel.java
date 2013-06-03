@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.Constants;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -278,7 +278,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
     }
 
     private void updateGrayedOut(LunModel lunModel) {
-        Constants constants = ConstantsManager.getInstance().getConstants();
+        UIConstants constants = ConstantsManager.getInstance().getConstants();
         Messages messages = ConstantsManager.getInstance().getMessages();
 
         LUNs lun = (LUNs) lunModel.getEntity();
