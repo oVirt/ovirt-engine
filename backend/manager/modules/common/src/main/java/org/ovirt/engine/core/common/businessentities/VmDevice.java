@@ -249,7 +249,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
                 && bootOrder == other.bootOrder
                 && ObjectUtils.objectsEqual(specParams, other.specParams)
                 && isManaged == other.isManaged
-                && isPlugged == other.isPlugged
+                && getIsPlugged().equals(other.getIsPlugged())
                 && isReadOnly == other.isReadOnly
                 && alias.equals(other.alias)
                 && ObjectUtils.objectsEqual(customProperties, other.customProperties));

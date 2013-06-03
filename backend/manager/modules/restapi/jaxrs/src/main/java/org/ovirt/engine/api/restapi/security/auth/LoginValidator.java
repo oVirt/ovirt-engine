@@ -165,7 +165,7 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
     public void postProcess(ServerResponse response) {
         HttpSession httpSession = getCurrentSession(false);
         if (!current.get(MetaData.class).hasKey("async") ||
-                ((Boolean)current.get(MetaData.class).get("async")) != Boolean.TRUE) {
+                (!(Boolean.TRUE.equals((Boolean) current.get(MetaData.class).get("async"))))) {
             VdcUser user = current.get(VdcUser.class);
             if (user != null) {
                 if (!persistentSession) {

@@ -131,7 +131,8 @@ public class ClusterGeneralModel extends EntityModel {
     private ClusterType clusterType;
 
     public void setConsoleAddressPartiallyOverridden(Boolean consoleAddressPartiallyOverridden) {
-        if (this.consoleAddressPartiallyOverridden != consoleAddressPartiallyOverridden) {
+        if ((this.consoleAddressPartiallyOverridden == null ? false : this.consoleAddressPartiallyOverridden.booleanValue()) !=
+            (consoleAddressPartiallyOverridden == null ? false : consoleAddressPartiallyOverridden.booleanValue())) {
             this.consoleAddressPartiallyOverridden = consoleAddressPartiallyOverridden;
             onPropertyChanged(new PropertyChangedEventArgs("consoleAddressPartiallyOverridden")); //$NON-NLS-1$
         }

@@ -106,7 +106,8 @@ public class RadioboxCell extends AbstractEditableCell<Boolean, Boolean> {
              * Save the new value. However, if the cell depends on the selection, then do not save the value because we
              * can get into an inconsistent state.
              */
-            if (value != isChecked && !dependsOnSelection()) {
+            if ((value == null ? false : value.booleanValue()) !=
+                (isChecked == null ? false : isChecked.booleanValue()) && !dependsOnSelection()) {
                 setViewData(context.getKey(), isChecked);
             } else {
                 clearViewData(context.getKey());
