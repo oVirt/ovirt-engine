@@ -34,14 +34,14 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.Messages;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
 public class HostGeneralModel extends EntityModel
 {
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
-    private static final Messages messages = ConstantsManager.getInstance().getMessages();
+    private static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
     public static EventDefinition RequestEditEventDefinition;
     private Event privateRequestEditEvent;

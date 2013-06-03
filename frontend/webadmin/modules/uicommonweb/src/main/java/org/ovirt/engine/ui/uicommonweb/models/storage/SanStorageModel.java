@@ -23,7 +23,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.Messages;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -279,7 +279,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
     private void updateGrayedOut(LunModel lunModel) {
         UIConstants constants = ConstantsManager.getInstance().getConstants();
-        Messages messages = ConstantsManager.getInstance().getMessages();
+        UIMessages messages = ConstantsManager.getInstance().getMessages();
 
         LUNs lun = (LUNs) lunModel.getEntity();
         boolean nonEmpty = lun.getStorageDomainId() != null || lun.getDiskId() != null ||
@@ -606,7 +606,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
     public ArrayList<String> getUsedLunsMessages() {
         ArrayList<String> usedLunsMessages = new ArrayList<String>();
-        Messages messages = ConstantsManager.getInstance().getMessages();
+        UIMessages messages = ConstantsManager.getInstance().getMessages();
 
         for (LunModel lunModel : getAddedLuns()) {
             if (lunModel.getStatus() == LunStatus.Used) {
@@ -627,7 +627,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
     public ArrayList<String> getPartOfSdLunsMessages() {
         ArrayList<String> partOfSdLunsMessages = new ArrayList<String>();
-        Messages messages = ConstantsManager.getInstance().getMessages();
+        UIMessages messages = ConstantsManager.getInstance().getMessages();
 
         for (LunModel lunModel : getAddedLuns()) {
             String reason = null;

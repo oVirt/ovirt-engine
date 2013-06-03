@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Messages;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class VmModelHelper {
@@ -30,7 +30,7 @@ public class VmModelHelper {
             }
         }
 
-        final Messages messages = ConstantsManager.getInstance().getMessages();
+        final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
         // check if VM provides any disk for the export
         if (vmDisks.size() - (sharedImageDisks.size() + directLunDisks.size()) == 0) {

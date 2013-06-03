@@ -71,7 +71,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.Messages;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -1146,7 +1146,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     public void restart()
     {
         final UIConstants constants = ConstantsManager.getInstance().getConstants();
-        final Messages messages = ConstantsManager.getInstance().getMessages();
+        final UIMessages messages = ConstantsManager.getInstance().getMessages();
         ConfirmationModel model = new ConfirmationModel();
         setConfirmWindow(model);
         model.setTitle(constants.restartHostsTitle());

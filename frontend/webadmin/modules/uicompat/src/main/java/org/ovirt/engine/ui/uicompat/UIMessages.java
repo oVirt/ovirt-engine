@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.uicompat;
 import java.util.Date;
 import java.util.List;
 
-public interface Messages extends com.google.gwt.i18n.client.Messages {
+public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("One of the parameters isn''t supported (available parameter(s): {0})")
     String customPropertyOneOfTheParamsIsntSupported(String parameters);

@@ -6,7 +6,7 @@ public final class ConstantsManager {
 
     private static final ConstantsManager INSTANCE = new ConstantsManager();
     private static final UIConstants constants = GWT.create(UIConstants.class);
-    private static final Messages messages = GWT.create(Messages.class);
+    private static final UIMessages messages = GWT.create(UIMessages.class);
 
     private ConstantsManager() {
     }
@@ -19,7 +19,7 @@ public final class ConstantsManager {
         return constants;
     }
 
-    public Messages getMessages() {
+    public UIMessages getMessages() {
         return messages;
     }
 
