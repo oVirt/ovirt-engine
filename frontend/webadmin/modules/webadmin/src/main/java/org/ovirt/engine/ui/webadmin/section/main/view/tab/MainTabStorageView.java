@@ -2,10 +2,10 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
@@ -94,6 +94,15 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 };
         getTable().addColumn(crossDataCenterStatusColumn, constants.crossDcStatusStorage(), "210px"); //$NON-NLS-1$
 
+        DiskSizeColumn<StorageDomain> totalSpaceColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
+            @Override
+            public Long getRawValue(StorageDomain object) {
+                long totalSpace = object.getTotalDiskSize() != null ? object.getTotalDiskSize() : 0;
+                return (long) totalSpace;
+            }
+        };
+        getTable().addColumn(totalSpaceColumn, constants.totalSpaceStorage(), "130px"); //$NON-NLS-1$
+
         DiskSizeColumn<StorageDomain> freeSpaceColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
             @Override
             public Long getRawValue(StorageDomain object) {
@@ -101,7 +110,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 return (long) availableDiskSize;
             }
         };
-        getTable().addColumn(freeSpaceColumn, constants.freeSpaceStorage(), "140px"); //$NON-NLS-1$
+        getTable().addColumn(freeSpaceColumn, constants.freeSpaceStorage(), "130px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> descriptionColumn = new TextColumnWithTooltip<StorageDomain>() {
             @Override
