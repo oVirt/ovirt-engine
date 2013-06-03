@@ -529,6 +529,18 @@ fi
 %post backend
 %if %{install_systemd}
 %systemd_post ovirt-engine.service
+
+# In 3.2 installations we did not handle postun section correctly.
+# It means that the systemd daemon is not reloaded when 3.2 package
+# is upgraded. This leads to an 'unstartable' ovirt-engine service
+# when we upgrade to 3.3. As such, during the upgrade to 3.3 we need to
+# reload the systemd daemon.
+
+# TODO: remove when moving to 3.4
+
+if [ $1 -eq 2  ] ; then
+  %systemd_postun
+fi
 %endif
 
 
