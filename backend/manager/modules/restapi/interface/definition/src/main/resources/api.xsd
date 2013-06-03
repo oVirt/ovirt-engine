@@ -612,6 +612,7 @@
           <xs:element ref="authentication_methods" minOccurs="0"/>
           <!--  Extrenal tasks -->
           <xs:element ref="step_types" minOccurs="0"/>
+          <xs:element ref="payload_encodings" minOccurs="0"/>
           <!-- Gluster related -->
           <xs:element ref="gluster_volume_types" minOccurs="0"/>
           <xs:element ref="transport_types" minOccurs="0"/>
@@ -958,6 +959,20 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="ScsiGenericIoOptions"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="payload_encodings" type="PayloadEncodings"/>
+
+  <xs:complexType name="PayloadEncodings">
+    <xs:sequence>
+      <xs:element name="payload_encodings" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="PayloadEncodings"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
@@ -2375,8 +2390,74 @@
   <xs:complexType name="Initialization">
       <xs:sequence>
         <xs:element name="configuration" type="Configuration" minOccurs="0" maxOccurs="1"/>
+        <xs:element name="cloud_init" type="CloudInit" minOccurs="0" maxOccurs="1"/>
       </xs:sequence>
-   </xs:complexType>
+  </xs:complexType>
+
+  <xs:element name="dns" type="DNS"/>
+
+  <xs:complexType name="DNS">
+    <xs:sequence>
+      <xs:element name="servers" type="Hosts" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="search_domains" type="Hosts" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="authorized_key" type="AuthorizedKey"/>
+
+  <xs:element name="authorized_keys" type="AuthorizedKeys"/>
+
+  <xs:complexType name="AuthorizedKey">
+    <xs:annotation>
+      <xs:appinfo>
+        <jaxb:class name="AuthorizedKey"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="user" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="key" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="AuthorizedKeys">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="AuthorizedKeys"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="authorized_key" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="cloud_init" type="CloudInit"/>
+
+  <xs:complexType name="CloudInit">
+    <xs:sequence>
+      <xs:element ref="host" minOccurs="0"/>
+      <xs:element name="network" minOccurs="0">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element ref="nics" minOccurs="0"/>
+            <xs:element ref="dns" minOccurs="0"/>
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element> <!-- </network> -->
+      <xs:element ref="authorized_keys" minOccurs="0"/>
+      <xs:element name="regenerate_ssh_keys" type="xs:boolean" minOccurs="0"/>
+      <xs:element name="timezone" type="xs:string" minOccurs="0"/>
+      <xs:element ref="users" minOccurs="0"/>
+      <xs:element ref="files" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
 
   <xs:complexType name="VmPlacementPolicy">
     <xs:sequence>
@@ -2815,6 +2896,8 @@
           <xs:element ref="port_mirroring" minOccurs="0" maxOccurs="1"/> <!-- Deprecated, replaced by 'vnic_profile' -->
           <xs:element ref="reported_devices" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="vnic_profile" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="boot_protocol" type="xs:string" minOccurs="0"/>
+          <xs:element name="on_boot" type="xs:boolean" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

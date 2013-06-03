@@ -283,6 +283,24 @@ actions:
           action.vm.display.type: 'xs:string', action.vm.stateless: 'xs:boolean', action.vm.os.cmdline: 'xs:string',
           action.vm.domain.user.username: 'xs:string', action.pause: 'xs:boolean',
           action.vm.os.boot--COLLECTION: {boot.dev: 'xs:string'}, action.vm.domain.user.password: 'xs:string'}
+          action.vm.initialization.cloud-init: {cloud-init.hostname: 'xs:string',
+          cloud-init.network.nics.nic--COLLECTION: {nic.name: 'xs:string',
+          nic.boot_protocol: 'xs:string',
+          nic.network.address.ip: 'xs:string',
+          nic.network.address.netmask: 'xs:string',
+          nic.network.address.gateway: 'xs:string',
+          nic.onboot: 'xs:boolean'},
+          cloud-init.network.dns.servers.host--COLLECTION: {host.address: 'xs:string'},
+          cloud-init.network.dns.search_domains.host--COLLECTION: {host.address: 'xs:string'},
+          cloud-init.authorized_keys.authorized_key--COLLECTION: {authorized_key.key: 'xs:string',
+          authorized_key.user.name: 'xs:string'},
+          cloud-init.regenerate_ssh_keys: 'xs:boolean',
+          cloud-init.timezone: 'xs:string',
+          cloud-init.users.user--COLLECTION: {user.password: 'xs:string',
+          user.name: 'xs:string'},
+          cloud-init.payload_files.payload_file--COLLECTION: {payload_file.name: 'xs:string',
+          payload_file.content: 'xs:string',
+          payload_file.type: 'xs:string'}}
         description: start a virtual machine in the system identified by the given id with the options specified in the request body
     urlparams: {}
     headers:

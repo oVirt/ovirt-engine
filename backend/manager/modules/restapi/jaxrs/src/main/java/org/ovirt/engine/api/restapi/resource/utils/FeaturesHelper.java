@@ -70,6 +70,7 @@ public class FeaturesHelper {
             addGlusterHooksFeature(features);
             addFeatureReportVmFQDN(features);
             addFeatureAttachDiskSnapshot(features);
+            addFeatureCloudInit(features);
         }
         if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_4)) {
             addGlusterBricksFeature(features);
@@ -384,4 +385,12 @@ public class FeaturesHelper {
         feature.setDescription("Ability to delete gluster bricks with data migration using the actions migrate and DELETE. Action migrate in combination with stopmigrate, migrates the data and brick can be reused further.");
         features.getFeature().add(feature);
     }
+
+    private void addFeatureCloudInit(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Cloud Init");
+        feature.setDescription("Support for VM initialization with Cloud Init.");
+        features.getFeature().add(feature);
+    }
+
 }
