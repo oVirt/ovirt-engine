@@ -1271,6 +1271,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Used")
     String usedStorageGeneral();
 
+    @DefaultStringValue("Allocated")
+    String allocatedStorageGeneral();
+
     @DefaultStringValue("Over Allocation Ratio")
     String overAllocRatioStorageGeneral();
 
