@@ -76,7 +76,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         if (result && DbFacade.getInstance().getStoragePoolDao().getByName(getStoragePool().getname()) != null) {
             result = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
-        } else if (!CheckStoragePoolNameLengthValid()) {
+        } else if (!checkStoragePoolNameLengthValid()) {
             result = false;
         } else if (!VersionSupport.checkVersionSupported(getStoragePool().getcompatibility_version()
                 )) {

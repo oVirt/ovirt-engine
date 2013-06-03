@@ -95,7 +95,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         boolean result = true;
         setVdsName(_problematicVds.getName());
         if (_problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
-            result = ActivateDataCenter();
+            result = activateDataCenter();
             if (getVdsDAO().getAllForStoragePool(getStoragePool().getId()).size() == 1) {
                 //reset SPM flag fot this Host
                 StoragePool sp = getStoragePool();
@@ -153,7 +153,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
 
     private Boolean _fenceSpmCalled;
 
-    private boolean ActivateDataCenter() {
+    private boolean activateDataCenter() {
         boolean result = false;
         _fenceSpmCalled = false;
 

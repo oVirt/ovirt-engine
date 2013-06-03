@@ -269,7 +269,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         }
     }
 
-    protected boolean CheckStoragePoolNameLengthValid() {
+    protected boolean checkStoragePoolNameLengthValid() {
         boolean result = true;
         if (getStoragePool().getname().length() > getStoragePoolNameSizeLimit()) {
             result = false;
@@ -316,7 +316,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     protected void runSynchronizeOperation(ActivateDeactivateSingleAsyncOperationFactory factory,
             Object... addionalParams) {
         List<VDS> allRunningVdsInPool = getAllRunningVdssInPool();
-        ArrayList<Object> parameters = InitAsyncOperationParameters(allRunningVdsInPool);
+        ArrayList<Object> parameters = initAsyncOperationParameters(allRunningVdsInPool);
         if (addionalParams.length > 0) {
             parameters.addAll(Arrays.asList(addionalParams));
         }
@@ -325,7 +325,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         sync.Execute();
     }
 
-    private ArrayList<Object> InitAsyncOperationParameters(List<VDS> allRunningVdsInPool) {
+    private ArrayList<Object> initAsyncOperationParameters(List<VDS> allRunningVdsInPool) {
         ArrayList<Object> parameters = new ArrayList<Object>();
         parameters.add(allRunningVdsInPool);
         parameters.add(getStorageDomain());

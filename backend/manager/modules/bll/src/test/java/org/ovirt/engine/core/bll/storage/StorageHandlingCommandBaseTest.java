@@ -98,11 +98,11 @@ public class StorageHandlingCommandBaseTest {
     }
 
     private void checkStoragePoolNameLengthSucceeds() {
-        assertFalse(cmd.CheckStoragePoolNameLengthValid());
+        assertFalse(cmd.checkStoragePoolNameLengthValid());
     }
 
     private void checkStoragePoolNameLengthFails() {
-        assertTrue(cmd.CheckStoragePoolNameLengthValid());
+        assertTrue(cmd.checkStoragePoolNameLengthValid());
     }
 
     private class TestStorageHandlingCommandBase extends StorageHandlingCommandBase<StoragePoolManagementParameter> {

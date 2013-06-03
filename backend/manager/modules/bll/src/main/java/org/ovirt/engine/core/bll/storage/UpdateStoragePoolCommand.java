@@ -185,7 +185,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     .add(VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_POOL_TYPE_WITH_DOMAINS
                             .toString());
         }
-        returnValue = returnValue && CheckStoragePoolNameLengthValid();
+        returnValue = returnValue && checkStoragePoolNameLengthValid();
         if (returnValue
                 && Version.OpInequality(_oldStoragePool.getcompatibility_version(), getStoragePool()
                         .getcompatibility_version())) {
