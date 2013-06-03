@@ -57,6 +57,8 @@ import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.OsTypeUtils;
 import org.ovirt.engine.api.model.OsTypes;
+import org.ovirt.engine.api.model.PayloadEncoding;
+import org.ovirt.engine.api.model.PayloadEncodings;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.PermitType;
 import org.ovirt.engine.api.model.Permits;
@@ -236,6 +238,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addWatchdogModels(version, WatchdogModel.values());
         addConfigurationTypes(version, ConfigurationType.values());
         addSnapshotStatuses(version, SnapshotStatus.values());
+        addPayloadEncodings(version, PayloadEncoding.values());
 
         // External tasks types
         addStepEnumTypes(version, StepEnum.values());
@@ -259,6 +262,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             version.setSnapshotStatuses(new SnapshotStatuses());
             for (SnapshotStatus mode : values) {
                 version.getSnapshotStatuses().getSnapshotStatuses().add(mode.value());
+            }
+        }
+    }
+
+    private void addPayloadEncodings(VersionCaps version, PayloadEncoding[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
+            version.setPayloadEncodings(new PayloadEncodings());
+            for (PayloadEncoding mode : values) {
+                version.getPayloadEncodings().getPayloadEncodings().add(mode.value());
             }
         }
     }

@@ -1,17 +1,25 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendVmsResource.SUB_COLLECTIONS;
+import static org.ovirt.engine.core.utils.Ticketing.GenerateOTP;
+
 import java.util.List;
 import java.util.Set;
+
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.DetailHelper.Detail;
 import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.AuthorizedKey;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
 import org.ovirt.engine.api.model.Certificate;
+import org.ovirt.engine.api.model.CloudInit;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.Statistic;
@@ -34,6 +42,7 @@ import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
+import org.ovirt.engine.core.common.action.CloudInitParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -48,6 +57,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -57,10 +67,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-
-
-import static org.ovirt.engine.api.restapi.resource.BackendVmsResource.SUB_COLLECTIONS;
-import static org.ovirt.engine.core.utils.Ticketing.GenerateOTP;
 
 public class BackendVmResource extends
         AbstractBackendActionableResource<VM, org.ovirt.engine.core.common.businessentities.VM> implements
@@ -233,6 +239,23 @@ public class BackendVmResource extends
             if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()) {
                 validateParameters(vm.getPlacementPolicy(), "host.id|name");
                 params.setDestinationVdsId(getHostId(vm.getPlacementPolicy().getHost()));
+            }
+            if (vm.isSetInitialization() && vm.getInitialization().isSetCloudInit()) {
+                CloudInit cloudInit = vm.getInitialization().getCloudInit();
+                // currently only 'root' user is supported, alert the user if other user sent
+                if (cloudInit.isSetAuthorizedKeys()) {
+                    for (AuthorizedKey authKey : cloudInit.getAuthorizedKeys().getAuthorizedKeys()) {
+                        if (!"root".equals(authKey.getUser().getUserName())) {
+                            throw new WebApplicationException(Response.status(Response.Status.BAD_REQUEST)
+.entity("Currently only the user 'root' is supported for authorized keys")
+.build());
+                        }
+                    }
+                }
+                params.setInitializationType(InitializationType.CloudInit);
+                ((RunVmOnceParams) params).setCloudInitParameters(
+                        getMapper(CloudInit.class, CloudInitParameters.class)
+                                .map(cloudInit, null));
             }
         } else {
             actionType = VdcActionType.RunVm;
