@@ -70,6 +70,7 @@ public class FeaturesHelper {
             addGlusterHooksFeature(features);
             addFeatureReportVmFQDN(features);
             addFeatureAttachDiskSnapshot(features);
+            addFeatureCloudInit(features);
         }
         return features;
     }
@@ -374,4 +375,12 @@ public class FeaturesHelper {
         feature.setDescription("Ability to report the fully qualified domain name (FQDN) of a Virtual Machine");
         features.getFeature().add(feature);
     }
+
+    private void addFeatureCloudInit(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Cloud Init");
+        feature.setDescription("Support for VM initialization with Cloud Init.");
+        features.getFeature().add(feature);
+    }
+
 }

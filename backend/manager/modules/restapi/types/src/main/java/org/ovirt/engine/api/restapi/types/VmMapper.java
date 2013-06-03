@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import static org.ovirt.engine.core.compat.Guid.createGuidFromString;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -10,9 +11,12 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
+import org.ovirt.engine.api.model.AuthorizedKey;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
+import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.CPU;
+import org.ovirt.engine.api.model.CloudInit;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.CpuMode;
@@ -24,20 +28,23 @@ import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.File;
+import org.ovirt.engine.api.model.Files;
 import org.ovirt.engine.api.model.GuestInfo;
 import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.IP;
 import org.ovirt.engine.api.model.IPs;
 import org.ovirt.engine.api.model.MemoryPolicy;
+import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.OperatingSystem;
 import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.Payload;
-import org.ovirt.engine.api.model.Files;
+import org.ovirt.engine.api.model.PayloadEncoding;
 import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
+import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VCpuPin;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmAffinity;
@@ -48,6 +55,8 @@ import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
+import org.ovirt.engine.core.common.action.CloudInitParameters;
+import org.ovirt.engine.core.common.action.CloudInitParameters.Attachment;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -58,6 +67,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -899,6 +910,137 @@ public class VmMapper {
                 entity.getFiles().put(file.getName(), file.getContent());
             }
         }
+        return entity;
+    }
+
+    @Mapping(from = Attachment.AttachmentType.class, to = PayloadEncoding.class)
+    public static PayloadEncoding map(Attachment.AttachmentType attachmentType, PayloadEncoding template) {
+        switch (attachmentType) {
+            case BASE64:            return PayloadEncoding.BASE64;
+            case PLAINTEXT:         return PayloadEncoding.PLAINTEXT;
+            default:                return null;
+        }
+    }
+
+    @Mapping(from = PayloadEncoding.class, to = Attachment.AttachmentType.class)
+    public static Attachment.AttachmentType map(PayloadEncoding attachmentType, Attachment.AttachmentType template) {
+        switch (attachmentType) {
+            case BASE64:            return Attachment.AttachmentType.BASE64;
+            case PLAINTEXT:         return Attachment.AttachmentType.PLAINTEXT;
+            default:                return null;
+        }
+    }
+
+    @Mapping(from = CloudInit.class, to = CloudInitParameters.class)
+    public static CloudInitParameters map(CloudInit model, CloudInitParameters template) {
+        CloudInitParameters entity = template != null ? template : new CloudInitParameters();
+
+        if (model.isSetHost() && model.getHost().isSetAddress()) {
+            entity.setHostname(model.getHost().getAddress());
+        }
+
+        if (model.isSetAuthorizedKeys()
+                && model.getAuthorizedKeys().isSetAuthorizedKeys()
+                && !model.getAuthorizedKeys().getAuthorizedKeys().isEmpty()) {
+            StringBuilder keys = new StringBuilder();
+            for (AuthorizedKey authKey : model.getAuthorizedKeys().getAuthorizedKeys()) {
+                if (keys.length() > 0) {
+                    keys.append("\n");
+                }
+                keys.append(authKey.getKey());
+            }
+            entity.setAuthorizedKeys(keys.toString());
+        }
+
+        if (model.isSetRegenerateSshKeys()) {
+            entity.setRegenerateKeys(model.isRegenerateSshKeys());
+        }
+
+        if (model.isSetNetwork()) {
+            if (model.getNetwork().isSetNics()) {
+                Map<String, VdsNetworkInterface> interfaces = new HashMap<>();
+                for (NIC iface : model.getNetwork().getNics().getNics()) {
+                    VdsNetworkInterface vdsNetworkInterface = new VdsNetworkInterface();
+                    if (iface.isSetBootProtocol()) {
+                        NetworkBootProtocol protocol = HostNicMapper.map(BootProtocol.fromValue(iface.getBootProtocol()), null);
+                        vdsNetworkInterface.setBootProtocol(protocol);
+                        if (protocol != NetworkBootProtocol.DHCP && iface.isSetNetwork() && iface.getNetwork().isSetIp()) {
+                            if (iface.getNetwork().getIp().isSetAddress()) {
+                                vdsNetworkInterface.setAddress(iface.getNetwork().getIp().getAddress());
+                            }
+                            if (iface.getNetwork().getIp().isSetNetmask()) {
+                                vdsNetworkInterface.setSubnet(iface.getNetwork().getIp().getNetmask());
+                            }
+                            if (iface.getNetwork().getIp().isSetGateway()) {
+                                vdsNetworkInterface.setGateway(iface.getNetwork().getIp().getGateway());
+                            }
+                        }
+                    }
+
+                    interfaces.put(iface.getName(), vdsNetworkInterface);
+
+                    if (iface.isSetOnBoot() && iface.isOnBoot()) {
+                        if (entity.getStartOnBoot() == null) {
+                            entity.setStartOnBoot(new ArrayList<String>());
+                        }
+                        entity.getStartOnBoot().add(iface.getName());
+                    }
+                }
+
+                entity.setInterfaces(interfaces);
+            }
+            if (model.getNetwork().isSetDns()) {
+                if (model.getNetwork().getDns().isSetServers()
+                        && model.getNetwork().getDns().getServers().isSetHosts()
+                        && !model.getNetwork().getDns().getServers().getHosts().isEmpty()) {
+                    List<String> dnsServers = new ArrayList<>();
+                    for (Host host : model.getNetwork().getDns().getServers().getHosts()) {
+                        if (host.isSetAddress()) {
+                            dnsServers.add(host.getAddress());
+                        }
+                    }
+                    entity.setDnsServers(dnsServers);
+                }
+
+                if (model.getNetwork().getDns().isSetSearchDomains()
+                        && model.getNetwork().getDns().getSearchDomains().isSetHosts()
+                        && !model.getNetwork().getDns().getSearchDomains().getHosts().isEmpty()) {
+                    List<String> searchDomains = new ArrayList<>();
+                    for (Host host : model.getNetwork().getDns().getSearchDomains().getHosts()) {
+                        if (host.isSetAddress()) {
+                            searchDomains.add(host.getAddress());
+                        }
+                    }
+                    entity.setDnsSearch(searchDomains);
+                }
+            }
+        }
+
+        if (model.isSetTimezone() && model.getTimezone() != null) {
+            entity.setTimeZone(model.getTimezone());
+        }
+
+        if (model.isSetUsers()) {
+            for (User user : model.getUsers().getUsers()) {
+                // currently only root password supported in backend
+                if ("root".equals(user.getUserName())) {
+                    entity.setRootPassword(user.getPassword());
+                }
+            }
+        }
+
+        if (model.isSetFiles()
+                && model.getFiles().isSetFiles()
+                && !model.getFiles().getFiles().isEmpty()) {
+            entity.setAttachments(new HashMap<String, Attachment>());
+            for (File file : model.getFiles().getFiles()) {
+                Attachment attachment = new Attachment();
+                attachment.setAttachmentType(map(PayloadEncoding.fromValue(file.getType()), null));
+                attachment.setContent(file.getContent());
+                entity.getAttachments().put(file.getName(), attachment);
+            }
+        }
+
         return entity;
     }
 
