@@ -77,7 +77,6 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
     private void enableEditPoolFields() {
         descriptionEditor.setEnabled(true);
         prestartedVmsEditor.setEnabled(true);
-        quotaEditor.setEnabled(true);
 
         editPrestartedVmsEditor.setEnabled(true);
         incraseNumOfVmsEditor.setEnabled(true);
