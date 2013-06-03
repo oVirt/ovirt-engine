@@ -12,13 +12,13 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -625,9 +625,10 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
             selectedItem = Linq.firstOrDefault(hosts, new Linq.HostPredicate(oldSelectedItem.getId()));
         }
 
-        // Select a default - first host in the list.
+        // Select a default - if there's a SPM choose it, otherwise choose the first host in the list.
         if (selectedItem == null) {
-            selectedItem = Linq.firstOrDefault(hosts);
+            VDS spm = getSPM(hosts);
+            selectedItem = spm == null ? Linq.firstOrDefault(hosts) : spm;
         }
 
         getHost().setItems(hosts);
