@@ -28,4 +28,34 @@
        <Method name="parseSrvRecord"/>
        <Bug code="DLS"/>
      </Match>
+
+     <!--
+      findbugs complain about the field executionReason that is not set
+      after deserialization.
+      that was the intend of the author for this field. (the field is mark
+      as transient)
+
+      findbugs reason:
+      Se: Transient field that isn't set by deserialization.  (SE_TRANSIENT_FIELD_NOT_RESTORED)
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.core.common.action.VdcActionParametersBase" />
+       <Field name="executionReason"/>
+       <Bug code="Se"/>
+     </Match>
+
+     <!--
+      findbugs complain about the field nullValue that is not set
+      after deserialization.
+      that was the intend of the author for this field. (the field is mark
+      as transient)
+
+      findbugs reason:
+      Se: Transient field that isn't set by deserialization.  (SE_TRANSIENT_FIELD_NOT_RESTORED)
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.core.common.businessentities.ActionVersionMap" />
+       <Field name="nullValue"/>
+       <Bug code="Se"/>
+     </Match>
 </FindBugsFilter>
