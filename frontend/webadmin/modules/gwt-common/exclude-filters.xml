@@ -84,5 +84,26 @@
        <Class name="org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView" />
        <Field name="pathEditor"/>
        <Bug code="UrF"/>
+        findbugs complains that we are using the same class name as it super-class
+        currently MenuBar is deeply coded in GWT and we will ignore findbugs warning for now
+
+        findbugs reason:
+        Nm: Class names shouldn't shadow simple name of superclass (NM_SAME_SIMPLE_NAME_AS_SUPERCLASS)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.widget.MenuBar" />
+       <Bug code="Nm"/>
+     </Match>
+
+       <!--
+        findbugs complains that we are using the same class name as it super-class
+        currently PopupPanel is deeply coded in GWT and we will ignore findbugs warning for now
+
+        findbugs reason:
+        Nm: Class names shouldn't shadow simple name of superclass (NM_SAME_SIMPLE_NAME_AS_SUPERCLASS)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.common.widget.PopupPanel" />
+       <Bug code="Nm"/>
      </Match>
  </FindBugsFilter>
