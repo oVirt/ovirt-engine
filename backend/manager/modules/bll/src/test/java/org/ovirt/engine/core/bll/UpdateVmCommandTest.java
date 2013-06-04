@@ -37,7 +37,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.customprop.CustomPropertiesUtils.ValidationError;
+import org.ovirt.engine.core.utils.customprop.ValidationError;
 
 /** A test case for the {@link UpdateVmCommand}. */
 @RunWith(MockitoJUnitRunner.class)

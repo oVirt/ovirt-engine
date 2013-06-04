@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsSelector;
-import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
@@ -43,18 +42,19 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.utils.customprop.ValidationError;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 
 public class RunVmValidator {
 
     public boolean validateVmProperties(VM vm, List<String> messages) {
-        List<VmPropertiesUtils.ValidationError> validationErrors =
+        List<ValidationError> validationErrors =
                 getVmPropertiesUtils().validateVMProperties(
                         vm.getVdsGroupCompatibilityVersion(),
                         vm.getStaticData());
 
         if (!validationErrors.isEmpty()) {
-            VmHandler.handleCustomPropertiesError(validationErrors, messages);
+            VmPropertiesUtils.getInstance().handleCustomPropertiesError(validationErrors, messages);
             return false;
         }
 

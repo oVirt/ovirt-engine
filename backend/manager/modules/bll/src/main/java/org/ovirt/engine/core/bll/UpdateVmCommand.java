@@ -45,7 +45,7 @@ import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.utils.customprop.CustomPropertiesUtils.ValidationError;
+import org.ovirt.engine.core.utils.customprop.ValidationError;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils.VMCustomProperties;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -234,7 +234,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         List<ValidationError> validationErrors = validateCustomProperties(vmFromParams.getStaticData());
         if (!validationErrors.isEmpty()) {
-            VmHandler.handleCustomPropertiesError(validationErrors, getReturnValue().getCanDoActionMessages());
+            VmPropertiesUtils.getInstance().handleCustomPropertiesError(validationErrors,
+                    getReturnValue().getCanDoActionMessages());
             return false;
         }
 

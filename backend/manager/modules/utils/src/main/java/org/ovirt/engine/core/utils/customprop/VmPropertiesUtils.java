@@ -19,8 +19,8 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.exceptions.InitializationException;
 
 /**
- * Helper methods to help parse and validate custom VM (predefined and user defined) properties. These
- * methods are used by vdsbroker and bll modules
+ * Helper methods to help parse and validate custom VM (predefined and user defined) properties. These methods are used
+ * by vdsbroker and bll modules
  *
  */
 public class VmPropertiesUtils extends CustomPropertiesUtils {
@@ -239,8 +239,8 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
      */
     private List<ValidationError> populateVMProperties(Version version, String vmPropertiesFieldValue,
             Map<String, String> propertiesMap) {
-        Set<ValidationError> errorsSet = new HashSet<VmPropertiesUtils.ValidationError>();
-        List<ValidationError> results = new ArrayList<VmPropertiesUtils.ValidationError>();
+        Set<ValidationError> errorsSet = new HashSet<ValidationError>();
+        List<ValidationError> results = new ArrayList<ValidationError>();
         if (!StringUtils.isEmpty(vmPropertiesFieldValue)) {
             String keyValuePairs[] = SEMICOLON_PATTERN.split(vmPropertiesFieldValue);
 

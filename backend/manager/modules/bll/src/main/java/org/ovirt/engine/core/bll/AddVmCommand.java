@@ -62,7 +62,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.utils.GuidUtils;
-import org.ovirt.engine.core.utils.customprop.CustomPropertiesUtils.ValidationError;
+import org.ovirt.engine.core.utils.customprop.ValidationError;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils.VMCustomProperties;
 import org.ovirt.engine.core.utils.linq.All;
@@ -164,7 +164,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         if (returnValue) {
             List<ValidationError> validationErrors = validateCustomProperties(vmStaticFromParams);
             if (!validationErrors.isEmpty()) {
-                VmHandler.handleCustomPropertiesError(validationErrors, reasons);
+                VmPropertiesUtils.getInstance().handleCustomPropertiesError(validationErrors, reasons);
                 returnValue = false;
             }
         }

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -42,10 +41,6 @@ import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
-import org.ovirt.engine.core.utils.customprop.CustomPropertiesUtils;
-import org.ovirt.engine.core.utils.customprop.CustomPropertiesUtils.ValidationError;
-import org.ovirt.engine.core.utils.customprop.CustomPropertiesUtils.ValidationFailureReason;
-import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
@@ -55,26 +50,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class VmHandler {
 
-    private static final Map<VmPropertiesUtils.ValidationFailureReason, String> failureReasonsToVdcBllMessagesMap =
-            new HashMap<VmPropertiesUtils.ValidationFailureReason, String>();
-    private static final Map<CustomPropertiesUtils.ValidationFailureReason, String> failureReasonsToFormatMessages =
-            new HashMap<VmPropertiesUtils.ValidationFailureReason, String>();
     private static ObjectIdentityChecker mUpdateVmsStatic;
 
     private static final Log log = LogFactory.getLog(VmHandler.class);
-
-    static {
-        failureReasonsToVdcBllMessagesMap.put(ValidationFailureReason.DUPLICATE_KEY,
-                VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_DUPLICATE_KEYS.name());
-        failureReasonsToVdcBllMessagesMap.put(ValidationFailureReason.KEY_DOES_NOT_EXIST,
-                VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_KEYS.name());
-        failureReasonsToVdcBllMessagesMap.put(ValidationFailureReason.INCORRECT_VALUE,
-                VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_VALUES.name());
-        failureReasonsToFormatMessages.put(ValidationFailureReason.DUPLICATE_KEY, "$DuplicateKeys %1$s");
-        failureReasonsToFormatMessages.put(ValidationFailureReason.KEY_DOES_NOT_EXIST, "$MissingKeys %1$s");
-        failureReasonsToFormatMessages.put(ValidationFailureReason.INCORRECT_VALUE, "$WrongValueKeys %1$s");
-
-    }
 
     /**
      * Initialize static list containers, for identity and permission check. The initialization should be executed
@@ -451,15 +429,6 @@ public class VmHandler {
             }
         }
         return retVal;
-    }
-
-    public static void handleCustomPropertiesError(List<ValidationError> validationErrors, List<String> message) {
-        String invalidSyntaxMsg = VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_SYNTAX.name();
-
-        List<String> errorMessages =
-                VmPropertiesUtils.getInstance().generateErrorMessages(validationErrors, invalidSyntaxMsg,
-                        failureReasonsToVdcBllMessagesMap, failureReasonsToFormatMessages);
-        message.addAll(errorMessages);
     }
 
     public static void updateImportedVmUsbPolicy(VmBase vmBase) {

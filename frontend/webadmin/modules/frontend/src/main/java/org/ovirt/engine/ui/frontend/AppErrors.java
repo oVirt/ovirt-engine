@@ -454,14 +454,20 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. source and destination is the same.")
     String ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST();
 
-    @DefaultStringValue("Cannot ${action} ${type} if custom VM properties are in invalid format. Please check the input.")
-    String ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_SYNTAX();
+    @DefaultStringValue("Cannot ${action} ${type} if custom properties are in invalid format. Please check the input.")
+    String ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_INVALID_SYNTAX();
 
     @DefaultStringValue("Cannot ${action} ${type} if some of the specified custom properties are not configured by the system. The keys are: ${MissingKeys}")
-    String ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_KEYS();
+    String ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_INVALID_KEYS();
 
     @DefaultStringValue("Cannot ${action} ${type} if some of the specified custom properties have illegal values. The keys are: ${WrongValueKeys}")
-    String ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_INVALID_VALUES();
+    String ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_INVALID_VALUES();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Custom properties are not supported in version: ${NotSupportedInVersion}")
+    String ACTION_TYPE_FAILED_CUSTOM_PROPERTIES_NOT_SUPPORTED_IN_VERSION();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Custom properties are not supported for device type: ${InvalidDeviceType}")
+    String ACTION_TYPE_FAILED_INVALID_DEVICE_TYPE_FOR_CUSTOM_PROPERTIES();
 
     @DefaultStringValue("Cannot ${action} ${type}. There are no available running Hosts in the Host Cluster.")
     String ACTION_TYPE_FAILED_VDS_VM_CLUSTER();
@@ -1718,7 +1724,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String VDS_GROUP_CANNOT_LOWER_CPU_LEVEL();
 
     @DefaultStringValue("Cannot update Cluster, custom properties are not supported under current Cluster version")
-    String CUSTOM_VM_PROPERTIES_INVALID_VALUES_NOT_ALLOWED_IN_CURRENT_CLUSTER();
+    String CUSTOM_PROPERTIES_INVALID_VALUES_NOT_ALLOWED_IN_CURRENT_CLUSTER();
 
     @DefaultStringValue("Authentication failed. The user is either locked or disabled")
     String USER_FAILED_TO_AUTHENTICATE_ACCOUNT_IS_LOCKED_OR_DISABLED();
@@ -1739,7 +1745,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String USER_FAILED_TO_AUTHENTICATE_WRONG_REALM();
 
     @DefaultStringValue("Cannot ${action} ${type} if some of the specified custom properties appear more than once. The keys are: ${DuplicateKeys}")
-    String ACTION_TYPE_FAILED_INVALID_CUSTOM_VM_PROPERTIES_DUPLICATE_KEYS();
+    String ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_DUPLICATE_KEYS();
 
     @DefaultStringValue("Host Address can not be modified due to Security restrictions.  In order to change Host Address, Host has to be reinstalled")
     String ACTION_TYPE_FAILED_HOSNAME_CANNOT_CHANGE();
