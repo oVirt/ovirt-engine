@@ -1,12 +1,17 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
+import java.io.Serializable;
+
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * This class represents a cluster-wide service (type). If a service type is enabled on a services, all the services of
  * that type should be in RUNNING state, and vice versa.
  */
-public class GlusterClusterService {
+public class GlusterClusterService implements Serializable {
+
+    private static final long serialVersionUID = 8971469111782110647L;
+
     private ServiceType serviceType;
     private Guid clusterId;
     private GlusterServiceStatus status;

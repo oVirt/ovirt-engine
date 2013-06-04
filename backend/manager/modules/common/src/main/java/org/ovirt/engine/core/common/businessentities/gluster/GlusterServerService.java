@@ -145,4 +145,9 @@ public class GlusterServerService extends IVdcQueryable implements BusinessEntit
         result = prime * result + ((port == null) ? 0 : port.hashCode());
         return result;
     }
+
+    @Override
+    public Object getQueryableId() {
+        return getId();
+    }
 }

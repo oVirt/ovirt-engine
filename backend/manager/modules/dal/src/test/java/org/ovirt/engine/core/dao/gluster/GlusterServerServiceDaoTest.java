@@ -116,7 +116,7 @@ public class GlusterServerServiceDaoTest extends BaseDAOTestCase {
         service.setServerId(Guid.createGuidFromString(SERVER1_ID));
         service.setServiceId(Guid.createGuidFromString(SERVICE2_ID));
         service.setServiceType(SERVICE2_TYPE);
-        service.setStatus(GlusterServiceStatus.FAILED);
+        service.setStatus(GlusterServiceStatus.UNKNOWN);
         service.setMessage("test message");
         service.setPid(NEW_PID);
 

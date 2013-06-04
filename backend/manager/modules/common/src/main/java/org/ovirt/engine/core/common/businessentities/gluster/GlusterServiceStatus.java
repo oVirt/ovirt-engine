@@ -6,9 +6,8 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 public enum GlusterServiceStatus {
     RUNNING,
     STOPPED,
-    FAILED,
-    ERROR,
-    NOT_INSTALLED,
+    ERROR, // when service status command is failed in vdsm
+    NOT_AVAILABLE, // service is not installed in the host
     MIXED, // cluster-wide status, few up, few down
     UNKNOWN, // Couldn't fetch status
     ;
