@@ -212,8 +212,8 @@ public enum VdcActionType {
     LiveMigrateVmDisks(1011, false, QuotaDependency.STORAGE),
     MoveDisks(1012, false, QuotaDependency.NONE),
     // Event Notification
-    AddEventSubscription(1100, QuotaDependency.NONE),
-    RemoveEventSubscription(1101, QuotaDependency.NONE),
+    AddEventSubscription(1100, false, QuotaDependency.NONE),
+    RemoveEventSubscription(1101, false, QuotaDependency.NONE),
 
     // Config
     ReloadConfigurations(1301, ActionGroup.CONFIGURE_ENGINE, false, QuotaDependency.NONE),
