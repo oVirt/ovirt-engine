@@ -78,21 +78,20 @@ public class NetworkConfigurator {
     }
 
     public boolean pollVds() {
-        long timeBeforePoll = System.currentTimeMillis();
         try {
             FutureVDSCall<VDSReturnValue> task =
                     Backend.getInstance().getResourceManager().runFutureVdsCommand(FutureVDSCommandType.Poll,
                             new VdsIdVDSCommandParametersBase(host.getId()));
-            task.get(Config.<Integer> GetValue(ConfigValues.SetupNetworksPollingTimeout), TimeUnit.SECONDS);
+            VDSReturnValue returnValue =
+                    task.get(Config.<Integer> GetValue(ConfigValues.SetupNetworksPollingTimeout), TimeUnit.SECONDS);
 
-            if (System.currentTimeMillis() - timeBeforePoll < POLLING_BREAK_IN_MILLIS) {
-                Thread.sleep(POLLING_BREAK_IN_MILLIS);
+            if (returnValue.getSucceeded()) {
+                return true;
             }
         } catch (Exception e) {
             // ignore failure until VDSM become responsive
-            return false;
         }
-        return true;
+        return false;
     }
 
     public boolean awaitVdsmResponse() {
@@ -105,9 +104,19 @@ public class NetworkConfigurator {
                         host.getName(),
                         host.getId());
                 return true;
+            } else {
+                delayPolling();
             }
         }
         return false;
+    }
+
+    private void delayPolling() {
+        try {
+            Thread.sleep(POLLING_BREAK_IN_MILLIS);
+        } catch (InterruptedException e) {
+            // ignore exception
+        }
     }
 
     public void refreshNetworkConfiguration() {
