@@ -201,9 +201,7 @@ public class LinkHelper {
         ParentToCollectionMap map;
 
         map = new ParentToCollectionMap(ReadOnlyDeviceResource.class, ReadOnlyDevicesResource.class, Template.class);
-        TYPES.put(CdRom.class, map);
-
-        map = new ParentToCollectionMap(DeviceResource.class, DevicesResource.class, VM.class);
+        map.add(DeviceResource.class, DevicesResource.class, VM.class);
         TYPES.put(CdRom.class, map);
 
         map = new ParentToCollectionMap(VmApplicationResource.class, VmApplicationsResource.class, VM.class);
