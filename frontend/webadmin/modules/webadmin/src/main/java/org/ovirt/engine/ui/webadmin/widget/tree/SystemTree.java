@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.webadmin.widget.tree;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
+
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionStackPanelItem;
 import org.ovirt.engine.ui.common.widget.action.SimpleActionPanel;
@@ -89,10 +93,17 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
     }
 
     private void addModelListeners(final SystemTreeModelProvider modelProvider) {
-        modelProvider.getModel().getItemsChangedEvent().addListener(new IEventListener() {
+        final SystemTreeModel treeModel = modelProvider.getModel();
+        treeModel.getItemsChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 expandTree(getDataDisplayWidget().getRootTreeNode(), ITEM_LEVEL);
+            }
+        });
+        treeModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                expandPath(modelProvider.getSelectionModel().getSelectedObject());
             }
         });
     }
@@ -107,7 +118,37 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
         };
         display.setAnimationEnabled(true);
         display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+        modelProvider.setDataDisplay(display);
         return display;
+    }
+
+    private void expandPath(SystemTreeItemModel targetNodeModel) {
+        if (targetNodeModel == null) {
+            return;
+        }
+
+        // first construct a list of all ancestors of the target node
+        List<SystemTreeItemModel> modelPath = new ArrayList<SystemTreeItemModel>();
+        SystemTreeItemModel model = targetNodeModel.getParent();
+        while (model != null) {
+            modelPath.add(model);
+            model = model.getParent();
+        }
+
+        // then iterate over it in reverse to expand the ancestors in the widget
+        TreeNode node = getDataDisplayWidget().getRootTreeNode();
+        ListIterator<SystemTreeItemModel> i = modelPath.listIterator(modelPath.size());
+        while (i.hasPrevious()) {
+            model = i.previous();
+
+            // look for the child that fits the current node in the ancestry path of the target node
+            for (int j=0; j < node.getChildCount(); ++j) {
+                if (node.getChildValue(j).equals(model)) {
+                    node = node.setChildOpen(j, true);
+                    break;
+                }
+            }
+        }
     }
 
     private void expandTree(TreeNode node) {

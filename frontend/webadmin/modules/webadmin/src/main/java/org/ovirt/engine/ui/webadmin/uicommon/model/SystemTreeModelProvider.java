@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.common.widget.tree.TreeModelWithElementId;
@@ -16,7 +17,11 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.widget.tree.SystemTreeItemCell;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.cellview.client.CellTree;
+import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -33,6 +38,8 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
     private final SingleSelectionModel<SystemTreeItemModel> selectionModel;
 
     private final SystemTreeItemCell cell;
+
+    private CellTree display;
 
     @Inject
     public SystemTreeModelProvider(EventBus eventBus,
@@ -86,6 +93,18 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
         return selectionModel;
     }
 
+    public void setSelectedItem(Guid id) {
+        display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.ENABLED); // open small GWT workaround
+        selectionModel.setSelected(getModel().getItemById(id), true);
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+            @Override
+            public void execute() {
+                display.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION); // close small GWT workaround
+            }
+        });
+    }
+
     @Override
     public void setSelectedItems(List<SystemTreeItemModel> items) {
         getModel().setSelectedItem(items.size() > 0 ? items.get(0) : null);
@@ -123,6 +142,10 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
     @Override
     public void setElementIdPrefix(String elementIdPrefix) {
         cell.setElementIdPrefix(elementIdPrefix);
+    }
+
+    public void setDataDisplay(CellTree display) {
+        this.display = display;
     }
 
 }

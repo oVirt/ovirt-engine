@@ -15,7 +15,11 @@ public abstract class TextColumnWithTooltip<T> extends Column<T, String> impleme
     }
 
     public TextColumnWithTooltip(int maxTextLength) {
-        super(new TextCellWithTooltip(maxTextLength));
+        this(new TextCellWithTooltip(maxTextLength));
+    }
+
+    public TextColumnWithTooltip(TextCellWithTooltip cell) {
+        super(cell);
     }
 
     @Override

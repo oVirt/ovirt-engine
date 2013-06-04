@@ -169,6 +169,12 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
         privateVolumeMap = value;
     }
 
+    private Map<Guid, SystemTreeItemModel> treeItemById;
+
+    public SystemTreeItemModel getItemById(Guid id) {
+        return treeItemById.get(id);
+    }
+
     static
     {
         ResetRequestedEventDefinition = new EventDefinition("ResetRequested", SystemTreeModel.class); //$NON-NLS-1$
@@ -401,6 +407,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
     {
         ArrayList<StorageDomain> storages = null;
         int count = -1;
+        treeItemById = new HashMap<Guid, SystemTreeItemModel>();
 
         // Build tree items.
         SystemTreeItemModel systemItem = new SystemTreeItemModel();

@@ -38,7 +38,11 @@ public class TextCellWithTooltip extends AbstractCellWithTooltip<String> {
     private static CellTemplate template;
 
     public TextCellWithTooltip(int maxTextLength) {
-        super("mouseover"); //$NON-NLS-1$
+        this(maxTextLength, "mouseover"); //$NON-NLS-1$
+    }
+
+    public TextCellWithTooltip(int maxTextLength, String... consumedEvents) {
+        super(consumedEvents);
         this.maxTextLength = maxTextLength;
 
         // Delay cell template creation until the first time it's needed
