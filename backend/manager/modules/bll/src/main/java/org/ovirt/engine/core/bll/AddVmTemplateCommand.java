@@ -369,6 +369,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         getVmTemplate().setQuotaId(getParameters().getMasterVm().getQuotaId());
         getVmTemplate().setDedicatedVmForVds(getParameters().getMasterVm().getDedicatedVmForVds());
         getVmTemplate().setMigrationSupport(getParameters().getMasterVm().getMigrationSupport());
+        getVmTemplate().setAllowConsoleReconnect(getParameters().getMasterVm().isAllowConsoleReconnect());
+        getVmTemplate().setIsoPath(getParameters().getMasterVm().getIsoPath());
         DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());

@@ -623,7 +623,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
                 / (Integer) model.getNumOfSockets().getSelectedItem());
         tempVar.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
-        tempVar.setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
         tempVar.setAutoSuspend(false);
         tempVar.setStateless((Boolean) model.getIsStateless().getEntity());
         tempVar.setRunAndPause(((Boolean) model.getIsRunAndPause().getEntity()));
@@ -631,6 +630,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setDefaultBootSequence(model.getBootSequence());
         tempVar.setAutoStartup((Boolean) model.getIsHighlyAvailable().getEntity());
         tempVar.setIsoPath(model.getCdImage().getIsChangable() ? (String) model.getCdImage().getSelectedItem() : ""); //$NON-NLS-1$
+        tempVar.setUsbPolicy(vm.getUsbPolicy());
         tempVar.setInitrdUrl(vm.getInitrdUrl());
         tempVar.setKernelUrl(vm.getKernelUrl());
         tempVar.setKernelParams(vm.getKernelParams());

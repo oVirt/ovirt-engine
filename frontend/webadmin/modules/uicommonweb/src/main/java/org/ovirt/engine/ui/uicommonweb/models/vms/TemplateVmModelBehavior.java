@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -9,16 +13,11 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.NGuid;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 
 public class TemplateVmModelBehavior extends VmModelBehaviorBase
 {
@@ -47,7 +46,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                             UnitVmModel model = (UnitVmModel) target;
                             StoragePool dataCenter = (StoragePool) returnValue;
                             model.setDataCenter(model,
-                                    new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dataCenter })));
+                                    new ArrayList<StoragePool>(Arrays.asList(new StoragePool[]{dataCenter})));
                             model.getDataCenter().setIsChangable(false);
 
                         }
@@ -63,7 +62,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                 @SuppressWarnings("unchecked")
                 Collection<VmWatchdog> watchdogs =
                         (Collection<VmWatchdog>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                for(VmWatchdog watchdog: watchdogs) {
+                for (VmWatchdog watchdog : watchdogs) {
                     model.getWatchdogAction().setSelectedItem(watchdog.getAction().name().toLowerCase());
                     model.getWatchdogModel().setSelectedItem(watchdog.getModel().name());
                 }
@@ -201,12 +200,9 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
 
     private void initCdImage()
     {
-        getModel().getCdImage().setSelectedItem(template.getIsoPath());
-
-        boolean hasCd = !StringHelper.isNullOrEmpty(template.getIsoPath());
-        getModel().getCdImage().setIsChangable(hasCd);
-        getModel().getCdAttached().setEntity(hasCd);
+        updateSelectedCdImage(template);
 
         updateCdImage();
     }
+
 }

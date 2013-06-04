@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -12,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -34,11 +39,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
@@ -859,5 +859,13 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateHostPinning(MigrationSupport migrationSupport) {
         getModel().getMigrationMode().setSelectedItem(migrationSupport);
+    }
+
+    protected void updateSelectedCdImage(VmBase vmBase) {
+        getModel().getCdImage().setSelectedItem(vmBase.getIsoPath());
+
+        boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
+        getModel().getCdImage().setIsChangable(hasCd);
+        getModel().getCdAttached().setEntity(hasCd);
     }
 }

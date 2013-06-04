@@ -202,6 +202,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getIsSmartcardEnabled().setEntity(this.vm.isSmartcardEnabled());
         getModel().getVncKeyboardLayout().setSelectedItem(this.vm.getVncKeyboardLayout());
 
+        updateSelectedCdImage(this.vm.getStaticData());
+
         updateTimeZone(this.vm.getTimeZone());
 
         // Update domain list
