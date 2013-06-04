@@ -89,6 +89,12 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.GlusterHook, AuditLogType.GLUSTER_HOOK_ADD_FAILED);
         AddEventNotificationEntry(EventNotificationEntity.GlusterHook, AuditLogType.GLUSTER_HOOK_REMOVED);
         AddEventNotificationEntry(EventNotificationEntity.GlusterHook, AuditLogType.GLUSTER_HOOK_REMOVE_FAILED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterService, AuditLogType.GLUSTER_SERVICE_STARTED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterService, AuditLogType.GLUSTER_SERVICE_START_FAILED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterService, AuditLogType.GLUSTER_SERVICE_STOPPED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterService, AuditLogType.GLUSTER_SERVICE_STOP_FAILED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterService, AuditLogType.GLUSTER_SERVICE_RESTARTED);
+        AddEventNotificationEntry(EventNotificationEntity.GlusterService, AuditLogType.GLUSTER_SERVICE_RESTART_FAILED);
 
         // DWH
         AddEventNotificationEntry(EventNotificationEntity.DWH, AuditLogType.DWH_STOPPED);

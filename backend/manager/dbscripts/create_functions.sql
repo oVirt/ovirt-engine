@@ -289,6 +289,22 @@ BEGIN
             SELECT cluster_id AS id
             UNION
             SELECT v_entity_id AS id;
+
+	WHEN v_entity_type = 25 THEN -- Gluster Service
+
+        -- get cluster id
+        cluster_id := ( SELECT vds_group_id FROM vds_static WHERE vds_id = v_entity_id );
+        -- get data center id
+        ds_id := ( SELECT storage_pool_id FROM vds_groups WHERE vds_group_id = cluster_id );
+
+        RETURN QUERY
+            SELECT system_root_id AS id
+            UNION
+            SELECT ds_id AS id
+            UNION
+            SELECT cluster_id AS id
+            UNION
+            SELECT v_entity_id AS id;
 	ELSE
 		IF v_entity_type IN ( 1,14,15,16 ) THEN -- Data Center, users and roles are under system
 			RETURN QUERY
@@ -478,6 +494,8 @@ BEGIN
         result := ( SELECT name FROM network WHERE id = v_entity_id );
     WHEN v_entity_type = 23 THEN
         result := ( SELECT concat(gluster_command,'-',stage,'-',name) FROM gluster_hooks where id = v_entity_id );
+    WHEN v_entity_type = 25 THEN
+        result := ( SELECT service_name FROM gluster_services where id = v_entity_id );
     ELSE
         result := 'Unknown type ' ||  v_entity_type;
     END CASE;

@@ -26,6 +26,15 @@ public class GlusterConstants {
     public static final String NEW_STATUS = "newstatus";
     public static final String SERVICE_TYPE = "servicetype";
     public static final String SERVICE_NAME = "servicename";
+    public static final String SERVER = "server";
+    public static final String SERVICE = "service";
+    public static final String SERVICE_GROUP_TYPE = "ServiceGroupType";
+    public static final String SERVICE_GROUP_NAME = "ServiceGroupName";
+    public static final String SERVICE_GROUP_TYPE_CLUSTER = "cluster";
+    public static final String SERVICE_GROUP_TYPE_SERVER = "server";
+    public static final String MANAGE_GLUSTER_SERVICE_ACTION_TYPE_START = "start";
+    public static final String MANAGE_GLUSTER_SERVICE_ACTION_TYPE_STOP = "stop";
+    public static final String MANAGE_GLUSTER_SERVICE_ACTION_TYPE_RESTART = "restart";
 
     public static final String HOOK_NAME = "glusterhookname";
     public static final String FAILURE_MESSAGE = "failuremessage";

@@ -94,6 +94,7 @@ public enum ActionGroup {
     MANIPULATE_GLUSTER_VOLUME(1001, RoleType.ADMIN, VdcObjectType.GlusterVolume, true, ApplicationMode.GlusterOnly),
     DELETE_GLUSTER_VOLUME(1002, RoleType.ADMIN, VdcObjectType.GlusterVolume, true, ApplicationMode.GlusterOnly),
     MANIPULATE_GLUSTER_HOOK(1003, RoleType.ADMIN, VdcObjectType.GlusterHook, true, ApplicationMode.GlusterOnly),
+    MANIPULATE_GLUSTER_SERVICE(1004, RoleType.ADMIN, VdcObjectType.GlusterService, true, ApplicationMode.GlusterOnly),
 
     // Disks action groups
     CREATE_DISK(1100, RoleType.USER, VdcObjectType.Disk, false, ApplicationMode.VirtOnly),

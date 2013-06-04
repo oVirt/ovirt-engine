@@ -31,7 +31,9 @@ public enum VdcObjectType {
     Snapshot(21, "Snapshot"),
     Event(22, "Event"),
     GlusterHook(23, "GlusterHook"),
-    PROVIDER(24, "Provider");
+    PROVIDER(24, "Provider"),
+    GlusterService(25, "GlusterService"),
+    ;
 
     private int value;
     private String vdcObjectTranslationVal;

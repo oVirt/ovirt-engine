@@ -157,6 +157,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String ActionGroup___MANIPULATE_GLUSTER_HOOK();
 
+	String ActionGroup___MANIPULATE_GLUSTER_SERVICE();
+
 	String EventNotificationEntity___Host();
 
 	String EventNotificationEntity___Vm();
@@ -170,6 +172,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 	String EventNotificationEntity___DWH();
 
 	String EventNotificationEntity___GlusterHook();
+
+	String EventNotificationEntity___GlusterService();
 
 	String AuditLogType___VDS_FAILURE();
 
@@ -289,6 +293,18 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String AuditLogType___GLUSTER_HOOK_REFRESH();
 
     String AuditLogType___GLUSTER_HOOK_REFRESH_FAILED();
+
+    String AuditLogType___GLUSTER_SERVICE_STARTED();
+
+    String AuditLogType___GLUSTER_SERVICE_START_FAILED();
+
+    String AuditLogType___GLUSTER_SERVICE_STOPPED();
+
+    String AuditLogType___GLUSTER_SERVICE_STOP_FAILED();
+
+    String AuditLogType___GLUSTER_SERVICE_RESTARTED();
+
+    String AuditLogType___GLUSTER_SERVICE_RESTART_FAILED();
 
     String VdcActionType___ActivateVds();
 
@@ -605,6 +621,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___RefreshGlusterHook();
 
+	String VdcActionType___ManageGlusterService();
+
 	String VdcActionType___ConnectStorageToVds();
 
 	String VdcObjectType___AdElements();
@@ -646,6 +664,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 	String VdcObjectType___RemoveWatchdog();
 
 	String VdcObjectType___AddWatchdog();
+
+	String VdcObjectType___GlusterService();
 
 	String VdsSelectionAlgorithm___None();
 
@@ -716,6 +736,16 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String GlusterHookContentType___TEXT();
 
     String GlusterHookContentType___BINARY();
+
+    String GlusterServiceStatus___RUNNING();
+
+    String GlusterServiceStatus___STOPPED();
+
+    String GlusterServiceStatus___MIXED();
+
+    String GlusterServiceStatus___NOT_AVAILABLE();
+
+    String GlusterServiceStatus___UNKNOWN();
 
     String VmWatchdogType___i6300esb();
 

@@ -11,6 +11,7 @@ public enum EventNotificationEntity {
     Engine(ApplicationMode.AllModes),
     GlusterVolume(ApplicationMode.GlusterOnly),
     GlusterHook(ApplicationMode.GlusterOnly),
+    GlusterService(ApplicationMode.GlusterOnly),
     DWH(ApplicationMode.VirtOnly);
 
 

@@ -239,6 +239,7 @@ public enum VdcActionType {
     AddGlusterHook(1417,ActionGroup.MANIPULATE_GLUSTER_HOOK,QuotaDependency.NONE),
     RemoveGlusterHook(1418,ActionGroup.MANIPULATE_GLUSTER_HOOK,QuotaDependency.NONE),
     RefreshGlusterHook(1419, ActionGroup.MANIPULATE_GLUSTER_HOOK, QuotaDependency.NONE),
+    ManageGlusterService(1420, ActionGroup.MANIPULATE_GLUSTER_SERVICE, QuotaDependency.NONE),
 
     // External events
     AddExternalEvent(1500, ActionGroup.INJECT_EXTERNAL_EVENTS, QuotaDependency.NONE),

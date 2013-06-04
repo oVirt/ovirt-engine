@@ -339,5 +339,4 @@ public interface Enums extends LocalizedEnums {
     String ServiceType___NFS();
 
     String ServiceType___SHD();
-
 }

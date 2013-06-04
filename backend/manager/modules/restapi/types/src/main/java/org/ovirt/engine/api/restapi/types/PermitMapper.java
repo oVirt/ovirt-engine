@@ -166,6 +166,8 @@ public class PermitMapper {
             return PermitType.LOGIN;
         case INJECT_EXTERNAL_EVENTS:
             return PermitType.INJECT_EXTERNAL_EVENTS;
+        case MANIPULATE_GLUSTER_SERVICE:
+            return PermitType.MANIPULATE_GLUSTER_SERVICE;
         default:
             return null;
         }

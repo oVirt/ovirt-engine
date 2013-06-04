@@ -385,7 +385,6 @@ public enum VdcBllErrors {
     GlusterServiceManageFailed(4552),
     GlusterServiceNotSupported(4553),
 
-
     UnicodeArgumentException(4900),
 
     // oVirt errors

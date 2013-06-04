@@ -796,6 +796,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Gluster Hook")
     String VAR__TYPE__GLUSTER_HOOK();
 
+    @DefaultStringValue("$type Service")
+    String VAR__TYPE__GLUSTER_SERVICE();
+
     @DefaultStringValue("Cannot ${action} ${type}. The chosen disk drive letter is already in use, please select a free one.")
     String ACTION_TYPE_FAILED_DISK_LETTER_ALREADY_IN_USE();
 
