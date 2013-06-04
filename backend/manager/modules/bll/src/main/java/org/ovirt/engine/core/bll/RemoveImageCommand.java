@@ -262,7 +262,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                     }
                 }
 
-                String newOvf = ovfManager.ExportVm(vmSnapshot, snapshotImages, ClusterUtils.getCompatilibilyVersion(vmSnapshot));
+                String newOvf = ovfManager.ExportVm(vmSnapshot, snapshotImages, ClusterUtils.getCompatibilityVersion(vmSnapshot));
                 snap.setVmConfiguration(newOvf);
             }
         } catch (OvfReaderException e) {

@@ -248,7 +248,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             vm.setVmtName(t.getName());
         }
         getVm().setVmtGuid(VmTemplateHandler.BlankVmTemplateId);
-        String vmMeta = ovfManager.ExportVm(vm, AllVmImages, ClusterUtils.getCompatilibilyVersion(vm));
+        String vmMeta = ovfManager.ExportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
         List<Guid> imageGroupIds = new ArrayList<Guid>();
         for(Disk disk : vm.getDiskMap().values()) {
             if(disk.getDiskStorageType() == DiskStorageType.IMAGE) {

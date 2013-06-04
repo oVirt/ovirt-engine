@@ -57,11 +57,11 @@ public class ClusterUtils {
                 .getVdsDao();
     }
 
-    public static Version getCompatilibilyVersion(VM vm) {
-        return getCompatilibilyVersion(vm.getStaticData());
+    public static Version getCompatibilityVersion(VM vm) {
+        return getCompatibilityVersion(vm.getStaticData());
     }
 
-    public static Version getCompatilibilyVersion(VmBase vmBase) {
+    public static Version getCompatibilityVersion(VmBase vmBase) {
         return vmBase.getVdsGroupId() != null ?
                 getInstance().getVdsGroupDao().get(vmBase.getVdsGroupId()).getcompatibility_version()
                 : Version.v3_0;

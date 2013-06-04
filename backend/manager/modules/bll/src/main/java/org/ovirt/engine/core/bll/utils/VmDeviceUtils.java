@@ -254,7 +254,7 @@ public class VmDeviceUtils {
     }
 
     private static void addSoundCard(VmBase vmBase) {
-        addSoundCard(vmBase, ClusterUtils.getCompatilibilyVersion(vmBase));
+        addSoundCard(vmBase, ClusterUtils.getCompatibilityVersion(vmBase));
     }
 
     private static void addSoundCard(VmBase vmBase, Version vdsGroupCompatibilityVersion) {

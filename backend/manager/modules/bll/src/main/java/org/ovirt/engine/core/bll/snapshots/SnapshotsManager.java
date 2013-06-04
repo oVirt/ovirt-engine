@@ -186,7 +186,7 @@ public class SnapshotsManager {
         for (DiskImage image : images) {
             image.setStorageIds(null);
         }
-        return new OvfManager().ExportVm(vm, images, ClusterUtils.getCompatilibilyVersion(vm));
+        return new OvfManager().ExportVm(vm, images, ClusterUtils.getCompatibilityVersion(vm));
     }
 
     /**

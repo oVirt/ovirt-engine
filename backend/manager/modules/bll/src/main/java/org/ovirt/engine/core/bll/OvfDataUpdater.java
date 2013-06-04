@@ -266,7 +266,7 @@ public class OvfDataUpdater {
     }
 
     protected String generateVmTemplateMetadata(VmTemplate template, List<DiskImage> allTemplateImages) {
-        return ovfManager.ExportTemplate(template, allTemplateImages, ClusterUtils.getCompatilibilyVersion(template));
+        return ovfManager.ExportTemplate(template, allTemplateImages, ClusterUtils.getCompatibilityVersion(template));
     }
 
     /**
@@ -318,7 +318,7 @@ public class OvfDataUpdater {
     }
 
     protected String generateVmMetadata(VM vm, ArrayList<DiskImage> AllVmImages) {
-        return ovfManager.ExportVm(vm, AllVmImages, ClusterUtils.getCompatilibilyVersion(vm));
+        return ovfManager.ExportVm(vm, AllVmImages, ClusterUtils.getCompatibilityVersion(vm));
     }
 
     /**
