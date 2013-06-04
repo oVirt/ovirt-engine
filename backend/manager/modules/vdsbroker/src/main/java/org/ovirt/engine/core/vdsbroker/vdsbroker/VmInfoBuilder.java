@@ -121,7 +121,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             true,
                             true,
-                            "");
+                            "",
+                            null);
             struct = new HashMap<String, Object>();
             addCdDetails(vmDevice, struct);
             addDevice(struct, vmDevice, "");
@@ -138,7 +139,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             true,
                             true,
-                            "");
+                            "",
+                            null);
             struct = new HashMap<String, Object>();
             addCdDetails(vmDevice, struct);
             addDevice(struct, vmDevice, vm.getCdPath());
@@ -178,7 +180,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             true,
                             true,
-                            "");
+                            "",
+                            null);
             Map<String, Object> struct = new HashMap<String, Object>();
             addCdDetails(vmDevice, struct);
             addDevice(struct, vmDevice, "");
@@ -195,7 +198,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             true,
                             true,
-                            "");
+                            "",
+                            null);
             Map<String, Object> struct = new HashMap<String, Object>();
             addFloppyDetails(vmDevice, struct);
             addDevice(struct, vmDevice, vm.getFloppyPath());
@@ -434,7 +438,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         true,
                         true,
                         true,
-                        "");
+                        "",
+                        null);
         Map<String, Object> struct = new HashMap<String, Object>();
         addFloppyDetails(vmDevice, struct);
         addDevice(struct, vmDevice, vm.getFloppyPath());
@@ -622,7 +627,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             true,
                             true,
-                            "");
+                            "",
+                            null);
             addMemBalloonDevice(vmDevice);
         } else {
             // get vm device for this Balloon from DB

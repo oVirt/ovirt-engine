@@ -22,6 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlTextWriter;
+import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 
 public abstract class OvfWriter implements IOvfBuilder {
     protected int _instanceId;
@@ -382,6 +383,11 @@ public abstract class OvfWriter implements IOvfBuilder {
         if (vmDevice.getSpecParams() != null && vmDevice.getSpecParams().size() != 0) {
             _writer.WriteStartElement(OvfProperties.VMD_SPEC_PARAMS);
             _writer.WriteMap(vmDevice.getSpecParams());
+            _writer.WriteEndElement();
+        }
+        if (vmDevice.getCustomProperties() != null && !vmDevice.getCustomProperties().isEmpty()) {
+            _writer.WriteStartElement(OvfProperties.VMD_CUSTOM_PROP);
+            _writer.WriteRaw(DevicePropertiesUtils.getInstance().convertProperties(vmDevice.getCustomProperties()));
             _writer.WriteEndElement();
         }
     }

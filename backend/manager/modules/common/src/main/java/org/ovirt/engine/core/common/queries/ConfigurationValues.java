@@ -87,7 +87,9 @@ public enum ConfigurationValues {
     MigrationSupportForNativeUsb(ConfigAuthType.User),
     MigrationNetworkEnabled,
     VncKeyboardLayout(ConfigAuthType.User),
-    VncKeyboardLayoutValidValues(ConfigAuthType.User)
+    VncKeyboardLayoutValidValues(ConfigAuthType.User),
+    SupportCustomDeviceProperties(ConfigAuthType.User),
+    CustomDeviceProperties(ConfigAuthType.User),
     ;
 
     public static enum ConfigAuthType {

@@ -3,10 +3,10 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -42,14 +42,13 @@ public class VmDeviceDAODbFacadeImpl extends
                 .addValue("type", entity.getType().getValue())
                 .addValue("address", entity.getAddress())
                 .addValue("boot_order", entity.getBootOrder())
-                .addValue("spec_params",
-                        entity.getSpecParams() == null ? null : SerializationFactory
-                                .getSerializer()
-                                .serialize(entity.getSpecParams()))
+                .addValue("spec_params", SerializationFactory.getSerializer().serialize(entity.getSpecParams()))
                 .addValue("is_managed", entity.getIsManaged())
                 .addValue("is_plugged", entity.getIsPlugged())
                 .addValue("is_readonly", entity.getIsReadOnly())
-                .addValue("alias", entity.getAlias());
+                .addValue("alias", entity.getAlias())
+                .addValue("custom_properties",
+                        SerializationFactory.getSerializer().serialize(entity.getCustomProperties()));
     }
 
     @Override
@@ -137,19 +136,14 @@ public class VmDeviceDAODbFacadeImpl extends
             vmDevice.setType(VmDeviceGeneralType.forValue(rs.getString("type")));
             vmDevice.setAddress(rs.getString("address"));
             vmDevice.setBootOrder(rs.getInt("boot_order"));
-            String specParams = rs.getString("spec_params");
-            if (StringUtils.isEmpty(specParams)) {
-                vmDevice.setSpecParams(new HashMap<String, Object>());
-            } else {
-                vmDevice.setSpecParams(SerializationFactory
-                        .getDeserializer()
-                        .deserialize(specParams, HashMap.class));
-            }
-
+            vmDevice.setSpecParams(SerializationFactory.getDeserializer()
+                    .deserializeOrCreateNew(rs.getString("spec_params"), HashMap.class));
             vmDevice.setIsManaged(rs.getBoolean("is_managed"));
             vmDevice.setIsPlugged(rs.getBoolean("is_plugged"));
             vmDevice.setIsReadOnly(rs.getBoolean("is_readonly"));
             vmDevice.setAlias(rs.getString("alias"));
+            vmDevice.setCustomProperties(SerializationFactory.getDeserializer()
+                    .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class));
             return vmDevice;
         }
     }

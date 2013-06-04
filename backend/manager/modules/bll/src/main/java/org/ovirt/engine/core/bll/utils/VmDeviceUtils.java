@@ -72,7 +72,8 @@ public class VmDeviceUtils {
                             entity.getDefaultDisplayType().getVmDeviceType(),
                             getMemExpr(entity.getNumOfMonitors()),
                             true,
-                            false);
+                            false,
+                            null);
                 }
             } else if (entity.getDefaultDisplayType() == DisplayType.qxl && oldVmBase.getNumOfMonitors() != entity
                     .getNumOfMonitors()) {
@@ -118,7 +119,8 @@ public class VmDeviceUtils {
                 VmDeviceType.SMARTCARD,
                 new SmartcardSpecParams(),
                 true,
-                false);
+                false,
+                null);
     }
 
     /**
@@ -146,7 +148,8 @@ public class VmDeviceUtils {
                     VmDeviceType.getSoundDeviceType(soundDevice),
                     new HashMap<String, Object>(),
                     true,
-                    true);
+                    true,
+                    null);
         }
     }
 
@@ -283,7 +286,8 @@ public class VmDeviceUtils {
                 VmDeviceType.getSoundDeviceType(soundDevice),
                 new HashMap<String, Object>(),
                 true,
-                true);
+                true,
+                null);
     }
 
     /**
@@ -312,7 +316,8 @@ public class VmDeviceUtils {
                 vm.getDefaultDisplayType().getVmDeviceType(),
                 getMemExpr(vm.getNumOfMonitors()),
                 true,
-                true);
+                true,
+                null);
     }
 
     private static void setCdPath(Map<String, Object> specParams, String srcCdPath, String isoPath) {
@@ -341,7 +346,8 @@ public class VmDeviceUtils {
                 VmDeviceType.BRIDGE,
                 Collections.<String, Object> emptyMap(),
                 plugged,
-                false);
+                false,
+                null);
     }
 
     /**
@@ -352,6 +358,7 @@ public class VmDeviceUtils {
      * @param plugged
      * @param readOnly
      * @param address
+     * @param customProp device custom properties
      * @return newly created VmDevice instance
      */
     public static VmDevice addManagedDevice(VmDeviceId id,
@@ -360,8 +367,9 @@ public class VmDeviceUtils {
             Map<String, Object> specParams,
             boolean plugged,
             boolean readOnly,
-            String address) {
-        VmDevice managedDevice = addManagedDevice(id, type, device, specParams,plugged,readOnly);
+            String address,
+            Map<String, String> customProp) {
+        VmDevice managedDevice = addManagedDevice(id, type, device, specParams,plugged,readOnly, customProp);
         if (StringUtils.isNotBlank(address)){
             managedDevice.setAddress(address);
         }
@@ -374,6 +382,7 @@ public class VmDeviceUtils {
      * @param id
      * @param type
      * @param device
+     * @param customProp device custom properties
      * @return New created VmDevice instance
      */
     public static VmDevice addManagedDevice(VmDeviceId id,
@@ -381,7 +390,8 @@ public class VmDeviceUtils {
             VmDeviceType device,
             Map<String, Object> specParams,
             boolean is_plugged,
-            boolean isReadOnly) {
+            boolean isReadOnly,
+            Map<String, String> customProp) {
         VmDevice managedDevice =
             new VmDevice(id,
                     type,
@@ -392,7 +402,8 @@ public class VmDeviceUtils {
                     true,
                     is_plugged,
                     isReadOnly,
-                    "");
+                    "",
+                    customProp);
         dao.save(managedDevice);
         // If we add Disk/Interface/CD/Floppy, we have to recalculate boot order
         if (type == VmDeviceGeneralType.DISK || type == VmDeviceGeneralType.INTERFACE) {
@@ -505,7 +516,8 @@ public class VmDeviceUtils {
                         VmDeviceType.QXL,
                         getMemExpr(newStatic.getNumOfMonitors()),
                         true,
-                        false);
+                        false,
+                        null);
             }
         } else { // delete video cards
             List<VmDevice> list = DbFacade
@@ -589,7 +601,8 @@ public class VmDeviceUtils {
                             null,
                             true,
                             false,
-                            getAddress(entity, id));
+                            getAddress(entity, id),
+                            null);
             updateVmDevice(entity, vmDevice, deviceId, vmDeviceToUpdate);
         }
     }
@@ -658,7 +671,8 @@ public class VmDeviceUtils {
                             null,
                             true,
                             false,
-                            getAddress(entity, id));
+                            getAddress(entity, id),
+                            null);
 
             VmDevice exportedDevice = entity.getManagedDeviceMap().get(deviceId);
             if (exportedDevice == null) {
@@ -736,7 +750,8 @@ public class VmDeviceUtils {
                     VmDeviceType.SPICEVMC,
                     getUsbSlotSpecParams(),
                     true,
-                    false);
+                    false,
+                    null);
         }
     }
 
@@ -748,14 +763,16 @@ public class VmDeviceUtils {
                     VmDeviceType.USB,
                     getUsbControllerSpecParams(EHCI_MODEL, 1, index),
                     true,
-                    false);
+                    false,
+                    null);
             for (int companionIndex = 1; companionIndex <= COMPANION_USB_CONTROLLERS; companionIndex++) {
                 VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
                         VmDeviceGeneralType.CONTROLLER,
                         VmDeviceType.USB,
                         getUsbControllerSpecParams(UHCI_MODEL, companionIndex, index),
                         true,
-                        false);
+                        false,
+                        null);
             }
         }
     }
@@ -825,7 +842,8 @@ public class VmDeviceUtils {
                 VmDeviceType.CDROM,
                 Collections.<String, Object> singletonMap(VdsProperties.Path, ""),
                 true,
-                true);
+                true,
+                null);
     }
 
     private static void updateMemoryBalloon(VmBase oldVm, VmBase newVm, boolean shouldHaveBalloon) {

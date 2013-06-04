@@ -47,7 +47,7 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
         watchdogSpecParams.put("action", "reset");
         VmDevice vmDevice = new VmDevice(new VmDeviceId(new Guid("6f86b8a4-e721-4149-b2df-056eb621b16a"),
                 vmId), VmDeviceGeneralType.WATCHDOG, VmDeviceType.WATCHDOG.getName(), "", 1, watchdogSpecParams, true,
-                true, true, "");
+                true, true, "", null);
         Mockito.when(vmDeviceDaoMock.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.WATCHDOG))
                 .thenReturn(Arrays.asList(vmDevice));
         GetWatchdogQuery<IdQueryParameters> query =

@@ -95,4 +95,13 @@ public class FeatureSupported {
     public static boolean migrationNetwork(Version version) {
         return supportedInConfig(ConfigValues.MigrationNetworkEnabled, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return {@code true} if device custom properties are supported for the version, otherwise {@code false}.
+     */
+    public static boolean deviceCustomProperties(Version version) {
+        return supportedInConfig(ConfigValues.SupportCustomDeviceProperties, version);
+    }
 }

@@ -138,7 +138,8 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
                 true,
                 getParameters().isPlugUnPlug(),
                 false,
-                "");
+                "",
+                null);
     }
 
     protected void updateBootOrderInVmDevice() {

@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.utils.customprop;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Class with helper methods to ease properties testing
@@ -36,5 +39,34 @@ public class PropertiesUtilsTestHelper {
         String val = map.get(key);
         assertNotNull(val);
         assertEquals(value, val);
+    }
+
+    /**
+     * Validates if errors are not empty and they contain specified reason
+     *
+     * @param errors
+     *            list of errors
+     * @param reason
+     *            specified reason
+     */
+    public static void validateFailure(List<ValidationError> errors, ValidationFailureReason reason) {
+        assertFalse(errors.isEmpty());
+        assertEquals(reason, errors.get(0).getReason());
+    }
+
+    /**
+     * Validates if property exists and its pattern matches the specified value
+     *
+     * @param map
+     *            properties map
+     * @param key
+     *            property name
+     * @param value
+     *            property pattern value
+     */
+    public static void validatePropertyPattern(Map<String, Pattern> map, String key, String value) {
+        Pattern pat = map.get(key);
+        assertNotNull(pat);
+        assertEquals(value, pat.pattern());
     }
 }

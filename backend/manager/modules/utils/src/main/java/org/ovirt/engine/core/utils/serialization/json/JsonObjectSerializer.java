@@ -58,7 +58,11 @@ public class JsonObjectSerializer implements Serializer {
 
     @Override
     public String serialize(Object payload) throws SerializationExeption {
-        return writeJsonAsString(payload, formattedMapper);
+        if (payload == null) {
+            return null;
+        } else {
+            return writeJsonAsString(payload, formattedMapper);
+        }
     }
 
     /**

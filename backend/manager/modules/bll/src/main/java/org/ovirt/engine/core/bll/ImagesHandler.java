@@ -341,7 +341,8 @@ public final class ImagesHandler {
                 VmDeviceType.DISK,
                 null,
                 true,
-                false);
+                false,
+                null);
     }
 
     /**

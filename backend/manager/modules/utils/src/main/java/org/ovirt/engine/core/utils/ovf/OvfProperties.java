@@ -16,4 +16,5 @@ public class OvfProperties {
     final static String VMD_IS_READONLY = "IsReadOnly";
     final static String VMD_SPEC_PARAMS = "SpecParams";
     final static String VMD_ALIAS = "Alias";
+    final static String VMD_CUSTOM_PROP = "CustomProperties";
 }

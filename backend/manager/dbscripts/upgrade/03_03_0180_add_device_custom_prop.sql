@@ -1,0 +1,1 @@
+select fn_db_add_column('vm_device', 'custom_properties', 'TEXT');

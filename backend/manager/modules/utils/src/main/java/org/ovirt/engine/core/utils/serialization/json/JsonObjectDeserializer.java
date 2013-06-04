@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import org.apache.commons.lang.SerializationException;
+import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.SerializationExeption;
+import org.ovirt.engine.core.utils.SerializationFactory;
 
 /**
  * {@link Deserializer} implementation for deserializing JSON content.
@@ -58,6 +60,30 @@ public class JsonObjectDeserializer implements Deserializer {
             return null;
         }
         return readJsonString(source, type, formattedMapper);
+    }
+
+    /**
+     * Converts JSON string to instance of specified class. If {@code value} is {@code null} or empty, tries to create
+     * new instance of specified class. If it fails returns {@code null}
+     *
+     * @param value
+     *            JSON string
+     * @param clazz
+     *            specified class
+     * @return new instance or {@code null} if a new instance cannot be created
+     */
+    public <T extends Serializable> T deserializeOrCreateNew(String value, Class<T> clazz) {
+        if (StringUtils.isEmpty(value)) {
+            T instance;
+            try {
+                instance = clazz.newInstance();
+            } catch (Exception ex) {
+                instance = null;
+            }
+            return instance;
+        } else {
+            return SerializationFactory.getDeserializer().deserialize(value, clazz);
+        }
     }
 
     private <T> T readJsonString(Object source, Class<T> type, ObjectMapper mapper) {

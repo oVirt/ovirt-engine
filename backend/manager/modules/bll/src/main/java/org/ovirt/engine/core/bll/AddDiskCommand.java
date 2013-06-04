@@ -345,7 +345,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                             VmDeviceType.DISK,
                             null,
                             getVm().getStatus() == VMStatus.Down,
-                            false);
+                            false,
+                            null);
                 }
                 return null;
             }
@@ -380,7 +381,8 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                     VmDeviceType.DISK,
                     null,
                     getVm().getStatus() == VMStatus.Down,
-                    false));
+                    false,
+                    null));
             getCompensationContext().stateChanged();
         }
         VdcReturnValueBase tmpRetValue =

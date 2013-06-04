@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.utils.log.Log;
@@ -60,6 +61,13 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             VmPropertiesUtils.getInstance().init();
         } catch (InitializationException e) {
             log.error("Initialization of vm custom properties failed.",e);
+        }
+
+        try {
+            log.info("Init device custom properties utilities");
+            DevicePropertiesUtils.getInstance().init();
+        } catch (InitializationException e) {
+            log.error("Initialization of device custom properties failed.",e);
         }
     }
 

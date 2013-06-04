@@ -533,6 +533,16 @@ select fn_db_add_config_value('LogMaxNetworkUsedThresholdInPercentage', '95', 'g
 select fn_db_add_config_value('LogMinFreeSwapThresholdInMB', '256', 'general');
 select fn_db_add_config_value('LogMaxSwapUsedThresholdInPercentage', '95', 'general');
 
+-- Device Custom Properties
+select fn_db_add_config_value('SupportCustomDeviceProperties', 'false', '3.0');
+select fn_db_add_config_value('SupportCustomDeviceProperties', 'false', '3.1');
+select fn_db_add_config_value('SupportCustomDeviceProperties', 'false', '3.2');
+select fn_db_add_config_value('SupportCustomDeviceProperties', 'true', '3.3');
+select fn_db_add_config_value('CustomDeviceProperties', '', '3.0');
+select fn_db_add_config_value('CustomDeviceProperties', '', '3.1');
+select fn_db_add_config_value('CustomDeviceProperties', '', '3.2');
+select fn_db_add_config_value('CustomDeviceProperties', '', '3.3');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

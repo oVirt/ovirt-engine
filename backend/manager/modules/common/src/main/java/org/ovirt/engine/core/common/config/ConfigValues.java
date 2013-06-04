@@ -1358,6 +1358,14 @@ public enum ConfigValues {
     @DefaultValueAttribute("120")
     WebSocketProxyTicketValiditySeconds(508),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    SupportCustomDeviceProperties(509),
+
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    CustomDeviceProperties(510),
+
     Invalid(65535);
 
     private int intValue;

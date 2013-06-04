@@ -28,6 +28,7 @@ import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNamespaceManager;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.compat.backendcompat.XmlNodeList;
+import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.w3c.dom.Node;
@@ -211,7 +212,7 @@ public abstract class OvfReader implements IOvfBuilder {
             vmDevice.setType(VmDeviceGeneralType.forValue(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)));
         } else {
             int resourceType = getResourceType(node, OvfProperties.VMD_RESOURCE_TYPE);
-            vmDevice.setType(VmDeviceGeneralType.forValue(VmDeviceType.getoVirtDevice(resourceType).getName()));
+            vmDevice.setType(VmDeviceGeneralType.forValue(VmDeviceType.getoVirtDevice(resourceType)));
         }
         if (node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS) != null
                 && !StringUtils.isEmpty(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText)) {
@@ -237,6 +238,14 @@ public abstract class OvfReader implements IOvfBuilder {
         } else {
             vmDevice.setIsReadOnly(Boolean.FALSE);
         }
+        if (node.SelectSingleNode(OvfProperties.VMD_CUSTOM_PROP, _xmlNS) != null
+                && StringUtils.isNotEmpty(node.SelectSingleNode(OvfProperties.VMD_CUSTOM_PROP, _xmlNS).InnerText)) {
+            vmDevice.setCustomProperties(DevicePropertiesUtils.getInstance().convertProperties(
+                    String.valueOf(node.SelectSingleNode(OvfProperties.VMD_CUSTOM_PROP, _xmlNS).InnerText)));
+        } else {
+            vmDevice.setCustomProperties(null);
+        }
+
         if (isManaged) {
             vmDevice.setIsManaged(true);
             vmBase.getManagedDeviceMap().put(vmDevice.getDeviceId(), vmDevice);

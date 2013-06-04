@@ -1428,7 +1428,7 @@ CREATE OR REPLACE VIEW user_object_permissions_view AS
 CREATE OR REPLACE VIEW vm_device_view
 AS
 SELECT device_id, vm_id, type, device, address, boot_order, spec_params,
-       is_managed, is_plugged, is_readonly, alias
+       is_managed, is_plugged, is_readonly, alias, custom_properties
   FROM vm_device;
 
 CREATE OR REPLACE VIEW vm_interface_ext_view

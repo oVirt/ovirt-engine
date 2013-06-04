@@ -5,7 +5,9 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import junit.framework.Assert;
 
@@ -40,13 +42,15 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
 
     @Override
     protected VmDevice generateNewEntity() {
+        Map<String, String> customProp = new LinkedHashMap<>();
+        customProp.put("prop1", "value1");
         return new VmDevice(new VmDeviceId(Guid.NewGuid(), EXISTING_VM_ID),
                 VmDeviceGeneralType.DISK,
                 "floppy",
                 "type:'drive', controller:'0', bus:'0', unit:'1'",
                 2,
                 new HashMap<String, Object>(),
-                true, false, false, "alias");
+                true, false, false, "alias", customProp);
     }
 
     @Override
