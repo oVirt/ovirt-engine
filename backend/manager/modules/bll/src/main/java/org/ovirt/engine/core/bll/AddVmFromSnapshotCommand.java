@@ -31,7 +31,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -98,7 +97,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 getActionType().getActionGroup()));
         for (DiskImage disk : getParameters().getDiskInfoDestinationMap().values()) {
             if (disk.getStorageIds() != null && !disk.getStorageIds().isEmpty()) {
-                permissionList.add(new PermissionSubject(GuidUtils.getGuidValue(disk.getStorageIds().get(0)),
+                permissionList.add(new PermissionSubject(disk.getStorageIds().get(0),
                         VdcObjectType.Storage, ActionGroup.CREATE_DISK));
             }
         }

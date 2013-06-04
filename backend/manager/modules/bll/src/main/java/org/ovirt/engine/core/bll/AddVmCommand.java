@@ -60,7 +60,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
-import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.customprop.ValidationError;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils.VMCustomProperties;
@@ -743,7 +742,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         if (getVmTemplate() != null && !getVmTemplate().getDiskList().isEmpty()) {
             for (DiskImage disk : getParameters().getDiskInfoDestinationMap().values()) {
                 if (disk.getStorageIds() != null && !disk.getStorageIds().isEmpty()) {
-                    permissionList.add(new PermissionSubject(GuidUtils.getGuidValue(disk.getStorageIds().get(0)),
+                    permissionList.add(new PermissionSubject(disk.getStorageIds().get(0),
                             VdcObjectType.Storage, ActionGroup.CREATE_DISK));
                 }
             }

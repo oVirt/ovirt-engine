@@ -54,10 +54,6 @@ public class GuidUtils {
 
     }
 
-    public static Guid getGuidValue(Guid id) {
-        return id;
-    }
-
     private static final String SEPARATOR = ",";
 
     /**
