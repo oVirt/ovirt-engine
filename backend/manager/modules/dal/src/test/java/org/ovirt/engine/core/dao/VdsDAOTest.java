@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.dao;
 
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -422,6 +425,40 @@ public class VdsDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(existingVds2, result.get(0));
+    }
+
+    @Test
+    public void testGetHostsForStorageOperation() {
+        List<VDS> result = dao.getHostsForStorageOperation(null, false);
+        assertNotNull(result);
+        assertGetHostsForStorageOperationNonGluster(result);
+    }
+
+    private void assertGetHostsForStorageOperationNonGluster(List<VDS> result) {
+        for (VDS vds : result) {
+            assertThat(vds.getVdsGroupId(), not(equalTo(FixturesTool.GLUSTER_CLUSTER_ID)));
+        }
+    }
+
+    @Test
+    public void testGetHostsForStorageOperationByStoragePool() {
+        List<VDS> result = dao.getHostsForStorageOperation(FixturesTool.STORAGE_POOL_RHEL6_ISCSI, false);
+        assertNotNull(result);
+        assertGetHostsForStorageOperationCorrectStoragePool(result);
+    }
+
+    private void assertGetHostsForStorageOperationCorrectStoragePool(List<VDS> result) {
+        for (VDS vds : result) {
+            assertEquals(vds.getStoragePoolId(), FixturesTool.STORAGE_POOL_RHEL6_ISCSI);
+        }
+    }
+
+    @Test
+    public void testGetHostsForStorageOperationLocalFsOnly() {
+        List<VDS> result = dao.getHostsForStorageOperation(null, true);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(FixturesTool.VDS_GROUP_RHEL6_LOCALFS, result.get(0).getVdsGroupId());
     }
 
     private void assertGetAllForStoragePoolCorrectResult(List<VDS> result) {

@@ -28,6 +28,11 @@ public class FixturesTool {
     protected static final Guid STORAGE_POOL_RHEL6_ISCSI_OTHER = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
 
     /**
+     * Predefined LocalFS storage pool.
+     */
+    protected static final Guid STORAGE_POOL_RHEL6_LOCALFS = new Guid("386bffd1-e7ed-4b08-bce9-d7df10f8c9a2");
+
+    /**
      * Predefined NFS master storage domain.
      */
     protected static final Guid STORAGE_DOAMIN_NFS_MASTER = new Guid("c2211b56-8869-41cd-84e1-78d7cb96f31d");
@@ -62,6 +67,11 @@ public class FixturesTool {
      * Predefined vds group.
      */
     protected static final Guid VDS_GROUP_RHEL6_NFS_2 = new Guid("eba797fb-8e3b-4777-b63c-92e7a5957d7c");
+
+    /**
+     * Predefined vds group for LocalFS storage pool
+     */
+    protected static final Guid VDS_GROUP_RHEL6_LOCALFS = new Guid("eba797fb-8e3b-4777-b63c-92e7a5957d7f");
 
     /**
      * Predefined vds group, with no specific quotas associated to it.
@@ -361,7 +371,7 @@ public class FixturesTool {
 
     public static final Guid NEW_HOOK_ID = new Guid("d2cb2f73-fab3-4a42-93f0-d5e4c069a43f");
 
-    public static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
+    public static final Guid GLUSTER_CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
 
     /**
      * Gluster Server UUID(s)

@@ -32,6 +32,7 @@ public enum VdcQueryType implements Serializable {
     GetAllVdsByStoragePool(VdcQueryAuthType.User),
     GetHostListFromExternalProvider(),
     GetProviderCertificateChain(),
+    GetHostsForStorageOperation,
 
     // Vds Networks
     GetVdsInterfacesByVdsId(VdcQueryAuthType.User),

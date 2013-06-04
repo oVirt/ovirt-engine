@@ -480,6 +480,18 @@
             <value>2011-03-21 03:38:22</value>
             <value>2011-03-21 15:57:10</value>
         </row>
+        <row>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a2</value>
+            <value>rhel6.LOCALFS</value>
+            <value></value>
+            <value>4</value>
+            <value>1</value>
+            <value>1</value>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>2.3</value>
+            <value>2011-03-21 03:38:22</value>
+            <value>2011-03-21 15:57:10</value>
+        </row>
     </table>
 
     <table name="vds_groups">
@@ -633,6 +645,26 @@
             <value>0</value>
             <value>1</value>
             <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <value>200</value>
+            <value>2.3</value>
+            <value>0</value>
+            <value>true</value>
+            <value>false</value>
+            <value>false</value>
+            <value>false</value>
+        </row>
+        <row>
+            <value>eba797fb-8e3b-4777-b63c-92e7a5957d7f</value>
+            <value>rhel6.localfs</value>
+            <null />
+            <value>Intel Xeon Core2</value>
+            <value>2010-10-12 03:38:36</value>
+            <value>2010-10-27 12:18:51</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a2</value>
             <value>200</value>
             <value>2.3</value>
             <value>0</value>
@@ -881,7 +913,7 @@
             <null />
             <null />
             <null />
-            <value>0</value>            
+            <value>0</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>8</value>
@@ -911,10 +943,40 @@
             <null />
             <null />
             <null />
-            <value>0</value>                        
+            <value>0</value>
             <value>2010-11-17 17:25:39</value>
             <value>2010-12-01 09:52:57</value>
             <value>6</value>
+            <value>b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31</value>
+        </row>
+        <row>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e8</value>
+            <value>localfs-vds</value>
+            <value>192.168.122.16</value>
+            <value>farkle</value>
+            <value>localfs-vds.redhat.com</value>
+            <value>54321</value>
+            <value>eba797fb-8e3b-4777-b63c-92e7a5957d7f</value>
+            <value>1</value>
+            <value>1</value>
+            <value>1</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <value></value>
+            <value>0</value>
+            <value>cluster,dc</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>
+            <value>2010-11-17 17:25:39</value>
+            <value>2010-12-01 09:52:57</value>
+            <value>8</value>
             <value>b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31</value>
         </row>
         <row>
@@ -1773,6 +1835,53 @@
             <null />
         </row>
         <row>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e8</value>
+            <value>3</value>
+            <value>8</value>
+            <value>Intel(R) Xeon(R) CPU           E5420  @ 2.50GHz</value>
+            <value>2494</value>
+            <null />
+            <value>1</value>
+            <value>15952</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>256</value>
+            <value>65</value>
+            <value>4.9.6-24.0.el6_3</value>
+            <value>4.9.0.25</value>
+            <value>Snow Man</value>
+            <null />
+            <value>12</value>
+            <value>fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1</value>
+            <value>2010-11-17 17:26:10</value>
+            <value>0</value>
+            <value>0</value>
+            <value>2</value>
+            <value>0</value>
+            <value>2.3</value>
+            <value>2.3</value>
+            <value>RHEL - 6Server - 6.0.0.37.el6</value>
+            <null />
+            <null />
+            <value>2.3</value>
+            <value>2.6.32 - 71.el6</value>
+            <value>iqn.1994-05.com.redhat:3d9116b4c11f</value>
+            <value>0</value>
+            <value>0</value>
+            <value>2010-12-01 14:13:10</value>
+            <value>{}</value>
+            <value>0</value>
+            <value>16</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+        </row>
+        <row>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
             <value>3</value>
             <value>8</value>
@@ -1905,6 +2014,24 @@
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
+            <value>100</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
+            <value>6</value>
+            <value>0</value>
+            <value>0</value>
+            <value>14741</value>
+            <value>0</value>
+            <value>15999</value>
+            <value>15999</value>
+            <value>0</value>
+            <value>64</value>
+            <value>0</value>
+            <null />
+        </row>
+        <row>
+            <value>afce7a39-8e8c-4819-ba9c-796d316592e8</value>
             <value>100</value>
             <value>0</value>
             <value>0</value>

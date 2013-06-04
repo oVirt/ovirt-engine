@@ -880,6 +880,22 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION getHostsForStorageOperation(v_storage_pool_id UUID, v_local_fs_only BOOLEAN) RETURNS SETOF vds
+   AS $procedure$
+BEGIN
+    BEGIN
+        RETURN QUERY SELECT vds.*
+        FROM vds
+        LEFT JOIN vds_groups vg ON vds.vds_group_id = vg.vds_group_id
+        LEFT JOIN storage_pool sp ON vds.storage_pool_id = sp.id
+        WHERE (v_storage_pool_id IS NULL OR vds.storage_pool_id = v_storage_pool_id)
+        AND (vg.virt_service = true)
+        AND (NOT v_local_fs_only OR sp.storage_pool_type = 4)
+        AND (v_storage_pool_id IS NOT NULL OR vds.status = 3); -- if DC is unspecified return only hosts with status = UP
+    END;
+    RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION UpdateVdsDynamicStatus(
         v_vds_guid UUID,

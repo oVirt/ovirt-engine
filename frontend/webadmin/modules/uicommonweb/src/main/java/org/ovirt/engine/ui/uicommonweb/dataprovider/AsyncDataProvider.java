@@ -73,6 +73,7 @@ import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
 import org.ovirt.engine.core.common.queries.GetHostListFromExternalProviderParameters;
+import org.ovirt.engine.core.common.queries.GetHostsForStorageOperationParameters;
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermittedStorageDomainsByStoragePoolIdParameters;
@@ -1057,6 +1058,20 @@ public final class AsyncDataProvider {
                 new SearchParameters("Host: " + (status == null ? "" : ("status=" + status.name())), SearchType.VDS); //$NON-NLS-1$ //$NON-NLS-2$
         searchParameters.setMaxCount(9999);
         Frontend.RunQuery(VdcQueryType.Search, searchParameters, aQuery);
+    }
+
+    public static void getHostsForStorageOperation(AsyncQuery aQuery, Guid storagePoolId, boolean localFsOnly) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                if (source != null) {
+                    return source;
+                }
+
+                return new ArrayList<VDS>();
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetHostsForStorageOperation, new GetHostsForStorageOperationParameters(storagePoolId, localFsOnly), aQuery);
     }
 
     public static void getVolumeList(AsyncQuery aQuery, String clusterName) {

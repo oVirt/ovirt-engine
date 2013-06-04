@@ -19,10 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -518,78 +515,17 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
         StoragePool dataCenter = (StoragePool) getDataCenter().getSelectedItem();
 
-        if (getSelectedItem() instanceof LocalStorageModel
-                && (dataCenter == null || dataCenter.getId().equals(UnassignedDataCenterId)))
-        {
-            ArrayList<StoragePool> dataCenterList =
-                    (ArrayList<StoragePool>) getDataCenter().getItems();
-            ArrayList<StoragePool> localDCList = new ArrayList<StoragePool>();
-            StringBuilder dataCenterQueryLine = new StringBuilder();
+        boolean localFsOnly = getSelectedItem() instanceof LocalStorageModel;
+        Guid dataCenterId = dataCenter == null ? null : dataCenter.getId();
 
-            for (StoragePool storagePool : dataCenterList)
-            {
-                if (storagePool.getstorage_pool_type() == StorageType.LOCALFS)
-                {
-                    localDCList.add(storagePool);
-                }
+        AsyncDataProvider.getHostsForStorageOperation(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                StorageModel storageModel = (StorageModel) model;
+                Iterable<VDS> hosts = (Iterable<VDS>) returnValue;
+                storageModel.postUpdateHost(hosts);
             }
-
-            if (localDCList.size() > 0)
-            {
-                int i = 0;
-                for (; i < localDCList.size() - 1; i++)
-                {
-                    dataCenterQueryLine.append("datacenter=").append(localDCList.get(i).getname()).append(" or "); //$NON-NLS-1$ //$NON-NLS-2$
-                }
-                dataCenterQueryLine.append("datacenter=").append(localDCList.get(i).getname()); //$NON-NLS-1$
-
-                AsyncQuery _asyncQuery = new AsyncQuery();
-                _asyncQuery.setModel(this);
-                _asyncQuery.setContext(getHash());
-                _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model, Object ReturnValue)
-                    {
-                        StorageModel storageModel = (StorageModel) model;
-                        Iterable<VDS> hosts =
-                                (ArrayList<VDS>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                        storageModel.postUpdateHost(hosts);
-                    }
-                };
-                Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Hosts: status=Up " + dataCenterQueryLine.toString(), //$NON-NLS-1$
-                        SearchType.VDS), _asyncQuery);
-            }
-        }
-        else
-        {
-            if (dataCenter == null || dataCenter.getId().equals(UnassignedDataCenterId))
-            {
-                AsyncDataProvider.getHostList(new AsyncQuery(this,
-                        new INewAsyncCallback() {
-                            @Override
-                            public void onSuccess(Object target, Object returnValue) {
-
-                                StorageModel storageModel = (StorageModel) target;
-                                Iterable<VDS> hosts = (Iterable<VDS>) returnValue;
-                                storageModel.postUpdateHost(hosts);
-                            }
-                        }, getHash()));
-            }
-            else
-            {
-                AsyncDataProvider.getHostListByDataCenter(new AsyncQuery(this,
-                        new INewAsyncCallback() {
-                            @Override
-                            public void onSuccess(Object target, Object returnValue) {
-
-                                StorageModel storageModel = (StorageModel) target;
-                                Iterable<VDS> hosts = (Iterable<VDS>) returnValue;
-                                storageModel.postUpdateHost(hosts);
-
-                            }
-                        }, getHash()), dataCenter.getId());
-            }
-        }
+        }, getHash()), dataCenterId, localFsOnly);
     }
 
     public void postUpdateHost(Iterable<VDS> hosts)

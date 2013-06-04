@@ -199,4 +199,15 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
      * @return the list of VDS instances
      */
     List<VDS> getAllWithoutNetwork(Guid networkId);
+
+    /**
+     * Retrieves all VDS instances that can be used as SPM in given Storage Pool
+     *
+     * @param storagePoolId
+     *          Id of selected Storage Pool or null if querying for all
+     * @param localFsOnly
+     *          true if selecting candidates for LocalFS storage domain
+     * @return the list of VDS instances
+     */
+    List<VDS> getHostsForStorageOperation(Guid storagePoolId, boolean localFsOnly);
 }

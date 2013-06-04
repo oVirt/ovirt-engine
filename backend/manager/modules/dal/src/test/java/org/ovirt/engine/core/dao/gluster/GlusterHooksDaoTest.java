@@ -33,7 +33,7 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
     private GlusterHookEntity getGlusterHook() {
         GlusterHookEntity hook = new GlusterHookEntity();
         hook.setId(FixturesTool.HOOK_ID);
-        hook.setClusterId(FixturesTool.CLUSTER_ID);
+        hook.setClusterId(FixturesTool.GLUSTER_CLUSTER_ID);
         hook.setGlusterCommand(GLUSTER_COMMAND);
         hook.setStage(GlusterHookStage.POST);
         hook.setName(HOOK_NAME);
@@ -89,7 +89,7 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testGetHook() {
-        GlusterHookEntity hook = dao.getGlusterHook(FixturesTool.CLUSTER_ID, GLUSTER_COMMAND, STAGE, EXISTING_HOOK_NAME);
+        GlusterHookEntity hook = dao.getGlusterHook(FixturesTool.GLUSTER_CLUSTER_ID, GLUSTER_COMMAND, STAGE, EXISTING_HOOK_NAME);
         assertNotNull(hook);
         assertEquals(EXISTING_HOOK_NAME, hook.getName());
     }
@@ -109,7 +109,7 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testGetByClusterId() {
-        List<GlusterHookEntity> hooks = dao.getByClusterId(FixturesTool.CLUSTER_ID);
+        List<GlusterHookEntity> hooks = dao.getByClusterId(FixturesTool.GLUSTER_CLUSTER_ID);
         assertNotNull(hooks);
         assertEquals(2, hooks.size());
     }
@@ -136,7 +136,7 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
         hookIds.add(FixturesTool.HOOK_ID);
         hookIds.add(FixturesTool.HOOK_ID2);
         dao.removeAll(hookIds);
-        List<GlusterHookEntity> hooks = dao.getByClusterId(FixturesTool.CLUSTER_ID);
+        List<GlusterHookEntity> hooks = dao.getByClusterId(FixturesTool.GLUSTER_CLUSTER_ID);
         assertNotNull(hooks);
         assertTrue(hooks.isEmpty());
     }
@@ -150,7 +150,7 @@ public class GlusterHooksDaoTest extends BaseDAOTestCase {
         hookIds.add(FixturesTool.HOOK_ID);
         hookIds.add(FixturesTool.HOOK_ID2);
         dao.removeAll(hookIds);
-        List<GlusterHookEntity> hooks = dao.getByClusterId(FixturesTool.CLUSTER_ID);
+        List<GlusterHookEntity> hooks = dao.getByClusterId(FixturesTool.GLUSTER_CLUSTER_ID);
         assertNotNull(hooks);
         assertEquals(1, hooks.size());
     }

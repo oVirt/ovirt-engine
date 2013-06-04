@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class VdsGroupDAOTest extends BaseDAOTestCase {
-    private static final int NUMBER_OF_GROUPS = 8;
+    private static final int NUMBER_OF_GROUPS = 9;
     private static final int NUMBER_OF_GROUPS_FOR_PRIVELEGED_USER = 1;
 
     private VdsGroupDAO dao;

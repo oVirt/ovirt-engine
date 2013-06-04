@@ -131,6 +131,19 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     }
 
     @Override
+    public List<VDS> getHostsForStorageOperation(Guid storagePoolId, boolean localFsOnly) {
+        // normalize to uniquely represent in DB that we want candidates from all DC's
+        if (storagePoolId == null || storagePoolId.equals(Guid.Empty)) {
+            storagePoolId = null;
+        }
+        return getCallsHandler().executeReadList("getHostsForStorageOperation",
+                VdsRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                    .addValue("storage_pool_id", storagePoolId)
+                    .addValue("local_fs_only", localFsOnly));
+    }
+
+    @Override
     public List<VDS> getAllForStoragePool(Guid storagePool) {
         return getAllForStoragePool(storagePool, null, false);
     }
