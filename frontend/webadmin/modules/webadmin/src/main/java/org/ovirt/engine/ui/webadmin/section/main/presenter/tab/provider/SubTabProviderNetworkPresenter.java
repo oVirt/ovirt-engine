@@ -11,7 +11,9 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ProviderSelectionChangeEvent;
+import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 
+import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.TabData;
@@ -25,12 +27,15 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabProviderNetworkPresenter extends AbstractSubTabPresenter<Provider, ProviderListModel, ProviderNetworkListModel, SubTabProviderNetworkPresenter.ViewDef, SubTabProviderNetworkPresenter.ProxyDef> {
 
+    private SystemTreeModelProvider systemTreeModelProvider;
+
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.providerNetworkSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabProviderNetworkPresenter> {
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<Provider> {
+        void setNetworkClickHandler(FieldUpdater<NetworkView, String> fieldUpdater);
     }
 
     @TabInfo(container = ProviderSubTabPanelPresenter.class)
@@ -42,9 +47,10 @@ public class SubTabProviderNetworkPresenter extends AbstractSubTabPresenter<Prov
     @Inject
     public SubTabProviderNetworkPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> modelProvider) {
+            SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> modelProvider, SystemTreeModelProvider systemTreeModelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 ProviderSubTabPanelPresenter.TYPE_SetTabContent);
+        this.systemTreeModelProvider = systemTreeModelProvider;
     }
 
     @Override
@@ -55,6 +61,18 @@ public class SubTabProviderNetworkPresenter extends AbstractSubTabPresenter<Prov
     @ProxyEvent
     public void onProviderSelectionChange(ProviderSelectionChangeEvent event) {
         updateMainTabSelection(event.getSelectedItems());
+    }
+
+    @Override
+    protected void onBind() {
+        super.onBind();
+        getView().setNetworkClickHandler(new FieldUpdater<NetworkView, String>() {
+
+            @Override
+            public void update(int index, NetworkView network, String value) {
+                systemTreeModelProvider.setSelectedItem(network.getId());
+            }
+        });
     }
 
 }

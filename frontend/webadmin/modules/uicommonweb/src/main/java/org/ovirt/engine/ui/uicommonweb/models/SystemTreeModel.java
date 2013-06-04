@@ -477,6 +477,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                     networkItem.setTitle(network.getName());
                     networkItem.setEntity(network);
                     networksItem.addChild(networkItem);
+                    treeItemById.put(network.getId(), networkItem);
                 }
             }
 
