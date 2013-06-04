@@ -13,12 +13,12 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -610,6 +610,16 @@ public class UnitVmModel extends Model {
         privateisSmartcardEnabled = value;
     }
 
+    private NotChangableForVmInPoolEntityModel isConsoleDeviceEnabled;
+
+    public EntityModel getIsConsoleDeviceEnabled() {
+        return isConsoleDeviceEnabled;
+    }
+
+    private void setConsoleDeviceEnabled(NotChangableForVmInPoolEntityModel consoleDeviceEnabled) {
+        this.isConsoleDeviceEnabled = consoleDeviceEnabled;
+    }
+
     private NotChangableForVmInPoolEntityModel privateIsStateless;
 
     public EntityModel getIsStateless()
@@ -1082,6 +1092,7 @@ public class UnitVmModel extends Model {
         setIsRunAndPause(new NotChangableForVmInPoolEntityModel());
         setIsSmartcardEnabled(new NotChangableForVmInPoolEntityModel());
         setIsDeleteProtected(new NotChangableForVmInPoolEntityModel());
+        setConsoleDeviceEnabled(new NotChangableForVmInPoolEntityModel());
         setVncKeyboardLayout(new NotChangableForVmInPoolListModel());
 
         setCdImage(new NotChangableForVmInPoolListModel());
@@ -1231,6 +1242,7 @@ public class UnitVmModel extends Model {
         getIsStateless().setEntity(false);
         getIsRunAndPause().setEntity(false);
         getIsSmartcardEnabled().setEntity(false);
+        isConsoleDeviceEnabled.setEntity(false);
         getIsHighlyAvailable().setEntity(false);
         getIsAutoAssign().setEntity(true);
         getIsTemplatePublic().setEntity(true);
@@ -1627,6 +1639,8 @@ public class UnitVmModel extends Model {
 
     private void oSType_SelectedItemChanged(Object sender, EventArgs args)
     {
+        behavior.oSType_SelectedItemChanged();
+
         VmOsType osType = (VmOsType) getOSType().getSelectedItem();
 
         setIsWindowsOS(AsyncDataProvider.isWindowsOsType(osType));

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -17,8 +18,13 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -179,6 +185,15 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     @Override
+    public void oSType_SelectedItemChanged() {
+        if (getModel().getOSType().getSelectedItem() == null) {
+            return;
+        }
+
+        getModel().getIsConsoleDeviceEnabled().setEntity(((VmOsType) getModel().getOSType().getSelectedItem()).isLinux());
+    }
+
+    @Override
     public void updateMinAllocatedMemory()
     {
     }
@@ -205,6 +220,14 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         updateSelectedCdImage(this.vm.getStaticData());
 
         updateTimeZone(this.vm.getTimeZone());
+
+        Frontend.RunQuery(VdcQueryType.GetConsoleDevices, new IdQueryParameters(this.vm.getId()), new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                List<String> consoleDevices = (List<String>) ((VdcQueryReturnValue)returnValue).getReturnValue();
+                getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
+        }
+        }));
 
         // Update domain list
         updateDomain();

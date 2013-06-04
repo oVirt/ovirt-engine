@@ -175,6 +175,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
     @WithElementId("isDeleteProtected")
     public EntityModelCheckBoxEditor isDeleteProtectedEditor;
 
+    @UiField(provided = true)
+    @Path(value = "isConsoleDeviceEnabled.entity")
+    @WithElementId("isConsoleDeviceEnabled")
+    public EntityModelCheckBoxEditor isConsoleDeviceEnabledEditor;
+
     @UiField
     @Ignore
     Label generalWarningMessage;
@@ -536,6 +541,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         isRunAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isDeleteProtectedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isSmartcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isConsoleDeviceEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         cdAttachedEditor = new EntityModelCheckBoxEditor(Align.LEFT);
         allowConsoleReconnectEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
@@ -782,6 +788,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         isStatelessEditor.setLabel(constants.statelessVmPopup());
         isRunAndPauseEditor.setLabel(constants.runAndPauseVmPopup());
         isDeleteProtectedEditor.setLabel(constants.deleteProtectionPopup());
+        isConsoleDeviceEnabledEditor.setLabel(constants.consoleDeviceEnabled());
         isSmartcardEnabledEditor.setLabel(constants.smartcardVmPopup());
 
         // Pools Tab
@@ -1159,6 +1166,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModelBoundPopupWidge
         isStatelessEditor.setTabIndex(nextTabIndex++);
         isRunAndPauseEditor.setTabIndex(nextTabIndex++);
         isDeleteProtectedEditor.setTabIndex(nextTabIndex++);
+        isConsoleDeviceEnabledEditor.setTabIndex(nextTabIndex++);
 
         // == Pools ==
         nextTabIndex = poolTab.setTabIndexes(nextTabIndex);
