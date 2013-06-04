@@ -63,6 +63,28 @@ class Statement(base.Base):
         ownConnection=False,
         transaction=True,
     ):
+        # autocommit member is available at >= 2.4.2
+        def __backup_autocommit(connection):
+            if hasattr(connection, 'autocommit'):
+                return connection.autocommit
+            else:
+                return connection.isolation_level
+        def __restore_autocommit(connection, v):
+            if hasattr(connection, 'autocommit'):
+                connection.autocommit = v
+            else:
+                connection.set_isolation_level(v)
+        def __set_autocommit(connection, autocommit):
+            if hasattr(connection, 'autocommit'):
+                connection.autocommit = autocommit
+            else:
+                connection.set_isolation_level(
+                    psycopg2.extensions.ISOLATION_LEVEL_AUTOCOMMIT
+                    if autocommit
+                    else
+                    psycopg2.extensions.ISOLATION_LEVEL_READ_COMMITTED
+                )
+
         ret = []
         if host is None:
             host = self.environment[osetupcons.DBEnv.HOST]
@@ -88,6 +110,7 @@ class Statement(base.Base):
             else:
                 sslmode = 'require'
 
+        old_autocommit = None
         _connection = None
         cursor = None
         try:
@@ -109,8 +132,10 @@ class Statement(base.Base):
                     database=database,
                     sslmode=sslmode,
                 )
-                if not transaction:
-                    connection.autocommit = True
+
+            if not transaction:
+                old_autocommit = __backup_autocommit(connection)
+                __set_autocommit(connection, True)
 
             cursor = connection.cursor()
             cursor.execute(
@@ -134,6 +159,8 @@ class Statement(base.Base):
             if _connection is not None:
                 _connection.commit()
         finally:
+            if old_autocommit is not None and connection is not None:
+                __restore_autocommit(connection, old_autocommit)
             if cursor is not None:
                 cursor.close()
             if _connection is not None:
