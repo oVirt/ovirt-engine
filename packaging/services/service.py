@@ -294,6 +294,10 @@ class Daemon(Base):
     def pidfile(self):
         return self._options.pidfile
 
+    @property
+    def debug(self):
+        return self._options.debug
+
     def __init__(self):
         super(Daemon, self).__init__()
         self._umask = 0o022

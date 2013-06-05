@@ -160,7 +160,7 @@ class Daemon(service.Daemon):
                 listen_host=self._config.get('PROXY_HOST'),
                 listen_port=self._config.get('PROXY_PORT'),
                 source_is_ipv6=self._config.getboolean('SOURCE_IS_IPV6'),
-                verbose=self._config.getboolean('LOG_VERBOSE'),
+                verbose=self.debug,
                 ticketDecoder=TicketDecoder(
                     insecure=not self._config.getboolean(
                         'FORCE_DATA_VERIFICATION'
