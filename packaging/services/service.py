@@ -512,6 +512,7 @@ class Daemon(Base):
             try:
                 with PidFile(self._options.pidfile):
                     self.daemonContext()
+                self._logger.debug('Returned normally %s', os.getpid())
             except self.TerminateException:
                 self._logger.debug('Terminated normally %s', os.getpid())
             finally:
