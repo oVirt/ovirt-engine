@@ -165,7 +165,7 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
     private List<VmGuestAgentInterface> getDevicesCollection(Guid vmId) {
         return getBackendCollection(VmGuestAgentInterface.class,
                 VdcQueryType.GetVmGuestAgentInterfacesByVmId,
-                new IdQueryParameters(asGuid(vmId)));
+                new IdQueryParameters(vmId));
     }
 
     @Override

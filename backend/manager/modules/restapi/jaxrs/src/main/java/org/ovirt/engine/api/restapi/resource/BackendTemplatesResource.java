@@ -136,7 +136,7 @@ public class BackendTemplatesResource
         } else if (isFiltered()) {
             Guid dataCenterId = null;
             if (cluster != null && cluster.getStoragePoolId() != null) {
-                dataCenterId = asGuid(cluster.getStoragePoolId());
+                dataCenterId = cluster.getStoragePoolId();
             }
             vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
                            VdcQueryType.GetVmByVmNameForDataCenter,

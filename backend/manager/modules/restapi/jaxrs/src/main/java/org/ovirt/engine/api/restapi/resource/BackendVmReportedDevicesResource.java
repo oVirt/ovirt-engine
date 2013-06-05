@@ -58,7 +58,7 @@ public class BackendVmReportedDevicesResource extends AbstractBackendCollectionR
     }
 
     protected List<VmGuestAgentInterface> getCollection() {
-        return getBackendCollection(VdcQueryType.GetVmGuestAgentInterfacesByVmId, new IdQueryParameters(asGuid(vmId)));
+        return getBackendCollection(VdcQueryType.GetVmGuestAgentInterfacesByVmId, new IdQueryParameters(vmId));
     }
 
     public ReportedDevice lookupReportedDevice(Guid deviceId) {

@@ -128,7 +128,7 @@ public class BackendClusterNetworksResource
                         VdcQueryType.GetVdsGroupById,
                         new IdQueryParameters(asGuid(clusterId)),
                         null).getStoragePoolId();
-        IdQueryParameters params = new IdQueryParameters(asGuid(dataCenterId));
+        IdQueryParameters params = new IdQueryParameters(dataCenterId);
         return getBackendCollection(VdcQueryType.GetAllNetworks, params);
     }
 

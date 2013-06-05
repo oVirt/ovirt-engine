@@ -261,10 +261,6 @@ public class BaseBackendResource {
         }
     }
 
-    protected Guid asGuid(Guid guid) {
-        return guid;
-    }
-
     protected Long asLong(String id) {
         try {
             return new Long(id);

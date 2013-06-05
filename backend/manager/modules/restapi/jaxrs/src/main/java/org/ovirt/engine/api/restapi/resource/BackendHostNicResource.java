@@ -156,7 +156,7 @@ public class BackendHostNicResource
             return lookupAtachedNetwork(originalInter.getNetworkName());
         } else {
             InterfaceAndIdQueryParameters params = new InterfaceAndIdQueryParameters(
-                                                                    asGuid(originalInter.getVdsId()),
+                                                                    originalInter.getVdsId(),
                                                                     originalInter);
             List<VdsNetworkInterface> vlans = getBackendCollection(VdsNetworkInterface.class, VdcQueryType.GetAllChildVlanInterfaces, params);
             if (vlans!=null && !vlans.isEmpty()) {
