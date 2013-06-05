@@ -150,11 +150,8 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         try {
             return entityResolver.resolve((T) result.getActionReturnValue());
         } catch (Exception e) {
-            // we tolerate a failure in the entity resolution
-            // as the substantive action (entity creation) has
-            // already succeeded
-            e.printStackTrace();
-            return null;
+            // Handling exception as we can't tolerate the failure
+            return handleError(e, false);
         }
     }
     protected String asString(VdcReturnValueBase result) {
