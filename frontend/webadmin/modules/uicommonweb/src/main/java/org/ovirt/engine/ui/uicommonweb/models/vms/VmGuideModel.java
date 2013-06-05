@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -33,7 +32,6 @@ public class VmGuideModel extends GuideModel
 
     private ArrayList<VmNetworkInterface> nics;
     private ArrayList<Disk> disks;
-    private VDSGroup cluster;
 
     @Override
     public VM getEntity()
@@ -126,7 +124,6 @@ public class VmGuideModel extends GuideModel
     public void resetData() {
         nics = null;
         disks = null;
-        cluster = null;
     }
 
     private void addNetworkUpdateData() {

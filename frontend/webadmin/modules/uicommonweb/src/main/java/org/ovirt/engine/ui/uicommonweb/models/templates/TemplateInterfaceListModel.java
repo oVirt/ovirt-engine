@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -61,7 +60,6 @@ public class TemplateInterfaceListModel extends SearchableListModel
     }
 
     private VDSGroup cluster = null;
-    private Boolean isLinkStateChangeable = null;
 
     // TODO: Check if we really need the following property.
     private VmTemplate getEntityStronglyTyped()
@@ -215,9 +213,6 @@ public class TemplateInterfaceListModel extends SearchableListModel
                 @Override
                 public void onSuccess(Object listModel, Object returnValue) {
                     cluster = (VDSGroup) returnValue;
-                    isLinkStateChangeable =
-                            (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
-                                    cluster.getcompatibility_version().getValue());
                     updateActionAvailability();
                 }
             }),

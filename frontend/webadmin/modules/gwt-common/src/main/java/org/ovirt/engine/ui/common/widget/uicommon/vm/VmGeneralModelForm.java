@@ -32,7 +32,6 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     TextBoxLabel defaultHost = new TextBoxLabel();
     TextBoxLabel customProperties = new TextBoxLabel();
     TextBoxLabel domain = new TextBoxLabel();
-    TextBoxLabel timeZone = new TextBoxLabel();
     TextBoxLabel compatibilityVersion = new TextBoxLabel();
 
     BooleanLabel isHighlyAvailable;

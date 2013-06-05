@@ -32,13 +32,11 @@ public class StoragesTree extends AbstractSubTabTree<TemplateStorageListModel, S
 
     ApplicationResources resources;
     ApplicationConstants constants;
-    ApplicationTemplates templates;
 
     public StoragesTree(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
         super(resources, constants, templates);
         this.resources = resources;
         this.constants = constants;
-        this.templates = templates;
 
         setNodeSelectionEnabled(true);
     }

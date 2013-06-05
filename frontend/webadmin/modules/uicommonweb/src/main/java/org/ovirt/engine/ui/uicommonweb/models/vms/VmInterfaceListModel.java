@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -27,7 +26,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class VmInterfaceListModel extends SearchableListModel
 {
 
-    private boolean isHotPlugSupported;
     private UICommand privateNewCommand;
     private UICommand privateEditCommand;
     private UICommand privateRemoveCommand;
@@ -294,10 +292,6 @@ public class VmInterfaceListModel extends SearchableListModel
         VM vm = getEntity();
         Version clusterCompatibilityVersion = vm.getVdsGroupCompatibilityVersion() != null
                 ? vm.getVdsGroupCompatibilityVersion() : new Version();
-
-        isHotPlugSupported =
-                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HotPlugEnabled,
-                        clusterCompatibilityVersion.toString());
     }
 
     @Override

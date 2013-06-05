@@ -11,11 +11,8 @@ public class BackendActionResource
         extends AbstractBackendAsyncStatusResource<Action>
         implements ActionResource {
 
-    private String action;
-
     public BackendActionResource(String action, String ids) {
         super(Action.class, ids);
-        this.action = action;
     }
 
     public Response get() {

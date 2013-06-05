@@ -117,11 +117,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     private TaskContext context;
     private IStorageModel storageModel;
     private NGuid storageId;
-    private StorageServerConnections nfsConnection;
     private StorageServerConnections connection;
     private Guid hostId = new Guid();
     private String path;
-    private StorageDomainType domainType = StorageDomainType.values()[0];
     private boolean removeConnection;
     private ArrayList<VDSGroup> clusters;
     private ArrayList<StorageDomain> allStorageDomains;
@@ -556,12 +554,10 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         storageDomain = null;
         storageModel = null;
         storageId = null;
-        nfsConnection = null;
         connection = null;
         removeConnection = false;
         path = null;
         hostId = new Guid();
-        domainType = StorageDomainType.values()[0];
         clusters = null;
         allStorageDomains = null;
         attachedStorageDomains = null;

@@ -10,23 +10,10 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 @SuppressWarnings("unused")
 public class HostHardwareGeneralModel extends EntityModel
 {
-    private boolean updateUpgradeAlert;
-
     @Override
     public VDS getEntity()
     {
         return (VDS) super.getEntity();
-    }
-
-    @Override
-    public void setEntity(Object value)
-    {
-        VDS vds = (VDS) value;
-        updateUpgradeAlert = vds == null || getEntity() == null
-            || !vds.getId().equals(getEntity().getId())
-            || !vds.getStatus().equals(getEntity().getStatus());
-
-        super.setEntity(value);
     }
 
     private String hardwareManufacturer;

@@ -200,13 +200,12 @@ public class ReapedMap<K, V> extends HashMap<K, V> {
      */
     static class IdAwareReference<T, S> extends SoftReference<S> {
         long timestamp;
-        long last;
         T key;
 
         IdAwareReference(T key, S value, ReferenceQueue<S> queue) {
             super(value, queue);
             this.key = key;
-            last = timestamp = System.currentTimeMillis();
+            timestamp = System.currentTimeMillis();
         }
 
         public T getKey() {
@@ -229,7 +228,6 @@ public class ReapedMap<K, V> extends HashMap<K, V> {
         }
 
         private IdAwareReference<T, S> reset() {
-            last = timestamp;
             timestamp = System.currentTimeMillis();
             return this;
         }

@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
 import org.ovirt.engine.ui.common.widget.tree.AbstractSubTabTree;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.widget.label.FullDateTimeLabel;
@@ -26,14 +25,12 @@ import com.google.gwt.user.client.ui.TreeItem;
 public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTabTree<M, VmTemplate, DiskImage> {
 
     ApplicationResources resources;
-    ApplicationConstants constants;
 
     public TemplatesTree(CommonApplicationResources resources,
             CommonApplicationConstants constants,
             ApplicationTemplates templates) {
         super(resources, constants, templates);
         this.resources = (ApplicationResources) resources;
-        this.constants = (ApplicationConstants) constants;
     }
 
     @Override
