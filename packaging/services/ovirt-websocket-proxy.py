@@ -203,7 +203,6 @@ class Daemon(service.Daemon):
         # redirect it to expected termination sequence.
         except SystemExit:
             self.logger.debug('SystemExit', exc_info=True)
-            raise Service.TerminateException()
         finally:
             signal.signal(signal.SIGTERM, oldterm)
         # WORKAROUND-END
