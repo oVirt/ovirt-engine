@@ -18,7 +18,6 @@ import os
 import sys
 import signal
 import gettext
-import socket
 import base64
 import json
 import datetime
@@ -45,29 +44,16 @@ class OvirtWebSocketProxy(websockify.WebSocketProxy):
         self._ticketDecoder = kwargs.pop('ticketDecoder')
         super(OvirtWebSocketProxy, self).__init__(*args, **kwargs)
 
-    def new_client(self):
+    def get_target(self, target_cfg, path):
         """
-        Called after a new WebSocket connection has been established.
+        Parses the path, extracts a token, and looks for a valid
+        target for that token in the configuration file(s). Sets
+        target_host and target_port if successful
         """
-        connection_data = self._ticketDecoder.decode(self.path[1:]).split(':')
+        connection_data = self._ticketDecoder.decode(path[1:]).split(':')
         target_host = connection_data[0].encode('utf8')
         target_port = connection_data[1].encode('utf8')
-
-        # Connect to the target
-        self.msg("connecting to: %s:%s" % (
-                 target_host, target_port))
-        tsock = self.socket(target_host, target_port,
-                            connect=True)
-
-        # Start proxying
-        try:
-            self.do_proxy(tsock)
-        except:
-            if tsock:
-                tsock.shutdown(socket.SHUT_RDWR)
-                tsock.close()
-                self.vmsg("%s:%s: Target closed" % (target_host, target_port))
-            raise
+        return (target_host, target_port)
 
 
 class TicketDecoder(object):
@@ -192,8 +178,9 @@ class Daemon(service.Daemon):
                     else self._config.get('TRACE_FILE')
                 ),
                 web=None,
-                target_host='ignore',
-                target_port='ignore',
+                target_cfg='/dummy',
+                target_host=None,
+                target_port=None,
                 wrap_mode='exit',
                 wrap_cmd=None
             ).start_server()
