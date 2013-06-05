@@ -55,6 +55,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/events.png")
     ImageResource eventsImage();
 
+    @Source("images/icon_foreman.png")
+    ImageResource foremanImage();
+
     @Source("images/btn_guide_hover.png")
     ImageResource guideHoverMediumImage();
 
@@ -112,6 +115,9 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/nonoperational.png")
     ImageResource nonOperationalImage();
 
+    @Source("images/icon_openstack.png")
+    ImageResource openstackImage();
+
     @Source("images/pause.gif")
     ImageResource pauseImage();
 
@@ -129,9 +135,6 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/plus.png")
     ImageResource plusImage();
-
-    @Source("images/icon_provider.png")
-    ImageResource providerImage();
 
     @Source("images/icon_providers.png")
     ImageResource providersImage();

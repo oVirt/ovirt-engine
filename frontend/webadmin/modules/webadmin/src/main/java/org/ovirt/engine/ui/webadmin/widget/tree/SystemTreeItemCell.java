@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.tree;
 
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -80,7 +81,16 @@ public class SystemTreeItemCell extends AbstractCell<SystemTreeItemModel> {
             imageResource = applicationResources.networksTreeImage();
             break;
         case Provider:
-            imageResource = applicationResources.providerImage();
+            switch (((Provider) value.getEntity()).getType()) {
+            case OPENSTACK_NETWORK:
+                imageResource = applicationResources.openstackImage();
+                break;
+            case FOREMAN:
+                imageResource = applicationResources.foremanImage();
+                break;
+            default:
+                imageResource = applicationResources.providersImage();
+            }
             break;
         case Providers:
             imageResource = applicationResources.providersImage();
