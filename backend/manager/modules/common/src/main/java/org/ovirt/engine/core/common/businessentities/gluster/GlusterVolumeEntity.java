@@ -119,24 +119,16 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
     public void setVolumeType(GlusterVolumeType volumeType) {
         this.volumeType = volumeType;
 
-        switch (volumeType) {
-        case DISTRIBUTE:
+        if (!volumeType.isReplicatedType()) {
             setReplicaCount(0);
+        }
+        if (!volumeType.isStripedType()) {
             setStripeCount(0);
-            break;
-        case REPLICATE:
-        case DISTRIBUTED_REPLICATE:
-            setStripeCount(0);
-            break;
-        case STRIPE:
-        case DISTRIBUTED_STRIPE:
-            setReplicaCount(0);
-            break;
         }
     }
 
     public void setVolumeType(String volumeType) {
-        setVolumeType(GlusterVolumeType.valueOf(volumeType));
+        setVolumeType(GlusterVolumeType.fromValue(volumeType));
     }
 
     public GlusterStatus getStatus() {

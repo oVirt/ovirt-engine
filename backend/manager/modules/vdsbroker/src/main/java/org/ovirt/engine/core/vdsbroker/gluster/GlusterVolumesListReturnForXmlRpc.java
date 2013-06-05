@@ -35,7 +35,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
     private static final String STRIPE_COUNT = "stripeCount";
 
     private Guid clusterId;
-    private Map<Guid, GlusterVolumeEntity> volumes = new HashMap<Guid, GlusterVolumeEntity>();
+    private final Map<Guid, GlusterVolumeEntity> volumes = new HashMap<Guid, GlusterVolumeEntity>();
     private static Log log = LogFactory.getLog(GlusterVolumesListReturnForXmlRpc.class);
     private static final GlusterDBUtils dbUtils = GlusterDBUtils.getInstance();
 
@@ -67,15 +67,13 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         volume.setName((String)map.get(VOLUME_NAME));
         volume.setVolumeType((String)map.get(VOLUME_TYPE));
 
-        switch (volume.getVolumeType()) {
-        case REPLICATE:
-        case DISTRIBUTED_REPLICATE:
-            volume.setReplicaCount(Integer.valueOf((String) map.get(REPLICA_COUNT)));
-            break;
-        case STRIPE:
-        case DISTRIBUTED_STRIPE:
-            volume.setStripeCount(Integer.valueOf((String) map.get(STRIPE_COUNT)));
-            break;
+        if (volume.getVolumeType() !=null) {
+            if (volume.getVolumeType().isReplicatedType()) {
+                volume.setReplicaCount(Integer.valueOf((String) map.get(REPLICA_COUNT)));
+            }
+            if (volume.getVolumeType().isStripedType()) {
+                volume.setStripeCount(Integer.valueOf((String) map.get(STRIPE_COUNT)));
+            }
         }
 
         for(Object transportType : (Object[])map.get(TRANSPORT_TYPE)) {

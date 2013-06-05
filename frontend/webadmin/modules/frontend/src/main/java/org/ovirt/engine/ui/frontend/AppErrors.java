@@ -2252,6 +2252,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Number of bricks must be a multiple of stripe count for a DISTRIBUTED STRIPE volume.")
     String ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Number of bricks must be multiple of stripe count and replicate count for a STRIPED REPLICATE volume.")
+    String ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_STRIPED_REPLICATE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Number of bricks must be a non-trivial multiple of stripe count and replicate count for a DISTRIBUTED STRIPED REPLICATE volume.")
+    String ACTION_TYPE_FAILED_INVALID_BRICK_COUNT_FOR_DISTRIBUTED_STRIPED_REPLICATE();
+
     @DefaultStringValue("Cannot ${action} ${type}. Invalid host id in brick.")
     String ACTION_TYPE_FAILED_INVALID_BRICK_SERVER_ID();
 

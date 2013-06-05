@@ -137,6 +137,10 @@ public class GlusterVolumeMapper {
             return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.STRIPE;
         case DISTRIBUTED_STRIPE:
             return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTED_STRIPE;
+        case STRIPED_REPLICATE:
+            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.STRIPED_REPLICATE;
+        case DISTRIBUTED_STRIPED_REPLICATE:
+            return org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE;
         default:
             return null;
         }
@@ -156,6 +160,10 @@ public class GlusterVolumeMapper {
             return GlusterVolumeType.STRIPE.value();
         case DISTRIBUTED_STRIPE:
             return GlusterVolumeType.DISTRIBUTED_STRIPE.value();
+        case STRIPED_REPLICATE:
+            return GlusterVolumeType.STRIPED_REPLICATE.value();
+        case DISTRIBUTED_STRIPED_REPLICATE:
+            return GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE.value();
         default:
             return null;
         }

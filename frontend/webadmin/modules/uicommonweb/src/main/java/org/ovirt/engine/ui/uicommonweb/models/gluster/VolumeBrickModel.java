@@ -516,6 +516,20 @@ public class VolumeBrickModel extends Model {
                 valid = false;
             }
             break;
+
+        case STRIPED_REPLICATE:
+            if (brickCount != stripeCount * replicaCount)
+            {
+                valid = false;
+            }
+            break;
+
+        case DISTRIBUTED_STRIPED_REPLICATE:
+            if (brickCount < stripeCount * replicaCount || (brickCount % (stripeCount * replicaCount)) != 0)
+            {
+                valid = false;
+            }
+            break;
         }
 
         return valid;
@@ -558,6 +572,15 @@ public class VolumeBrickModel extends Model {
         case DISTRIBUTED_STRIPE:
             validationMsg = ConstantsManager.getInstance().getConstants().distriputedStripeVolumeAddBricksMsg();
             break;
+
+        case STRIPED_REPLICATE:
+            validationMsg = ConstantsManager.getInstance().getConstants().stripedReplicateVolumeAddBricksMsg();
+            break;
+
+        case DISTRIBUTED_STRIPED_REPLICATE:
+            validationMsg = ConstantsManager.getInstance().getConstants().distriputedStripedReplicateVolumeAddBricksMsg();
+            break;
+
         }
 
         return validationMsg;

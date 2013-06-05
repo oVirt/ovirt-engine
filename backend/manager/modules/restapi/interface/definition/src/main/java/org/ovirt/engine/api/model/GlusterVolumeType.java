@@ -7,7 +7,9 @@ public enum GlusterVolumeType {
     REPLICATE,
     DISTRIBUTED_REPLICATE,
     STRIPE,
-    DISTRIBUTED_STRIPE;
+    DISTRIBUTED_STRIPE,
+    STRIPED_REPLICATE,
+    DISTRIBUTED_STRIPED_REPLICATE;
 
     public String value() {
         return name().toLowerCase();

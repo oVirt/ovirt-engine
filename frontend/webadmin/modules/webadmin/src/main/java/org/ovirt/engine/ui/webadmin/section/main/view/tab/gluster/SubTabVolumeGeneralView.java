@@ -88,23 +88,8 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     public void setMainTabSelectedItem(GlusterVolumeEntity selectedItem) {
         driver.edit(getDetailModel());
 
-        if (selectedItem.getVolumeType() == GlusterVolumeType.REPLICATE
-                || selectedItem.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
-        {
-            replicaFormItem.setIsAvailable(true);
-            stripeFormItem.setIsAvailable(false);
-        }
-        else if (selectedItem.getVolumeType() == GlusterVolumeType.STRIPE
-                || selectedItem.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE)
-        {
-            replicaFormItem.setIsAvailable(false);
-            stripeFormItem.setIsAvailable(true);
-        }
-        else
-        {
-            replicaFormItem.setIsAvailable(false);
-            stripeFormItem.setIsAvailable(false);
-        }
+        replicaFormItem.setIsAvailable(selectedItem.getVolumeType().isReplicatedType());
+        stripeFormItem.setIsAvailable(selectedItem.getVolumeType().isStripedType());
 
         formBuilder.update(getDetailModel());
     }

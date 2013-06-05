@@ -334,6 +334,10 @@ public interface Enums extends LocalizedEnums {
 
     String GlusterVolumeType___DISTRIBUTED_STRIPE();
 
+    String GlusterVolumeType___STRIPED_REPLICATE();
+
+    String GlusterVolumeType___DISTRIBUTED_STRIPED_REPLICATE();
+
     String GlusterStatus___UP();
 
     String GlusterStatus___DOWN();

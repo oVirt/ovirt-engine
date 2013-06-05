@@ -204,13 +204,11 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         volumeBrickModel.getReplicaCount().setEntity(volumeEntity.getReplicaCount());
         volumeBrickModel.getReplicaCount().setIsChangable(true);
-        volumeBrickModel.getReplicaCount().setIsAvailable(volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE
-                || volumeEntity.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE);
+        volumeBrickModel.getReplicaCount().setIsAvailable(volumeEntity.getVolumeType().isReplicatedType());
 
         volumeBrickModel.getStripeCount().setEntity(volumeEntity.getStripeCount());
         volumeBrickModel.getStripeCount().setIsChangable(true);
-        volumeBrickModel.getStripeCount().setIsAvailable(volumeEntity.getVolumeType() == GlusterVolumeType.STRIPE
-                || volumeEntity.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE);
+        volumeBrickModel.getStripeCount().setIsAvailable(volumeEntity.getVolumeType().isStripedType());
 
         volumeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().addBricksVolume());
         volumeBrickModel.setHashName("add_bricks"); //$NON-NLS-1$
@@ -394,8 +392,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
     private boolean validateReplicaStripeCount(GlusterVolumeEntity volumeEntity, VolumeBrickModel volumeBrickModel)
     {
-        if (volumeEntity.getVolumeType() == GlusterVolumeType.REPLICATE
-                || volumeEntity.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
+        if (volumeEntity.getVolumeType().isReplicatedType())
         {
             int newReplicaCount = volumeBrickModel.getReplicaCountValue();
             if (newReplicaCount > (volumeEntity.getReplicaCount() + 1))
@@ -406,8 +403,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                 return false;
             }
         }
-        else if (volumeEntity.getVolumeType() == GlusterVolumeType.STRIPE
-                || volumeEntity.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE)
+        if (volumeEntity.getVolumeType().isStripedType())
         {
             int newStripeCount = volumeBrickModel.getStripeCountValue();
             if (newStripeCount > (volumeEntity.getStripeCount() + 1))
@@ -535,11 +531,60 @@ public class VolumeBrickListModel extends SearchableListModel {
             }
             break;
 
+        case STRIPED_REPLICATE:
+            valid = validateStripedReplicateRemove(volumeType, selectedBricks, brickList, removeBrickModel);
+            if (!valid)
+            {
+                removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .cannotRemoveBricksStripedReplicateVolume());
+            }
+            break;
+
+        case DISTRIBUTED_STRIPED_REPLICATE:
+            valid = validateDistributedStripedReplicateRemove(volumeType, selectedBricks, brickList, removeBrickModel);
+            if (!valid)
+            {
+                removeBrickModel.setValidationMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .cannotRemoveBricksDistributedStripedReplicateVolume());
+            }
+            break;
+
         default:
             break;
         }
 
         return valid;
+    }
+
+    public boolean validateStripedReplicateRemove(GlusterVolumeType volumeType,
+            List<GlusterBrickEntity> selectedBricks,
+            List<GlusterBrickEntity> brickList,
+            RemoveBrickModel removeBrickModel) {
+        // validate only count in the UI
+        int stripeCount = removeBrickModel.getStripeCount();
+        int replicaCount = removeBrickModel.getReplicaCount();
+
+        if ((brickList.size() - selectedBricks.size()) != stripeCount * replicaCount) {
+            return false;
+        }
+
+          return true;
+    }
+
+    public boolean validateDistributedStripedReplicateRemove(GlusterVolumeType volumeType,
+            List<GlusterBrickEntity> selectedBricks,
+            List<GlusterBrickEntity> brickList,
+            RemoveBrickModel removeBrickModel) {
+        int stripeCount = removeBrickModel.getStripeCount();
+        int replicaCount = removeBrickModel.getReplicaCount();
+
+        if (selectedBricks.size() % (stripeCount * replicaCount) != 0) {
+            return false;
+        }
+
+        return true;
     }
 
     public boolean validateDistriputedReplicateRemove(GlusterVolumeType volumeType,

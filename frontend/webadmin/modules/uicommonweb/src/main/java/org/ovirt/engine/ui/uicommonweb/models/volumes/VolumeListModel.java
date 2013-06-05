@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -586,11 +586,13 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         volume.setName((String) volumeModel.getName().getEntity());
         GlusterVolumeType type = (GlusterVolumeType) volumeModel.getTypeList().getSelectedItem();
 
-        if (type == GlusterVolumeType.STRIPE || type == GlusterVolumeType.DISTRIBUTED_STRIPE) {
+        if (type.isStripedType()) {
             volume.setStripeCount(volumeModel.getStripeCountValue());
-        } else if (type == GlusterVolumeType.REPLICATE || type == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
+        }
+        if (type.isReplicatedType()) {
             volume.setReplicaCount(volumeModel.getReplicaCountValue());
         }
+
         volume.setVolumeType(type);
 
         if ((Boolean) volumeModel.getTcpTransportType().getEntity()) {

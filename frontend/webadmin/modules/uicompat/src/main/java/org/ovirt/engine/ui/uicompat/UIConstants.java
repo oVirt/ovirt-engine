@@ -1558,6 +1558,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Number of bricks should be a mutiple of Stripe Count")
     String distriputedStripeVolumeAddBricksMsg();
 
+    @DefaultStringValue("Number of bricks should be equal to Stripe Count * Replica count")
+    String stripedReplicateVolumeAddBricksMsg();
+
+    @DefaultStringValue("Number of bricks should be a mutiple of Stripe Count and Replica count")
+    String distriputedStripedReplicateVolumeAddBricksMsg();
+
     @DefaultStringValue("Bricks cannot be empty")
     String emptyAddBricksMsg();
 
@@ -1674,6 +1680,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Incorrect bricks selected for the removal in Distributed Stripe volume. Selected bricks should be from the same sub volume!")
     String cannotRemoveBricksDistributedStripeVolume();
+
+    @DefaultStringValue("Incorrect bricks selected for the removal in Striped Replicate volume. Selected bricks should be a multiple of stripe and replica count")
+    String cannotRemoveBricksStripedReplicateVolume();
+
+    @DefaultStringValue("Incorrect bricks selected for the removal in Distributed Striped Replicate volume. Selected bricks should be from the same sub volume!")
+    String cannotRemoveBricksDistributedStripedReplicateVolume();
 
     @DefaultStringValue("Replica count can be increased by only one")
     String addBricksReplicaCountIncreaseValidationMsg();

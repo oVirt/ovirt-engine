@@ -702,21 +702,16 @@ public class GlusterSyncJob extends GlusterJob {
             changed = true;
         }
 
-        switch (existingVolume.getVolumeType()) {
-        case REPLICATE:
-        case DISTRIBUTED_REPLICATE:
-            if (!ObjectUtils.objectsEqual(existingVolume.getReplicaCount(), fetchedVolume.getReplicaCount())) {
+        if (existingVolume.getVolumeType().isReplicatedType() &&
+                !ObjectUtils.objectsEqual(existingVolume.getReplicaCount(), fetchedVolume.getReplicaCount())) {
                 existingVolume.setReplicaCount(fetchedVolume.getReplicaCount());
                 changed = true;
-            }
-            break;
-        case STRIPE:
-        case DISTRIBUTED_STRIPE:
-            if (!ObjectUtils.objectsEqual(existingVolume.getStripeCount(), fetchedVolume.getStripeCount())) {
-                existingVolume.setStripeCount(fetchedVolume.getStripeCount());
-                changed = true;
-            }
-            break;
+        }
+
+        if (existingVolume.getVolumeType().isStripedType() &&
+                !ObjectUtils.objectsEqual(existingVolume.getStripeCount(), fetchedVolume.getStripeCount())) {
+            existingVolume.setStripeCount(fetchedVolume.getStripeCount());
+            changed = true;
         }
 
         if (changed) {

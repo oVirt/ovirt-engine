@@ -48,15 +48,14 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_BRICKS_REQUIRED);
             return false;
         }
-        if (getGlusterVolume().getVolumeType() == GlusterVolumeType.REPLICATE
-                || getGlusterVolume().getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
+        if (getGlusterVolume().getVolumeType().isReplicatedType()) {
             if (getParameters().getReplicaCount() > getGlusterVolume().getReplicaCount() + 1) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_REPLICA_COUNT_MORE_THAN_ONE);
             } else if (getParameters().getReplicaCount() < getGlusterVolume().getReplicaCount()) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_REDUCE_REPLICA_COUNT);
             }
-        } else if (getGlusterVolume().getVolumeType() == GlusterVolumeType.STRIPE
-                || getGlusterVolume().getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE) {
+        }
+        if (getGlusterVolume().getVolumeType().isStripedType()) {
             if (getParameters().getStripeCount() > getGlusterVolume().getStripeCount() + 1) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CAN_NOT_INCREASE_STRIPE_COUNT_MORE_THAN_ONE);
             } else if (getParameters().getStripeCount() < getGlusterVolume().getStripeCount()) {
@@ -194,28 +193,21 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
                 && stripeCount < (volume.getBricks().size() + newBricks.size())) {
             volume.setVolumeType(GlusterVolumeType.DISTRIBUTED_STRIPE);
         }
+        //TODO: check for DISTRIBUTED_STRIPED_REPLICATE and STRIPED_REPLICATE
 
         getGlusterVolumeDao().updateGlusterVolume(volume);
     }
 
     private boolean isReplicaCountIncreased(int replicaCount) {
-        if ((getGlusterVolume().getVolumeType() == GlusterVolumeType.REPLICATE
+        return ((getGlusterVolume().getVolumeType() == GlusterVolumeType.REPLICATE
                 || getGlusterVolume().getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
-                && replicaCount > getGlusterVolume().getReplicaCount()) {
-            return true;
-        } else {
-            return false;
-        }
+                && replicaCount > getGlusterVolume().getReplicaCount());
     }
 
     private boolean isStripeCountIncreased(int stripeCount) {
-        if ((getGlusterVolume().getVolumeType() == GlusterVolumeType.STRIPE
+        return ((getGlusterVolume().getVolumeType() == GlusterVolumeType.STRIPE
                 || getGlusterVolume().getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE)
-                && stripeCount > getGlusterVolume().getStripeCount()) {
-            return true;
-        } else {
-            return false;
-        }
+                && stripeCount > getGlusterVolume().getStripeCount());
     }
 
     private GlusterStatus getBrickStatus() {

@@ -132,21 +132,9 @@ public class VolumeModel extends Model {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (getTypeList().getSelectedItem() == GlusterVolumeType.REPLICATE
-                        || getTypeList().getSelectedItem() == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
-                    getReplicaCount().setIsAvailable(true);
-                }
-                else {
-                    getReplicaCount().setIsAvailable(false);
-                }
 
-                if (getTypeList().getSelectedItem() == GlusterVolumeType.STRIPE
-                        || getTypeList().getSelectedItem() == GlusterVolumeType.DISTRIBUTED_STRIPE) {
-                    getStripeCount().setIsAvailable(true);
-                }
-                else {
-                    getStripeCount().setIsAvailable(false);
-                }
+                getReplicaCount().setIsAvailable(((GlusterVolumeType)getTypeList().getSelectedItem()).isReplicatedType());
+                getStripeCount().setIsAvailable(((GlusterVolumeType)getTypeList().getSelectedItem()).isStripedType());
 
                 if (getBricks().getItems() != null && ((List) getBricks().getItems()).size() > 0
                         && !validateBrickCount()
@@ -413,13 +401,11 @@ public class VolumeModel extends Model {
         }
 
         GlusterVolumeType selectedVolumeType = (GlusterVolumeType) getTypeList().getSelectedItem();
-        if (selectedVolumeType == GlusterVolumeType.REPLICATE
-                || selectedVolumeType == GlusterVolumeType.DISTRIBUTED_REPLICATE)
+        if (selectedVolumeType.isReplicatedType())
         {
             getReplicaCount().setEntity(volumeBrickModel.getReplicaCount().getEntity());
         }
-        else if (selectedVolumeType == GlusterVolumeType.STRIPE
-                || selectedVolumeType == GlusterVolumeType.DISTRIBUTED_STRIPE)
+        if (selectedVolumeType.isStripedType())
         {
             getStripeCount().setEntity(volumeBrickModel.getStripeCount().getEntity());
         }

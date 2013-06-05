@@ -136,14 +136,12 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
         for (GlusterBrickEntity brick : brickList) {
             getGlusterBrickDao().removeBrick(brick.getId());
         }
-
         // Update volume type and replica/stripe count
         if (volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE
                 && volume.getReplicaCount() == (volume.getBricks().size() - brickList.size())) {
             volume.setVolumeType(GlusterVolumeType.REPLICATE);
         }
-        if (volume.getVolumeType() == GlusterVolumeType.REPLICATE
-                || volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE) {
+        if (volume.getVolumeType().isReplicatedType()) {
             int replicaCount =
                     (getParameters().getReplicaCount() == 0)
                             ? volume.getReplicaCount()
@@ -155,6 +153,12 @@ public class GlusterVolumeRemoveBricksCommand extends GlusterVolumeCommandBase<G
         if (volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE
                 && volume.getStripeCount() == (volume.getBricks().size() - brickList.size())) {
             volume.setVolumeType(GlusterVolumeType.STRIPE);
+            getGlusterVolumeDao().updateGlusterVolume(volume);
+        }
+
+        if (volume.getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPED_REPLICATE
+                && (volume.getStripeCount() * volume.getReplicaCount()) == (volume.getBricks().size() - brickList.size())) {
+            volume.setVolumeType(GlusterVolumeType.STRIPED_REPLICATE);
             getGlusterVolumeDao().updateGlusterVolume(volume);
         }
     }
