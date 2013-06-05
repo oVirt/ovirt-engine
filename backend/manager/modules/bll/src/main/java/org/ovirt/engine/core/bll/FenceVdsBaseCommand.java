@@ -38,7 +38,7 @@ import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
-    private final int SLEEP_BEFORE_FIRST_ATTEMPT = 5000;
+    private static final int SLEEP_BEFORE_FIRST_ATTEMPT = 5000;
     private static final String INTERNAL_FENCE_USER = "Engine";
     protected FenceExecutor executor;
     protected List<VM> mVmList = null;

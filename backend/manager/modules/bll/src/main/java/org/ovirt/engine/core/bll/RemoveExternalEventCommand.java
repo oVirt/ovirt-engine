@@ -11,7 +11,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveExternalEventCommand <T extends RemoveExternalEventParameters> extends ExternalEventCommandBase<T> {
 
-    private final String OVIRT="oVirt";
+    private static final String OVIRT="oVirt";
 
     public RemoveExternalEventCommand(T parameters) {
         super(parameters);

@@ -61,7 +61,7 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
     protected final CommonApplicationTemplates templates;
 
 
-    protected final String NODE_HEADER = "nodeHeader"; //$NON-NLS-1$
+    protected static final String NODE_HEADER = "nodeHeader"; //$NON-NLS-1$
 
     public AbstractSubTabTree(CommonApplicationResources resources, CommonApplicationConstants constants, CommonApplicationTemplates templates) {
         this.resources = resources;

@@ -132,7 +132,7 @@ public class SliderBar extends FocusPanel implements RequiresResize,
          * The delay between shifts, which shortens as the user holds down the
          * button.
          */
-        private final int repeatDelay = 30;
+        private static final int repeatDelay = 30;
 
         /**
          * A bit indicating whether we are shifting to a higher or lower value.

@@ -21,23 +21,23 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
  */
 public class CustomPropertiesUtils {
     protected final Pattern SEMICOLON_PATTERN = Pattern.compile(";");
-    protected final String PROPERTIES_DELIMETER = ";";
-    protected final String KEY_VALUE_DELIMETER = "=";
+    protected final static String PROPERTIES_DELIMETER = ";";
+    protected final static String KEY_VALUE_DELIMETER = "=";
 
-    protected final String LEGITIMATE_CHARACTER_FOR_KEY = "[a-z_A-Z0-9]";
-    protected final Pattern KEY_PATTERN = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_KEY + ")+");
-
-    // all characters but the delimiter are allowed
-    protected final String LEGITIMATE_CHARACTER_FOR_VALUE = "[^" + PROPERTIES_DELIMETER + "]";
+    protected final static String LEGITIMATE_CHARACTER_FOR_KEY = "[a-z_A-Z0-9]";
+    protected final static Pattern KEY_PATTERN = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_KEY + ")+");
+    protected final static String LEGITIMATE_CHARACTER_FOR_VALUE = "[^" + PROPERTIES_DELIMETER + "]"; // all characters
+                                                                                               // but the delimiter
+                                                                                               // are allowed
     protected final Pattern VALUE_PATTERN = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_VALUE + ")+");
 
     // properties are in form of key1=val1;key2=val2; .... key and include alpha numeric characters and _
-    protected final String KEY_VALUE_REGEX_STR = "((" + LEGITIMATE_CHARACTER_FOR_KEY + ")+)=(("
+    protected static final String KEY_VALUE_REGEX_STR = "((" + LEGITIMATE_CHARACTER_FOR_KEY + ")+)=(("
             + LEGITIMATE_CHARACTER_FOR_VALUE + ")+)";
 
     // frontend can pass custom values in the form of "key=value" or "key1=value1;... key-n=value_n" (if there is only
     // one key-value, no ; is attached to it
-    protected final String VALIDATION_STR = KEY_VALUE_REGEX_STR + "(;" + KEY_VALUE_REGEX_STR + ")*;?";
+    protected static final String VALIDATION_STR = KEY_VALUE_REGEX_STR + "(;" + KEY_VALUE_REGEX_STR + ")*;?";
     protected final Pattern VALIDATION_PATTERN = Pattern.compile(VALIDATION_STR);
 
     protected final List<ValidationError> invalidSyntaxValidationError =

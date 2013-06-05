@@ -23,7 +23,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      * use this member to determine if fence failed but vms moved to unknown mode (for the audit log type)
      */
     private boolean _vmsMovedToUnknown;
-    private final String RESTART = "Restart";
+    private static final String RESTART = "Restart";
 
     public VdsNotRespondingTreatmentCommand(T parameters) {
         super(parameters);

@@ -3,7 +3,7 @@ package org.ovirt.engine.core.domains;
 import java.util.Map.Entry;
 
 public class PasswordDomainsConfigurationEntry extends DomainsConfigurationEntry {
-    private final String LOGGING_PASSWORD = "********";
+    private static final String LOGGING_PASSWORD = "********";
     public PasswordDomainsConfigurationEntry(String entry, String domainSeperator, String valueSeperator) {
         super(entry, domainSeperator, valueSeperator);
     }
