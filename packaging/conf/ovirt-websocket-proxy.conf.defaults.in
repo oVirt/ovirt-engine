@@ -1,9 +1,6 @@
 #
 # This is a default configuration file for oVirt/RHEV-M websockets proxy
 #
-# Make sure you provide valid certificate and key for SSL
-#
-
 PROXY_HOST=*
 PROXY_PORT=6100
 SOURCE_IS_IPV6=False
@@ -15,4 +12,3 @@ SSL_ONLY=False
 LOG_FILE="@ENGINE_LOG@/ovirt-websocket-proxy.log"
 LOG_VERBOSE=False
 ENGINE_USR="@ENGINE_USR@"
-
