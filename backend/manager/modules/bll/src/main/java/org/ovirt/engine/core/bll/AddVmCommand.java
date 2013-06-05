@@ -80,7 +80,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<Guid, StorageDomain>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
-    protected String newMac = "";
 
     /**
      * A list of the new disk images which were saved for the VM.

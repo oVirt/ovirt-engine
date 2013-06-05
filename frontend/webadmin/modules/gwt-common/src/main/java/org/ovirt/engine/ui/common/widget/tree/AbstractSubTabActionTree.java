@@ -49,7 +49,6 @@ public class AbstractSubTabActionTree<M extends SearchableListModel, R, N> exten
     protected AbstractSubTabTree<M, R, N> tree = null;
 
     protected final EventBus eventBus;
-    protected SearchableDetailModelProvider<?, ?, M> modelProvider;
 
     protected final CommonApplicationResources resources;
     protected final CommonApplicationConstants constants;
@@ -60,7 +59,6 @@ public class AbstractSubTabActionTree<M extends SearchableListModel, R, N> exten
         super(modelProvider, eventBus);
 
         this.eventBus = eventBus;
-        this.modelProvider = modelProvider;
         this.resources = resources;
         this.constants = constants;
 

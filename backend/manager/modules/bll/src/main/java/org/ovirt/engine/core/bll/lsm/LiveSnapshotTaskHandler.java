@@ -18,13 +18,10 @@ import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
 
     private final TaskHandlerCommand<? extends LiveMigrateVmDisksParameters> enclosingCommand;
-    protected Log log = LogFactory.getLog(getClass());
 
     public LiveSnapshotTaskHandler(TaskHandlerCommand<? extends LiveMigrateVmDisksParameters> enclosingCommand) {
         this.enclosingCommand = enclosingCommand;

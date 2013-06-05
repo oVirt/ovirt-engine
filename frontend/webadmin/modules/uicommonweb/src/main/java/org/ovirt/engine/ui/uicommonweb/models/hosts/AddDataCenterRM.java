@@ -271,7 +271,6 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
                                 VdcReturnValueBase returnValue = result.getReturnValue();
 
-                                context.removeVDSGroupReturnValue = returnValue;
                                 rollback5();
                             }
                         });
@@ -403,6 +402,5 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         public VDS hostFoundById;
         public VdcReturnValueBase addDataCenterReturnValue;
         public VdcReturnValueBase changeVDSClusterReturnValue;
-        public VdcReturnValueBase removeVDSGroupReturnValue;
     }
 }
