@@ -156,10 +156,6 @@ class Daemon(service.Daemon):
         )
 
     def daemonContext(self):
-        record = self._config.get('LOG_FILE')
-        if record == 'False':
-            record = False # translate to boolean
-
         #
         # WORKAROUND-BEGIN
         # set terminate exception as
@@ -191,7 +187,10 @@ class Daemon(service.Daemon):
                 key=self._config.get('SSL_KEY'),
                 ssl_only=self._config.getboolean('SSL_ONLY'),
                 daemon=False,
-                record=record,
+                record=(
+                    None if not self._config.getboolean('TRACE_ENABLE')
+                    else self._config.get('TRACE_FILE')
+                ),
                 web=None,
                 target_host='ignore',
                 target_port='ignore',
