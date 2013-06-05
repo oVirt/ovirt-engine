@@ -61,7 +61,7 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
 
     private VdsStatic getVdsStatic() {
         VdsStatic vds = new VdsStatic();
-        vds.setId(new Guid());
+        vds.setId(Guid.newGuid());
         vds.setHostName(NEW_SERVER);
         return vds;
     }

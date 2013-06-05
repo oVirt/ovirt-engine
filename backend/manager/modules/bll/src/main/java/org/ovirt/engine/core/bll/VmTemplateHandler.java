@@ -16,7 +16,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class VmTemplateHandler {
-    protected static Guid BlankVmTemplateId = new Guid();
+    protected static Guid BlankVmTemplateId = Guid.Empty;
     protected final static String BlankVmTemplateName = "Blank";
     private static ObjectIdentityChecker mUpdateVmTemplate;
 

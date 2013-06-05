@@ -128,7 +128,7 @@ public class ReplaceGlusterVolumeBrickCommandTest {
                                     "127.0.0.1",
                                     "0934390834",
                                     20,
-                                    new Guid(),
+                                    Guid.newGuid(),
                                     serverId,
                                     serverName,
                                     true,

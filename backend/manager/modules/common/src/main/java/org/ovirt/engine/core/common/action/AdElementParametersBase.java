@@ -4,7 +4,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class AdElementParametersBase extends VdcActionParametersBase {
     private static final long serialVersionUID = -8078914032408357639L;
-    private Guid _adElementId = new Guid();
+    private Guid _adElementId = Guid.Empty;
 
     public AdElementParametersBase(Guid adElementId) {
         _adElementId = adElementId;

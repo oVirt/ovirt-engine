@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class VdcUser implements IVdcUser {
     private static final long serialVersionUID = -5689096270467866486L;
 
-    private Guid mUserId = new Guid();
+    private Guid mUserId = Guid.Empty;
     private String mUserName;
     private String mPassword;
     private String mDomainControler;

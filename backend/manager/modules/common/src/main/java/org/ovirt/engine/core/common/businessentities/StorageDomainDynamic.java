@@ -25,7 +25,7 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         this.availableDiskSize = availableDiskSize;
     }
 
-    private Guid id = new Guid();
+    private Guid id = Guid.Empty;
 
     @Override
     public Guid getId() {

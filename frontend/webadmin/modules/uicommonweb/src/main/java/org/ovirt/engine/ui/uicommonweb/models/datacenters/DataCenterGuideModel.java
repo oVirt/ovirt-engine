@@ -117,7 +117,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     private IStorageModel storageModel;
     private Guid storageId;
     private StorageServerConnections connection;
-    private Guid hostId = new Guid();
+    private Guid hostId = Guid.Empty;
     private String path;
     private boolean removeConnection;
     private ArrayList<VDSGroup> clusters;
@@ -556,7 +556,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         connection = null;
         removeConnection = false;
         path = null;
-        hostId = new Guid();
+        hostId = Guid.Empty;
         clusters = null;
         allStorageDomains = null;
         attachedStorageDomains = null;

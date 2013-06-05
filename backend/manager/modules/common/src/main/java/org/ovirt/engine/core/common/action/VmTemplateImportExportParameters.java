@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.compat.Guid;
-
 import java.util.LinkedList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.compat.Guid;
+
 public class VmTemplateImportExportParameters extends VmTemplateParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = -3811237640112907464L;
-    private Guid privateStorageDomainId = new Guid();
+    private Guid privateStorageDomainId = Guid.Empty;
 
     public Guid getStorageDomainId() {
         return privateStorageDomainId;
@@ -18,7 +18,7 @@ public class VmTemplateImportExportParameters extends VmTemplateParametersBase i
         privateStorageDomainId = value;
     }
 
-    private Guid privateStoragePoolId = new Guid();
+    private Guid privateStoragePoolId = Guid.Empty;
 
     public Guid getStoragePoolId() {
         return privateStoragePoolId;

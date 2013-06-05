@@ -14,7 +14,7 @@ import org.ovirt.engine.core.compat.Version;
 public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, Commented {
     private static final long serialVersionUID = 6162262095329980112L;
 
-    private Guid id = new Guid();
+    private Guid id = Guid.Empty;
 
     @ValidName(message = "VALIDATION.DATA_CENTER.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
@@ -36,7 +36,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, 
 
     private int masterDomainVersion;
 
-    private Guid spmVdsId = new Guid();
+    private Guid spmVdsId = Guid.Empty;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_VERSION_SIZE)
     private String compatibilityVersion;

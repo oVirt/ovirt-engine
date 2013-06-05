@@ -9,7 +9,7 @@ public class GetVmPoolsAttachedToAdGroupParameters extends VdcQueryParametersBas
         _id = id;
     }
 
-    private Guid _id = new Guid();
+    private Guid _id = Guid.Empty;
 
     public Guid getId() {
         return _id;

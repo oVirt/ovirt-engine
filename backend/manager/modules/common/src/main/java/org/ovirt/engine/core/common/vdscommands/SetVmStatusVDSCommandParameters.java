@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SetVmStatusVDSCommandParameters extends VDSParametersBase {
-    private Guid _vmId = new Guid();
+    private Guid _vmId = Guid.Empty;
     private VMStatus _status = VMStatus.forValue(0);
 
     public SetVmStatusVDSCommandParameters(Guid vmId, VMStatus status) {

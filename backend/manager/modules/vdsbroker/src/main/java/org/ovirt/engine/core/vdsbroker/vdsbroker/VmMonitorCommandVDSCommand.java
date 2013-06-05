@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.vdscommands.VmMonitorCommandVDSCommandParame
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmMonitorCommandVDSCommand<P extends VmMonitorCommandVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private Guid mVmId = new Guid();
+    private Guid mVmId = Guid.Empty;
     private String mMonitorCommand;
 
     public VmMonitorCommandVDSCommand(P parameters) {

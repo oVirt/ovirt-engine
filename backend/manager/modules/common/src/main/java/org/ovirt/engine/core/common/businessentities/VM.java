@@ -914,7 +914,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         return this.vmStatic.getExportDate();
     }
 
-    private Guid storagePoolId = new Guid();
+    private Guid storagePoolId = Guid.Empty;
 
     @Override
     public Guid getStoragePoolId() {

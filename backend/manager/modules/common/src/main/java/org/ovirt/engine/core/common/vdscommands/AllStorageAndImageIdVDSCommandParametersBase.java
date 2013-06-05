@@ -9,7 +9,7 @@ public class AllStorageAndImageIdVDSCommandParametersBase extends StoragePoolDom
         _imageId = imageId;
     }
 
-    private Guid _imageId = new Guid();
+    private Guid _imageId = Guid.Empty;
 
     public Guid getImageId() {
         return _imageId;

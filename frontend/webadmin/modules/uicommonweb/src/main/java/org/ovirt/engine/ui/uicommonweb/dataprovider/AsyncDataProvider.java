@@ -926,7 +926,7 @@ public final class AsyncDataProvider {
     }
 
     public final static class GetSnapshotListQueryResult {
-        private Guid privatePreviewingImage = new Guid();
+        private Guid privatePreviewingImage = Guid.Empty;
 
         public Guid getPreviewingImage() {
             return privatePreviewingImage;
@@ -956,7 +956,7 @@ public final class AsyncDataProvider {
             privateDisk = value;
         }
 
-        private Guid privateVmId = new Guid();
+        private Guid privateVmId = Guid.Empty;
 
         public Guid getVmId() {
             return privateVmId;
@@ -2930,7 +2930,7 @@ public final class AsyncDataProvider {
         {
             return ((Network) entity).getId();
         }
-        return new Guid();
+        return Guid.Empty;
     }
 
     public static boolean isWindowsOsType(Integer osType) {

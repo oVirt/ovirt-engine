@@ -10,7 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     private static final long serialVersionUID = 7789482445091432555L;
 
-    private Guid id = new Guid();
+    private Guid id = Guid.Empty;
     private VMStatus status = VMStatus.Down;
     private String vmIp;
     private String vmHost;

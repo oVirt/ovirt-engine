@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DeactivateStorageDomainVDSCommandParameters extends ActivateStorageDomainVDSCommandParameters {
-    private Guid privateMasterStorageDomainId = new Guid();
+    private Guid privateMasterStorageDomainId = Guid.Empty;
 
     public Guid getMasterStorageDomainId() {
         return privateMasterStorageDomainId;

@@ -1025,7 +1025,7 @@ public final class Linq
 
     public final static class DataCenterPredicate implements IPredicate<StoragePool>
     {
-        private Guid id = new Guid();
+        private Guid id = Guid.Empty;
 
         public DataCenterPredicate(Guid id)
         {
@@ -1081,7 +1081,7 @@ public final class Linq
 
     public final static class ClusterPredicate implements IPredicate<VDSGroup>
     {
-        private Guid id = new Guid();
+        private Guid id = Guid.Empty;
 
         public ClusterPredicate(Guid id)
         {
@@ -1097,7 +1097,7 @@ public final class Linq
 
     public final static class HostPredicate implements IPredicate<VDS>
     {
-        private Guid id = new Guid();
+        private Guid id = Guid.Empty;
 
         public HostPredicate(Guid id)
         {
@@ -1129,7 +1129,7 @@ public final class Linq
 
     public final static class TemplatePredicate implements IPredicate<VmTemplate>
     {
-        private Guid id = new Guid();
+        private Guid id = Guid.Empty;
 
         public TemplatePredicate(Guid id)
         {
@@ -1145,7 +1145,7 @@ public final class Linq
 
     public final static class StoragePredicate implements IPredicate<StorageDomain>
     {
-        private Guid id = new Guid();
+        private Guid id = Guid.Empty;
 
         public StoragePredicate(Guid id)
         {

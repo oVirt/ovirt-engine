@@ -30,7 +30,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
 
     @Override
     protected Guid generateNonExistingId() {
-        return new Guid();
+        return Guid.Empty;
     }
 
     @Override

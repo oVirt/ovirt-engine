@@ -153,7 +153,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         this.usage_network_percentField = value;
     }
 
-    private Guid vm_guidField = new Guid();
+    private Guid vm_guidField = Guid.Empty;
 
     private ArrayList<VmNetworkInterface> interfaceStatisticsField;
 

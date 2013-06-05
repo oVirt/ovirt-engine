@@ -88,7 +88,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
                 thenReturn(SELECTOR_SCRIPT);
         when(mockRequest.getSession()).thenReturn(mockSession);
         when(mockSession.getId()).thenReturn("sessionId"); //$NON-NLS-1$
-        when(mockUser.getUserId()).thenReturn(new Guid());
+        when(mockUser.getUserId()).thenReturn(Guid.newGuid());
         when(mockUser.getUserName()).thenReturn("admin"); //$NON-NLS-1$
         when(mockUser.getDomainControler()).thenReturn("internal"); //$NON-NLS-1$
         when(mockBrandingManager.getBrandingThemes()).thenReturn(new ArrayList<BrandingTheme>());

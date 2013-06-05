@@ -4,7 +4,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class LogoutUserParameters extends VdcActionParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = -8545136602971701926L;
-    private Guid _userId = new Guid();
+    private Guid _userId = Guid.Empty;
 
     public LogoutUserParameters(Guid userId) {
         _userId = userId;

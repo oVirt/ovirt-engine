@@ -19,7 +19,7 @@ public class GetImagesListParameters extends GetImagesListParametersBase {
         setStorageDomainId(storageDomainId);
     }
 
-    private Guid storageDomainId = new Guid();
+    private Guid storageDomainId = Guid.Empty;
 
     public Guid getStorageDomainId() {
         return storageDomainId;

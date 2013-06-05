@@ -45,7 +45,7 @@ public class EventAuditLogSubscriber implements Serializable {
         this.event_typeField = value;
     }
 
-    private Guid subscriber_idField = new Guid();
+    private Guid subscriber_idField = Guid.Empty;
 
     public Guid getsubscriber_id() {
         return this.subscriber_idField;
@@ -185,7 +185,7 @@ public class EventAuditLogSubscriber implements Serializable {
         this.vds_nameField = value;
     }
 
-    private Guid storage_pool_idField = new Guid();
+    private Guid storage_pool_idField = Guid.Empty;
 
     public Guid getstorage_pool_id() {
         return this.storage_pool_idField;
@@ -205,7 +205,7 @@ public class EventAuditLogSubscriber implements Serializable {
         this.storage_pool_nameField = value;
     }
 
-    private Guid storage_domain_idField = new Guid();
+    private Guid storage_domain_idField = Guid.Empty;
 
     public Guid getstorage_domain_id() {
         return this.storage_domain_idField;

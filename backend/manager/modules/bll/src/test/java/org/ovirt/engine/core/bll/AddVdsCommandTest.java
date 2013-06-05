@@ -67,7 +67,7 @@ public class AddVdsCommandTest {
         newVdsData.setHostName("BUZZ");
         newVdsData.setVdsName("BAR");
         newVdsData.setVdsGroupCompatibilityVersion(new Version("1.2.3"));
-        newVdsData.setVdsGroupId(new Guid());
+        newVdsData.setVdsGroupId(Guid.newGuid());
         newVdsData.setId(vdsId);
         return newVdsData;
     }

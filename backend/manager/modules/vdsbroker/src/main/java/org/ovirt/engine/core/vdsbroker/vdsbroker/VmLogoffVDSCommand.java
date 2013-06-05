@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.vdscommands.VmLogoffVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmLogoffVDSCommand<P extends VmLogoffVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private Guid mVmId = new Guid();
+    private Guid mVmId = Guid.Empty;
     private boolean mForce;
 
     public VmLogoffVDSCommand(P parameters) {

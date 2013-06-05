@@ -82,7 +82,7 @@ public class event_notification_hist implements Serializable {
         this.status = value;
     }
 
-    private Guid subscriberId = new Guid();
+    private Guid subscriberId = Guid.Empty;
 
     public Guid getsubscriber_id() {
         return this.subscriberId;

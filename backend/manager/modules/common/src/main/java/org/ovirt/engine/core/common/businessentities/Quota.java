@@ -36,7 +36,7 @@ public class Quota extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * The quota id.
      */
-    private Guid id = new Guid();
+    private Guid id = Guid.Empty;
 
     /**
      * The storage pool id the quota is enforced on.

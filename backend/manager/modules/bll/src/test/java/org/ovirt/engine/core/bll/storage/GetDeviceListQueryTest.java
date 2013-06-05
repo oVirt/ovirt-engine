@@ -16,9 +16,9 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
@@ -148,7 +148,7 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
     private void createInputLUNs() {
         LUNs lunWithVG = new LUNs();
         lunWithVG.setLUN_id(Guid.newGuid().toString());
-        lunWithVG.setvolume_group_id(new Guid().toString());
+        lunWithVG.setvolume_group_id(Guid.newGuid().toString());
 
         LUNs lunExistsInDB = new LUNs();
         lunExistsInDB.setLUN_id(Guid.newGuid().toString());

@@ -22,7 +22,7 @@ public class UpdateVdsCommandTest {
     @Test
     public void canDoAction() {
         UpdateVdsActionParameters parameters = new UpdateVdsActionParameters();
-        Guid vdsId = new Guid();
+        Guid vdsId = Guid.newGuid();
         VDS newVdsData = makeTestVds(vdsId);
         VDS oldVdsData = newVdsData.clone();
         oldVdsData.setVdsName("FOO");
@@ -49,7 +49,7 @@ public class UpdateVdsCommandTest {
         newVdsData.setHostName("BUZZ");
         newVdsData.setVdsName("BAR");
         newVdsData.setVdsGroupCompatibilityVersion(new Version("1.2.3"));
-        newVdsData.setVdsGroupId(new Guid());
+        newVdsData.setVdsGroupId(Guid.newGuid());
         newVdsData.setId(vdsId);
         return newVdsData;
     }
@@ -57,7 +57,7 @@ public class UpdateVdsCommandTest {
     @Test
     public void canDoActionSameName() {
         UpdateVdsActionParameters parameters = new UpdateVdsActionParameters();
-        Guid vdsId = new Guid();
+        Guid vdsId = Guid.newGuid();
         VDS newVdsData = makeTestVds(vdsId);
         VDS oldVdsData = newVdsData.clone();
         oldVdsData.setVdsName("FOO");

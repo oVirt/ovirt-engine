@@ -5,7 +5,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class GetVmTemplateParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 8906662143775124331L;
 
-    private Guid _id = new Guid();
+    private Guid _id = Guid.Empty;
     private String _name;
 
     public GetVmTemplateParameters(Guid id) {

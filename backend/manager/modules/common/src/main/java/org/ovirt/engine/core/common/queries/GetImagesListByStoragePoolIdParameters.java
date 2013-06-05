@@ -19,7 +19,7 @@ public class GetImagesListByStoragePoolIdParameters extends GetImagesListParamet
         setStoragePoolId(storagePoolId);
     }
 
-    private Guid storagePoolId = new Guid();
+    private Guid storagePoolId = Guid.Empty;
 
     public Guid getStoragePoolId() {
         return storagePoolId;

@@ -10,7 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private Guid mVmId = new Guid();
+    private Guid mVmId = Guid.Empty;
     private String mTicket;
     private int mValidTime; // in seconds
     private String connectionAction = "disconnect";

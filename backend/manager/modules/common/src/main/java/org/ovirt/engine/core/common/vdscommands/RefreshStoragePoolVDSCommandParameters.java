@@ -10,7 +10,7 @@ public class RefreshStoragePoolVDSCommandParameters extends GetStorageConnection
         setMasterVersion(masterVersion);
     }
 
-    private Guid privateMasterStorageDomainId = new Guid();
+    private Guid privateMasterStorageDomainId = Guid.Empty;
 
     public Guid getMasterStorageDomainId() {
         return privateMasterStorageDomainId;

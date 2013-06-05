@@ -80,7 +80,7 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     @Test
     public void updateStatusForNonExistingSnapshot() throws Exception {
-        Guid snapshotId = new Guid();
+        Guid snapshotId = Guid.Empty;
 
         assertNull(dao.get(snapshotId));
         dao.updateStatus(snapshotId, SnapshotStatus.LOCKED);
@@ -94,7 +94,7 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
         assertNotNull(snapshot);
         Guid oldId = snapshot.getId();
-        snapshot.setId(new Guid());
+        snapshot.setId(Guid.Empty);
 
         dao.updateId(oldId, snapshot.getId());
 
@@ -103,8 +103,8 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     @Test
     public void updateIdForNonExistingSnapshot() throws Exception {
-        Guid snapshotId = new Guid();
-        Guid newSnapshotId = new Guid();
+        Guid snapshotId = Guid.Empty;
+        Guid newSnapshotId = Guid.Empty;
 
         assertNull(dao.get(snapshotId));
         dao.updateId(snapshotId, newSnapshotId);
@@ -145,7 +145,7 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     @Test
     public void getIdByTypeReturnsNullForNonExistingVm() throws Exception {
-        assertEquals(null, dao.getId(new Guid(), SnapshotType.REGULAR));
+        assertEquals(null, dao.getId(Guid.Empty, SnapshotType.REGULAR));
     }
 
     @Test
@@ -160,7 +160,7 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     @Test
     public void getIdByTypeAndStatusReturnsNullForNonExistingVm() throws Exception {
-        assertEquals(null, dao.getId(new Guid(), SnapshotType.REGULAR, SnapshotStatus.OK));
+        assertEquals(null, dao.getId(Guid.Empty, SnapshotType.REGULAR, SnapshotStatus.OK));
     }
 
     @Test
@@ -251,7 +251,7 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     @Test
     public void existsWithTypeReturnsFalseForNonExistingVm() throws Exception {
-        assertFalse(dao.exists(new Guid(), SnapshotType.REGULAR));
+        assertFalse(dao.exists(Guid.Empty, SnapshotType.REGULAR));
     }
 
     @Test
@@ -266,7 +266,7 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     @Test
     public void existsWithStatusReturnsFalseForNonExistingVm() throws Exception {
-        assertFalse(dao.exists(new Guid(), SnapshotStatus.OK));
+        assertFalse(dao.exists(Guid.Empty, SnapshotStatus.OK));
     }
 
     @Test
@@ -281,12 +281,12 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     @Test
     public void existsWithSnapshotReturnsFalseForNonExistingVm() throws Exception {
-        assertFalse(dao.exists(new Guid(), getExistingEntityId()));
+        assertFalse(dao.exists(Guid.Empty, getExistingEntityId()));
     }
 
     @Test
     public void existsWithSnapshotReturnsFalseForNonExistingSnapshot() throws Exception {
-        assertFalse(dao.exists(EXISTING_VM_ID, new Guid()));
+        assertFalse(dao.exists(EXISTING_VM_ID, Guid.Empty));
     }
 
     @Test

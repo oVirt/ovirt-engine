@@ -14,7 +14,7 @@ public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSComman
         setPath(path);
     }
 
-    private Guid privateStoragePoolId = new Guid();
+    private Guid privateStoragePoolId = Guid.Empty;
 
     public Guid getStoragePoolId() {
         return privateStoragePoolId;

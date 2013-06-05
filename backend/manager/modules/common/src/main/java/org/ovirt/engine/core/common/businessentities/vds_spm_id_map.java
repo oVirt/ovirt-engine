@@ -17,7 +17,7 @@ public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
         this.vds_spm_idField = vds_spm_id;
     }
 
-    private Guid storage_pool_idField = new Guid();
+    private Guid storage_pool_idField = Guid.Empty;
 
     public Guid getstorage_pool_id() {
         return this.storage_pool_idField;

@@ -6,10 +6,10 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.when;
 
 import java.util.Collections;
 import java.util.List;
@@ -140,7 +140,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
 
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
-        vds.setId(new Guid());
+        vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
         vds.setVdsGroupId(CLUSTER_ID);
         vds.setStatus(status);

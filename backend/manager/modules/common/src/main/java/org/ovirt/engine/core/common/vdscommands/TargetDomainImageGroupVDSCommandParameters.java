@@ -4,7 +4,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class TargetDomainImageGroupVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
 
-    private Guid privateDstDomainId = new Guid();
+    private Guid privateDstDomainId = Guid.Empty;
 
     public TargetDomainImageGroupVDSCommandParameters(Guid storagePoolId,
             Guid storageDomainId,

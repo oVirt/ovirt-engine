@@ -1,20 +1,20 @@
 package org.ovirt.engine.ui.uicommonweb.models.tags;
 
+import java.util.ArrayList;
+import java.util.Map;
+
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.TreeNodeInfo;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.ArrayList;
-import java.util.Map;
 
 public class TagModel extends Model implements TreeNodeInfo {
 
@@ -67,7 +67,7 @@ public class TagModel extends Model implements TreeNodeInfo {
         privateIsNew = value;
     }
 
-    private Guid privateId = new Guid();
+    private Guid privateId = Guid.Empty;
 
     public Guid getId()
     {
@@ -79,7 +79,7 @@ public class TagModel extends Model implements TreeNodeInfo {
         privateId = value;
     }
 
-    private Guid privateParentId = new Guid();
+    private Guid privateParentId = Guid.Empty;
 
     public Guid getParentId()
     {

@@ -22,7 +22,7 @@ public class GetVmInterfacesByVmIdQueryTest extends AbstractUserQueryTest<IdQuer
         VmNetworkInterfaceDao daoMock = mock(VmNetworkInterfaceDao.class);
         when(dbFacadeMock.getVmNetworkInterfaceDao()).thenReturn(daoMock);
 
-        Guid guid   = new Guid();
+        Guid guid = Guid.newGuid();
 
         IdQueryParameters params = getQueryParameters();
         when(params.getId()).thenReturn(guid);

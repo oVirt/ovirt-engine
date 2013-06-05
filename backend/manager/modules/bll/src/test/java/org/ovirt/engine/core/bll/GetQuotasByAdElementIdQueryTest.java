@@ -24,8 +24,8 @@ public class GetQuotasByAdElementIdQueryTest extends AbstractQueryTest<GetQuotas
     @Mock
     QuotaDAO quotaDAO;
 
-    Guid adElementId = new Guid();
-    Guid storagePoolId = new Guid();
+    Guid adElementId = Guid.newGuid();
+    Guid storagePoolId = Guid.newGuid();
 
     List<Quota> returnedQuotas;
 

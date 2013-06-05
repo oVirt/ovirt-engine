@@ -27,7 +27,7 @@ public final class RegistrationResult
 
     public final static EventDefinition RetrievedEventDefinition;
 
-    private Guid privateId = new Guid();
+    private Guid privateId = Guid.Empty;
 
     public Guid getId()
     {

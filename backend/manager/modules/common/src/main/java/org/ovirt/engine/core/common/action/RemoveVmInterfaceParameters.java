@@ -4,7 +4,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveVmInterfaceParameters extends VmOperationParameterBase {
     private static final long serialVersionUID = -1016346012853472189L;
-    private Guid _interfaceId = new Guid();
+    private Guid _interfaceId = Guid.Empty;
 
     public RemoveVmInterfaceParameters(Guid vmId, Guid ifaceId) {
         super(vmId);

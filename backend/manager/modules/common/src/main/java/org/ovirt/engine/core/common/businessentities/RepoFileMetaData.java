@@ -10,10 +10,10 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class RepoFileMetaData extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = 566928138057530047L;
-    private Guid storagePoolId = new Guid();
+    private Guid storagePoolId = Guid.Empty;
     private StoragePoolStatus storagePoolStatus;
     private VDSStatus vdsStatus;
-    private Guid repoDomainId = new Guid();
+    private Guid repoDomainId = Guid.Empty;
     private StorageDomainStatus storageDomainStatus;
     private String repoImageId;
     private String repoImageName;

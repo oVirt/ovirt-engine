@@ -11,7 +11,7 @@ public class TagsUserGroupMap implements Serializable {
 
     private Guid tagId;
 
-    private Guid groupId = new Guid();
+    private Guid groupId = Guid.Empty;
 
     private Date created = new Date();
 

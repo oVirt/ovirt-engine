@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MoveImageGroupVDSCommandParameters extends TargetDomainImageGroupVDSCommandParameters {
-    private Guid privateVmId = new Guid();
+    private Guid privateVmId = Guid.Empty;
 
     public Guid getVmId() {
         return privateVmId;

@@ -38,7 +38,7 @@ public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupId
         privateVolumeFormat = value;
     }
 
-    private Guid privateNewImageID = new Guid();
+    private Guid privateNewImageID = Guid.Empty;
 
     public Guid getNewImageID() {
         return privateNewImageID;

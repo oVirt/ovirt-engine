@@ -25,7 +25,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
     private VmDAO vmDAO;
 
     private VM vm;
-    private final Guid vmId = new Guid();
+    private final Guid vmId = Guid.newGuid();
     private final String VM_NAME = "VmTESTNaME";
 
     @Override

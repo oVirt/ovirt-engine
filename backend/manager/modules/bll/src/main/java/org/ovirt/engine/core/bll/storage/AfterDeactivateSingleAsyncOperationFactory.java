@@ -5,7 +5,7 @@ import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 
 public class AfterDeactivateSingleAsyncOperationFactory extends ActivateDeactivateSingleAsyncOperationFactory {
     private boolean _isLastMaster;
-    private Guid _newMasterStorageDomainId = new Guid();
+    private Guid _newMasterStorageDomainId = Guid.Empty;
 
     @Override
     public ISingleAsyncOperation createSingleAsyncOperation() {

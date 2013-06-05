@@ -5,7 +5,7 @@ import org.ovirt.engine.core.compat.Guid;
 public abstract class StorageDomainQueryParametersBase extends VdcQueryParametersBase {
     private static final long serialVersionUID = -1267869804833489615L;
 
-    private Guid privateStorageDomainId = new Guid();
+    private Guid privateStorageDomainId = Guid.Empty;
 
     public Guid getStorageDomainId() {
         return privateStorageDomainId;

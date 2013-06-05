@@ -876,7 +876,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.cpuOverCommitDurationMinutes = value;
     }
 
-    private Guid storagePoolId = new Guid();
+    private Guid storagePoolId = Guid.Empty;
 
     @Override
     public Guid getStoragePoolId() {

@@ -24,7 +24,7 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         setCompatibilityVersion(compatibilityVersion);
     }
 
-    private Guid privatedstImageGroupId = new Guid();
+    private Guid privatedstImageGroupId = Guid.Empty;
 
     public Guid getdstImageGroupId() {
         return privatedstImageGroupId;
@@ -34,7 +34,7 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privatedstImageGroupId = value;
     }
 
-    private Guid privateVmId = new Guid();
+    private Guid privateVmId = Guid.Empty;
 
     public Guid getVmId() {
         return privateVmId;
@@ -44,7 +44,7 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateVmId = value;
     }
 
-    private Guid privateDstImageId = new Guid();
+    private Guid privateDstImageId = Guid.Empty;
 
     public Guid getDstImageId() {
         return privateDstImageId;
@@ -64,7 +64,7 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateImageDescription = value;
     }
 
-    private Guid privateDstStorageDomainId = new Guid();
+    private Guid privateDstStorageDomainId = Guid.Empty;
 
     public Guid getDstStorageDomainId() {
         return privateDstStorageDomainId;

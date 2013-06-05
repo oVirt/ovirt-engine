@@ -24,7 +24,7 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
     @Override
     protected void executeCommand() {
         VmDevice watchdogDevice = new VmDevice();
-        watchdogDevice.setId(new VmDeviceId(new Guid(), getParameters().getId()));
+        watchdogDevice.setId(new VmDeviceId(Guid.Empty, getParameters().getId()));
         watchdogDevice.setDevice(VmDeviceType.WATCHDOG.getName());
         watchdogDevice.setType(VmDeviceGeneralType.WATCHDOG);
         watchdogDevice.setAddress(StringUtils.EMPTY);

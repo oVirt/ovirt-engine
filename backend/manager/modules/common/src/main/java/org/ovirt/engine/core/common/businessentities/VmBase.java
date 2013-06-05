@@ -37,7 +37,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private Map<Guid, VmDevice> managedDeviceMap = new HashMap<Guid, VmDevice>();
     private List<VmDevice> unmanagedDeviceList = new ArrayList<VmDevice>();
 
-    private Guid id = new Guid();
+    private Guid id = Guid.Empty;
 
     @EditableOnVmStatusField
     private Guid vdsGroupId;

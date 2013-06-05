@@ -12,7 +12,7 @@ public class Guid implements Serializable, Comparable<Guid> {
     protected static final String EMPTY_GUID_VALUE = "00000000-0000-0000-0000-000000000000";
     public static final Guid SYSTEM = new Guid("AAA00000-0000-0000-0000-123456789AAA");
     public static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");
-    public final static Guid Empty = new Guid();
+    public final static Guid Empty = new Guid(EMPTY_GUID_VALUE);
 
     private static final byte[] CHANGE_BYTE_ORDER_INDICES = { 3, 2, 1, 0,
             5, 4, 7, 6, 8, 9, 10, 11, 12, 13, 14, 15 };
@@ -21,9 +21,13 @@ public class Guid implements Serializable, Comparable<Guid> {
 
     protected UUID uuid;
 
-    public Guid() {
-        this(EMPTY_GUID_VALUE);
-
+    /**
+     * This constructor should never be used directly - use {@link #Empty} instead.
+     * It is left here only because GWT requires it.
+     */
+    @Deprecated
+    private Guid() {
+        this(Empty.getUuid());
     }
 
     public Guid(UUID uuid) {

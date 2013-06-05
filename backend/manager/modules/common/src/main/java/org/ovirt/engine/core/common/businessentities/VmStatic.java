@@ -14,7 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmStatic extends VmBase {
     private static final long serialVersionUID = -2753306386502558044L;
 
-    private Guid vmtGuid = new Guid();
+    private Guid vmtGuid = Guid.Empty;
 
     private boolean initialized;
 

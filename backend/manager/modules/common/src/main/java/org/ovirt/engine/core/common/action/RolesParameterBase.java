@@ -12,7 +12,7 @@ public class RolesParameterBase extends VdcActionParametersBase {
     }
 
     @NotNull
-    private Guid privateRoleId = new Guid();
+    private Guid privateRoleId = Guid.Empty;
 
     public Guid getRoleId() {
         return privateRoleId;

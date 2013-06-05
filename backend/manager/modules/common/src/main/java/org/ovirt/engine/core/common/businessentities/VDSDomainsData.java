@@ -6,7 +6,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VDSDomainsData implements Serializable {
     private static final long serialVersionUID = 8446715112443992758L;
-    private Guid privateDomainId = new Guid();
+    private Guid privateDomainId = Guid.Empty;
     private double lastCheck;
     private double delay;
 

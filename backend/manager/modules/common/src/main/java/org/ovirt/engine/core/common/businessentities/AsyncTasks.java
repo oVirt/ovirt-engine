@@ -79,7 +79,7 @@ public class AsyncTasks implements Serializable {
         this.status = value;
     }
 
-    private Guid taskId = new Guid();
+    private Guid taskId = Guid.Empty;
 
     public Guid gettask_id() {
         return this.taskId;

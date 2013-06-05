@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class LdapGroup extends IVdcQueryable {
     private static final long serialVersionUID = 6717840754119287059L;
 
-    private Guid id = new Guid();
+    private Guid id = Guid.Empty;
 
     private String name;
 

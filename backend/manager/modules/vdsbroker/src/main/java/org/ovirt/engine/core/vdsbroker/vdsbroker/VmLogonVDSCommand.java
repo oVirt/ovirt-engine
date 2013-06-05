@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.vdscommands.VmLogonVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmLogonVDSCommand<P extends VmLogonVDSCommandParameters> extends VdsBrokerCommand<P> {
-    private Guid mVmId = new Guid();
+    private Guid mVmId = Guid.Empty;
     private String mDomain;
     private String mUserName;
     private String mPassword;

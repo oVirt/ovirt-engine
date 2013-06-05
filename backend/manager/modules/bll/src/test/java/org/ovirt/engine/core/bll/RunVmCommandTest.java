@@ -116,7 +116,7 @@ public class RunVmCommandTest {
     private static DiskImage createImage() {
         final DiskImage diskImage = new DiskImage();
         diskImage.setId(Guid.newGuid());
-        diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid())));
+        diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(Guid.newGuid())));
         return diskImage;
     }
 

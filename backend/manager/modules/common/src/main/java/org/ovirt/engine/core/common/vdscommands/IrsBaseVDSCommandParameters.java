@@ -7,7 +7,7 @@ public class IrsBaseVDSCommandParameters extends VDSParametersBase {
         setStoragePoolId(storagePoolId);
     }
 
-    private Guid privateStoragePoolId = new Guid();
+    private Guid privateStoragePoolId = Guid.Empty;
 
     public Guid getStoragePoolId() {
         return privateStoragePoolId;

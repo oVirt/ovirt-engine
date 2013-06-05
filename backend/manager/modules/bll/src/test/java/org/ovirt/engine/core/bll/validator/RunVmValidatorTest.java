@@ -124,7 +124,7 @@ public class RunVmValidatorTest {
     @Test
     public void testNoDiskBootFromIsoDomain() {
         IsoDomainListSyncronizer mock = mockIsoDomainListSyncronizer();
-        doReturn(new Guid()).when(mock).findActiveISODomain(any(Guid.class));
+        doReturn(Guid.newGuid()).when(mock).findActiveISODomain(any(Guid.class));
         validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.CD, new ArrayList<Disk>()),
                 true,
                 null);

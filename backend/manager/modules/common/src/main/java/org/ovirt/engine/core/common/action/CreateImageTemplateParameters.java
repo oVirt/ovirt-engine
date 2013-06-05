@@ -6,7 +6,7 @@ public class CreateImageTemplateParameters extends ImagesActionsParametersBase i
     private static final long serialVersionUID = 1528721415797299722L;
 
     private Guid destinationStorageDomainId;
-    private Guid privateVmTemplateId = new Guid();
+    private Guid privateVmTemplateId = Guid.Empty;
 
     public Guid getVmTemplateId() {
         return privateVmTemplateId;
@@ -16,7 +16,7 @@ public class CreateImageTemplateParameters extends ImagesActionsParametersBase i
         privateVmTemplateId = value;
     }
 
-    private Guid privateVmId = new Guid();
+    private Guid privateVmId = Guid.Empty;
 
     public Guid getVmId() {
         return privateVmId;

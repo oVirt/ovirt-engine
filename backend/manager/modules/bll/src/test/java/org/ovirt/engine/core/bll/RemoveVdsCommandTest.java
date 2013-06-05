@@ -225,7 +225,7 @@ public class RemoveVdsCommandTest {
         List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
         if (isBricksRequired) {
             GlusterBrickEntity brick = new GlusterBrickEntity();
-            brick.setVolumeId(new Guid());
+            brick.setVolumeId(Guid.newGuid());
             brick.setServerId(command.getVdsId());
             bricks.add(brick);
         }

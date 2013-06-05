@@ -60,7 +60,7 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
 
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
-        vds.setId(new Guid());
+        vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
         vds.setVdsGroupId(CLUSTER_ID);
         vds.setStatus(status);
@@ -94,7 +94,7 @@ public class GetGlusterVolumeProfileInfoQueryTest extends
 
     private List<BrickProfileDetails> getBrickProfileDetails() {
         BrickProfileDetails profileDetails = new BrickProfileDetails();
-        profileDetails.setBrickId(new Guid());
+        profileDetails.setBrickId(Guid.newGuid());
         profileDetails.setStatsInfo(getStatsInfo());
         return Collections.singletonList(profileDetails);
     }

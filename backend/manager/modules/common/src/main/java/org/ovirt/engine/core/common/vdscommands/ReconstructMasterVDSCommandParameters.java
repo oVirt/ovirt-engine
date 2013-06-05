@@ -16,7 +16,7 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
         privateVdsSpmId = value;
     }
 
-    private Guid privateStoragePoolId = new Guid();
+    private Guid privateStoragePoolId = Guid.Empty;
 
     public Guid getStoragePoolId() {
         return privateStoragePoolId;
@@ -36,7 +36,7 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
         privateStoragePoolName = value;
     }
 
-    private Guid privateMasterDomainId = new Guid();
+    private Guid privateMasterDomainId = Guid.Empty;
 
     public Guid getMasterDomainId() {
         return privateMasterDomainId;

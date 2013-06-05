@@ -68,7 +68,7 @@ public class VdsBrokerObjectsBuilder {
                 vmdynamic.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
             } catch (FormatException e) {
                 log.info("vm id is not in uuid format, ", e);
-                vmdynamic.setId(new Guid());
+                vmdynamic.setId(Guid.Empty);
             }
         }
         if (xmlRpcStruct.containsKey(VdsProperties.status)) {
@@ -108,7 +108,7 @@ public class VdsBrokerObjectsBuilder {
                 vm.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
             } catch (FormatException e) {
                 log.info("vm id is not in uuid format, ", e);
-                vm.setId(new Guid());
+                vm.setId(Guid.Empty);
             }
         }
         if (xmlRpcStruct.containsKey(VdsProperties.session)) {
@@ -263,7 +263,7 @@ public class VdsBrokerObjectsBuilder {
                 vm.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
             } catch (FormatException e) {
                 log.info("vm id is not in uuid format, ", e);
-                vm.setId(new Guid());
+                vm.setId(Guid.Empty);
             }
         }
 

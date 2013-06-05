@@ -4,7 +4,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveVmFromPoolParameters extends VmPoolParametersBase {
     private static final long serialVersionUID = -9051384517712295806L;
-    private Guid _vmId = new Guid();
+    private Guid _vmId = Guid.Empty;
     private boolean removePoolUponDetachAllVMs = false;
 
     public RemoveVmFromPoolParameters(Guid vmId) {

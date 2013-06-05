@@ -13,7 +13,7 @@ public class RemoveVMVDSCommandParameters extends StorageDomainIdParametersBase 
         setStorageDomainId(storageDomainId);
     }
 
-    private Guid privateVmGuid = new Guid();
+    private Guid privateVmGuid = Guid.Empty;
 
     public Guid getVmGuid() {
         return privateVmGuid;

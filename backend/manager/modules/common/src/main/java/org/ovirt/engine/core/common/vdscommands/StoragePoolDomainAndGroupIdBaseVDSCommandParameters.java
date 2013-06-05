@@ -10,7 +10,7 @@ public class StoragePoolDomainAndGroupIdBaseVDSCommandParameters extends Storage
         setImageGroupId(imageGroupId);
     }
 
-    private Guid privateImageGroupId = new Guid();
+    private Guid privateImageGroupId = Guid.Empty;
 
     public Guid getImageGroupId() {
         return privateImageGroupId;

@@ -155,7 +155,7 @@ public class OvfManagerTest {
         VM vm = new VM();
         vm.setName("test-vm");
         vm.setOrigin(OriginType.OVIRT);
-        vm.setId(new Guid());
+        vm.setId(Guid.newGuid());
         vm.setVmDescription("test-description");
         vm.getStaticData().setDomain("domain_name");
         vm.setTimeZone("Israel Standard Time");
@@ -192,7 +192,7 @@ public class OvfManagerTest {
         VmTemplate template = new VmTemplate();
         template.setName("test-template");
         template.setOrigin(OriginType.OVIRT);
-        template.setId(new Guid());
+        template.setId(Guid.newGuid());
         template.setDescription("test-description");
         template.setDbGeneration(2L);
         return template;

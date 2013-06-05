@@ -198,7 +198,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     public Guid storageId;
     public StorageServerConnections fileConnection;
     public StorageServerConnections connection;
-    public Guid hostId = new Guid();
+    public Guid hostId = Guid.Empty;
     public String path;
     public StorageDomainType domainType = StorageDomainType.values()[0];
     public StorageType storageType;

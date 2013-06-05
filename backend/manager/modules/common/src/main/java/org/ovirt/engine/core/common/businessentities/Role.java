@@ -14,7 +14,7 @@ public class Role extends IVdcQueryable implements BusinessEntity<Guid> {
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String description;
-    private Guid id = new Guid();
+    private Guid id = Guid.Empty;
     private boolean readOnly;
 
     @NotNull(message = "VALIDATION.ROLES.NAME.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })

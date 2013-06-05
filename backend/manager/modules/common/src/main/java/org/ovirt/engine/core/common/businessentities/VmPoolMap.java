@@ -16,7 +16,7 @@ public class VmPoolMap implements Serializable {
         this.vmPoolId = vm_pool_id;
     }
 
-    private Guid vmId = new Guid();
+    private Guid vmId = Guid.Empty;
 
     public Guid getvm_guid() {
         return this.vmId;

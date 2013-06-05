@@ -8,7 +8,7 @@ public class HSMTaskGuidBaseVDSCommandParameters extends VdsIdVDSCommandParamete
         setTaskId(taskId);
     }
 
-    private Guid privateTaskId = new Guid();
+    private Guid privateTaskId = Guid.Empty;
 
     public Guid getTaskId() {
         return privateTaskId;

@@ -14,7 +14,7 @@ import java.util.List;
 public class UserPermissionModel extends Model
 {
 
-    private Guid privateId = new Guid();
+    private Guid privateId = Guid.Empty;
 
     public Guid getId()
     {

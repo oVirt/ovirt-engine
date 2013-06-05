@@ -18,7 +18,7 @@ public class RemoveVmFromImportExportParamenters extends RemoveVmParameters impl
         return _vm;
     }
 
-    private Guid privateStorageDomainId = new Guid();
+    private Guid privateStorageDomainId = Guid.Empty;
 
     public Guid getStorageDomainId() {
         return privateStorageDomainId;
@@ -28,7 +28,7 @@ public class RemoveVmFromImportExportParamenters extends RemoveVmParameters impl
         privateStorageDomainId = value;
     }
 
-    private Guid privateStoragePoolId = new Guid();
+    private Guid privateStoragePoolId = Guid.Empty;
 
     public Guid getStoragePoolId() {
         return privateStoragePoolId;

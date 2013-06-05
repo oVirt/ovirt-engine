@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 public class DbUser extends IVdcQueryable {
     private static final long serialVersionUID = 7052102138405696755L;
 
-    private Guid id = new Guid();
+    private Guid id = Guid.Empty;
 
     @Size(max = BusinessEntitiesDefinitions.USER_NAME_SIZE)
     private String name = "";

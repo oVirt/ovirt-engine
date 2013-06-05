@@ -7,7 +7,7 @@ public class IsVmDuringInitiatingVDSCommandParameters extends VDSParametersBase 
         _vmId = vmId;
     }
 
-    private Guid _vmId = new Guid();
+    private Guid _vmId = Guid.Empty;
 
     public Guid getVmId() {
         return _vmId;
