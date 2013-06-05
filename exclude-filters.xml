@@ -1,0 +1,14 @@
+<FindBugsFilter>
+       <!--
+        findbugs complains parseVersion is never read
+        it is used for generate GWT code
+
+        findbugs reason:
+        UrF: Unread public/protected field (URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs" />
+       <Field name="parseVersion"/>
+       <Bug code="UrF"/>
+     </Match>
+</FindBugsFilter>

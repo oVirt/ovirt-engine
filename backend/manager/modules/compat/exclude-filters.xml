@@ -26,4 +26,30 @@
        <Method name="setValue"/>
        <Bug code="SF"/>
      </Match>
+
+       <!--
+        findbugs complains that we don't use innerText in XmlNode
+        We do use that code for reading/writing xml from legacy code
+
+        findbugs reason:
+        UrF: Unread public/protected field (URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.core.compat.backendcompat.XmlNode" />
+       <Field name="InnerText"/>
+       <Bug code="UrF"/>
+     </Match>
+
+       <!--
+        findbugs complains that we don't use Attributes in XmlNode
+        We do use that code for reading/writing xml from legacy code
+
+        findbugs reason:
+        UrF: Unread public/protected field (URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD)
+       -->
+     <Match>
+       <Class name="org.ovirt.engine.core.compat.backendcompat.XmlNode" />
+       <Field name="Attributes"/>
+       <Bug code="UrF"/>
+     </Match>
 </FindBugsFilter>
