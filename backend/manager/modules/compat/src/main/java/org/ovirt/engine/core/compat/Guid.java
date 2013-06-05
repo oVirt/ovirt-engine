@@ -58,17 +58,15 @@ public class Guid implements Serializable, Comparable<Guid> {
     public static Guid createGuidFromString(String candidate) {
         if (candidate == null) {
             return null;
-        } else {
-            return new Guid(candidate);
         }
+        return new Guid(candidate);
     }
 
     public static Guid createGuidFromStringDefaultEmpty(String candidate) {
         if (candidate == null) {
             return Guid.Empty;
-        } else {
-            return new Guid(candidate);
         }
+        return new Guid(candidate);
     }
 
     public static boolean isNullOrEmpty(Guid id) {
@@ -100,10 +98,10 @@ public class Guid implements Serializable, Comparable<Guid> {
 
     @Override
     public String toString() {
-        if (uuid == null)
+        if (uuid == null) {
             return "[null]";
-        else
-            return uuid.toString();
+        }
+        return uuid.toString();
     }
 
     /**
