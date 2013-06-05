@@ -20,7 +20,7 @@ public class GetStorageDomainByIdQueryTest extends AbstractUserQueryTest<IdQuery
     @Test
     public void testExecuteQuery() {
         // Create a storage domain for the test
-        Guid storageDomainId = Guid.NewGuid();
+        Guid storageDomainId = Guid.newGuid();
         StorageDomain expected = new StorageDomain();
         expected.setId(storageDomainId);
 

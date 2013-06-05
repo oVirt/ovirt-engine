@@ -70,8 +70,8 @@ public class RemoveStorageServerConnectionCommandTest {
 
     private void prepareCommand() {
         parameters = new StorageServerConnectionParametersBase();
-        parameters.setVdsId(Guid.NewGuid());
-        parameters.setStoragePoolId(Guid.NewGuid());
+        parameters.setVdsId(Guid.newGuid());
+        parameters.setStoragePoolId(Guid.newGuid());
 
         command = spy(new RemoveStorageServerConnectionCommand(parameters));
         doReturn(lunDAO).when(command).getLunDao();
@@ -83,7 +83,7 @@ public class RemoveStorageServerConnectionCommandTest {
             NfsVersion version,
             int timeout,
             int retrans) {
-        Guid id = Guid.NewGuid();
+        Guid id = Guid.newGuid();
         StorageServerConnections connectionDetails = populateBasicConnectionDetails(id, connection, type);
         connectionDetails.setNfsVersion(version);
         connectionDetails.setNfsTimeo((short) timeout);
@@ -98,7 +98,7 @@ public class RemoveStorageServerConnectionCommandTest {
             String password,
             String portal
             ) {
-        Guid id = Guid.NewGuid();
+        Guid id = Guid.newGuid();
         StorageServerConnections connectionDetails = populateBasicConnectionDetails(id, connection, type);
         connectionDetails.setiqn(iqn);
         connectionDetails.setuser_name(userName);

@@ -18,7 +18,7 @@ public class DetachActionGroupsFromRoleCommandTest extends AbstractRolesCommandT
 
     @Override
     protected ActionGroupsToRoleParameter generateParameters() {
-        Guid roleId = Guid.NewGuid();
+        Guid roleId = Guid.newGuid();
         ArrayList<ActionGroup> groups =
                 new ArrayList<ActionGroup>(Arrays.asList(ActionGroup.DELETE_HOST, ActionGroup.CONFIGURE_ENGINE));
         return new ActionGroupsToRoleParameter(roleId, groups);

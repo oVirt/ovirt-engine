@@ -24,7 +24,7 @@ public class GetVmTemplatesByImageGuidQueryTest extends AbstractQueryTest<IdQuer
     @Test
     public void testExecuteQueryCommand() {
         // Set up the query parameters
-        Guid imageGuid = Guid.NewGuid();
+        Guid imageGuid = Guid.newGuid();
         when(params.getId()).thenReturn(imageGuid);
 
         // Set up the DAOs

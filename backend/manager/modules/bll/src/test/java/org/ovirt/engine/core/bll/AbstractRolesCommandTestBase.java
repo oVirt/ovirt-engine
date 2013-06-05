@@ -40,7 +40,7 @@ public abstract class AbstractRolesCommandTestBase {
     }
 
     protected RolesParameterBase generateParameters() {
-        return new RolesParameterBase(Guid.NewGuid());
+        return new RolesParameterBase(Guid.newGuid());
     }
 
     abstract protected RolesCommandBase<? extends RolesParameterBase> generateCommand();

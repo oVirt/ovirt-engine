@@ -21,7 +21,7 @@ public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
     private RoleType roleType;
 
     public permissions() {
-        this.id = Guid.NewGuid();
+        this.id = Guid.newGuid();
     }
 
     /**
@@ -36,7 +36,7 @@ public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
     }
 
     public permissions(Guid adElementId, Guid roleId, Guid objectId, VdcObjectType objectType) {
-        this.id = Guid.NewGuid();
+        this.id = Guid.newGuid();
         this.adElementId = adElementId;
         this.roleId = roleId;
         this.objectId = objectId;

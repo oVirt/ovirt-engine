@@ -27,9 +27,9 @@ public class RemoveStorageDomainCommandTest {
 
     @Before
     public void setUp() {
-        storageDomainID = Guid.NewGuid();
-        vdsID = Guid.NewGuid();
-        storagePoolID = Guid.NewGuid();
+        storageDomainID = Guid.newGuid();
+        vdsID = Guid.newGuid();
+        storagePoolID = Guid.newGuid();
         RemoveStorageDomainParameters params = new RemoveStorageDomainParameters();
         params.setVdsId(vdsID);
         params.setStorageDomainId(storageDomainID);

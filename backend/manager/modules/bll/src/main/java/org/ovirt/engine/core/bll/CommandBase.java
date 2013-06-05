@@ -137,7 +137,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected CommandBase() {
-        commandId = Guid.NewGuid();
+        commandId = Guid.newGuid();
     }
 
     protected CommandBase(T parameters) {
@@ -161,7 +161,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         Guid commandIdFromParameters = parameters.getCommandId();
         if (commandIdFromParameters == null) {
-            commandIdFromParameters = Guid.NewGuid();
+            commandIdFromParameters = Guid.newGuid();
             getParameters().setCommandId(commandIdFromParameters);
         }
 

@@ -59,8 +59,8 @@ public class VirtMonitoringStrategyTest {
     @Test
     public void testNeedToProcessHardwareCapsFalse() {
         VDS oldVds = new VDS();
-        oldVds.setVdsGroupId(Guid.NewGuid());
-        oldVds.setId(Guid.NewGuid());
+        oldVds.setVdsGroupId(Guid.newGuid());
+        oldVds.setId(Guid.newGuid());
         oldVds.setCpuFlags("flag1");
         VDS newVds = oldVds.clone();
         assertFalse(virtStrategy.processHardwareCapabilitiesNeeded(oldVds, newVds));
@@ -69,8 +69,8 @@ public class VirtMonitoringStrategyTest {
     @Test
     public void testNeedToProcessHardwareCapsTrue() {
         VDS oldVds = new VDS();
-        oldVds.setVdsGroupId(Guid.NewGuid());
-        oldVds.setId(Guid.NewGuid());
+        oldVds.setVdsGroupId(Guid.newGuid());
+        oldVds.setId(Guid.newGuid());
         oldVds.setCpuFlags("flag1");
         VDS newVds = oldVds.clone();
         newVds.setCpuFlags("flag2");

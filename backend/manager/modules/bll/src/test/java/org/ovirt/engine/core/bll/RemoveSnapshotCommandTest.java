@@ -62,17 +62,17 @@ public class RemoveSnapshotCommandTest {
     @Mock
     private SnapshotsValidator snapshotValidator;
 
-    private static final Guid STORAGE_DOMAIN_ID = Guid.NewGuid();
-    private static final Guid STORAGE_DOMAIN_ID2 = Guid.NewGuid();
-    private static final Guid STORAGE_POOLD_ID = Guid.NewGuid();
+    private static final Guid STORAGE_DOMAIN_ID = Guid.newGuid();
+    private static final Guid STORAGE_DOMAIN_ID2 = Guid.newGuid();
+    private static final Guid STORAGE_POOLD_ID = Guid.newGuid();
 
     private static final int USED_SPACE_GB = 4;
     private static final int IMAGE_ACTUAL_SIZE_GB = 4;
 
     @Before
     public void setUp() {
-        Guid vmGuid = Guid.NewGuid();
-        Guid snapGuid = Guid.NewGuid();
+        Guid vmGuid = Guid.newGuid();
+        Guid snapGuid = Guid.newGuid();
 
         RemoveSnapshotParameters params = new RemoveSnapshotParameters(snapGuid, vmGuid);
         cmd = spy(new RemoveSnapshotCommand<RemoveSnapshotParameters>(params));
@@ -204,7 +204,7 @@ public class RemoveSnapshotCommandTest {
     @Test
     public void testCanDoActionVmUp() {
         VM vm = new VM();
-        vm.setId(Guid.NewGuid());
+        vm.setId(Guid.newGuid());
         vm.setStatus(VMStatus.Up);
         vm.setStoragePoolId(STORAGE_POOLD_ID);
 
@@ -225,7 +225,7 @@ public class RemoveSnapshotCommandTest {
 
     /** Mocks a call to {@link RemoveSnapshotCommand#getSourceImages()} and returns its image guid */
     private Guid mockSourceImage() {
-        Guid imageId = Guid.NewGuid();
+        Guid imageId = Guid.newGuid();
         DiskImage image = new DiskImage();
         image.setImageId(imageId);
         ArrayList<Guid> list = new ArrayList<Guid>();
@@ -241,7 +241,7 @@ public class RemoveSnapshotCommandTest {
     private static List<DiskImage> mockMultipleSourceImagesForDomain(int numberOfDisks, Guid storageDomainId, int actualDiskSize) {
         List<DiskImage> listDisks = new ArrayList<DiskImage>();
         for (int index=0; index < numberOfDisks; index++) {
-            Guid imageId = Guid.NewGuid();
+            Guid imageId = Guid.newGuid();
             DiskImage image = new DiskImage();
             image.setImageId(imageId);
             ArrayList<Guid> list = new ArrayList<Guid>();

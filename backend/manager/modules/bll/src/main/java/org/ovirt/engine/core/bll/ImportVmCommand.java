@@ -159,14 +159,14 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     private void initImportClonedVm() {
-        Guid guid = Guid.NewGuid();
+        Guid guid = Guid.newGuid();
         getVm().setId(guid);
         setVmId(guid);
         getVm().setName(getParameters().getVm().getName());
         getVm().setStoragePoolId(getParameters().getStoragePoolId());
         getParameters().setVm(getVm());
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
-            iface.setId(Guid.NewGuid());
+            iface.setId(Guid.newGuid());
         }
     }
 
@@ -637,7 +637,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         Map<Guid, List<DiskImage>> images = ImagesHandler.getImagesLeaf(getVm().getImages());
 
         if (getParameters().getCopyCollapse()) {
-            Guid snapshotId = Guid.NewGuid();
+            Guid snapshotId = Guid.newGuid();
             int aliasCounter = 0;
             for (List<DiskImage> diskList : images.values()) {
                 DiskImage disk = diskList.get(diskList.size() - 1);
@@ -659,8 +659,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 diskGuidList.add(disk.getId());
                 imageGuidList.add(disk.getImageId());
                 if (getParameters().isImportAsNewEntity()) {
-                    disk.setId(Guid.NewGuid());
-                    disk.setImageId(Guid.NewGuid());
+                    disk.setId(Guid.newGuid());
+                    disk.setImageId(Guid.newGuid());
                     for (int i = 0; i < diskList.size() - 1; i++) {
                          diskList.get(i).setId(disk.getId());
                     }
@@ -880,7 +880,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     private void initInterface(VmNetworkInterface iface) {
         if (iface.getId() == null) {
-            iface.setId(Guid.NewGuid());
+            iface.setId(Guid.newGuid());
         }
         fillMacAddressIfMissing(iface);
         iface.setVmTemplateId(null);

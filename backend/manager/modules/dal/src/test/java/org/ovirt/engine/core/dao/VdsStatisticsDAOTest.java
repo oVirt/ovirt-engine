@@ -38,7 +38,7 @@ public class VdsStatisticsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        VdsStatistics result = dao.get(Guid.NewGuid());
+        VdsStatistics result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }

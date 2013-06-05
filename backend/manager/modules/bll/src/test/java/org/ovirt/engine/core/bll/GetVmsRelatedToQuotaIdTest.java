@@ -23,7 +23,7 @@ public class GetVmsRelatedToQuotaIdTest extends AbstractQueryTest<IdQueryParamet
     @Mock
     VmDAO vmDAO;
 
-    Guid quotaId = Guid.NewGuid();
+    Guid quotaId = Guid.newGuid();
     List<VM> returnedVms;
 
     @Test

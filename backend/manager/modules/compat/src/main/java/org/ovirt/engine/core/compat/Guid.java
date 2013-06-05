@@ -51,7 +51,7 @@ public class Guid implements Serializable, Comparable<Guid> {
         }
     }
 
-    public static Guid NewGuid() {
+    public static Guid newGuid() {
         return new Guid(UUID.randomUUID());
     }
 

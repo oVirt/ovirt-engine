@@ -100,14 +100,14 @@ public class VdsUpdateRunTimeInfoTest {
 
     @Test
     public void updateVmDevicesNotNull() {
-        Guid vmGuid = Guid.NewGuid();
+        Guid vmGuid = Guid.newGuid();
         when(vmDeviceDAO.getVmDeviceByVmId(vmGuid)).thenReturn(Collections.<VmDevice> emptyList());
 
         HashMap vm = new HashMap();
         vm.put(VdsProperties.vm_guid, vmGuid.toString());
 
         Map<String, Object> deviceProperties = new HashMap<String, Object>();
-        Guid deviceID = Guid.NewGuid();
+        Guid deviceID = Guid.newGuid();
         deviceProperties.put(VdsProperties.DeviceId, deviceID.toString());
         deviceProperties.put(VdsProperties.Address, Collections.emptyMap());
         deviceProperties.put(VdsProperties.Device, "aDevice");

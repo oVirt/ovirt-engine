@@ -41,10 +41,10 @@ public class BusinessEntitySnapshotDAOTest extends BaseDAOTestCase {
     @Test
     public void testInsertSnapshot() {
         BusinessEntitySnapshot snapshot = new BusinessEntitySnapshot();
-        Guid commandId = Guid.NewGuid();
+        Guid commandId = Guid.newGuid();
         snapshot.setCommandId(commandId);
         snapshot.setCommandType("org.ovirt.engine.core.bll.UpdateVdsCommand");
-        snapshot.setEntityId(Guid.NewGuid().toString());
+        snapshot.setEntityId(Guid.newGuid().toString());
         snapshot.setEntityType("org.ovirt.engine.core.common.businessentities.VdsStatic");
         snapshot.setEntitySnapshot("something");
         snapshot.setSnapshotClass("someClass");

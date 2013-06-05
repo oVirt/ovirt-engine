@@ -63,7 +63,7 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        VmDynamic result = dao.get(Guid.NewGuid());
+        VmDynamic result = dao.get(Guid.newGuid());
         assertNull(result);
     }
 

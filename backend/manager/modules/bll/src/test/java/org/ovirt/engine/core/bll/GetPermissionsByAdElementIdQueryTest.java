@@ -22,7 +22,7 @@ public class GetPermissionsByAdElementIdQueryTest extends AbstractUserQueryTest<
     @Test
     public void testQueryExecution() {
         // Prepare the query parameters
-        Guid adElementGuid = Guid.NewGuid();
+        Guid adElementGuid = Guid.newGuid();
         when(getQueryParameters().getId()).thenReturn(adElementGuid);
 
         // Create expected result

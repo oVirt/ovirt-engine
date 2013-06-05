@@ -38,7 +38,7 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        VdsDynamic result = dao.get(Guid.NewGuid());
+        VdsDynamic result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }

@@ -103,7 +103,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
                 _adGroup = AdGroupsHandlingCommandBase.initAdGroup(getParameters().getAdGroup());
             }
 
-            paramPermission.setId(Guid.NewGuid());
+            paramPermission.setId(Guid.newGuid());
 
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override

@@ -31,7 +31,7 @@ public class LdapGroupSearchQueryTest extends LdapSearchQueryTestBase {
 
     @Override
     protected LdapGroup getExpectedResult() {
-        return new LdapGroup(Guid.NewGuid(), NAME_TO_SEARCH, DOMAIN);
+        return new LdapGroup(Guid.newGuid(), NAME_TO_SEARCH, DOMAIN);
     }
 
     @Override

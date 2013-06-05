@@ -38,7 +38,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        VDS result = dao.get(Guid.NewGuid());
+        VDS result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }
@@ -353,7 +353,7 @@ public class VdsDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForStoragePoolNoVds() {
-        List<VDS> result = dao.getAllForStoragePool(Guid.NewGuid());
+        List<VDS> result = dao.getAllForStoragePool(Guid.newGuid());
         assertIncorrectGetResult(result);
     }
 

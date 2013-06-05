@@ -80,8 +80,8 @@ public class UpdateStorageServerConnectionCommandTest {
 
     private void prepareCommand() {
        parameters = new StorageServerConnectionParametersBase();
-       parameters.setVdsId(Guid.NewGuid());
-       parameters.setStoragePoolId(Guid.NewGuid());
+       parameters.setVdsId(Guid.newGuid());
+       parameters.setStoragePoolId(Guid.newGuid());
 
        command = spy(new UpdateStorageServerConnectionCommand<StorageServerConnectionParametersBase>(parameters));
        doReturn(storageConnDao).when(command).getStorageConnDao();
@@ -95,7 +95,7 @@ public class UpdateStorageServerConnectionCommandTest {
                                                          NfsVersion version,
                                                          int timeout,
                                                          int retrans) {
-        Guid id = Guid.NewGuid();
+        Guid id = Guid.newGuid();
         StorageServerConnections connectionDetails = populateBasicConnectionDetails(id, connection, type);
         connectionDetails.setNfsVersion(version);
         connectionDetails.setNfsTimeo((short) timeout);
@@ -104,7 +104,7 @@ public class UpdateStorageServerConnectionCommandTest {
     }
 
     private StorageServerConnections createPosixConnection(String connection, StorageType type, String vfsType, String mountOptions) {
-        Guid id = Guid.NewGuid();
+        Guid id = Guid.newGuid();
         StorageServerConnections connectionDetails = populateBasicConnectionDetails(id, connection, type);
         connectionDetails.setVfsType(vfsType);
         connectionDetails.setMountOptions(mountOptions);
@@ -226,7 +226,7 @@ public class UpdateStorageServerConnectionCommandTest {
         conn1.setid(newNFSConnection.getid());
         StorageServerConnections conn2 = new StorageServerConnections();
         conn2.setconnection(newNFSConnection.getconnection());
-        conn2.setid(Guid.NewGuid().toString());
+        conn2.setid(Guid.newGuid().toString());
         connections.add(conn1);
         connections.add(conn2);
         when(storageConnDao.getAllForStorage(newNFSConnection.getconnection())).thenReturn(connections);

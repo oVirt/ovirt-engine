@@ -43,9 +43,9 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
         AbstractQueryTest<GlusterVolumeAdvancedDetailsParameters, GetGlusterVolumeAdvancedDetailsQuery<GlusterVolumeAdvancedDetailsParameters>> {
 
     private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
-    private static final Guid VOLUME_ID = Guid.NewGuid();
-    private static final Guid BRICK_ID = Guid.NewGuid();
-    private static final Guid SERVER_ID = Guid.NewGuid();
+    private static final Guid VOLUME_ID = Guid.newGuid();
+    private static final Guid BRICK_ID = Guid.newGuid();
+    private static final Guid SERVER_ID = Guid.newGuid();
     private static final String SERVER_NAME = "server1";
     private GlusterVolumeAdvancedDetails expectedVolumeAdvancedDetails;
     private ClusterUtils clusterUtils;
@@ -90,7 +90,7 @@ public class GetGlusterVolumeAdvancedDetailsQueryTest extends
 
     private BrickProperties getBrickProperties() {
         BrickProperties brickProperties = new BrickProperties();
-        brickProperties.setBrickId(Guid.NewGuid());
+        brickProperties.setBrickId(Guid.newGuid());
         brickProperties.setPort(24009);
         brickProperties.setStatus(GlusterStatus.UP);
         brickProperties.setPid(1459);

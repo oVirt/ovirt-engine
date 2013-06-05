@@ -49,7 +49,7 @@ public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
 
         newVmInterface = new VmNetworkInterface();
         newVmInterface.setStatistics(new VmNetworkStatistics());
-        newVmInterface.setId(Guid.NewGuid());
+        newVmInterface.setId(Guid.newGuid());
         newVmInterface.setName("eth77");
         newVmInterface.setNetworkName("enginet");
         newVmInterface.setLinked(true);
@@ -74,7 +74,7 @@ public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithNonExistingId() {
-        VmNetworkInterface result = dao.get(Guid.NewGuid());
+        VmNetworkInterface result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }
@@ -95,7 +95,7 @@ public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForTemplateWithInvalidTemplate() {
-        List<VmNetworkInterface> result = dao.getAllForTemplate(Guid.NewGuid());
+        List<VmNetworkInterface> result = dao.getAllForTemplate(Guid.newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -147,7 +147,7 @@ public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllInterfacesForVmWithInvalidVm() {
-        List<VmNetworkInterface> result = dao.getAllForVm(Guid.NewGuid());
+        List<VmNetworkInterface> result = dao.getAllForVm(Guid.newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

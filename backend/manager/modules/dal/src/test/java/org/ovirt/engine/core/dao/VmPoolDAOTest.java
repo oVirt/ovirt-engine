@@ -69,7 +69,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetVmPoolWithInvalidId() {
-        VmPool result = dao.get(Guid.NewGuid());
+        VmPool result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }
@@ -148,7 +148,7 @@ public class VmPoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllVmPoolsForUserWithNoVmPools() {
-        List<VmPool> result = dao.getAllForUser(Guid.NewGuid());
+        List<VmPool> result = dao.getAllForUser(Guid.newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

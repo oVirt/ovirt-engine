@@ -139,7 +139,7 @@ public class VmInterfaceManagerTest {
         mockDaos();
 
         List<String> vmNames =
-                vmInterfaceManager.findActiveVmsUsingNetworks(Guid.NewGuid(), Collections.singletonList(NETWORK_NAME));
+                vmInterfaceManager.findActiveVmsUsingNetworks(Guid.newGuid(), Collections.singletonList(NETWORK_NAME));
         assertTrue(vmNames.contains(VM_NAME));
     }
 
@@ -148,7 +148,7 @@ public class VmInterfaceManagerTest {
         mockDaos();
 
         List<String> vmNames =
-                vmInterfaceManager.findActiveVmsUsingNetworks(Guid.NewGuid(),
+                vmInterfaceManager.findActiveVmsUsingNetworks(Guid.newGuid(),
                         Collections.singletonList(NETWORK_NAME + "1"));
         assertTrue(vmNames.isEmpty());
     }
@@ -159,7 +159,7 @@ public class VmInterfaceManagerTest {
 
         when(vmNetworkInterfaceDAO.getAllForVm(any(Guid.class))).thenReturn(interfaces);
 
-        vmInterfaceManager.removeAll(Guid.NewGuid());
+        vmInterfaceManager.removeAll(Guid.newGuid());
 
         for (VmNetworkInterface iface : interfaces) {
             verifyRemoveAllDelegatedCorrectly(iface);
@@ -203,7 +203,7 @@ public class VmInterfaceManagerTest {
      */
     protected VmNetworkInterface createNewInterface() {
         VmNetworkInterface iface = new VmNetworkInterface();
-        iface.setId(Guid.NewGuid());
+        iface.setId(Guid.newGuid());
         iface.setMacAddress(RandomUtils.instance().nextString(10));
         return iface;
     }
@@ -226,7 +226,7 @@ public class VmInterfaceManagerTest {
      */
     private VM createVM(String vmName, String networkName) {
         VM vm = new VM();
-        vm.setId(Guid.NewGuid());
+        vm.setId(Guid.newGuid());
         vm.setName(vmName);
         VmNetworkInterface vmIface = createNewInterface();
         vmIface.setVmId(vm.getId());

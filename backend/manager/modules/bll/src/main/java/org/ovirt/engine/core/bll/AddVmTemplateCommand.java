@@ -142,7 +142,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             VmHandler.LockVm(vmDynamic, getCompensationContext());
         }
         setActionReturnValue(Guid.Empty);
-        setVmTemplateId(Guid.NewGuid());
+        setVmTemplateId(Guid.newGuid());
         getParameters().setVmTemplateId(getVmTemplateId());
         getParameters().setEntityId(getVmTemplateId());
 
@@ -392,7 +392,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getId());
         for (VmNetworkInterface iface : interfaces) {
             VmNetworkInterface iDynamic = new VmNetworkInterface();
-            iDynamic.setId(Guid.NewGuid());
+            iDynamic.setId(Guid.newGuid());
             iDynamic.setVmTemplateId(getVmTemplateId());
             iDynamic.setName(iface.getName());
             iDynamic.setNetworkName(iface.getNetworkName());
@@ -406,7 +406,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     protected void AddVmTemplateImages() {
-        Guid vmSnapshotId = Guid.NewGuid();
+        Guid vmSnapshotId = Guid.newGuid();
 
         for (DiskImage diskImage : mImages) {
             CreateImageTemplateParameters createParams = new CreateImageTemplateParameters(diskImage.getImageId(),

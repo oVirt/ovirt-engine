@@ -105,11 +105,11 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                         }
                     });
 
-            Guid image1GroupId = Guid.NewGuid();
+            Guid image1GroupId = Guid.newGuid();
             // this is temp code until SPM will implement the new verb that does
             // it for us:
 
-            Guid hiberVol1 = Guid.NewGuid();
+            Guid hiberVol1 = Guid.newGuid();
             final VDSReturnValue ret1 =
                     Backend
                             .getInstance()
@@ -147,9 +147,9 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
             getReturnValue().getTaskIdList().add(guid1);
 
             // second vol should be 10kb
-            Guid image2GroupId = Guid.NewGuid();
+            Guid image2GroupId = Guid.newGuid();
 
-            Guid hiberVol2 = Guid.NewGuid();
+            Guid hiberVol2 = Guid.newGuid();
             VDSReturnValue ret2 =
                     Backend
                             .getInstance()

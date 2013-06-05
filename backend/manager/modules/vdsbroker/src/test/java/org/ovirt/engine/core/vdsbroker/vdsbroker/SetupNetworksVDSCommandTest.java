@@ -50,7 +50,7 @@ public class SetupNetworksVDSCommandTest {
         VdsNetworkInterface vlan = createVlan(nic, net);
 
         SetupNetworksVdsCommandParameters parameters =
-                new SetupNetworksVdsCommandParameters(Guid.NewGuid(),
+                new SetupNetworksVdsCommandParameters(Guid.newGuid(),
                         Collections.singletonList(net),
                         Collections.<String> emptyList(),
                         Collections.singletonList(nic),
@@ -76,7 +76,7 @@ public class SetupNetworksVDSCommandTest {
         ifaces.add(vlan);
 
         SetupNetworksVdsCommandParameters parameters =
-                new SetupNetworksVdsCommandParameters(Guid.NewGuid(),
+                new SetupNetworksVdsCommandParameters(Guid.newGuid(),
                         Collections.singletonList(net),
                         Collections.<String> emptyList(),
                         Collections.singletonList(bond),
@@ -97,7 +97,7 @@ public class SetupNetworksVDSCommandTest {
         VdsNetworkInterface nic = createNic("eth0", null, NetworkBootProtocol.DHCP, net.getName());
 
         SetupNetworksVdsCommandParameters parameters =
-                new SetupNetworksVdsCommandParameters(Guid.NewGuid(),
+                new SetupNetworksVdsCommandParameters(Guid.newGuid(),
                         Collections.singletonList(net),
                         Collections.<String> emptyList(),
                         Collections.<VdsNetworkInterface> emptyList(),
@@ -121,7 +121,7 @@ public class SetupNetworksVDSCommandTest {
         ifaces.add(bond);
 
         SetupNetworksVdsCommandParameters parameters =
-                new SetupNetworksVdsCommandParameters(Guid.NewGuid(),
+                new SetupNetworksVdsCommandParameters(Guid.newGuid(),
                         Collections.<Network> emptyList(),
                         Collections.<String> emptyList(),
                         Collections.singletonList(bond),
@@ -219,7 +219,7 @@ public class SetupNetworksVDSCommandTest {
             String networkName,
             Integer vlanId) {
         VdsNetworkInterface iface = new VdsNetworkInterface();
-        iface.setId(Guid.NewGuid());
+        iface.setId(Guid.newGuid());
         iface.setName(name);
         iface.setBonded(bonded);
         iface.setBondName(bondName);
@@ -254,7 +254,7 @@ public class SetupNetworksVDSCommandTest {
     private Network createNetwork(Integer vlanId) {
         return new Network("",
                 "",
-                Guid.NewGuid(),
+                Guid.newGuid(),
                 RandomUtils.instance().nextString(10),
                 "",
                 "",

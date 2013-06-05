@@ -28,7 +28,7 @@ import org.ovirt.engine.core.dao.VdsGroupDAO;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RefreshGlusterHooksCommandTest {
-    private static final Guid CLUSTER_ID = Guid.NewGuid();
+    private static final Guid CLUSTER_ID = Guid.newGuid();
     /**
      * The command under test.
      */
@@ -56,7 +56,7 @@ public class RefreshGlusterHooksCommandTest {
 
     protected VDS getServer() {
         VDS server =  new VDS();
-        server.setId(Guid.NewGuid());
+        server.setId(Guid.newGuid());
         server.setVdsName("VDS1");
         server.setStatus(VDSStatus.Up);
         server.setVdsGroupId(CLUSTER_ID);

@@ -128,7 +128,7 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
      */
     private void prepareParameters() {
 
-        vdsId = Guid.NewGuid();
+        vdsId = Guid.newGuid();
         when(getQueryParameters().getVdsId()).thenReturn(vdsId);
 
         storageType = StorageType.UNKNOWN;
@@ -147,11 +147,11 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
      */
     private void createInputLUNs() {
         LUNs lunWithVG = new LUNs();
-        lunWithVG.setLUN_id(Guid.NewGuid().toString());
+        lunWithVG.setLUN_id(Guid.newGuid().toString());
         lunWithVG.setvolume_group_id(new Guid().toString());
 
         LUNs lunExistsInDB = new LUNs();
-        lunExistsInDB.setLUN_id(Guid.NewGuid().toString());
+        lunExistsInDB.setLUN_id(Guid.newGuid().toString());
 
         lunsInput = new ArrayList<LUNs>();
         lunsInput.add(lunWithVG);

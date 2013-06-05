@@ -174,7 +174,7 @@ public class GlusterHookSyncJob extends GlusterJob {
                         if (newHook == null) {
                             newHook = fetchedHook;
                             newHook.setClusterId(clusterId);
-                            newHook.setId(Guid.NewGuid());
+                            newHook.setId(Guid.newGuid());
                             log.infoFormat("Detected new hook {0} in server {1}, adding to engine hooks", key,server);
                             logMessage(clusterId, key, AuditLogType.GLUSTER_HOOK_DETECTED_NEW);
 

@@ -51,7 +51,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        permissions result = dao.get(Guid.NewGuid());
+        permissions result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }
@@ -73,7 +73,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForRoleAndAdElementAndObjectWithInvalidRole() {
         permissions result = dao.getForRoleAndAdElementAndObject(
-                Guid.NewGuid(), AD_ELEMENT_ID, VM_ENTITY_ID);
+                Guid.newGuid(), AD_ELEMENT_ID, VM_ENTITY_ID);
 
         assertNull(result);
     }
@@ -84,7 +84,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForRoleAndAdElementAndObjectWithInvalidAdElement() {
         permissions result = dao.getForRoleAndAdElementAndObject(ROLE_ID,
-                Guid.NewGuid(), VM_ENTITY_ID);
+                Guid.newGuid(), VM_ENTITY_ID);
 
         assertNull(result);
     }
@@ -95,7 +95,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForRoleAndAdElementAndObjectWithInvalidObject() {
         permissions result = dao.getForRoleAndAdElementAndObject(ROLE_ID,
-                AD_ELEMENT_ID, Guid.NewGuid());
+                AD_ELEMENT_ID, Guid.newGuid());
 
         assertNull(result);
     }
@@ -131,7 +131,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForAdElementWithInvalidId() {
-        List<permissions> result = dao.getAllForAdElement(Guid.NewGuid());
+        List<permissions> result = dao.getAllForAdElement(Guid.newGuid());
 
         assertInvalidGetPermissionList(result);
     }
@@ -171,7 +171,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForAdElementOnlyWithInvalidId() {
-        List<permissions> result = dao.getAllDirectPermissionsForAdElement(Guid.NewGuid());
+        List<permissions> result = dao.getAllDirectPermissionsForAdElement(Guid.newGuid());
 
         assertInvalidGetPermissionList(result);
     }
@@ -191,7 +191,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForEntityWithInvalidId() {
-        List<permissions> result = dao.getAllForEntity(Guid.NewGuid());
+        List<permissions> result = dao.getAllForEntity(Guid.newGuid());
 
         assertInvalidGetPermissionList(result);
     }
@@ -265,7 +265,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForRoleWithInvalidRole() {
-        List<permissions> result = dao.getAllForRole(Guid.NewGuid());
+        List<permissions> result = dao.getAllForRole(Guid.newGuid());
 
         assertInvalidGetPermissionList(result);
     }
@@ -291,7 +291,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForRoleAndAdElementWithInvalidRole() {
         List<permissions> result = dao.getAllForRoleAndAdElement(
-                Guid.NewGuid(), AD_ELEMENT_ID);
+                Guid.newGuid(), AD_ELEMENT_ID);
 
         assertInvalidGetPermissionList(result);
     }
@@ -303,7 +303,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForRoleAndAdElementWithInvalidElement() {
         List<permissions> result = dao.getAllForRoleAndAdElement(ROLE_ID,
-                Guid.NewGuid());
+                Guid.newGuid());
 
         assertInvalidGetPermissionList(result);
     }
@@ -329,7 +329,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForRoleAndObjectWithInvalidRole() {
-        List<permissions> result = dao.getAllForRoleAndObject(Guid.NewGuid(),
+        List<permissions> result = dao.getAllForRoleAndObject(Guid.newGuid(),
                 VM_ENTITY_ID);
 
         assertInvalidGetPermissionList(result);
@@ -341,7 +341,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForRoleAndObjectWithInvalidEntity() {
         List<permissions> result = dao.getAllForRoleAndObject(ROLE_ID,
-                Guid.NewGuid());
+                Guid.newGuid());
 
         assertInvalidGetPermissionList(result);
     }
@@ -366,7 +366,7 @@ public class PermissionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetTreeForEntityWithInvalidEntity() {
-        List<permissions> result = dao.getTreeForEntity(Guid.NewGuid(),
+        List<permissions> result = dao.getTreeForEntity(Guid.newGuid(),
                 VdcObjectType.AdElements);
 
         assertInvalidGetPermissionList(result);

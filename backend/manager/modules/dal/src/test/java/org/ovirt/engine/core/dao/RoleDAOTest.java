@@ -42,7 +42,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetRoleWithInvalidId() {
-        Role result = dao.get(Guid.NewGuid());
+        Role result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }
@@ -105,8 +105,8 @@ public class RoleDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAllForUsersAndGroupsInvalidUserAndGroups() {
-        List<Role> result = dao.getAllForUserAndGroups(Guid.NewGuid(),
-                Guid.NewGuid().toString());
+        List<Role> result = dao.getAllForUserAndGroups(Guid.newGuid(),
+                Guid.newGuid().toString());
         assertNotNull(result);
         assertTrue(result.isEmpty());
 

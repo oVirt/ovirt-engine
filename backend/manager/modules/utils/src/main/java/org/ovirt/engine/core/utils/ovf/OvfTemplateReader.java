@@ -121,7 +121,7 @@ public class OvfTemplateReader extends OvfReader {
                 break;
             // CDROM
             case 15:
-                readVmDevice(node, _vmTemplate, Guid.NewGuid(), Boolean.TRUE);
+                readVmDevice(node, _vmTemplate, Guid.newGuid(), Boolean.TRUE);
                 break;
             // USB
             case 23:
@@ -132,11 +132,11 @@ public class OvfTemplateReader extends OvfReader {
             case 20:
                 _vmTemplate
                         .setNumOfMonitors(Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
-                readVmDevice(node, _vmTemplate, Guid.NewGuid(), Boolean.TRUE);
+                readVmDevice(node, _vmTemplate, Guid.newGuid(), Boolean.TRUE);
                 break;
             // OTHER
             case 0:
-                readVmDevice(node, _vmTemplate, Guid.NewGuid(), Boolean.FALSE);
+                readVmDevice(node, _vmTemplate, Guid.newGuid(), Boolean.FALSE);
                 break;
 
             }

@@ -55,7 +55,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
 
     @Test
     public void testQueryWithHostId() {
-        Guid vdsId = Guid.NewGuid();
+        Guid vdsId = Guid.newGuid();
         VDS vds = new VDS();
         vds.setId(vdsId);
         vds.setVdsType(VDSType.oVirtNode);
@@ -73,7 +73,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
 
     @Test
     public void testQueryClusterLevel() {
-        Guid vdsId = Guid.NewGuid();
+        Guid vdsId = Guid.newGuid();
         VDS vds = new VDS();
         vds.setId(vdsId);
         vds.setVdsType(VDSType.oVirtNode);
@@ -92,7 +92,7 @@ public class GetoVirtISOsTest extends AbstractQueryTest<VdsIdParametersBase, Get
 
     @Test
     public void testQueryWithNonExistingHostId() {
-        when(getQueryParameters().getVdsId()).thenReturn(Guid.NewGuid());
+        when(getQueryParameters().getVdsId()).thenReturn(Guid.newGuid());
         getQuery().setInternalExecution(true);
         getQuery().executeCommand();
 

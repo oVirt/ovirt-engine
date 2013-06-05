@@ -17,9 +17,9 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 public class GetManagementInterfaceAddressByVmIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetManagementInterfaceAddressByVmIdQuery<IdQueryParameters>> {
     @Test
     public void testExecuteQuery() {
-        Guid vmID = Guid.NewGuid();
+        Guid vmID = Guid.newGuid();
         VM vm = new VM();
-        Guid vdsID = Guid.NewGuid();
+        Guid vdsID = Guid.newGuid();
         vm.setRunOnVds(vdsID);
 
         VDS vds = new VDS();

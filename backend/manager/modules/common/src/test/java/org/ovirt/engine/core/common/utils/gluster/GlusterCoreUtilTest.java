@@ -20,9 +20,9 @@ public class GlusterCoreUtilTest {
     private final String DIR_1 = "dir1";
     private final String DIR_2 = "dir2";
     private final String DIR_3 = "dir3";
-    private final Guid UUID_1 = Guid.NewGuid();
-    private final Guid UUID_2 = Guid.NewGuid();
-    private final Guid UUID_3 = Guid.NewGuid();
+    private final Guid UUID_1 = Guid.newGuid();
+    private final Guid UUID_2 = Guid.newGuid();
+    private final Guid UUID_3 = Guid.newGuid();
     private final GlusterBrickEntity brick1 = createBrick(UUID_1, SERVER_1, DIR_1);
     private final GlusterBrickEntity brick2 = createBrick(UUID_2, SERVER_2, DIR_2);
     private final GlusterBrickEntity brick3 = createBrick(UUID_3, SERVER_3, DIR_3);
@@ -77,7 +77,7 @@ public class GlusterCoreUtilTest {
 
     private GlusterBrickEntity createBrick(Guid serverId, String serverName, String brickDir) {
         GlusterBrickEntity brick = new GlusterBrickEntity();
-        brick.setId(Guid.NewGuid());
+        brick.setId(Guid.newGuid());
         brick.setServerId(serverId);
         brick.setServerName(serverName);
         brick.setBrickDirectory(brickDir);

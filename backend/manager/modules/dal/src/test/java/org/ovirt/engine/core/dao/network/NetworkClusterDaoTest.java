@@ -74,7 +74,7 @@ public class NetworkClusterDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForClusterWithInvalidCluster() {
-        List<NetworkCluster> result = dao.getAllForCluster(Guid.NewGuid());
+        List<NetworkCluster> result = dao.getAllForCluster(Guid.newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

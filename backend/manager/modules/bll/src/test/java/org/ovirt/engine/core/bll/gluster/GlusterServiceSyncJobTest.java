@@ -51,13 +51,13 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GlusterServiceSyncJobTest {
-    private static final Guid CLUSTER_ID = Guid.NewGuid();
-    private static final Guid SERVER1_ID = Guid.NewGuid();
-    private static final Guid SERVER2_ID = Guid.NewGuid();
-    private static final Guid SERVER3_ID = Guid.NewGuid();
-    private static final Guid SERVICE1_ID = Guid.NewGuid();
-    private static final Guid SERVICE2_ID = Guid.NewGuid();
-    private static final Guid SERVICE3_ID = Guid.NewGuid();
+    private static final Guid CLUSTER_ID = Guid.newGuid();
+    private static final Guid SERVER1_ID = Guid.newGuid();
+    private static final Guid SERVER2_ID = Guid.newGuid();
+    private static final Guid SERVER3_ID = Guid.newGuid();
+    private static final Guid SERVICE1_ID = Guid.newGuid();
+    private static final Guid SERVICE2_ID = Guid.newGuid();
+    private static final Guid SERVICE3_ID = Guid.newGuid();
     private static final String SERVICE1_NAME = "service1";
     private static final String SERVICE2_NAME = "service2";
     private static final String SERVICE3_NAME = "service3";
@@ -201,7 +201,7 @@ public class GlusterServiceSyncJobTest {
             String serviceName,
             GlusterServiceStatus status) {
         GlusterServerService service = new GlusterServerService();
-        service.setId(Guid.NewGuid());
+        service.setId(Guid.newGuid());
         service.setServerId(serverId);
         service.setServiceId(serviceId);
         service.setStatus(status);

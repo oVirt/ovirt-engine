@@ -25,7 +25,7 @@ public class GetVdsWithoutNetworkQueryTest
     @Test
     public void testExecuteQueryCommand() {
         // Set up the query parameters
-        Guid networkId = Guid.NewGuid();
+        Guid networkId = Guid.newGuid();
         when(params.getId()).thenReturn(networkId);
 
         // Set up the DAOs

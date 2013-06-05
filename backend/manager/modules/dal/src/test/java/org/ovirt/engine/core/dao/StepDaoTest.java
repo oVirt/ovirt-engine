@@ -45,7 +45,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
 
     @Override
     protected Guid generateNonExistingId() {
-        return Guid.NewGuid();
+        return Guid.newGuid();
     }
 
     @Override
@@ -76,7 +76,7 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
 
     @Test
     public void nonExistStep() {
-        assertFalse(dao.exists(Guid.NewGuid()));
+        assertFalse(dao.exists(Guid.newGuid()));
     }
 
     @Test

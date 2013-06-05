@@ -31,9 +31,9 @@ public class JsonSerializablePojo implements Serializable {
      */
     public JsonSerializablePojo() {
         integer = RandomUtils.instance().nextInt();
-        setGuid(Guid.NewGuid());
+        setGuid(Guid.newGuid());
         setString(RandomUtils.instance().nextString(100, 100000));
-        setObject(Guid.NewGuid());
+        setObject(Guid.newGuid());
     }
 
     /* --- Setters & Getters --- */

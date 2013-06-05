@@ -43,7 +43,7 @@ public class DiskImageDynamicDAOTest extends BaseDAOTestCase{
      */
     @Test
     public void testGetWithInvalidId() {
-        DiskImageDynamic result = dao.get(Guid.NewGuid());
+        DiskImageDynamic result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }
@@ -106,13 +106,13 @@ public class DiskImageDynamicDAOTest extends BaseDAOTestCase{
     @Test
     public void testSave() {
         DiskImage newImage = new DiskImage();
-        newImage.setImageId(Guid.NewGuid());
+        newImage.setImageId(Guid.newGuid());
         newImage.setvolumeFormat(VolumeFormat.COW);
         newImage.setVolumeType(VolumeType.Sparse);
         newImage.setDiskInterface(DiskInterface.IDE);
         newImage.setActive(true);
         newImage.setImageTemplateId(EXISTING_IMAGE_DISK_TEMPLATE);
-        newImage.setId(Guid.NewGuid());
+        newImage.setId(Guid.newGuid());
         imageDao.save(newImage.getImage());
         diskDao.save(newImage);
         DiskImageDynamic dynamic = new DiskImageDynamic();

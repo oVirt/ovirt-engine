@@ -47,10 +47,10 @@ public class MultipleStorageDomainsValidatorTest {
 
     @Before
     public void setUp() {
-        spId = Guid.NewGuid();
+        spId = Guid.newGuid();
 
-        sdId1 = Guid.NewGuid();
-        sdId2 = Guid.NewGuid();
+        sdId1 = Guid.newGuid();
+        sdId2 = Guid.newGuid();
 
         domain1 = new StorageDomain();
         domain1.setId(sdId1);

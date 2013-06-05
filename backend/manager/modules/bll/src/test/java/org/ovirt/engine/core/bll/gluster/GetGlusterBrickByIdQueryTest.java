@@ -28,7 +28,7 @@ public class GetGlusterBrickByIdQueryTest extends AbstractQueryTest<IdQueryParam
 
     private void setupExpectedBrick() {
         expected = new GlusterBrickEntity();
-        expected.setId(Guid.NewGuid());
+        expected.setId(Guid.newGuid());
     }
 
     private void setupMock() {

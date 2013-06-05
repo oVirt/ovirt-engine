@@ -1209,7 +1209,7 @@ public class VdsUpdateRunTimeInfo {
             String address = ((Map<String, String>) device.get(VdsProperties.Address)).toString();
             String alias = StringUtils.defaultString((String) device.get(VdsProperties.Alias));
             Object o = device.get(VdsProperties.SpecParams);
-            newDeviceId = Guid.NewGuid();
+            newDeviceId = Guid.newGuid();
             VmDeviceId id = new VmDeviceId(newDeviceId, vmId);
             VmDevice newDevice = new VmDevice(id, VmDeviceGeneralType.forValue(typeName), deviceName, address,
                     0,

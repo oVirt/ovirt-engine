@@ -71,7 +71,7 @@ public class ImportProviderCertificateChainCommand<P extends ProviderParameters>
                 int firstCertificateIndex = chain.size() == 1 ? 0 : 1;
                 for (int certIndex = firstCertificateIndex; certIndex < chain.size(); ++certIndex) {
                     Certificate certificate = chain.get(certIndex);
-                    String alias = Guid.NewGuid().toString();
+                    String alias = Guid.newGuid().toString();
                     ks.setCertificateEntry(alias, certificate);
                 }
 

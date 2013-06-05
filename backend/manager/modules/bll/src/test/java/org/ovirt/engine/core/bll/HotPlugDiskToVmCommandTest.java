@@ -49,8 +49,8 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 @RunWith(MockitoJUnitRunner.class)
 public class HotPlugDiskToVmCommandTest {
 
-    protected Guid diskImageGuid = Guid.NewGuid();
-    protected Guid vmId = Guid.NewGuid();
+    protected Guid diskImageGuid = Guid.newGuid();
+    protected Guid vmId = Guid.newGuid();
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
@@ -201,7 +201,7 @@ public class HotPlugDiskToVmCommandTest {
         vm.setStatus(VMStatus.Up);
         vm.setVmOs(8);
         vm.setId(vmId);
-        vm.setRunOnVds(Guid.NewGuid());
+        vm.setRunOnVds(Guid.newGuid());
         doReturn(vmDAO).when(command).getVmDAO();
         mockVMDAO(vm);
         return vm;
@@ -213,7 +213,7 @@ public class HotPlugDiskToVmCommandTest {
         VM vm1 = new VM();
         vm1.setId(command.getParameters().getVmId());
         VM vm2 = new VM();
-        vm2.setId(Guid.NewGuid());
+        vm2.setId(Guid.newGuid());
         vmList.add(vm1);
         vmList.add(vm2);
         when(vmDAO.getVmsListForDisk(any(Guid.class))).thenReturn(vmList);

@@ -44,7 +44,7 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
 
     @Override
     protected Guid generateNonExistingId() {
-        return Guid.NewGuid();
+        return Guid.newGuid();
     }
 
     @Override
@@ -55,15 +55,15 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     @Override
     protected Job generateNewEntity() {
         Job job = new Job();
-        job.setId(Guid.NewGuid());
+        job.setId(Guid.newGuid());
         job.setActionType(VdcActionType.ActivateStorageDomain);
         job.setDescription(VdcActionType.ActivateStorageDomain.name());
         job.setStatus(JobExecutionStatus.STARTED);
-        job.setOwnerId(Guid.NewGuid());
+        job.setOwnerId(Guid.newGuid());
         job.setVisible(true);
         job.setStartTime(new Date());
         job.setLastUpdateTime(new Date());
-        job.setCorrelationId(Guid.NewGuid().toString());
+        job.setCorrelationId(Guid.newGuid().toString());
         return job;
     }
 
@@ -80,7 +80,7 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
 
     @Test
     public void nonExistStep() {
-        assertFalse(dao.exists(Guid.NewGuid()));
+        assertFalse(dao.exists(Guid.newGuid()));
     }
 
     @Test

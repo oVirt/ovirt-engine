@@ -115,22 +115,22 @@ public class ActivateStorageDomainCommandTest {
     private void createStorageDomain(StorageDomainStatus status) {
         StorageDomain domain = new StorageDomain();
         domain.setStatus(status);
-        domain.setId(Guid.NewGuid());
+        domain.setId(Guid.newGuid());
         when(storageDomainDAO.get(any(Guid.class))).thenReturn(domain);
         when(storageDomainDAO.getForStoragePool(any(Guid.class), any(Guid.class))).thenReturn(domain);
     }
 
     private void createUpStoragePool() {
         StoragePool pool = new StoragePool();
-        pool.setId(Guid.NewGuid());
+        pool.setId(Guid.newGuid());
         pool.setstatus(StoragePoolStatus.Up);
         when(storagePoolDAO.get(any(Guid.class))).thenReturn(pool);
     }
 
     private void createCommand() {
         StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase();
-        params.setStorageDomainId(Guid.NewGuid());
-        params.setStoragePoolId(Guid.NewGuid());
+        params.setStorageDomainId(Guid.newGuid());
+        params.setStoragePoolId(Guid.newGuid());
         cmd = spy(new ActivateStorageDomainCommand<StorageDomainPoolParametersBase>(params));
         doReturn(storageDomainDAO).when(cmd).getStorageDomainDAO();
         doReturn(storagePoolDAO).when(cmd).getStoragePoolDAO();

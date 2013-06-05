@@ -19,7 +19,7 @@ public class GetVdsByVdsIdQueryTest extends AbstractQueryTest<IdQueryParameters,
     @Test
     public void testExecuteQueryCommnad() {
         // Set up the expected data
-        Guid vdsID = Guid.NewGuid();
+        Guid vdsID = Guid.newGuid();
         VDS expected = new VDS();
         expected.setId(vdsID);
 

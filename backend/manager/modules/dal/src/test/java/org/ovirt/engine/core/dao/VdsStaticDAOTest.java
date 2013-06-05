@@ -42,7 +42,7 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        VdsStatic result = dao.get(Guid.NewGuid());
+        VdsStatic result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }

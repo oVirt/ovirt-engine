@@ -39,7 +39,7 @@ public class JobSubjectEntityDaoTest extends BaseDAOTestCase {
     public void saveJobSubjectEntity() {
         Map<Guid, VdcObjectType> entitybeforeSave = dao.getJobSubjectEntityByJobId(EXISTING_JOB_ID);
         assertTrue(!entitybeforeSave.isEmpty());
-        dao.save(EXISTING_JOB_ID, Guid.NewGuid(), VdcObjectType.VmPool);
+        dao.save(EXISTING_JOB_ID, Guid.newGuid(), VdcObjectType.VmPool);
         Map<Guid, VdcObjectType> entityAfterSave = dao.getJobSubjectEntityByJobId(EXISTING_JOB_ID);
         assertEquals("Job subject entities before and after adding new entity",
                 entitybeforeSave.size() + 1,

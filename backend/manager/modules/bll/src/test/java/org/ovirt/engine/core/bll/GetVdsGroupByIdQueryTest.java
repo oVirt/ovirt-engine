@@ -19,7 +19,7 @@ public class GetVdsGroupByIdQueryTest extends AbstractUserQueryTest<IdQueryParam
     @Test
     public void testExecuteQueryCommnad() {
         // Set up the expected data
-        Guid vdsGroupID = Guid.NewGuid();
+        Guid vdsGroupID = Guid.newGuid();
         VDSGroup expected = new VDSGroup();
         expected.setId(vdsGroupID);
 

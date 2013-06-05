@@ -20,7 +20,7 @@ public class GetAllNetworksByClusterIdQueryTest extends AbstractUserQueryTest<Id
     /** Tests that {@link GetAllNetworksByClusterIdQuery#executeQueryCommand()} delegated to the correct DAOs, using mock objects */
     @Test
     public void testExecuteQueryCommand() {
-        Guid clusterID = Guid.NewGuid();
+        Guid clusterID = Guid.newGuid();
 
         Network networkMock = mock(Network.class);
 

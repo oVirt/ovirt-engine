@@ -67,7 +67,7 @@ public class RemoveVdsCommandTest {
 
     @Before
     public void setUp() {
-        clusterId = Guid.NewGuid();
+        clusterId = Guid.newGuid();
     }
 
     private void prepareMocks() {
@@ -89,7 +89,7 @@ public class RemoveVdsCommandTest {
 
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
-        vds.setId(Guid.NewGuid());
+        vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
         vds.setVdsGroupId(clusterId);
         vds.setStatus(status);
@@ -99,7 +99,7 @@ public class RemoveVdsCommandTest {
 
     @Test
     public void canDoActionSucceeds() throws Exception {
-        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), false)));
+        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.newGuid(), false)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
@@ -112,7 +112,7 @@ public class RemoveVdsCommandTest {
 
     @Test
     public void canDoActionFailsWhenGlusterHostHasVolumes() throws Exception {
-        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), false)));
+        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.newGuid(), false)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
@@ -127,7 +127,7 @@ public class RemoveVdsCommandTest {
 
     @Test
     public void canDoActionFailsWhenGlusterMultipleHostHasVolumesWithForce() throws Exception {
-        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), true)));
+        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.newGuid(), true)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockHasMultipleClusters(true);
@@ -140,7 +140,7 @@ public class RemoveVdsCommandTest {
 
     @Test
     public void canDoActionSucceedsWithForceOption() throws Exception {
-        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), true)));
+        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.newGuid(), true)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();
@@ -153,7 +153,7 @@ public class RemoveVdsCommandTest {
 
     @Test
     public void canDoActionFailsWhenVMsPinnedToHost() throws Exception {
-        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), false)));
+        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.newGuid(), false)));
         prepareMocks();
         mockVdsWithStatus(VDSStatus.Maintenance);
         mockVdsDynamic();

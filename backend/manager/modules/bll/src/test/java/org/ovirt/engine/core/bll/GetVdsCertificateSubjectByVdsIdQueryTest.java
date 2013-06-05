@@ -25,7 +25,7 @@ public class GetVdsCertificateSubjectByVdsIdQueryTest extends AbstractUserQueryT
 
         doReturn(orgName).when(getQuery()).getOrganizationName();
 
-        Guid vdsID = Guid.NewGuid();
+        Guid vdsID = Guid.newGuid();
         VDS vds = new VDS();
         vds.setId(vdsID);
         vds.setHostName(hostName);

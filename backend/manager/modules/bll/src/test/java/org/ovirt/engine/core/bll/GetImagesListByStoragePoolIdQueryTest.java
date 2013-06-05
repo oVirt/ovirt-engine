@@ -47,13 +47,13 @@ public class GetImagesListByStoragePoolIdQueryTest
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        storageDomainId = Guid.NewGuid();
+        storageDomainId = Guid.newGuid();
     }
 
     @Override
     protected void setUpMockQueryParameters() {
         super.setUpMockQueryParameters();
-        when(getQueryParameters().getStoragePoolId()).thenReturn(Guid.NewGuid());
+        when(getQueryParameters().getStoragePoolId()).thenReturn(Guid.newGuid());
         when(getQueryParameters().getImageType()).thenReturn(expectedType);
     }
 

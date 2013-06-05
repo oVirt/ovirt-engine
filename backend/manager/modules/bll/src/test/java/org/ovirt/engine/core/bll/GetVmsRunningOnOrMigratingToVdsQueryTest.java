@@ -23,7 +23,7 @@ public class GetVmsRunningOnOrMigratingToVdsQueryTest
 
     @Test
     public void testQueryExecution() {
-        Guid vmGuid = Guid.NewGuid();
+        Guid vmGuid = Guid.newGuid();
 
         VM vm = new VM();
         vm.setId(vmGuid);

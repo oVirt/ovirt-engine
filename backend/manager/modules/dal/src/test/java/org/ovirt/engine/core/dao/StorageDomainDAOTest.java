@@ -65,7 +65,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        StorageDomain result = dao.get(Guid.NewGuid());
+        StorageDomain result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }
@@ -115,7 +115,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetForStoragePoolWithInvalidId() {
-        StorageDomain result = dao.getForStoragePool(Guid.NewGuid(), EXISTING_STORAGE_POOL_ID);
+        StorageDomain result = dao.getForStoragePool(Guid.newGuid(), EXISTING_STORAGE_POOL_ID);
 
         assertNull(result);
     }
@@ -137,7 +137,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllStorageDomainsByNotExistingImageId() {
-        List<StorageDomain> result = dao.getAllStorageDomainsByImageId(Guid.NewGuid());
+        List<StorageDomain> result = dao.getAllStorageDomainsByImageId(Guid.newGuid());
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -157,7 +157,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetForStoragePoolWithInvalidPool() {
         StorageDomain result = dao.getForStoragePool(existingDomain.getId(),
-                Guid.NewGuid());
+                Guid.newGuid());
 
         assertNull(result);
     }
@@ -222,7 +222,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForStorageDomainWithInvalidDomain() {
         List<StorageDomain> result = dao.getAllForStorageDomain(Guid
-                .NewGuid());
+                .newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -279,7 +279,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllByStoragePoolAndConnectionWithInvalidStoragePool() {
         List<StorageDomain> result =
-                dao.getAllByStoragePoolAndConnection(Guid.NewGuid(), EXISTING_CONNECTION);
+                dao.getAllByStoragePoolAndConnection(Guid.newGuid(), EXISTING_CONNECTION);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -291,7 +291,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllByStoragePoolAndConnectionWithInvalidInput() {
         List<StorageDomain> result =
-                dao.getAllByStoragePoolAndConnection(Guid.NewGuid(), RandomUtils.instance().nextString(10));
+                dao.getAllByStoragePoolAndConnection(Guid.newGuid(), RandomUtils.instance().nextString(10));
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -313,7 +313,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForStoragePoolWithInvalidPool() {
-        List<StorageDomain> result = dao.getAllForStoragePool(Guid.NewGuid());
+        List<StorageDomain> result = dao.getAllForStoragePool(Guid.newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

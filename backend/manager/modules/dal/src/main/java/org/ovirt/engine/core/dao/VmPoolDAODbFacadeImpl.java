@@ -72,7 +72,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     public void save(VmPool pool) {
         Guid id = pool.getVmPoolId();
         if (Guid.isNullOrEmpty(id)) {
-            id = Guid.NewGuid();
+            id = Guid.newGuid();
             pool.setVmPoolId(id);
         }
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()

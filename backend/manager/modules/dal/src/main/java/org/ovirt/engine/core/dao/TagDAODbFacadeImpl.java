@@ -28,10 +28,10 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
             tags entity = new tags();
             entity.setdescription(getValueOrNull(rs, "description", ""));
             entity.settag_id(Guid.createGuidFromStringDefaultEmpty(getValueOrNull(rs,
-                    "tag_id", Guid.NewGuid().getUuid().toString())));
+                    "tag_id", Guid.newGuid().getUuid().toString())));
             entity.settag_name(getValueOrNull(rs, "tag_name", ""));
             entity.setparent_id(Guid.createGuidFromString(getValueOrNull(rs,
-                    "parent_id", Guid.NewGuid().getUuid().toString())));
+                    "parent_id", Guid.newGuid().getUuid().toString())));
             entity.setIsReadonly(rs.getBoolean("readonly"));
             entity.settype(TagsType.forValue(Integer.valueOf(getValueOrNull(rs,
                     "type", "0"))));
@@ -182,7 +182,7 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
     public void save(tags tag) {
         Guid id = tag.gettag_id();
         if (Guid.isNullOrEmpty(id)) {
-            id = Guid.NewGuid();
+            id = Guid.newGuid();
             tag.settag_id(id);
         }
 

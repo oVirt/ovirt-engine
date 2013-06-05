@@ -34,10 +34,10 @@ import org.ovirt.engine.core.dao.VmDAO;
 @RunWith(MockitoJUnitRunner.class)
 public class MoveDisksCommandTest {
 
-    private final Guid diskImageId = Guid.NewGuid();
-    private final Guid templateDiskImageId = Guid.NewGuid();
-    private final Guid srcStorageId = Guid.NewGuid();
-    private final Guid dstStorageId = Guid.NewGuid();
+    private final Guid diskImageId = Guid.newGuid();
+    private final Guid templateDiskImageId = Guid.newGuid();
+    private final Guid srcStorageId = Guid.newGuid();
+    private final Guid dstStorageId = Guid.newGuid();
 
     @Mock
     private DiskImageDAO diskImageDao;
@@ -92,7 +92,7 @@ public class MoveDisksCommandTest {
         command.getParameters().setParametersList(createMoveDisksParameters());
 
         initDiskImage(diskImageId);
-        initVm(VMStatus.Unknown, Guid.NewGuid(), diskImageId);
+        initVm(VMStatus.Unknown, Guid.newGuid(), diskImageId);
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -140,7 +140,7 @@ public class MoveDisksCommandTest {
         command.getParameters().setParametersList(createMoveDisksParameters());
 
         initDiskImage(diskImageId);
-        initVm(VMStatus.Up, Guid.NewGuid(), diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
 
         assertTrue(command.canDoAction());
         assertFalse(command.getLiveMigrateDisksParametersList().isEmpty());
@@ -151,7 +151,7 @@ public class MoveDisksCommandTest {
         command.getParameters().setParametersList(createMoveDisksParameters());
 
         initDiskImageBasedOnTemplate(diskImageId);
-        initVm(VMStatus.Up, Guid.NewGuid(), diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
 
         assertTrue(command.canDoAction());
         assertFalse(command.getLiveMigrateDisksParametersList().isEmpty());
@@ -159,8 +159,8 @@ public class MoveDisksCommandTest {
 
     @Test
     public void moveDiskAndLiveMigrateDisk() {
-        Guid diskImageId1 = Guid.NewGuid();
-        Guid diskImageId2 = Guid.NewGuid();
+        Guid diskImageId1 = Guid.newGuid();
+        Guid diskImageId2 = Guid.newGuid();
 
         MoveDiskParameters moveDiskParameters1 = new MoveDiskParameters(diskImageId1, srcStorageId, dstStorageId);
         MoveDiskParameters moveDiskParameters2 = new MoveDiskParameters(diskImageId2, srcStorageId, dstStorageId);
@@ -168,8 +168,8 @@ public class MoveDisksCommandTest {
 
         initDiskImage(diskImageId1);
         initDiskImage(diskImageId2);
-        initVm(VMStatus.Up, Guid.NewGuid(), diskImageId1);
-        initVm(VMStatus.Down, Guid.NewGuid(), diskImageId2);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageId1);
+        initVm(VMStatus.Down, Guid.newGuid(), diskImageId2);
 
         assertTrue(command.canDoAction());
         assertFalse(command.getMoveDisksParametersList().isEmpty());

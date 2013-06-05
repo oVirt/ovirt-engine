@@ -115,7 +115,7 @@ public class RunVmCommandTest {
 
     private static DiskImage createImage() {
         final DiskImage diskImage = new DiskImage();
-        diskImage.setId(Guid.NewGuid());
+        diskImage.setId(Guid.newGuid());
         diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(new Guid())));
         return diskImage;
     }
@@ -297,7 +297,7 @@ public class RunVmCommandTest {
 
     @Before
     public void createCommand() {
-        RunVmParams param = new RunVmParams(Guid.NewGuid());
+        RunVmParams param = new RunVmParams(Guid.newGuid());
         command = spy(new RunVmCommand<RunVmParams>(param));
         mockIsoDomainListSyncronizer();
         mockSuccessfulRunVmValidator();

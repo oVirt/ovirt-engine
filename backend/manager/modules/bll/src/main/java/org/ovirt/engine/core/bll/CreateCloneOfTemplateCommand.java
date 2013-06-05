@@ -44,9 +44,9 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
 
     @Override
     protected VDSReturnValue performImageVdsmOperation() {
-        setDestinationImageId(Guid.NewGuid());
+        setDestinationImageId(Guid.newGuid());
         mNewCreatedDiskImage = cloneDiskImage(getDestinationImageId());
-        mNewCreatedDiskImage.setimage_group_id(Guid.NewGuid());
+        mNewCreatedDiskImage.setimage_group_id(Guid.newGuid());
         Guid storagePoolID = mNewCreatedDiskImage.getStoragePoolId() != null ? mNewCreatedDiskImage
                 .getStoragePoolId() : Guid.Empty;
 

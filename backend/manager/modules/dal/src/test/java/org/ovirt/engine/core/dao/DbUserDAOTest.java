@@ -48,7 +48,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        DbUser result = dao.get(Guid.NewGuid());
+        DbUser result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }
@@ -90,7 +90,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForVmWithInvalidVm() {
-        List<DbUser> result = dao.getAllForVm(Guid.NewGuid());
+        List<DbUser> result = dao.getAllForVm(Guid.newGuid());
 
         // TODO this should return an empty collection
         assertTrue(result.isEmpty());

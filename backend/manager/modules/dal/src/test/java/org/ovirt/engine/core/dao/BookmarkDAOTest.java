@@ -46,7 +46,7 @@ public class BookmarkDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        Bookmark result = dao.get(Guid.NewGuid());
+        Bookmark result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }

@@ -43,7 +43,7 @@ public class DiskImagesValidatorTest {
 
     private static DiskImage createDisk() {
         DiskImage disk = new DiskImage();
-        disk.setId(Guid.NewGuid());
+        disk.setId(Guid.newGuid());
         disk.setDiskAlias(RandomUtils.instance().nextString(10));
         disk.setActive(true);
         disk.setImageStatus(ImageStatus.OK);

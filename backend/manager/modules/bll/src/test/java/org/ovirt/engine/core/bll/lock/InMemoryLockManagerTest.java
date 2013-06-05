@@ -39,8 +39,8 @@ public class InMemoryLockManagerTest {
 
     @Before
     public void setup() {
-        updateGuid = Guid.NewGuid().toString();
-        lockGuid = Guid.NewGuid().toString();
+        updateGuid = Guid.newGuid().toString();
+        lockGuid = Guid.newGuid().toString();
         Map<String, Pair<String, String>> updateRegionsMap = new HashMap<String, Pair<String, String>>();
         updateRegionsMap.put(updateGuid, new Pair<String, String>("1", ERROR1));
         updateLock1 = new EngineLock();

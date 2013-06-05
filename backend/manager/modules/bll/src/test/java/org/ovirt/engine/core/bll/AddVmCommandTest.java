@@ -66,8 +66,8 @@ public class AddVmCommandTest {
     private static final int REQUIRED_DISK_SIZE_GB = 10;
     private static final int AVAILABLE_SPACE_GB = 11;
     private static final int USED_SPACE_GB = 4;
-    private static final Guid STORAGE_POOL_ID = Guid.NewGuid();
-    private static final Guid STORAGE_DOMAIN_ID = Guid.NewGuid();
+    private static final Guid STORAGE_POOL_ID = Guid.newGuid();
+    private static final Guid STORAGE_DOMAIN_ID = Guid.newGuid();
     private VmTemplate vmTemplate = null;
 
     @Rule
@@ -182,7 +182,7 @@ public class AddVmCommandTest {
     public void canAddCloneVmFromSnapshotSnapshotDoesNotExist() {
         final int domainSizeGB = 15;
         final int sizeRequired = 4;
-        final Guid sourceSnapshotId = Guid.NewGuid();
+        final Guid sourceSnapshotId = Guid.newGuid();
         AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
                 setupCanAddVmFromSnapshotTests(domainSizeGB, sizeRequired, sourceSnapshotId);
         cmd.getVm().setName("vm1");
@@ -197,7 +197,7 @@ public class AddVmCommandTest {
     public void canAddCloneVmFromSnapshotNoConfiguration() {
         final int domainSizeGB = 15;
         final int sizeRequired = 4;
-        final Guid sourceSnapshotId = Guid.NewGuid();
+        final Guid sourceSnapshotId = Guid.newGuid();
         AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
                 setupCanAddVmFromSnapshotTests(domainSizeGB, sizeRequired, sourceSnapshotId);
         cmd.getVm().setName("vm1");
@@ -248,7 +248,7 @@ public class AddVmCommandTest {
         AddVmFromSnapshotParameters param = new AddVmFromSnapshotParameters();
         param.setVm(vm);
         param.setSourceSnapshotId(sourceSnapshotId);
-        param.setStorageDomainId(Guid.NewGuid());
+        param.setStorageDomainId(Guid.newGuid());
         AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd =
                 new AddVmFromSnapshotCommand<AddVmFromSnapshotParameters>(param) {
                     @Override
@@ -301,7 +301,7 @@ public class AddVmCommandTest {
     }
 
     private static <T extends VmManagementParametersBase> void initCommandMethods(AddVmCommand<T> cmd) {
-        doReturn(Guid.NewGuid()).when(cmd).getStoragePoolId();
+        doReturn(Guid.newGuid()).when(cmd).getStoragePoolId();
         doReturn(true).when(cmd).canAddVm(anyListOf(String.class), anyString(), any(Guid.class), anyInt());
         doReturn(STORAGE_POOL_ID).when(cmd).getStoragePoolId();
     }
@@ -321,8 +321,8 @@ public class AddVmCommandTest {
     private static void setNewDisksForTemplate(int numberOfNewDisks, Map<Guid, DiskImage> disksMap) {
         for (int newDiskInd = 0; newDiskInd < numberOfNewDisks; newDiskInd++) {
             DiskImage diskImageTempalte = new DiskImage();
-            diskImageTempalte.setImageId(Guid.NewGuid());
-            disksMap.put(Guid.NewGuid(), diskImageTempalte);
+            diskImageTempalte.setImageId(Guid.newGuid());
+            disksMap.put(Guid.newGuid(), diskImageTempalte);
         }
     }
 
@@ -332,7 +332,7 @@ public class AddVmCommandTest {
         DiskImage diskImage = new DiskImage();
         diskImage.setActualSizeInBytes(diskSize);
         diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID)));
-        diskImageMap.put(Guid.NewGuid(), diskImage);
+        diskImageMap.put(Guid.newGuid(), diskImage);
         cmd.storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
         cmd.storageToDisksMap.put(STORAGE_DOMAIN_ID,
                 new ArrayList<DiskImage>(diskImageMap.values()));
@@ -397,7 +397,7 @@ public class AddVmCommandTest {
         DiskImage i = new DiskImage();
         i.setSizeInGigabytes(USED_SPACE_GB + AVAILABLE_SPACE_GB);
         i.setActualSizeInBytes(REQUIRED_DISK_SIZE_GB * 1024L * 1024L * 1024L);
-        i.setImageId(Guid.NewGuid());
+        i.setImageId(Guid.newGuid());
         i.setStorageIds(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID)));
         return i;
     }
@@ -410,14 +410,14 @@ public class AddVmCommandTest {
         DiskImage img = new DiskImage();
         img.setSizeInGigabytes(size);
         img.setActualSize(size);
-        img.setId(Guid.NewGuid());
+        img.setId(Guid.newGuid());
         img.setStorageIds(new ArrayList<Guid>(Arrays.asList(STORAGE_DOMAIN_ID)));
         return img;
     }
 
     private void mockGetImageDomainsListVdsCommand() {
         ArrayList<Guid> guids = new ArrayList<Guid>(1);
-        guids.add(Guid.NewGuid());
+        guids.add(Guid.newGuid());
         VDSReturnValue returnValue = new VDSReturnValue();
         returnValue.setReturnValue(guids);
         when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.GetImageDomainsList),
@@ -457,7 +457,7 @@ public class AddVmCommandTest {
         VM vm = new VM();
         VmDynamic dynamic = new VmDynamic();
         VmStatic stat = new VmStatic();
-        stat.setVmtGuid(Guid.NewGuid());
+        stat.setVmtGuid(Guid.newGuid());
         stat.setName("testVm");
         stat.setPriority(1);
         vm.setStaticData(stat);
@@ -497,6 +497,6 @@ public class AddVmCommandTest {
         doReturn(true).when(spy).areParametersLegal(anyListOf(String.class));
         doReturn(Collections.<VmNetworkInterface> emptyList()).when(spy).getVmInterfaces();
         doReturn(Collections.<DiskImageBase> emptyList()).when(spy).getVmDisks();
-        spy.setVmTemplateId(Guid.NewGuid());
+        spy.setVmTemplateId(Guid.newGuid());
     }
 }

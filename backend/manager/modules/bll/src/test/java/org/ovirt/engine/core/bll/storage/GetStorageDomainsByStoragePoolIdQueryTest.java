@@ -20,7 +20,7 @@ public class GetStorageDomainsByStoragePoolIdQueryTest extends AbstractUserQuery
 
     @Test
     public void testExecuteQuery() {
-        Guid storagePoolID = Guid.NewGuid();
+        Guid storagePoolID = Guid.newGuid();
         when(getQueryParameters().getId()).thenReturn(storagePoolID);
 
         StorageDomain domain = new StorageDomain();

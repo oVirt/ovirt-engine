@@ -83,7 +83,7 @@ public class Step extends IVdcQueryable implements BusinessEntity<Guid> {
     }
 
     public Step(StepEnum stepType) {
-        this.id = Guid.NewGuid();
+        this.id = Guid.newGuid();
         this.parentStepId = null;
         this.stepType = stepType;
         this.startTime = new Date();

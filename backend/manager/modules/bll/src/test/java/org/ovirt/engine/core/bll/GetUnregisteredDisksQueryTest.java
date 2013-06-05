@@ -48,10 +48,10 @@ public class GetUnregisteredDisksQueryTest
     public void setUp() throws Exception {
         super.setUp();
 
-        importDiskId = Guid.NewGuid();
-        existingDiskId = Guid.NewGuid();
-        storageDomainId = Guid.NewGuid();
-        storagePoolId = Guid.NewGuid();
+        importDiskId = Guid.newGuid();
+        existingDiskId = Guid.newGuid();
+        storageDomainId = Guid.newGuid();
+        storagePoolId = Guid.newGuid();
         // Wrapping the list in a new ArrayList as this will eventually be modified by the GetUnregisteredDisksQuery command and
         // Arrays returned by Arrays.asList are immutable. The wrapping allows for mutability.
         importDiskIds = new ArrayList<Guid>(Arrays.asList(importDiskId, existingDiskId));

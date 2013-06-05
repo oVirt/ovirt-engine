@@ -34,7 +34,7 @@ public abstract class AbstractVdcUserQueryParametersBaseTestCase<P extends VdcUs
 
     @Test
     public void testParameterizedConstructor() throws Exception {
-        Guid expectedUserID = Guid.NewGuid();
+        Guid expectedUserID = Guid.newGuid();
         param = getTypeParameterClass().getConstructor(Guid.class).newInstance(expectedUserID);
         assertEquals("Wrong user ID", expectedUserID, param.getUserId());
     }

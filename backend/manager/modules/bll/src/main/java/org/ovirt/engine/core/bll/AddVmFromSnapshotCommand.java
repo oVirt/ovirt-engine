@@ -219,8 +219,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 // Allocating new IDs for image and disk as it's possible
                 // that more than one clone will be made from this snapshot
                 // So this is required to avoid PK violation at DB.
-                diskImage.setImageId(Guid.NewGuid());
-                diskImage.setId(Guid.NewGuid());
+                diskImage.setImageId(Guid.newGuid());
+                diskImage.setId(Guid.newGuid());
                 diskImage.setParentId(Guid.Empty);
                 diskImage.setImageTemplateId(Guid.Empty);
                 ImagesHandler.setDiskAlias(diskImage, getVm());

@@ -52,7 +52,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             }
 
             getInterface().setSpeed(VmInterfaceType.forValue(getInterface().getType()).getSpeed());
-            getInterface().setId(Guid.NewGuid());
+            getInterface().setId(Guid.newGuid());
             getInterface().setVmId(getParameters().getVmId());
 
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {

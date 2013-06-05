@@ -32,7 +32,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     public void testGeneralQuotaLimitations() throws Exception {
         // Set new Quota definition.
         Quota quota = new Quota();
-        Guid quotaId = Guid.NewGuid();
+        Guid quotaId = Guid.newGuid();
         quota.setId(quotaId);
         quota.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
         quota.setQuotaName("Watson");
@@ -58,7 +58,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     public void testSpecificQuotaLimitations() throws Exception {
         // Set new Quota definition.
         Quota quota = new Quota();
-        Guid quotaId = Guid.NewGuid();
+        Guid quotaId = Guid.newGuid();
         quota.setId(quotaId);
         quota.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
         quota.setQuotaName("Watson");
@@ -80,7 +80,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     public void testSpecificAndGeneralQuotaLimitations() throws Exception {
         // Set new Quota definition.
         Quota quota = new Quota();
-        Guid quotaId = Guid.NewGuid();
+        Guid quotaId = Guid.newGuid();
         quota.setId(quotaId);
         quota.setStoragePoolId(FixturesTool.STORAGE_POOL_NFS);
         quota.setQuotaName("Watson");
@@ -434,7 +434,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testFetchStoragePoolWithNoQuota() throws Exception {
-        List<Quota> quotaList = dao.getQuotaByStoragePoolGuid(Guid.NewGuid());
+        List<Quota> quotaList = dao.getQuotaByStoragePoolGuid(Guid.newGuid());
         assertEquals(true, quotaList.size() == 0);
     }
 
@@ -484,7 +484,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetRelevantQuotasNonExistingStorage() throws Exception {
         // There is no such storgae, so no quotas are defined on it
-        assertGetAllRelevantQuoatsForStorage(Guid.NewGuid(), 0);
+        assertGetAllRelevantQuoatsForStorage(Guid.newGuid(), 0);
     }
 
     /**
@@ -519,7 +519,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetRelevantQuotasNonExistingVdsGroup() throws Exception {
         // There is no such storgae, so no quotas are defined on it
-        assertGetAllRelevantQuoatsForVdsGroup(Guid.NewGuid(), 0);
+        assertGetAllRelevantQuoatsForVdsGroup(Guid.newGuid(), 0);
     }
 
     /**
@@ -553,7 +553,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
     private static QuotaStorage getSpecificQuotaStorage(Guid quotaId) {
         QuotaStorage quotaStorage = new QuotaStorage();
         quotaStorage.setQuotaId(quotaId);
-        quotaStorage.setQuotaStorageId(Guid.NewGuid());
+        quotaStorage.setQuotaStorageId(Guid.newGuid());
         quotaStorage.setStorageId(FixturesTool.STORAGE_DOAMIN_NFS_MASTER);
         quotaStorage.setStorageSizeGB(10000L);
         quotaStorage.setStorageSizeGBUsage(0d);
@@ -563,7 +563,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
 
     private static QuotaVdsGroup getSpecificQuotaVdsGroup(Guid quotaId) {
         QuotaVdsGroup quotaVdsGroup = new QuotaVdsGroup();
-        quotaVdsGroup.setQuotaVdsGroupId(Guid.NewGuid());
+        quotaVdsGroup.setQuotaVdsGroupId(Guid.newGuid());
         quotaVdsGroup.setQuotaId(quotaId);
         quotaVdsGroup.setVdsGroupId(FixturesTool.VDS_GROUP_RHEL6_NFS);
         quotaVdsGroup.setVirtualCpu(2880);

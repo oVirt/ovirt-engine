@@ -55,7 +55,7 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        vmID = Guid.NewGuid();
+        vmID = Guid.newGuid();
         pluggedDisk = createDiskImage();
         unpluggedDisk = createDiskImage();
         setUpDAOMocks();
@@ -114,11 +114,11 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
                 new Date(),
                 1L,
                 "1",
-                Guid.NewGuid(),
+                Guid.newGuid(),
                 "2",
-                Guid.NewGuid(),
+                Guid.newGuid(),
                 1L,
-                Guid.NewGuid(),
+                Guid.newGuid(),
                 ImageStatus.OK,
                 new Date(),
                 "", VmEntityType.VM, 1, null, null, QuotaEnforcementTypeEnum.DISABLED, false);
@@ -131,9 +131,9 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
                 new Date(),
                 1L,
                 "1",
-                Guid.NewGuid(),
+                Guid.newGuid(),
                 "2",
-                Guid.NewGuid(),
+                Guid.newGuid(),
                 1L,
                 diskId,
                 ImageStatus.OK,

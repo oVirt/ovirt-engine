@@ -29,8 +29,8 @@ import org.ovirt.engine.core.dao.VmDAO;
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveQuotaCommandTest {
 
-    private final Guid generalGuidQuota = Guid.NewGuid();
-    private final Guid storagePoolUUID = Guid.NewGuid();
+    private final Guid generalGuidQuota = Guid.newGuid();
+    private final Guid storagePoolUUID = Guid.newGuid();
 
     @Mock
     private QuotaDAO quotaDAO;

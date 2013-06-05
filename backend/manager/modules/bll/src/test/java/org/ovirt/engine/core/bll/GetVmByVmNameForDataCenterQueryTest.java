@@ -18,7 +18,7 @@ import org.ovirt.engine.core.dao.VmDAO;
 public class GetVmByVmNameForDataCenterQueryTest extends AbstractUserQueryTest<GetVmByVmNameForDataCenterParameters, GetVmByVmNameForDataCenterQuery<GetVmByVmNameForDataCenterParameters>> {
     @Test
     public void testExecuteQuery() {
-        Guid dataCenterId = Guid.NewGuid();
+        Guid dataCenterId = Guid.newGuid();
         String VM_NAME = "VM";
         VM expectedResult = new VM();
         expectedResult.setId(dataCenterId);

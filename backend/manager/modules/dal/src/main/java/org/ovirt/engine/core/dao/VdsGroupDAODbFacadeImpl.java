@@ -98,7 +98,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
     public void save(VDSGroup group) {
         Guid id = group.getId();
         if (Guid.isNullOrEmpty(id)) {
-            id = Guid.NewGuid();
+            id = Guid.newGuid();
             group.setId(id);
         }
         getCallsHandler().executeModification("InsertVdsGroups", getVdsGroupParamSource(group));

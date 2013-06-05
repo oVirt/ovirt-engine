@@ -75,7 +75,7 @@ public class StorageHandlingCommandBaseTest {
     private static StoragePool createStoragePool() {
         StoragePool pool = new StoragePool();
         pool.setname("DefaultStoragePool");
-        pool.setId(Guid.NewGuid());
+        pool.setId(Guid.newGuid());
         return pool;
     }
 

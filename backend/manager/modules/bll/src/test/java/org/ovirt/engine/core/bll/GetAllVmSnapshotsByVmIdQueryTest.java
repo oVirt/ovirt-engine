@@ -40,9 +40,9 @@ public class GetAllVmSnapshotsByVmIdQueryTest
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        vmId = Guid.NewGuid();
+        vmId = Guid.newGuid();
         snapshot =
-                new Snapshot(Guid.NewGuid(), SnapshotStatus.OK, vmId, null, SnapshotType.REGULAR, "", new Date(), "");
+                new Snapshot(Guid.newGuid(), SnapshotStatus.OK, vmId, null, SnapshotType.REGULAR, "", new Date(), "");
         setUpDAOMocks();
     }
 

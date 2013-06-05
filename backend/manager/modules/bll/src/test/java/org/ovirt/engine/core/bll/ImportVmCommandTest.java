@@ -93,26 +93,26 @@ public class ImportVmCommandTest {
     protected ImportVmParameters createParameters() {
         final VM v = createVM();
         v.setName("testVm");
-        return new ImportVmParameters(v, Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid());
+        return new ImportVmParameters(v, Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), Guid.newGuid());
     }
 
     protected VM createVM() {
         final VM v = new VM();
-        v.setId(Guid.NewGuid());
+        v.setId(Guid.newGuid());
 
-        Guid imageGroupId = Guid.NewGuid();
+        Guid imageGroupId = Guid.newGuid();
         DiskImage baseImage = new DiskImage();
         baseImage.setId(imageGroupId);
-        baseImage.setImageId(Guid.NewGuid());
+        baseImage.setImageId(Guid.newGuid());
         baseImage.setSizeInGigabytes(1);
-        baseImage.setVmSnapshotId(Guid.NewGuid());
+        baseImage.setVmSnapshotId(Guid.newGuid());
         baseImage.setActive(false);
 
         DiskImage activeImage = new DiskImage();
         activeImage.setId(imageGroupId);
-        activeImage.setImageId(Guid.NewGuid());
+        activeImage.setImageId(Guid.newGuid());
         activeImage.setSizeInGigabytes(1);
-        activeImage.setVmSnapshotId(Guid.NewGuid());
+        activeImage.setVmSnapshotId(Guid.newGuid());
         activeImage.setActive(true);
         activeImage.setParentId(baseImage.getImageId());
 

@@ -48,7 +48,7 @@ public class AddGlusterHookCommandTest extends GlusterHookCommandTest<AddGluster
     @Mock
     private VdsDAO vdsDao;
 
-    private static final Guid SERVER_ID = Guid.NewGuid();
+    private static final Guid SERVER_ID = Guid.newGuid();
 
     private void setUpMocksForAdd() {
         setUpMocksForAdd(true);

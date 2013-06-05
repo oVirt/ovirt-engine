@@ -40,7 +40,7 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
 
     @Override
     protected void executeCommand() {
-        getProvider().setId(Guid.NewGuid());
+        getProvider().setId(Guid.newGuid());
         getDbFacade().getProviderDao().save(getProvider());
         getReturnValue().setActionReturnValue(getProvider().getId());
         setSucceeded(true);

@@ -32,7 +32,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
     @Override
     protected void executeCommand() {
         setImageGroupId(getParameters().getDiskInfo().getId());
-        setDestinationImageId(Guid.NewGuid());
+        setDestinationImageId(Guid.newGuid());
 
         mNewCreatedDiskImage = new DiskImage();
         mNewCreatedDiskImage.setImageId(getDestinationImageId());

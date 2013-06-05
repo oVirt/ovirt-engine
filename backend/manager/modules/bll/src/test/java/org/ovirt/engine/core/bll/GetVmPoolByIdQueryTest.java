@@ -18,7 +18,7 @@ import org.ovirt.engine.core.dao.VmPoolDAO;
 public class GetVmPoolByIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVmPoolByIdQuery<IdQueryParameters>> {
     @Test
     public void testExecuteQuery() {
-        Guid vmPoolID = Guid.NewGuid();
+        Guid vmPoolID = Guid.newGuid();
         VmPool expectedResult = new VmPool();
         expectedResult.setVmPoolId(vmPoolID);
 

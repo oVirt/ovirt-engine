@@ -25,8 +25,8 @@ public class GetVmTemplatesAndNetworkInterfacesByNetworkIdQueryTest
         extends AbstractQueryTest<IdQueryParameters,
         GetVmTemplatesAndNetworkInterfacesByNetworkIdQuery<IdQueryParameters>> {
 
-    private Guid networkId = Guid.NewGuid();
-    private Guid vmTemplateId = Guid.NewGuid();
+    private Guid networkId = Guid.newGuid();
+    private Guid vmTemplateId = Guid.newGuid();
     private VmTemplate vmTemplate = new VmTemplate();
     private VmNetworkInterface vmNetworkInterface = new VmNetworkInterface();
 

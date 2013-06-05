@@ -227,7 +227,7 @@ public class ImportVmTemplateCommandTest {
         VmTemplate t = new VmTemplate();
         t.setName("testTemplate");
         final ImportVmTemplateParameters p =
-                new ImportVmTemplateParameters(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), t);
+                new ImportVmTemplateParameters(Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), Guid.newGuid(), t);
         return p;
     }
 

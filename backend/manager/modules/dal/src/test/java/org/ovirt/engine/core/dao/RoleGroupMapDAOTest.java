@@ -45,7 +45,7 @@ public class RoleGroupMapDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllRoleGroupMapsWithInvalidRole() {
-        List<RoleGroupMap> result = dao.getAllForRole(Guid.NewGuid());
+        List<RoleGroupMap> result = dao.getAllForRole(Guid.newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

@@ -24,7 +24,7 @@ public class GetTemplatesRelatedToQuotaIdQueryTest extends AbstractQueryTest<IdQ
     @Mock
     VmTemplateDAO vmTemplateDAO;
 
-    Guid quotaId = Guid.NewGuid();
+    Guid quotaId = Guid.newGuid();
 
     List<VmTemplate> returnedVmTemplates;
 

@@ -28,7 +28,7 @@ public class GetGlusterVolumeByIdQueryTest extends AbstractQueryTest<IdQueryPara
 
     private void setupExpectedVolume() {
         expected = new GlusterVolumeEntity();
-        expected.setId(Guid.NewGuid());
+        expected.setId(Guid.newGuid());
     }
 
     private void setupMock() {

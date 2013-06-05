@@ -92,8 +92,8 @@ public class BackwardCompatibilityTaskCreationTest {
                     @Override
                     public VM getVm() {
                         VM vm = new VM();
-                        vm.setId(Guid.NewGuid());
-                        vm.setStoragePoolId(Guid.NewGuid());
+                        vm.setId(Guid.newGuid());
+                        vm.setStoragePoolId(Guid.newGuid());
                         return vm;
                     }
                 },
@@ -149,7 +149,7 @@ public class BackwardCompatibilityTaskCreationTest {
     @Theory
     public void testConcreateCreateTaskBackwardsComaptibility(CommandBase<? extends VdcActionParametersBase> cmd) {
         VdcActionParametersBase params = cmd.getParameters();
-        params.setEntityId(Guid.NewGuid());
+        params.setEntityId(Guid.newGuid());
         params.setParentCommand(RandomUtils.instance().nextEnum(VdcActionType.class));
         params.setParentParameters(params);
 
@@ -183,9 +183,9 @@ public class BackwardCompatibilityTaskCreationTest {
     /** @return A randomly generated {@link AsyncTaskCreationInfo} object */
     private static AsyncTaskCreationInfo nextAsyncTaskCreationInfo() {
         AsyncTaskCreationInfo info = new AsyncTaskCreationInfo();
-        info.setStepId(Guid.NewGuid());
-        info.setStoragePoolID(Guid.NewGuid());
-        info.setTaskID(Guid.NewGuid());
+        info.setStepId(Guid.newGuid());
+        info.setStoragePoolID(Guid.newGuid());
+        info.setTaskID(Guid.newGuid());
         info.setTaskType(RandomUtils.instance().nextEnum(AsyncTaskType.class));
         return info;
     }

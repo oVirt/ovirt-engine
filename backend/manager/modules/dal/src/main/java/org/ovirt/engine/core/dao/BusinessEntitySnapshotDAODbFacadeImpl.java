@@ -74,7 +74,7 @@ public class BusinessEntitySnapshotDAODbFacadeImpl extends BaseDAODbFacade imple
     public void save(BusinessEntitySnapshot entitySnapshot) {
         Guid id = entitySnapshot.getId();
         if (Guid.isNullOrEmpty(id)) {
-            id = Guid.NewGuid();
+            id = Guid.newGuid();
             entitySnapshot.setId(id);
         }
         MapSqlParameterSource parameterSource =

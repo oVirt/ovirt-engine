@@ -19,7 +19,7 @@ public class GetRoleActionGroupsByRoleIdQueryTest extends AbstractUserQueryTest<
     @Test
     public void testExecuteQueryCommand() {
         // Mock parameters
-        Guid roleId = Guid.NewGuid();
+        Guid roleId = Guid.newGuid();
         when(getQueryParameters().getId()).thenReturn(roleId);
 
         // Mock the expected result

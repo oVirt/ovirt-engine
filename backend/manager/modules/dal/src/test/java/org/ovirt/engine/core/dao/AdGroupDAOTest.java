@@ -32,7 +32,7 @@ public class AdGroupDAOTest extends BaseDAOTestCase {
 
         // create some test data
         newAdGroup = new LdapGroup();
-        newAdGroup.setid(Guid.NewGuid());
+        newAdGroup.setid(Guid.newGuid());
         newAdGroup.setdomain("domain");
         newAdGroup.setname("name");
         newAdGroup.setstatus(LdapRefStatus.Active);
@@ -45,7 +45,7 @@ public class AdGroupDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        LdapGroup result = dao.get(Guid.NewGuid());
+        LdapGroup result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }

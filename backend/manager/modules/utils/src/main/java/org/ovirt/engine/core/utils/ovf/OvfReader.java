@@ -490,7 +490,7 @@ public abstract class OvfReader implements IOvfBuilder {
             list = _document.SelectNodes(sb.toString(), _xmlNS);
             for (XmlNode node : list) {
                 VmNetworkInterface iface = new VmNetworkInterface();
-                iface.setId(Guid.NewGuid());
+                iface.setId(Guid.newGuid());
                 updateSingleNic(node, iface);
                 interfaces.add(iface);
             }

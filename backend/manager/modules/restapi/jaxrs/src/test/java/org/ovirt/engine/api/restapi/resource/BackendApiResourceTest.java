@@ -65,7 +65,7 @@ public class BackendApiResourceTest extends Assert {
     protected static final String BASE_PATH = "/api";
     protected static final String URI_BASE = URI_ROOT + BASE_PATH;
     protected static final String BUNDLE_PATH = "org/ovirt/engine/api/restapi/logging/Messages";
-    protected static final String sessionId = Guid.NewGuid().toString();
+    protected static final String sessionId = Guid.newGuid().toString();
     private static String USER_FILTER_HEADER = "Filter";
 
     protected static final int MAJOR = 11;

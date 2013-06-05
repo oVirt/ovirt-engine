@@ -44,9 +44,9 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 @RunWith(MockitoJUnitRunner.class)
 public class MoveOrCopyDiskCommandTest {
 
-    private final Guid diskImageGuid = Guid.NewGuid();
-    private Guid destStorageId = Guid.NewGuid();
-    private final Guid srcStorageId = Guid.NewGuid();
+    private final Guid diskImageGuid = Guid.newGuid();
+    private Guid destStorageId = Guid.newGuid();
+    private final Guid srcStorageId = Guid.newGuid();
     private final static int FREE_SPACE_CRITICAL_LOW_IN_GB = 0;
 
     @ClassRule

@@ -27,8 +27,8 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQueryTest
         extends AbstractQueryTest<GetVmsAndNetworkInterfacesByNetworkIdParameters,
         GetVmsAndNetworkInterfacesByNetworkIdQuery<GetVmsAndNetworkInterfacesByNetworkIdParameters>> {
 
-    private Guid networkId = Guid.NewGuid();
-    private Guid vmId = Guid.NewGuid();
+    private Guid networkId = Guid.newGuid();
+    private Guid vmId = Guid.newGuid();
     private VM vm = new VM();
     private VmNetworkInterface vmNetworkInterface = new VmNetworkInterface();
 
@@ -75,7 +75,7 @@ public class GetVmsAndNetworkInterfacesByNetworkIdQueryTest
 
         vm.setStatus(expectedStatus);
         VM downVm = new VM();
-        downVm.setId(Guid.NewGuid());
+        downVm.setId(Guid.newGuid());
         downVm.setStatus(unexpectedStatus);
 
         VmNetworkInterface downVmInterface = new VmNetworkInterface();

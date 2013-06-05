@@ -36,10 +36,10 @@ AbstractQueryTest<IdQueryParameters, GetGlusterVolumeBricksQuery<IdQueryParamete
 
     private void setupExpectedVolume() {
         expected = new GlusterVolumeEntity();
-        expected.setId(Guid.NewGuid());
+        expected.setId(Guid.newGuid());
         brickEntity = new GlusterBrickEntity();
-        brickEntity.setId(Guid.NewGuid());
-        brickEntity.setServerId(Guid.NewGuid());
+        brickEntity.setId(Guid.newGuid());
+        brickEntity.setServerId(Guid.newGuid());
         brickEntity.setBrickDirectory("/tmp/b1");
         brickEntity.setStatus(GlusterStatus.DOWN);
         bricks.add(brickEntity);

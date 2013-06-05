@@ -20,7 +20,7 @@ public class BaseDiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, Base
 
     @Override
     protected Guid generateNonExistingId() {
-        return Guid.NewGuid();
+        return Guid.newGuid();
     }
 
     @Override
@@ -30,7 +30,7 @@ public class BaseDiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, Base
 
     @Override
     protected BaseDisk generateNewEntity() {
-        return new BaseDisk(Guid.NewGuid(),
+        return new BaseDisk(Guid.newGuid(),
                 DiskInterface.IDE,
                 true,
                 PropagateErrors.Off,

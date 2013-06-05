@@ -24,7 +24,7 @@ public class GetPermissionsToConsumeQuotaByQuotaIdQueryTest extends AbstractQuer
     @Mock
     PermissionDAO permissionDAO;
 
-    Guid quotaId = Guid.NewGuid();
+    Guid quotaId = Guid.newGuid();
     List<permissions> returnedPermissions;
 
     @Test

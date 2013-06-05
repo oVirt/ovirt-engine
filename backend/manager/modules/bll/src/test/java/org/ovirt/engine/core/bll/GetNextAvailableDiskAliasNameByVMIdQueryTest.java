@@ -61,7 +61,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQueryTest extends AbstractUserQu
         vm = mockVmAndReturnFromDAO();
         Map<Guid, Disk> diskMap = vm.getDiskMap();
         DiskImage diskImage = new DiskImage();
-        diskImage.setImageId(Guid.NewGuid());
+        diskImage.setImageId(Guid.newGuid());
         diskMap.put(diskImage.getId(), diskImage);
         String diskAliasName = VM_NAME + "_Disk2";
 

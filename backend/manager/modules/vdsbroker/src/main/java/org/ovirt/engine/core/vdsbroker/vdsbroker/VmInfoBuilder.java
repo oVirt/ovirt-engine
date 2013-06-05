@@ -76,7 +76,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.put(VdsProperties.Type, VmDeviceGeneralType.VIDEO.getValue());
         struct.put(VdsProperties.Device, displayType.getVmDeviceType().getName());
         struct.put(VdsProperties.SpecParams, getNewMonitorSpecParams());
-        struct.put(VdsProperties.DeviceId, String.valueOf(Guid.NewGuid()));
+        struct.put(VdsProperties.DeviceId, String.valueOf(Guid.newGuid()));
         devices.add(struct);
     }
 
@@ -111,7 +111,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         // check if we have payload CD
         if (vm.getVmPayload() != null && vm.getVmPayload().getType() == VmDeviceType.CDROM) {
             VmDevice vmDevice =
-                    new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                    new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
                             VmDeviceGeneralType.DISK,
                             VmDeviceType.CDROM.getName(),
                             "",
@@ -129,7 +129,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         // check first if CD was given as a parameter
         if (vm.isRunOnce() && !StringUtils.isEmpty(vm.getCdPath())) {
             VmDevice vmDevice =
-                    new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                    new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
                             VmDeviceGeneralType.DISK,
                             VmDeviceType.CDROM.getName(),
                             "",
@@ -170,7 +170,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         // check if we have payload CD
         if (vm.getVmPayload() != null && vm.getVmPayload().getType() == VmDeviceType.FLOPPY) {
             VmDevice vmDevice =
-                    new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                    new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
                             VmDeviceGeneralType.DISK,
                             VmDeviceType.FLOPPY.getName(),
                             "",
@@ -188,7 +188,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         // check first if Floppy was given as a parameter
         else if (vm.isRunOnce() && !StringUtils.isEmpty(vm.getFloppyPath())) {
             VmDevice vmDevice =
-                    new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                    new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
                             VmDeviceGeneralType.DISK,
                             VmDeviceType.FLOPPY.getName(),
                             "",
@@ -443,7 +443,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         vmPayload.setContent(Base64.encodeBase64String(sysPrepContent.getBytes()));
 
         VmDevice vmDevice =
-                new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
                         VmDeviceGeneralType.DISK,
                         VmDeviceType.FLOPPY.getName(),
                         "",
@@ -649,7 +649,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             Map<String, Object> specParams = new HashMap<String, Object>();
             specParams.put(VdsProperties.Model, VdsProperties.Virtio);
             VmDevice vmDevice =
-                    new VmDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                    new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
                             VmDeviceGeneralType.BALLOON,
                             VmDeviceType.MEMBALLOON.getName(),
                             "",

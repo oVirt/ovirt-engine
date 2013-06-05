@@ -20,7 +20,7 @@ public class GetStoragePoolByIdQueryTest extends AbstractUserQueryTest<IdQueryPa
 
     @Test
     public void testExecuteQuery() {
-        Guid storagePoolID = Guid.NewGuid();
+        Guid storagePoolID = Guid.newGuid();
         StoragePool expectedResult = mock(StoragePool.class);
 
         IdQueryParameters paramsMock = getQueryParameters();

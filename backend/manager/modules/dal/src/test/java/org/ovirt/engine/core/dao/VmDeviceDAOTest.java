@@ -32,7 +32,7 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
 
     @Override
     protected VmDeviceId generateNonExistingId() {
-        return new VmDeviceId(Guid.NewGuid(), Guid.NewGuid());
+        return new VmDeviceId(Guid.newGuid(), Guid.newGuid());
     }
 
     @Override
@@ -44,7 +44,7 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     protected VmDevice generateNewEntity() {
         Map<String, String> customProp = new LinkedHashMap<>();
         customProp.put("prop1", "value1");
-        return new VmDevice(new VmDeviceId(Guid.NewGuid(), EXISTING_VM_ID),
+        return new VmDevice(new VmDeviceId(Guid.newGuid(), EXISTING_VM_ID),
                 VmDeviceGeneralType.DISK,
                 "floppy",
                 "type:'drive', controller:'0', bus:'0', unit:'1'",
@@ -75,7 +75,7 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
 
     @Test
     public void existsForNonExistingVmDevice() throws Exception {
-        assertFalse(dao.exists(new VmDeviceId(Guid.NewGuid(), Guid.NewGuid())));
+        assertFalse(dao.exists(new VmDeviceId(Guid.newGuid(), Guid.newGuid())));
     }
 
     @Test

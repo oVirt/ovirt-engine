@@ -38,7 +38,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
         // Add storage connection to the database.
         if (isValidConnection) {
-            connection.setid(Guid.NewGuid().toString());
+            connection.setid(Guid.newGuid().toString());
             saveConnection(connection);
             getReturnValue().setActionReturnValue(getConnection().getid());
             setSucceeded(true);

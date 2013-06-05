@@ -104,7 +104,7 @@ public class AddDiskToVmCommandTest {
 
     @Test
     public void canDoActionSucceedsOnDiskDomainCheckWhenNoDisks() throws Exception {
-        Guid storageId = Guid.NewGuid();
+        Guid storageId = Guid.newGuid();
         initializeCommand(storageId);
 
         mockVm();
@@ -117,7 +117,7 @@ public class AddDiskToVmCommandTest {
     @Test
     public void canDoActionSucceedsOnDiskDomainCheckWhenEmptyStorageGuidInParams() throws Exception {
         initializeCommand(Guid.Empty);
-        Guid storageId = Guid.NewGuid();
+        Guid storageId = Guid.newGuid();
 
         mockVmWithDisk(storageId);
         mockStorageDomain(storageId);
@@ -128,7 +128,7 @@ public class AddDiskToVmCommandTest {
 
     @Test
     public void canDoActionSucceedsOnDiskDomainCheckWhenStorageGuidInParamsMatches() throws Exception {
-        Guid storageId = Guid.NewGuid();
+        Guid storageId = Guid.newGuid();
         initializeCommand(storageId);
 
         mockVmWithDisk(storageId);
@@ -140,10 +140,10 @@ public class AddDiskToVmCommandTest {
 
     @Test
     public void canDoActionSucceedsOnDiskDomainCheckWhenStorageGuidInParamsMismatches() throws Exception {
-        Guid storageId = Guid.NewGuid();
+        Guid storageId = Guid.newGuid();
         initializeCommand(storageId);
 
-        mockVmWithDisk(Guid.NewGuid());
+        mockVmWithDisk(Guid.newGuid());
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
 
@@ -152,11 +152,11 @@ public class AddDiskToVmCommandTest {
 
     @Test
     public void canDoActionFailsOnNullDiskInterface() throws Exception {
-        Guid storageId = Guid.NewGuid();
+        Guid storageId = Guid.newGuid();
         DiskImage image = new DiskImage();
         image.setvolumeFormat(VolumeFormat.COW);
         image.setVolumeType(VolumeType.Preallocated);
-        AddDiskParameters params = new AddDiskParameters(Guid.NewGuid(), image);
+        AddDiskParameters params = new AddDiskParameters(Guid.newGuid(), image);
         initializeCommand(storageId, params);
         assertFalse(command.validateInputs());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains("VALIDATION.DISK_INTERFACE.NOT_NULL"));
@@ -166,7 +166,7 @@ public class AddDiskToVmCommandTest {
     public void canDoActionThinProvisioningSpaceCheckSucceeds() throws Exception {
         final int availableSize = 6;
         final int usedSize = 4;
-        Guid sdid = Guid.NewGuid();
+        Guid sdid = Guid.newGuid();
         initializeCommand(sdid, VolumeType.Sparse);
 
         mockVm();
@@ -180,7 +180,7 @@ public class AddDiskToVmCommandTest {
     public void canDoActionThinProvisioningSpaceCheckFailsSize() {
         final int availableSize = 4;
         final int usedSize = 6;
-        Guid sdid = Guid.NewGuid();
+        Guid sdid = Guid.newGuid();
         initializeCommand(sdid, VolumeType.Sparse);
 
         mockVm();
@@ -197,7 +197,7 @@ public class AddDiskToVmCommandTest {
     public void canDoActionPreallocatedSpaceCheckSucceeds() {
         final int availableSize = 12;
         final int usedSize = 8;
-        Guid sdid = Guid.NewGuid();
+        Guid sdid = Guid.newGuid();
         initializeCommand(sdid, VolumeType.Preallocated);
 
         mockVm();
@@ -210,7 +210,7 @@ public class AddDiskToVmCommandTest {
     public void canDoActionPreallocatedSpaceCheckFailsSize() {
         final int availableSize = 3;
         final int usedSize = 7;
-        Guid sdid = Guid.NewGuid();
+        Guid sdid = Guid.newGuid();
         initializeCommand(sdid, VolumeType.Preallocated);
 
         mockVm();
@@ -228,7 +228,7 @@ public class AddDiskToVmCommandTest {
      */
     @Test
     public void canDoActionMaxBlockDiskSizeCheckSucceeds() {
-        Guid storageId = Guid.NewGuid();
+        Guid storageId = Guid.newGuid();
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(createDiskImage(MAX_BLOCK_SIZE));
         initializeCommand(storageId, parameters);
@@ -245,7 +245,7 @@ public class AddDiskToVmCommandTest {
      */
     @Test
     public void canDoActionMaxBlockDiskSizeCheckFails() {
-        Guid storageId = Guid.NewGuid();
+        Guid storageId = Guid.newGuid();
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(createDiskImage(MAX_BLOCK_SIZE * 2));
         initializeCommand(storageId, parameters);
@@ -270,7 +270,7 @@ public class AddDiskToVmCommandTest {
 
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(image);
-        Guid storageId = Guid.NewGuid();
+        Guid storageId = Guid.newGuid();
         initializeCommand(storageId, parameters);
 
         mockVm();
@@ -290,7 +290,7 @@ public class AddDiskToVmCommandTest {
 
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(image);
-        Guid storageId = Guid.NewGuid();
+        Guid storageId = Guid.newGuid();
         initializeCommand(storageId, parameters);
 
         mockVm();
@@ -366,7 +366,7 @@ public class AddDiskToVmCommandTest {
     private VM mockVm() {
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
-        vm.setStoragePoolId(Guid.NewGuid());
+        vm.setStoragePoolId(Guid.newGuid());
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(vm);
 
         return vm;
@@ -386,7 +386,7 @@ public class AddDiskToVmCommandTest {
      * @return
      */
     private StoragePool mockStoragePool(Version compatibilityVersion) {
-        Guid storagePoolId = Guid.NewGuid();
+        Guid storagePoolId = Guid.newGuid();
         StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
         storagePool.setcompatibility_version(compatibilityVersion);
@@ -451,7 +451,7 @@ public class AddDiskToVmCommandTest {
     private static AddDiskParameters createParameters() {
         DiskImage image = new DiskImage();
         image.setDiskInterface(DiskInterface.IDE);
-        AddDiskParameters parameters = new AddDiskParameters(Guid.NewGuid(), image);
+        AddDiskParameters parameters = new AddDiskParameters(Guid.newGuid(), image);
         return parameters;
     }
 
@@ -509,7 +509,7 @@ public class AddDiskToVmCommandTest {
         LunDisk disk = createISCSILunDisk();
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
-        initializeCommand(Guid.NewGuid(), parameters);
+        initializeCommand(Guid.newGuid(), parameters);
         when(diskLunMapDAO.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
         assertTrue("checkIfLunDiskCanBeAdded() failed for valid iscsi lun",command.checkIfLunDiskCanBeAdded());
     }
@@ -519,7 +519,7 @@ public class AddDiskToVmCommandTest {
         LunDisk disk = createISCSILunDisk();
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
-        initializeCommand(Guid.NewGuid(), parameters);
+        initializeCommand(Guid.newGuid(), parameters);
         disk.getLun().setLunType(StorageType.UNKNOWN);
         assertFalse("checkIfLunDiskCanBeAdded() succeded for LUN with UNKNOWN type", command.checkIfLunDiskCanBeAdded());
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_HAS_NO_VALID_TYPE));
@@ -530,7 +530,7 @@ public class AddDiskToVmCommandTest {
         LunDisk disk = createISCSILunDisk();
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
-        initializeCommand(Guid.NewGuid(), parameters);
+        initializeCommand(Guid.newGuid(), parameters);
         disk.getLun().getLunConnections().get(0).setiqn(null);
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null iqn", command.checkIfLunDiskCanBeAdded());
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
@@ -547,7 +547,7 @@ public class AddDiskToVmCommandTest {
         LunDisk disk = createISCSILunDisk();
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
-        initializeCommand(Guid.NewGuid(), parameters);
+        initializeCommand(Guid.newGuid(), parameters);
         disk.getLun().getLunConnections().get(0).setconnection(null);
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null address",command.checkIfLunDiskCanBeAdded());
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
@@ -564,7 +564,7 @@ public class AddDiskToVmCommandTest {
         LunDisk disk = createISCSILunDisk();
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
-        initializeCommand(Guid.NewGuid(), parameters);
+        initializeCommand(Guid.newGuid(), parameters);
         disk.getLun().getLunConnections().get(0).setport(null);
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a null port",command.checkIfLunDiskCanBeAdded());
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response",verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
@@ -582,7 +582,7 @@ public class AddDiskToVmCommandTest {
         disk.setDiskInterface(DiskInterface.IDE);
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
-        initializeCommand(Guid.NewGuid(), parameters);
+        initializeCommand(Guid.newGuid(), parameters);
         when(diskLunMapDAO.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
         VM vm = mockVm();
 
@@ -590,7 +590,7 @@ public class AddDiskToVmCommandTest {
         fillDiskMap(disk, vm, VmCommand.MAX_IDE_SLOTS - 1);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
 
-        vm.getDiskMap().put(Guid.NewGuid(), disk);
+        vm.getDiskMap().put(Guid.newGuid(), disk);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_IDE_SLOTS);
     }
@@ -601,7 +601,7 @@ public class AddDiskToVmCommandTest {
         disk.setDiskInterface(DiskInterface.VirtIO);
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
-        initializeCommand(Guid.NewGuid(), parameters);
+        initializeCommand(Guid.newGuid(), parameters);
         when(diskLunMapDAO.getDiskIdByLunId(disk.getLun().getLUN_id())).thenReturn(null);
         VM vm = mockVm();
 
@@ -609,7 +609,7 @@ public class AddDiskToVmCommandTest {
         fillDiskMap(disk, vm, VmCommand.MAX_PCI_SLOTS - 2);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
 
-        vm.getDiskMap().put(Guid.NewGuid(), disk);
+        vm.getDiskMap().put(Guid.newGuid(), disk);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_PCI_SLOTS);
     }
@@ -620,7 +620,7 @@ public class AddDiskToVmCommandTest {
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
 
-        Guid storageId = Guid.NewGuid();
+        Guid storageId = Guid.newGuid();
         initializeCommand(storageId, parameters);
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
@@ -648,7 +648,7 @@ public class AddDiskToVmCommandTest {
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
 
-        Guid storageId = Guid.NewGuid();
+        Guid storageId = Guid.newGuid();
         initializeCommand(storageId, parameters);
         mockStorageDomain(storageId);
         mockStoragePoolIsoMap();
@@ -668,7 +668,7 @@ public class AddDiskToVmCommandTest {
 
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
-        initializeCommand(Guid.NewGuid(), parameters);
+        initializeCommand(Guid.newGuid(), parameters);
 
         VM vm = mockVm();
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
@@ -679,7 +679,7 @@ public class AddDiskToVmCommandTest {
     private void fillDiskMap(LunDisk disk, VM vm, int expectedMapSize) {
         Map<Guid, Disk> diskMap = new HashMap<Guid, Disk>();
         for (int i = 0; i < expectedMapSize; i++) {
-            diskMap.put(Guid.NewGuid(), disk);
+            diskMap.put(Guid.newGuid(), disk);
         }
         vm.setDiskMap(diskMap);
     }

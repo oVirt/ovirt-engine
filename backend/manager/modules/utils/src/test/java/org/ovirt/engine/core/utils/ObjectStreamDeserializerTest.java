@@ -18,8 +18,8 @@ public class ObjectStreamDeserializerTest {
         try {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             StoragePoolIsoMap isoMap = new StoragePoolIsoMap();
-            isoMap.setstorage_id(Guid.NewGuid());
-            isoMap.setstorage_pool_id(Guid.NewGuid());
+            isoMap.setstorage_id(Guid.newGuid());
+            isoMap.setstorage_pool_id(Guid.newGuid());
             isoMap.setstatus(StorageDomainStatus.Active);
             new ObjectOutputStream(outputStream).writeObject(isoMap);
             byte[] bytes = outputStream.toByteArray();

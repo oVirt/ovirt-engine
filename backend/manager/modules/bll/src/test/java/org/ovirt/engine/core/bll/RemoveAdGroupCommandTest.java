@@ -17,7 +17,7 @@ public class RemoveAdGroupCommandTest {
      * The command under test.
      */
     private RemoveAdGroupCommand<AdElementParametersBase> command;
-    private Guid adElementId = Guid.NewGuid();
+    private Guid adElementId = Guid.newGuid();
 
     @Before
     public void initializeCommand() {

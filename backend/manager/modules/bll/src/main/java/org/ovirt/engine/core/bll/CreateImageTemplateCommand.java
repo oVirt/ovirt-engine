@@ -38,8 +38,8 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                 : Guid.Empty;
         Guid snapshotId = getDiskImage().getImageId();
         // Create new image group id and image id:
-        Guid destinationImageGroupID = Guid.NewGuid();
-        setDestinationImageId(Guid.NewGuid());
+        Guid destinationImageGroupID = Guid.newGuid();
+        setDestinationImageId(Guid.newGuid());
         getDiskImage().getSnapshots().addAll(
                 ImagesHandler.getAllImageSnapshots(getDiskImage().getImageId(), getDiskImage().getImageTemplateId()));
 

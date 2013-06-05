@@ -16,7 +16,7 @@ public class VdcUserTest {
 
     @Before
     public void setUp() {
-        adUser = new LdapUser("UserName", "password", Guid.NewGuid(), "DomainController");
+        adUser = new LdapUser("UserName", "password", Guid.newGuid(), "DomainController");
     }
 
     /** Tests {@link VdcUser#VdcUser(LdapUser)) */

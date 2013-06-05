@@ -157,7 +157,7 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntity<
 
     public Guid getId(boolean generateIfNull) {
         if(id == null && generateIfNull) {
-            id = Guid.NewGuid();
+            id = Guid.newGuid();
         }
         return id;
     }

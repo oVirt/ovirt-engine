@@ -31,8 +31,8 @@ public class AddStorageServerConnectionCommandTest {
     @Before
     public void prepareParams() {
         parameters = new StorageServerConnectionParametersBase();
-        parameters.setVdsId(Guid.NewGuid());
-        parameters.setStoragePoolId(Guid.NewGuid());
+        parameters.setVdsId(Guid.newGuid());
+        parameters.setStoragePoolId(Guid.newGuid());
         command = spy(new AddStorageServerConnectionCommand<StorageServerConnectionParametersBase>(parameters));
     }
 
@@ -162,7 +162,7 @@ public class AddStorageServerConnectionCommandTest {
                         StorageType.POSIXFS,
                         "nfs",
                         "timeo=30");
-        newPosixConnection.setid(Guid.NewGuid().toString());
+        newPosixConnection.setid(Guid.newGuid().toString());
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
         doReturn(true).when(command).initializeVds();

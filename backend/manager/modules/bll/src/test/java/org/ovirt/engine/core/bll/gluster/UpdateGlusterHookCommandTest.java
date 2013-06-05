@@ -48,7 +48,7 @@ public class UpdateGlusterHookCommandTest extends GlusterHookCommandTest<UpdateG
     private VdsDAO vdsDao;
 
     private static final String CONTENT = "TestContent";
-    private static final Guid SERVER_ID = Guid.NewGuid();
+    private static final Guid SERVER_ID = Guid.newGuid();
 
     private void setUpMocksForUpdate() {
         setUpMocksForUpdate(true);

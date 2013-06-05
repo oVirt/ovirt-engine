@@ -87,7 +87,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     public AddVmCommand(T parameters) {
         super(parameters);
         // if we came from EndAction the VmId is not null
-        setVmId((parameters.getVmId().equals(Guid.Empty)) ? Guid.NewGuid() : parameters.getVmId());
+        setVmId((parameters.getVmId().equals(Guid.Empty)) ? Guid.newGuid() : parameters.getVmId());
         setVmName(parameters.getVm().getName());
         parameters.setVmId(getVmId());
         setStorageDomainId(getParameters().getStorageDomainId());
@@ -541,7 +541,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         VmPayload payload = getParameters().getVmPayload();
 
         if (payload != null) {
-            VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), getParameters().getVmId()),
+            VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), getParameters().getVmId()),
                     VmDeviceGeneralType.DISK,
                     payload.getType(),
                     payload.getSpecParams(),
@@ -602,7 +602,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected void addVmNetwork() {
         // Add interfaces from template
         for (VmNetworkInterface iface : getVmInterfaces()) {
-            iface.setId(Guid.NewGuid());
+            iface.setId(Guid.newGuid());
             iface.setMacAddress(MacPoolManager.getInstance().allocateNewMac());
             iface.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());
             iface.setVmTemplateId(null);
@@ -791,7 +791,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected void addActiveSnapshot() {
-        _vmSnapshotId = Guid.NewGuid();
+        _vmSnapshotId = Guid.newGuid();
         new SnapshotsManager().addActiveSnapshot(_vmSnapshotId, getVm(), getCompensationContext());
     }
 

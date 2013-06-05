@@ -42,7 +42,7 @@ public class StopGlusterVolumeProfileCommandTest {
 
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
-        vds.setId(Guid.NewGuid());
+        vds.setId(Guid.newGuid());
         vds.setVdsName("server1");
         vds.setVdsGroupId(CLUSTER_ID);
         vds.setStatus(status);

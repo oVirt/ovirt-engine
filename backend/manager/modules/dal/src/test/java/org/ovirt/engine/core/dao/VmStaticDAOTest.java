@@ -42,12 +42,12 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         vmtemplate = dbFacade.getVmTemplateDao().get(
                 new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
         newVmStatic = new VmStatic();
-        newVmStatic.setId(Guid.NewGuid());
+        newVmStatic.setId(Guid.newGuid());
         newVmStatic.setName("New Virtual Machine");
         newVmStatic.setVdsGroupId(VDS_GROUP_ID);
         newVmStatic.setVmtGuid(vmtemplate.getId());
         newVmStatic.setOrigin(OriginType.OVIRT);
-        newVmStatic.setQuotaId(Guid.NewGuid());
+        newVmStatic.setQuotaId(Guid.newGuid());
     }
 
     /**
@@ -55,7 +55,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        VmStatic result = dao.get(Guid.NewGuid());
+        VmStatic result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }
@@ -179,7 +179,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAllNamesPinnedToHostReturnsNothingForRandomHost() throws Exception {
-        assertTrue(dao.getAllNamesPinnedToHost(Guid.NewGuid()).isEmpty());
+        assertTrue(dao.getAllNamesPinnedToHost(Guid.newGuid()).isEmpty());
     }
 
 

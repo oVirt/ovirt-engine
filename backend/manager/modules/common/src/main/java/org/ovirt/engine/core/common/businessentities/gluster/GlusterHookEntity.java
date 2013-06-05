@@ -46,7 +46,7 @@ public class GlusterHookEntity extends IVdcQueryable implements BusinessEntity<G
 
     public GlusterHookEntity() {
         super();
-        id = Guid.NewGuid();
+        id = Guid.newGuid();
     }
 
     @Override

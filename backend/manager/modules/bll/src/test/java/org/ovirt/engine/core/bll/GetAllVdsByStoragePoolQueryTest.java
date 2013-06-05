@@ -19,7 +19,7 @@ public class GetAllVdsByStoragePoolQueryTest extends AbstractUserQueryTest<IdQue
     @Test
     public void testExecuteQueryCommand() {
         // Prepare the parameters
-        Guid spId = Guid.NewGuid();
+        Guid spId = Guid.newGuid();
         when(getQueryParameters().getId()).thenReturn(spId);
 
         // Prepare the result

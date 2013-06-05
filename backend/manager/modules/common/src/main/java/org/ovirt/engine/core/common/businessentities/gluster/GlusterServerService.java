@@ -106,7 +106,7 @@ public class GlusterServerService extends IVdcQueryable implements BusinessEntit
     }
 
     public static void main(String[] args) {
-        System.out.println(Guid.NewGuid());
+        System.out.println(Guid.newGuid());
     }
 
     @Override

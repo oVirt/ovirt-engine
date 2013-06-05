@@ -503,7 +503,7 @@ public class GlusterSyncJobTest {
     }
 
     private void replaceBrick(GlusterBrickEntity brick, Guid newServerId, String newBrickDir) {
-        brick.setId(Guid.NewGuid());
+        brick.setId(Guid.newGuid());
         brick.setServerId(newServerId);
         brick.setBrickDirectory(newBrickDir);
         addedBrickIds.add(brick.getId());

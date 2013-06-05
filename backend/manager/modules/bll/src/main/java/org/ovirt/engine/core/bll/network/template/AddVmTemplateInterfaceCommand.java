@@ -34,7 +34,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
     @Override
     protected void executeCommand() {
         getParameters().getInterface().setVmTemplateId(getParameters().getVmTemplateId());
-        getParameters().getInterface().setId(Guid.NewGuid());
+        getParameters().getInterface().setId(Guid.newGuid());
         getParameters().getInterface().setSpeed(
                 VmInterfaceType.forValue(
                         getParameters().getInterface().getType()).getSpeed());

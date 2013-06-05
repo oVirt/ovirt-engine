@@ -18,7 +18,7 @@ public class GetHostsForStorageOperationQueryTest extends AbstractQueryTest<GetH
     @Test
     public void testExecuteQueryCommand() {
         // Prepare the parameters
-        Guid spId = Guid.NewGuid();
+        Guid spId = Guid.newGuid();
         when(getQueryParameters().getId()).thenReturn(spId);
         when(getQueryParameters().isLocalFsOnly()).thenReturn(false);
 

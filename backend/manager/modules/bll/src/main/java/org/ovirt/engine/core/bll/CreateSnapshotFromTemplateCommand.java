@@ -22,7 +22,7 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
     public CreateSnapshotFromTemplateCommand(T parameters) {
         super(parameters);
         super.setVmId(parameters.getVmId());
-        setImageGroupId(Guid.NewGuid());
+        setImageGroupId(Guid.newGuid());
     }
 
     /**

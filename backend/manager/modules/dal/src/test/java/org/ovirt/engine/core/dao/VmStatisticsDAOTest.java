@@ -47,7 +47,7 @@ public class VmStatisticsDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetNonExistingId() {
-        VmStatistics result = dao.get(Guid.NewGuid());
+        VmStatistics result = dao.get(Guid.newGuid());
         assertNull(result);
     }
 
@@ -64,7 +64,7 @@ public class VmStatisticsDAOTest extends BaseDAOTestCase {
 
     @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
     public void testSaveStaticDoesNotExist() {
-        Guid newGuid = Guid.NewGuid();
+        Guid newGuid = Guid.newGuid();
         newVmStatistics.setId(newGuid);
         dao.save(newVmStatistics);
 

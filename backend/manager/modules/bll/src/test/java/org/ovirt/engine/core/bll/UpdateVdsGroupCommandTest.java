@@ -48,7 +48,7 @@ public class UpdateVdsGroupCommandTest {
     private static final Version VERSION_1_0 = new Version(1, 0);
     private static final Version VERSION_1_1 = new Version(1, 1);
     private static final Version VERSION_1_2 = new Version(1, 2);
-    private static final Guid STORAGE_POOL_ID = Guid.NewGuid();
+    private static final Guid STORAGE_POOL_ID = Guid.newGuid();
 
     @Mock
     private VdsGroupDAO vdsGroupDAO;
@@ -360,7 +360,7 @@ public class UpdateVdsGroupCommandTest {
 
     private static VDSGroup createVdsGroupWithDifferentPool() {
         VDSGroup group = createNewVdsGroup();
-        group.setStoragePoolId(Guid.NewGuid());
+        group.setStoragePoolId(Guid.newGuid());
         return group;
     }
 

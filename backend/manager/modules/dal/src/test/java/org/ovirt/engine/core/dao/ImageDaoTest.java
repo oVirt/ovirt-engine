@@ -24,7 +24,7 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
 
     @Override
     protected Guid generateNonExistingId() {
-        return Guid.NewGuid();
+        return Guid.newGuid();
     }
 
     @Override
@@ -61,11 +61,11 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
         newImage.setActive(true);
         newImage.setTemplateImageId(EXISTING_IMAGE_DISK_TEMPLATE_ID);
         newImage.setSnapshotId(EXISTING_SNAPSHOT_ID);
-        newImage.setId(Guid.NewGuid());
+        newImage.setId(Guid.newGuid());
         newImage.setVolumeFormat(VolumeFormat.COW);
         newImage.setVolumeType(VolumeType.Sparse);
-        newImage.setDiskId(Guid.NewGuid());
-        newImage.setQuotaId(Guid.NewGuid());
+        newImage.setDiskId(Guid.newGuid());
+        newImage.setQuotaId(Guid.newGuid());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
 
     @Test
     public void testUpdateImageVmSnapshotId() {
-        Guid guid = Guid.NewGuid();
+        Guid guid = Guid.newGuid();
         dao.updateImageVmSnapshotId(EXISTING_IMAGE_ID, guid);
         Image imageFromDb = dao.get(EXISTING_IMAGE_ID);
         assertNotNull(imageFromDb);

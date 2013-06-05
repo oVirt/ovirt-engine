@@ -31,7 +31,7 @@ public class FenceVdsBaseCommandTest {
     StopVdsCommand<FenceVdsActionParameters> command;
 
     protected FenceVdsActionParameters createParameters() {
-        return new FenceVdsActionParameters(Guid.NewGuid(), FenceActionType.Stop);
+        return new FenceVdsActionParameters(Guid.newGuid(), FenceActionType.Stop);
     }
 
     @SuppressWarnings("serial")

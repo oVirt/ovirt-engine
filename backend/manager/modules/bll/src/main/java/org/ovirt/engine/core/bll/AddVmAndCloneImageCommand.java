@@ -52,8 +52,8 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
             VdcActionType parentCommandType) {
         DiskImage newDiskImage = cloneDiskImage(getVmId(),
                 destStorageDomainId,
-                Guid.NewGuid(),
-                Guid.NewGuid(),
+                Guid.newGuid(),
+                Guid.newGuid(),
                 diskImage);
         ImagesHandler.setDiskAlias(newDiskImage, getVm());
         MoveOrCopyImageGroupParameters parameters = createCopyParameters(newDiskImage,

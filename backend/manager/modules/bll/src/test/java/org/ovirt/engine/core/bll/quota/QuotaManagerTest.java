@@ -485,7 +485,7 @@ public class QuotaManagerTest {
 
         // basic data
         Quota quota = new Quota();
-        quota.setId(Guid.NewGuid());
+        quota.setId(Guid.newGuid());
         quota.setStoragePoolId(storage_pool.getId());
         quota.setDescription("My Quota description");
         quota.setQuotaName("My Quota Name");
@@ -513,8 +513,8 @@ public class QuotaManagerTest {
         ArrayList<QuotaStorage> quotaStorages = new ArrayList<QuotaStorage>();
         quotaStorages.add(getQuotaStorage(UNLIMITED_STORAGE, 0));
         quotaStorages.add(getQuotaStorage(50, 5));
-        quotaStorages.get(0).setStorageId(Guid.NewGuid());
-        quotaStorages.get(1).setStorageId(Guid.NewGuid());
+        quotaStorages.get(0).setStorageId(Guid.newGuid());
+        quotaStorages.get(1).setStorageId(Guid.newGuid());
         quotaStorages.add(getQuotaStorage(storageSize, storageSizeUsed));
         return quotaStorages;
     }
@@ -533,8 +533,8 @@ public class QuotaManagerTest {
         ArrayList<QuotaVdsGroup> quotaVdsGroups = new ArrayList<QuotaVdsGroup>();
         quotaVdsGroups.add(getQuotaVdsGroup(UNLIMITED_VCPU, 0, UNLIMITED_MEM, 0));
         quotaVdsGroups.add(getQuotaVdsGroup(10, 2, 1000, 100));
-        quotaVdsGroups.get(0).setVdsGroupId(Guid.NewGuid());
-        quotaVdsGroups.get(1).setVdsGroupId(Guid.NewGuid());
+        quotaVdsGroups.get(0).setVdsGroupId(Guid.newGuid());
+        quotaVdsGroups.get(1).setVdsGroupId(Guid.newGuid());
         quotaVdsGroups.add(getQuotaVdsGroup(vCpu, vCpuUsed, mem, memUsed));
         return quotaVdsGroups;
     }

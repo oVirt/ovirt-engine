@@ -75,7 +75,7 @@ public class AttachStorageDomainToPoolCommandTest {
 
     @Test
     public void statusSetInMap() {
-        StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(Guid.NewGuid(), Guid.NewGuid());
+        StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(Guid.newGuid(), Guid.newGuid());
         AttachStorageDomainToPoolCommand<StorageDomainPoolParametersBase> cmd =
                 spy(new AttachStorageDomainToPoolCommand<StorageDomainPoolParametersBase>(params));
 

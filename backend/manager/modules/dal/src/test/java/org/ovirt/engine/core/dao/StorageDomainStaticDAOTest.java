@@ -47,7 +47,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        StorageDomainStatic result = dao.get(Guid.NewGuid());
+        StorageDomainStatic result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }
@@ -102,7 +102,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForStoragePoolWithInvalidPool() {
         List<StorageDomainStatic> result = dao
-                .getAllForStoragePool(Guid.NewGuid());
+                .getAllForStoragePool(Guid.newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -161,7 +161,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAllIdsForNonExistingStoragePoolId() throws Exception {
-        List<Guid> result = dao.getAllIds(Guid.NewGuid(), StorageDomainStatus.Active);
+        List<Guid> result = dao.getAllIds(Guid.newGuid(), StorageDomainStatus.Active);
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

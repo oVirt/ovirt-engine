@@ -371,7 +371,7 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     }
 
     private GlusterVolumeEntity insertTestVolume() {
-        Guid volumeId = Guid.NewGuid();
+        Guid volumeId = Guid.newGuid();
 
         GlusterVolumeEntity volume = new GlusterVolumeEntity();
         volume.setName(NEW_VOL_NAME);

@@ -31,10 +31,10 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVmConfigurationBySnapshotQuery<IdQueryParameters>> {
     private SnapshotDao snapshotDaoMock;
     private DiskImageDAO diskImageDaoMock;
-    private Guid existingSnapshotId = Guid.NewGuid();
-    private Guid existingVmId = Guid.NewGuid();
-    private Guid existingImageId = Guid.NewGuid();
-    private Guid existingImageGroupId = Guid.NewGuid();
+    private Guid existingSnapshotId = Guid.newGuid();
+    private Guid existingVmId = Guid.newGuid();
+    private Guid existingImageId = Guid.newGuid();
+    private Guid existingImageGroupId = Guid.newGuid();
     private Snapshot existingSnapshot;
     private VM existingVm = null;
     private SnapshotsManager snapshotsManager;
@@ -110,7 +110,7 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     @Test
     public void testNonExistingSnapshotQuery() throws Exception {
         GetVmConfigurationBySnapshotQuery<IdQueryParameters> query =
-                setupQueryBySnapshotId(Guid.NewGuid());
+                setupQueryBySnapshotId(Guid.newGuid());
         when(snapshotDaoMock.get(any(Guid.class))).thenReturn(null);
         VdcQueryReturnValue returnValue = query.getQueryReturnValue();
         VM returnedVm = (VM) returnValue.getReturnValue();

@@ -70,7 +70,7 @@ public class GlusterVolumeRemoveBricksCommandTest {
 
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
-        vds.setId(Guid.NewGuid());
+        vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
         vds.setVdsGroupId(CLUSTER_ID);
         vds.setStatus(status);

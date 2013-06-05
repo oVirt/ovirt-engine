@@ -27,9 +27,9 @@ public class GetVdsGroupsAndNetworksByNetworkIdQueryTest
         extends AbstractQueryTest<IdQueryParameters,
         GetVdsGroupsAndNetworksByNetworkIdQuery<IdQueryParameters>> {
 
-    private Guid networkId = Guid.NewGuid();
-    private Guid storagePoolId = Guid.NewGuid();
-    private Guid clusterId = Guid.NewGuid();
+    private Guid networkId = Guid.newGuid();
+    private Guid storagePoolId = Guid.newGuid();
+    private Guid clusterId = Guid.newGuid();
     private Network network = new Network();
     private VDSGroup cluster = new VDSGroup();
     private NetworkCluster networkCluster = new NetworkCluster();

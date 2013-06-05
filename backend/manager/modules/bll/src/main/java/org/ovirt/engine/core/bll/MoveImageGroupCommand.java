@@ -30,7 +30,7 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         // task manager calls the end methods of command based on the entity id.
         // the remove done here is a "clenaup", either on the source domain or on the target - so
         // other operations on the image shouldn't be dependent and wait for it.
-        removeImageParams.setEntityId(Guid.NewGuid());
+        removeImageParams.setEntityId(Guid.newGuid());
         VdcReturnValueBase returnValue = getBackend().runInternalAction(
                 VdcActionType.RemoveImage,
                 removeImageParams,

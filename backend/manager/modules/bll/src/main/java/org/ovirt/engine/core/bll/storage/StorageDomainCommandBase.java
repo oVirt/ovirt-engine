@@ -241,7 +241,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             List<StorageServerConnections> connections = DbFacade.getInstance()
                     .getStorageServerConnectionDao().getAllForConnection(connection);
             if (connections.isEmpty()) {
-                connection.setid(Guid.NewGuid().toString());
+                connection.setid(Guid.newGuid().toString());
                 connection.setstorage_type(storageType);
                 DbFacade.getInstance().getStorageServerConnectionDao().save(connection);
 

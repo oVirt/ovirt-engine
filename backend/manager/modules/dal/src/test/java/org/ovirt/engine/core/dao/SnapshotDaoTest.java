@@ -33,7 +33,7 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     @Override
     protected Guid generateNonExistingId() {
-        return Guid.NewGuid();
+        return Guid.newGuid();
     }
 
     @Override
@@ -43,7 +43,7 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
 
     @Override
     protected Snapshot generateNewEntity() {
-        return new Snapshot(Guid.NewGuid(),
+        return new Snapshot(Guid.newGuid(),
                 RandomUtils.instance().nextEnum(SnapshotStatus.class),
                 EXISTING_VM_ID,
                 RandomUtils.instance().nextString(200000),

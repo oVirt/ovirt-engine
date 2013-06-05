@@ -50,7 +50,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        StoragePool result = dao.get(Guid.NewGuid());
+        StoragePool result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }

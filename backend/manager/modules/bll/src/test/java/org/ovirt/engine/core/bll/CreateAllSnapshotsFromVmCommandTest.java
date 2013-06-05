@@ -55,7 +55,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() {
-        CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters(Guid.NewGuid(), "");
+        CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters(Guid.newGuid(), "");
         cmd = spy(new CreateAllSnapshotsFromVmCommand<CreateAllSnapshotsFromVmParameters>(params));
         doReturn(vmValidator).when(cmd).createVmValidator();
         doReturn(snapshotsValidator).when(cmd).createSnapshotValidator();
@@ -68,7 +68,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     public void testPositiveCanDoActionWithNoDisks() {
         setUpGeneralValidations();
         doReturn(getEmptyDiskList()).when(cmd).getDisksList();
-        doReturn(Guid.NewGuid()).when(cmd).getStorageDomainId();
+        doReturn(Guid.newGuid()).when(cmd).getStorageDomainId();
         assertTrue(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().isEmpty());
     }
@@ -170,7 +170,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
         setUpGeneralValidations();
         setUpDiskValidations();
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
-        doReturn(Guid.NewGuid()).when(cmd).getStorageDomainId();
+        doReturn(Guid.newGuid()).when(cmd).getStorageDomainId();
         assertTrue(cmd.canDoAction());
         assertTrue(cmd.getReturnValue().getCanDoActionMessages().isEmpty());
     }

@@ -22,7 +22,7 @@ public class GetAllRelevantQuotasForVdsGroupQueryTest extends AbstractQueryTest<
     @Test
     public void testExecuteQueryCommand() {
         // Set up the query parameters
-        Guid quotaID = Guid.NewGuid();
+        Guid quotaID = Guid.newGuid();
         when(params.getId()).thenReturn(quotaID);
 
         // Set up the DAOs

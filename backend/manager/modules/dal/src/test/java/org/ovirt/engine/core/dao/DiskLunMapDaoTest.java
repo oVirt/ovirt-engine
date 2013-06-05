@@ -19,7 +19,7 @@ public class DiskLunMapDaoTest extends BaseGenericDaoTestCase<DiskLunMapId, Disk
 
     @Override
     protected DiskLunMapId generateNonExistingId() {
-        return new DiskLunMapId(Guid.NewGuid(), RandomUtils.instance().nextString(10));
+        return new DiskLunMapId(Guid.newGuid(), RandomUtils.instance().nextString(10));
     }
 
     @Override

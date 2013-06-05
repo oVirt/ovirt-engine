@@ -85,11 +85,11 @@ public class RestoreAllSnapshotCommandTest {
     @Mock
     private MultipleStorageDomainsValidator storageValidator;
 
-    private Guid vmId = Guid.NewGuid();
-    private Guid diskImageId = Guid.NewGuid();
-    private Guid storageDomainId = Guid.NewGuid();
-    private Guid dstSnapshotId = Guid.NewGuid();
-    private Guid spId = Guid.NewGuid();
+    private Guid vmId = Guid.newGuid();
+    private Guid diskImageId = Guid.newGuid();
+    private Guid storageDomainId = Guid.newGuid();
+    private Guid dstSnapshotId = Guid.newGuid();
+    private Guid spId = Guid.newGuid();
     private VmDynamic mockDynamicVm;
     private Snapshot mockSnapshot;
     private RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters> spyCommand;
@@ -180,7 +180,7 @@ public class RestoreAllSnapshotCommandTest {
     private void mockDiskImageDao() {
         List<Disk> diskImageList = new ArrayList<Disk>();
         DiskImage diskImage = new DiskImage();
-        diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(Guid.NewGuid())));
+        diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(Guid.newGuid())));
         diskImageList.add(diskImage);
         doReturn(diskDao).when(spyCommand).getDiskDao();
         when(diskDao.getAllForVm(vmId)).thenReturn(diskImageList);

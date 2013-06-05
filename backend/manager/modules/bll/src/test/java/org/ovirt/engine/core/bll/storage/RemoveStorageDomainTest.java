@@ -52,9 +52,9 @@ public class RemoveStorageDomainTest {
     @ClassRule
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
 
-    private final Guid STORAGE_DOMAIN_ID = Guid.NewGuid();
-    private final Guid STORAGE_POOL_ID = Guid.NewGuid();
-    private final Guid VDS_ID = Guid.NewGuid();
+    private final Guid STORAGE_DOMAIN_ID = Guid.newGuid();
+    private final Guid STORAGE_POOL_ID = Guid.newGuid();
+    private final Guid VDS_ID = Guid.newGuid();
 
     @Mock
     private DbFacade db;

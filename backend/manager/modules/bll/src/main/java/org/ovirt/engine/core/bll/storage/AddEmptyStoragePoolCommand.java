@@ -26,7 +26,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     }
 
     protected void addStoragePoolToDb() {
-        getStoragePool().setId(Guid.NewGuid());
+        getStoragePool().setId(Guid.newGuid());
         getStoragePool().setstatus(StoragePoolStatus.Uninitialized);
         getStoragePoolDAO().save(getStoragePool());
     }
@@ -54,7 +54,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
 
     private void addDefaultNetworks() {
         Network net = new Network();
-        net.setId(Guid.NewGuid());
+        net.setId(Guid.newGuid());
         net.setName(NetworkUtils.getEngineNetwork());
         net.setDescription(AddVdsGroupCommand.DefaultNetworkDescription);
         net.setDataCenterId(getStoragePool().getId());

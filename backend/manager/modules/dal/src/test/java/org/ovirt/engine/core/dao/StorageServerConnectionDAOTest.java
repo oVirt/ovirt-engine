@@ -80,7 +80,7 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testgetAllConnectableStorageSeverConnectionWithNoConnections() {
-        List<StorageServerConnections> result = dao.getAllConnectableStorageSeverConnection(Guid.NewGuid());
+        List<StorageServerConnections> result = dao.getAllConnectableStorageSeverConnection(Guid.newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

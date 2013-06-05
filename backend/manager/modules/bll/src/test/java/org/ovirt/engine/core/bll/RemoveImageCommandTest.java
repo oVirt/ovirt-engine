@@ -59,7 +59,7 @@ public class RemoveImageCommandTest {
     @SuppressWarnings("serial")
     @Before
     public void setUp() {
-        RemoveImageParameters params = new RemoveImageParameters(Guid.NewGuid());
+        RemoveImageParameters params = new RemoveImageParameters(Guid.newGuid());
         cmd = spy(new RemoveImageCommand<RemoveImageParameters>(params) {
             @Override
             protected void initImage() {
@@ -89,14 +89,14 @@ public class RemoveImageCommandTest {
 
     @Test
     public void testRemoveImageFromSnapshotConfiguration() throws OvfReaderException {
-        Guid vmId = Guid.NewGuid();
+        Guid vmId = Guid.newGuid();
         VM vm = new VM();
         vm.setId(vmId);
-        vm.setStoragePoolId(Guid.NewGuid());
+        vm.setStoragePoolId(Guid.newGuid());
         vm.setVmtName(RandomUtils.instance().nextString(10));
         vm.setOrigin(OriginType.OVIRT);
         vm.setDbGeneration(1L);
-        Guid vmSnapshotId = Guid.NewGuid();
+        Guid vmSnapshotId = Guid.newGuid();
 
         DiskImage disk1 = addTestDisk(vm, vmSnapshotId);
         DiskImage disk2 = addTestDisk(vm, vmSnapshotId);
@@ -123,14 +123,14 @@ public class RemoveImageCommandTest {
 
     @Test
     public void testRemoveImageFromSnapshotConfigurationBackwardCompatibility() throws OvfReaderException {
-        Guid vmId = Guid.NewGuid();
+        Guid vmId = Guid.newGuid();
         VM vm = new VM();
         vm.setId(vmId);
-        vm.setStoragePoolId(Guid.NewGuid());
+        vm.setStoragePoolId(Guid.newGuid());
         vm.setVmtName(RandomUtils.instance().nextString(10));
         vm.setOrigin(OriginType.OVIRT);
         vm.setDbGeneration(1L);
-        Guid vmSnapshotId = Guid.NewGuid();
+        Guid vmSnapshotId = Guid.newGuid();
 
         DiskImage disk1 = addTestDisk(vm, vmSnapshotId);
         DiskImage disk2 = addTestDisk(vm, vmSnapshotId);
@@ -156,10 +156,10 @@ public class RemoveImageCommandTest {
     }
 
     private static DiskImage addTestDisk(VM vm, Guid snapshotId) {
-        Guid imageId = Guid.NewGuid();
+        Guid imageId = Guid.newGuid();
         DiskImage disk = new DiskImage();
         disk.setImageId(imageId);
-        disk.setId(Guid.NewGuid());
+        disk.setId(Guid.newGuid());
         disk.setVolumeType(VolumeType.Sparse);
         disk.setvolumeFormat(VolumeFormat.COW);
         disk.setDiskInterface(DiskInterface.VirtIO);

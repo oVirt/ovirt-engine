@@ -28,7 +28,7 @@ import org.ovirt.engine.core.dao.StepDao;
 public class JobRepositoryTest {
 
     private static final Map<Guid, VdcObjectType> JOB_SUBJECT_ENTITIES_MAP =
-            Collections.<Guid, VdcObjectType> singletonMap(Guid.NewGuid(), VdcObjectType.VM);
+            Collections.<Guid, VdcObjectType> singletonMap(Guid.newGuid(), VdcObjectType.VM);
 
     @Mock
     private JobDao jobDao;
@@ -107,7 +107,7 @@ public class JobRepositoryTest {
 
     private Job createJob() {
         Job job = new Job();
-        job.setId(Guid.NewGuid());
+        job.setId(Guid.newGuid());
         return job;
     }
 }

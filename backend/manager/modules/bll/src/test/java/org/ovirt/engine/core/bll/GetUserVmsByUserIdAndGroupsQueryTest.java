@@ -114,8 +114,8 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
     /** @return A disk to add to the VM */
     private static DiskImage mockDisk() {
         // Prepare the disk
-        Guid diskGuid = Guid.NewGuid();
-        Guid itGuid = Guid.NewGuid();
+        Guid diskGuid = Guid.newGuid();
+        Guid itGuid = Guid.newGuid();
         final DiskImage expectedDisk = new DiskImage();
         expectedDisk.setImageId(diskGuid);
         expectedDisk.setImageTemplateId(itGuid);
@@ -125,7 +125,7 @@ public class GetUserVmsByUserIdAndGroupsQueryTest
 
     /** @return The snapshots to add to the disk */
     private static ArrayList<DiskImage> mockSnapshots() {
-        Guid snapshotGuid = Guid.NewGuid();
+        Guid snapshotGuid = Guid.newGuid();
         DiskImage expectedSnapshot = new DiskImage();
         expectedSnapshot.setImageId(snapshotGuid);
         ArrayList<DiskImage> snapshots = new ArrayList<DiskImage>(1);

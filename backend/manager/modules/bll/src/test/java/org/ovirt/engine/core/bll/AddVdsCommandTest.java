@@ -36,7 +36,7 @@ import org.ovirt.engine.core.utils.ssh.SSHClient;
 @RunWith(MockitoJUnitRunner.class)
 public class AddVdsCommandTest {
     private static final String PEER_1 = "peer1";
-    private static final Guid vdsId = Guid.NewGuid();
+    private static final Guid vdsId = Guid.newGuid();
     private AddVdsActionParameters parameters;
 
     @Mock

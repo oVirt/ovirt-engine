@@ -47,9 +47,9 @@ public class AddVmTemplateCommandTest {
     @Before
     public void setUp() {
         // The VM to use
-        Guid vmId = Guid.NewGuid();
-        Guid vdsGroupId = Guid.NewGuid();
-        Guid spId = Guid.NewGuid();
+        Guid vmId = Guid.newGuid();
+        Guid vdsGroupId = Guid.newGuid();
+        Guid spId = Guid.newGuid();
 
         vm = new VM();
         vm.setId(vmId);

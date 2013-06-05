@@ -21,7 +21,7 @@ import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 public class GetTemplateInterfacesByTemplateIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetTemplateInterfacesByTemplateIdQuery<IdQueryParameters>> {
     @Test
     public void testExecuteQuery() {
-        Guid templateID = Guid.NewGuid();
+        Guid templateID = Guid.newGuid();
         List<VmNetworkInterface> expectedResult = Collections.singletonList(new VmNetworkInterface());
 
         IdQueryParameters paramsMock = getQueryParameters();

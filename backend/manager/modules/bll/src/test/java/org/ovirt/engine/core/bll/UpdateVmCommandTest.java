@@ -79,7 +79,7 @@ public class UpdateVmCommandTest {
         vm = new VM();
         vmStatic = new VmStatic();
         group = new VDSGroup();
-        group.setId(Guid.NewGuid());
+        group.setId(Guid.newGuid());
         group.setcompatibility_version(Version.v3_0);
 
         vm.setVdsGroupId(group.getId());
@@ -156,7 +156,7 @@ public class UpdateVmCommandTest {
         // this will cause null to return when getting vds from vdsDAO
         doReturn(vdsDAO).when(command).getVdsDAO();
 
-        vmStatic.setDedicatedVmForVds(Guid.NewGuid());
+        vmStatic.setDedicatedVmForVds(Guid.newGuid());
 
         assertFalse("canDoAction should have failed with invalid dedicated host.", command.canDoAction());
         assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER);
@@ -167,10 +167,10 @@ public class UpdateVmCommandTest {
         prepareVmToPassCanDoAction();
 
         VDS vds = new VDS();
-        vds.setVdsGroupId(Guid.NewGuid());
+        vds.setVdsGroupId(Guid.newGuid());
         doReturn(vdsDAO).when(command).getVdsDAO();
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
-        vmStatic.setDedicatedVmForVds(Guid.NewGuid());
+        vmStatic.setDedicatedVmForVds(Guid.newGuid());
 
         assertFalse("canDoAction should have failed with invalid dedicated host.", command.canDoAction());
         assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER);
@@ -184,7 +184,7 @@ public class UpdateVmCommandTest {
         vds.setVdsGroupId(group.getId());
         doReturn(vdsDAO).when(command).getVdsDAO();
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
-        vmStatic.setDedicatedVmForVds(Guid.NewGuid());
+        vmStatic.setDedicatedVmForVds(Guid.newGuid());
 
         assertTrue("canDoAction should have passed.", command.canDoAction());
     }
@@ -217,7 +217,7 @@ public class UpdateVmCommandTest {
     @Test
     public void testChangeClusterForbidden() {
         prepareVmToPassCanDoAction();
-        vmStatic.setVdsGroupId(Guid.NewGuid());
+        vmStatic.setVdsGroupId(Guid.newGuid());
 
         assertFalse("canDoAction should have failed with cant change cluster.", command.canDoAction());
         assertCanDoActionMessage(VdcBllMessages.VM_CANNOT_UPDATE_CLUSTER);

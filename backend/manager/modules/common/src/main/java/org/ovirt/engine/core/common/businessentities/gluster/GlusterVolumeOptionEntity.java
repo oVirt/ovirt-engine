@@ -100,7 +100,7 @@ public class GlusterVolumeOptionEntity extends IVdcQueryable implements Business
     @Override
     public Guid getId() {
         if(id == null) {
-            id = Guid.NewGuid();
+            id = Guid.newGuid();
         }
         return id;
     }

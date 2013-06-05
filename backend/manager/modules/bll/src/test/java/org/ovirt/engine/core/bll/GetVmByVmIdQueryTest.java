@@ -18,7 +18,7 @@ import org.ovirt.engine.core.dao.VmDAO;
 public class GetVmByVmIdQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVmByVmIdQuery<IdQueryParameters>> {
     @Test
     public void testExecuteQuery() {
-        Guid vmID = Guid.NewGuid();
+        Guid vmID = Guid.newGuid();
         VM expectedResult = new VM();
         expectedResult.setId(vmID);
 

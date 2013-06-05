@@ -63,7 +63,7 @@ public class TagsDirectorTest {
     }
 
     protected tags createTag(String name, String description) {
-        Guid tagId = Guid.NewGuid();
+        Guid tagId = Guid.newGuid();
         tags tag = new tags();
         tag.setdescription(description);
         tag.settag_id(tagId);
@@ -139,11 +139,11 @@ public class TagsDirectorTest {
     public void testMoveTag() {
         // let's have two top level tag under root
         tags level1obj1 = createTag("level1obj1", "");
-        level1obj1.settag_id(Guid.NewGuid());
+        level1obj1.settag_id(Guid.newGuid());
         level1obj1.setparent_id(tagsDirector.GetRootTag().gettag_id());
         tagsDirector.AddTag(level1obj1);
         tags level1obj2 = createTag("level1obj2", "");
-        level1obj2.settag_id(Guid.NewGuid());
+        level1obj2.settag_id(Guid.newGuid());
         level1obj2.setparent_id(tagsDirector.GetRootTag().gettag_id());
         tagsDirector.AddTag(level1obj2);
 
@@ -153,7 +153,7 @@ public class TagsDirectorTest {
 
         // now let's add a child tag o the first top level tag
         tags level2obj1 = createTag("level2obj1", "");
-        level2obj1.settag_id(Guid.NewGuid());
+        level2obj1.settag_id(Guid.newGuid());
         level2obj1.setparent_id(level1obj1.gettag_id());
         tagsDirector.AddTag(level2obj1);
 
@@ -175,11 +175,11 @@ public class TagsDirectorTest {
     public void testMoveTag_root() {
         // let's have two top level tag under root
         tags level1obj1 = createTag("level1obj1", "");
-        level1obj1.settag_id(Guid.NewGuid());
+        level1obj1.settag_id(Guid.newGuid());
         level1obj1.setparent_id(tagsDirector.GetRootTag().gettag_id());
         tagsDirector.AddTag(level1obj1);
         tags level1obj2 = createTag("level1obj2", "");
-        level1obj2.settag_id(Guid.NewGuid());
+        level1obj2.settag_id(Guid.newGuid());
         level1obj2.setparent_id(tagsDirector.GetRootTag().gettag_id());
         tagsDirector.AddTag(level1obj2);
 
@@ -201,7 +201,7 @@ public class TagsDirectorTest {
     @Test
     public void testUpdateParentTag() {
         tags tag = createTag("tag1", "desc1");
-        tag.settag_id(Guid.NewGuid());
+        tag.settag_id(Guid.newGuid());
         tagsDirector.AddTag(tag);
         tags rootTag = tagsDirector.GetRootTag();
         tag = rootTag.getChildren().get(0);
@@ -209,7 +209,7 @@ public class TagsDirectorTest {
 
         // now let's add another tag
         tags sub = createTag("subtag1", "subdesc");
-        sub.settag_id(Guid.NewGuid());
+        sub.settag_id(Guid.newGuid());
         sub.setparent_id(tag.gettag_id());
         tagsDirector.AddTag(sub);
 

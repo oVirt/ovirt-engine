@@ -119,9 +119,9 @@ public class OvfVmReader extends OvfReader {
             } else if (OvfHardware.Monitor.equals(resourceType)) {
                 _vm.getStaticData().setNumOfMonitors(
                         Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
-                readVmDevice(node, _vm.getStaticData(), Guid.NewGuid(), Boolean.TRUE);
+                readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
             } else if (OvfHardware.CD.equals(resourceType)) {
-                readVmDevice(node, _vm.getStaticData(), Guid.NewGuid(), Boolean.TRUE);
+                readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
             } else if (OvfHardware.OTHER.equals(resourceType)) {
                 if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
                         && StringUtils.isNotEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
@@ -129,12 +129,12 @@ public class OvfVmReader extends OvfReader {
                     String device = String.valueOf(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText);
                     // special devices are treated as managed devices but still have the OTHER OVF ResourceType
                     if (VmDeviceCommonUtils.isSpecialDevice(device, type)) {
-                        readVmDevice(node, _vm.getStaticData(), Guid.NewGuid(), Boolean.TRUE);
+                        readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
                     } else {
-                        readVmDevice(node, _vm.getStaticData(), Guid.NewGuid(), Boolean.FALSE);
+                        readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.FALSE);
                     }
                 } else {
-                    readVmDevice(node, _vm.getStaticData(), Guid.NewGuid(), Boolean.FALSE);
+                    readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.FALSE);
                 }
             }
         }

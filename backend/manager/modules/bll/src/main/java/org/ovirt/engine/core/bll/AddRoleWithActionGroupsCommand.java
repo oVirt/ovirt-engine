@@ -98,7 +98,7 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
     protected void prepareRoleForCommand() {
         // Note that the role is take from the parameters
         Role role = getRole();
-        role.setId(Guid.NewGuid());
+        role.setId(Guid.newGuid());
         role.setAllowsViewingChildren(false);
 
         for (ActionGroup group : getParameters().getActionGroups()) {

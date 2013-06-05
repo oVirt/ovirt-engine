@@ -33,8 +33,8 @@ public class SnapshotsValidatorTest {
 
     @Before
     public void setUp() {
-        vmId = Guid.NewGuid();
-        snapshotId = Guid.NewGuid();
+        vmId = Guid.newGuid();
+        snapshotId = Guid.newGuid();
         doReturn(snapshotDao).when(validator).getSnapshotDao();
     }
 

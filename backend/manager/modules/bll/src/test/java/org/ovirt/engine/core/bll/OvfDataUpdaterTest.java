@@ -137,14 +137,14 @@ public class OvfDataUpdaterTest {
         pool1 =
                 new StoragePool("first sp",
                         "",
-                        Guid.NewGuid(),
+                        Guid.newGuid(),
                         "storage_pool1",
                         StorageType.NFS.getValue(),
                         StoragePoolStatus.Up.getValue());
         pool2 =
                 new StoragePool("second sp",
                         "",
-                        Guid.NewGuid(),
+                        Guid.newGuid(),
                         "storage_pool2",
                         StorageType.NFS.getValue(),
                         StoragePoolStatus.Up.getValue());
@@ -282,7 +282,7 @@ public class OvfDataUpdaterTest {
     private List<Guid> generateGuidList(int size) {
         List<Guid> toReturn = new LinkedList<Guid>();
         for (int i = 0; i < size; i++) {
-            toReturn.add(Guid.NewGuid());
+            toReturn.add(Guid.newGuid());
         }
         return toReturn;
     }
@@ -320,7 +320,7 @@ public class OvfDataUpdaterTest {
 
     private DiskImage createDiskImage(ImageStatus status) {
         DiskImage disk = new DiskImage();
-        disk.setId(Guid.NewGuid());
+        disk.setId(Guid.newGuid());
         disk.setImageStatus(status);
         return disk;
     }

@@ -266,7 +266,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
 
     @SuppressWarnings("serial")
     private void insertServerService(VDS server, final GlusterServerService fetchedService) {
-        fetchedService.setId(Guid.NewGuid());
+        fetchedService.setId(Guid.newGuid());
         getGlusterServerServiceDao().save(fetchedService);
         log.infoFormat("Service {0} was not mapped to server {1}. Mapped it now.",
                 fetchedService.getServiceName(),

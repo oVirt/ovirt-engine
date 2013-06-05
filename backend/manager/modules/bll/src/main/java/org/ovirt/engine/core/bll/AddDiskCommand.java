@@ -74,7 +74,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     public AddDiskCommand(T parameters) {
         super(parameters);
-        parameters.getDiskInfo().setId(Guid.NewGuid());
+        parameters.getDiskInfo().setId(Guid.newGuid());
         parameters.setEntityId(parameters.getDiskInfo().getId());
     }
 

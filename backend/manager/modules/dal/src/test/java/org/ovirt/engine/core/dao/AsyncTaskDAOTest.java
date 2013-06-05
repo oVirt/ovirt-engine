@@ -53,16 +53,16 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
 
         // create some test data
         newAsyncTask = new AsyncTasks();
-        newAsyncTask.settask_id(Guid.NewGuid());
+        newAsyncTask.settask_id(Guid.newGuid());
         newAsyncTask.setStartTime(new Date());
         newAsyncTask.setaction_type(VdcActionType.AddDisk);
         newAsyncTask.setstatus(AsyncTaskStatusEnum.running);
         newAsyncTask.setresult(AsyncTaskResultEnum.success);
         newAsyncTask.setActionParameters(params);
         newAsyncTask.setTaskParameters(taskParams);
-        newAsyncTask.setCommandId(Guid.NewGuid());
+        newAsyncTask.setCommandId(Guid.newGuid());
         newAsyncTask.setTaskType(AsyncTaskType.copyImage);
-        newAsyncTask.setStoragePoolId(Guid.NewGuid());
+        newAsyncTask.setStoragePoolId(Guid.newGuid());
 
         existingAsyncTask = dao.get(FixturesTool.EXISTING_TASK_ID);
     }
@@ -72,7 +72,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        AsyncTasks result = dao.get(Guid.NewGuid());
+        AsyncTasks result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }
@@ -86,7 +86,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAsyncTaskIdsByInvalidEntity() {
-        List<Guid> guids = dao.getAsyncTaskIdsByEntity(Guid.NewGuid());
+        List<Guid> guids = dao.getAsyncTaskIdsByEntity(Guid.newGuid());
         assertNotNull(guids);
         assertTrue(guids.isEmpty());
     }
@@ -102,7 +102,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAsyncTaskIdsByInvalidStoragePoolId() {
-        List<Guid> guids = dao.getAsyncTaskIdsByStoragePoolId(Guid.NewGuid());
+        List<Guid> guids = dao.getAsyncTaskIdsByStoragePoolId(Guid.newGuid());
         assertNotNull(guids);
         assertEquals(guids.size(), 0);
     }
@@ -150,7 +150,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testSaveWithEntities() {
-        Guid storageId = Guid.NewGuid();
+        Guid storageId = Guid.newGuid();
         dao.save(newAsyncTask, VdcObjectType.Storage, storageId);
         List<Guid> asyncTasks = dao.getAsyncTaskIdsByEntity(storageId);
         assertNotNull(asyncTasks);
@@ -222,7 +222,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         AsyncTasks taskFromDb = dao.get(existingAsyncTask.gettask_id());
         assertNotNull(taskFromDb);
         assertEquals(taskFromDb,existingAsyncTask);
-        dao.saveOrUpdate(newAsyncTask, VdcObjectType.Disk, Guid.NewGuid());
+        dao.saveOrUpdate(newAsyncTask, VdcObjectType.Disk, Guid.newGuid());
         tasks = dao.getAll();
         assertNotNull(tasks);
         assertEquals(tasksNumber+1, tasks.size());

@@ -20,7 +20,7 @@ import org.ovirt.engine.core.dao.VmDAO;
 
 public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryParameters, GetVmsByStorageDomainQuery<IdQueryParameters>> {
     VmDAO vmDao = mock(VmDAO.class);
-    Guid domainId = Guid.NewGuid();
+    Guid domainId = Guid.newGuid();
     GetVmsByStorageDomainQuery<IdQueryParameters> query;
 
     @Before

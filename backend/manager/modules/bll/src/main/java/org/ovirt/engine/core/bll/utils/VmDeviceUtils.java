@@ -68,7 +68,7 @@ public class VmDeviceUtils {
                 }
                 // add video device per each monitor
                 for (int i = 0; i<entity.getNumOfMonitors();i++) {
-                    addManagedDevice(new VmDeviceId(Guid.NewGuid(), entity.getId()),
+                    addManagedDevice(new VmDeviceId(Guid.newGuid(), entity.getId()),
                             VmDeviceGeneralType.VIDEO,
                             entity.getDefaultDisplayType().getVmDeviceType(),
                             getMemExpr(entity.getNumOfMonitors()),
@@ -114,7 +114,7 @@ public class VmDeviceUtils {
     }
 
     public static void addSmartcardDevice(Guid vmId) {
-        VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmId),
+        VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), vmId),
                 VmDeviceGeneralType.SMARTCARD,
                 VmDeviceType.SMARTCARD,
                 new SmartcardSpecParams(),
@@ -163,7 +163,7 @@ public class VmDeviceUtils {
         if (createDevice) {
             String soundDevice =
                     OsRepositoryImpl.INSTANCE.getSoundDevice(newVmBase.getOsId(), compatibilityVersion);
-            addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmId),
+            addManagedDevice(new VmDeviceId(Guid.newGuid(), vmId),
                     VmDeviceGeneralType.SOUND,
                     VmDeviceType.getSoundDeviceType(soundDevice),
                     new HashMap<String, Object>(),
@@ -198,13 +198,13 @@ public class VmDeviceUtils {
         boolean hasSoundDevice = false;
 
         for (VmDevice device : devicesDataToUse) {
-            id = Guid.NewGuid();
+            id = Guid.newGuid();
             Map<String, Object> specParams = new HashMap<String, Object>();
             if (srcId.equals(Guid.Empty)) {
                 //add CD if not exists
                 if (addCD) {
                     setCdPath(specParams, "", isoPath);
-                    addManagedDevice(new VmDeviceId(Guid.NewGuid(),dstId) , VmDeviceGeneralType.DISK, VmDeviceType.CDROM, specParams, true, true, null);
+                    addManagedDevice(new VmDeviceId(Guid.newGuid(),dstId) , VmDeviceGeneralType.DISK, VmDeviceType.CDROM, specParams, true, true, null);
                 }
                 // updating USB slots
                 updateUSBSlots(null, vmBase);
@@ -312,7 +312,7 @@ public class VmDeviceUtils {
 
     private static void addSoundCard(VmBase vmBase, Version vdsGroupCompatibilityVersion) {
         String soundDevice = OsRepositoryImpl.INSTANCE.getSoundDevice(vmBase.getOsId(), vdsGroupCompatibilityVersion);
-        addManagedDevice(new VmDeviceId(Guid.NewGuid(), vmBase.getId()),
+        addManagedDevice(new VmDeviceId(Guid.newGuid(), vmBase.getId()),
                 VmDeviceGeneralType.SOUND,
                 VmDeviceType.getSoundDeviceType(soundDevice),
                 new HashMap<String, Object>(),
@@ -342,7 +342,7 @@ public class VmDeviceUtils {
 
     private static void addVideoDevice(VmBase vm) {
         addManagedDevice(
-                new VmDeviceId(Guid.NewGuid(),vm.getId()),
+                new VmDeviceId(Guid.newGuid(),vm.getId()),
                 VmDeviceGeneralType.VIDEO,
                 vm.getDefaultDisplayType().getVmDeviceType(),
                 getMemExpr(vm.getNumOfMonitors()),
@@ -543,7 +543,7 @@ public class VmDeviceUtils {
             // monitors were added
             for (int i = prevNumOfMonitors; i < newStatic
                     .getNumOfMonitors(); i++) {
-                Guid newId = Guid.NewGuid();
+                Guid newId = Guid.newGuid();
                 VmDeviceUtils.addManagedDevice(new VmDeviceId(newId, newStatic.getId()),
                         VmDeviceGeneralType.VIDEO,
                         VmDeviceType.QXL,
@@ -781,7 +781,7 @@ public class VmDeviceUtils {
 
     private static void addUsbSlots(VmBase vm, int numOfSlots) {
         for (int index = 1; index <= numOfSlots; index++) {
-            VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+            VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
                     VmDeviceGeneralType.CHANNEL,
                     VmDeviceType.SPICEVMC,
                     getUsbSlotSpecParams(),
@@ -794,7 +794,7 @@ public class VmDeviceUtils {
     private static void addUsbControllers(VmBase vm, int numOfControllers) {
         // For each controller we need to create one EHCI and companion UHCI controllers
         for (int index = 0; index < numOfControllers; index++) {
-            VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+            VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
                     VmDeviceGeneralType.CONTROLLER,
                     VmDeviceType.USB,
                     getUsbControllerSpecParams(EHCI_MODEL, 1, index),
@@ -802,7 +802,7 @@ public class VmDeviceUtils {
                     false,
                     null);
             for (int companionIndex = 1; companionIndex <= COMPANION_USB_CONTROLLERS; companionIndex++) {
-                VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), vm.getId()),
+                VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
                         VmDeviceGeneralType.CONTROLLER,
                         VmDeviceType.USB,
                         getUsbControllerSpecParams(UHCI_MODEL, companionIndex, index),
@@ -873,7 +873,7 @@ public class VmDeviceUtils {
      * @param dstId
      */
     private static void addEmptyCD(Guid dstId) {
-        VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.NewGuid(), dstId),
+        VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), dstId),
                 VmDeviceGeneralType.DISK,
                 VmDeviceType.CDROM,
                 Collections.<String, Object> singletonMap(VdsProperties.Path, ""),
@@ -890,7 +890,7 @@ public class VmDeviceUtils {
                 // add a balloon device
                 Map<String,Object> specParams = new HashMap<String, Object>();
                 specParams.put(VdsProperties.Model, VdsProperties.Virtio);
-                addManagedDevice(new VmDeviceId(Guid.NewGuid(),newVm.getId()) , VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON, specParams, true, true, null);
+                addManagedDevice(new VmDeviceId(Guid.newGuid(),newVm.getId()) , VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON, specParams, true, true, null);
             }
             else {
                 // remove the balloon device
@@ -907,11 +907,11 @@ public class VmDeviceUtils {
     private static void setNewIdInImportedCollections(VmBase entity) {
         for (VmDevice managedDevice : entity.getManagedDeviceMap().values()){
             if (!isDiskOrInterface(managedDevice)) {
-                managedDevice.setId(new VmDeviceId(Guid.NewGuid(), entity.getId()));
+                managedDevice.setId(new VmDeviceId(Guid.newGuid(), entity.getId()));
             }
         }
         for (VmDevice unMnagedDevice : entity.getUnmanagedDeviceList()) {
-            unMnagedDevice.setId(new VmDeviceId(Guid.NewGuid(), entity.getId()));
+            unMnagedDevice.setId(new VmDeviceId(Guid.newGuid(), entity.getId()));
         }
     }
 

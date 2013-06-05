@@ -65,7 +65,7 @@ public class DeactivateStorageDomainCommandTest {
 
     @Test
     public void statusSetInMap() {
-        StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(Guid.NewGuid(), Guid.NewGuid());
+        StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(Guid.newGuid(), Guid.newGuid());
         DeactivateStorageDomainCommand<StorageDomainPoolParametersBase> cmd =
                 spy(new DeactivateStorageDomainCommand<StorageDomainPoolParametersBase>(params));
 

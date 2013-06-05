@@ -50,13 +50,13 @@ public class RemoveDiskCommandTest {
 
     @Before
     public void setUp() {
-        Guid diskId = Guid.NewGuid();
+        Guid diskId = Guid.newGuid();
 
         disk = new DiskImage();
         disk.setId(diskId);
         disk.setVmEntityType(VmEntityType.VM);
 
-        Guid vmId = Guid.NewGuid();
+        Guid vmId = Guid.newGuid();
         vm = new VM();
         vm.setId(vmId);
 

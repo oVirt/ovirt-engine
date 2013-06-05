@@ -46,7 +46,7 @@ public class VmNetworkStatisticsDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithNonExistingId() {
-        VmNetworkStatistics result = dao.get(Guid.NewGuid());
+        VmNetworkStatistics result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }

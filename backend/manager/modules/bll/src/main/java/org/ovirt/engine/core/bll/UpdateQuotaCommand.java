@@ -81,13 +81,13 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
         if (!quotaParameter.isEmptyStorageQuota()) {
             for (QuotaStorage quotaStorage : quotaParameter.getQuotaStorages()) {
                 quotaStorage.setQuotaId(getQuotaId());
-                quotaStorage.setQuotaStorageId(Guid.NewGuid());
+                quotaStorage.setQuotaStorageId(Guid.newGuid());
             }
         }
         if (!quotaParameter.isEmptyVdsGroupQuota()) {
             for (QuotaVdsGroup quotaVdsGroup : quotaParameter.getQuotaVdsGroups()) {
                 quotaVdsGroup.setQuotaId(getQuotaId());
-                quotaVdsGroup.setQuotaVdsGroupId(Guid.NewGuid());
+                quotaVdsGroup.setQuotaVdsGroupId(Guid.newGuid());
             }
         }
         setQuota(quotaParameter);

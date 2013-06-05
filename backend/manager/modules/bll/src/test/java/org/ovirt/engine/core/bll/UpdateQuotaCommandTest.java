@@ -52,7 +52,7 @@ public class UpdateQuotaCommandTest {
 
     private void setUpQuota() {
         quota = new Quota();
-        quota.setId(Guid.NewGuid());
+        quota.setId(Guid.newGuid());
 
         int numQutoaVdsGroups = RandomUtils.instance().nextInt(10);
         List<QuotaVdsGroup> quotaVdsGroups = new ArrayList<QuotaVdsGroup>(numQutoaVdsGroups);

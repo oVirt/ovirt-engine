@@ -41,7 +41,7 @@ public class StoragePoolValidatorTest {
         storagePool =
                 new StoragePool("test",
                         "",
-                        Guid.NewGuid(),
+                        Guid.newGuid(),
                         "test",
                         StorageType.UNKNOWN.getValue(),
                         StoragePoolStatus.Up.getValue());

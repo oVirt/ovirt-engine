@@ -41,7 +41,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
                 new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79"));
 
         newVmTemplate = new VmTemplate();
-        newVmTemplate.setId(Guid.NewGuid());
+        newVmTemplate.setId(Guid.newGuid());
         newVmTemplate.setName("NewVmTemplate");
         newVmTemplate.setVdsGroupId(VDS_GROUP_ID);
     }
@@ -51,7 +51,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        VmTemplate result = dao.get(Guid.NewGuid());
+        VmTemplate result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }

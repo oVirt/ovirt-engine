@@ -61,7 +61,7 @@ public class ExecutionHandler {
     public static Job createJob(VdcActionType actionType, CommandBase<?> command) {
         Job job = new Job();
 
-        job.setId(Guid.NewGuid());
+        job.setId(Guid.newGuid());
         job.setActionType(actionType);
         job.setDescription(ExecutionMessageDirector.resolveJobMessage(actionType, command.getJobMessageProperties()));
         job.setJobSubjectEntities(getSubjectEntities(command.getPermissionCheckSubjects()));

@@ -49,7 +49,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     }
 
     protected void initializeStorageDomain() {
-        getStorageDomain().setId(Guid.NewGuid());
+        getStorageDomain().setId(Guid.newGuid());
     }
 
     protected boolean addStorageDomainInIrs() {

@@ -36,12 +36,12 @@ public class TryBackToAllSnapshotsOfVmCommandTest {
 
     @Before
     public void setUp() {
-        vmId = Guid.NewGuid();
+        vmId = Guid.newGuid();
         vm = new VM();
         vm.setId(vmId);
         when(vmDao.get(vmId)).thenReturn(vm);
 
-        Guid snapshotId = Guid.NewGuid();
+        Guid snapshotId = Guid.newGuid();
         snapshot = new Snapshot();
         snapshot.setId(snapshotId);
         snapshot.setVmId(vmId);

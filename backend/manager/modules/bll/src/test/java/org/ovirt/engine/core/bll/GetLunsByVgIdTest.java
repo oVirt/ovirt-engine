@@ -37,8 +37,8 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
             new Guid("33333333-3333-3333-3333-333333333333"),
     };
 
-    private static final String VG_ID = Guid.NewGuid().toString();
-    private static final Guid VDS_ID = Guid.NewGuid();
+    private static final String VG_ID = Guid.newGuid().toString();
+    private static final Guid VDS_ID = Guid.newGuid();
 
     private static final String ADDRESS = "foo.bar.com";
     private static final String PORT = "123456";

@@ -23,7 +23,7 @@ public class IsBalloonEnabledQueryTest extends AbstractQueryTest<IdQueryParamete
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        vmID = Guid.NewGuid();
+        vmID = Guid.newGuid();
         setUpDAOMocks();
     }
 

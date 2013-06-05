@@ -44,8 +44,8 @@ public class NetworkValidatorTest {
     private final String NAMEABLE_NAME = "nameable";
     private final String DEFAULT_NETWORK_NAME = "mynetwork";
     private final String OTHER_NETWORK_NAME = "myothernetwork";
-    private final Guid DEFAULT_GUID = Guid.NewGuid();
-    private final Guid OTHER_GUID = Guid.NewGuid();
+    private final Guid DEFAULT_GUID = Guid.newGuid();
+    private final Guid OTHER_GUID = Guid.newGuid();
     private final int DEFAULT_VLAN_ID = 0;
     private final int OTHER_VLAN_ID = 1;
 

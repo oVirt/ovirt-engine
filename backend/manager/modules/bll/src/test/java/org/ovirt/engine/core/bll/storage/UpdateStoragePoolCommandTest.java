@@ -202,7 +202,7 @@ public class UpdateStoragePoolCommandTest {
 
     private static StoragePool createBasicPool() {
         StoragePool pool = new StoragePool();
-        pool.setId(Guid.NewGuid());
+        pool.setId(Guid.newGuid());
         pool.setname("Default");
         return pool;
     }

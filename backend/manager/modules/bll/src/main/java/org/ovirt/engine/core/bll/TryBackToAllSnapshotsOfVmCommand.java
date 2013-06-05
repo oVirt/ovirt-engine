@@ -117,7 +117,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     @Override
     protected void executeVmCommand() {
 
-        final Guid newActiveSnapshotId = Guid.NewGuid();
+        final Guid newActiveSnapshotId = Guid.newGuid();
         final Snapshot snapshotToBePreviewed = getDstSnapshot();
         final List<DiskImage> images = DbFacade
                 .getInstance()

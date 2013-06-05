@@ -64,9 +64,9 @@ public class ImagesHandlerTest {
 
     @Test
     public void testGetAllStorageIdsForImageIds() {
-        Guid sdIdShared = Guid.NewGuid();
-        Guid sdId1 = Guid.NewGuid();
-        Guid sdId2 = Guid.NewGuid();
+        Guid sdIdShared = Guid.newGuid();
+        Guid sdId1 = Guid.newGuid();
+        Guid sdId2 = Guid.newGuid();
 
         disk1.setStorageIds(new ArrayList<Guid>(Arrays.asList(sdId1, sdIdShared)));
         disk2.setStorageIds(new ArrayList<Guid>(Arrays.asList(sdId2, sdIdShared)));

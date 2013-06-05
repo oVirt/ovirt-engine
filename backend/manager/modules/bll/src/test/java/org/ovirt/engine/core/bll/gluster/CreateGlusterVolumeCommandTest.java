@@ -60,7 +60,7 @@ public class CreateGlusterVolumeCommandTest {
 
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
-        vds.setId(Guid.NewGuid());
+        vds.setId(Guid.newGuid());
         vds.setVdsName("gfs1");
         vds.setVdsGroupId(clusterId);
         vds.setStatus(status);
@@ -96,7 +96,7 @@ public class CreateGlusterVolumeCommandTest {
 
     private GlusterVolumeEntity getVolume(int brickCount, boolean withDuplicateBricks) {
         GlusterVolumeEntity volumeEntity = new GlusterVolumeEntity();
-        volumeEntity.setId(Guid.NewGuid());
+        volumeEntity.setId(Guid.newGuid());
         volumeEntity.setClusterId(clusterId);
         volumeEntity.setName("vol1");
         volumeEntity.setVolumeType(GlusterVolumeType.DISTRIBUTE);

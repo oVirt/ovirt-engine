@@ -78,8 +78,8 @@ public class AddQuotaCommandTest {
         vdsGroupQuota.setMemSizeMBUsage(0L);
         generalQuota.setGlobalQuotaVdsGroup(vdsGroupQuota);
 
-        generalQuota.setId(Guid.NewGuid());
-        generalQuota.setStoragePoolId(Guid.NewGuid());
+        generalQuota.setId(Guid.newGuid());
+        generalQuota.setStoragePoolId(Guid.newGuid());
         return generalQuota;
     }
 }

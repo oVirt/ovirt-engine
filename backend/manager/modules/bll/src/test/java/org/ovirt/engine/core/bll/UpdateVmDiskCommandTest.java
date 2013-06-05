@@ -49,8 +49,8 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateVmDiskCommandTest {
 
-    private Guid diskImageGuid = Guid.NewGuid();
-    private Guid vmId = Guid.NewGuid();
+    private Guid diskImageGuid = Guid.newGuid();
+    private Guid vmId = Guid.newGuid();
 
     @Mock
     private VmDAO vmDAO;
@@ -84,7 +84,7 @@ public class UpdateVmDiskCommandTest {
         UpdateVmDiskParameters parameters = createParameters();
 
         DiskImage otherDisk = new DiskImage();
-        otherDisk.setId(Guid.NewGuid());
+        otherDisk.setId(Guid.newGuid());
         otherDisk.setActive(true);
         when(diskDao.getAllForVm(vmId)).thenReturn(new LinkedList<Disk>(Arrays.asList(parameters.getDiskInfo(),
                 otherDisk)));
@@ -141,7 +141,7 @@ public class UpdateVmDiskCommandTest {
         parameters.setDiskInfo(createShareableDisk(VolumeFormat.RAW));
 
         DiskImage oldDisk = createDiskImage();
-        oldDisk.setVmSnapshotId(Guid.NewGuid());
+        oldDisk.setVmSnapshotId(Guid.newGuid());
 
         when(diskDao.get(diskImageGuid)).thenReturn(oldDisk);
         initializeCommand(parameters);
@@ -168,7 +168,7 @@ public class UpdateVmDiskCommandTest {
         newDisk.setBoot(true);
 
         DiskImage otherDisk = new DiskImage();
-        otherDisk.setId(Guid.NewGuid());
+        otherDisk.setId(Guid.newGuid());
         otherDisk.setActive(true);
         otherDisk.setBoot(boot);
         if (boot) {
@@ -198,12 +198,12 @@ public class UpdateVmDiskCommandTest {
         Disk newDisk = parameters.getDiskInfo();
         newDisk.setBoot(true);
 
-        Guid otherVmId = Guid.NewGuid();
+        Guid otherVmId = Guid.newGuid();
         VM otherVm = new VM();
         otherVm.setId(otherVmId);
 
         DiskImage otherDisk = new DiskImage();
-        otherDisk.setId(Guid.NewGuid());
+        otherDisk.setId(Guid.newGuid());
         otherDisk.setActive(true);
         otherDisk.setBoot(boot);
         if (boot) {
@@ -306,7 +306,7 @@ public class UpdateVmDiskCommandTest {
      * @return
      */
     private StoragePool mockStoragePool(Version compatibilityVersion) {
-        Guid storagePoolId = Guid.NewGuid();
+        Guid storagePoolId = Guid.newGuid();
         StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
         storagePool.setcompatibility_version(compatibilityVersion);

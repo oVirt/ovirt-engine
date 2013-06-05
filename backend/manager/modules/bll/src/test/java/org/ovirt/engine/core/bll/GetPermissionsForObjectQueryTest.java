@@ -28,7 +28,7 @@ public class GetPermissionsForObjectQueryTest extends AbstractUserQueryTest<GetP
     public void setUp() throws Exception {
         super.setUp();
 
-        objectID = Guid.NewGuid();
+        objectID = Guid.newGuid();
 
         permissions permission = new permissions();
         permission.setObjectId(objectID);

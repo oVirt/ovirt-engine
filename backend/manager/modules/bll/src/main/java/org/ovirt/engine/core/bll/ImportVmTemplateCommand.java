@@ -203,9 +203,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     private void initImportClonedTemplate() {
-        getParameters().getVmTemplate().setId(Guid.NewGuid());
+        getParameters().getVmTemplate().setId(Guid.newGuid());
         for (VmNetworkInterface iface : getParameters().getVmTemplate().getInterfaces()) {
-            iface.setId(Guid.NewGuid());
+            iface.setId(Guid.newGuid());
         }
     }
 
@@ -214,8 +214,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             diskGuidList.add(image.getId());
             imageGuidList.add(image.getImageId());
             if (getParameters().isImportAsNewEntity()) {
-                image.setId(Guid.NewGuid());
-                image.setImageId(Guid.NewGuid());
+                image.setId(Guid.newGuid());
+                image.setImageId(Guid.newGuid());
             }
         }
     }
@@ -372,7 +372,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         String networkName;
         for (VmNetworkInterface iface : interfaces) {
             if (iface.getId() == null) {
-                iface.setId(Guid.NewGuid());
+                iface.setId(Guid.newGuid());
             }
             networkName = iface.getNetworkName();
             iface.setVmId(getVmTemplateId());

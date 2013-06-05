@@ -46,7 +46,7 @@ public class LoginValidatorTest extends Assert {
     protected LoginValidator validator;
     protected SessionHelper session;
     protected IMocksControl control;
-    protected String sessionId = Guid.NewGuid().toString();
+    protected String sessionId = Guid.newGuid().toString();
 
     @Before
     public void setUp() {

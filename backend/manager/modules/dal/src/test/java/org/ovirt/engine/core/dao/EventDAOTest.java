@@ -51,7 +51,7 @@ public class EventDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForSubscriberWithNoSubscriptions() {
-        List<event_subscriber> result = dao.getAllForSubscriber(Guid.NewGuid());
+        List<event_subscriber> result = dao.getAllForSubscriber(Guid.newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

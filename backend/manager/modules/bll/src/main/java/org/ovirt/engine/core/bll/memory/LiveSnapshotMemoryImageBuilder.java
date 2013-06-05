@@ -34,10 +34,10 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
         this.enclosingCommand = enclosingCommand;
         this.storageDomainId = storageDomainId;
         this.storagePool = storagePool;
-        this.memoryDumpImageGroupId = Guid.NewGuid();
-        this.memoryDumpVolumeId = Guid.NewGuid();
-        this.vmConfImageGroupId = Guid.NewGuid();
-        this.vmConfVolumeId = Guid.NewGuid();
+        this.memoryDumpImageGroupId = Guid.newGuid();
+        this.memoryDumpVolumeId = Guid.newGuid();
+        this.vmConfImageGroupId = Guid.newGuid();
+        this.vmConfVolumeId = Guid.newGuid();
     }
 
     public void build() {

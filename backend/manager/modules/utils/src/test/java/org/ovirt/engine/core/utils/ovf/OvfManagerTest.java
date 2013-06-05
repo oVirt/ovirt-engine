@@ -167,7 +167,7 @@ public class OvfManagerTest {
     private static void initInterfaces(VM vm) {
         VmNetworkInterface vmInterface = new VmNetworkInterface();
         vmInterface.setStatistics(new VmNetworkStatistics());
-        vmInterface.setId(Guid.NewGuid());
+        vmInterface.setId(Guid.newGuid());
         vmInterface.setName("eth77");
         vmInterface.setNetworkName("blue");
         vmInterface.setLinked(false);
@@ -177,7 +177,7 @@ public class OvfManagerTest {
 
         VmNetworkInterface vmInterface2 = new VmNetworkInterface();
         vmInterface2.setStatistics(new VmNetworkStatistics());
-        vmInterface2.setId(Guid.NewGuid());
+        vmInterface2.setId(Guid.newGuid());
         vmInterface2.setName("eth88");
         vmInterface2.setNetworkName(null);
         vmInterface2.setLinked(true);

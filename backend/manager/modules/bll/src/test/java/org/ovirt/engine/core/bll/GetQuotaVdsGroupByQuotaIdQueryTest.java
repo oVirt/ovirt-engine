@@ -23,7 +23,7 @@ public class GetQuotaVdsGroupByQuotaIdQueryTest
     @Test
     public void testExecuteQueryCommand() {
         // Mock the parameters
-        Guid quotaId = Guid.NewGuid();
+        Guid quotaId = Guid.newGuid();
         when(params.getId()).thenReturn(quotaId);
 
         // Create the return value

@@ -109,7 +109,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void executeVmCommand() {
-        Guid newActiveSnapshotId = Guid.NewGuid();
+        Guid newActiveSnapshotId = Guid.newGuid();
         Guid createdSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
         getParameters().setSnapshotType(determineSnapshotType());
         getParameters().setInitialVmStatus(getVm().getStatus());

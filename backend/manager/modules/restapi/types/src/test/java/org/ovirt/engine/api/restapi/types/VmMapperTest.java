@@ -181,7 +181,7 @@ public class VmMapperTest extends
         org.ovirt.engine.core.common.businessentities.VM entity =
                 new org.ovirt.engine.core.common.businessentities.VM();
         entity.setStatus(VMStatus.Up);
-        Guid guid = Guid.NewGuid();
+        Guid guid = Guid.newGuid();
         entity.setRunOnVds(guid);
         VM model = VmMapper.map(entity, null);
         assertEquals(guid.toString(), model.getHost().getId());

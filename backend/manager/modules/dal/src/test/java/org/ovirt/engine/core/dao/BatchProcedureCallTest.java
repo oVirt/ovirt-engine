@@ -46,8 +46,8 @@ public class BatchProcedureCallTest extends BaseDAOTestCase {
             dao.remove(tag.gettag_id());
         }
         List<tags> data = new ArrayList<>();
-        data.add(new tags("a", Guid.Empty, true, Guid.NewGuid(), "a"));
-        data.add(new tags("b", Guid.Empty, true, Guid.NewGuid(), "b"));
+        data.add(new tags("a", Guid.Empty, true, Guid.newGuid(), "a"));
+        data.add(new tags("b", Guid.Empty, true, Guid.newGuid(), "b"));
         List<MapSqlParameterSource> executions = new ArrayList<MapSqlParameterSource>();
         for (tags tag : data) {
             executions.add(getParamsSource(tag));

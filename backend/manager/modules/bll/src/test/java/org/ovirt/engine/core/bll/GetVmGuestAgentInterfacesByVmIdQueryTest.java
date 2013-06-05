@@ -16,7 +16,7 @@ public class GetVmGuestAgentInterfacesByVmIdQueryTest
     @Test
     public void testExecuteQuery() {
         IdQueryParameters params = getQueryParameters();
-        Guid vmId = Guid.NewGuid();
+        Guid vmId = Guid.newGuid();
         when(params.getId()).thenReturn(vmId);
 
         VmGuestAgentInterfaceDao vmGuestAgentInterfaceDao = mock(VmGuestAgentInterfaceDao.class);

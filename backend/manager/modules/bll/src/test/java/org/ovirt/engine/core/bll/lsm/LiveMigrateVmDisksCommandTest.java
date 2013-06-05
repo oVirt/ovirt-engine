@@ -39,13 +39,13 @@ import org.ovirt.engine.core.dao.VmDAO;
 @RunWith(MockitoJUnitRunner.class)
 public class LiveMigrateVmDisksCommandTest {
 
-    private final Guid diskImageId = Guid.NewGuid();
-    private final Guid srcStorageId = Guid.NewGuid();
-    private final Guid dstStorageId = Guid.NewGuid();
-    private final Guid vmId = Guid.NewGuid();
-    private final Guid quotaId = Guid.NewGuid();
-    private final Guid storagePoolId = Guid.NewGuid();
-    private final Guid templateDiskId = Guid.NewGuid();
+    private final Guid diskImageId = Guid.newGuid();
+    private final Guid srcStorageId = Guid.newGuid();
+    private final Guid dstStorageId = Guid.newGuid();
+    private final Guid vmId = Guid.newGuid();
+    private final Guid quotaId = Guid.newGuid();
+    private final Guid storagePoolId = Guid.newGuid();
+    private final Guid templateDiskId = Guid.newGuid();
 
     @Mock
     private DiskImageDAO diskImageDao;
@@ -93,7 +93,7 @@ public class LiveMigrateVmDisksCommandTest {
 
     @Test
     public void canDoActionNoDisksSpecified() {
-        initVm(VMStatus.Up, Guid.NewGuid(), null);
+        initVm(VMStatus.Up, Guid.newGuid(), null);
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
@@ -107,7 +107,7 @@ public class LiveMigrateVmDisksCommandTest {
         DiskImage diskImage = initDiskImage(diskImageId);
         diskImage.setShareable(true);
 
-        initVm(VMStatus.Up, Guid.NewGuid(), diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -123,7 +123,7 @@ public class LiveMigrateVmDisksCommandTest {
         diskImage.setImageTemplateId(templateDiskId);
 
         initDiskImage(templateDiskId);
-        initVm(VMStatus.Up, Guid.NewGuid(), diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -139,7 +139,7 @@ public class LiveMigrateVmDisksCommandTest {
         storageDomain.setStatus(StorageDomainStatus.Locked);
 
         initDiskImage(diskImageId);
-        initVm(VMStatus.Up, Guid.NewGuid(), diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -159,7 +159,7 @@ public class LiveMigrateVmDisksCommandTest {
         dstStorageDomain.setStorageDomainType(StorageDomainType.ISO);
 
         initDiskImage(diskImageId);
-        initVm(VMStatus.Up, Guid.NewGuid(), diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
 
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
@@ -171,7 +171,7 @@ public class LiveMigrateVmDisksCommandTest {
     public void canDoActionVmRunningStateless() {
         createParameters();
         initDiskImage(diskImageId);
-        initVm(VMStatus.Up, Guid.NewGuid(), diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
 
         doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS)).when(vmValidator)
                 .vmNotRunningStateless();

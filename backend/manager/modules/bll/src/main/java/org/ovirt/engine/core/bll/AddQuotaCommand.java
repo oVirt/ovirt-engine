@@ -62,18 +62,18 @@ public class AddQuotaCommand extends QuotaCRUDCommand {
      */
     private void setQuotaParameter() {
         Quota quotaParameter = getParameters().getQuota();
-        quotaParameter.setId(Guid.NewGuid());
+        quotaParameter.setId(Guid.newGuid());
         setStoragePoolId(quotaParameter.getStoragePoolId());
         if (quotaParameter.getQuotaStorages() != null) {
             for (QuotaStorage quotaStorage : quotaParameter.getQuotaStorages()) {
                 quotaStorage.setQuotaId(quotaParameter.getId());
-                quotaStorage.setQuotaStorageId(Guid.NewGuid());
+                quotaStorage.setQuotaStorageId(Guid.newGuid());
             }
         }
         if (quotaParameter.getQuotaVdsGroups() != null) {
             for (QuotaVdsGroup quotaVdsGroup : quotaParameter.getQuotaVdsGroups()) {
                 quotaVdsGroup.setQuotaId(quotaParameter.getId());
-                quotaVdsGroup.setQuotaVdsGroupId(Guid.NewGuid());
+                quotaVdsGroup.setQuotaVdsGroupId(Guid.newGuid());
             }
         }
         setQuota(quotaParameter);

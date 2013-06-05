@@ -1045,7 +1045,7 @@ public class VdsBrokerObjectsBuilder {
                 VdsNetworkInterface iface = new VdsNetworkInterface();
                 VdsNetworkStatistics iStats = new VdsNetworkStatistics();
                 iface.setStatistics(iStats);
-                iStats.setId(Guid.NewGuid());
+                iStats.setId(Guid.newGuid());
                 iStats.setVdsId(vds.getId());
                 iface.setId(iStats.getId());
 
@@ -1098,7 +1098,7 @@ public class VdsBrokerObjectsBuilder {
                 VdsNetworkInterface iface = new VdsNetworkInterface();
                 VdsNetworkStatistics iStats = new VdsNetworkStatistics();
                 iface.setStatistics(iStats);
-                iStats.setId(Guid.NewGuid());
+                iStats.setId(Guid.newGuid());
                 iface.setId(iStats.getId());
 
                 String vlanDeviceName = entry.getKey();
@@ -1143,7 +1143,7 @@ public class VdsBrokerObjectsBuilder {
                 VdsNetworkInterface iface = new VdsNetworkInterface();
                 VdsNetworkStatistics iStats = new VdsNetworkStatistics();
                 iface.setStatistics(iStats);
-                iStats.setId(Guid.NewGuid());
+                iStats.setId(Guid.newGuid());
                 iface.setId(iStats.getId());
                 iface.setName(entry.getKey());
                 iface.setVdsId(vds.getId());

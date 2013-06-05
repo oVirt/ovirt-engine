@@ -130,7 +130,7 @@ public class NetworkDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForClusterWithInvalidCluster() {
-        List<Network> result = dao.getAllForCluster(Guid.NewGuid());
+        List<Network> result = dao.getAllForCluster(Guid.newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -210,7 +210,7 @@ public class NetworkDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForDataCenterWithInvalidDataCenter() {
-        List<Network> result = dao.getAllForDataCenter(Guid.NewGuid());
+        List<Network> result = dao.getAllForDataCenter(Guid.newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
@@ -285,7 +285,7 @@ public class NetworkDaoTest extends BaseDAOTestCase {
         NetworkCluster clusterFromDB = clustersFromDB.get(0);
         assertNotNull(clusterFromDB);
         new_net.setCluster(clusterFromDB);
-        new_net.setId(Guid.NewGuid());
+        new_net.setId(Guid.newGuid());
         dao.save(new_net);
 
         Network result = dao.getByName(new_net.getName());

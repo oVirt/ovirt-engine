@@ -27,7 +27,7 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
 
     @Override
     protected Guid generateNonExistingId() {
-        return Guid.NewGuid();
+        return Guid.newGuid();
     }
 
     @Override
@@ -105,7 +105,7 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
 
     @Test
     public void testGetImagesWithNoDiskReturnsEmptyList() {
-        List<DiskImage> result = dao.getImagesWithNoDisk(Guid.NewGuid());
+        List<DiskImage> result = dao.getImagesWithNoDisk(Guid.newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

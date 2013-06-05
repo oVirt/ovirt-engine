@@ -18,8 +18,8 @@ public class ObjectStreamSerializerTest {
         try {
             ObjectStreamSerializer serializer = new ObjectStreamSerializer();
             StoragePoolIsoMap isoMap = new StoragePoolIsoMap();
-            isoMap.setstorage_id(Guid.NewGuid());
-            isoMap.setstorage_pool_id(Guid.NewGuid());
+            isoMap.setstorage_id(Guid.newGuid());
+            isoMap.setstorage_pool_id(Guid.newGuid());
             isoMap.setstatus(StorageDomainStatus.Active);
             byte[] bytes = (byte[]) serializer.serialize(isoMap);
             StoragePoolIsoMap readEntity =

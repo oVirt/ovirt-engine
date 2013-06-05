@@ -1283,7 +1283,7 @@ public class SetupNetworksHelperTest {
      * @return A network with some defaults and the given name,
      */
     private Network createNetwork(String networkName) {
-        return new Network("", "", Guid.NewGuid(), networkName, "", "", 0, null, false, 0, true);
+        return new Network("", "", Guid.newGuid(), networkName, "", "", 0, null, false, 0, true);
     }
 
     /**
@@ -1322,7 +1322,7 @@ public class SetupNetworksHelperTest {
      * @return {@link VdsNetworkInterface} representing a regular NIC with the given parameters.
      */
     private VdsNetworkInterface createNic(String nicName, String networkName) {
-        return createVdsInterface(Guid.NewGuid(), nicName, false, null, null, networkName, true);
+        return createVdsInterface(Guid.newGuid(), nicName, false, null, null, networkName, true);
     }
 
     /**
@@ -1333,7 +1333,7 @@ public class SetupNetworksHelperTest {
      * @return {@link VdsNetworkInterface} representing a regular NIC with the given parameters.
      */
     private VdsNetworkInterface createNicSyncedWithNetwork(String nicName, Network network) {
-        VdsNetworkInterface nic = createVdsInterface(Guid.NewGuid(),
+        VdsNetworkInterface nic = createVdsInterface(Guid.newGuid(),
                 nicName,
                 false,
                 null,
@@ -1365,7 +1365,7 @@ public class SetupNetworksHelperTest {
      * @return Bond with the given parameters.
      */
     private VdsNetworkInterface createBond(String name, String networkName) {
-        return createVdsInterface(Guid.NewGuid(), name, true, null, null, networkName, true);
+        return createVdsInterface(Guid.newGuid(), name, true, null, null, networkName, true);
     }
 
     /**
@@ -1378,7 +1378,7 @@ public class SetupNetworksHelperTest {
      * @return VLAN over the given interface, with the given ID and optional network name.
      */
     private VdsNetworkInterface createVlan(String baseIfaceName, int vlanId, String networkName) {
-        return createVdsInterface(Guid.NewGuid(),
+        return createVdsInterface(Guid.newGuid(),
                 baseIfaceName + "." + vlanId,
                 false,
                 null,

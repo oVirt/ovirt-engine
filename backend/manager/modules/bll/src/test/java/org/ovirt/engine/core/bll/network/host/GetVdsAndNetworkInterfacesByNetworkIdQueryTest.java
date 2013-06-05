@@ -25,7 +25,7 @@ public class GetVdsAndNetworkInterfacesByNetworkIdQueryTest
         extends AbstractQueryTest<IdQueryParameters,
         GetVdsAndNetworkInterfacesByNetworkIdQuery<IdQueryParameters>> {
 
-    private Guid networkId = Guid.NewGuid();
+    private Guid networkId = Guid.newGuid();
     private VDS vds = new VDS();
     private VdsNetworkInterface vdsNetworkInterface = new VdsNetworkInterface();
 

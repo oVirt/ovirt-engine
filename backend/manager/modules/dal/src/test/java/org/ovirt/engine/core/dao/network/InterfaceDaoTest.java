@@ -40,7 +40,7 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
 
         newVdsInterface = new VdsNetworkInterface();
         newVdsInterface.setStatistics(new VdsNetworkStatistics());
-        newVdsInterface.setId(Guid.NewGuid());
+        newVdsInterface.setId(Guid.newGuid());
         newVdsInterface.setName("eth77");
         newVdsInterface.setNetworkName("enginet");
         newVdsInterface.setAddress("192.168.122.177");
@@ -60,7 +60,7 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllInterfacesForVdsWithInvalidVds() {
-        List<VdsNetworkInterface> result = dao.getAllInterfacesForVds(Guid.NewGuid());
+        List<VdsNetworkInterface> result = dao.getAllInterfacesForVds(Guid.newGuid());
 
         assertNotNull(result);
         assertTrue(result.isEmpty());

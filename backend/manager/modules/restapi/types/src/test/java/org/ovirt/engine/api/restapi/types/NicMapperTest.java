@@ -42,7 +42,7 @@ public class NicMapperTest extends AbstractInvertibleMappingTest<NIC, VmNetworkI
     @Test
     public void testPortMirorringMapping() {
         NIC nic = new NIC();
-        String netId = Guid.NewGuid().toString();
+        String netId = Guid.newGuid().toString();
         Network network = new Network();
         network.setId(netId);
         Networks networks = new Networks();

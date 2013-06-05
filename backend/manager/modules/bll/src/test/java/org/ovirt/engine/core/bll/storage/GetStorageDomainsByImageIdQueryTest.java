@@ -22,7 +22,7 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<IdQue
     @Test
     public void testExecuteQueryCommandWithEmptyList() {
         // Set up the query parameters
-        Guid imageId = Guid.NewGuid();
+        Guid imageId = Guid.newGuid();
         when(params.getId()).thenReturn(imageId);
 
         // Set up the DAOs
@@ -42,14 +42,14 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<IdQue
     @Test
     public void testExecuteQueryCommandWithMultipleStorageList() {
         // Set up the query parameters
-        Guid imageId = Guid.NewGuid();
+        Guid imageId = Guid.newGuid();
         when(params.getId()).thenReturn(imageId);
 
         StorageDomain firstStorageDomain =
-                new StorageDomain(Guid.NewGuid(),
-                        Guid.NewGuid().toString(),
+                new StorageDomain(Guid.newGuid(),
+                        Guid.newGuid().toString(),
                         "FirstStorage",
-                        Guid.NewGuid(),
+                        Guid.newGuid(),
                         0,
                         0,
                         StorageDomainStatus.Active,
@@ -58,10 +58,10 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<IdQue
                         0,
                         "First Storage Description");
         StorageDomain secondStorageDomain =
-                new StorageDomain(Guid.NewGuid(),
-                        Guid.NewGuid().toString(),
+                new StorageDomain(Guid.newGuid(),
+                        Guid.newGuid().toString(),
                         "SecondStorage",
-                        Guid.NewGuid(),
+                        Guid.newGuid(),
                         0,
                         0,
                         StorageDomainStatus.Active,
