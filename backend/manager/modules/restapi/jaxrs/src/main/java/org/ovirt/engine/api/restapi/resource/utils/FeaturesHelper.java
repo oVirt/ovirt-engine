@@ -52,6 +52,7 @@ public class FeaturesHelper {
         }
         if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_3)) {
             addFeatureVmApplications(features);
+            addFeatureVnicCustomProperties(features);
         }
         return features;
     }
@@ -229,6 +230,13 @@ public class FeaturesHelper {
         feature.setName("Gluster Support");
         feature.setDescription("Support for Gluster Volumes and Bricks");
         feature.setGlusterVolumes(new GlusterVolumes());
+        features.getFeature().add(feature);
+    }
+
+    private void addFeatureVnicCustomProperties(Features features) {
+        Feature feature = new Feature();
+        feature.setName("VM NIC Custom Properties");
+        feature.setDescription("Ability to add custom properties to vm nic.");
         features.getFeature().add(feature);
     }
 }

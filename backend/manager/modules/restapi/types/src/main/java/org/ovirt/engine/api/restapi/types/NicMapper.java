@@ -1,12 +1,15 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.MAC;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 
 public class NicMapper {
     @Mapping(from = NIC.class, to = VmNetworkInterface.class)
@@ -51,6 +54,10 @@ public class NicMapper {
                 entity.setPortMirroring(false);
             }
         }
+        if (model.isSetCustomProperties()) {
+            entity.setCustomProperties(DevicePropertiesUtils.getInstance().convertProperties(
+                    CustomPropertiesParser.parse(model.getCustomProperties().getCustomProperty())));
+        }
         return entity;
     }
 
@@ -81,6 +88,13 @@ public class NicMapper {
         model.setInterface(map(entity.getType()));
         model.setActive(entity.isPlugged());
         model.setPlugged(entity.isPlugged());
+
+        if (entity.getCustomProperties() != null && !entity.getCustomProperties().isEmpty()) {
+            CustomProperties hooks = new CustomProperties();
+            hooks.getCustomProperty().addAll(CustomPropertiesParser.parse(
+                    DevicePropertiesUtils.getInstance().convertProperties(entity.getCustomProperties()), false));
+            model.setCustomProperties(hooks);
+        }
         return model;
     }
 
