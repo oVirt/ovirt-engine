@@ -46,7 +46,7 @@ public class AbstractSubTabActionTree<M extends SearchableListModel, R, N> exten
     protected SimplePanel actionPanelContainer;
     protected SubTabTreeActionPanel actionPanel;
     protected EntityModelCellTable<ListModel> table;
-    protected AbstractSubTabTree<M, R, N> tree;
+    protected AbstractSubTabTree<M, R, N> tree = null;
 
     protected final EventBus eventBus;
     protected SearchableDetailModelProvider<?, ?, M> modelProvider;

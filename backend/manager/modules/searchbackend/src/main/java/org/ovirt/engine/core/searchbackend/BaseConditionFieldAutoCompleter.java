@@ -65,7 +65,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
 
     }
 
-    public static ITagsHandler TagsHandler;
+    public static ITagsHandler TagsHandler = null;
 
     public Map<String, Class<?>> getTypeDictionary() {
         return typeDict;

@@ -16,7 +16,7 @@ public class AsyncQuery {
 
     public Object Model;
     public INewAsyncCallback asyncCallback;
-    public IAsyncConverter converterCallback;
+    public IAsyncConverter converterCallback = null;
     private boolean handleFailure;
     public VdcQueryReturnValue OriginalReturnValue;
     public Object[] Data;
