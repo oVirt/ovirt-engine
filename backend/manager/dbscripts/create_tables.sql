@@ -652,6 +652,7 @@ CREATE TABLE vm_statistics
    usage_network_percent INTEGER  DEFAULT 0,
    usage_mem_percent INTEGER  DEFAULT 0,
    usage_cpu_percent INTEGER  DEFAULT 0,
+   disks_usage text,
    CONSTRAINT PK_vm_statistics PRIMARY KEY(vm_guid)
 ) WITH OIDS;
 
@@ -1074,8 +1075,6 @@ CREATE TABLE disk_image_dynamic
    read_rate INTEGER,
    write_rate INTEGER,
    actual_size BIGINT NOT NULL,
-   guest_disk_size_bytes bigint,
-   guest_used_disk_size_bytes bigint,
    read_latency_seconds DECIMAL(18,9),
    write_latency_seconds DECIMAL(18,9),
    flush_latency_seconds DECIMAL(18,9),
