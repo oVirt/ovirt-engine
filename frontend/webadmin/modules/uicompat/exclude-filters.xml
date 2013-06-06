@@ -1,0 +1,29 @@
+<FindBugsFilter>
+    <!--
+    findbugs complain of using unwritten public field: EventArgs.Empty
+    This class is GWT generated code and its generated code will write
+    to this field
+
+    findbugs reason:
+    UwF: Unwritten public or protected field (UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD)
+    -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.uicompat.Enlistment" />
+       <Method name="Done"/>
+       <Bug code="UwF"/>
+     </Match>
+
+    <!--
+    findbugs complain of using unwritten public field: Dispatcher.CurrentDispatcher
+    This class is GWT generated code and its generated code will write
+    to this field
+
+    findbugs reason:
+    UwF: Unwritten public or protected field (UWF_UNWRITTEN_PUBLIC_OR_PROTECTED_FIELD)
+    -->
+     <Match>
+       <Class name="org.ovirt.engine.ui.uicompat.Task" />
+       <Method name="Task"/>
+       <Bug code="UwF"/>
+     </Match>
+ </FindBugsFilter>
