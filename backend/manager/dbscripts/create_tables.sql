@@ -835,6 +835,7 @@ CREATE TABLE LUNs
    lun_mapping INTEGER,
    vendor_id VARCHAR(50),
    product_id VARCHAR(50),
+   device_size INTEGER default 0,
    CONSTRAINT PK_LUNs PRIMARY KEY(LUN_id)
 ) WITH OIDS;
 
