@@ -32,6 +32,7 @@ from otopi import constants as otopicons
 from otopi import filetransaction
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup import dialog
 
 
@@ -144,16 +145,17 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _misc(self):
-        with open(osetupcons.FileLocations.OVIRT_NFS_RHEL_CONFIG) as f:
-            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-                filetransaction.FileTransaction(
-                    name=osetupcons.FileLocations.NFS_RHEL_CONFIG,
-                    content=f.read(),
-                    modifiedList=self.environment[
-                        otopicons.CoreEnv.MODIFIED_FILES
-                    ],
-                )
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            filetransaction.FileTransaction(
+                name=osetupcons.FileLocations.NFS_RHEL_CONFIG,
+                content=osetuputil.processTemplate(
+                    osetupcons.FileLocations.OVIRT_NFS_RHEL_CONFIG,
+                ),
+                modifiedList=self.environment[
+                    otopicons.CoreEnv.MODIFIED_FILES
+                ],
             )
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,

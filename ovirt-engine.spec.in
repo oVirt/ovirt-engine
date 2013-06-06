@@ -597,9 +597,6 @@ fi
 # versionlock we cannot move these until
 # 3.4
 %{engine_data}/conf/engine-config-install.properties
-%{engine_data}/conf/ovirt-engine-proxy.conf.in
-%{engine_data}/conf/iptables.default
-%{engine_data}/conf/nfs.sysconfig
 
 # Documentation:
 %doc LICENSE
@@ -758,6 +755,9 @@ fi
 # Configuration files
 %{engine_data}/conf/ovirt-engine-root-redirect.conf.in
 %{engine_data}/conf/version
+%{engine_data}/conf/ovirt-engine-proxy.conf.v2.in
+%{engine_data}/conf/iptables.default.in
+%{engine_data}/conf/nfs.sysconfig.in
 
 # Plugins directory:
 %dir %{engine_data}/scripts/plugins

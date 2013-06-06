@@ -153,7 +153,7 @@ class ConfigFile(base.Base):
 
 
 @util.export
-def processTemplate(template, subst):
+def processTemplate(template, subst={}):
     content = ''
     with open(template, 'r') as f:
         content = f.read()

@@ -94,7 +94,7 @@ class FileLocations(object):
     OVIRT_IPTABLES_DEFAULT = os.path.join(
         OVIRT_ENGINE_DATADIR,
         'conf',
-        'iptables.default'
+        'iptables.default.in'
     )
 
     OVIRT_FIREWALLD_CONFIG = os.path.join(
@@ -270,7 +270,7 @@ class FileLocations(object):
     OVIRT_NFS_RHEL_CONFIG = os.path.join(
         OVIRT_ENGINE_DATADIR,
         'conf',
-        'nfs.sysconfig'
+        'nfs.sysconfig.in'
     )
     NFS_EXPORT_FILE = os.path.join(
         SYSCONFDIR,
@@ -333,7 +333,7 @@ class FileLocations(object):
     HTTPD_CONF_OVIRT_ENGINE_TEMPLATE = os.path.join(
         OVIRT_ENGINE_DATADIR,
         'conf',
-        'ovirt-engine-proxy.conf.in',
+        'ovirt-engine-proxy.conf.v2.in',
     )
 
     HTTPD_CONF_OVIRT_ROOT_TEMPLATE = os.path.join(

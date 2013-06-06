@@ -327,14 +327,14 @@ install_setup:
 
 	# Configuration files:
 	install -m 644 packaging/conf/engine-config-install.properties $(DESTDIR)$(DATA_DIR)/conf
-	install -m 644 packaging/conf/iptables.default $(DESTDIR)$(DATA_DIR)/conf
+	install -m 644 packaging/conf/iptables.default.in $(DESTDIR)$(DATA_DIR)/conf
 	#FirewallD
 	install -m 644 packaging/firewalld/base/ovirt-nfs.xml.in $(DESTDIR)$(DATA_DIR)/firewalld/base/ovirt-nfs.xml.in
 	install -m 644 packaging/firewalld/base/ovirt-http.xml.in $(DESTDIR)$(DATA_DIR)/firewalld/base/ovirt-http.xml.in
 	install -m 644 packaging/firewalld/base/ovirt-https.xml.in $(DESTDIR)$(DATA_DIR)/firewalld/base/ovirt-https.xml.in
 
-	install -m 644 packaging/conf/nfs.sysconfig $(DESTDIR)$(DATA_DIR)/conf
-	install -m 644 packaging/conf/ovirt-engine-proxy.conf.in $(DESTDIR)$(DATA_DIR)/conf
+	install -m 644 packaging/conf/nfs.sysconfig.in $(DESTDIR)$(DATA_DIR)/conf
+	install -m 644 packaging/conf/ovirt-engine-proxy.conf.v2.in $(DESTDIR)$(DATA_DIR)/conf
 	install -m 644 packaging/conf/ovirt-engine-root-redirect.conf.in $(DESTDIR)$(DATA_DIR)/conf
 
 	# Shared python modules:
