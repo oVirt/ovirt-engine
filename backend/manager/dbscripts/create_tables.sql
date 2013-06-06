@@ -204,6 +204,7 @@ CREATE TABLE vm_templates
    kernel_url VARCHAR(4000),
    kernel_params VARCHAR(4000),
    origin INTEGER  default 0,
+   _update_date timestamp with time zone DEFAULT CURRENT_TIMESTAMP,
    CONSTRAINT PK_vm_templates PRIMARY KEY(vmt_guid)
 ) WITH OIDS;
 
