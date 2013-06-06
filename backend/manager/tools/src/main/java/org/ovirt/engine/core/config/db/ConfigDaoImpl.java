@@ -82,12 +82,13 @@ public class ConfigDaoImpl implements ConfigDAO {
         Connection connection = null;
         PreparedStatement prepareStatement = null;
         ConfigKey ckReturn = null;
+        ResultSet resultSet = null;
         try {
             connection = ds.getConnection();
             prepareStatement = connection.prepareStatement(selectSql);
             prepareStatement.setString(1, key.getKey());
             prepareStatement.setString(2, key.getVersion());
-            ResultSet resultSet = prepareStatement.executeQuery();
+            resultSet = prepareStatement.executeQuery();
             resultSet.next();
             try {
                 String value = resultSet.getString(valueColumn);
@@ -96,6 +97,9 @@ public class ConfigDaoImpl implements ConfigDAO {
                 throw new SQLException("Failed to fetch value of " + key.getKey() + " with version " + key.getVersion() + " from DB. " + e.getMessage());
             }
         } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
             if (prepareStatement != null) {
                 prepareStatement.close();
             }
@@ -110,12 +114,13 @@ public class ConfigDaoImpl implements ConfigDAO {
     public List<ConfigKey> getKeysForName(String name) throws SQLException {
         Connection connection = null;
         PreparedStatement prepareStatement = null;
+        ResultSet resultSet = null;
         List<ConfigKey> keys = new ArrayList<ConfigKey>();
         try {
             connection = ds.getConnection();
             prepareStatement = connection.prepareStatement(selectKeysForNameSql);
             prepareStatement.setString(1, name);
-            ResultSet resultSet = prepareStatement.executeQuery();
+            resultSet = prepareStatement.executeQuery();
             while (resultSet.next()) {
                 try {
                     keys.add(ConfigKeyFactory.getInstance().fromResultSet(resultSet));
@@ -125,6 +130,9 @@ public class ConfigDaoImpl implements ConfigDAO {
                 }
             }
         } finally {
+            if (resultSet != null) {
+                resultSet.close();
+            }
             if (prepareStatement != null) {
                 prepareStatement.close();
             }
