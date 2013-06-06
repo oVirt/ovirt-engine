@@ -380,7 +380,7 @@ CREATE TABLE audit_log
    log_type_name VARCHAR(100)  default '',
    log_type INTEGER NOT NULL,
    severity INTEGER NOT NULL,
-   message VARCHAR(4000) NOT NULL,
+   message TEXT NOT NULL,
    processed BOOLEAN  NOT NULL default false,
    storage_pool_id UUID,
    storage_pool_name VARCHAR(40),
