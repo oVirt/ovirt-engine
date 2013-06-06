@@ -198,7 +198,7 @@ public class EntityModelInputWithSlider extends Composite implements EditorWidge
 
                     // checks if it is an enabled value
                     for (double i = slider.getMinValue(); i <= newValue; i += slider.getStepSize()) {
-                        if (i == newValue) {
+                        if (Double.valueOf(i).equals(newValue)) {
                             return true;
                         }
                     }

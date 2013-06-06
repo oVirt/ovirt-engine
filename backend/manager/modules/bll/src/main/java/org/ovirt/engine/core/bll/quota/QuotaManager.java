@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -985,7 +985,7 @@ public class QuotaManager {
                     if (QuotaStorage.UNLIMITED.equals(quotaStorage.getStorageSizeGB())) {
                         storageLimit = QuotaStorage.UNLIMITED; // Do not break because usage is still counting
                     }
-                    if (storageLimit != QuotaStorage.UNLIMITED) {
+                    if (!Double.valueOf(storageLimit).equals(QuotaStorage.UNLIMITED)) {
                         storageLimit += quotaStorage.getStorageSizeGB();
                     }
                     storageUsage += quotaStorage.getStorageSizeGBUsage();
