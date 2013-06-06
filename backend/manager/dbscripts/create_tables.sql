@@ -482,7 +482,7 @@ CREATE TABLE vm_dynamic
 (
    vm_guid UUID NOT NULL,
    status INTEGER NOT NULL,
-   vm_ip VARCHAR(255),
+   vm_ip TEXT,
    vm_host VARCHAR(255),
    vm_pid INTEGER,
    vm_last_up_time TIMESTAMP WITH TIME ZONE,
