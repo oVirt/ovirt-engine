@@ -630,6 +630,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         cluster.setName((String) model.getName().getEntity());
         cluster.setdescription((String) model.getDescription().getEntity());
+        cluster.setComment((String) model.getComment().getEntity());
         cluster.setStoragePoolId(((StoragePool) model.getDataCenter().getSelectedItem()).getId());
         if (model.getCPU().getSelectedItem() != null)
         {

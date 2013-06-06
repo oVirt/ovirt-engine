@@ -143,6 +143,7 @@
 								</g:FlowPanel>	
 								<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 								<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+								<e:EntityModelTextBoxEditor ui:field="commentEditor" />
 								<e:ListModelListBoxEditor ui:field="cPUEditor" />
 								<e:ListModelListBoxEditor ui:field="versionEditor" />
 								<g:VerticalPanel ui:field="servicesCheckboxPanel">

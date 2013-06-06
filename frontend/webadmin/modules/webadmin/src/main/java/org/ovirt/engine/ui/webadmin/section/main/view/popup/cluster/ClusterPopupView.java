@@ -98,6 +98,11 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @WithElementId
     EntityModelTextBoxEditor descriptionEditor;
 
+    @UiField
+    @Path(value = "comment.entity")
+    @WithElementId
+    EntityModelTextBoxEditor commentEditor;
+
     @UiField(provided = true)
     @Path(value = "cPU.selectedItem")
     @WithElementId
@@ -346,6 +351,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         dataCenterEditor.setLabel(constants.clusterPopupDataCenterLabel());
         nameEditor.setLabel(constants.clusterPopupNameLabel());
         descriptionEditor.setLabel(constants.clusterPopupDescriptionLabel());
+        commentEditor.setLabel(constants.commentLabel());
         cPUEditor.setLabel(constants.clusterPopupCPULabel());
         versionEditor.setLabel(constants.clusterPopupVersionLabel());
         enableOvirtServiceEditor.setLabel(constants.clusterEnableOvirtServiceLabel());
