@@ -1073,6 +1073,8 @@ CREATE TABLE disk_image_dynamic
    read_rate INTEGER,
    write_rate INTEGER,
    actual_size BIGINT NOT NULL,
+   guest_disk_size_bytes bigint,
+   guest_used_disk_size_bytes bigint,
    CONSTRAINT PK_disk_image_dynamic PRIMARY KEY(image_id)
 ) WITH OIDS;
 
