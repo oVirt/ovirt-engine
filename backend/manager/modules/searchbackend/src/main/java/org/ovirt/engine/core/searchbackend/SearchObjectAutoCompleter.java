@@ -136,6 +136,9 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
 
         // cluster - vm pool
         addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME, "vds_group_id", SearchObjects.VDC_POOL_OBJ_NAME, "vds_group_id");
+
+        // provider - network
+        addJoin(SearchObjects.PROVIDER_OBJ_NAME, "id", SearchObjects.NETWORK_OBJ_NAME, "provider_network_provider_id");
     }
 
     private void addJoin(String firstObj, String firstColumnName, String secondObj, String secondColumnName) {
