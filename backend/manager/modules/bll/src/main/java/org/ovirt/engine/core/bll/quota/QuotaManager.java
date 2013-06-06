@@ -199,12 +199,12 @@ public class QuotaManager {
             Map<Guid, Double> newUsedGlobalStorageSize,
             Map<Guid, Map<Guid, Double>> newUsedSpecificStorageSize) {
         // cache new storage size.
-        for (Guid quotaId : newUsedGlobalStorageSize.keySet()) {
-            Quota quota = quotaMap.get(quotaId);
-            double value = newUsedGlobalStorageSize.get(quotaId);
+        for (Map.Entry<Guid, Double> entry : newUsedGlobalStorageSize.entrySet()) {
+            Quota quota = quotaMap.get(entry.getKey());
+            double value = entry.getValue();
             if (value < 0) {
-                log.errorFormat("Quota id {0} cached storage size is negative, removing from cache", quotaId);
-                quotaMap.remove(quotaId);
+                log.errorFormat("Quota id {0} cached storage size is negative, removing from cache", entry.getKey());
+                quotaMap.remove(entry.getKey());
                 continue;
             }
             quota.getGlobalQuotaStorage().setStorageSizeGBUsage(value);

@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.SessionState;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
@@ -30,7 +31,6 @@ import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
@@ -514,17 +514,17 @@ public class VdsBrokerObjectsBuilder {
                 .get(VdsProperties.NETWORK);
         if (interfaces != null) {
             int networkUsage = 0;
-            for (String name : interfaces.keySet()) {
+            for (Entry<String, Object> entry : interfaces.entrySet()) {
                 VdsNetworkInterface iface = null;
                 for (VdsNetworkInterface tempInterface : vds.getInterfaces()) {
-                    if (tempInterface.getName().equals(name)) {
+                    if (tempInterface.getName().equals(entry.getKey())) {
                         iface = tempInterface;
                         break;
                     }
                 }
                 if (iface != null) {
                     iface.setVdsId(vds.getId());
-                    Map<String, Object> dict = (Map<String, Object>) interfaces.get(name);
+                    Map<String, Object> dict = (Map<String, Object>) entry.getValue();
                     Double rx_rate = AssignDoubleValue(dict, VdsProperties.rx_rate);
                     Double rx_dropped = AssignDoubleValue(dict, VdsProperties.rx_dropped);
                     Double tx_rate = AssignDoubleValue(dict, VdsProperties.tx_rate);
@@ -616,10 +616,10 @@ public class VdsBrokerObjectsBuilder {
 
             vds.setLocalDisksUsage(diskStats);
 
-            for (String path : diskStatsStruct.keySet()) {
-                Map<String, Object> pathStatsStruct = (Map<String, Object>) diskStatsStruct.get(path);
+            for (Entry<String, Object> entry : diskStatsStruct.entrySet()) {
+                Map<String, Object> pathStatsStruct = (Map<String, Object>) entry.getValue();
 
-                diskStats.put(path, AssignLongValue(pathStatsStruct, VdsProperties.DISK_STATS_FREE));
+                diskStats.put(entry.getKey(), AssignLongValue(pathStatsStruct, VdsProperties.DISK_STATS_FREE));
             }
         }
     }
@@ -1126,16 +1126,16 @@ public class VdsBrokerObjectsBuilder {
     private static void addHostNetworkInterfaces(VDS vds, Map<String, Object> xmlRpcStruct) {
         Map<String, Object> nics = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.NETWORK_NICS);
         if (nics != null) {
-            for (String key : nics.keySet()) {
+            for (Entry<String, Object> entry : nics.entrySet()) {
                 VdsNetworkInterface iface = new VdsNetworkInterface();
                 VdsNetworkStatistics iStats = new VdsNetworkStatistics();
                 iface.setStatistics(iStats);
                 iStats.setId(Guid.NewGuid());
                 iface.setId(iStats.getId());
-                iface.setName(key);
+                iface.setName(entry.getKey());
                 iface.setVdsId(vds.getId());
 
-                updateNetworkInterfaceDataFromHost(iface, (Map<String, Object>) nics.get(key));
+                updateNetworkInterfaceDataFromHost(iface, (Map<String, Object>) entry.getValue());
 
                 iStats.setVdsId(vds.getId());
                 vds.getInterfaces().add(iface);

@@ -3,9 +3,10 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.vdscommands.GetStoragePoolInfoVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -47,11 +48,11 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
     private java.util.ArrayList<StorageDomain> ParseStorageDomainList(Map<String, Object> xmlRpcStruct, Guid masterId) {
         java.util.ArrayList<StorageDomain> domainsList = new java.util.ArrayList<StorageDomain>(
                 xmlRpcStruct.size());
-        for (String domain : xmlRpcStruct.keySet()) {
-            Map<String, Object> domainAsStruct = (Map<String, Object>) xmlRpcStruct.get(domain);
+        for (Entry<String, Object> entry : xmlRpcStruct.entrySet()) {
+            Map<String, Object> domainAsStruct = (Map<String, Object>) entry.getValue();
             StorageDomain sd = GetStorageDomainStatsVDSCommand.BuildStorageDynamicFromXmlRpcStruct(domainAsStruct);
             sd.setStoragePoolId(getParameters().getStoragePoolId());
-            sd.setId(new Guid(domain));
+            sd.setId(new Guid(entry.getKey()));
             if (!masterId.equals(Guid.Empty) && masterId.equals(sd.getId())) {
                 sd.setStorageDomainType(StorageDomainType.Master);
             } else if (!masterId.equals(Guid.Empty)) {

@@ -260,24 +260,24 @@ public class GlusterHookSyncJob extends GlusterJob {
             Map<String, Integer> existingHookConflictMap,
             Set<VDS> upServers) {
         //Add missing conflicts for hooks that are missing on any one of the servers
-        for (Guid hookId: existingHookServersMap.keySet()) {
-            if (existingHookServersMap.get(hookId).size() == upServers.size()) {
+        for (Map.Entry<Guid, Set<VDS>> entry : existingHookServersMap.entrySet()) {
+            if (entry.getValue().size() == upServers.size()) {
                 //hook is present in all of the servers. Nothing to do
                 continue;
             }
             //Get servers on which the hooks are missing.
             Set<VDS> hookMissingServers = new HashSet<VDS>(upServers);
-            hookMissingServers.removeAll(existingHookServersMap.get(hookId));
+            hookMissingServers.removeAll(entry.getValue());
 
             for (VDS missingServer : hookMissingServers) {
                 GlusterServerHook missingServerHook = new GlusterServerHook();
-                missingServerHook.setHookId(hookId);
+                missingServerHook.setHookId(entry.getKey());
                 missingServerHook.setServerId(missingServer.getId());
                 missingServerHook.setStatus(GlusterHookStatus.MISSING);
                 getHooksDao().saveOrUpdateGlusterServerHook(missingServerHook);
             }
             //get the hook from database, as we don't have the hookkey for it
-            GlusterHookEntity hookEntity = getHooksDao().getById(hookId);
+            GlusterHookEntity hookEntity = getHooksDao().getById(entry.getKey());
             if (existingHookMap.get(hookEntity.getHookKey()) != null) {
                 //if it was an already existing hook, get the hook with
                 //updated conflict values from map

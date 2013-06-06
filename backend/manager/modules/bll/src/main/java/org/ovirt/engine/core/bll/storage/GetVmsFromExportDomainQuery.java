@@ -44,9 +44,9 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
                     // add disk map
                     Map<Guid, List<DiskImage>> images = ImportVmCommand
                             .getImagesLeaf(diskImages);
-                    for (Guid id : images.keySet()) {
-                        List<DiskImage> list = images.get(id);
-                        vm.getDiskMap().put(id, list.get(list.size() - 1));
+                    for (Map.Entry<Guid, List<DiskImage>> entry : images.entrySet()) {
+                        List<DiskImage> list = entry.getValue();
+                        vm.getDiskMap().put(entry.getKey(), list.get(list.size() - 1));
                     }
                     vms.add(vm);
                 }

@@ -105,10 +105,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             if (retVal) {
                 Map<VmTemplate, List<DiskImage>> templates = (Map) qretVal.getReturnValue();
                 ArrayList<DiskImage> images = new ArrayList<DiskImage>();
-                for (VmTemplate t : templates.keySet()) {
-                    if (t.getId().equals(getVmTemplate().getId())) {
-                        images = new ArrayList<DiskImage>(templates.get(t));
-                        getVmTemplate().setInterfaces(t.getInterfaces());
+                for (Map.Entry<VmTemplate, List<DiskImage>> entry : templates.entrySet()) {
+                    if (entry.getKey().getId().equals(getVmTemplate().getId())) {
+                        images = new ArrayList<DiskImage>(entry.getValue());
+                        getVmTemplate().setInterfaces(entry.getKey().getInterfaces());
                         break;
                     }
                 }

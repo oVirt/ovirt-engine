@@ -101,9 +101,9 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         } else {
             // disconnect all hosts if connection is not in use by other luns
             Map<String, List<Guid>> processed = result.getSecond();
-            for (String lunId : processed.keySet()) {
-                for (Guid vdsId : processed.get(lunId)) {
-                    LUNs lun = lunsMap.get(lunId);
+            for (Map.Entry<String, List<Guid>> entry : processed.entrySet()) {
+                for (Guid vdsId : entry.getValue()) {
+                    LUNs lun = lunsMap.get(entry.getKey());
                     StorageHelperDirector.getInstance().getItem(getStoragePool().getstorage_pool_type())
                             .disconnectStorageFromLunByVdsId(getStorageDomain(), vdsId, lun);
                 }

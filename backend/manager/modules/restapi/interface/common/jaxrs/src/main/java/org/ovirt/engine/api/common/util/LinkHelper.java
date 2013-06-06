@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map.Entry;
 
 import javax.ws.rs.Path;
 import javax.ws.rs.core.UriBuilder;
@@ -494,9 +495,9 @@ public class LinkHelper {
         ParentToCollectionMap collections = TYPES.get(model.getClass());
 
         if (suggestedParentType != null) {
-            for (Class<? extends BaseResource> parentType : collections.keySet()) {
-                if (parentType.equals(suggestedParentType)) {
-                    return collections.get(parentType);
+            for (Entry<Class<? extends BaseResource>, Collection> entry : collections.entrySet()) {
+                if (entry.getKey().equals(suggestedParentType)) {
+                    return entry.getValue();
                 }
             }
         }

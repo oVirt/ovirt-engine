@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.ui.common.widget.MenuBar;
@@ -160,14 +161,14 @@ public abstract class NetworkItemPanel extends DnDPanel {
     private MenuBar menuFor(NetworkItemModel<?> item) {
         MenuBar menu = rootMenu(item);
         OperationMap operationMap = item.getSetupModel().commandsFor(item);
-        for (final NetworkOperation operation : operationMap.keySet()) {
-            final List<NetworkCommand> commands = operationMap.get(operation);
-            if (operation.isUnary()) {
+        for (final Entry<NetworkOperation, List<NetworkCommand>> entry : operationMap.entrySet()) {
+            final List<NetworkCommand> commands = entry.getValue();
+            if (entry.getKey().isUnary()) {
                 assert commands.size() == 1 : "Got a NetworkCommand List with more than one Unary Operation"; //$NON-NLS-1$
-                menu.addItem(operation.getVerb(item), new Command() {
+                menu.addItem(entry.getKey().getVerb(item), new Command() {
                     @Override
                     public void execute() {
-                        executeCommand(operation, commands.get(0));
+                        executeCommand(entry.getKey(), commands.get(0));
                     }
                 });
             } else {
@@ -184,11 +185,11 @@ public abstract class NetworkItemPanel extends DnDPanel {
                     subMenu.addItem(new MenuItem(command.getName(), new Command() {
                         @Override
                         public void execute() {
-                            executeCommand(operation, command);
+                            executeCommand(entry.getKey(), command);
                         }
                     }));
                 }
-                menu.addItem(operation.getVerb(item), subMenu);
+                menu.addItem(entry.getKey().getVerb(item), subMenu);
             }
         }
         return menu;

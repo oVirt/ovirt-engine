@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.vdscommands.GetVmsInfoVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -33,8 +34,8 @@ public class GetVmsInfoVDSCommand<P extends GetVmsInfoVDSCommandParameters> exte
 
         Map<String, Object> xmlRpcStruct = _vmsInfo.vmlist;
         java.util.ArrayList<String> retVal = new java.util.ArrayList<String>();
-        for (String key : xmlRpcStruct.keySet()) {
-            retVal.add(xmlRpcStruct.get(key).toString());
+        for (Entry<String, Object> entry : xmlRpcStruct.entrySet()) {
+            retVal.add(entry.getValue().toString());
         }
         setReturnValue(retVal);
 

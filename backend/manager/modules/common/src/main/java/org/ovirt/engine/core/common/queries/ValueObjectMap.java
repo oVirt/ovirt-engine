@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.common.queries;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.Set;
-import java.util.ArrayList;
 
 public class ValueObjectMap extends ValueObject implements Serializable {
     private static final long serialVersionUID = -8970215546874151379L;
@@ -21,8 +21,9 @@ public class ValueObjectMap extends ValueObject implements Serializable {
         // if the value is also a map construct a ValueObjectMap from the value
         // as well.
         if (mapOfMaps) {
-            for (Object key : map.keySet()) {
-                Map innerMap = (Map) map.get(key);
+            for (Object e : map.entrySet()) {
+                Map.Entry<Object, Map> entryMap = (Map.Entry<Object, Map>) e;
+                Map innerMap = entryMap.getValue();
                 boolean innerMapIsMapOfMaps = false;
                 // If map of maps, it is possible the inner map is also a map of maps
                 // So the inner ValueObjectMap should be constructed accordingly
@@ -38,7 +39,7 @@ public class ValueObjectMap extends ValueObject implements Serializable {
                     }
                 }
 
-                valuePairs.add(new ValueObjectPair(key, new ValueObjectMap(innerMap, innerMapIsMapOfMaps)));
+                valuePairs.add(new ValueObjectPair(entryMap.getKey(), new ValueObjectMap(innerMap, innerMapIsMapOfMaps)));
                 ++i;
             }
         } else {

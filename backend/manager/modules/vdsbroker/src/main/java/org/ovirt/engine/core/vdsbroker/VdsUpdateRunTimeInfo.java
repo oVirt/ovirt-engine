@@ -753,10 +753,10 @@ public class VdsUpdateRunTimeInfo {
         // check the bond statuses, if one is down we mark it as broken
         // only if we didn't already mark a NIC as broken
         if (brokenNics.isEmpty()) {
-            for (String key : bondsWithStatus.keySet()) {
-                if (!bondsWithStatus.get(key)) {
+            for (Entry<String, Boolean> entry : bondsWithStatus.entrySet()) {
+                if (!entry.getValue()) {
                     // add the nics name for audit log
-                    for (String name : bondsWithListOfNics.get(key)) {
+                    for (String name : bondsWithListOfNics.get(entry.getKey())) {
                         brokenNics.add(name);
                     }
                 }

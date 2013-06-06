@@ -280,10 +280,10 @@ public class LdapBrokerUtils {
             } else {
                 java.util.HashMap<Guid, LdapUser> parentGroupUser = _groupsAdUsersMap.get(parentGroupName);
                 if (parentGroupUser != null && groupUsers != null) {
-                    for (Guid userId : groupUsers.keySet()) {
-                        if (!parentGroupUser.containsKey(userId)) {
-                            parentGroupUser.put(userId, groupUsers.get(userId));
-                            AddGroupToUser(groupUsers.get(userId), parentGroupName);
+                    for (Map.Entry<Guid, LdapUser> entry : groupUsers.entrySet()) {
+                        if (!parentGroupUser.containsKey(entry.getKey())) {
+                            parentGroupUser.put(entry.getKey(), entry.getValue());
+                            AddGroupToUser(entry.getValue(), parentGroupName);
                         }
                     }
                 }

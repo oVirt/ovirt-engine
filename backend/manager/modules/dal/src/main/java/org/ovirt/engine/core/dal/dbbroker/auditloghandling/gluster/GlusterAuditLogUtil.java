@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -49,8 +50,8 @@ public class GlusterAuditLogUtil {
         logable.setVdsGroupId(clusterId == null ? Guid.Empty : clusterId);
 
         if (customValues != null) {
-            for (String key : customValues.keySet()) {
-                logable.addCustomValue(key, customValues.get(key));
+            for (Entry<String, String> entry : customValues.entrySet()) {
+                logable.addCustomValue(entry.getKey(), entry.getValue());
             }
         }
 
