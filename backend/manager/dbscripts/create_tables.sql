@@ -233,6 +233,7 @@ CREATE TABLE vds_static
    pm_enabled BOOLEAN  not null default false,
    _create_date TIMESTAMP WITH TIME ZONE default LOCALTIMESTAMP,
    _update_date TIMESTAMP WITH TIME ZONE,
+   otp_validity BIGINT,
    CONSTRAINT PK_vds_static PRIMARY KEY(vds_id)
 ) WITH OIDS;
 
