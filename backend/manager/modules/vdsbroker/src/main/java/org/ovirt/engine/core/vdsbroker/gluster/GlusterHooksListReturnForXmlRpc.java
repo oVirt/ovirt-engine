@@ -10,7 +10,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 public class GlusterHooksListReturnForXmlRpc extends StatusReturnForXmlRpc {
 
     private static final String HOOK_STATUS = "status";
-    private static final String CONTENT_TYPE = "type";
+    private static final String CONTENT_TYPE = "mimetype";
     private static final String CHECKSUM = "md5sum";
     private static final String LEVEL = "level";
     private static final String COMMAND = "command";
