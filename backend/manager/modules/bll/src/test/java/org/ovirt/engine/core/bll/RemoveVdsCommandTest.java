@@ -82,6 +82,11 @@ public class RemoveVdsCommandTest {
         when(clusterUtils.getUpServer(clusterId)).thenReturn(getVds(VDSStatus.Up));
     }
 
+    private void mockHasMultipleClusters(Boolean isMultiple) {
+        when(command.getVdsGroupId()).thenReturn(clusterId);
+        when(clusterUtils.hasMultipleServers(clusterId)).thenReturn(isMultiple);
+    }
+
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
         vds.setId(Guid.NewGuid());
@@ -113,6 +118,19 @@ public class RemoveVdsCommandTest {
         mockVdsDynamic();
         mockVmsPinnedToHost(Collections.<String> emptyList());
 
+        mockIsGlusterEnabled(true);
+        mockHasVolumeOnServer(true);
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+    }
+
+    @Test
+    public void canDoActionFailsWhenGlusterMultipleHostHasVolumesWithForce() throws Exception {
+        command = spy(new RemoveVdsCommand<RemoveVdsParameters>(new RemoveVdsParameters(Guid.NewGuid(), true)));
+        prepareMocks();
+        mockVdsWithStatus(VDSStatus.Maintenance);
+        mockHasMultipleClusters(true);
         mockIsGlusterEnabled(true);
         mockHasVolumeOnServer(true);
 

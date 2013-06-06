@@ -8,13 +8,13 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -77,24 +77,27 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
 
         if (returnValue && storagePool != null && storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
             if (!getStorageDomainDAO().getAllForStoragePool(storagePool.getId()).isEmpty()) {
-                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_WITH_LOCAL_STORAGE);
-                returnValue = false;
+                returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_WITH_LOCAL_STORAGE);
             }
         }
 
-        // Perform volume bricks on server and up server null check only when force action is false
-        if (returnValue && isGlusterEnabled() && !getParameters().isForceAction()) {
-            if (hasVolumeBricksOnServer()) {
-                addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
-                returnValue = false;
-            }
-
-            if (clusterHasMultipleHosts()) {
-                upServer = getClusterUtils().getUpServer(getVdsGroupId());
-                if (upServer == null) {
+        // Perform volume bricks on server and up server null check
+        if (returnValue && isGlusterEnabled()) {
+            upServer = getClusterUtils().getUpServer(getVdsGroupId());
+            if (!getParameters().isForceAction()) {
+                //  fail if host has bricks on a volume
+                if (hasVolumeBricksOnServer()) {
+                    returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
+                } else if (upServer == null && clusterHasMultipleHosts()) {
+                    //  fail if there is no up server in cluster, and if host being removed is not
+                    //  the last server in cluster
                     addCanDoActionMessage(String.format("$clusterName %1$s", getVdsGroup().getname()));
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
-                    returnValue = false;
+                    returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
+                 }
+            } else {
+                // if force, cannot remove only if there are bricks on server and there is an up server.
+                if (hasVolumeBricksOnServer() && upServer != null ) {
+                    returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_HAVING_GLUSTER_VOLUME);
                 }
             }
         }
@@ -191,7 +194,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     private void glusterHostRemove() {
-        if (isGlusterEnabled() && clusterHasMultipleHosts() && !hasVolumeBricksOnServer()) {
+        if (clusterHasMultipleHosts() && !hasVolumeBricksOnServer()) {
             VDSReturnValue returnValue =
                     runVdsCommand(
                             VDSCommandType.RemoveGlusterServer,
