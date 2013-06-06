@@ -1,10 +1,15 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.List;
+
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
+import org.ovirt.engine.core.utils.customprop.ValidationError;
 
 /**
  * A class that can validate a {@link VmNetworkInterface} is valid from certain aspects.
@@ -52,4 +57,18 @@ public class VmNicValidator {
     protected String clusterVersion() {
         return String.format(CLUSTER_VERSION_REPLACEMENT_FORMAT, version.getValue());
     }
+
+    public boolean validateCustomProperties(List<String> messages) {
+        // validate custom properties
+        List<ValidationError> errors =
+                DevicePropertiesUtils.getInstance().validateProperties(version,
+                        VmDeviceGeneralType.INTERFACE,
+                        nic.getCustomProperties());
+        if (!errors.isEmpty()) {
+            DevicePropertiesUtils.getInstance().handleCustomPropertiesError(errors, messages);
+            return false;
+        }
+        return true;
+    }
+
 }

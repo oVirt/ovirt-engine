@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.util.Map;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
@@ -26,6 +29,11 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     private String vmName;
     private NGuid vmTemplateId;
     private boolean plugged = true;
+
+    /**
+     * Device custom properties
+     */
+    private Map<String, String> customProperties;
 
     /**
      * Link State of the Nic. <BR>
@@ -109,6 +117,14 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
         this.plugged = plugged;
     }
 
+    public Map<String, String> getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties(Map<String, String> customProperties) {
+        this.customProperties = customProperties;
+    }
+
     public boolean isLinked() {
         return linked;
     }
@@ -155,6 +171,8 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
                 .append(getMacAddress())
                 .append(", active=")
                 .append(isPlugged())
+                .append(", customProperties=")
+                .append(getCustomProperties())
                 .append(", linked=")
                 .append(isLinked())
                 .append(", portMirroring=")
@@ -174,6 +192,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + (plugged ? 1231 : 1237);
+        result = prime * result + (customProperties == null ? 0 : customProperties.hashCode());
         result = prime * result + (linked ? 1231 : 1237);
         result = prime * result + ((vmId == null) ? 0 : vmId.hashCode());
         result = prime * result + ((vmName == null) ? 0 : vmName.hashCode());
@@ -196,6 +215,11 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
         if (plugged != other.plugged) {
             return false;
         }
+
+        if (!ObjectUtils.objectsEqual(customProperties, other.customProperties)) {
+            return false;
+        }
+
         if (linked != other.linked) {
             return false;
         }

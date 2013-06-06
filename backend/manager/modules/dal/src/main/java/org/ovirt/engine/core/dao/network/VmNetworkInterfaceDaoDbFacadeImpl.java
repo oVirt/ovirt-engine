@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao.network;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.comparators.InterfaceComparerByMAC;
@@ -10,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NGuid;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -17,6 +19,7 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
 
     private static final int MAC_COLUMN_POSITION = 1;
 
+    @SuppressWarnings("unchecked")
     protected final RowMapper<VmNetworkInterface> mapper =
             new RowMapper<VmNetworkInterface>() {
                 @Override
@@ -39,6 +42,8 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
                     entity.setId(Guid.createGuidFromString(rs.getString("id")));
                     entity.setSpeed((Integer) rs.getObject("speed"));
                     entity.setPlugged(rs.getBoolean("is_plugged"));
+                    entity.setCustomProperties(SerializationFactory.getDeserializer()
+                            .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class));
                     entity.setPortMirroring(rs.getBoolean("port_mirroring"));
                     entity.setLinked(rs.getBoolean("linked"));
                     return entity;

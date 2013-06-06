@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
@@ -51,7 +52,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 requiredAction = RequiredAction.PLUG;
             } else if (oldIface.isPlugged() && !getInterface().isPlugged()) {
                 requiredAction = RequiredAction.UNPLUG;
-            } else if (liveActionRequired() && properiesRequiringVmUpdateDeviceWereUpdated()) {
+            } else if (liveActionRequired() && propertiesRequiringVmUpdateDeviceWereUpdated()) {
                 requiredAction = RequiredAction.UPDATE_VM_DEVICE;
             }
         }
@@ -81,7 +82,10 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 @Override
                 public Void runInTransaction() {
                     getCompensationContext().snapshotEntity(oldIface);
+                    getCompensationContext().snapshotEntity(oldVmDevice);
                     getVmNetworkInterfaceDao().update(getInterface());
+                    oldVmDevice.setCustomProperties(getInterface().getCustomProperties());
+                    getDbFacade().getVmDeviceDao().update(oldVmDevice);
                     getCompensationContext().stateChanged();
                     return null;
                 }
@@ -126,9 +130,10 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         return true;
     }
 
-    private boolean properiesRequiringVmUpdateDeviceWereUpdated() {
+    private boolean propertiesRequiringVmUpdateDeviceWereUpdated() {
         return (!StringUtils.equals(oldIface.getNetworkName(), getNetworkName()))
-                || oldIface.isLinked() != getInterface().isLinked();
+                || oldIface.isLinked() != getInterface().isLinked()
+                || !ObjectUtils.objectsEqual(oldIface.getCustomProperties(), getInterface().getCustomProperties());
     }
 
     @Override
@@ -192,6 +197,10 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         macShouldBeChanged = !StringUtils.equals(oldIface.getMacAddress(), getMacAddress());
         if (macShouldBeChanged && (!validate(macAddressValid()) || !validate(macAvailable()))) {
+            return false;
+        }
+
+        if (!nicValidator.validateCustomProperties(getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 

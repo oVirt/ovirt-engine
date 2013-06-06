@@ -9,6 +9,8 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -26,6 +28,9 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
     @Override
     protected void executeCommand() {
         getVmNetworkInterfaceDao().update(getParameters().getInterface());
+        VmDevice vmDevice = getDbFacade().getVmDeviceDao().get(new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmTemplateId()));
+        vmDevice.setCustomProperties(getParameters().getInterface().getCustomProperties());
+        getDbFacade().getVmDeviceDao().update(vmDevice);
         setSucceeded(true);
     }
 
@@ -60,6 +65,10 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
         }
 
         if (!StringUtils.equals(oldIface.getName(), getInterfaceName()) && !interfaceNameUnique(interfaces)) {
+            return false;
+        }
+
+        if (!nicValidator.validateCustomProperties(getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 

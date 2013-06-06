@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 
@@ -31,6 +32,10 @@ public class UpdateVmInterfaceVDSCommand extends VdsBrokerCommand<VmNicDeviceVDS
         deviceStruct.put(VdsProperties.PORT_MIRRORING,
                 nic.isPortMirroring() && nic.getNetworkName() != null
                         ? Collections.singletonList(nic.getNetworkName()) : Collections.<String> emptyList());
+
+        if (FeatureSupported.deviceCustomProperties(getParameters().getVm().getVdsGroupCompatibilityVersion())) {
+            deviceStruct.put(VdsProperties.Custom, getParameters().getVmDevice().getCustomProperties());
+        }
 
         return deviceStruct;
     }

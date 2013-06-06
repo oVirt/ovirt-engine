@@ -486,6 +486,10 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             struct.put(VdsProperties.PORT_MIRRORING, networks);
         }
 
+        if (FeatureSupported.deviceCustomProperties(clusterVersion)) {
+            struct.put(VdsProperties.Custom, vmDevice.getCustomProperties());
+        }
+
         addNetworkFiltersToNic(struct, clusterVersion);
     }
 

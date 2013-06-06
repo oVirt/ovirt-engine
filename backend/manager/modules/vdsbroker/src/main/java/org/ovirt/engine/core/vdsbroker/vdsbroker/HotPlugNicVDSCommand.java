@@ -60,6 +60,10 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
                     ? Collections.<String> emptyList() : Collections.singletonList(nic.getNetworkName()));
         }
 
+        if (FeatureSupported.deviceCustomProperties(getParameters().getVm().getVdsGroupCompatibilityVersion())) {
+            map.put(VdsProperties.Custom, vmDevice.getCustomProperties());
+        }
+
         VmInfoBuilder.addNetworkFiltersToNic(map, getParameters().getVm().getVdsGroupCompatibilityVersion());
         return map;
     }

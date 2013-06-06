@@ -81,7 +81,8 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     private void addInterfaceDeviceToDb() {
         VmDevice vmDevice = VmDeviceUtils.addNetworkInterfaceDevice(
                 new VmDeviceId(getInterface().getId(), getParameters().getVmId()),
-                getInterface().isPlugged());
+                getInterface().isPlugged(),
+                getInterface().getCustomProperties());
         getCompensationContext().snapshotNewEntity(vmDevice);
     }
 
@@ -165,6 +166,10 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
                                                                               // pool
         {
             addCanDoActionMessage(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
+            return false;
+        }
+
+        if (!nicValidator.validateCustomProperties(getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 

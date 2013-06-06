@@ -42,7 +42,8 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
         getVmNetworkInterfaceDao().save(getParameters().getInterface());
         VmDeviceUtils.addNetworkInterfaceDevice(
                 new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmTemplateId()),
-                getParameters().getInterface().isPlugged());
+                getParameters().getInterface().isPlugged(),
+                getParameters().getInterface().getCustomProperties());
 
         setSucceeded(true);
     }
@@ -85,6 +86,10 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                 addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
                 return false;
             }
+        }
+
+        if (!nicValidator.validateCustomProperties(getReturnValue().getCanDoActionMessages())) {
+            return false;
         }
 
         return true;

@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -62,6 +64,9 @@ public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
         newVmDevice.setIsManaged(true);
         newVmDevice.setIsPlugged(true);
         newVmDevice.setIsReadOnly(false);
+        Map<String, String> customProp = new LinkedHashMap<>();
+        customProp.put("prop1", "val1");
+        newVmDevice.setCustomProperties(customProp);
     }
 
     /**
