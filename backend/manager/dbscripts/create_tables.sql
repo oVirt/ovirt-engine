@@ -761,7 +761,7 @@ CREATE TABLE storage_pool
    name VARCHAR(40) NOT NULL,
    description VARCHAR(4000) NOT NULL,
    storage_pool_type INTEGER NOT NULL,
-   storage_pool_format_type INTEGER default NULL,
+   storage_pool_format_type varchar(50),
    status INTEGER NOT NULL,
    master_domain_version INTEGER NOT NULL,
    spm_vds_id UUID,
@@ -778,7 +778,7 @@ CREATE TABLE storage_domain_static
    storage_name VARCHAR(250) NOT NULL,
    storage_domain_type INTEGER NOT NULL,
    storage_type INTEGER NOT NULL,
-   storage_domain_format_type INTEGER NOT NULL DEFAULT 0,
+   storage_domain_format_type varchar(50) NOT NULL,
    _create_date TIMESTAMP WITH TIME ZONE default LOCALTIMESTAMP,
    _update_date TIMESTAMP WITH TIME ZONE default NULL,
    constraint pk_storage primary key(id)
