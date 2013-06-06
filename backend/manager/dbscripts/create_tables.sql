@@ -1122,7 +1122,7 @@ CREATE TABLE dwh_history_timekeeping
 (
 var_name VARCHAR(50) NOT NULL,
 var_value VARCHAR(255),
-var_datetime TIMESTAMP
+var_datetime TIMESTAMP WITH TIME ZONE
 ) WITH OIDS;
 
 -- ----------------------------------------------------------------------
