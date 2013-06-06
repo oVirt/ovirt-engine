@@ -49,8 +49,10 @@ public class ManageDomains {
     private final String WARNING_ABOUT_TO_DELETE_LAST_DOMAIN =
             "WARNING: Domain %1$s is the last domain in the configuration. After deleting it you will have to either add another domain, or to use the internal admin user in order to login.";
     private final String INFO_ABOUT_NOT_ADDING_PERMISSIONS =
-            "The domain %1$s has been added to the engine as an authentication source but no users from that domain have been granted permissions within the oVirt Manager.%n"+
-            "Users from this domain can be granted permissions from the Web administration interface or by editing the domain using -action=edit and specifying -addPermissions.";
+            "The domain %1$s has been added to the engine as an authentication source but no users from that domain"
+            + " have been granted permissions within the oVirt Manager.%n"
+            + "Users from this domain can be granted permissions by editing the domain using -action=edit and"
+            +" specifying -addPermissions or from the Web administration interface logging in as admin@internal user.";
 
     private final String SERVICE_RESTART_MESSAGE =
             "oVirt Engine restart is required in order for the changes to take place (service ovirt-engine restart).";
