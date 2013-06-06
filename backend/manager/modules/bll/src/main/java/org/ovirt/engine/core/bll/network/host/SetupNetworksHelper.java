@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -86,6 +87,7 @@ public class SetupNetworksHelper {
                 // validate and extract to network map
                 if (violations.isEmpty() && StringUtils.isNotBlank(iface.getNetworkName())) {
                     extractNetwork(iface);
+                    validateGateway(iface);
                 }
             }
         }
@@ -531,6 +533,18 @@ public class SetupNetworksHelper {
                     addViolation(VdcBllMessages.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS, vmName);
                 }
             }
+        }
+    }
+
+    /**
+     * Validates that gateway is set not on management network just if multiple gateways feature is supported
+     */
+    private void validateGateway(VdsNetworkInterface iface) {
+        if (StringUtils.isNotEmpty(iface.getGateway())
+                && !NetworkUtils.isManagementNetwork(iface.getNetworkName())
+                && !FeatureSupported.multipleGatewaysSupported(vds.getVdsGroupCompatibilityVersion())) {
+
+            addViolation(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY, iface.getNetworkName());
         }
     }
 

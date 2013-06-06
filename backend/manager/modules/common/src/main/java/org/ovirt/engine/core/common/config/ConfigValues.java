@@ -1366,6 +1366,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     CustomDeviceProperties(510),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    MultipleGatewaysSupported(505),
+
     Invalid(65535);
 
     private int intValue;

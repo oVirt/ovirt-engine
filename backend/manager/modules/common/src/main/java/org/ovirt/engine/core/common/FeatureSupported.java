@@ -104,4 +104,13 @@ public class FeatureSupported {
     public static boolean deviceCustomProperties(Version version) {
         return supportedInConfig(ConfigValues.SupportCustomDeviceProperties, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if multiple gateways is supported for the version, <code>false</code> if it's not.
+     */
+    public static boolean multipleGatewaysSupported(Version version) {
+        return supportedInConfig(ConfigValues.MultipleGatewaysSupported, version);
+    }
 }

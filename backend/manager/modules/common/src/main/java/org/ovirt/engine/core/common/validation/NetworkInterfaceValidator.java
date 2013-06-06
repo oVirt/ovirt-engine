@@ -8,8 +8,6 @@ import javax.validation.ConstraintValidatorContext;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;
 
 public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetworkConfiguration, VdsNetworkInterface> {
@@ -22,7 +20,6 @@ public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetwo
      * validate the following:
      * <ul>
      * <li>an interface must have an address when the boot protocol is static
-     * <li>its legal to state the network gateway only to the management network
      * </ul>
      */
     @Override
@@ -37,14 +34,6 @@ public class NetworkInterfaceValidator implements ConstraintValidator<ValidNetwo
                         .addNode("address").addConstraintViolation();
                 return false;
             }
-        }
-
-        if (!Config.<String> GetValue(ConfigValues.ManagementNetwork).equals(iface.getNetworkName())
-                && !isNullOrEmpty(iface.getGateway())) {
-            context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate("NETWORK_ATTACH_ILLEGAL_GATEWAY")
-                    .addNode("gateway").addConstraintViolation();
-            return false;
         }
 
         if (!isEmpty(iface.getBondName()) && !validateSlave(iface)) {
