@@ -14,7 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
 
-public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable, Cloneable {
+public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Commented, Nameable, Cloneable {
     private static final long serialVersionUID = -7893976203379789926L;
     private VdsStatic mVdsStatic;
     private VdsDynamic mVdsDynamic;
@@ -103,7 +103,16 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
     }
 
     public VDS(Guid vds_group_id, String vds_group_name, String vds_group_description, Guid vds_id, String vds_name,
-            String ip, String host_name, int port, int ssh_port, String ssh_username, int status, Integer cpu_cores, Integer cpuThreads, String cpu_model,
+            String ip,
+            String host_name,
+            String comment,
+            int port,
+            int ssh_port,
+            String ssh_username,
+            int status,
+            Integer cpu_cores,
+            Integer cpuThreads,
+            String cpu_model,
             String hwManufacturer, String hwProductName,
             String hwVersion, String hwSerialNumber, String hwUUID, String hwFamily,
             Double cpu_speed_mh, String if_total_speed, Boolean kvm_enabled, Integer physical_mem_mb,
@@ -129,6 +138,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.setVdsName(vds_name);
         this.setManagementIp(ip);
         this.setHostName(host_name);
+        setComment(comment);
         this.setPort(port);
         this.setSshPort(ssh_port);
         this.setSshUsername(ssh_username);
@@ -200,6 +210,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                         getName(),
                         getManagementIp(),
                         getHostName(),
+                        getComment(),
                         getPort(),
                         getSshPort(),
                         getSshUsername(),
@@ -401,6 +412,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     public void setHostName(String value) {
         this.mVdsStatic.setHostName(value);
+    }
+
+    public String getComment() {
+        return mVdsStatic.getComment();
+    }
+
+    public void setComment(String value) {
+        mVdsStatic.setComment(value);
     }
 
     public int getPort() {

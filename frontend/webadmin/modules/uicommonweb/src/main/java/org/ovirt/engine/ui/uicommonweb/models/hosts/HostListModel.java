@@ -836,6 +836,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         // Save changes.
         host.setVdsName((String) model.getName().getEntity());
+        host.setComment((String) model.getComment().getEntity());
         host.setHostName((String) model.getHost().getEntity());
         host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
         host.setSshPort(Integer.parseInt(model.getHostPort().getEntity().toString()));

@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetails
 import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
 
@@ -193,6 +194,8 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
             };
             getTable().addColumn(spmColumn, constants.spmPriorityHost(), "100px"); //$NON-NLS-1$
         }
+
+        getTable().addColumn(new CommentColumn<VDS>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.newHost()) {
             @Override

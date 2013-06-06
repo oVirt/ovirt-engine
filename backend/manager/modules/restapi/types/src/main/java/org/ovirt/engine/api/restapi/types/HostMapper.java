@@ -243,6 +243,7 @@ public class HostMapper {
         Host model = template != null ? template : new Host();
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
+        model.setComment(entity.getComment());
         if (entity.getVdsGroupId() != null) {
             Cluster cluster = new Cluster();
             cluster.setId(entity.getVdsGroupId().toString());

@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VdsStatic implements BusinessEntity<Guid> {
+public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     private static final long serialVersionUID = -1425566208615075937L;
     private static final int HOST_DEFAULT_SPM_PRIORITY = 5;
@@ -34,6 +34,9 @@ public class VdsStatic implements BusinessEntity<Guid> {
     @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS_WITH_DOT, message = "VALIDATION_VDS_NAME_INVALID", groups = {
             CreateEntity.class, UpdateEntity.class })
     private String name = "";
+
+    @EditableField
+    private String comment = "";
 
     @EditableField
     @HostnameOrIp(message = "VALIDATION.VDS.POWER_MGMT.ADDRESS.HOSTNAME_OR_IP", groups = PowerManagementCheck.class)
@@ -217,6 +220,14 @@ public class VdsStatic implements BusinessEntity<Guid> {
 
     public void setHostName(String value) {
         this.hostname = value;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String value) {
+        comment = value;
     }
 
     public String getManagementIp() {
@@ -593,5 +604,4 @@ public class VdsStatic implements BusinessEntity<Guid> {
                 && vdsType == other.vdsType
                 && ObjectUtils.objectsEqual(sshKeyFingerprint, other.sshKeyFingerprint));
     }
-
 }

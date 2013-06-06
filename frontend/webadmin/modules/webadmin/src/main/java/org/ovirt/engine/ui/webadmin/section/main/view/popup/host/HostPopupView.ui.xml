@@ -251,6 +251,7 @@
                                 </g:FlowPanel>
                                 <g:FlowPanel>
                                     <e:EntityModelTextBoxEditor ui:field="nameEditor"/>
+                                    <e:EntityModelTextBoxEditor ui:field="commentEditor"/>
                                     <e:EntityModelTextBoxEditor ui:field="hostAddressEditor" />
                                     <e:EntityModelTextBoxEditor ui:field="hostPortEditor"/>
                                     <g:VerticalPanel addStyleNames="{style.content}">

@@ -49,6 +49,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
     protected void verify(Host model, Host transform) {
         assertNotNull(transform);
         assertEquals(model.getName(), transform.getName());
+        assertEquals(model.getComment(), transform.getComment());
         assertEquals(model.getId(), transform.getId());
         assertNotNull(transform.getCluster());
         assertEquals(model.getCluster().getId(), transform.getCluster().getId());

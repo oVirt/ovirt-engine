@@ -131,6 +131,10 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @WithElementId("fetchResult")
     Label fetchResult;
 
+    @Path(value = "comment.entity")
+    @WithElementId("comment")
+    EntityModelTextBoxEditor commentEditor;
+
     @UiField
     @Path(value = "providerSearchFilter.entity")
     @WithElementId("providerSearchFilter")
@@ -542,6 +546,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         clusterEditor.setLabel(constants.hostPopupClusterLabel());
         nameEditor.setLabel(constants.hostPopupNameLabel());
         userNameEditor.setLabel(constants.hostPopupUsernameLabel());
+        commentEditor.setLabel(constants.commentLabel());
         hostAddressEditor.setLabel(constants.hostPopupHostAddressLabel());
         hostPortEditor.setLabel(constants.hostPopupPortLabel());
         authLabel.setText(constants.hostPopupAuthLabel());

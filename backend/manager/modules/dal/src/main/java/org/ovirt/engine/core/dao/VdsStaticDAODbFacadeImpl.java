@@ -69,6 +69,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
     private MapSqlParameterSource getInsertOrUpdateParams(final VdsStatic vds) {
         return getCustomMapSqlParameterSource()
                 .addValue("host_name", vds.getHostName())
+                .addValue("free_text_comment", vds.getComment())
                 .addValue("ip", vds.getManagementIp())
                 .addValue("vds_unique_id", vds.getUniqueID())
                 .addValue("port", vds.getPort())
@@ -121,6 +122,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 throws SQLException {
             VdsStatic entity = new VdsStatic();
             entity.setHostName(rs.getString("host_name"));
+            entity.setComment(rs.getString("free_text_comment"));
             entity.setManagementIp(rs.getString("ip"));
             entity.setUniqueID(rs.getString("vds_unique_id"));
             entity.setPort(rs.getInt("port"));

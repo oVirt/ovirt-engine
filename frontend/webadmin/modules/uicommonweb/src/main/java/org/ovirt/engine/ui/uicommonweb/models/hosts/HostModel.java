@@ -45,12 +45,13 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.KeyValuePairValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class HostModel extends Model
 {
@@ -740,6 +741,18 @@ public abstract class HostModel extends Model
         privateExternalHostName = value;
     }
 
+    private EntityModel privateComment;
+
+    public EntityModel getComment()
+    {
+        return privateComment;
+    }
+
+    protected void setComment(EntityModel value)
+    {
+        privateComment = value;
+    }
+
     private EntityModel externalHostProviderEnabled;
 
     public EntityModel getExternalHostProviderEnabled() {
@@ -857,6 +870,7 @@ public abstract class HostModel extends Model
         }));
 
         setName(new EntityModel());
+        setComment(new EntityModel());
         setHost(new EntityModel());
         setPkSection(new EntityModel());
         setPasswordSection(new EntityModel());
@@ -1570,6 +1584,8 @@ public abstract class HostModel extends Model
             }
         } });
 
+        getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
+
         getHost().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
                 new LengthValidation(255),
@@ -1614,6 +1630,7 @@ public abstract class HostModel extends Model
         }
 
         setIsGeneralTabValid(getName().getIsValid()
+                && getComment().getIsValid()
                 && getHost().getIsValid()
                 && getPort().getIsValid()
                 && getCluster().getIsValid());
@@ -1652,6 +1669,7 @@ public abstract class HostModel extends Model
         setSpmPriorityValue(vds.getVdsSpmPriority());
         setOriginalName(vds.getName());
         getName().setEntity(vds.getName());
+        getComment().setEntity(vds.getComment());
         getHost().setEntity(vds.getHostName());
         getFetchSshFingerprint().setEntity(vds.getSshKeyFingerprint());
         getUserName().setEntity(vds.getSshUsername());

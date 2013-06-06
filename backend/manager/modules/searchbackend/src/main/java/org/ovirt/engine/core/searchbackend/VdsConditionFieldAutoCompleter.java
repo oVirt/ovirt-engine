@@ -7,6 +7,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
     public VdsConditionFieldAutoCompleter() {
         super();
         mVerbs.add("NAME");
+        mVerbs.add("COMMENT");
         mVerbs.add("STATUS");
         mVerbs.add("CLUSTER");
         mVerbs.add("ADDRESS");
@@ -29,6 +30,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         buildCompletions();
         // Building the types dict
         getTypeDictionary().put("NAME", String.class);
+        getTypeDictionary().put("COMMENT", String.class);
         getTypeDictionary().put("STATUS", VDSStatus.class);
         getTypeDictionary().put("CLUSTER", String.class);
         getTypeDictionary().put("ADDRESS", String.class);
@@ -50,6 +52,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         // mTypeDict.Add("NOTE", typeof(string));
         // building the ColumnName Dict
         columnNameDict.put("NAME", "vds_name");
+        columnNameDict.put("COMMENT", "free_text_comment");
         columnNameDict.put("STATUS", "status");
         columnNameDict.put("CLUSTER", "vds_group_name");
         columnNameDict.put("ADDRESS", "host_name");

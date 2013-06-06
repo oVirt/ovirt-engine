@@ -636,7 +636,8 @@ CREATE OR REPLACE VIEW vds
 as
 SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group_name, vds_groups.description as vds_group_description,
                       vds_groups.selection_algorithm as selection_algorithm, vds_static.vds_id as vds_id, vds_static.vds_name as vds_name, vds_static.ip as ip, vds_static.vds_unique_id as vds_unique_id,
-                      vds_static.host_name as host_name, vds_static.port as port, vds_static.vds_strength as vds_strength, vds_static.server_SSL_enabled as server_SSL_enabled, vds_static.vds_type as vds_type,
+                      vds_static.host_name as host_name, vds_static.free_text_comment as free_text_comment,
+                      vds_static.port as port, vds_static.vds_strength as vds_strength, vds_static.server_SSL_enabled as server_SSL_enabled, vds_static.vds_type as vds_type,
                       vds_static.pm_type as pm_type, vds_static.pm_user as pm_user, vds_static.pm_password as pm_password, vds_static.pm_port as pm_port,
                       vds_static.pm_options as pm_options, vds_static.pm_enabled as pm_enabled,
                       vds_static.pm_proxy_preferences as pm_proxy_preferences,vds_static.pm_secondary_ip as pm_secondary_ip,
@@ -677,7 +678,7 @@ CREATE OR REPLACE VIEW vds_with_tags
 as
 SELECT     vds_groups.vds_group_id, vds_groups.name AS vds_group_name, vds_groups.description AS vds_group_description,
                       vds_groups.selection_algorithm, vds_static.vds_id, vds_static.vds_name, vds_static.ip, vds_static.vds_unique_id,
-                      vds_static.host_name, vds_static.port, vds_static.vds_strength, vds_static.server_SSL_enabled, vds_static.vds_type,
+                      vds_static.host_name, vds_static.free_text_comment, vds_static.port, vds_static.vds_strength, vds_static.server_SSL_enabled, vds_static.vds_type,
                       vds_static.pm_type, vds_static.pm_user, vds_static.pm_password, vds_static.pm_port,
                       vds_dynamic.hw_product_name, vds_dynamic.hw_version, vds_dynamic.hw_serial_number, vds_dynamic.hw_uuid, vds_dynamic.hw_family,
                       vds_static.pm_options, vds_static.pm_enabled, vds_static.pm_proxy_preferences as pm_proxy_preferences,
