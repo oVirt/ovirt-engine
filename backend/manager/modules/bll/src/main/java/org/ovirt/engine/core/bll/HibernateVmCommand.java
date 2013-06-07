@@ -60,6 +60,12 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
     private Guid _storageDomainId = Guid.Empty;
 
+    @Override
+    protected void insertAsyncTaskPlaceHolders() {
+        persistAsyncTaskPlaceHolder(getParameters().getParentCommand(), SAVE_IMAGE_TASK_KEY);
+        persistAsyncTaskPlaceHolder(getParameters().getParentCommand(), SAVE_RAM_STATE_TASK_KEY);
+    }
+
     /*
      * find a storage domain to store the hibernation volumes
      * domain must:
@@ -107,7 +113,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                         }
                     });
 
-            final Guid taskId1 = persistAsyncTaskPlaceHolder(VdcActionType.HibernateVm, SAVE_IMAGE_TASK_KEY);
+            final Guid taskId1 = getAsyncTaskId(SAVE_IMAGE_TASK_KEY);
 
             Guid image1GroupId = Guid.newGuid();
             // this is temp code until SPM will implement the new verb that does
@@ -151,7 +157,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
             getReturnValue().getVdsmTaskIdList().add(guid1);
 
-            Guid taskId2 = persistAsyncTaskPlaceHolder(VdcActionType.HibernateVm, SAVE_RAM_STATE_TASK_KEY);
+            Guid taskId2 = getAsyncTaskId(SAVE_RAM_STATE_TASK_KEY);
 
             // second vol should be 10kb
             Guid image2GroupId = Guid.newGuid();
