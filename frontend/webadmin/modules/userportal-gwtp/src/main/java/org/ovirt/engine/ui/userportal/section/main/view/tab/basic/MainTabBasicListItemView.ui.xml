@@ -61,17 +61,17 @@
 			z-index: 1;
 		}
 		
-		.consoleBannerStyle {
-			background: url(images/general/tvlayout_doubleclick_to_console.png) repeat-x;
+		.consoleBannerLabelStyle {
+			background: #FFFFFF;
 			z-index: 1;
 			font-family: Arial,sans-serif;
-  			color: #3A5F7C;
+			color: #3A5F7C;
   			font-size: 13px;
-		}
-		
-		.consoleBannerLabelStyle {
-			margin-top: 9px;
-			margin-left: 3px;		
+			padding-top: 2px;
+			padding-bottom: 2px;
+
+			opacity: 0.8;
+			filter:alpha(opacity=80); /* IE8 */
 		}
 		
 		.basicItemStyle {
@@ -147,9 +147,9 @@
 					<i:VmPausedImage ui:field="vmPausedImage" addStyleNames="{style.vmPausedImage}" resource='{resources.pausedIcon}'/>
 				</g:layer>
 				
-				<g:layer top='55px' height='30px' left='5px' width='150px'>
-					<g:SimplePanel ui:field="consoleBaner" addStyleNames="{style.consoleBannerStyle}">
-						<g:Label addStyleNames="{style.consoleBannerLabelStyle}" text="{constants.doubleClickForConsole}"/>
+				<g:layer top='55px' height='60px' left='5px' width='150px'>
+					<g:SimplePanel ui:field="consoleBaner">
+						<g:Label addStyleNames="{style.consoleBannerLabelStyle}" wordWrap="true" text="{constants.doubleClickForConsole}"/>
 					</g:SimplePanel>
 				</g:layer>
 
