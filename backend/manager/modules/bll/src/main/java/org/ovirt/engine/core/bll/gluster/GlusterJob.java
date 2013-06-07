@@ -26,6 +26,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
+import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
@@ -116,6 +117,10 @@ public abstract class GlusterJob {
 
     protected GlusterClusterServiceDao getGlusterClusterServiceDao() {
         return DbFacade.getInstance().getGlusterClusterServiceDao();
+    }
+
+    protected GlusterServerDao getGlusterServerDao() {
+        return DbFacade.getInstance().getGlusterServerDao();
     }
 
     /**

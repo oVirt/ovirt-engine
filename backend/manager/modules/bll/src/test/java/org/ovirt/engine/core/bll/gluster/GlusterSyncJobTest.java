@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.hamcrest.Matcher;
-import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
@@ -63,6 +63,7 @@ import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.VdsStatisticsDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
+import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -83,7 +84,10 @@ public class GlusterSyncJobTest {
             mockConfig(ConfigValues.GlusterRefreshRateLight, 5),
             mockConfig(ConfigValues.GlusterRefreshRateHeavy, 300),
             mockConfig(ConfigValues.GlusterRefreshHeavyWeight, "3.1", false),
-            mockConfig(ConfigValues.GlusterRefreshHeavyWeight, "3.2", true));
+            mockConfig(ConfigValues.GlusterRefreshHeavyWeight, "3.2", true),
+            mockConfig(ConfigValues.GlusterHostUUIDSupport, "3.1", false),
+            mockConfig(ConfigValues.GlusterHostUUIDSupport, "3.2", false),
+            mockConfig(ConfigValues.GlusterHostUUIDSupport, "3.3", true));
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
@@ -100,6 +104,7 @@ public class GlusterSyncJobTest {
     private static final Guid SERVER_ID_1 = new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3");
     private static final Guid SERVER_ID_2 = new Guid("2001751e-549b-4e7a-aff6-32d36856c125");
     private static final Guid SERVER_ID_3 = new Guid("2001751e-549b-4e7a-aff6-32d36856c126");
+    private static final Guid GLUSTER_SERVER_UUID_1 = new Guid("24f4d494-5dfb-472b-86dc-9e1d2d3c18f3");
     private static final String SERVER_NAME_1 = "srvr1";
     private static final String SERVER_NAME_2 = "srvr2";
     private static final String SERVER_NAME_3 = "srvr3";
@@ -135,6 +140,8 @@ public class GlusterSyncJobTest {
     private VdsGroupDAO clusterDao;
     @Mock
     private InterfaceDao interfaceDao;
+    @Mock
+    private GlusterServerDao glusterServerDao;
 
     private VDSGroup existingCluster;
     private VDS existingServer1;
@@ -148,13 +155,12 @@ public class GlusterSyncJobTest {
     private final List<Guid> addedBrickIds = new ArrayList<Guid>();
     private final List<GlusterBrickEntity> bricksWithChangedStatus = new ArrayList<GlusterBrickEntity>();
 
-    @Before
-    public void createObjects() {
-        existingServer1 = createServer(SERVER_ID_1, SERVER_NAME_1);
-        existingServer2 = createServer(SERVER_ID_2, SERVER_NAME_2);
+    private void createObjects(Version version) {
+        existingServer1 = createServer(SERVER_ID_1, SERVER_NAME_1, version);
+        existingServer2 = createServer(SERVER_ID_2, SERVER_NAME_2, version);
         existingServers.add(existingServer1);
         existingServers.add(existingServer2);
-        existingServers.add(createServer(SERVER_ID_3, SERVER_NAME_3));
+        existingServers.add(createServer(SERVER_ID_3, SERVER_NAME_3,version));
 
         existingDistVol = createDistVol(DIST_VOL_NAME, EXISTING_VOL_DIST_ID);
         existingReplVol = createReplVol();
@@ -167,15 +173,18 @@ public class GlusterSyncJobTest {
         existingCluster.setGlusterService(true);
         existingCluster.setVirtService(false);
         existingCluster.setcompatibility_version(version);
+        createObjects(version);
     }
 
-    private VDS createServer(Guid serverId, String hostname) {
+    private VDS createServer(Guid serverId, String hostname, Version version) {
         VdsStatic vdsStatic = new VdsStatic();
         vdsStatic.setId(serverId);
         vdsStatic.setHostName(hostname);
         VdsDynamic vdsDynamic = new VdsDynamic();
         vdsDynamic.setstatus(VDSStatus.Up);
-        return new VDS(vdsStatic, vdsDynamic, new VdsStatistics());
+        VDS vds = new VDS(vdsStatic, vdsDynamic, new VdsStatistics());
+        vds.setVdsGroupCompatibilityVersion(version);
+        return vds;
     }
 
     private GlusterVolumeEntity createDistVol(String volName, Guid volId) {
@@ -209,6 +218,10 @@ public class GlusterSyncJobTest {
 
     private GlusterBrickEntity createBrick(Guid existingVolDistId, VDS server, String brickDir) {
         return new GlusterBrickEntity(existingVolDistId, server.getStaticData(), brickDir, GlusterStatus.UP);
+    }
+
+    private GlusterServer getGlusterServer() {
+        return new GlusterServer(SERVER_ID_1, GLUSTER_SERVER_UUID_1);
     }
 
     @SuppressWarnings("unchecked")
@@ -346,6 +359,7 @@ public class GlusterSyncJobTest {
         doReturn(vdsDynamicDao).when(glusterManager).getVdsDynamicDao();
         doReturn(clusterDao).when(glusterManager).getClusterDao();
         doReturn(interfaceDao).when(glusterManager).getInterfaceDao();
+        doReturn(glusterServerDao).when(glusterManager).getGlusterServerDao();
 
         doReturn(Collections.singletonList(existingCluster)).when(clusterDao).getAll();
         doReturn(existingServers).when(vdsDao).getAllForVdsGroup(CLUSTER_ID);
@@ -561,6 +575,16 @@ public class GlusterSyncJobTest {
         setupMocks();
         glusterManager.refreshHeavyWeightData();
         verifyMocksForHeavyWeight();
+    }
+
+    @Test
+    public void testRefreshLightWeightFor33() throws Exception {
+        createCluster(Version.v3_3);
+        setupMocks();
+        doReturn(getGlusterServer()).when(glusterServerDao).getByServerId(any(Guid.class));
+
+        glusterManager.refreshLightWeightData();
+        verifyMocksForLightWeight();
     }
 
     @Test

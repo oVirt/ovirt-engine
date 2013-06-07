@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeAdvancedDetails;
@@ -129,6 +130,8 @@ public class GlusterSyncJob extends GlusterJob {
             if (fetchedServers != null) {
                 removeDetachedServers(existingServers, fetchedServers);
             }
+        } catch(Exception e) {
+            log.errorFormat("Error while refreshing server data for cluster {0} from database!", cluster.getName(), e);
         } finally {
             releaseLock(cluster.getId());
         }
@@ -192,14 +195,25 @@ public class GlusterSyncJob extends GlusterJob {
      * @return
      */
     private boolean serverDetached(VDS server, List<GlusterServerInfo> fetchedServers) {
-        List<String> vdsIps = getVdsIps(server);
-        for (GlusterServerInfo fetchedServer : fetchedServers) {
-            if (fetchedServer.getHostnameOrIp().equals(server.getHostName())
-                    || vdsIps.contains(fetchedServer.getHostnameOrIp())) {
-                return false;
+        if (GlusterFeatureSupported.glusterHostUuidSupported(server.getVdsGroupCompatibilityVersion())) {
+            // compare gluster host uuid stored in server with the ones fetched from list
+            GlusterServer glusterServer = getGlusterServerDao().getByServerId(server.getId());
+            for (GlusterServerInfo fetchedServer : fetchedServers) {
+                if (fetchedServer.getUuid().equals(glusterServer.getGlusterServerUuid())) {
+                    return false;
+                }
             }
+            return true;
+        } else {
+            List<String> vdsIps = getVdsIps(server);
+            for (GlusterServerInfo fetchedServer : fetchedServers) {
+                if (fetchedServer.getHostnameOrIp().equals(server.getHostName())
+                        || vdsIps.contains(fetchedServer.getHostnameOrIp())) {
+                    return false;
+                }
+            }
+            return true;
         }
-        return true;
     }
 
     private List<String> getVdsIps(VDS vds) {
@@ -227,8 +241,7 @@ public class GlusterSyncJob extends GlusterJob {
             // It's possible that the server we are using to get list of servers itself has been removed from the
             // cluster, and hence is returning a single server (itself)
             GlusterServerInfo server = fetchedServers.iterator().next();
-            if (server.getHostnameOrIp().equals(upServer.getHostName())
-                    || getVdsIps(upServer).contains(server.getHostnameOrIp())) {
+            if (isSameServer(upServer, server)) {
                 // Find a different UP server, and get servers list from it
                 tempServers.remove(upServer);
                 upServer = getNewUpServer(tempServers, upServer);
@@ -249,6 +262,16 @@ public class GlusterSyncJob extends GlusterJob {
             }
         }
         return fetchedServers;
+    }
+
+    private boolean isSameServer(VDS upServer, GlusterServerInfo server) {
+        if (GlusterFeatureSupported.glusterHostUuidSupported(upServer.getVdsGroupCompatibilityVersion())) {
+            GlusterServer glusterUpServer = getGlusterServerDao().getByServerId(upServer.getId());
+            return glusterUpServer.getGlusterServerUuid().equals(server.getUuid());
+        } else {
+            return server.getHostnameOrIp().equals(upServer.getHostName())
+                || getVdsIps(upServer).contains(server.getHostnameOrIp());
+        }
     }
 
     /**
