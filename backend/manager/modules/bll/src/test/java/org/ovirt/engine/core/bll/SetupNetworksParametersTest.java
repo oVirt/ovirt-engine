@@ -30,7 +30,7 @@ public class SetupNetworksParametersTest {
         params.setInterfaces(Arrays.asList(nic));
 
         nic.setNetworkName("otherThenMgmtNetwork");
-        nic.setGateway("1.1.1.1");
+        nic.setGateway("1.1.1");
 
         Validator validator = ValidationUtils.getValidator();
 

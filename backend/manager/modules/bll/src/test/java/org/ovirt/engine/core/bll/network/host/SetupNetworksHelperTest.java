@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
@@ -45,7 +46,8 @@ public class SetupNetworksHelperTest {
 
     @Rule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.ManagementNetwork,
-            MANAGEMENT_NETWORK_NAME));
+            MANAGEMENT_NETWORK_NAME),
+            mockConfig(ConfigValues.MultipleGatewaysSupported, "3.3", true));
 
     @Mock
     private NetworkDao networkDAO;
@@ -1477,6 +1479,7 @@ public class SetupNetworksHelperTest {
     private SetupNetworksHelper createHelper(SetupNetworksParameters params) {
         VDS vds = mock(VDS.class);
         when(vds.getId()).thenReturn(Guid.Empty);
+        when(vds.getVdsGroupCompatibilityVersion()).thenReturn(Version.v3_3);
         return createHelper(params, vds);
     }
 
