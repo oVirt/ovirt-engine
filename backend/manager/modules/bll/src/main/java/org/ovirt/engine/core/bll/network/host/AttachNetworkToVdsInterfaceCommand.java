@@ -115,7 +115,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         }
 
         // check if the parameters interface is part of a bond
-        if (!StringUtils.isEmpty(params.getInterface().getBondName())) {
+        if (StringUtils.isNotEmpty(params.getInterface().getBondName())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_ALREADY_IN_BOND);
             return false;
         }
@@ -137,7 +137,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
         }
 
         if (!NetworkUtils.getEngineNetwork().equals(logicalNetwork.getName())
-                && !StringUtils.isEmpty(params.getGateway())) {
+                && StringUtils.isNotEmpty(params.getGateway())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
             return false;
         }

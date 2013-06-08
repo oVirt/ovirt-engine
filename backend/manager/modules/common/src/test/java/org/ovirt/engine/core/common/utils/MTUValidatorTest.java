@@ -66,7 +66,6 @@ public class MTUValidatorTest {
 
     private class MtuContainer {
         @MTU
-        @SuppressWarnings("unused")
         private int mtu;
 
         public MtuContainer(int mtu) {

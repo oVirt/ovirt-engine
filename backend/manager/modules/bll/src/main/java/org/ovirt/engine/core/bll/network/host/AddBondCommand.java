@@ -3,15 +3,14 @@ package org.ovirt.engine.core.bll.network.host;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddBondParameters;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.vdscommands.CollectVdsNetworkDataVDSCommandParameters;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.vdscommands.CollectVdsNetworkDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.NetworkVdsmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -49,13 +48,11 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
                 params.getBondingOptions(),
                 params.getBootProtocol());
 
-        VDSReturnValue retVal = Backend.getInstance().getResourceManager()
-                .RunVdsCommand(VDSCommandType.AddNetwork, vdsParams);
+        VDSReturnValue retVal = getBackend().getResourceManager().RunVdsCommand(VDSCommandType.AddNetwork, vdsParams);
 
         if (retVal.getSucceeded()) {
             // update vds network data
-            retVal = Backend
-                    .getInstance()
+            retVal = getBackend()
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
                             new CollectVdsNetworkDataVDSCommandParameters(getVds()));

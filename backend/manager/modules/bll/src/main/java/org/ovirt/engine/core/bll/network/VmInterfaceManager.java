@@ -30,7 +30,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  */
 public class VmInterfaceManager {
 
-    protected Log log = LogFactory.getLog(getClass());
+    private Log log = LogFactory.getLog(getClass());
 
     /**
      * Add a {@link VmNetworkInterface} to the VM. Allocates a MAC from the {@link MacPoolManager} if necessary,

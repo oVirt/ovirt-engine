@@ -152,19 +152,11 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             }
         }
 
-        if (!StringUtils.isEmpty(getMacAddress())) {
+        if (StringUtils.isNotEmpty(getMacAddress())) {
             if (!validate(macAddressValid()) || !validate(macAvailable())) {
                 return false;
             }
-        } else if (MacPoolManager.getInstance().getAvailableMacsCount() <= 0) // check
-                                                                              // if
-                                                                              // we
-                                                                              // have
-                                                                              // mac
-                                                                              // address
-                                                                              // in
-                                                                              // pool
-        {
+        } else if (MacPoolManager.getInstance().getAvailableMacsCount() <= 0) {
             addCanDoActionMessage(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
             return false;
         }
