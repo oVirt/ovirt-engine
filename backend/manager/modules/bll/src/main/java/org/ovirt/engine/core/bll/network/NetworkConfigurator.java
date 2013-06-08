@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -49,7 +50,7 @@ public class NetworkConfigurator {
     }
 
     public void createManagementNetworkIfRequired() {
-        final String managementNetwork = Config.<String> GetValue(ConfigValues.ManagementNetwork);
+        final String managementNetwork = NetworkUtils.getEngineNetwork();
 
         if (host == null
                 || managementNetwork.equals(host.getActiveNic())
@@ -161,8 +162,7 @@ public class NetworkConfigurator {
 
         Network managementNetwork =
                 getDbFacade().getNetworkDao()
-                        .getByNameAndDataCenter(Config.<String> GetValue(ConfigValues.ManagementNetwork),
-                                host.getStoragePoolId());
+                        .getByNameAndDataCenter(NetworkUtils.getEngineNetwork(), host.getStoragePoolId());
 
         if (managementNetwork.getName().equals(nic.getNetworkName())) {
             return null;

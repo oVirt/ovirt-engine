@@ -145,8 +145,8 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
             return failCanDoAction(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);
         }
 
-        if (!NetworkUtils.isManagementNetwork(getParameters().getNetwork().getName())
-                && !StringUtils.isEmpty(getParameters().getGateway())) {
+        if (StringUtils.isNotEmpty(getParameters().getGateway()) &&
+                !NetworkUtils.isManagementNetwork(getParameters().getNetwork())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
             return false;
         }

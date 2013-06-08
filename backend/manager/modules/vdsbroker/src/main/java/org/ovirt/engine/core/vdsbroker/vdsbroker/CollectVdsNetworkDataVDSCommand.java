@@ -17,8 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.CollectVdsNetworkDataVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -118,7 +116,7 @@ public class CollectVdsNetworkDataVDSCommand<P extends CollectVdsNetworkDataVDSC
     }
 
     private static void skipManagementNetworkCheck(List<VdsNetworkInterface> ifaces, List<Network> clusterNetworks) {
-        String managementNetworkName = Config.GetValue(ConfigValues.ManagementNetwork);
+        String managementNetworkName = NetworkUtils.getEngineNetwork();
         for (VdsNetworkInterface iface : ifaces) {
             if (managementNetworkName.equals(iface.getNetworkName())) {
                 return;

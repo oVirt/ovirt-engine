@@ -200,6 +200,6 @@ public final class NetworkUtils {
      * @return <code>true</code> iff the network is a management network.
      */
     public static boolean isManagementNetwork(String networkName) {
-        return Config.<String> GetValue(ConfigValues.ManagementNetwork).equals(networkName);
+        return getEngineNetwork().equals(networkName);
     }
 }

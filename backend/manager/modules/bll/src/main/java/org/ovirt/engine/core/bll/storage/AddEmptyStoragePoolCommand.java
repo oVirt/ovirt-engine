@@ -11,14 +11,13 @@ import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter> extends
         StoragePoolManagementCommandBase<T> {
@@ -56,7 +55,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     private void addDefaultNetworks() {
         Network net = new Network();
         net.setId(Guid.NewGuid());
-        net.setName(Config.<String> GetValue(ConfigValues.ManagementNetwork));
+        net.setName(NetworkUtils.getEngineNetwork());
         net.setDescription(AddVdsGroupCommand.DefaultNetworkDescription);
         net.setDataCenterId(getStoragePool().getId());
         net.setVmNetwork(true);
