@@ -49,7 +49,7 @@ cert_pass="$6"
 req_name="$7"
 req_org="$8"
 
-[ -n "${req_org}" ] || usage
+[ -n "${cert_pass}" ] || usage
 
 lock_file="$(dirname "$0")/SignReq.lock"
 shift
