@@ -22,7 +22,7 @@ Where:
     Organization                = O
     locking timeout             = Amount of seconds to wait for locking
 __EOF__
-        return 0
+        exit 1
 }
 
 sign () {
