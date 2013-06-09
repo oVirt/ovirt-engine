@@ -17,6 +17,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -57,6 +59,9 @@ public class LiveMigrateVmDisksCommandTest {
 
     @Mock
     private VmDAO vmDao;
+
+    @Mock
+    private VmValidator vmValidator;
 
     /**
      * The command under test
@@ -163,6 +168,21 @@ public class LiveMigrateVmDisksCommandTest {
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL.toString()));
     }
 
+    @Test
+    public void canDoActionVmRunningStateless() {
+        createParameters();
+        initDiskImage(diskImageId);
+        initVm(VMStatus.Up, Guid.NewGuid(), diskImageId);
+
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS)).when(vmValidator)
+                .vmNotRunningStateless();
+
+        assertFalse(command.canDoAction());
+        assertTrue(command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS.name()));
+    }
+
     /** Initialize Entities */
 
     private void initVm(VMStatus vmStatus, NGuid runOnVds, Guid diskImageId) {
@@ -214,6 +234,7 @@ public class LiveMigrateVmDisksCommandTest {
         mockDiskImageDao();
         mockStorageDomainDao();
         mockStoragePoolDao();
+        mockValidators();
     }
 
     private void mockVmDao() {
@@ -230,5 +251,10 @@ public class LiveMigrateVmDisksCommandTest {
 
     private void mockStoragePoolDao() {
         doReturn(storagePoolDao).when(command).getStoragePoolDAO();
+    }
+
+    private void mockValidators() {
+        doReturn(vmValidator).when(command).createVmValidator();
+        doReturn(ValidationResult.VALID).when(vmValidator).vmNotRunningStateless();
     }
 }

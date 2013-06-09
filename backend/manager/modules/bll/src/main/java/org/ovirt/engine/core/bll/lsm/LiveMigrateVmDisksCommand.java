@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
@@ -195,7 +196,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     protected boolean canDoAction() {
         setStoragePoolId(getVm().getStoragePoolId());
 
-        if (!isValidParametersList() || !checkImagesStatus() || !isValidSpaceRequirements()) {
+        if (!isValidParametersList() || !checkImagesStatus() || !isValidSpaceRequirements()
+                || !isVmNotRunningStateless()) {
             return false;
         }
 
@@ -312,5 +314,13 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain, long totalImagesSize) {
         return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(totalImagesSize));
+    }
+
+    private boolean isVmNotRunningStateless() {
+        return validate(createVmValidator().vmNotRunningStateless());
+    }
+
+    protected VmValidator createVmValidator() {
+        return new VmValidator(getVm());
     }
 }
