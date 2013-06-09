@@ -12,36 +12,57 @@
 			margin-top: 20px;
 		}
 
-		.testButtonStyle {
-			float: right;
-			margin-right: 10px;
+		.authField {
+			padding-left: 10px;
 		}
 
-		.testResultImageStyle {
+		.testResultImage {
+			float: left;
+			vertical-align: middle;
+			margin-left: 3px;
+		}
+
+		.testResultMessage {
+			float: left;
+			vertical-align: middle;
+			margin-left: 5px;
+			font-size: 8pt;
+		}
+
+		.testButton {
 			float: right;
-			margin-top: 3px;
+			vertical-align: middle;
+			margin-right: 10px;
 		}
 	</ui:style>
 
-	<d:SimpleDialogPanel width="450px" height="340px">
+	<d:SimpleDialogPanel width="450px" height="450px">
 		<d:content>
-			<g:FlowPanel>
-				<g:FlowPanel>
-					<e:EntityModelTextBoxEditor ui:field="nameEditor" />
-					<e:ListModelListBoxEditor ui:field="typeEditor" />
-					<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
-					<e:EntityModelTextBoxEditor ui:field="urlEditor" />
+			<g:DockLayoutPanel>
+				<g:center>
 					<g:FlowPanel>
-						<w:UiCommandButton ui:field="testButton" addStyleNames="{style.testButtonStyle}" />
-						<g:Image ui:field="testResultImage" />
+						<g:FlowPanel>
+							<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+							<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+							<e:ListModelListBoxEditor ui:field="typeEditor" />
+							<e:EntityModelTextBoxEditor ui:field="urlEditor" />
+						</g:FlowPanel>
+						<g:FlowPanel addStyleNames="{style.sectionStyle}">
+							<e:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" />
+							<e:EntityModelTextBoxEditor ui:field="usernameEditor" addStyleNames="{style.authField}" />
+							<e:EntityModelPasswordBoxEditor ui:field="passwordEditor" addStyleNames="{style.authField}" />
+							<e:EntityModelTextBoxEditor ui:field="tenantNameEditor" addStyleNames="{style.authField}" />
+						</g:FlowPanel>
 					</g:FlowPanel>
-				</g:FlowPanel>
-				<g:FlowPanel addStyleNames="{style.sectionStyle}">
-					<e:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" />
-					<e:EntityModelTextBoxEditor ui:field="usernameEditor" />
-					<e:EntityModelPasswordBoxEditor ui:field="passwordEditor" />
-				</g:FlowPanel>
-			</g:FlowPanel>
+				</g:center>
+				<g:south size="30">
+					<g:FlowPanel>
+						<g:Image ui:field="testResultImage" addStyleNames="{style.testResultImage}" />
+						<g:Label ui:field="testResultMessage" addStyleNames="{style.testResultMessage}" />
+						<w:UiCommandButton ui:field="testButton" addStyleNames="{style.testButton}" />
+					</g:FlowPanel>
+				</g:south>
+			</g:DockLayoutPanel>
 		</d:content>
 	</d:SimpleDialogPanel>
 

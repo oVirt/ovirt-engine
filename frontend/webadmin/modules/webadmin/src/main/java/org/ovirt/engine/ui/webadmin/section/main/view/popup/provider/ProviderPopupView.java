@@ -24,6 +24,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Image;
+import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel> implements ProviderPopupPresenterWidget.ViewDef {
@@ -40,20 +41,22 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private final ApplicationConstants constants;
+
     @UiField
     @Path(value = "name.entity")
     @WithElementId
     EntityModelTextBoxEditor nameEditor;
 
-    @UiField(provided = true)
-    @Path(value = "type.selectedItem")
-    @WithElementId
-    ListModelListBoxEditor<Object> typeEditor;
-
     @UiField
     @Path(value = "description.entity")
     @WithElementId
     EntityModelTextBoxEditor descriptionEditor;
+
+    @UiField(provided = true)
+    @Path(value = "type.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<Object> typeEditor;
 
     @UiField
     @Path(value = "url.entity")
@@ -65,6 +68,10 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
     @UiField
     Image testResultImage;
+
+    @UiField
+    @Ignore
+    Label testResultMessage;
 
     @UiField(provided = true)
     @Path(value = "requiresAuthentication.entity")
@@ -82,6 +89,11 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     EntityModelPasswordBoxEditor passwordEditor;
 
     @UiField
+    @Path(value = "tenantName.entity")
+    @WithElementId
+    EntityModelTextBoxEditor tenantNameEditor;
+
+    @UiField
     Style style;
 
     private ApplicationResources resources;
@@ -95,6 +107,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         requiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         this.resources = resources;
+        this.constants = constants;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
@@ -104,13 +117,14 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
     void localize(ApplicationConstants constants) {
         nameEditor.setLabel(constants.nameProvider());
-        typeEditor.setLabel(constants.typeProvider());
         descriptionEditor.setLabel(constants.descriptionProvider());
+        typeEditor.setLabel(constants.typeProvider());
         urlEditor.setLabel(constants.urlProvider());
         testButton.setLabel(constants.testProvider());
         requiresAuthenticationEditor.setLabel(constants.requiresAuthenticationProvider());
         usernameEditor.setLabel(constants.usernameProvider());
         passwordEditor.setLabel(constants.passwordProvider());
+        tenantNameEditor.setLabel(constants.tenantName());
     }
 
     @Override
@@ -134,7 +148,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
     interface Style extends CssResource {
         String contentStyle();
-        String testResultImageStyle();
+        String testResultImage();
     }
 
     @Override
@@ -145,7 +159,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @Override
     public void setTestResultImage(String errorMessage) {
         testResultImage.setResource(errorMessage.isEmpty() ? resources.logNormalImage() : resources.logErrorImage());
-        testResultImage.setStylePrimaryName(style.testResultImageStyle());
-        testResultImage.setTitle(errorMessage);
+        testResultImage.setStylePrimaryName(style.testResultImage());
+        testResultMessage.setText(errorMessage.isEmpty() ? constants.testSuccessMessage() : errorMessage);
     }
 }

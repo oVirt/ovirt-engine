@@ -2795,11 +2795,14 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Description")
     String descriptionProvider();
 
-    @DefaultStringValue("URL")
+    @DefaultStringValue("Provider URL")
     String urlProvider();
 
     @DefaultStringValue("Test")
     String testProvider();
+
+    @DefaultStringValue("Test succeeded, managed to access provider.")
+    String testSuccessMessage();
 
     @DefaultStringValue("Requires Authentication")
     String requiresAuthenticationProvider();
@@ -2809,6 +2812,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Password")
     String passwordProvider();
+
+    @DefaultStringValue("Tenant Name")
+    String tenantName();
 
     @DefaultStringValue("Add")
     String addProvider();

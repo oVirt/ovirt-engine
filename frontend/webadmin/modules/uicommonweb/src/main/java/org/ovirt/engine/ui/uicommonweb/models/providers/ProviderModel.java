@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import java.util.Arrays;
-import java.util.List;
 
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -52,6 +52,7 @@ public class ProviderModel extends Model {
     private EntityModel requiresAuthentication = new EntityModel();
     private EntityModel username = new EntityModel();
     private EntityModel password = new EntityModel();
+    private EntityModel tenantName = new EntityModel();
     private UICommand testCommand;
     private EntityModel testResult = new EntityModel();
 
@@ -83,6 +84,10 @@ public class ProviderModel extends Model {
         return password;
     }
 
+    public EntityModel getTenantName() {
+        return tenantName;
+    }
+
     public UICommand getTestCommand() {
         return testCommand;
     }
@@ -106,6 +111,13 @@ public class ProviderModel extends Model {
                 boolean authenticationRequired = (Boolean) requiresAuthentication.getEntity();
                 getUsername().setIsChangable(authenticationRequired);
                 getPassword().setIsChangable(authenticationRequired);
+                getTenantName().setIsChangable(authenticationRequired);
+            }
+        });
+        getType().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                getTenantName().setIsAvailable(((ProviderType) getType().getSelectedItem()) == ProviderType.OPENSTACK_NETWORK);
             }
         });
 
@@ -115,10 +127,13 @@ public class ProviderModel extends Model {
         getRequiresAuthentication().setEntity(provider.isRequiringAuthentication());
         getUsername().setEntity(provider.getUsername());
         getPassword().setEntity(provider.getPassword());
+        getTenantName().setIsAvailable(false);
 
-        List<ProviderType> allTypes = Arrays.asList(ProviderType.values());
-        getType().setItems(allTypes);
+        getType().setItems(Arrays.asList(ProviderType.values()));
         getType().setSelectedItem(provider.getType());
+        if (getTenantName().getIsAvailable()) {
+            getTenantName().setEntity(((TenantProviderProperties) provider.getAdditionalProperties()).getTenantName());
+        }
 
         UICommand tempVar = new UICommand(CMD_SAVE, this);
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -136,11 +151,12 @@ public class ProviderModel extends Model {
         getType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getUsername().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
+        getTenantName().validateEntity(new IValidation[] { new NotEmptyValidation()} );
         getUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
                 new UrlValidation(Uri.SCHEME_HTTP, Uri.SCHEME_HTTPS) });
 
         return getName().getIsValid() && getType().getIsValid() && getUrl().getIsValid() && getUsername().getIsValid()
-                && getPassword().getIsValid();
+                && getPassword().getIsValid() && getTenantName().getIsValid();
     }
 
     private void cancel() {
@@ -158,6 +174,9 @@ public class ProviderModel extends Model {
         if (authenticationRequired) {
             provider.setUsername((String) username.getEntity());
             provider.setPassword((String) password.getEntity());
+            if (getTenantName().getIsAvailable()) {
+                provider.setAdditionalProperties(new TenantProviderProperties((String) getTenantName().getEntity()));
+            }
         }
     }
 
