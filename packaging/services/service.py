@@ -126,7 +126,7 @@ class ConfigFile(Base):
                         index += 1
                         self._loadLine(line)
             except Exception as e:
-                self._logger(
+                self._logger.debug(
                     "File '%s' index %d error" % (file, index),
                     exc_info=True,
                 )
