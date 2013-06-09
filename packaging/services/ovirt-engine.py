@@ -159,7 +159,7 @@ class Daemon(service.Daemon):
                 engineApp,
             )
             if not os.path.exists(engineAppDir):
-                self._logger.warning(
+                self.logger.warning(
                     _(
                         "Application '{application}' directory '{directory}' "
                         "does not exist, it will be ignored"
@@ -181,7 +181,7 @@ class Daemon(service.Daemon):
                 try:
                     os.symlink(engineAppDir, engineAppLink)
                 except OSError as e:
-                    self._logger.debug('exception', exc_info=True)
+                    self.logger.debug('exception', exc_info=True)
                     raise RuntimeError(
                         _(
                             "Cannot create symbolic link '{file}': "
@@ -197,7 +197,7 @@ class Daemon(service.Daemon):
                 try:
                     os.remove(markerFile)
                 except OSError as e:
-                    self._logger.debug('exception', exc_info=True)
+                    self.logger.debug('exception', exc_info=True)
                     raise RuntimeError(
                         _(
                             "Cannot remove deployment marker file '{file}': "
@@ -215,7 +215,7 @@ class Daemon(service.Daemon):
                 with open(markerFile, "w"):
                     pass
             except IOError as e:
-                self._logger.debug('exception', exc_info=True)
+                self.logger.debug('exception', exc_info=True)
                 raise RuntimeError(
                     _(
                         "Cannot create deployment marker file '{file}': "

@@ -74,6 +74,12 @@ class Base(object):
     """
     Base class for logging.
     """
+
+    @property
+    def logger(self):
+        """Logger."""
+        return self._logger
+
     def __init__(self):
         self._logger = logging.getLogger(
             'ovirt.service.%s' % self.__class__.__name__
@@ -118,7 +124,7 @@ class ConfigFile(Base):
 
     def loadFile(self, file):
         if os.path.exists(file):
-            self._logger.debug("loading config '%s'", file)
+            self.logger.debug("loading config '%s'", file)
             index = 0
             try:
                 with open(file, 'r') as f:
@@ -126,7 +132,7 @@ class ConfigFile(Base):
                         index += 1
                         self._loadLine(line)
             except Exception as e:
-                self._logger.debug(
+                self.logger.debug(
                     "File '%s' index %d error" % (file, index),
                     exc_info=True,
                 )
@@ -210,7 +216,7 @@ class TempDir(Base):
     """
 
     def _clear(self):
-        self._logger.debug("removing directory '%s'", self._dir)
+        self.logger.debug("removing directory '%s'", self._dir)
         if os.path.exists(self._dir):
             shutil.rmtree(self._dir)
 
@@ -226,13 +232,13 @@ class TempDir(Base):
         try:
             self._clear()
         except Exception as e:
-            self._logger.warning(
+            self.logger.warning(
                 _("Cannot remove directory '{directory}': {error}").format(
                     directory=self._dir,
                     error=e,
                 ),
             )
-            self._logger.debug('exception', exc_info=True)
+            self.logger.debug('exception', exc_info=True)
 
     def __enter__(self):
         self.create()
@@ -256,7 +262,7 @@ class PidFile(Base):
 
     def __enter__(self):
         if self._file is not None:
-            self._logger.debug(
+            self.logger.debug(
                 "creating pidfile '%s' pid=%s",
                 self._file,
                 os.getpid()
@@ -266,7 +272,7 @@ class PidFile(Base):
 
     def __exit__(self, exc_type, exc_value, traceback):
         if self._file is not None:
-            self._logger.debug("removing pidfile '%s'", self._file)
+            self.logger.debug("removing pidfile '%s'", self._file)
             try:
                 os.remove(self._file)
             except OSError:
@@ -276,13 +282,13 @@ class PidFile(Base):
                     with open(self._file, 'w'):
                         pass
                 except IOError as e:
-                    self._logger.error(
+                    self.logger.error(
                         _("Cannot remove pidfile '{file}': {error}").format(
                             file=self._file,
                             error=e,
                         ),
                     )
-                    self._logger.debug('exception', exc_info=True)
+                    self.logger.debug('exception', exc_info=True)
 
 
 class Daemon(Base):
@@ -393,7 +399,7 @@ class Daemon(Base):
         stopTime=30,
         stopInterval=1,
     ):
-        self._logger.debug(
+        self.logger.debug(
             'executing daemon: exe=%s, args=%s, env=%s',
             executable,
             args,
@@ -401,7 +407,7 @@ class Daemon(Base):
         )
 
         try:
-            self._logger.debug('creating process')
+            self.logger.debug('creating process')
             p = subprocess.Popen(
                 args=args,
                 executable=executable,
@@ -409,12 +415,12 @@ class Daemon(Base):
                 close_fds=True,
             )
 
-            self._logger.debug(
+            self.logger.debug(
                 'waiting for termination of pid=%s',
                 p.pid,
             )
             p.wait()
-            self._logger.debug(
+            self.logger.debug(
                 'terminated pid=%s rc=%s',
                 p.pid,
                 p.returncode,
@@ -431,36 +437,36 @@ class Daemon(Base):
                 )
 
         except self.TerminateException:
-            self._logger.debug('got stop signal')
+            self.logger.debug('got stop signal')
 
             # avoid recursive signals
             for sig in (signal.SIGTERM, signal.SIGINT):
                 signal.signal(sig, signal.SIG_IGN)
 
             try:
-                self._logger.debug('terminating pid=%s', p.pid)
+                self.logger.debug('terminating pid=%s', p.pid)
                 p.terminate()
                 for i in range(stopTime // stopInterval):
                     if p.poll() is not None:
-                        self._logger.debug('terminated pid=%s', p.pid)
+                        self.logger.debug('terminated pid=%s', p.pid)
                         break
-                    self._logger.debug(
+                    self.logger.debug(
                         'waiting for termination of pid=%s',
                         p.pid,
                     )
                     time.sleep(stopInterval)
             except OSError as e:
-                self._logger.warning(
+                self.logger.warning(
                     _('Cannot terminate pid {pid}: {error}').format(
                         pid=p.pid,
                         error=e,
                     )
                 )
-                self._logger.debug('exception', exc_info=True)
+                self.logger.debug('exception', exc_info=True)
 
             try:
                 if p.poll() is None:
-                    self._logger.debug('killing pid=%s', p.pid)
+                    self.logger.debug('killing pid=%s', p.pid)
                     p.kill()
                     raise RuntimeError(
                         _('Had to kill process {pid}').format(
@@ -468,21 +474,21 @@ class Daemon(Base):
                         )
                     )
             except OSError as e:
-                self._logger.warning(
+                self.logger.warning(
                     _('Cannot kill pid {pid}: {error}').format(
                         pid=p.pid,
                         error=e
                     )
                 )
-                self._logger.debug('exception', exc_info=True)
+                self.logger.debug('exception', exc_info=True)
                 raise
 
             raise
 
     def _daemon(self):
 
-        self._logger.debug('daemon entry pid=%s', os.getpid())
-        self._logger.debug('background=%s', self._options.background)
+        self.logger.debug('daemon entry pid=%s', os.getpid())
+        self.logger.debug('background=%s', self._options.background)
 
         os.umask(0o022)
 
@@ -516,21 +522,21 @@ class Daemon(Base):
             files_preserve=handles,
             umask=0o022,
         ):
-            self._logger.debug('I am a daemon %s', os.getpid())
+            self.logger.debug('I am a daemon %s', os.getpid())
 
             try:
                 with PidFile(self._options.pidfile):
                     self.daemonContext()
-                self._logger.debug('Returned normally %s', os.getpid())
+                self.logger.debug('Returned normally %s', os.getpid())
             except self.TerminateException:
-                self._logger.debug('Terminated normally %s', os.getpid())
+                self.logger.debug('Terminated normally %s', os.getpid())
             finally:
                 self.daemonCleanup()
 
-        self._logger.debug('daemon return')
+        self.logger.debug('daemon return')
 
     def run(self):
-        self._logger.debug('startup args=%s', sys.argv)
+        self.logger.debug('startup args=%s', sys.argv)
 
         parser = optparse.OptionParser(
             usage=_('usage: %prog [options] start'),
@@ -597,12 +603,12 @@ class Daemon(Base):
         try:
             self._daemon()
         except Exception as e:
-            self._logger.error(
+            self.logger.error(
                 _('Error: {error}').format(
                     error=e,
                 )
             )
-            self._logger.debug('exception', exc_info=True)
+            self.logger.debug('exception', exc_info=True)
             sys.exit(1)
         else:
             sys.exit(0)
