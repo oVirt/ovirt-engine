@@ -30,9 +30,9 @@ cp cert.template cert.conf
 # is in correct permissions
 #
 echo 1000 > serial.txt
-rm -f database.txt
-touch database.txt
-chown --reference=. serial.txt database.txt
+rm -f database.txt*
+touch database.txt .rnd
+chown --reference=. serial.txt* database.txt* .rnd*
 
 openssl genrsa -out private/ca.pem 2048 && \
 	openssl req -new -key private/ca.pem \

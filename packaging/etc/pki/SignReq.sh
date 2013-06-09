@@ -51,12 +51,21 @@ req_org="$8"
 
 [ -n "${cert_pass}" ] || usage
 
-lock_file="$(dirname "$0")/SignReq.lock"
+SCRIPTDIR="$(dirname "$0")"
+lock_file="${SCRIPTDIR}/SignReq.lock"
 shift
 timeout=$8
 if [ -z "$timeout" ]; then
         timeout=20
 fi
+
+cleanup() {
+        # openssl always reset ownership
+        # of these files, so we have to reset
+        # our defaults
+        chown --reference="${SCRIPTDIR}" "${SCRIPTDIR}"/serial.txt* "${SCRIPTDIR}"/database.txt* "${SCRIPTDIR}"/.rnd*
+}
+trap cleanup 0
 
 # Wait for lock on $lock_file (fd 200) for $timeout seconds
 (
