@@ -56,6 +56,10 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
 
     @UiField
     @Ignore
+    Label errorLabel;
+
+    @UiField
+    @Ignore
     Label selectNewDSDLabel;
 
     @UiField(provided = true)
@@ -117,6 +121,15 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
                 selectNewDSDLabel.setText(applicationConstants.dataCenterRecoveryStoragePopupSelectNewDSDLabel());
             }
         });
+    }
+
+    @Override
+    public void setMessage(String message) {
+        if (message != null) {
+            errorLabel.setText(message);
+            errorLabel.setVisible(true);
+            messageLabel.setVisible(false);
+        }
     }
 
     @Override

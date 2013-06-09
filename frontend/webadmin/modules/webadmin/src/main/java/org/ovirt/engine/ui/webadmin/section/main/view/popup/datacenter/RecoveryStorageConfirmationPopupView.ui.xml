@@ -15,6 +15,12 @@
 			padding-bottom: 20px;
 		}
 
+		.errorLabel {
+			padding-bottom: 20px;
+			width: 450px;
+			color: red;
+		}
+
 		.selectNewDSDLabel {
 			padding-top: 10px;
 		}
@@ -32,6 +38,7 @@
 		<d:content>
 			<g:FlowPanel addStyleNames="{style.content}">
 				<g:FlowPanel addStyleNames="{style.messages}">
+                    <g:Label ui:field="errorLabel" addStyleNames="{style.errorLabel}" visible="false"/>
 					<g:HTML ui:field="messageLabel" addStyleNames="{style.messageLabel}"/>
 				</g:FlowPanel>
 				<e:EntityModelCheckBoxEditor ui:field="latch" visible="false"/>
