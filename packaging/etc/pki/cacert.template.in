@@ -7,8 +7,6 @@ default_keyfile = keys/ca.pem
 distinguished_name = req_distinguished_name
 attributes = req_attributes
 x509_extensions = v3_ca
-prompt = no
-output_password = NoSoup4U
 
 [req_attributes]
 

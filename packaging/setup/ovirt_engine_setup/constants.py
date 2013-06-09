@@ -162,8 +162,12 @@ class FileLocations(object):
         'private',
     )
     OVIRT_ENGINE_PKI_CA_CREATE = os.path.join(
-        OVIRT_ENGINE_PKIDIR,
-        'installCA.sh',
+        OVIRT_ENGINE_BINDIR,
+        'pki-create-ca.sh',
+    )
+    OVIRT_ENGINE_PKI_CA_ENROLL = os.path.join(
+        OVIRT_ENGINE_BINDIR,
+        'pki-enroll-pkcs12.sh',
     )
     OVIRT_ENGINE_PKI_ENGINE_STORE = os.path.join(
         OVIRT_ENGINE_PKIKEYSDIR,

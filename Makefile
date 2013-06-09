@@ -153,6 +153,7 @@ ARTIFACTS = \
 # List of files that will be generated from templates:
 GENERATED = \
 	packaging/bin/engine-prolog.sh \
+	packaging/bin/pki-common.sh \
 	packaging/conf/engine.conf.defaults \
 	packaging/conf/notifier.conf.defaults \
 	packaging/conf/ovirt-websocket-proxy.conf.defaults \
@@ -388,8 +389,10 @@ install_sec:
 	install -m 644 packaging/etc/pki/cert.template.in $(DESTDIR)$(PKG_PKI_DIR)
 
 	# Scripts:
-	install -m 755 packaging/etc/pki/*.sh $(DESTDIR)$(PKG_PKI_DIR)
-	install -m 644 packaging/etc/pki/*.lock $(DESTDIR)$(PKG_PKI_DIR)
+	install -m 644 packaging/bin/pki-common.sh $(DESTDIR)$(DATA_DIR)/bin
+	install -m 755 packaging/bin/pki-create-ca.sh $(DESTDIR)$(DATA_DIR)/bin
+	install -m 755 packaging/bin/pki-enroll-pkcs12.sh $(DESTDIR)$(DATA_DIR)/bin
+	install -m 755 packaging/bin/pki-enroll-request.sh $(DESTDIR)$(DATA_DIR)/bin
 
 install_config:
 	@echo "*** Deploying engine-config & engine-manage-domains"

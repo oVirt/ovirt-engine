@@ -688,8 +688,10 @@ fi
 %dir %{engine_pki}/keys
 
 # PKI scripts:
-%{engine_pki}/*.sh
-%{engine_pki}/*.lock
+%{engine_data}/bin/pki-common.sh
+%{engine_data}/bin/pki-create-ca.sh
+%{engine_data}/bin/pki-enroll-pkcs12.sh
+%{engine_data}/bin/pki-enroll-request.sh
 
 # PKI configuration files:
 %config(noreplace) %{engine_pki}/openssl.conf

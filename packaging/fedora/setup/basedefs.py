@@ -56,6 +56,7 @@ DIR_KERBEROS="%s/ovirt-engine/kerberos" % DIR_USR_SHARE
 DIR_ENGINE="/usr/share/%s" % (ENGINE_SERVICE_NAME)
 DIR_PLUGINS="%s/ovirt-engine/scripts/plugins" % DIR_USR_SHARE
 
+DIR_ENGINE_BIN="%s/ovirt-engine/bin" % DIR_USR_SHARE
 DIR_ENGINE_EAR="%s/ovirt-engine/engine.ear" % DIR_USR_SHARE
 DIR_DB_SCRIPTS="%s/ovirt-engine/dbscripts/" % DIR_USR_SHARE
 DIR_DB_BACKUPS="%s/ovirt-engine/backups" % DIR_VAR_LIB

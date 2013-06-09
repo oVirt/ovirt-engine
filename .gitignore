@@ -43,6 +43,7 @@ __pycache__
 # Files generated from templates
 ###########################
 packaging/bin/engine-prolog.sh
+packaging/bin/pki-common.sh
 packaging/conf/engine.conf.defaults
 packaging/conf/notifier.conf.defaults
 packaging/conf/ovirt-websocket-proxy.conf.defaults

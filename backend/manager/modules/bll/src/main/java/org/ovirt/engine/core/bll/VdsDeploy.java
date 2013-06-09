@@ -754,7 +754,6 @@ public class VdsDeploy implements SSHDialog.Sink {
                         );
                         _certificate = OpenSslCAWrapper.signCertificateRequest(
                             StringUtils.join(event.value, "\n"),
-                            _vds.getHostName(),
                             _vds.getHostName()
                         );
                     }

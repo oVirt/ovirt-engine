@@ -818,11 +818,6 @@ def _createCA():
         if not os.path.exists(basedefs.FILE_CA_CRT_SRC):
             _updateCaCrtTemplate()
 
-            # We create the CA with yesterday's starting date
-            yesterday = datetime.datetime.utcnow() - datetime.timedelta(1)
-            date = yesterday.strftime("%y%m%d%H%M%S+0000")
-            logging.debug("Date string is %s", date)
-
             # Add random string to certificate CN field
             randInt = random.randint(10000,99999)
 
@@ -834,18 +829,34 @@ def _createCA():
 
             # Create the CA
             cmd = [
-                os.path.join(basedefs.DIR_OVIRT_PKI, "installCA.sh"),
-                controller.CONF["HOST_FQDN"],
-                basedefs.CONST_CA_COUNTRY,
-                controller.CONF["ORG_NAME"],
-                basedefs.CONST_CA_ALIAS,
-                basedefs.CONST_CA_PASS,
-                date,
-                basedefs.DIR_OVIRT_PKI,
-                uniqueCN,
+                os.path.join(basedefs.DIR_ENGINE_BIN, "pki-create-ca.sh"),
+                "--subject=/C=%s/O=%s/CN=%s" % (
+                    basedefs.CONST_CA_COUNTRY,
+                    controller.CONF["ORG_NAME"],
+                    uniqueCN,
+                ),
+                "--keystore-password=%s" % basedefs.CONST_CA_PASS,
             ]
 
             out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_RC_CODE, maskList=[basedefs.CONST_CA_PASS])
+
+            # Enroll certificates
+            for name in ('engine', 'apache', 'jboss'):
+                utils.execCmd(
+                    cmdList=(
+                        os.path.join(basedefs.DIR_ENGINE_BIN, "pki-enroll-pkcs12.sh"),
+                        "--name=%s" % name,
+                        "--password=%s" % basedefs.CONST_CA_PASS,
+                        "--subject=/C=%s/O=%s/CN=%s" % (
+                            basedefs.CONST_CA_COUNTRY,
+                            controller.CONF["ORG_NAME"],
+                            controller.CONF["HOST_FQDN"],
+                        ),
+                    ),
+                    failOnError=True,
+                    msg=output_messages.ERR_RC_CODE,
+                    maskList=[basedefs.CONST_CA_PASS],
+                )
 
             # Extract non password key for log collector
             cmd = [

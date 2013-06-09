@@ -11,9 +11,6 @@ import java.io.OutputStream;
 import java.nio.charset.Charset;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.TimeZone;
 
 import org.apache.commons.codec.binary.Base64;
 import org.ovirt.engine.core.common.config.Config;
@@ -59,22 +56,16 @@ public class OpenSslCAWrapper {
 
     public static String signCertificateRequest(
         String request,
-        String label,
         String hostname
     ) throws IOException {
         EngineLocalConfig config = EngineLocalConfig.getInstance();
-        File pkicertdir = new File(config.getPKIDir(), "certs");
-        File pkireqdir = new File(config.getPKIDir(), "requests");
-        File signRequestBatch = new File(config.getPKIDir(), "SignReq.sh");
-        String reqFileName = String.format("%1$sreq.pem", label);
-        String certFileName = String.format("%1$scert.pem", label);
 
         OutputStream os = null;
         try {
             os = new FileOutputStream(
                 new File(
-                    pkireqdir,
-                    reqFileName
+                    new File(config.getPKIDir(), "requests"),
+                    String.format("%s.req", hostname)
                 )
             );
             os.write(request.getBytes(Charset.forName("UTF-8")));
@@ -92,38 +83,41 @@ public class OpenSslCAWrapper {
 
         if (
             !new OpenSslCAWrapper().signCertificateRequest(
-                reqFileName,
-                hostname,
-                Config.<Integer> GetValue(ConfigValues.VdsCertificateValidityInYears) * 365,
-                certFileName,
-                signRequestBatch
+                new File(new File(config.getUsrDir(), "bin"), "pki-enroll-request.sh"),
+                hostname
             )
         ) {
             throw new RuntimeException("Certificate enrollment failed");
         }
 
-        return FileUtil.readAllText(new File(pkicertdir, certFileName).getPath());
+        return FileUtil.readAllText(
+            new File(new File(config.getPKIDir(), "certs"),
+            String.format("%s.cer", hostname)
+        ).getPath());
     }
 
     public final boolean signCertificateRequest(
-        String requestFileName,
-        String hostname,
-        int days,
-        String signedCertificateFileName,
-        File signRequestBatch
+        File executable,
+        String hostname
     ) {
         log.debug("Entered signCertificateRequest");
         boolean returnValue = true;
-        if (signRequestBatch.exists()) {
+        if (executable.exists()) {
             String organization = Config.<String> GetValue(ConfigValues.OrganizationName);
+            int days = Config.<Integer> GetValue(ConfigValues.VdsCertificateValidityInYears) * 365;
             Integer signatureTimeout = Config.<Integer> GetValue(ConfigValues.SignCertTimeoutInSeconds);
-            String[] command_array =
-                    createCommandArray(signatureTimeout, signRequestBatch.getAbsolutePath(), requestFileName,
-                            hostname, organization, days,
-                            signedCertificateFileName);
-            returnValue = runCommandArray(command_array, signatureTimeout);
+            returnValue = runCommandArray(
+                new String[] {
+                    executable.getAbsolutePath(),
+                    String.format("--name=%s", hostname),
+                    String.format("--subject=/O=%s/CN=%s", organization, hostname),
+                    String.format("--days=%s", days),
+                    String.format("--timeout=%s", signatureTimeout / 2)
+                },
+                signatureTimeout
+            );
         } else {
-            log.error(String.format("Sign certificate request file '%s' not found", signRequestBatch));
+            log.error(String.format("Sign certificate request file '%s' not found", executable.getPath()));
             returnValue = false;
         }
         log.debug("End of signCertificateRequest");
@@ -210,39 +204,6 @@ public class OpenSslCAWrapper {
             log.error("IOException while trying to read from buffer", e);
         }
         return returnString.toString();
-    }
-
-    /**
-     * Prepares a String array in order to run the SignReq.sh script
-     * @param signatureTimeout
-     * @param signRequestBatch
-     *            the script name
-     * @param requestFileName
-     * @param days
-     * @param signedCertificateFileName
-     * @return the command_array ready to run
-     */
-    private String[] createCommandArray(Integer signatureTimeout,
-            String signRequestBatch,
-            String requestFileName,
-            String hostname,
-            String organization,
-            int days,
-            String signedCertificateFileName) {
-        log.debug("Building command array for Sign Certificate request script");
-        EngineLocalConfig config = EngineLocalConfig.getInstance();
-        String baseDirectoryPath = config.getPKIDir().getAbsolutePath();
-        String keystorePass = config.getPKIEngineStorePassword();
-        Calendar yesterday = Calendar.getInstance();
-        yesterday.add(Calendar.DATE, -1);
-        SimpleDateFormat format = new SimpleDateFormat("yyMMddHHmmssZ");
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String[] command_array = { signRequestBatch, requestFileName, signedCertificateFileName, "" + days,
-                baseDirectoryPath, format.format(yesterday.getTime()), keystorePass,
-                hostname, organization,
-                "" + (signatureTimeout / 2) };
-        log.debug("Finished building command array for Sign Certificate request script");
-        return command_array;
     }
 
     /**

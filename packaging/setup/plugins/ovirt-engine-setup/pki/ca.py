@@ -168,25 +168,39 @@ class Plugin(plugin.PluginBase):
                     ),
                 )
 
-        yesterday = datetime.datetime.utcnow() - datetime.timedelta(1)
         self.execute(
             (
                 osetupcons.FileLocations.OVIRT_ENGINE_PKI_CA_CREATE,
-                self.environment[osetupcons.ConfigEnv.FQDN],
-                self.environment[osetupcons.PKIEnv.COUNTRY],
-                self.environment[osetupcons.PKIEnv.ORG],
-                'engine',
-                self.environment[osetupcons.PKIEnv.STORE_PASS],
-                yesterday.strftime('%y%m%d%H%M%S+0000'),
-                osetupcons.FileLocations.OVIRT_ENGINE_PKIDIR,
-                '%s.%s' % (
+                '--subject=/C=%s/O=%s/CN=%s.%s' % (
+                    self.environment[osetupcons.PKIEnv.COUNTRY],
+                    self.environment[osetupcons.PKIEnv.ORG],
                     self.environment[
                         osetupcons.ConfigEnv.FQDN
                     ][:MAX_HOST_FQDN_LEN],
                     random.randint(10000, 99999),
-                )
+                ),
+                '--keystore-password=%s' % (
+                    self.environment[osetupcons.PKIEnv.STORE_PASS],
+                ),
             ),
         )
+
+        for name in ('engine', 'apache', 'jboss'):
+            self.execute(
+                (
+                    osetupcons.FileLocations.OVIRT_ENGINE_PKI_CA_ENROLL,
+                    '--name=%s' % name,
+                    '--password=%s' % (
+                        self.environment[osetupcons.PKIEnv.STORE_PASS],
+                    ),
+                    '--subject=/C=%s/O=%s/CN=%s' % (
+                        self.environment[osetupcons.PKIEnv.COUNTRY],
+                        self.environment[osetupcons.PKIEnv.ORG],
+                        self.environment[osetupcons.ConfigEnv.FQDN],
+                    ),
+                ),
+            )
+
         uninstall_files.extend(
             (
                 osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CERT,

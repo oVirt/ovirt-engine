@@ -1,0 +1,29 @@
+
+PKIDIR="@ENGINE_PKI@"
+USRDIR="@ENGINE_USR@"
+BINDIR="${USRDIR}/bin"
+
+die() {
+	local m="$1"
+	echo "$m" >&2
+	exit 1
+}
+
+common_backup() {
+	local time="$(date +"%Y%m%d%H%M%S")"
+
+	while [ -n "$1" ]; do
+		local f="$1"
+		shift
+		[ -f "${f}" ] && cp -a "${f}" "${f}.${time}"
+	done
+}
+
+common_restore_perms() {
+	local pkidir="$1"
+
+	# openssl always reset ownership
+	# of these files, so we have to reset
+	# our defaults
+	chown --reference="${pkidir}" "${pkidir}"/serial.txt* "${pkidir}"/database.txt* "${pkidir}"/.rnd* > /dev/null 2>&1
+}
