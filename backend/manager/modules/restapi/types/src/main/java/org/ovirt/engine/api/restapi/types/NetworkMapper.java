@@ -28,6 +28,9 @@ public class NetworkMapper {
         if (model.isSetDescription()) {
             entity.setDescription(model.getDescription());
         }
+        if (model.isSetComment()) {
+            entity.setComment(model.getComment());
+        }
         if (model.isSetDataCenter() && model.getDataCenter().isSetId()) {
             entity.setDataCenterId(GuidUtils.asGuid(model.getDataCenter().getId()));
         }
@@ -79,6 +82,7 @@ public class NetworkMapper {
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
         model.setDescription(entity.getDescription());
+        model.setComment(entity.getComment());
         if (entity.getDataCenterId() != null) {
             DataCenter dataCenter = new DataCenter();
             dataCenter.setId(entity.getDataCenterId().toString());

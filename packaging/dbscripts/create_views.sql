@@ -1108,6 +1108,7 @@ AS
 SELECT network.id AS id,
    network.name AS name,
    network.description AS description,
+   network.free_text_comment AS free_text_comment,
    network.type AS type,
    network.addr AS addr,
    network.subnet AS subnet,

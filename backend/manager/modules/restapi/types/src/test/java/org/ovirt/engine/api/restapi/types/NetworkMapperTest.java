@@ -18,6 +18,7 @@ public class NetworkMapperTest extends AbstractInvertibleMappingTest<Network, or
         assertEquals(model.getName(), transform.getName());
         assertEquals(model.getId(), transform.getId());
         assertEquals(model.getDescription(), transform.getDescription());
+        assertEquals(model.getComment(), transform.getComment());
         assertNotNull(transform.getDataCenter());
         assertEquals(model.getDataCenter().getId(), transform.getDataCenter().getId());
         assertNotNull(transform.getIp());

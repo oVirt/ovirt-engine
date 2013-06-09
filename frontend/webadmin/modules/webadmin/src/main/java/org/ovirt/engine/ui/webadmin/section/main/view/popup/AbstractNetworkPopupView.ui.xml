@@ -73,6 +73,7 @@
 									<e:ListModelListBoxEditor ui:field="dataCenterEditor"/>
 									<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 									<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+									<e:EntityModelTextBoxEditor ui:field="commentEditor" />
 								</g:FlowPanel>
                         		<g:FlowPanel addStyleNames="{style.sectionStyle}">
 									<g:Label ui:field="exportLabel" addStyleNames="{style.mainLabel}" />

@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.Commented;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
@@ -18,7 +19,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class Network extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, Nameable {
+public class Network extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, Nameable, Commented {
     private static final long serialVersionUID = 7357288865938773402L;
 
     private Guid id;
@@ -30,6 +31,8 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String description;
+
+    private String comment;
 
     private Integer type;
 
@@ -101,6 +104,14 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
 
     public void setDescription(String value) {
         this.description = value;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String value) {
+        comment = value;
     }
 
     @Override
@@ -207,6 +218,8 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
                 .append(getId())
                 .append(", description=")
                 .append(getDescription())
+                .append(", comment=")
+                .append(getComment())
                 .append(", subnet=")
                 .append(getSubnet())
                 .append(", gateway=")

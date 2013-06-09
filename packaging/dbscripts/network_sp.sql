@@ -8,6 +8,7 @@
 
 Create or replace FUNCTION Insertnetwork(v_addr VARCHAR(50) ,
 	v_description VARCHAR(4000) ,
+	v_free_text_comment text,
 	v_id UUID,
 	v_name VARCHAR(50),
 	v_subnet VARCHAR(20) ,
@@ -23,8 +24,8 @@ Create or replace FUNCTION Insertnetwork(v_addr VARCHAR(50) ,
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO network(addr, description, id, name, subnet, gateway, type, vlan_id, stp, storage_pool_id, mtu, vm_network, provider_network_provider_id, provider_network_external_id)
-	VALUES(v_addr, v_description, v_id, v_name, v_subnet, v_gateway, v_type, v_vlan_id, v_stp, v_storage_pool_id, v_mtu, v_vm_network, v_provider_network_provider_id, v_provider_network_external_id);
+INSERT INTO network(addr, description, free_text_comment, id, name, subnet, gateway, type, vlan_id, stp, storage_pool_id, mtu, vm_network, provider_network_provider_id, provider_network_external_id)
+	VALUES(v_addr, v_description, v_free_text_comment, v_id, v_name, v_subnet, v_gateway, v_type, v_vlan_id, v_stp, v_storage_pool_id, v_mtu, v_vm_network, v_provider_network_provider_id, v_provider_network_external_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -33,6 +34,7 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION Updatenetwork(v_addr VARCHAR(50) ,
 	v_description VARCHAR(4000) ,
+	v_free_text_comment text,
 	v_id UUID,
 	v_name VARCHAR(50),
 	v_subnet VARCHAR(20) ,
@@ -51,7 +53,7 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE network
-      SET addr = v_addr,description = v_description,name = v_name,subnet = v_subnet,
+      SET addr = v_addr,description = v_description, free_text_comment = v_free_text_comment, name = v_name,subnet = v_subnet,
       gateway = v_gateway,type = v_type,vlan_id = v_vlan_id,
       stp = v_stp,storage_pool_id = v_storage_pool_id, mtu = v_mtu,
       vm_network = v_vm_network,
@@ -180,7 +182,7 @@ LANGUAGE plpgsql;
 
 
 DROP TYPE IF EXISTS networkViewClusterType CASCADE;
-CREATE TYPE networkViewClusterType AS(id uuid,name VARCHAR(50),description VARCHAR(4000),type INTEGER,
+CREATE TYPE networkViewClusterType AS(id uuid,name VARCHAR(50),description VARCHAR(4000), free_text_comment text, type INTEGER,
             addr VARCHAR(50),subnet VARCHAR(20),gateway VARCHAR(20),vlan_id INTEGER,stp BOOLEAN,storage_pool_id UUID,
 	    mtu INTEGER, vm_network BOOLEAN,
 	    provider_network_provider_id UUID, provider_network_external_id TEXT,
@@ -195,6 +197,7 @@ RETURN QUERY SELECT
     network.id,
     network.name,
     network.description,
+    network.free_text_comment,
     network.type,
     network.addr,
     network.subnet,

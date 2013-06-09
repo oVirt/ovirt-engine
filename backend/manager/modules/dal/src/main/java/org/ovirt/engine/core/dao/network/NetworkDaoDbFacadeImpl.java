@@ -101,6 +101,7 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
         return getCustomMapSqlParameterSource()
                 .addValue("addr", network.getAddr())
                 .addValue("description", network.getDescription())
+                .addValue("free_text_comment", network.getComment())
                 .addValue("id", network.getId())
                 .addValue("name", network.getName())
                 .addValue("subnet", network.getSubnet())
@@ -149,6 +150,7 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
             entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setName(rs.getString("name"));
             entity.setDescription(rs.getString("description"));
+            entity.setComment(rs.getString("free_text_comment"));
             entity.setType((Integer) rs.getObject("type"));
             entity.setAddr(rs.getString("addr"));
             entity.setSubnet(rs.getString("subnet"));

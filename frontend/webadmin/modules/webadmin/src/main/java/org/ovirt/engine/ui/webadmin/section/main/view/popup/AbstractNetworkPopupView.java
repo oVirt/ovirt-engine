@@ -75,6 +75,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Path(value = "description.entity")
     public EntityModelTextBoxEditor descriptionEditor;
 
+    @UiField
+    @Path(value = "comment.entity")
+    public EntityModelTextBoxEditor commentEditor;
+
     @UiField(provided = true)
     @Path(value = "export.entity")
     @WithElementId("export")
@@ -176,6 +180,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         exportEditor.setLabel(constants.exportCheckboxLabel());
         externalProviderEditor.setLabel(constants.externalProviderLabel());
         networkLabel.setLabel(constants.networkLabel());
+        commentEditor.setLabel(constants.commentLabel());
         isVmNetworkEditor.setLabel(constants.vmNetworkLabel());
         vlanTagging.setLabel(constants.enableVlanTagLabel());
         hasMtuEditor.setLabel(constants.overrideMtuLabel());

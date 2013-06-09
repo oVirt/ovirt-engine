@@ -4,6 +4,7 @@ package org.ovirt.engine.core.searchbackend;
 public class NetworkConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     private static final String NAME = "NAME";
     private static final String DESCRIPTION = "DESCRIPTION";
+    private static final String COMMENT = "COMMENT";
     private static final String VLAN_ID = "VLANID";
     private static final String STP = "STP";
     private static final String MTU = "MTU";
@@ -14,6 +15,7 @@ public class NetworkConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         // Building the basic verbs dict.
         mVerbs.add(NAME);
         mVerbs.add(DESCRIPTION);
+        mVerbs.add(COMMENT);
         mVerbs.add(VLAN_ID);
         mVerbs.add(STP);
         mVerbs.add(MTU);
@@ -26,6 +28,7 @@ public class NetworkConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         // Building the types dict.
         getTypeDictionary().put(NAME, String.class);
         getTypeDictionary().put(DESCRIPTION, String.class);
+        getTypeDictionary().put(COMMENT, String.class);
         getTypeDictionary().put(VLAN_ID, Integer.class);
         getTypeDictionary().put(STP, Boolean.class);
         getTypeDictionary().put(MTU, Integer.class);
@@ -35,6 +38,7 @@ public class NetworkConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         // building the ColumnName dict.
         columnNameDict.put(NAME, "name");
         columnNameDict.put(DESCRIPTION, "description");
+        columnNameDict.put(COMMENT, "free_text_comment");
         columnNameDict.put(VLAN_ID, "vlan_id");
         columnNameDict.put(STP, "stp");
         columnNameDict.put(MTU, "mtu");

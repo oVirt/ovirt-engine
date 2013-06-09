@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkRoleColumnHelper;
 
 import com.google.gwt.core.client.GWT;
@@ -89,6 +90,8 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
             }
         };
         getTable().addColumn(descriptionColumn, constants.descriptionNetwork(), "300px"); //$NON-NLS-1$
+
+        getTable().addColumn(new CommentColumn<NetworkView>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
 
         SafeHtmlWithSafeHtmlTooltipColumn<NetworkView> roleColumn =
                 new SafeHtmlWithSafeHtmlTooltipColumn<NetworkView>() {

@@ -302,6 +302,7 @@ public final class Cloner
 
         obj.setAddr(instance.getAddr());
         obj.setDescription(instance.getDescription());
+        obj.setComment(instance.getComment());
         obj.setId(instance.getId());
         obj.setName(instance.getName());
         obj.setSubnet(instance.getSubnet());

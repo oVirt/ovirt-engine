@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -30,6 +31,7 @@ public abstract class NetworkModel extends Model
     private EntityModel export;
     private ListModel externalProviders;
     private EntityModel networkLabel;
+    private EntityModel privateComment;
     private EntityModel privateVLanTag;
     private EntityModel privateIsStpEnabled;
     private EntityModel privateHasVLanTag;
@@ -54,6 +56,7 @@ public abstract class NetworkModel extends Model
         this.sourceListModel = sourceListModel;
         setName(new EntityModel());
         setDescription(new EntityModel());
+        setComment(new EntityModel());
         setDataCenters(new ListModel());
         getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener() {
 
@@ -155,6 +158,14 @@ public abstract class NetworkModel extends Model
 
     public void setNetworkLabel(EntityModel networkLabel) {
         this.networkLabel = networkLabel;
+    }
+
+    public EntityModel getComment() {
+        return privateComment;
+    }
+
+    private void setComment(EntityModel value) {
+        privateComment = value;
     }
 
     public EntityModel getVLanTag()
@@ -298,6 +309,8 @@ public abstract class NetworkModel extends Model
         tempVar3.setMaxLength(40);
         getDescription().validateEntity(new IValidation[] { tempVar3 });
 
+        getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
+
         getVLanTag().setIsValid(true);
         if ((Boolean) getHasVLanTag().getEntity())
         {
@@ -319,7 +332,7 @@ public abstract class NetworkModel extends Model
         getExternalProviders().validateSelectedItem(new IValidation [] { new NotEmptyValidation() });
 
         return getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()
-                && getMtu().getIsValid() && getExternalProviders().getIsValid();
+                && getMtu().getIsValid() && getExternalProviders().getIsValid() && getComment().getIsValid();
     }
 
     protected boolean firstInit = true;
@@ -366,6 +379,7 @@ public abstract class NetworkModel extends Model
         network.setStp((Boolean) getIsStpEnabled().getEntity());
         network.setDescription((String) getDescription().getEntity());
         network.setLabel((String) getNetworkLabel().getEntity());
+        network.setComment((String) getComment().getEntity());
         network.setVmNetwork((Boolean) getIsVmNetwork().getEntity());
 
         network.setMtu(0);
