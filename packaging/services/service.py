@@ -300,7 +300,6 @@ class Daemon(Base):
 
     def __init__(self):
         super(Daemon, self).__init__()
-        self._umask = 0o022
 
     def check(
         self,
@@ -485,7 +484,7 @@ class Daemon(Base):
         self._logger.debug('daemon entry pid=%s', os.getpid())
         self._logger.debug('background=%s', self._options.background)
 
-        os.umask(self._umask)
+        os.umask(0o022)
 
         self.daemonSetup()
 
