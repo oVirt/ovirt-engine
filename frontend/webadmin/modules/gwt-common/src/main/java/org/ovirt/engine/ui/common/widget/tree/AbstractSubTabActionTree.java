@@ -78,7 +78,7 @@ public class AbstractSubTabActionTree<M extends SearchableListModel, R, N> exten
         });
 
         actionPanel = createActionPanel(modelProvider);
-        if (actionPanel != null) {
+        if (actionPanel != null && tree != null) {
             actionPanelContainer.add(actionPanel);
             actionPanel.addContextMenuHandler(tree);
         }
