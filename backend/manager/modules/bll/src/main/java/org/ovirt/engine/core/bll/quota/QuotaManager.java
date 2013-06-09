@@ -968,7 +968,7 @@ public class QuotaManager {
     private QuotaUsagePerUser addQuotaEntry(Quota quota) {
         // if quota is not null (found in cache or DB) - add entry to quotaPerUserUsageEntityMap
         if (quota != null) {
-            double storageLimit = 0;
+            long storageLimit = 0;
             double storageUsage = 0;
             int cpuLimit = 0;
             int cpuUsage = 0;
@@ -985,7 +985,7 @@ public class QuotaManager {
                     if (QuotaStorage.UNLIMITED.equals(quotaStorage.getStorageSizeGB())) {
                         storageLimit = QuotaStorage.UNLIMITED; // Do not break because usage is still counting
                     }
-                    if (!Double.valueOf(storageLimit).equals(QuotaStorage.UNLIMITED)) {
+                    if (storageLimit != QuotaStorage.UNLIMITED) {
                         storageLimit += quotaStorage.getStorageSizeGB();
                     }
                     storageUsage += quotaStorage.getStorageSizeGBUsage();
