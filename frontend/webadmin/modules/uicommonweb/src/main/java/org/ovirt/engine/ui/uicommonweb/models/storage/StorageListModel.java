@@ -349,6 +349,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.setStorage(storage);
         model.getName().setEntity(storage.getStorageName());
         model.getDescription().setEntity(storage.getDescription());
+        model.getComment().setEntity(storage.getComment());
         model.setOriginalName(storage.getStorageName());
 
         model.getDataCenter().setIsChangable(false);
@@ -358,6 +359,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getHost().setIsChangable(false);
         model.getName().setIsChangable(isStorageEditable);
         model.getDescription().setIsChangable(isStorageEditable);
+        model.getComment().setIsChangable(isStorageEditable);
         //set the field domain type to non editable
         model.getAvailableStorageItems().setIsChangable(false);
         model.setIsChangable(isStorageEditable);
@@ -623,6 +625,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.setSystemTreeSelectedItem(getSystemTreeSelectedItem());
         model.getName().setIsAvailable(false);
         model.getDescription().setIsAvailable(false);
+        model.getComment().setIsAvailable(false);
         model.getFormat().setIsAvailable(false);
 
         ArrayList<IStorageModel> items = new ArrayList<IStorageModel>();
@@ -1226,6 +1229,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
         storageDomain.setStorageName((String) model.getName().getEntity());
         storageDomain.setDescription((String) model.getDescription().getEntity());
+        storageDomain.setComment((String) model.getComment().getEntity());
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
         if (isNew) {
@@ -1472,6 +1476,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         storageDomain.setStorageName((String) model.getName().getEntity());
         storageDomain.setDescription((String) model.getDescription().getEntity());
+        storageDomain.setComment((String) model.getComment().getEntity());
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
         if (isNew)
@@ -1710,6 +1715,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         storageDomain.setStorageName((String) model.getName().getEntity());
         storageDomain.setDescription((String) model.getDescription().getEntity());
+        storageDomain.setComment((String) model.getComment().getEntity());
 
         if (isNew)
         {
@@ -1857,6 +1863,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         storageDomain.setStorageName((String) model.getName().getEntity());
         storageDomain.setDescription((String) model.getDescription().getEntity());
+        storageDomain.setComment((String) model.getComment().getEntity());
 
         if (isNew)
         {

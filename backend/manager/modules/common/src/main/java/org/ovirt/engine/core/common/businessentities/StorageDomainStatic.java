@@ -29,6 +29,8 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
             groups = { CreateEntity.class, UpdateEntity.class })
     private String description;
 
+    private String comment;
+
     private StorageDomainType storageType = StorageDomainType.Master;
 
     private StorageType storagePoolType = StorageType.UNKNOWN;
@@ -142,6 +144,14 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String value) {
+        comment = value;
     }
 
     @Override

@@ -111,6 +111,16 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         this.description = description;
     }
 
+    private EntityModel comment;
+
+    public EntityModel getComment() {
+        return comment;
+    }
+
+    public void setComment(EntityModel value) {
+        comment = value;
+    }
+
     private ListModel privateDataCenter;
 
     public ListModel getDataCenter()
@@ -196,6 +206,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
         setName(new EntityModel());
         setDescription(new EntityModel());
+        setComment(new EntityModel());
         setDataCenterAlert(new EntityModel());
         setDataCenter(new ListModel());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
@@ -690,7 +701,10 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 new LengthValidation(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE),
                 new SpecialAsciiI18NOrNoneValidation() });
 
-        return getName().getIsValid() && getHost().getIsValid() && getIsValid() && getSelectedItem().validate() && getDescription().getIsValid();
+        getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
+
+        return getName().getIsValid() && getHost().getIsValid() && getIsValid() && getSelectedItem().validate()
+                && getDescription().getIsValid() && getComment().getIsValid();
     }
 
     private SystemTreeItemModel privateSystemTreeSelectedItem;

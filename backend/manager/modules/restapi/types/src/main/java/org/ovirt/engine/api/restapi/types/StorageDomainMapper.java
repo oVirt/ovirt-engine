@@ -28,6 +28,9 @@ public class StorageDomainMapper {
         if (model.isSetDescription()) {
             entity.setDescription(model.getDescription());
         }
+        if(model.isSetComment()) {
+            entity.setComment(model.getComment());
+        }
         if (model.isSetType()) {
             StorageDomainType storageDomainType = StorageDomainType.fromValue(model.getType());
             if (storageDomainType != null) {
@@ -114,6 +117,7 @@ public class StorageDomainMapper {
         model.setId(entity.getId().toString());
         model.setName(entity.getStorageName());
         model.setDescription(entity.getDescription());
+        model.setComment(entity.getComment());
         model.setType(map(entity.getStorageDomainType(), null));
         model.setMaster(entity.getStorageDomainType() == org.ovirt.engine.core.common.businessentities.StorageDomainType.Master);
         if (entity.getStatus() != null) {

@@ -87,6 +87,7 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
                 .addValue("storage", domain.getStorage())
                 .addValue("storage_name", domain.getStorageName())
                 .addValue("storage_description", domain.getDescription())
+                .addValue("storage_comment", domain.getComment())
                 .addValue("storage_type", domain.getStorageType())
                 .addValue("storage_domain_type",
                         domain.getStorageDomainType())
@@ -110,6 +111,7 @@ public class StorageDomainStaticDAODbFacadeImpl extends DefaultGenericDaoDbFacad
             entity.setStorage(rs.getString("storage"));
             entity.setStorageName(rs.getString("storage_name"));
             entity.setDescription(rs.getString("storage_description"));
+            entity.setComment(rs.getString("storage_comment"));
             entity.setStorageType(StorageType.forValue(rs
                     .getInt("storage_type")));
             entity.setStorageDomainType(StorageDomainType.forValue(rs

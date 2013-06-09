@@ -48,6 +48,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         // Allow change only to name & description field
         props.remove("storageName");
         props.remove("description");
+        props.remove("comment");
         if (returnValue && props.size() > 0) {
             log.warnFormat("There was an attempt to update the following fields although they are not allowed to be updated: {0}",
                     StringUtils.join(props, ","));

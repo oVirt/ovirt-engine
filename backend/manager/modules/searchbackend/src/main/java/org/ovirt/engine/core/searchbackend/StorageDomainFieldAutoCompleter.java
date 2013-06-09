@@ -14,6 +14,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         mVerbs.add("SIZE");
         mVerbs.add("USED");
         mVerbs.add("COMMITTED");
+        mVerbs.add("COMMENT");
 
         // Building the autoCompletion Dict
         buildCompletions();
@@ -25,6 +26,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         getTypeDictionary().put("SIZE", Integer.class);
         getTypeDictionary().put("USED", Integer.class);
         getTypeDictionary().put("COMMITTED", Integer.class);
+        getTypeDictionary().put("COMMENT", String.class);
 
         // building the ColumnName Dict
         columnNameDict.put("NAME", "storage_name");
@@ -34,6 +36,7 @@ public class StorageDomainFieldAutoCompleter extends BaseConditionFieldAutoCompl
         columnNameDict.put("SIZE", "available_disk_size");
         columnNameDict.put("USED", "used_disk_size");
         columnNameDict.put("COMMITTED", "commited_disk_size");
+        columnNameDict.put("COMMENT", "storage_comment");
 
         // Building the validation dict
         buildBasicValidationTable();
