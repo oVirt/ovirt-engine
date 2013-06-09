@@ -590,7 +590,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
 
         VM vm = getEntity();
-        if (vm == null || !vm.getStatus().isUpOrPaused()) {
+        if (vm == null || !vm.getStatus().isUpOrPaused() || vm.isStateless()) {
             return false;
         }
 
