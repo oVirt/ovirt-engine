@@ -27,7 +27,7 @@
 			<g:Image resource='{resources.userImage}' addStyleNames="{style.imageStyle}"/>
 			<g:RadioButton name="rolesRadioButton" ui:field="userRolesRadioButton"/>
 		</g:HorizontalPanel>
-		<g:SimplePanel ui:field="rolesTabContent" height="400px" />
+		<g:SimplePanel ui:field="rolesTabContent" height="495px" />
 	</g:VerticalPanel>
 
 </ui:UiBinder>

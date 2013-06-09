@@ -3,9 +3,12 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
 	<ui:style>
-		
+	    .panel {
+		    padding-right: 4px;
+		    height: 525px;
+		}
 	</ui:style>
 
-	<g:SimplePanel ui:field="tabContent" height="400px" />
+	<g:SimplePanel ui:field="tabContent" addStyleNames="{style.panel}" />
 
 </ui:UiBinder>
