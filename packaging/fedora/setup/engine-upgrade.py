@@ -1471,6 +1471,10 @@ def main(options):
 
 if __name__ == '__main__':
     try:
+        # make sure we create files
+        # as we intend to
+        os.umask(0022)
+
         # Change to the root directory to avoid problems if our current
         # working directory is deleted:
         os.chdir("/")

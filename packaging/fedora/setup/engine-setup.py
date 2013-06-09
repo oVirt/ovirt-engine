@@ -2464,6 +2464,11 @@ def initPluginsSequences():
         plugin.initSequences(controller)
 
 def initMain():
+
+    # make sure we create files
+    # as we intend to
+    os.umask(0022)
+
     #verify that root is the user executing the script - only supported user for now.
     #TODO: check how we can change this to user rhevm
     _verifyUserPermissions()
