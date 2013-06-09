@@ -37,6 +37,7 @@ sign () {
         -days "$exp_time" -out "certs/$out_file" -startdate "$start_time" \
         ${req_name:+-subj "/O=$req_org/CN=$req_name"} \
         ${EXTRA_COMMAND}
+      chmod a+r "certs/$out_file"
 }
 
 result=9

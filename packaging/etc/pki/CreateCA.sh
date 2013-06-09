@@ -21,6 +21,7 @@ echo "C = $1" >> cacert.conf
 echo "O = $2" >> cacert.conf
 echo "CN = $3" >> cacert.conf
 cp cert.template cert.conf
+chmod a+r cacert.conf cert.conf
 
 #
 # openssl ca directory must
@@ -42,3 +43,5 @@ openssl genrsa -out private/ca.pem 2048 && \
 		-config openssl.conf -extfile cacert.conf \
 		-extensions v3_ca -batch && \
 	openssl x509 -in ca.pem -out certs/ca.der
+chmod a+r ca.pem certs/ca.der
+chown --reference=private private/ca.pem

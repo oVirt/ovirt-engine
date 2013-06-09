@@ -32,6 +32,7 @@ enroll_certificate() {
 	echo " "
 	echo "}} Creating Engine Key..."
 	openssl req -newkey rsa:2048 -days 365 -out "requests/${name}.req" -keyout "${ENGINE_KEY}" -passout "pass:${pass}" -subj "${subj}" || die "Cannot create certificate request"
+	chmod go-rwx "requests/${name}.req" "${ENGINE_KEY}"
 
 	echo " "
 	echo "}} Signing certificate request..."
@@ -41,6 +42,7 @@ enroll_certificate() {
 	echo " "
 	echo "}} Creating PKCS#12 store..."
 	openssl pkcs12 -export -in "certs/${name}.cer" -inkey "${ENGINE_KEY}" -passin "pass:${pass}" -out "keys/${name}.p12" -passout "pass:${pass}" || die "Cannot createPKCS#12"
+	chmod go-rwx "keys/${name}.p12"
 }
 
 # Set var's
@@ -76,6 +78,7 @@ echo "> Importing CA certificate..."
 # Generate truststore
 keytool -delete -noprompt -alias cacert -keystore ./.truststore -storepass "$PASS" > /dev/null 2>&1
 keytool -import -noprompt -trustcacerts -alias cacert -keypass "$PASS" -file certs/ca.der -keystore ./.truststore -storepass "$PASS"
+chmod a+r ./.truststore
 
 echo " "
 echo "} Creating client certificates for oVirt..."
