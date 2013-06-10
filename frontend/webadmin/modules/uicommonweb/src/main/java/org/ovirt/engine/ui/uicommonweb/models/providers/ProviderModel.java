@@ -45,86 +45,54 @@ public class ProviderModel extends Model {
     private final VdcActionType action;
     private final Provider provider;
 
-    private EntityModel privateName;
-    private ListModel privateType;
-    private EntityModel privateDescription;
-    private EntityModel privateUrl;
-    private EntityModel privateRequiresAuthentication;
-    private EntityModel privateUsername;
-    private EntityModel privatePassword;
-    private UICommand privateTestCommand;
-    private EntityModel privateTestResult;
+    private EntityModel name = new EntityModel();
+    private ListModel type = new ListModel();
+    private EntityModel description = new EntityModel();
+    private EntityModel url = new EntityModel();
+    private EntityModel requiresAuthentication = new EntityModel();
+    private EntityModel username = new EntityModel();
+    private EntityModel password = new EntityModel();
+    private UICommand testCommand;
+    private EntityModel testResult = new EntityModel();
 
     public EntityModel getName() {
-        return privateName;
-    }
-
-    private void setName(EntityModel value) {
-        privateName = value;
+        return name;
     }
 
     public ListModel getType() {
-        return privateType;
-    }
-
-    private void setType(ListModel value) {
-        privateType = value;
+        return type;
     }
 
     public EntityModel getDescription() {
-        return privateDescription;
-    }
-
-    private void setDescription(EntityModel value) {
-        privateDescription = value;
+        return description;
     }
 
     public EntityModel getUrl() {
-        return privateUrl;
-    }
-
-    private void setUrl(EntityModel value) {
-        privateUrl = value;
+        return url;
     }
 
     public EntityModel getRequiresAuthentication() {
-        return privateRequiresAuthentication;
-    }
-
-    private void setRequiresAuthentication(EntityModel value) {
-        privateRequiresAuthentication = value;
+        return requiresAuthentication;
     }
 
     public EntityModel getUsername() {
-        return privateUsername;
-    }
-
-    private void setUsername(EntityModel value) {
-        privateUsername = value;
+        return username;
     }
 
     public EntityModel getPassword() {
-        return privatePassword;
-    }
-
-    private void setPassword(EntityModel value) {
-        privatePassword = value;
+        return password;
     }
 
     public UICommand getTestCommand() {
-        return privateTestCommand;
+        return testCommand;
     }
 
     private void setTestCommand(UICommand value) {
-        privateTestCommand = value;
+        testCommand = value;
     }
 
     public EntityModel getTestResult() {
-        return privateTestResult;
-    }
-
-    private void setTestResult(EntityModel value) {
-        privateTestResult = value;
+        return testResult;
     }
 
     public ProviderModel(ListModel sourceListModel, VdcActionType action, Provider provider) {
@@ -132,25 +100,21 @@ public class ProviderModel extends Model {
         this.action = action;
         this.provider = provider;
 
-        setRequiresAuthentication(new EntityModel());
         getRequiresAuthentication().getEntityChangedEvent().addListener(new IEventListener() {
-
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean requiresAuthentication = (Boolean) privateRequiresAuthentication.getEntity();
-                getUsername().setIsChangable(requiresAuthentication);
-                getPassword().setIsChangable(requiresAuthentication);
+                boolean authenticationRequired = (Boolean) requiresAuthentication.getEntity();
+                getUsername().setIsChangable(authenticationRequired);
+                getPassword().setIsChangable(authenticationRequired);
             }
         });
 
-        setName(new EntityModel(provider.getName()));
-        setType(new ListModel());
-        setDescription(new EntityModel(provider.getDescription()));
-        setUrl(new EntityModel(provider.getUrl()));
-        setUsername(new EntityModel(provider.getUsername()));
-        setPassword(new EntityModel(provider.getPassword()));
+        getName().setEntity(provider.getName());
+        getDescription().setEntity(provider.getDescription());
+        getUrl().setEntity(provider.getUrl());
         getRequiresAuthentication().setEntity(provider.isRequiringAuthentication());
-        setTestResult(new EntityModel());
+        getUsername().setEntity(provider.getUsername());
+        getPassword().setEntity(provider.getPassword());
 
         List<ProviderType> allTypes = Arrays.asList(ProviderType.values());
         getType().setItems(allTypes);
@@ -184,16 +148,16 @@ public class ProviderModel extends Model {
     }
 
     private void flush() {
-        provider.setName((String) privateName.getEntity());
-        provider.setType((ProviderType) privateType.getSelectedItem());
-        provider.setDescription((String) privateDescription.getEntity());
-        provider.setUrl((String) privateUrl.getEntity());
+        provider.setName((String) name.getEntity());
+        provider.setType((ProviderType) type.getSelectedItem());
+        provider.setDescription((String) description.getEntity());
+        provider.setUrl((String) url.getEntity());
 
-        boolean requiresAuthentication = (Boolean) privateRequiresAuthentication.getEntity();
-        provider.setRequiringAuthentication(requiresAuthentication);
-        if (requiresAuthentication) {
-            provider.setUsername((String) privateUsername.getEntity());
-            provider.setPassword((String) privatePassword.getEntity());
+        boolean authenticationRequired = (Boolean) requiresAuthentication.getEntity();
+        provider.setRequiringAuthentication(authenticationRequired);
+        if (authenticationRequired) {
+            provider.setUsername((String) username.getEntity());
+            provider.setPassword((String) password.getEntity());
         }
     }
 
