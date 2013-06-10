@@ -222,6 +222,18 @@ public class HostInterfaceModel extends EntityModel
         this.originalNetParams = originalNetParams;
     }
 
+    private EntityModel gateway;
+
+    public EntityModel getGateway()
+    {
+        return gateway;
+    }
+
+    private void setGateway(EntityModel value)
+    {
+        gateway = value;
+    }
+
     public HostInterfaceModel() {
         this(false);
     }
@@ -231,6 +243,7 @@ public class HostInterfaceModel extends EntityModel
         setSetupNetworkMode(compactMode);
         setAddress(new EntityModel());
         setSubnet(new EntityModel());
+        setGateway(new EntityModel());
         setNetwork(new ListModel());
         getNetwork().getSelectedItemChangedEvent().addListener(this);
         setName(new EntityModel());
@@ -267,6 +280,7 @@ public class HostInterfaceModel extends EntityModel
             setBootProtocol(originalNetParams.getBootProtocol());
             getAddress().setEntity(originalNetParams.getAddress());
             getSubnet().setEntity(originalNetParams.getSubnet());
+            getGateway().setEntity(originalNetParams.getGateway());
         }
     }
 
@@ -313,6 +327,7 @@ public class HostInterfaceModel extends EntityModel
 
         getAddress().setIsValid(true);
         getSubnet().setIsValid(true);
+        getGateway().setIsValid(true);
     }
 
     private void updateCanSpecify()
@@ -320,6 +335,7 @@ public class HostInterfaceModel extends EntityModel
         boolean isChangable = bootProtocolsAvailable && getIsStaticAddress();
         getAddress().setIsChangable(isChangable);
         getSubnet().setIsChangable(isChangable);
+        getGateway().setIsChangable(isChangable);
     }
 
     public boolean validate()
@@ -328,13 +344,17 @@ public class HostInterfaceModel extends EntityModel
 
         getAddress().setIsValid(true);
         getSubnet().setIsValid(true);
+        getGateway().setIsValid(true);
 
         if (getIsStaticAddress())
         {
             getAddress().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
             getSubnet().validateEntity(new IValidation[] { new NotEmptyValidation(), new SubnetMaskValidation() });
+            if (getGateway().getEntity() != null) {
+                getGateway().validateEntity(new IValidation[] { new IpAddressValidation() });
+            }
         }
 
-        return getNetwork().getIsValid() && getAddress().getIsValid() && getSubnet().getIsValid();
+        return getNetwork().getIsValid() && getAddress().getIsValid() && getSubnet().getIsValid() && getGateway().getIsValid();
     }
 }

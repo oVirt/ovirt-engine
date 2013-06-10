@@ -308,6 +308,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 networkDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetwork.getName()));
                 networkDialogModel.getAddress().setEntity(entity.getAddress());
                 networkDialogModel.getSubnet().setEntity(entity.getSubnet());
+                networkDialogModel.getGateway().setEntity(entity.getGateway());
                 networkDialogModel.getName().setIsAvailable(false);
                 networkDialogModel.getBondingOptions().setIsAvailable(false);
 
@@ -330,6 +331,7 @@ public class HostSetupNetworksModel extends EntityModel {
                         entity.setBootProtocol(networkDialogModel.getBootProtocol());
                         entity.setAddress((String) networkDialogModel.getAddress().getEntity());
                         entity.setSubnet((String) networkDialogModel.getSubnet().getEntity());
+                        entity.setGateway((String) networkDialogModel.getGateway().getEntity());
 
                         if ((Boolean) networkDialogModel.getIsToSync().getEntity()) {
                             HostSetupNetworksModel.this.networksToSync.add(logicalNetwork.getName());

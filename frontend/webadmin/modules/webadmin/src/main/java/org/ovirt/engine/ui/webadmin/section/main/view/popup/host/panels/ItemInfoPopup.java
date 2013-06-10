@@ -133,9 +133,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         if (bootProtocol == NetworkBootProtocol.STATIC_IP) {
             addRow(constants.addressItemInfo(), entity.getAddress());
             addRow(constants.subnetItemInfo(), entity.getSubnet());
-            if (entity.getIsManagement()) {
-                addRow(constants.gatewayItemInfo(), entity.getGateway());
-            }
+            addRow(constants.gatewayItemInfo(), entity.getGateway());
         }
         if (nic instanceof BondNetworkInterfaceModel) {
             addRow(constants.bondOptionsItemInfo(), entity.getBondOptions());

@@ -127,14 +127,12 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             netParams.setBootProtocol(nicEntity.getBootProtocol());
             netParams.setAddress(nicEntity.getAddress());
             netParams.setSubnet(nicEntity.getSubnet());
+            netParams.setGateway(nicEntity.getGateway());
         } else {
             netParams.setBootProtocol(vlanNic.getEntity().getBootProtocol());
             netParams.setAddress(vlanNic.getEntity().getAddress());
             netParams.setSubnet(vlanNic.getEntity().getSubnet());
-        }
-
-        if (isManagement()) {
-            netParams.setGateway(!hasVlan() ? nicEntity.getGateway() : vlanNic.getEntity().getGateway());
+            netParams.setGateway(vlanNic.getEntity().getGateway());
         }
 
         getSetupModel().getNetworkToLastDetachParams().put(getName(), netParams);

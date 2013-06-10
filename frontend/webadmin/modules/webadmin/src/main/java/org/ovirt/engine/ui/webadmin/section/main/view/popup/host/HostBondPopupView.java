@@ -166,7 +166,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         bootProtocolLabel.asEditor().getSubEditor().setValue("   "); //$NON-NLS-1$
         address.setLabel(constants.ipHostPopup() + ":"); //$NON-NLS-1$
         subnet.setLabel(constants.subnetMaskHostPopup() + ":"); //$NON-NLS-1$
-        gateway.setLabel(constants.defaultGwHostPopup() + ":"); //$NON-NLS-1$
+        gateway.setLabel(constants.gwHostPopup() + ":"); //$NON-NLS-1$
         checkConnectivity.setLabel(constants.checkConHostPopup());
         info.setHTML(constants.changesTempHostPopup());
         commitChanges.setLabel(constants.saveNetConfigHostPopup());

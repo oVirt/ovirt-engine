@@ -27,6 +27,7 @@
 						<we:EnumRadioEditor ui:field="bootProtocol" />
 						<e:EntityModelTextBoxEditor ui:field="address" />
 						<e:EntityModelTextBoxEditor ui:field="subnet" />
+						<e:EntityModelTextBoxEditor ui:field="gateway" />
 						<g:HorizontalPanel>
 							<e:EntityModelCheckBoxEditor ui:field="isToSync" />
 							<d:InfoIcon ui:field="isToSyncInfo"/>

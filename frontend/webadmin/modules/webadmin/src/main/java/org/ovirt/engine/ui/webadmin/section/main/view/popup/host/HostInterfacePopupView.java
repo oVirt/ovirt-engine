@@ -79,6 +79,10 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
     @Path(value = "subnet.entity")
     EntityModelTextBoxEditor subnet;
 
+    @UiField
+    @Path(value = "gateway.entity")
+    EntityModelTextBoxEditor gateway;
+
     @UiField(provided = true)
     @Path(value = "checkConnectivity.entity")
     EntityModelCheckBoxEditor checkConnectivity;
@@ -165,6 +169,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         customEditor.setLabel(constants.customModeHostPopup() + ":"); //$NON-NLS-1$
         address.setLabel(constants.ipHostPopup() + ":"); //$NON-NLS-1$
         subnet.setLabel(constants.subnetMaskHostPopup() + ":"); //$NON-NLS-1$
+        gateway.setLabel(constants.gwHostPopup() + ":"); //$NON-NLS-1$
         checkConnectivity.setLabel(constants.checkConHostPopup() + ":"); //$NON-NLS-1$
         info.setHTML(constants.changesTempHostPopup());
         isToSync.setLabel(constants.syncNetwork());
@@ -232,6 +237,8 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
         isToSync.setVisible(false);
         isToSyncInfo.setVisible(false);
+
+        gateway.setVisible(false);
     }
 
     @Override

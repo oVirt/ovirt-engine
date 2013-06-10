@@ -30,6 +30,8 @@ public class SetupNetworksInterfacePopupView extends HostInterfacePopupView impl
         bondingModeEditor.setVisible(false);
         commitChanges.setVisible(false);
 
+        gateway.setVisible(true);
+
         isToSync.setVisible(true);
         if (object.getIsToSync().getIsChangable()){
             isToSyncInfo.setVisible(true);

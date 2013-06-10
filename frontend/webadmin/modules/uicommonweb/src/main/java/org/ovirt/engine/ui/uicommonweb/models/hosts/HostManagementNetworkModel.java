@@ -298,12 +298,15 @@ public class HostManagementNetworkModel extends EntityModel
 
         getAddress().setIsValid(true);
         getSubnet().setIsValid(true);
+        getGateway().setIsValid(true);
 
         if (getIsStaticAddress())
         {
             getAddress().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
             getSubnet().validateEntity(new IValidation[] { new NotEmptyValidation(), new SubnetMaskValidation() });
-            getGateway().validateEntity(new IValidation[] { new IpAddressValidation() });
+            if (getGateway().getEntity() != null) {
+                getGateway().validateEntity(new IValidation[] { new IpAddressValidation() });
+            }
         }
 
         return getInterface().getIsValid() && getAddress().getIsValid() && getSubnet().getIsValid() && getGateway().getIsValid();

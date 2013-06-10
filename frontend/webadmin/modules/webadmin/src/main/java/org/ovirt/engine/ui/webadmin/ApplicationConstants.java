@@ -2084,8 +2084,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Subnet Mask")
     String subnetMaskHostPopup();
 
-    @DefaultStringValue("Default Gateway")
-    String defaultGwHostPopup();
+    @DefaultStringValue("Gateway")
+    String gwHostPopup();
 
     @DefaultStringValue("Verify connectivity between Host and Engine")
     String checkConHostPopup();
