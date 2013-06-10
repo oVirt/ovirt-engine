@@ -47,7 +47,7 @@ def setupLogger():
 
     logger = logging.getLogger('ovirt')
     logger.propagate = False
-    if os.environ.get('OVIRT_ENGINE_SERVICE_DEBUG', '0') != '0':
+    if os.environ.get('OVIRT_SERVICE_DEBUG', '0') != '0':
         logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(logging.INFO)
