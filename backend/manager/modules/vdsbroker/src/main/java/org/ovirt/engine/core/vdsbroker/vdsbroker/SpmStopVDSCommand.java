@@ -94,7 +94,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
             break;
         default:
             super.ProceedProxyReturnValue();
-            InitializeVdsError(returnStatus);
+            initializeVdsError(returnStatus);
             break;
         }
     }

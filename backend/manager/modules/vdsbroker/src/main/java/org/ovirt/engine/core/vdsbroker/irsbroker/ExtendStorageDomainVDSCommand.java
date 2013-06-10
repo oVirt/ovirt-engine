@@ -35,7 +35,7 @@ public class ExtendStorageDomainVDSCommand<P extends ExtendStorageDomainVDSComma
             break;
         default:
             super.ProceedProxyReturnValue();
-            InitializeVdsError(returnStatus);
+            initializeVdsError(returnStatus);
             break;
         }
     }

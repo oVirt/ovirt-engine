@@ -31,7 +31,7 @@ public class HSMGetTaskStatusVDSCommand<P extends HSMTaskGuidBaseVDSCommandParam
 
         default:
             super.ProceedProxyReturnValue();
-            InitializeVdsError(returnStatus);
+            initializeVdsError(returnStatus);
             break;
         }
     }

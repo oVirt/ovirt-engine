@@ -118,7 +118,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     @Override
     protected boolean canDoAction() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-        boolean returnValue = super.canDoAction() && InitializeVds() && checkStorageDomainNameLengthValid();
+        boolean returnValue = super.canDoAction() && initializeVds() && checkStorageDomainNameLengthValid();
         if (returnValue && IsStorageWithSameNameExists()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
             returnValue = false;

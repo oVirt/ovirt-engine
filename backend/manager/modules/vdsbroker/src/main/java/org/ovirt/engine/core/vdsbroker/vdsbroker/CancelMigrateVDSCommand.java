@@ -30,7 +30,7 @@ public class CancelMigrateVDSCommand<P extends VdsAndVmIDVDSParametersBase> exte
         case noVM:
             VDSExceptionBase outEx =
                     createDefaultConcreteException("Cancel migration has failed. Please try again in a few moments and track the VM's event log for details");
-            InitializeVdsError(returnStatus);
+            initializeVdsError(returnStatus);
             outEx.setVdsError(new VDSError(VdcBllErrors.MIGRATION_CANCEL_ERROR_NO_VM, getReturnStatus().mMessage));
             throw outEx;
         default:

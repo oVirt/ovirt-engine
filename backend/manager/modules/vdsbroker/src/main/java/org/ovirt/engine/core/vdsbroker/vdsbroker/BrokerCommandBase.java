@@ -25,7 +25,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         return status.mStatus;
     }
 
-    protected void InitializeVdsError(VdcBllErrors returnStatus) {
+    protected void initializeVdsError(VdcBllErrors returnStatus) {
         VDSError tempVar = new VDSError();
         tempVar.setCode(returnStatus);
         tempVar.setMessage(getReturnStatus().mMessage);

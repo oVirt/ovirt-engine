@@ -64,7 +64,7 @@ public class AddStorageServerConnectionCommandTest {
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
         parameters.setStoragePoolId(Guid.Empty);
-        doReturn(true).when(command).InitializeVds();
+        doReturn(true).when(command).initializeVds();
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 

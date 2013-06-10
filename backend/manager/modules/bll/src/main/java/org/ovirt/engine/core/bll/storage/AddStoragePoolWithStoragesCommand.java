@@ -287,7 +287,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     @Override
     protected boolean canDoAction() {
         boolean returnValue = super.canDoAction() && checkStoragePool()
-                && CheckStoragePoolStatus(StoragePoolStatus.Uninitialized) && InitializeVds()
+                && CheckStoragePoolStatus(StoragePoolStatus.Uninitialized) && initializeVds()
                 && checkStorageDomainsInPool();
         return returnValue;
     }

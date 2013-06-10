@@ -41,7 +41,7 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
 
         default:
             super.ProceedProxyReturnValue();
-            InitializeVdsError(returnStatus);
+            initializeVdsError(returnStatus);
             break;
         }
     }

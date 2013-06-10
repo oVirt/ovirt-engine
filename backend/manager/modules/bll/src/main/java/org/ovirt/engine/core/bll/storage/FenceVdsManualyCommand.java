@@ -68,7 +68,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         if (IsLegalStatus(_problematicVds.getStatus())) {
             if (_problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
                 if(getStoragePool().getstorage_pool_type() != StorageType.LOCALFS) {
-                    returnValue = returnValue && InitializeVds();
+                    returnValue = returnValue && initializeVds();
                 }
                 if (returnValue && getStoragePool().getstatus() != StoragePoolStatus.NotOperational
                         && getStoragePool().getstatus() != StoragePoolStatus.Problematic

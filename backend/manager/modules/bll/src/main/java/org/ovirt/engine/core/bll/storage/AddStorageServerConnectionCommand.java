@@ -82,7 +82,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         }
 
         if (getParameters().getVdsId().equals(Guid.Empty)) {
-            if (!InitializeVds()) {
+            if (!initializeVds()) {
                 return false;
             }
         } else if (getVds() == null) {

@@ -34,12 +34,12 @@ public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommand
         case ReleaseHostIdFailure:
             VDSExceptionBase outEx = new VDSErrorException(String.format("Failed in vdscommand %1$s, error = %2$s",
                     getCommandName(), getReturnStatus().mMessage));
-            InitializeVdsError(returnStatus);
+            initializeVdsError(returnStatus);
             getVDSReturnValue().setSucceeded(false);
             throw outEx;
         default:
             getVDSReturnValue().setSucceeded(false);
-            InitializeVdsError(returnStatus);
+            initializeVdsError(returnStatus);
             break;
         }
     }

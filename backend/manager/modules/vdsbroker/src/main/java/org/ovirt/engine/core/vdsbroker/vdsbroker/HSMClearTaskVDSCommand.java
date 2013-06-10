@@ -23,7 +23,7 @@ public class HSMClearTaskVDSCommand<P extends HSMTaskGuidBaseVDSCommandParameter
             log.error(String.format("Trying to remove unknown task: %1$s", getParameters().getTaskId()));
             return;
         case TaskStateError:
-            InitializeVdsError(returnStatus);
+            initializeVdsError(returnStatus);
             getVDSReturnValue().setSucceeded(false);
             return;
         }

@@ -112,7 +112,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
         if (vds == null) {
             if (localFs) {
-                if (!InitializeVds()) {
+                if (!initializeVds()) {
                     return false;
                 }
             } else {

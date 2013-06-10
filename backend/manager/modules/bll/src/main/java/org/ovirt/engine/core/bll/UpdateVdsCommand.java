@@ -125,7 +125,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
     protected void executeCommand() {
         updateVdsData();
         if (NeedToUpdateVdsBroker()) {
-            InitializeVds();
+            initializeVds();
         }
 
         if (getParameters().getInstallVds()) {

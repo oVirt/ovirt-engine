@@ -91,7 +91,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
             if (electNewMaster(false) == null) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN);
-            } else if (!InitializeVds()) {
+            } else if (!initializeVds()) {
                 returnValue = false;
                 addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DESTROY_LAST_STORAGE_DOMAIN_HOST_NOT_ACTIVE);
             }

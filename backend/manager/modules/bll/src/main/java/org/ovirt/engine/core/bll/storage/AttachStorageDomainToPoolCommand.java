@@ -133,7 +133,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
         // which is not attached.
         boolean returnValue =
                 checkStoragePool()
-                        && InitializeVds() && checkStorageDomain() && checkDomainCanBeAttached(getStorageDomain());
+                        && initializeVds() && checkStorageDomain() && checkDomainCanBeAttached(getStorageDomain());
 
         if (returnValue && getStoragePool().getstatus() == StoragePoolStatus.Uninitialized
                 && getStorageDomain().getStorageDomainType() != StorageDomainType.Data) {

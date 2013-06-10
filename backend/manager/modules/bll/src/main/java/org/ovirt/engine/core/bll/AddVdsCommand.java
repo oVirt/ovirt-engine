@@ -134,7 +134,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                InitializeVds();
+                initializeVds();
                 AlertIfPowerManagementNotConfigured(getParameters().getVdsStaticData());
                 TestVdsPowerManagementStatus(getParameters().getVdsStaticData());
                 setSucceeded(true);

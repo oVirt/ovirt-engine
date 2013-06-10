@@ -297,7 +297,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         }
 
         if (getStoragePool().getstatus() != StoragePoolStatus.Uninitialized && !getParameters().getForceDelete()
-                && !InitializeVds()) {
+                && !initializeVds()) {
             return false;
         }
 

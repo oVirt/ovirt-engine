@@ -86,7 +86,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected boolean InitializeVds() {
+    protected boolean initializeVds() {
         boolean returnValue = true;
         if (getVds() == null) {
             List<VDS> hosts = getVdsDAO().getAllForStoragePoolAndStatus(getStoragePool().getId(),

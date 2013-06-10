@@ -61,7 +61,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
             }
         }
 
-        return InitializeVds();
+        return initializeVds();
     }
 
     @Override

@@ -44,7 +44,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         setVdsId(parameters.getVdsId());
     }
 
-    protected void InitializeVds() {
+    protected void initializeVds() {
         Backend.getInstance()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.RemoveVds,

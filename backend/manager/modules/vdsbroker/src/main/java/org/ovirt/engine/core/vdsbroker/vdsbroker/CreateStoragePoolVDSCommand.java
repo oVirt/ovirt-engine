@@ -46,7 +46,7 @@ public class CreateStoragePoolVDSCommand<P extends CreateStoragePoolVDSCommandPa
 
         default:
             super.ProceedProxyReturnValue();
-            InitializeVdsError(returnStatus);
+            initializeVdsError(returnStatus);
             break;
         }
     }
