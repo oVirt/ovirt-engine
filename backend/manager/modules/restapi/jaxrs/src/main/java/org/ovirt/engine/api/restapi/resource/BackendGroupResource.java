@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource;
 
 import static org.ovirt.engine.api.restapi.resource.BackendGroupsResourceBase.SUB_COLLECTIONS;
 
+import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
@@ -25,7 +26,7 @@ public class BackendGroupResource
 
     @Override
     public Group get() {
-        return performGet(VdcQueryType.GetAdGroupById, new IdQueryParameters(guid));
+        return performGet(VdcQueryType.GetAdGroupById, new IdQueryParameters(guid), BaseResource.class);
     }
 
     @Override

@@ -11,6 +11,7 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.common.util.QueryHelper;
+import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.model.User;
@@ -72,7 +73,7 @@ public class BackendGroupsResourceBase extends AbstractBackendCollectionResource
     protected Groups mapDbGroupsCollection(List<DbUser> entities) {
         Groups collection = new Groups();
         for (DbUser entity : entities) {
-            collection.getGroups().add(addLinks(modifyDomain(mapDbUser(entity))));
+            collection.getGroups().add(addLinks(modifyDomain(mapDbUser(entity)), BaseResource.class));
         }
         return collection;
     }
