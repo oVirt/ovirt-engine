@@ -15,7 +15,6 @@ output_password = NoSoup4U
 [v3_ca]
 
 subjectKeyIdentifier = hash
-authorityInfoAccess = caIssuers;URI:@AIA@
 authorityKeyIdentifier = keyid:always,issuer:always
 basicConstraints = critical,CA:true
 keyUsage = critical,cRLSign,keyCertSign
