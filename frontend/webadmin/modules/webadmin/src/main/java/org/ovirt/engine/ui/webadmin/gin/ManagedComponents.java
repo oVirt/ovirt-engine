@@ -728,5 +728,5 @@ public interface ManagedComponents {
 
     AsyncProvider<SubTabProviderNetworkPresenter> getSubTabProviderNetworkPresenter();
 
-    SearchableDetailModelProvider<Network, ProviderListModel, ProviderNetworkListModel> getSubTabProviderNetworkModelProvider();
+    SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> getSubTabProviderNetworkModelProvider();
 }

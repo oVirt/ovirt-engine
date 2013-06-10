@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -42,7 +42,7 @@ public class SubTabProviderNetworkPresenter extends AbstractSubTabPresenter<Prov
     @Inject
     public SubTabProviderNetworkPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<Network, ProviderListModel, ProviderNetworkListModel> modelProvider) {
+            SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

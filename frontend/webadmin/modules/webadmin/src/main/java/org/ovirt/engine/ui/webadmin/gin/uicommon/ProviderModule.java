@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
-import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
@@ -79,9 +79,9 @@ public class ProviderModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Network, ProviderListModel, ProviderNetworkListModel> getProviderNetworkListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> getProviderNetworkListProvider(ClientGinjector ginjector,
             final Provider<DiscoverNetworkPopupPresenterWidget> discoverNetworkPopupProvider) {
-        return new SearchableDetailTabModelProvider<Network, ProviderListModel, ProviderNetworkListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel>(ginjector,
                 ProviderListModel.class,
                 ProviderNetworkListModel.class) {
             @Override
