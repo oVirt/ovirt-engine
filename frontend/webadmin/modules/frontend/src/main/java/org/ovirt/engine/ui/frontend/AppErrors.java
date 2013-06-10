@@ -2143,6 +2143,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("VFS type cannot be empty")
     String VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE();
 
+    @DefaultStringValue("Target details cannot be empty.")
+    String VALIDATION_STORAGE_CONNECTION_EMPTY_IQN();
+
+    @DefaultStringValue("Mount path is illegal, please use [IP:/path or FQDN:/path] convention.")
     String VALIDATION_STORAGE_CONNECTION_INVALID();
 
     String VMPAYLOAD_INVALID_PAYLOAD_TYPE();

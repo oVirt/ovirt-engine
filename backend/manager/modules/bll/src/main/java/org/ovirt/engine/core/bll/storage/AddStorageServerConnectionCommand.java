@@ -80,6 +80,10 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
                 && (StringUtils.isEmpty(paramConnection.getVfsType()))) {
             return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
         }
+        if (paramConnection.getstorage_type() == StorageType.ISCSI
+                && StringUtils.isEmpty(paramConnection.getiqn())) {
+            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
+        }
 
         if (getParameters().getVdsId().equals(Guid.Empty)) {
             if (!initializeVds()) {
