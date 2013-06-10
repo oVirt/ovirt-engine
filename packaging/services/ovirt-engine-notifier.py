@@ -143,7 +143,7 @@ class Daemon(service.Daemon):
 
         self._engineEnv = os.environ.copy()
         self._engineEnv.update({
-            'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin',
+            'PATH': '/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin',
             'LANG': 'en_US.UTF-8',
             'LC_ALL': 'en_US.UTF-8',
             'CLASSPATH': '',
