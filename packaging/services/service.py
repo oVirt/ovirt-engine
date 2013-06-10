@@ -495,6 +495,15 @@ class Daemon(Base):
         def _myterm(signum, frame):
             raise self.TerminateException()
 
+        #
+        # preserve log handler.
+        # bit undocumented.
+        #
+        handles = []
+        for l in logging.getLogger('ovirt').handlers:
+            if hasattr(l, 'socket'):
+                handles.append(l.socket)
+
         with daemon.DaemonContext(
             detach_process=self._options.background,
             signal_map={
@@ -504,6 +513,7 @@ class Daemon(Base):
             },
             stdout=stdout,
             stderr=stderr,
+            files_preserve=handles,
             umask=0o022,
         ):
             self._logger.debug('I am a daemon %s', os.getpid())
