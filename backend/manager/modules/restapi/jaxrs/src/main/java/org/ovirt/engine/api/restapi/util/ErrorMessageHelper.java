@@ -62,7 +62,16 @@ public class ErrorMessageHelper {
             return Status.BAD_REQUEST;
         case DATA_CORRUPTION:
             return Status.INTERNAL_SERVER_ERROR;
-
+        case INTERNAL_ERROR:
+            return Status.INTERNAL_SERVER_ERROR;
+        case NO_AUTHENTICATION:
+            return Status.UNAUTHORIZED;
+        case NO_PERMISSION:
+            return Status.FORBIDDEN;
+        case NOT_SUPPORTED:
+            return Status.BAD_REQUEST;
+        case INCOMPATIBLE_VERSION:
+            return Status.BAD_REQUEST;
         default:
             return Status.BAD_REQUEST;
         }
