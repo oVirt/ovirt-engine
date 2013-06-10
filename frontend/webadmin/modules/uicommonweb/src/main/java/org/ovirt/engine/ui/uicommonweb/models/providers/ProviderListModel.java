@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.providers;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -26,6 +27,8 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
     private UICommand addCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
+
+    private ProviderNetworkListModel providerNetworkListModel;
 
     private SystemTreeItemModel systemTreeSelectedItem;
 
@@ -79,9 +82,21 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
 
         list.add(new ProviderGeneralModel());
-        list.add(new ProviderNetworkListModel());
+        providerNetworkListModel = new ProviderNetworkListModel();
+        list.add(providerNetworkListModel);
 
         setDetailModels(list);
+    }
+
+    @Override
+    protected void updateDetailsAvailability() {
+        super.updateDetailsAvailability();
+        Provider provider = (Provider) getSelectedItem();
+        if (provider != null) {
+            providerNetworkListModel.setIsAvailable(provider.getType()
+                    .getProvidedTypes()
+                    .contains(VdcObjectType.Network));
+        }
     }
 
     @Override
