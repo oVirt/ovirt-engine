@@ -2,6 +2,8 @@ package org.ovirt.engine.core.utils;
 
 import java.util.Locale;
 
+import org.ovirt.engine.core.utils.servlet.LocaleFilter;
+
 public class LocaleUtils {
     //Do not allow instantiation of this class.
     private LocaleUtils() {}
@@ -27,16 +29,16 @@ public class LocaleUtils {
      * @return The {@code Locale} determined in the method.
      */
     public static Locale getLocaleFromString(String localeString, boolean returnDefaultLocale) {
-        Locale result = returnDefaultLocale ? null : Locale.US;
+        Locale result = returnDefaultLocale ? null : LocaleFilter.DEFAULT_LOCALE;
         try {
             result = org.apache.commons.lang.LocaleUtils.toLocale(localeString != null ?
                     localeString.replaceAll("\\-", "_") : localeString);
             if(result == null && returnDefaultLocale) {
-                result = Locale.US;
+                result = LocaleFilter.DEFAULT_LOCALE;
             }
         }
         catch(IllegalArgumentException e) {
-            result = returnDefaultLocale ? Locale.US : null;
+            result = returnDefaultLocale ? LocaleFilter.DEFAULT_LOCALE : null;
         }
         return result;
     }

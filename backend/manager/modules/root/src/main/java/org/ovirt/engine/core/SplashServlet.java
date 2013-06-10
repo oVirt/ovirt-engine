@@ -1,10 +1,7 @@
 package org.ovirt.engine.core;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -36,17 +33,12 @@ public class SplashServlet extends HttpServlet {
      */
     private static final String LOCALE_KEYS = "localeKeys";
 
-    /**
-     * The extension of the properties file containing the available languages.
-     */
-    private static final String LANGUAGES = ".languages"; //the resource bundle name
-
     @Override
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
         ServletException {
         Locale userLocale = (Locale) request.getAttribute(LocaleFilter.LOCALE);
         log.info("Detected Locale: " + userLocale.toLanguageTag());
-        request.setAttribute(LOCALE_KEYS, getLocaleKeys());
+        request.setAttribute(LOCALE_KEYS, LocaleFilter.getLocaleKeys());
         RequestDispatcher dispatcher = request.getRequestDispatcher("/WEB-INF/ovirt-engine.jsp");
         response.setContentType("text/html;charset=UTF-8");
         if (dispatcher != null) {
@@ -54,17 +46,4 @@ public class SplashServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Get a list of available locales.
-     * @return A {@code List} of Locale strings.
-     */
-    private List<String> getLocaleKeys() {
-        ResourceBundle bundle = ResourceBundle.getBundle(this.getClass().getPackage().getName() + LANGUAGES, Locale.US);
-        List<String> keys = Collections.list(bundle.getKeys());
-        //Can't just return the unsorted list, it won't match the GWT output.
-        //Apparently GWT does a sort before showing the list as well, which
-        //works out nicely for me.
-        Collections.sort(keys);
-        return keys;
-    }
 }

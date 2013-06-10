@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.utils.servlet;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
+import java.util.Properties;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -41,6 +44,11 @@ public class LocaleFilter implements Filter {
      * The default locale.
      */
     public static final Locale DEFAULT_LOCALE = Locale.US;
+
+    /**
+     * The extension of the properties file containing the available languages.
+     */
+    private static final String LANGUAGES_FILE = "languages.properties"; // the property file name
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response,
@@ -90,10 +98,12 @@ public class LocaleFilter implements Filter {
         }
         // Step 4.
         if (locale == null) { // No accept headers.
-            locale = Locale.US;
+            locale = DEFAULT_LOCALE;
         }
-        log.debug("Filter determined locale to be: " + locale.toLanguageTag());
-        return locale;
+        Locale resolvedLocale = lookupSupportedLocale(locale, getLocaleKeys());
+        log.debug(String.format("Incoming locale: %s. Filter determined locale to be: %s",
+                locale.toLanguageTag(), resolvedLocale.toLanguageTag()));
+        return resolvedLocale;
     }
 
     /**
@@ -112,6 +122,56 @@ public class LocaleFilter implements Filter {
             }
         }
         return locale;
+    }
+
+    /**
+     * Get a list of available locales.
+     * @return A {@code List} of Locale strings.
+     */
+    public static List<String> getLocaleKeys() {
+        Properties languages = getLanguageProperties();
+        @SuppressWarnings("unchecked")
+        List<String> keys = (List<String>) Collections.list(languages.propertyNames());
+        // Can't just return the unsorted list, it won't match the GWT output.
+        // Apparently GWT does a sort before showing the list as well, which
+        // works out nicely for me.
+        Collections.sort(keys);
+        return keys;
+    }
+
+    /**
+     * Load the language property file into a Properties object.
+     * @return The {@code Properties} object.
+     */
+    private static Properties getLanguageProperties() {
+        Properties prop = new Properties();
+        try {
+            prop.load(LocaleFilter.class.getResourceAsStream(LANGUAGES_FILE));
+        } catch (IOException e) {
+            log.error("Unable to load supported langauges file", e);
+        }
+        return prop;
+    }
+
+    /**
+     *
+     * @param filteredLocale The locale the filter determined.
+     * @param supportedLocales The list of supported locale strings.
+     * @return The supported locale based on the passed in filteredLocale and list of supported locales.
+     */
+    private Locale lookupSupportedLocale(final Locale filteredLocale, final List<String> supportedLocales) {
+        for (String supportedLocale: supportedLocales) {
+            Locale locale = LocaleUtils.getLocaleFromString(supportedLocale);
+            @SuppressWarnings("unchecked")
+            List<Locale> localeLookupList = org.apache.commons.lang.LocaleUtils.localeLookupList(locale);
+            for (Locale lookupLocale: localeLookupList) {
+                if (lookupLocale.equals(filteredLocale)) {
+                    // Matched on one of the locales. Find the supported one in the list.
+                    return locale;
+                }
+            }
+        }
+        return DEFAULT_LOCALE;
     }
 
     @Override

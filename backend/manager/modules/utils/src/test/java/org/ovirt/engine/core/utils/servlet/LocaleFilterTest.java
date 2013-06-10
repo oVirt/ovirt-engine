@@ -45,7 +45,7 @@ public class LocaleFilterTest {
 
     @Test
     public void testDoFilterFromParameter() throws IOException, ServletException {
-        Locale testLocale = Locale.ITALIAN;
+        Locale testLocale = Locale.GERMANY;
         when(mockRequest.getParameter(LocaleFilter.LOCALE)).thenReturn(testLocale.toString());
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
         verify(mockChain).doFilter(mockRequest, mockResponse);
@@ -57,7 +57,7 @@ public class LocaleFilterTest {
 
     @Test
     public void testDoFilterFromParameterWithCookie() throws IOException, ServletException {
-        Locale testLocale = Locale.ITALIAN;
+        Locale testLocale = Locale.JAPAN;
         Cookie[] cookies = createCookies(Locale.GERMAN);
         when(mockRequest.getParameter(LocaleFilter.LOCALE)).thenReturn(testLocale.toString());
         when(mockRequest.getCookies()).thenReturn(cookies);
@@ -69,7 +69,7 @@ public class LocaleFilterTest {
 
     @Test
     public void testDoFilterFromCookie() throws IOException, ServletException {
-        Locale testLocale = Locale.ITALIAN;
+        Locale testLocale = Locale.GERMANY;
         Cookie[] cookies = createCookies(testLocale);
         when(mockRequest.getCookies()).thenReturn(cookies);
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
@@ -106,8 +106,8 @@ public class LocaleFilterTest {
         when(mockRequest.getLocale()).thenReturn(Locale.JAPANESE);
         testFilter.doFilter(mockRequest, mockResponse, mockChain);
         verify(mockChain).doFilter(mockRequest, mockResponse);
-        verify(mockRequest).setAttribute(LocaleFilter.LOCALE, Locale.JAPANESE);
         verify(mockResponse, times(1)).addCookie((Cookie) any());
+        verify(mockRequest).setAttribute(LocaleFilter.LOCALE, Locale.JAPAN);
     }
 
     @Test
