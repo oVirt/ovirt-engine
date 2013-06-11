@@ -970,7 +970,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection already exists.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters can be edited only for NFS data domains in maintenance.")
+    @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters can be edited only for NFS, Posix or local data domains in maintenance.")
     String  ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE();
 
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters are related to more than one storage domain")

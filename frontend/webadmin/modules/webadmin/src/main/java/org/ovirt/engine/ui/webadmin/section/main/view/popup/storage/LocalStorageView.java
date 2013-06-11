@@ -33,7 +33,7 @@ public class LocalStorageView extends AbstractStorageView<LocalStorageModel> {
     @UiField
     WidgetStyle style;
 
-    @UiField(provided = true)
+    @UiField
     @WithElementId
     @Path(value = "path.entity")
     EntityModelTextBoxEditor localPathEditor;
@@ -45,8 +45,6 @@ public class LocalStorageView extends AbstractStorageView<LocalStorageModel> {
 
     @Inject
     public LocalStorageView() {
-        createPathEditor();
-        localPathEditor = pathEditor;
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(ClientGinjectorProvider.instance().getApplicationConstants());
         ViewIdHandler.idHandler.generateAndSetIds(this);

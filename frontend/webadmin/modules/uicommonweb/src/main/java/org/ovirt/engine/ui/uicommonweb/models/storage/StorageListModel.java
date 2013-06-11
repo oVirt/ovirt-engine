@@ -361,15 +361,16 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getAvailableStorageItems().setIsChangable(false);
         model.setIsChangable(isStorageEditable);
 
+        boolean isPathEditable = isPathEditable(storage);
+        isStorageEditable = isStorageEditable || isPathEditable;
+
         IStorageModel item = null;
         switch (storage.getStorageType()) {
             case NFS:
                 item = prepareNfsStorageForEdit(storage);
-                boolean isNfsPathEditable = isPathEditable(storage);
-                isStorageEditable = isStorageEditable || isNfsPathEditable;
                 //when storage is active, only SPM can perform actions on it, thus it is set above that host is not changeable.
                 //If storage is editable but not active (maintenance) - any host can perform the edit so the changeable here is set based on that
-                model.getHost().setIsChangable(isNfsPathEditable);
+                model.getHost().setIsChangable(isPathEditable);
                 break;
 
             case FCP:
@@ -382,12 +383,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
             case LOCALFS:
                 item = prepareLocalStorageForEdit(storage);
+                model.getHost().setIsChangable(isPathEditable);
                 break;
 
             case POSIXFS:
                 item = preparePosixStorageForEdit(storage);
-                boolean isPathEditable = isPathEditable(storage);
-                isStorageEditable = isStorageEditable || isPathEditable;
                 //when storage is active, only SPM can perform actions on it, thus it is set above that host is not changeable.
                 //If storage is editable but not active (maintenance) - any host can perform the edit so the changeable here is set based on that
                 model.getHost().setIsChangable(isPathEditable);
@@ -480,19 +480,22 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     }
 
     private boolean isPathEditable(StorageDomain storage) {
-        return (storage.getStorageDomainType() == StorageDomainType.Data || storage.getStorageDomainType() == StorageDomainType.Master) && storage.getStatus() == StorageDomainStatus.Maintenance;
+        if(storage.getStorageType().isFileDomain() && !storage.getStorageType().equals(StorageType.GLUSTERFS)) {
+          return ((storage.getStorageDomainType() == StorageDomainType.Data || storage.getStorageDomainType() == StorageDomainType.Master) && storage.getStatus() == StorageDomainStatus.Maintenance);
+        }
+        return false;
     }
 
     private IStorageModel prepareLocalStorageForEdit(StorageDomain storage)
     {
         LocalStorageModel model = new LocalStorageModel();
         model.setRole(storage.getStorageDomainType());
-        model.getPath().setIsAvailable(false);
+        boolean isPathEditable = isPathEditable(storage);
+        model.getPath().setIsChangable(isPathEditable);
 
         AsyncDataProvider.getStorageConnectionById(new AsyncQuery(model, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
-
                 LocalStorageModel localStorageModel = (LocalStorageModel) target;
                 StorageServerConnections connection = (StorageServerConnections) returnValue;
                 localStorageModel.getPath().setEntity(connection.getconnection());
@@ -1769,15 +1772,22 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         }
         else
         {
-            Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(storageDomain), new IFrontendActionAsyncCallback() {
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
-
-                    StorageListModel storageListModel = (StorageListModel) result.getState();
-                    storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
-
-                }
-            }, this);
+            StorageDomain storageDomain = (StorageDomain) getSelectedItem();
+            if (isPathEditable(storageDomain)) {
+                updatePath();
+            }
+            else {
+                Frontend.RunAction(VdcActionType.UpdateStorageDomain,
+                        new StorageDomainManagementParameter(this.storageDomain),
+                        new IFrontendActionAsyncCallback() {
+                            @Override
+                            public void executed(FrontendActionAsyncResult result) {
+                                StorageListModel storageListModel = (StorageListModel) result.getState();
+                                storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
+                            }
+                        },
+                        this);
+            }
         }
     }
 

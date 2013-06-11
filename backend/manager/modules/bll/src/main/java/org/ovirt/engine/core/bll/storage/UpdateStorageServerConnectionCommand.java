@@ -50,16 +50,19 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     protected boolean canDoAction() {
         StorageServerConnections newConnectionDetails = getParameters().getStorageServerConnection();
 
-        if (newConnectionDetails.getstorage_type() != StorageType.NFS && newConnectionDetails.getstorage_type() != StorageType.POSIXFS) {
+        if (!newConnectionDetails.getstorage_type().isFileDomain()
+                || newConnectionDetails.getstorage_type().equals(StorageType.GLUSTERFS)) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE);
         }
 
         // Check if the NFS path has a valid format
-        if (newConnectionDetails.getstorage_type() == StorageType.NFS &&  !new NfsMountPointConstraint().isValid(newConnectionDetails.getconnection(), null)) {
+        if (newConnectionDetails.getstorage_type() == StorageType.NFS
+                && !new NfsMountPointConstraint().isValid(newConnectionDetails.getconnection(), null)) {
             return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID);
         }
 
-        if (newConnectionDetails.getstorage_type() == StorageType.POSIXFS && (StringUtils.isEmpty(newConnectionDetails.getVfsType()))) {
+        if (newConnectionDetails.getstorage_type() == StorageType.POSIXFS
+                && (StringUtils.isEmpty(newConnectionDetails.getVfsType()))) {
             return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
         }
 
@@ -212,8 +215,9 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                         getParameters().getStoragePoolId(),
                         getParameters().getStorageServerConnection().getstorage_type(),
                         getParameters().getStorageServerConnection());
-        boolean isDisconnectSucceeded = runVdsCommand(VDSCommandType.DisconnectStorageServer, connectionParametersForVdsm).getSucceeded();
-        if(!isDisconnectSucceeded) {
+        boolean isDisconnectSucceeded =
+                runVdsCommand(VDSCommandType.DisconnectStorageServer, connectionParametersForVdsm).getSucceeded();
+        if (!isDisconnectSucceeded) {
             log.warn("Failed to disconnect storage connection " + getParameters().getStorageServerConnection());
         }
     }
@@ -260,8 +264,9 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         domains = getStorageDomainsByConnId(getParameters().getStorageServerConnection().getid());
         if (!domains.isEmpty() && domains.size() == 1) {
             setStorageDomain(domains.get(0));
-            locks.put(getStorageDomain().getId().toString(), LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
-                    VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+            locks.put(getStorageDomain().getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
+                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
         // lock the path to NFS to avoid at the same time if some other user tries to:
         // add new storage domain to same path or edit another storage server connection to point to same path
