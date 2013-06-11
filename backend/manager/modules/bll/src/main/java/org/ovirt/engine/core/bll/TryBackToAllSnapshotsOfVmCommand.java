@@ -203,6 +203,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         VmValidator vmValidator = new VmValidator(getVm());
         if (!validate(vmValidator.vmDown())
+                || !validate(snapshotsValidator.snapshotExists(getVmId(), getParameters().getDstSnapshotId()))
                 || !validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))
                 || !validate(snapshotsValidator.vmNotInPreview(getVmId()))
                 || !validate(snapshotsValidator.snapshotExists(snapshot))
