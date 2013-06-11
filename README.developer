@@ -11,11 +11,13 @@ Install the following system components:
 
  - jdk-7 / openjdk-7-jdk / icedtea-7
  - bash
+ - unzip
  - openssl
  - postgresql-server postgresql
  - python-m2crypto / m2crypto
  - python-psycopg2 / psycopg
  - python-cheetah / cheetah
+ - libxml2-python / libxml2[python]
  - python-daemon
  - otopi >= 1.0.2
  - ovirt-host-deploy
