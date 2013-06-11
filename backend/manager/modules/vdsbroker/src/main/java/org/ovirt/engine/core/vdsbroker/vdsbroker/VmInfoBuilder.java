@@ -696,7 +696,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                                 VmDeviceGeneralType.WATCHDOG);
         for (VmDevice watchdog : watchdogs) {
             HashMap watchdogFromRpc = new HashMap();
-            watchdogFromRpc.put(VdsProperties.Type, watchdog.getType());
+            watchdogFromRpc.put(VdsProperties.Type, VmDeviceGeneralType.WATCHDOG.getValue());
             watchdogFromRpc.put(VdsProperties.Device, watchdog.getDevice());
             Map<String, Object> specParams = watchdog.getSpecParams();
             if (specParams == null) {
