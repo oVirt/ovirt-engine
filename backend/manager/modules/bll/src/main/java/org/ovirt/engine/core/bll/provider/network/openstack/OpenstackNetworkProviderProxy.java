@@ -78,6 +78,10 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
             }
         }
 
+        if (!provider.isRequiringAuthentication()) {
+            networkForCreate.setTenantId(DEVICE_OWNER);
+        }
+
         try {
             com.woorea.openstack.quantum.model.Network createdNetwork =
                     getClient().networks().create(networkForCreate).execute();
