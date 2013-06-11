@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.eventqueue;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.Future;
@@ -50,6 +51,12 @@ public class EventQueueMonitor implements EventQueue {
         if (task != null) {
             try {
                 return task.get();
+            } catch (CancellationException e) {
+                // CancellationException is normal here, as we cancel future tasks when reconstruct is running
+                // This cancellation is also being reported to the log
+                // Currently ignoring that exception, writing a debug message, in case other scenario of canceling an exception will be introduced
+                log.debugFormat("CancellationException at submitEventSync, for pool {0} with details {1}",
+                        event.getStoragePoolId(), e);
             } catch (Exception e) {
                 log.errorFormat("Failed at submitEventSync, for pool {0} with exception {1}",
                         event.getStoragePoolId(), e);
