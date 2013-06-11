@@ -6,11 +6,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
@@ -61,6 +60,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
 
     @Override
     public LdapReturnValueBase execute() {
+        boolean exceptionOccured = false;
         try {
             log.debugFormat("Running LDAP command: {0}", getClass().getName());
             String loginNameForKerberos =
@@ -68,10 +68,16 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
             LdapCredentials ldapCredentials = new LdapCredentials(loginNameForKerberos, getPassword());
             DirectorySearcher directorySearcher = new DirectorySearcher(ldapCredentials);
             executeQuery(directorySearcher);
+            exceptionOccured = directorySearcher.getException() != null;
         } catch (RuntimeException e) {
             log.error(String.format("Failed to run command %s. Domain is %s. User is %s.",
                     getClass().getSimpleName(), getDomain(), getLoginName()));
-            _ldapReturnValue.setExceptionString(VdcBllMessages.FAILED_TO_RUN_LDAP_QUERY.name());
+        }
+ finally {
+            if (exceptionOccured) {
+                _ldapReturnValue.setExceptionString(VdcBllMessages.FAILED_TO_RUN_LDAP_QUERY.name());
+                _ldapReturnValue.setSucceeded(false);
+            }
         }
         return _ldapReturnValue;
     }
