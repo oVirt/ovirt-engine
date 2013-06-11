@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.frontend.server.gwt.branding.BrandingManager;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BrandingServletTest {
+
     @Mock
     HttpServletRequest mockRequest;
 
@@ -46,8 +47,7 @@ public class BrandingServletTest {
     @Before
     public void setUp() throws Exception {
         testServlet = new BrandingServlet();
-        testServlet.init();
-        testServlet.setBrandingManager(mockBrandingManager);
+        testServlet.init(mockBrandingManager);
         when(mockBrandingManager.getBrandingRootPath()).thenReturn(mockFile);
         when(mockFile.getAbsolutePath()).thenReturn("/abs/test"); //$NON-NLS-1$
         when(mockRequest.getPathInfo()).thenReturn("/test/something.txt"); //$NON-NLS-1$
@@ -123,4 +123,5 @@ public class BrandingServletTest {
         assertEquals("Path should be '/abs/test/branding/test'", //$NON-NLS-1$
                 "/abs/test/branding/test", fullPath); //$NON-NLS-1$
     }
+
 }

@@ -76,6 +76,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     private static final String UTF_CONTENT_TYPE = "text/html; charset=UTF-8"; //$NON-NLS-1$
 
     private BackendLocal backend;
+
     private ObjectMapper mapper;
     private BrandingManager brandingManager;
 
@@ -85,18 +86,14 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         this.backend = backend;
     }
 
-    /**
-     * Set the branding manager to the passed in value.
-     * @param manager The {@code BrandingManager} to set.
-     */
-    public void setBrandingManager(final BrandingManager manager) {
-        brandingManager = manager;
-    }
-
     @Override
     public void init() {
-        this.mapper = new ObjectMapper();
-        setBrandingManager(new BrandingManager());
+        init(new ObjectMapper(), new BrandingManager());
+    }
+
+    void init(ObjectMapper mapper, BrandingManager brandingManager) {
+        this.mapper = mapper;
+        this.brandingManager = brandingManager;
     }
 
     @Override

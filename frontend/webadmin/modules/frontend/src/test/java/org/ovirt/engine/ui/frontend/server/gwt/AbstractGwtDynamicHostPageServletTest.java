@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.junit.Before;
 import org.junit.Test;
@@ -99,8 +100,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     protected void setUpTestServlet() throws NoSuchAlgorithmException {
         testServlet = getTestServletSpy();
         testServlet.setBackend(mockBackend);
-        testServlet.init();
-        testServlet.setBrandingManager(mockBrandingManager);
+        testServlet.init(new ObjectMapper(), mockBrandingManager);
         doReturn(mockDigest).when(testServlet).createMd5Digest();
     }
 

@@ -32,17 +32,13 @@ public class BrandingServlet extends HttpServlet {
      */
     private BrandingManager brandingManager;
 
-    /**
-     * Set the branding manager.
-     * @param manager The {@code BrandingManager}
-     */
-    public final void setBrandingManager(final BrandingManager manager) {
-        brandingManager = manager;
-    }
-
     @Override
     public void init() {
-        setBrandingManager(new BrandingManager());
+        init(new BrandingManager());
+    }
+
+    void init(BrandingManager brandingManager) {
+        this.brandingManager = brandingManager;
     }
 
     @Override
