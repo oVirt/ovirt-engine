@@ -144,7 +144,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
             return false;
         }
 
-        if (network.getProvidedBy() != null) {
+        if (network.isExternal()) {
             return failCanDoAction(VdcBllMessages.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
         }
 

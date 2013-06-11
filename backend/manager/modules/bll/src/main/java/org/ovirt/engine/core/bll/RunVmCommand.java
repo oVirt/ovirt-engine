@@ -523,7 +523,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             String networkName = iface.getNetworkName();
             Network network = (networkName == null) ? null : clusterNetworks.get(networkName);
             VmDevice vmDevice = nicDevices.get(new VmDeviceId(iface.getId(), getVmId()));
-            if (network != null && network.getProvidedBy() != null && vmDevice.getIsPlugged()) {
+            if (network != null && network.isExternal() && vmDevice.getIsPlugged()) {
                 Provider<?> provider = getDbFacade().getProviderDao().get(network.getProvidedBy().getProviderId());
                 NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(provider);
                 Map<String, String> deviceProperties = providerProxy.allocate(network, iface);

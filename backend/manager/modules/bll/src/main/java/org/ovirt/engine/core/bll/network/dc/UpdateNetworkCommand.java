@@ -60,7 +60,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     }
 
     private boolean oldAndNewNetworkIsNotExternal() {
-        return getOldNetwork().getProvidedBy() == null && getNetwork().getProvidedBy() == null;
+        return !getOldNetwork().isExternal() && !getNetwork().isExternal();
     }
 
     @Override

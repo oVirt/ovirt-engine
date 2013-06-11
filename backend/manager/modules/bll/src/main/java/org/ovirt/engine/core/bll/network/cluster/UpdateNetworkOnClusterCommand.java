@@ -77,7 +77,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         return (!NetworkUtils.isManagementNetwork(getNetwork())
                 || validate(validator.managementNetworkAttachment(getNetworkName())))
                 && validate(validator.migrationPropertySupported(getNetworkName()))
-                && (getNetwork().getProvidedBy() == null || validateExternalNetwork(validator));
+                && (!getNetwork().isExternal() || validateExternalNetwork(validator));
     }
 
     private boolean validateExternalNetwork(NetworkClusterValidator validator) {

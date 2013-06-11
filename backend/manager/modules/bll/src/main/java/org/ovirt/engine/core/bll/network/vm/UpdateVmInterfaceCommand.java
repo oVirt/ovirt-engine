@@ -341,8 +341,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
          * @return An error if either the old or new network is an external network, otherwise hot update is allowed.
          */
         public ValidationResult hotUpdateDoneWithInternalNetwork(Network oldNetwork, Network newNetwork) {
-            return (oldNetwork == null || oldNetwork.getProvidedBy() == null)
-                    && (newNetwork == null || newNetwork.getProvidedBy() == null)
+            return (oldNetwork == null || !oldNetwork.isExternal())
+                    && (newNetwork == null || !newNetwork.isExternal())
                     ? ValidationResult.VALID
                     : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REWIRED);
         }

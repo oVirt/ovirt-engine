@@ -237,7 +237,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         }
 
         Network network = getNetworkDAO().getByNameAndCluster(getNetworkName(), vds.getVdsGroupId());
-        if (network != null && network.getProvidedBy() != null) {
+        if (network != null && network.isExternal()) {
             return failCanDoAction(VdcBllMessages.EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED);
         }
 

@@ -76,7 +76,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         return (!NetworkUtils.isManagementNetwork(getNetwork())
                 || validate(validator.managementNetworkAttachment(getNetworkName())))
                 && validate(validator.migrationPropertySupported(getNetworkName()))
-                && (getPersistedNetwork().getProvidedBy() == null
+                && (!getPersistedNetwork().isExternal()
                 || validateExternalNetwork(validator));
     }
 

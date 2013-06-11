@@ -18,7 +18,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -143,9 +142,7 @@ public class VmNicValidatorTest {
             boolean portMirroring,
             Matcher<ValidationResult> matcher) {
         Network network = mock(Network.class);
-        if (externalNetwork) {
-            when(network.getProvidedBy()).thenReturn(mock(ProviderNetwork.class));
-        }
+        when(network.isExternal()).thenReturn(externalNetwork);
 
         when(nic.isPortMirroring()).thenReturn(portMirroring);
 

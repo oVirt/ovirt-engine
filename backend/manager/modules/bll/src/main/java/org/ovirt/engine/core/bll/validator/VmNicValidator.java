@@ -73,7 +73,7 @@ public class VmNicValidator {
     }
 
     public ValidationResult portMirroringNotSetIfExternalNetwork(Network network) {
-        return !nic.isPortMirroring() || network.getProvidedBy() == null
+        return !nic.isPortMirroring() || !network.isExternal()
                 ? ValidationResult.VALID
                 : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED);
     }

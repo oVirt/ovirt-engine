@@ -61,7 +61,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
             // External networks are handled by their provider, so only check if exists on host for internal networks.
             if (getNetwork() != null
-                    && getNetwork().getProvidedBy() == null
+                    && !getNetwork().isExternal()
                     && !networkAttachedToVds(getNetworkName(), getVdsId())) {
                 addCanDoActionMessage(VdcBllMessages.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
                 return false;
@@ -107,7 +107,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     protected void executeVmCommand() {
         // HotPlug in the host is called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getStatus())) {
-            if (getNetwork() != null && getNetwork().getProvidedBy() != null) {
+            if (getNetwork() != null && getNetwork().isExternal()) {
                 handleExternalNetworks();
             }
 

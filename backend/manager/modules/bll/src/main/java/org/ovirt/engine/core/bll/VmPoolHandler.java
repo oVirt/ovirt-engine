@@ -70,7 +70,7 @@ public class VmPoolHandler {
             String networkName = iface.getNetworkName();
 
             if (networkName != null
-                    && clusterNetworks.get(networkName).getProvidedBy() != null) {
+                    && clusterNetworks.get(networkName).isExternal()) {
                 NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(
                         DbFacade.getInstance().getProviderDao().get(
                                 clusterNetworks.get(networkName).getProvidedBy().getProviderId()));

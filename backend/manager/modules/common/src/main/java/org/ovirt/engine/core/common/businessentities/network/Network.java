@@ -182,6 +182,10 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
         this.providedBy = providedBy;
     }
 
+    public boolean isExternal() {
+        return providedBy != null;
+    }
+
     public String getLabel() {
         return label;
     }
