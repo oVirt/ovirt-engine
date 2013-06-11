@@ -72,10 +72,6 @@ The branding directory is treated as a standard conf.d, in which directories
 are sorted by name, each package is read by order and overrides
 the previous ones.
 
-Since the default oVirt theme is required for consistent look & feel, make
-sure to install this theme either via README.developer or simply by creating
-symlink from packaging/branding/ovirt.brand to /etc/ovirt-engine/branding/ovirt.brand
-
 MAINTENANCE
 -----------
 
