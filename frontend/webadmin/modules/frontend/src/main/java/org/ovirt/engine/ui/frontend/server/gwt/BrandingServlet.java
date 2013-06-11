@@ -9,8 +9,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.ovirt.engine.core.utils.branding.BrandingManager;
 import org.ovirt.engine.core.utils.servlet.ServletUtils;
-import org.ovirt.engine.ui.frontend.server.gwt.branding.BrandingManager;
 
 /**
  * This class serves files from the branding themes to the browser. This
@@ -34,7 +34,7 @@ public class BrandingServlet extends HttpServlet {
 
     @Override
     public void init() {
-        init(new BrandingManager());
+        init(BrandingManager.getInstance());
     }
 
     void init(BrandingManager brandingManager) {

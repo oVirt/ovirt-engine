@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.ui.frontend.server.gwt.branding.BrandingManager;
+import org.ovirt.engine.core.utils.branding.BrandingManager;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BrandingServletTest {

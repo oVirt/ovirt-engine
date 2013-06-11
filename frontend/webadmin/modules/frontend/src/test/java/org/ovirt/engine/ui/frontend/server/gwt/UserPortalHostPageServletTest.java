@@ -7,7 +7,7 @@ import static org.mockito.Mockito.spy;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.ui.frontend.server.gwt.branding.BrandingTheme;
+import org.ovirt.engine.core.utils.branding.BrandingTheme;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserPortalHostPageServletTest extends AbstractGwtDynamicHostPageServletTest<UserPortalHostPageServlet> {

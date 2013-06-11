@@ -23,10 +23,10 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
+import org.ovirt.engine.core.utils.branding.BrandingManager;
+import org.ovirt.engine.core.utils.branding.BrandingTheme;
+import org.ovirt.engine.core.utils.branding.BrandingTheme.ApplicationType;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
-import org.ovirt.engine.ui.frontend.server.gwt.branding.BrandingManager;
-import org.ovirt.engine.ui.frontend.server.gwt.branding.BrandingTheme;
-import org.ovirt.engine.ui.frontend.server.gwt.branding.BrandingTheme.ApplicationType;
 
 /**
  * Renders the HTML host page of a GWT application.
@@ -88,7 +88,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
 
     @Override
     public void init() {
-        init(new ObjectMapper(), new BrandingManager());
+        init(new ObjectMapper(), BrandingManager.getInstance());
     }
 
     void init(ObjectMapper mapper, BrandingManager brandingManager) {

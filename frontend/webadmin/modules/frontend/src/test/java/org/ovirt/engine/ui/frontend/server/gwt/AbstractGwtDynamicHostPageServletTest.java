@@ -39,8 +39,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.server.gwt.branding.BrandingManager;
-import org.ovirt.engine.ui.frontend.server.gwt.branding.BrandingTheme;
+import org.ovirt.engine.core.utils.branding.BrandingManager;
+import org.ovirt.engine.core.utils.branding.BrandingTheme;
 
 public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamicHostPageServlet> {
 

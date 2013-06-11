@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.frontend.server.gwt.branding;
+package org.ovirt.engine.core.utils.branding;
 
 import java.io.File;
 import java.io.FileInputStream;

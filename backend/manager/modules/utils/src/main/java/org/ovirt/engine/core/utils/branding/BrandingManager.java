@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.frontend.server.gwt.branding;
+package org.ovirt.engine.core.utils.branding;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
+import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
 /**
  * This class manages the available branding themes and changeable localized messages.
@@ -60,18 +61,37 @@ public class BrandingManager {
     private final File brandingRootPath;
 
     /**
-     * Default constructor.
+     * Instance of the holder pattern, instance doesn't get initialized until needed. This removes
+     * the need for synchronization and double locking pattern.
      */
-    public BrandingManager() {
-        this(EngineLocalConfig.getInstance().getEtcDir());
+    private static class Holder {
+        /**
+         * Instance of the BrandingManager.
+         */
+        static final BrandingManager instance =
+                new BrandingManager(EngineLocalConfig.getInstance().getEtcDir());
     }
+
+    /**
+     * ObjectMapper to translate map into Javascript.
+     */
+    private ObjectMapper objectMapper;
 
     /**
      * Constructor that takes a {@code File} object to configure the brandingRootPath.
      * @param etcDir A {@code File} pointing to the branding root path.
      */
-    public BrandingManager(final File etcDir) {
+    BrandingManager(final File etcDir) {
         brandingRootPath = new File(etcDir, BRANDING_PATH);
+        objectMapper = new ObjectMapper();
+    }
+
+    /**
+     * Get an instance of the {@code BrandingManager} with the default ETC_DIR.
+     * @return A {@code BrandingManager}
+     */
+    public static BrandingManager getInstance() {
+        return Holder.instance;
     }
 
     /**
@@ -102,41 +122,81 @@ public class BrandingManager {
     }
 
     /**
+     * Get the message associated with the passed in key.
+     * @param key The key to get the message for. For instance obrand.common.copy_right_notice.
+     * @return The associated message in the default locale.
+     */
+    public String getMessage(final String key) {
+        return getMessage(key, LocaleFilter.DEFAULT_LOCALE);
+    }
+
+    /**
+     * Get the message associated with the passed in key.
+     * @param key The key to get the message for. For instance obrand.common.copy_right_notice.
+     * @param locale The locale to use to look up the message.
+     * @return The associated message in the passed in locale.
+     */
+    public String getMessage(final String key, final Locale locale) {
+        String result = "";
+        // key needs to start with obrand.
+        if (key != null && key.startsWith(BRAND_PREFIX + ".")) {
+            String[] splitString = key.split("\\.");
+            String prefix = (splitString.length >= 2) ? splitString[1] : "";
+            if (prefix.length() > 0) {
+                result = getMessageMap(prefix, locale).get(key.substring(key.indexOf(prefix) + prefix.length() + 1));
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Returns a Map of String keys and values.
+     * @param prefix The prefix to use for getting the keys.
+     * @param locale The locale to get the messages for.
+     * @return A {@code Map} of keys and values.
+     */
+    private Map<String, String> getMessageMap(final String prefix, final Locale locale) {
+        List<BrandingTheme> messageThemes = getBrandingThemes();
+        // We need this map to remove potential duplicate strings from the resource bundles.
+        Map<String, String> keyValues = new HashMap<String, String>();
+        if (messageThemes != null) {
+            for (BrandingTheme theme : messageThemes) {
+                ResourceBundle messagesBundle = theme.getMessagesBundle(locale);
+                for (String key : messagesBundle.keySet()) {
+                    if (key.startsWith(BRAND_PREFIX + "." + prefix) || key.startsWith(COMMON_PREFIX)) { //$NON-NLS-1$
+                        // We can potentially override existing values here
+                        // but this is fine as the themes are sorted in order
+                        // And later messages should override earlier ones.
+                        keyValues.put(key.replaceFirst(BRAND_PREFIX + "\\." //$NON-NLS-1$
+                                + prefix + "\\.", "") //$NON-NLS-1$
+                                .replaceFirst(COMMON_PREFIX + "\\.", ""), //$NON-NLS-1$
+                                messagesBundle.getString(key));
+                    }
+                }
+            }
+        }
+        return keyValues;
+    }
+
+    /**
      * get a JavaScript associative array string representation of the available messages. Only 'common' messages and
      * messages that have keys that start with the passed in prefix will be returned.
      * @param prefix The prefix to use for getting the keys.
      * @param locale The locale to get the messages for.
      * @return A string of format {'key':'value',...}
      */
-    public final String getMessages(final String prefix, final Locale locale) {
-        List<BrandingTheme> messageThemes = getBrandingThemes();
-        // We need this map to remove potential duplicate strings from the resource bundles.
-        Map<String, String> keyValues = new HashMap<String, String>();
-        for (BrandingTheme theme : messageThemes) {
-            ResourceBundle messagesBundle = theme.getMessagesBundle(locale);
-            for (String key : messagesBundle.keySet()) {
-                if (key.startsWith(BRAND_PREFIX + "." + prefix) || key.startsWith(COMMON_PREFIX)) { //$NON-NLS-1$
-                    // We can potentially override existing values here
-                    // but this is fine as the themes are sorted in order
-                    // And later messages should override earlier ones.
-                    keyValues.put(key.replaceFirst(BRAND_PREFIX + "\\." //$NON-NLS-1$
-                            + prefix + "\\.", "") //$NON-NLS-1$
-                            .replaceFirst(COMMON_PREFIX + "\\.", ""), //$NON-NLS-1$
-                            messagesBundle.getString(key));
-                }
-            }
-        }
+    public String getMessages(final String prefix, final Locale locale) {
+        Map<String, String> keyValues = getMessageMap(prefix, locale);
         // Turn the map into a string with the format:
         // {"key":"value",...}
         return getMessagesFromMap(keyValues);
     }
-
     /**
      * @param keyValues The map to turn into the string.
      * @return A string of format {"key":"value",...}
      */
     String getMessagesFromMap(final Map<String, String> keyValues) {
-        ObjectNode node = new ObjectMapper().createObjectNode();
+        ObjectNode node = objectMapper.createObjectNode();
         for (Map.Entry<String, String> entry : keyValues.entrySet()) {
             node.put(entry.getKey(), entry.getValue());
         }

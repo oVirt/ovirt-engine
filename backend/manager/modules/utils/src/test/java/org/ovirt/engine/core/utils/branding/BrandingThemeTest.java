@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.frontend.server.gwt.branding;
+package org.ovirt.engine.core.utils.branding;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -23,7 +23,7 @@ public class BrandingThemeTest {
     @Before
     public void setUp() throws Exception {
         File testThemeRootPath = new File(this.getClass().getClassLoader().
-            getResource("./org/ovirt/engine/ui/frontend/server/gwt/branding") //$NON-NLS-1$
+            getResource("./org/ovirt/engine/core/utils/branding") //$NON-NLS-1$
             .getFile());
         File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "01-test.brand"); //$NON-NLS-1$
         testTheme = new BrandingTheme(testThemePath.getAbsolutePath(),
@@ -56,6 +56,6 @@ public class BrandingThemeTest {
     public void testGetMessagesBundleLocale() {
         ResourceBundle bundle = testTheme.getMessagesBundle(Locale.FRENCH);
         assertNotNull("There should be a bundle", bundle); //$NON-NLS-1$
-        assertEquals("Login header(fr)", bundle.getString("common.login_header_label")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("Login header(fr)", bundle.getString("obrand.common.login_header_label")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }

@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.frontend.server.gwt.branding;
+package org.ovirt.engine.core.utils.branding;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -26,8 +26,7 @@ public class BrandingManagerTest {
     @Before
     public void setUp() throws Exception {
         File etcDir = new File(this.getClass().getClassLoader().
-                getResource("./org/ovirt/engine/ui/frontend/server/gwt") //$NON-NLS-1$
-                .getFile());
+                getResource("./org/ovirt/engine/core/utils").getFile()); //$NON-NLS-1$
         testManager = new BrandingManager(etcDir);
     }
 
@@ -70,9 +69,36 @@ public class BrandingManagerTest {
     @Test
     public void testGetBrandingRootPath() {
         String rootPath = this.getClass().getClassLoader().
-            getResource("./org/ovirt/engine/ui/frontend/server/gwt") //$NON-NLS-1$
+            getResource("./org/ovirt/engine/core/utils/") //$NON-NLS-1$
             .getFile() + "/branding"; //$NON-NLS-1$
         assertEquals("Root paths don't match", new File(rootPath), testManager.getBrandingRootPath()); //$NON-NLS-1$
     }
 
+    @Test
+    public void testGetMessageDefaultLocale() {
+        String testKey = "obrand.common.main_header_label";
+        String result = testManager.getMessage(testKey);
+        assertEquals("The result should be 'Main header'", "Main header", result);
+    }
+
+    @Test
+    public void testGetMessageBadKey() {
+        String testKey = "obrandcommonmain_header_label";
+        String result = testManager.getMessage(testKey);
+        assertEquals("The result should be a blank string", "", result);
+    }
+
+    @Test
+    public void testGetMessageNullKey() {
+        String testKey = null;
+        String result = testManager.getMessage(testKey);
+        assertEquals("The result should be a blank string", "", result);
+    }
+
+    @Test
+    public void testGetMessageFrenchLocale() {
+        String testKey = "obrand.common.main_header_label";
+        String result = testManager.getMessage(testKey, Locale.FRENCH);
+        assertEquals("The result should be 'Main header(fr)'", "Main header(fr)", result);
+    }
 }

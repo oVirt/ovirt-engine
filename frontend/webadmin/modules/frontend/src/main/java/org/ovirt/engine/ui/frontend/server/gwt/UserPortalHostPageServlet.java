@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.frontend.server.gwt;
 
-import org.ovirt.engine.ui.frontend.server.gwt.branding.BrandingTheme.ApplicationType;
+import org.ovirt.engine.core.utils.branding.BrandingTheme.ApplicationType;
 
 /**
  * UserPortal GWT application host page servlet.
