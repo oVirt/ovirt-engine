@@ -68,7 +68,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -255,7 +254,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 image.setStorageIds(new ArrayList<Guid>(Arrays.asList(getParameters().getSourceDomainId())));
             }
 
-            Map<Guid, List<DiskImage>> images = getImagesLeaf(getVm().getImages());
+            Map<Guid, List<DiskImage>> images = ImagesHandler.getImagesLeaf(getVm().getImages());
             for (Map.Entry<Guid, List<DiskImage>> entry : images.entrySet()) {
                 Guid id = entry.getKey();
                 List<DiskImage> diskList = entry.getValue();
@@ -609,7 +608,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     protected void addVmImagesAndSnapshots() {
-        Map<Guid, List<DiskImage>> images = getImagesLeaf(getVm().getImages());
+        Map<Guid, List<DiskImage>> images = ImagesHandler.getImagesLeaf(getVm().getImages());
 
         if (getParameters().getCopyCollapse()) {
             Guid snapshotId = Guid.NewGuid();
@@ -769,70 +768,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                         "Active VM snapshot",
                         new Date(),
                         null));
-    }
-
-    // the last image in each list is the leaf
-    public static Map<Guid, List<DiskImage>> getImagesLeaf(List<DiskImage> images) {
-        Map<Guid, List<DiskImage>> retVal = new HashMap<Guid, List<DiskImage>>();
-        for (DiskImage image : images) {
-            MultiValueMapUtils.addToMap(image.getId(), image, retVal);
-        }
-
-        for (List<DiskImage> list : retVal.values()) {
-            sortImageList(list);
-        }
-        return retVal;
-    }
-
-    private static void sortImageList(List<DiskImage> images) {
-        List<DiskImage> hold = new ArrayList<DiskImage>();
-        DiskImage curr = null;
-
-        // find the first image
-        for (int i = 0; i < images.size(); i++) {
-            int pos = getFirstImage(images, images.get(i));
-            if (pos == -1) {
-                curr = images.get(i);
-                hold.add(images.get(i));
-                images.remove(images.get(i));
-                break;
-            }
-        }
-
-        while (images.size() > 0) {
-            int pos = getNextImage(images, curr);
-            if (pos == -1) {
-                log.error("Image list error in SortImageList");
-                break;
-            }
-            curr = images.get(pos);
-            hold.add(images.get(pos));
-            images.remove(images.get(pos));
-        }
-
-        for (DiskImage image : hold) {
-            images.add(image);
-        }
-    }
-
-    // function return the index of the image that has no parent
-    private static int getFirstImage(List<DiskImage> images, DiskImage curr) {
-        for (int i = 0; i < images.size(); i++) {
-            if (curr.getParentId().equals(images.get(i).getImageId())) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
-    // function return the index of image that is its child
-    private static int getNextImage(List<DiskImage> images, DiskImage curr) {
-        for (int i = 0; i < images.size(); i++) {
-            if (images.get(i).getParentId().equals(curr.getImageId())) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     protected void addVmStatic() {
