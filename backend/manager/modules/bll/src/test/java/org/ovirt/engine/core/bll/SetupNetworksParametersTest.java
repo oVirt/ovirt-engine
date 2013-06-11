@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol.STATIC_IP;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
@@ -30,11 +29,11 @@ public class SetupNetworksParametersTest {
         params.setInterfaces(Arrays.asList(nic));
 
         nic.setNetworkName("otherThenMgmtNetwork");
-        nic.setGateway("1.1.1");
+        nic.setGateway("1.1.1.1");
 
         Validator validator = ValidationUtils.getValidator();
 
-        assertFalse(validator.validate(params).isEmpty());
+        assertTrue(validator.validate(params).isEmpty());
 
         nic.setGateway("");
         nic.setBootProtocol(STATIC_IP);

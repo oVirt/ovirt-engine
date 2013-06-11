@@ -47,7 +47,8 @@ public class SetupNetworksHelperTest {
     @Rule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.ManagementNetwork,
             MANAGEMENT_NETWORK_NAME),
-            mockConfig(ConfigValues.MultipleGatewaysSupported, "3.3", true));
+            mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_3.toString(), true),
+            mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_2.toString(), false));
 
     @Mock
     private NetworkDao networkDAO;
@@ -166,7 +167,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void gatewayChanged() {
-        Network net = createNetwork("net");
+        Network net = createNetwork("otherThenMgmtNetwork");
         mockExistingNetworks(net);
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
         nic.setBootProtocol(NetworkBootProtocol.STATIC_IP);
@@ -174,9 +175,32 @@ public class SetupNetworksHelperTest {
         mockExistingIfaces(nic);
         nic.setGateway(RandomUtils.instance().nextString(10));
 
-        SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+        VDS vds = mock(VDS.class);
+        when(vds.getId()).thenReturn(Guid.Empty);
+        when(vds.getVdsGroupCompatibilityVersion()).thenReturn(Version.v3_3);
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic), vds);
 
         validateAndAssertNetworkModified(helper, net);
+    }
+
+    @Test
+    public void unsupportedGatewayChanged() {
+        Network net = createNetwork("otherThenMgmtNetwork");
+        mockExistingNetworks(net);
+        VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
+        nic.setBootProtocol(NetworkBootProtocol.STATIC_IP);
+        nic.setGateway(RandomUtils.instance().nextString(10));
+        mockExistingIfaces(nic);
+        nic.setGateway(RandomUtils.instance().nextString(10));
+
+        VDS vds = mock(VDS.class);
+        when(vds.getId()).thenReturn(Guid.Empty);
+        when(vds.getVdsGroupCompatibilityVersion()).thenReturn(Version.v3_2);
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic), vds);
+
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY, nic.getNetworkName());
     }
 
     @Test
@@ -1479,7 +1503,6 @@ public class SetupNetworksHelperTest {
     private SetupNetworksHelper createHelper(SetupNetworksParameters params) {
         VDS vds = mock(VDS.class);
         when(vds.getId()).thenReturn(Guid.Empty);
-        when(vds.getVdsGroupCompatibilityVersion()).thenReturn(Version.v3_3);
         return createHelper(params, vds);
     }
 
