@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -19,6 +20,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -379,5 +382,29 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected void executeInScope(TransactionScopeOption scope, TransactionMethod<?> code) {
         TransactionSupport.executeInScope(scope, code);
+    }
+
+    protected boolean checkIsConnectionFieldEmpty(StorageServerConnections connection) {
+        if (StringUtils.isEmpty(connection.getconnection())) {
+            String fieldName = getFieldName(connection);
+            addCanDoActionMessage(String.format("$fieldName %1$s", fieldName));
+            addCanDoActionMessage(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION);
+            return true;
+        }
+        return false;
+    }
+
+    private String getFieldName(StorageServerConnections paramConnection) {
+        String fieldName = null;
+        if (paramConnection.getstorage_type().equals(StorageType.ISCSI)) {
+            fieldName = "address";
+        }
+        else if (paramConnection.getstorage_type().isFileDomain()) {
+            fieldName = "path";
+        }
+        else {
+            fieldName = "connection";
+        }
+        return fieldName;
     }
 }

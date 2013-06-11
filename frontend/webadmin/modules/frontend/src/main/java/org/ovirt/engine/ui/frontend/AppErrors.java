@@ -2146,6 +2146,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Target details cannot be empty.")
     String VALIDATION_STORAGE_CONNECTION_EMPTY_IQN();
 
+    @DefaultStringValue("${fieldName} field cannot be empty.")
+    String VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION();
+
     @DefaultStringValue("Mount path is illegal, please use [IP:/path or FQDN:/path] convention.")
     String VALIDATION_STORAGE_CONNECTION_INVALID();
 

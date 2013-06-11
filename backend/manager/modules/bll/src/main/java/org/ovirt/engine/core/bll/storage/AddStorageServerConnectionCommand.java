@@ -85,6 +85,10 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
             return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
         }
 
+        if (checkIsConnectionFieldEmpty(paramConnection)) {
+           return false;
+        }
+
         if (getParameters().getVdsId().equals(Guid.Empty)) {
             if (!initializeVds()) {
                 return false;

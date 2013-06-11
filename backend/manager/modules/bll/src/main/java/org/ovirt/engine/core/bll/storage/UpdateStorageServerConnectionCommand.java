@@ -66,6 +66,10 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
         }
 
+        if (checkIsConnectionFieldEmpty(newConnectionDetails)) {
+           return false;
+        }
+
         Guid vdsmId = getParameters().getVdsId();
         if (vdsmId == null || vdsmId.equals(Guid.Empty)) {
             return failCanDoAction(VdcBllMessages.VDS_EMPTY_NAME_OR_ID);
@@ -115,6 +119,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
         return super.canDoAction();
     }
+
 
     protected String createDomainNamesList(List<StorageDomain> domains) {
         // Build domain names list to display in the error

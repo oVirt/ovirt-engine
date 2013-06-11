@@ -95,4 +95,26 @@ public class AddStorageServerConnectionCommandTest {
         doReturn(true).when(command).initializeVds();
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
+
+     @Test
+     public void addNFSEmptyConn() {
+        StorageServerConnections newPosixConnection = createPosixConnection("",StorageType.POSIXFS, "nfs" , "timeo=30");
+        parameters.setStorageServerConnection(newPosixConnection);
+        parameters.setVdsId(Guid.Empty);
+        parameters.setStoragePoolId(Guid.Empty);
+        doReturn(true).when(command).initializeVds();
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION);
+     }
+
+    @Test
+     public void addISCSIEmptyConn() {
+        StorageServerConnections newISCSIConnection = createISCSIConnection("", StorageType.ISCSI,"iqn.2013-04.myhat.com:aaa-target1","user1","mypassword123");
+        parameters.setStorageServerConnection(newISCSIConnection);
+        parameters.setVdsId(Guid.Empty);
+        parameters.setStoragePoolId(Guid.Empty);
+        doReturn(true).when(command).initializeVds();
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION);
+     }
 }
