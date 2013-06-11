@@ -513,6 +513,7 @@
         <column>gluster_service</column>
         <column>count_threads_as_cores</column>
         <column>tunnel_migration</column>
+        <column>emulated_machine</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>rhel6.iscsi</value>
@@ -532,6 +533,7 @@
             <value>false</value>
             <value>false</value>
             <value>false</value>
+            <null/>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
@@ -552,6 +554,7 @@
             <value>false</value>
             <value>false</value>
             <value>false</value>
+            <value>pc-1.0</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
@@ -572,6 +575,7 @@
             <value>false</value>
             <value>false</value>
             <value>false</value>
+            <value>pc-1.0</value>
         </row>
         <row>
             <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
@@ -592,6 +596,7 @@
             <value>false</value>
             <value>false</value>
             <value>false</value>
+            <value>pc-1.0</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -612,6 +617,7 @@
             <value>false</value>
             <value>false</value>
             <value>false</value>
+            <value>pc-1.0</value>
         </row>
 		<row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7d</value>
@@ -632,6 +638,7 @@
             <value>false</value>
             <value>false</value>
             <value>false</value>
+            <value>pc-1.0</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7e</value>
@@ -652,6 +659,7 @@
             <value>false</value>
             <value>false</value>
             <value>false</value>
+            <value>pc-1.0</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7f</value>
@@ -672,6 +680,7 @@
             <value>false</value>
             <value>false</value>
             <value>false</value>
+            <value>pc-1.0</value>
         </row>
         <row>
             <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
@@ -692,6 +701,7 @@
             <value>true</value>
             <value>false</value>
             <value>false</value>
+            <value>pc-1.0</value>
         </row>
     </table>
 
@@ -1770,6 +1780,7 @@
         <column>hw_serial_number</column>
         <column>hw_uuid</column>
         <column>hw_family</column>
+        <column>supported_emulated_machines</column>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>3</value>
@@ -1810,6 +1821,7 @@
             <value>{}</value>
             <value>0</value>
             <value>16</value>
+            <null />
             <null />
             <null />
             <null />
@@ -1863,6 +1875,7 @@
             <null />
             <null />
             <null />
+            <value>rhel6.4,rhel6.4,pc-1.1,pc-1.0</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e8</value>
@@ -1910,6 +1923,7 @@
             <null />
             <null />
             <null />
+            <value>rhel6.4,rhel6.4,pc-1.1,pc-1.0</value>
         </row>
         <row>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
@@ -1957,6 +1971,7 @@
             <null />
             <null />
             <null />
+            <value>rhel6.4,rhel6.4,pc-1.1,pc-1.0</value>
         </row>
         <row>
             <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
@@ -2004,6 +2019,7 @@
             <null />
             <null />
             <null />
+            <value>rhel6.4,rhel6.4,pc-1.1,pc-1.0</value>
         </row>
     </table>
 

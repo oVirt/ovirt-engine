@@ -179,14 +179,15 @@ Create or replace FUNCTION InsertVdsDynamic(v_cpu_cores INTEGER ,
  v_hw_serial_number VARCHAR(255),
  v_hw_uuid VARCHAR(255),
  v_hw_family VARCHAR(255),
- v_hbas VARCHAR(255))
+ v_hbas VARCHAR(255),
+ v_supported_emulated_machines VARCHAR(255))
 RETURNS VOID
    AS $procedure$
 BEGIN
 
    BEGIN
-INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, cpu_over_commit_time_stamp, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, anonymous_hugepages,hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas)
-	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_cpu_over_commit_time_stamp, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_anonymous_hugepages,v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas);
+INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, cpu_over_commit_time_stamp, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, anonymous_hugepages,hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines)
+	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_cpu_over_commit_time_stamp, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_anonymous_hugepages,v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines);
    END;
 
    RETURN;
@@ -242,7 +243,8 @@ Create or replace FUNCTION UpdateVdsDynamic(v_cpu_cores INTEGER ,
  v_hw_serial_number VARCHAR(255),
  v_hw_uuid VARCHAR(255),
  v_hw_family VARCHAR(255),
- v_hbas VARCHAR(255))
+ v_hbas VARCHAR(255),
+ v_supported_emulated_machines VARCHAR(255))
 RETURNS VOID
 
 	--The [vds_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -272,7 +274,7 @@ BEGIN
       _update_date = LOCALTIMESTAMP,non_operational_reason = v_non_operational_reason,
       hw_manufacturer = v_hw_manufacturer, hw_product_name = v_hw_product_name,
       hw_version = v_hw_version, hw_serial_number = v_hw_serial_number,
-      hw_uuid = v_hw_uuid, hw_family = v_hw_family, hbas = v_hbas
+      hw_uuid = v_hw_uuid, hw_family = v_hw_family, hbas = v_hbas, supported_emulated_machines = v_supported_emulated_machines
       WHERE vds_id = v_vds_id;
    END;
 

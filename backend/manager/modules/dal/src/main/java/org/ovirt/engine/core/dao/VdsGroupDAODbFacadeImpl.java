@@ -150,7 +150,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("migrate_on_error", group.getMigrateOnError())
                 .addValue("virt_service", group.supportsVirtService())
                 .addValue("gluster_service", group.supportsGlusterService())
-                .addValue("tunnel_migration", group.isTunnelMigration());
+                .addValue("tunnel_migration", group.isTunnelMigration())
+                .addValue("emulated_machine", group.getEmulatedMachine());
         return parameterSource;
     }
 
@@ -188,6 +189,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setVirtService(rs.getBoolean("virt_service"));
             entity.setGlusterService(rs.getBoolean("gluster_service"));
             entity.setTunnelMigration(rs.getBoolean("tunnel_migration"));
+            entity.setEmulatedMachine(rs.getString("emulated_machine"));
             return entity;
         }
     }

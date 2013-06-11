@@ -1329,4 +1329,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
     public void setActiveNic(String activeNic) {
         this.activeNic = activeNic;
     }
+
+    public void setSupportedEmulatedMachines(String supportedEmulatedMachines) {
+        mVdsDynamic.setSupportedEmulatedMachines(supportedEmulatedMachines);
+    }
+
+    public String getSupportedEmulatedMachines() {
+        return mVdsDynamic.getSupportedEmulatedMachines();
+    }
 }

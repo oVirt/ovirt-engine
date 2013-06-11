@@ -68,6 +68,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private boolean tunnelMigration = false;
 
+    private String emulatedMachine;
+
     public VDSGroup() {
         selection_algorithm = VdsSelectionAlgorithm.None;
         high_utilization = -1;
@@ -242,6 +244,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         tunnelMigration = value;
     }
 
+    public String getEmulatedMachine() {
+        return emulatedMachine;
+    }
+
+    public void setEmulatedMachine(String emulatedMachine) {
+        this.emulatedMachine = emulatedMachine;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -265,6 +275,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (virtService ? 1231 : 1237);
         result = prime * result + (glusterService ? 1231 : 1237);
         result = prime * result + (tunnelMigration ? 1231 : 1237);
+        result = prime * result + (emulatedMachine == null ? 0 : emulatedMachine.hashCode());
         return result;
     }
 
@@ -298,6 +309,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && transparentHugepages == other.transparentHugepages
                 && virtService == other.virtService
                 && glusterService == other.glusterService
-                && tunnelMigration == other.tunnelMigration);
+                && tunnelMigration == other.tunnelMigration
+                && ObjectUtils.objectsEqual(emulatedMachine, other.emulatedMachine));
     }
 }

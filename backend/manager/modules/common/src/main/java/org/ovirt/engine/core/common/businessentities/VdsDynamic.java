@@ -128,12 +128,25 @@ public class VdsDynamic implements BusinessEntity<Guid> {
 
     private java.util.HashSet<Version> _supportedENGINESVersionsSet;
 
+    /**
+     * comma separated list of emulated machines the host supports
+     */
+    private String supportedEmulatedMachines;
+
     public void setVersion(RpmVersion value) {
         rpmVersion = value;
     }
 
     public RpmVersion getVersion() {
         return rpmVersion;
+    }
+
+    public String getSupportedEmulatedMachines() {
+        return supportedEmulatedMachines;
+    }
+
+    public void setSupportedEmulatedMachines(String supportedEmulatedMachines) {
+        this.supportedEmulatedMachines = supportedEmulatedMachines;
     }
 
     public VdsDynamic() {
@@ -699,6 +712,8 @@ public class VdsDynamic implements BusinessEntity<Guid> {
                 && ObjectUtils.objectsEqual(hwSerialNumber, other.hwSerialNumber)
                 && ObjectUtils.objectsEqual(hwUUID, other.hwUUID)
                 && ObjectUtils.objectsEqual(hwFamily, other.hwFamily)
-                && ObjectUtils.objectsEqual(HBAs, other.HBAs));
+                && ObjectUtils.objectsEqual(HBAs, other.HBAs)
+                && ObjectUtils.objectsEqual(supportedEmulatedMachines, other.supportedEmulatedMachines));
     }
+
 }

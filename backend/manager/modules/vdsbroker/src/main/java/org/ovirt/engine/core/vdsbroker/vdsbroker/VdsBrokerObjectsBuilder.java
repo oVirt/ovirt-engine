@@ -333,6 +333,8 @@ public class VdsBrokerObjectsBuilder {
         vds.setSupportedEngines(AssignStringValueFromArray(xmlRpcStruct, VdsProperties.supported_engines));
         vds.setIScsiInitiatorName(AssignStringValue(xmlRpcStruct, VdsProperties.iSCSIInitiatorName));
 
+        vds.setSupportedEmulatedMachines(AssignStringValueFromArray(xmlRpcStruct, VdsProperties.emulatedMachines));
+
         String hooksStr = ""; // default value if hooks is not in the xml rpc struct
         if (xmlRpcStruct.containsKey(VdsProperties.hooks)) {
             hooksStr = xmlRpcStruct.get(VdsProperties.hooks).toString();

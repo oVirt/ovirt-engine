@@ -152,7 +152,8 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("hw_serial_number", vds.getHardwareSerialNumber())
                 .addValue("hw_uuid", vds.getHardwareUUID())
                 .addValue("hw_family", vds.getHardwareFamily())
-                .addValue("hbas", new JsonObjectSerializer().serialize(vds.getHBAs()));
+                .addValue("hbas", new JsonObjectSerializer().serialize(vds.getHBAs()))
+                .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines());
 
         getCallsHandler().executeModification("InsertVdsDynamic", parameterSource);
     }
@@ -209,7 +210,8 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("hw_serial_number", vds.getHardwareSerialNumber())
                 .addValue("hw_uuid", vds.getHardwareUUID())
                 .addValue("hw_family", vds.getHardwareFamily())
-                .addValue("hbas", new JsonObjectSerializer().serialize(vds.getHBAs()));
+                .addValue("hbas", new JsonObjectSerializer().serialize(vds.getHBAs()))
+                .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines());
 
         getCallsHandler().executeModification("UpdateVdsDynamic", parameterSource);
     }
