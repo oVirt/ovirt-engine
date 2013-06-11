@@ -69,6 +69,7 @@ import org.ovirt.engine.core.common.queries.GetSystemStatisticsQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.branding.BrandingManager;
 
 public class BackendApiResource
     extends AbstractBackendActionableResource<API, Object>
@@ -383,9 +384,10 @@ public class BackendApiResource
     private API addSystemVersion(API api) {
         String productVersion = getConfigurationValueDefault(String.class,
                 ConfigurationValues.ProductRPMVersion);
+        BrandingManager obrand = BrandingManager.getInstance();
         api.setProductInfo(new ProductInfo());
-        api.getProductInfo().setName("oVirt Engine");
-        api.getProductInfo().setVendor("ovirt.org");
+        api.getProductInfo().setName(obrand.getMessage("obrand.backend.product"));
+        api.getProductInfo().setVendor(obrand.getMessage("obrand.backend.vendor"));
         api.getProductInfo().setFullVersion(productVersion);
         api.getProductInfo().setVersion(VersionHelper.parseVersion(getConfigurationValueDefault(String.class, ConfigurationValues.VdcVersion)));
         return api;
