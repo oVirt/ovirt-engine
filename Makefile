@@ -80,6 +80,7 @@ PKG_GROUP=ovirt
 SPICE_DIR=/usr/share/spice
 RPMBUILD=rpmbuild
 PYTHON=python
+JBOSS_HOME=/usr/share/jboss-as
 PYTHON_SYS_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
 PYTHON_DIR=$(PYTHON_SYS_DIR)
 
@@ -146,6 +147,7 @@ ARTIFACTS = \
 	-e "s|@PACKAGE_VERSION@|$(PACKAGE_VERSION)|g" \
 	-e "s|@DISPLAY_VERSION@|$(DISPLAY_VERSION)|g" \
 	-e "s|@SPICE_DIR@|$(SPICE_DIR)|g" \
+	-e "s|@JBOSS_HOME@|$(JBOSS_HOME)|g" \
 	$< > $@
 
 # List of files that will be generated from templates:
