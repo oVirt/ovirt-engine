@@ -156,11 +156,15 @@ MSG_ALERT_STOP_ENGINE="\nDuring the upgrade process, %s  will not be accessible.
 All existing running virtual machines will continue but you will not be able to\n\
 start or stop any new virtual machines during the process.\n" % basedefs.APP_NAME
 INFO_Q_PROCEED="Would you like to proceed"
-MSG_INFO_REPORTS="Perform the following steps to upgrade the history service \
-or the reporting package:\n\
-1. Execute: yum update ovirt-engine-reports*\n\
-2. Execute: ovirt-engine-dwh-setup\n\
-3. Execute: ovirt-engine-reports-setup"
+MSG_INFO_REPORTS=(
+    'Perform the following steps to upgrade the history service '
+    'or the reporting package:\n'
+    '\t1. Execute: yum update {packagename}-reports*\n'
+    '\t2. Execute: {packagename}-dwh-setup\n'
+    '\t3. Execute: {packagename}-reports-setup\n'
+).format(
+    packagename=basedefs.ENGINE_RPM_NAME,
+)
 
 # GLOBAL
 logFile = "ovirt-engine-upgrade.log"
