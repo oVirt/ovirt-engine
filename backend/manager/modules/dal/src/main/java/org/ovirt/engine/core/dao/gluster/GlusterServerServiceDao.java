@@ -28,4 +28,6 @@ public interface GlusterServerServiceDao extends DAO, SearchDAO<GlusterServerSer
     public void save(GlusterServerService service);
 
     public void update(GlusterServerService service);
+
+    public void updateByServerIdAndServiceType(GlusterServerService service);
 }

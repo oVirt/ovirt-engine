@@ -44,6 +44,17 @@ public class GlusterServerServiceDaoDbFacadeImpl extends MassOperationsGenericDa
     }
 
     @Override
+    public void updateByServerIdAndServiceType(GlusterServerService service) {
+        getCallsHandler().executeModification("UpdateGlusterServerServiceByServerIdAndServiceType",
+                getCustomMapSqlParameterSource()
+                .addValue("server_id", service.getServerId())
+                .addValue("service_id", service.getServiceId())
+                .addValue("pid", service.getPid())
+                .addValue("status", EnumUtils.nameOrNull(service.getStatus()))
+                .addValue("message", service.getMessage()));
+    }
+
+    @Override
     protected ParameterizedRowMapper<GlusterServerService> createEntityRowMapper() {
         return serviceRowMapper;
     }

@@ -213,6 +213,25 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- Update a server specific service by server id and service id
+Create or replace FUNCTION UpdateGlusterServerServiceByServerIdAndServiceType(v_server_id UUID,
+                                                v_service_id UUID,
+                                                v_pid INTEGER,
+                                                v_status VARCHAR(32),
+                                                v_message VARCHAR(1000))
+RETURNS VOID
+AS $procedure$
+BEGIN
+    UPDATE  gluster_server_services
+    SET     pid = v_pid,
+            status = v_status,
+            message = v_message,
+            _update_date = LOCALTIMESTAMP
+    WHERE   server_id = v_server_id
+    AND     service_id = v_service_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
 -- Delete a server specific service
 Create or replace FUNCTION DeleteGlusterServerService(v_id UUID)
 RETURNS VOID

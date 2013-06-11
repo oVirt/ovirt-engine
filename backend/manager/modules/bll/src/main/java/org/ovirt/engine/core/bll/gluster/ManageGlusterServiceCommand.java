@@ -212,7 +212,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
         for (GlusterServerService serverService : fetchedServerServices) {
             if (serviceIds.contains(serverService.getServiceId())) {
                 serverService.setStatus(manageActionDetailsMap.get(actionType).getStatus());
-                getGlusterServerServiceDao().update(serverService);
+                getGlusterServerServiceDao().updateByServerIdAndServiceType(serverService);
             } else {
                 getGlusterServerServiceDao().save(serverService);
             }
