@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.gluster.GlusterClusterParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookManageParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -38,6 +39,8 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
 
     private UICommand resolveConflictsCommand;
 
+    private UICommand syncWithServersCommand;
+
     public UICommand getEnableHookCommand() {
         return enableHookCommand;
     }
@@ -70,6 +73,14 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         this.resolveConflictsCommand = resolveConflictsCommand;
     }
 
+    public UICommand getSyncWithServersCommand() {
+        return syncWithServersCommand;
+    }
+
+    public void setSyncWithServersCommand(UICommand syncWithServersCommand) {
+        this.syncWithServersCommand = syncWithServersCommand;
+    }
+
     @Override
     public VDSGroup getEntity() {
         return (VDSGroup) super.getEntity();
@@ -91,6 +102,8 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
 
         setResolveConflictsCommand(new UICommand("ResolveConflicts", this)); //$NON-NLS-1$
         getResolveConflictsCommand().setIsExecutionAllowed(false);
+
+        setSyncWithServersCommand(new UICommand("SyncWithServers", this)); //$NON-NLS-1$
     }
 
     private void enableHook() {
@@ -394,6 +407,10 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         }
     }
 
+    private void syncWithServers() {
+        Frontend.RunAction(VdcActionType.RefreshGlusterHooks, new GlusterClusterParameters(getEntity().getId()));
+    }
+
     @Override
     protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
@@ -498,6 +515,9 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         }
         else if (command.getName().equals("OnResolveConflicts")) { //$NON-NLS-1$
             onResolveConflicts();
+        }
+        else if (command.equals(getSyncWithServersCommand())) {
+            syncWithServers();
         }
         else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
             cancel();

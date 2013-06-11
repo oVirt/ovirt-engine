@@ -1743,6 +1743,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Resolve Conflicts")
     String resolveConflictsGlusterHook();
 
+    @DefaultStringValue("Sync")
+    String syncWithServersGlusterHook();
+
     @DefaultStringValue("Conflicts Reasons")
     String conflictReasonsGlusterHook();
 

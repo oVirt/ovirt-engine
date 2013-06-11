@@ -104,5 +104,11 @@ public class SubTabClusterGlusterHookView extends AbstractSubTabTableView<VDSGro
                 return getDetailModel().getResolveConflictsCommand();
             }
         });
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterHookEntity>(constants.syncWithServersGlusterHook()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getSyncWithServersCommand();
+            }
+        });
     }
 }
