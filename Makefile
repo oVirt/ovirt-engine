@@ -500,6 +500,10 @@ install_service:
 	install -m 755 packaging/services/ovirt-engine.systemd $(DESTDIR)$(DATA_DIR)/services
 	install -m 755 packaging/services/ovirt-engine.sysv $(DESTDIR)$(DATA_DIR)/services
 
+gwt-debug:
+	[ -n "$(DEBUG_MODULE)" ] || ( echo "Please specify DEBUG_MODULE" && false )
+	cd "frontend/webadmin/modules/$(DEBUG_MODULE)" && $(MVN) gwt:debug -Pgwtdev,gwt-admin,gwt-user -Dgwt.noserver=true
+
 install-dev:
 	[ "$(DEV_REBUILD)" != 0 ] && rm -f "$(BUILD_FILE)" || :
 	rm -f $(GENERATED)

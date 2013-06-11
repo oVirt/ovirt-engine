@@ -162,6 +162,21 @@ Acess using HTTP or HTTPS:
 
 Debug port is available at 127.0.0.1:8787
 
+GWT DEBUG
+
+$ make install-dev PREFIX="${HOME}/ovirt-engine"
+$ make gwt-debug DEBUG_MODULE=<module>
+
+While <module> is webadmin or userportal-gwtp.
+
+Debug port is 8000, more information is available at[1].
+
+Common URLs, provided components running on same machine:
+    WebAdmin:   http://127.0.0.1:8080/webadmin/webadmin/WebAdmin.html?gwt.codesvr=127.0.0.1:9997
+    UserPortal: http://127.0.0.1:8080/UserPortal/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html?gwt.codesvr=127.0.0.1:9997
+
+[1] https://developers.google.com/web-toolkit/doc/latest/DevGuideCompilingAndDebugging
+
 DAO TESTS
 
 Create empty database for DAO tests refer to DATABASE CREATION.
