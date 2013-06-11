@@ -21,6 +21,11 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
     public NetworkCluster() {
     }
 
+    public NetworkCluster(boolean required) {
+        this();
+        this.required = required;
+    }
+
     public NetworkCluster(Guid clusterId,
             Guid networkId,
             NetworkStatus status,

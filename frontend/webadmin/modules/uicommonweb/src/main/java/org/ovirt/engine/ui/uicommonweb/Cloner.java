@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -46,6 +47,10 @@ public final class Cloner
         if (instance instanceof NetworkCluster)
         {
             return cloneNetworkCluster((NetworkCluster) instance);
+        }
+        if (instance instanceof ProviderNetwork)
+        {
+            return cloneProviderNetwork((ProviderNetwork) instance);
         }
         if (instance instanceof VmPool)
         {
@@ -296,6 +301,9 @@ public final class Cloner
         if (instance.getCluster() !=null){
             obj.setCluster(cloneNetworkCluster(instance.getCluster()));
         }
+        if (instance.getProvidedBy() != null) {
+            obj.setProvidedBy(cloneProviderNetwork(instance.getProvidedBy()));
+        }
         return obj;
     }
 
@@ -307,6 +315,15 @@ public final class Cloner
         obj.setDisplay(instance.isDisplay());
         obj.setRequired(instance.isRequired());
         obj.setMigration(instance.isMigration());
+        return obj;
+    }
+
+    private static ProviderNetwork cloneProviderNetwork(ProviderNetwork instance)
+    {
+        ProviderNetwork obj = new ProviderNetwork();
+
+        obj.setExternalId(instance.getExternalId());
+        obj.setProviderId(instance.getProviderId());
         return obj;
     }
 

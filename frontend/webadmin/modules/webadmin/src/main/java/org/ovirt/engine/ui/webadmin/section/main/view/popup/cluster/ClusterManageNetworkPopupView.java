@@ -219,7 +219,8 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
             @Override
             protected boolean canEdit(EntityModel model) {
-                return ((ClusterNetworkModel) model).isAttached();
+                ClusterNetworkModel clusterNetworkModel = (ClusterNetworkModel) model;
+                return clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal();
             }
         }, constants.displayNetwork(), "100px"); //$NON-NLS-1$
 
@@ -243,7 +244,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
                 Boolean migrationNetworkEnabled =
                         (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MigrationNetworkEnabled,
                          clusterNetworkModel.getCluster().getcompatibility_version().toString());
-                return migrationNetworkEnabled && clusterNetworkModel.isAttached();
+                return migrationNetworkEnabled && clusterNetworkModel.isAttached() && !clusterNetworkModel.isExternal();
             }
         }, constants.migrationNetwork(), "100px"); //$NON-NLS-1$
     }
@@ -273,7 +274,9 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     }
 
     private boolean canEditRequired(EntityModel model) {
-        return ((ClusterNetworkModel) model).isAttached() && !((ClusterNetworkModel) model).isManagement();
+        ClusterNetworkModel clusterNetworkModel = (ClusterNetworkModel) model;
+        return clusterNetworkModel.isAttached() && !clusterNetworkModel.isManagement()
+                && !clusterNetworkModel.isExternal();
     }
 
 }

@@ -17,7 +17,7 @@ public class ClusterNetworkModel extends EntityModel {
         if (network.getCluster() == null){
             attached = false;
             // Init with default values
-            getEntity().setCluster(new NetworkCluster());
+            getEntity().setCluster(new NetworkCluster(!network.isExternal()));
         }
         if (HostInterfaceListModel.ENGINE_NETWORK_NAME.equals(network.getName())) {
             setManagement(true);
@@ -68,6 +68,10 @@ public class ClusterNetworkModel extends EntityModel {
 
     public boolean isMigrationNetwork() {
         return getEntity().getCluster().isMigration();
+    }
+
+    public boolean isExternal() {
+        return getEntity().isExternal();
     }
 
     public void setAttached(boolean attached) {
