@@ -113,7 +113,6 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void initPortMirroring() {
-        getPortMirroring().setIsChangable(isPortMirroringSupported());
         getPortMirroring().setEntity(getNic().isPortMirroring());
     }
 

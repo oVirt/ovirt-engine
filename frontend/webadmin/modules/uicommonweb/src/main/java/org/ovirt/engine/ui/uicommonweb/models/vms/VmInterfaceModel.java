@@ -100,6 +100,7 @@ public abstract class VmInterfaceModel extends Model
             public void setSelectedItem(Object value) {
                 super.setSelectedItem(value);
                 updateLinkChangability();
+                updatePortMirroringChangeability();
             }
         });
         setNicType(new ListModel());
@@ -467,6 +468,7 @@ public abstract class VmInterfaceModel extends Model
             {
                 getNetwork().setItems((List<Network>) result1);
                 networkBehavior.initSelectedNetwork(getNetwork(), getNic());
+                updateNetworkChangability();
 
                 // fetch completed
                 okCommand.setIsExecutionAllowed(true);
@@ -546,8 +548,27 @@ public abstract class VmInterfaceModel extends Model
         getLinked().setIsChangable(true);
     }
 
+    protected void updatePortMirroringChangeability() {
+        if (isPortMirroringSupported() && !selectedNetworkExternal()) {
+            getPortMirroring().setIsChangable(true);
+            return;
+        }
+
+        if (selectedNetworkExternal()) {
+            getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
+                    .getConstants()
+                    .portMirroringNotSupportedExternalNetworks());
+        }
+        getPortMirroring().setIsChangable(false);
+    }
+
     protected void updateNetworkChangability() {
         getNetwork().setIsChangable(true);
+    }
+
+    protected boolean selectedNetworkExternal() {
+        Network network = (Network) getNetwork().getSelectedItem();
+        return network != null && network.isExternal();
     }
 
     protected void initCustomPropertySheet() {

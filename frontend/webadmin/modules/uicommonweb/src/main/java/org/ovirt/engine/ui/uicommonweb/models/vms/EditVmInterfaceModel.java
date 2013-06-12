@@ -51,22 +51,18 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
             getEnableMac().setChangeProhibitionReason(ConstantsManager.getInstance()
                     .getConstants()
                     .hotMacUpdateNotPossible());
-            getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
-                    .getConstants()
-                    .hotPortMirroringUpdateNotSupported());
 
             initSelectedType();
             getEnableMac().setEntity(false);
             initMAC();
-            initPortMirroring();
 
         }
 
         getNicType().setIsChangable(!plug);
         getEnableMac().setIsChangable(!plug);
         getMAC().setIsChangable((Boolean) getEnableMac().getEntity() && !plug);
-        getPortMirroring().setIsChangable(isPortMirroringSupported() && !plug);
 
+        updatePortMirroringChangeability();
         updateNetworkChangability();
         updateLinkChangability();
     }
@@ -81,15 +77,37 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
         boolean isPlugged = isPluggedBeforeAndAfterEdit();
         boolean isPortMirroring = (Boolean) getPortMirroring().getEntity();
 
-        if (isVmUp() && hotUpdateSupported) {
-            if (isPlugged && isPortMirroring) {
+        if (isVmUp() && hotUpdateSupported && isPlugged) {
+            if (selectedNetworkExternal()) {
+                getLinked().setChangeProhibitionReason(ConstantsManager.getInstance()
+                        .getConstants()
+                        .hotLinkStateUpdateNotSupportedExternalNetworks());
+            } else if (isPortMirroring) {
                 getLinked().setChangeProhibitionReason(ConstantsManager.getInstance()
                         .getConstants()
                         .hotLinkStateUpdateNotSupportedWithPortMirroring());
-                getLinked().setIsChangable(false);
-                initLinked();
+            } else {
                 return;
             }
+
+            getLinked().setIsChangable(false);
+            initLinked();
+        }
+    }
+
+    @Override
+    protected void updatePortMirroringChangeability() {
+        super.updatePortMirroringChangeability();
+        if (!getPortMirroring().getIsAvailable() || !getPortMirroring().getIsChangable()) {
+            return;
+        }
+
+        if (isVmUp() && isPluggedBeforeAndAfterEdit()) {
+            getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
+                    .getConstants()
+                    .hotPortMirroringUpdateNotSupported());
+            getPortMirroring().setIsChangable(false);
+            initPortMirroring();
         }
     }
 
@@ -103,22 +121,25 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
         boolean isPlugged = isPluggedBeforeAndAfterEdit();
         boolean isPortMirroring = (Boolean) getPortMirroring().getEntity();
 
-        if (isVmUp() && hotUpdateSupported) {
-            if (isPlugged && isPortMirroring) {
+        if (isVmUp() && isPlugged) {
+            if (!hotUpdateSupported) {
                 getNetwork().setChangeProhibitionReason(ConstantsManager.getInstance()
-                                .getConstants()
-                                .hotNetworkUpdateNotSupportedWithPortMirroring());
-                getNetwork().setIsChangable(false);
-                getNetworkBehavior().initSelectedNetwork(getNetwork(), getNic());
+                        .getMessages()
+                        .hotNetworkUpdateNotSupported(getClusterCompatibilityVersion().toString()));
+            } else if (selectedNetworkExternal()) {
+                getNetwork().setChangeProhibitionReason(ConstantsManager.getInstance()
+                        .getConstants()
+                        .hotNetworkUpdateNotSupportedExternalNetworks());
+            } else if (isPortMirroring) {
+                getNetwork().setChangeProhibitionReason(ConstantsManager.getInstance()
+                        .getConstants()
+                        .hotNetworkUpdateNotSupportedWithPortMirroring());
+            } else {
                 return;
             }
-        } else if (isVmUp() && isPlugged) {
-            getNetwork().setChangeProhibitionReason(ConstantsManager.getInstance()
-                    .getMessages()
-                    .hotNetworkUpdateNotSupported(getClusterCompatibilityVersion().toString()));
+
             getNetwork().setIsChangable(false);
             getNetworkBehavior().initSelectedNetwork(getNetwork(), getNic());
-            return;
         }
     }
 

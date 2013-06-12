@@ -1831,6 +1831,15 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Updating 'Port Mirroring' on a running virtual machine while the NIC is plugged is not supported")
     String hotPortMirroringUpdateNotSupported();
 
+    @DefaultStringValue("'Port Mirroring' is not supported for externally-provided networks")
+    String portMirroringNotSupportedExternalNetworks();
+
+    @DefaultStringValue("Detaching an externally-provided network from a plugged NIC on a running virtual machine is not supported")
+    String hotNetworkUpdateNotSupportedExternalNetworks();
+
+    @DefaultStringValue("Updating 'Link State' on a running virtual machine while the NIC is plugged is not supported for externally-provided networks")
+    String hotLinkStateUpdateNotSupportedExternalNetworks();
+
     @DefaultStringValue("Console connect")
     String confirmConsoleConnect();
 
