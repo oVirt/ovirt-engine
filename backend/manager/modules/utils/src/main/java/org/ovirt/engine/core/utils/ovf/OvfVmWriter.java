@@ -41,6 +41,16 @@ public class OvfVmWriter extends OvfWriter {
         _writer.WriteStartElement("TemplateName");
         _writer.WriteRaw(_vm.getVmtName());
         _writer.WriteEndElement();
+        if (_vm.getInstanceTypeId() != null ) {
+            _writer.WriteStartElement("InstanceTypeId");
+            _writer.WriteRaw(_vm.getInstanceTypeId().toString());
+            _writer.WriteEndElement();
+        }
+        if (_vm.getImageTypeId() != null ) {
+            _writer.WriteStartElement("ImageTypeId");
+            _writer.WriteRaw(_vm.getImageTypeId().toString());
+            _writer.WriteEndElement();
+        }
         _writer.WriteStartElement("IsInitilized");
         _writer.WriteRaw(String.valueOf(_vm.getStaticData().isInitialized()));
         _writer.WriteEndElement();

@@ -43,6 +43,9 @@ public class OvfTemplateWriter extends OvfWriter {
         _writer.WriteStartElement("TrustedService");
         _writer.WriteRaw(String.valueOf(_vmTemplate.isTrustedService()));
         _writer.WriteEndElement();
+        _writer.WriteStartElement("TemplateType");
+        _writer.WriteRaw(_vmTemplate.getTemplateType().name());
+        _writer.WriteEndElement();
     }
 
     @Override

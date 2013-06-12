@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -23,7 +24,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class OvfTemplateReader extends OvfReader {
     protected VmTemplate _vmTemplate;
-    private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    private final OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     public OvfTemplateReader(XmlDocument document,
             VmTemplate vmTemplate,
@@ -183,6 +184,11 @@ public class OvfTemplateReader extends OvfReader {
         node = content.SelectSingleNode("TrustedService");
         if (node != null) {
             _vmTemplate.setTrustedService(Boolean.parseBoolean(node.InnerText));
+        }
+
+        node = content.SelectSingleNode("TemplateType");
+        if (node != null) {
+            _vmTemplate.setTemplateType(VmEntityType.valueOf(node.InnerText));
         }
     }
 

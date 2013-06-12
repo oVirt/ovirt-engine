@@ -160,6 +160,18 @@ public class OvfVmReader extends OvfReader {
                 _vm.setVmtName(node.InnerText);
             }
         }
+        node = content.SelectSingleNode("InstanceTypeId");
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.InnerText)) {
+                _vm.setInstanceTypeId(new Guid(node.InnerText));
+            }
+        }
+        node = content.SelectSingleNode("ImageTypeId");
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.InnerText)) {
+                _vm.setImageTypeId(new Guid(node.InnerText));
+            }
+        }
         node = content.SelectSingleNode("IsInitilized");
         if (node != null) {
             _vm.getStaticData().setInitialized(Boolean.parseBoolean(node.InnerText));
