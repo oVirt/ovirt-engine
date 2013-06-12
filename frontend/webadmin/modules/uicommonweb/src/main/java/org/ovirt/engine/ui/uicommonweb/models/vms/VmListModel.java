@@ -1425,7 +1425,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 model.getDisksAllocationModel().getImageToDestinationDomainMap());
 
         model.startProgress(null);
-        addVmTemplateParameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
         Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
@@ -2017,10 +2016,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                 model.startProgress(null);
 
+
                 AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(getcurrentVm(),
                         new ArrayList<DiskImage>(),
                         NGuid.Empty);
-                parameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
                 setVmWatchdogToParams(model, parameters);
                 Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters,
@@ -2066,7 +2065,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     vmListModel.getcurrentVm(),
                                     unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
                                     Guid.Empty);
-                            param.setConsoleEnabled((Boolean) unitVmModel.getIsConsoleDeviceEnabled().getEntity());
 
                             ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                             parameters.add(param);
@@ -2096,7 +2094,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                     VmManagementParametersBase params = new VmManagementParametersBase(getcurrentVm());
                     params.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
-                    params.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
                     ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                     parameters.add(params);
@@ -2178,7 +2175,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                 model.startProgress(null);
                 VmManagementParametersBase updateVmParams = new VmManagementParametersBase(getcurrentVm());
-                updateVmParams.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
                 setVmWatchdogToParams(model, updateVmParams);
                 Frontend.RunAction(VdcActionType.UpdateVm, updateVmParams,

@@ -7,10 +7,10 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -190,13 +190,6 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
             }
         }));
 
-        Frontend.RunQuery(VdcQueryType.GetConsoleDevices, new IdQueryParameters(getVm().getId()), new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                List<String> consoleDevices = (List<String>) ((VdcQueryReturnValue)returnValue).getReturnValue();
-                getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
-            }
-        }));
 
         getModel().getVncKeyboardLayout().setSelectedItem(vm.getVncKeyboardLayout());
 

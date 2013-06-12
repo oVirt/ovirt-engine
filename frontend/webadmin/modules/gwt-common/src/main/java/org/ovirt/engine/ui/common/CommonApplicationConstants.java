@@ -343,14 +343,11 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Start in Pause Mode")
     String runAndPauseVmPopup();
 
-    @DefaultStringValue("Delete Protection")
+    @DefaultStringValue("Delete protection")
     String deleteProtectionPopup();
 
-    @DefaultStringValue("Smartcard Enabled")
+    @DefaultStringValue("Smartcard enabled")
     String smartcardVmPopup();
-
-    @DefaultStringValue("Console Device Enabled")
-    String consoleDeviceEnabled();
 
     @DefaultStringValue("Pool")
     String poolVmPopup();
@@ -1271,5 +1268,4 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Are you sure you want to remove the following items?")
     String removeConfirmationPopupMessage();
-
 }

@@ -296,7 +296,6 @@
 							<e:EntityModelCheckBoxEditor ui:field="isStatelessEditor" addStyleNames="{style.checkbox}" />
 							<e:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" addStyleNames="{style.checkbox}" />
 							<e:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" addStyleNames="{style.checkbox}" />
-							<e:EntityModelCheckBoxEditor ui:field="isConsoleDeviceEnabledEditor" addStyleNames="{style.checkbox}" />
 						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.sectionPanel}">
 							

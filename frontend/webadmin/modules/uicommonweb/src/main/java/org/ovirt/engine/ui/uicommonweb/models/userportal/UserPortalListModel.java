@@ -656,7 +656,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         addVmTemplateParameters.setDiskInfoDestinationMap(model.getDisksAllocationModel()
                 .getImageToDestinationDomainMap());
-        addVmTemplateParameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
         Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
@@ -1077,7 +1076,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                 new ArrayList<DiskImage>(),
                                 NGuid.Empty);
                 parameters.setMakeCreatorExplicitOwner(true);
-                parameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
                 Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters,
                         new IFrontendActionAsyncCallback() {
@@ -1107,7 +1105,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                     unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
                                     Guid.Empty);
                             param.setMakeCreatorExplicitOwner(true);
-                            param.setConsoleEnabled((Boolean) unitVmModel.getIsConsoleDeviceEnabled().getEntity());
 
                             ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                             parameters.add(param);
@@ -1130,7 +1127,6 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
                     param.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
                     param.setMakeCreatorExplicitOwner(true);
-                    param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
                     ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                     parameters.add(param);
@@ -1171,10 +1167,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             }
             else
             {
-                VmManagementParametersBase params = new VmManagementParametersBase(gettempVm());
-                params.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
-
-                Frontend.RunAction(VdcActionType.UpdateVm, params,
+                Frontend.RunAction(VdcActionType.UpdateVm, new VmManagementParametersBase(gettempVm()),
                         new IFrontendActionAsyncCallback() {
                             @Override
                             public void executed(FrontendActionAsyncResult a) {

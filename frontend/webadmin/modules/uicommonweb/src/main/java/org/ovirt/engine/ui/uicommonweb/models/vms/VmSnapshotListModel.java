@@ -596,7 +596,6 @@ public class VmSnapshotListModel extends SearchableListModel
                 new AddVmFromSnapshotParameters(getcurrentVm().getStaticData(), snapshot.getId());
         parameters.setDiskInfoDestinationMap(imageToDestinationDomainMap);
         setupAddVmFromSnapshotParameters(parameters);
-        parameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
         model.startProgress(null);
 

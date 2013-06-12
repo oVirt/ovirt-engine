@@ -510,7 +510,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         param.setStorageDomainId(Guid.Empty);
                         param.setDiskInfoDestinationMap(model.getDisksAllocationModel()
                                 .getImageToDestinationDomainMap());
-                        param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
                         if (model.getQuota().getSelectedItem() != null) {
                             desktop.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
