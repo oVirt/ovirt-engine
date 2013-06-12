@@ -997,9 +997,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Given URI is of an invalid format.")
     String uriInvalidFormat();
 
-    @DefaultStringValue("Given URL contains invalid scheme, only 'http://' is allowed.")
-    String urlSchemeNotHttp();
-
     @DefaultStringValue("Switch to maintenance mode to enable Upgrade.")
     String switchToMaintenanceModeToEnableUpgradeReason();
 

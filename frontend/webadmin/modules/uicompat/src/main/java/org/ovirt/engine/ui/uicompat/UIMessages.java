@@ -255,6 +255,15 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Diskless Virtual Machine cannot run in stateless mode")
     String disklessVmCannotRunAsStateless();
 
+    @DefaultMessage("Given URL must not contain a scheme (e.g. ''{0}'').")
+    String urlSchemeMustBeEmpty(String passedScheme);
+
+    @DefaultMessage("Given URL does not contain a scheme, it must contain one of the following:\n\n{0}")
+    String urlSchemeMustNotBeEmpty(String allowedSchemes);
+
+    @DefaultMessage("Given URL contains invalid scheme ''{0}'', only the following schemes are allowed:\n\n{1}")
+    String urlSchemeInvalidScheme(String passedScheme, String allowedSchemes);
+
     // Vnic
     @DefaultMessage("Hot Plug is not supported on cluster version {0}")
     String hotPlugNotSupported(String clusterVersion);

@@ -179,7 +179,7 @@ public class ProviderModel extends Model {
             getUrl().setEntity(url.getStringRepresentation());
         }
         getUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
-                new UrlValidation(new String[] { Uri.SCHEME_HTTP, Uri.SCHEME_HTTPS }) });
+                new UrlValidation(Uri.SCHEME_HTTP, Uri.SCHEME_HTTPS) });
 
         return getName().getIsValid() && getType().getIsValid() && getUrl().getIsValid() && getUsername().getIsValid()
                 && getPassword().getIsValid();

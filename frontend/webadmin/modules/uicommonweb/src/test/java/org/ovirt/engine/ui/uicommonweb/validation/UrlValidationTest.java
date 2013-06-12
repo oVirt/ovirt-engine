@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 
@@ -42,7 +43,7 @@ public class UrlValidationTest {
         urlValidation = spy(new UrlValidation(new String[] { Uri.SCHEME_HTTP }));
         hostValidation = new TestableHostValidation();
         doReturn(null).when(urlValidation).getUriMessage();
-        doReturn(null).when(urlValidation).getSchemeMessage();
+        doReturn(null).when(urlValidation).getSchemeMessage(any(String.class));
         doReturn(hostValidation).when(urlValidation).getHostValidation();
     }
 

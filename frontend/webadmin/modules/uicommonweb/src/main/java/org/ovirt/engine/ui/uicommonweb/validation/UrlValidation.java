@@ -10,10 +10,8 @@ public class UrlValidation implements IValidation {
 
     private final Set<String> allowedSchemes = new HashSet<String>();
 
-    public UrlValidation(String[] allowedSchemes) {
-        if (allowedSchemes == null) {
-            this.allowedSchemes.add(""); //$NON-NLS-1$
-        } else {
+    public UrlValidation(String... allowedSchemes) {
+        if (allowedSchemes != null) {
             for (String scheme : allowedSchemes) {
                 this.allowedSchemes.add(scheme.toLowerCase());
             }
@@ -32,9 +30,10 @@ public class UrlValidation implements IValidation {
         }
 
         res = getHostValidation().validate(uri.getAuthority().getHost());
-        if (!allowedSchemes.contains(uri.getScheme())) {
+        String scheme = uri.getScheme();
+        if (!allowedSchemes.contains(scheme)) {
             res.setSuccess(false);
-            res.getReasons().add(getSchemeMessage());
+            res.getReasons().add(getSchemeMessage(scheme));
         }
         return res;
     }
@@ -43,8 +42,20 @@ public class UrlValidation implements IValidation {
         return ConstantsManager.getInstance().getConstants().uriInvalidFormat();
     }
 
-    protected String getSchemeMessage() {
-        return ConstantsManager.getInstance().getConstants().urlSchemeNotHttp();
+    protected String getSchemeMessage(String passedScheme) {
+        if (allowedSchemes.isEmpty()) {
+            return ConstantsManager.getInstance().getMessages().urlSchemeMustBeEmpty(passedScheme);
+        } else {
+            StringBuilder allowedSchemeList = new StringBuilder();
+            for (String scheme : allowedSchemes) {
+                allowedSchemeList.append("- ").append(scheme).append('\n'); // $NON-NLS-1$
+            }
+            return passedScheme.isEmpty() ? ConstantsManager.getInstance()
+                    .getMessages()
+                    .urlSchemeMustNotBeEmpty(allowedSchemeList.toString()) : ConstantsManager.getInstance()
+                    .getMessages()
+                    .urlSchemeInvalidScheme(passedScheme, allowedSchemeList.toString());
+        }
     }
 
     protected HostAddressValidation getHostValidation() {
