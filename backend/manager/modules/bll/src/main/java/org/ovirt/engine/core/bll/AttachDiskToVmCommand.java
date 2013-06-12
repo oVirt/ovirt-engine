@@ -176,6 +176,10 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        if (disk == null) {
+            return null;
+        }
+
         Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
         if (!disk.isShareable()) {
             locks.put(disk.getId().toString(),
