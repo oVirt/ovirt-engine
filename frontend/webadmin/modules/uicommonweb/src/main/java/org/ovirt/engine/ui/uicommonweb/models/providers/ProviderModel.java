@@ -172,12 +172,6 @@ public class ProviderModel extends Model {
         getType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getUsername().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
-
-        Uri url = new Uri((String) getUrl().getEntity());
-        if (url.getScheme().isEmpty()) {
-            url.setScheme(Uri.SCHEME_HTTP);
-            getUrl().setEntity(url.getStringRepresentation());
-        }
         getUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
                 new UrlValidation(Uri.SCHEME_HTTP, Uri.SCHEME_HTTPS) });
 

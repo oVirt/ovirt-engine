@@ -35,6 +35,10 @@ public class Uri {
         }
     }
 
+    public Uri() {
+        this(null);
+    }
+
     public String getStringRepresentation() {
         if (!valid) {
             return null;
