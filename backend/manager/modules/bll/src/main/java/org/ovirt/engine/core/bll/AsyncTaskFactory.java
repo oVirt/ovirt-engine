@@ -27,7 +27,7 @@ public final class AsyncTaskFactory {
      *            the info by which we construct the task.
      * @return
      */
-    public static SPMAsyncTask Construct(AsyncTaskCreationInfo creationInfo) {
+    public static SPMAsyncTask construct(AsyncTaskCreationInfo creationInfo) {
         AsyncTasks asyncTask = DbFacade.getInstance().getAsyncTaskDao().getByVdsmTaskId(creationInfo.getVdsmTaskId());
         if (asyncTask == null || asyncTask.getActionParameters() == null) {
             asyncTask =
@@ -45,7 +45,12 @@ public final class AsyncTaskFactory {
             creationInfo.setTaskType(AsyncTaskType.unknown);
         }
         AsyncTaskParameters asyncTaskParams = new AsyncTaskParameters(creationInfo, asyncTask);
-        return Construct(creationInfo.getTaskType(), asyncTaskParams, true);
+        return construct(creationInfo.getTaskType(), asyncTaskParams, true);
+    }
+
+    public static SPMAsyncTask construct(AsyncTaskCreationInfo creationInfo, AsyncTasks asyncTask) {
+        AsyncTaskParameters asyncTaskParams = new AsyncTaskParameters(creationInfo, asyncTask);
+        return construct(creationInfo.getTaskType(), asyncTaskParams, true);
     }
 
     /**
@@ -61,7 +66,7 @@ public final class AsyncTaskFactory {
      *            the parameters by which we construct the task.
      * @return
      */
-    public static SPMAsyncTask Construct(AsyncTaskType taskType, AsyncTaskParameters asyncTaskParams, boolean duringInit) {
+    public static SPMAsyncTask construct(AsyncTaskType taskType, AsyncTaskParameters asyncTaskParams, boolean duringInit) {
         try {
             SPMAsyncTask result = null;
             if (taskType == AsyncTaskType.unknown) {

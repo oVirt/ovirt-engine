@@ -61,6 +61,10 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
         return _name;
     }
 
+    public void setName(String value) {
+        _name = value;
+    }
+
     public String getDescription() {
         return _description;
     }

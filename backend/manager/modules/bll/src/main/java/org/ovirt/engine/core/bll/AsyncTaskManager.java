@@ -5,17 +5,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
@@ -29,14 +28,15 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
@@ -66,7 +66,10 @@ public final class AsyncTaskManager {
     /**Map of tasks in DB per storage pool that exist after restart **/
     private ConcurrentMap<Guid, List<AsyncTasks>> tasksInDbAfterRestart = null;
 
-
+    /**
+     * Map of tasks for commands that have been partially submitted to vdsm
+     */
+    private Map<Guid, AsyncTasks> partiallyCompletedCommandTasks = new ConcurrentHashMap<>();
 
     private static final AsyncTaskManager _taskManager = new AsyncTaskManager();
 
@@ -79,25 +82,27 @@ public final class AsyncTaskManager {
         _tasks = new ConcurrentHashMap<Guid, SPMAsyncTask>();
 
         SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
-        scheduler.scheduleAFixedDelayJob(this, "_timer_Elapsed", new Class[] {},
-                new Object[] {}, Config.<Integer> GetValue(ConfigValues.AsyncTaskPollingRate),
-                Config.<Integer> GetValue(ConfigValues.AsyncTaskPollingRate), TimeUnit.SECONDS);
+        scheduler.scheduleAFixedDelayJob(this, "_timer_Elapsed", new Class[]{},
+                new Object[]{}, Config.<Integer>GetValue(ConfigValues.AsyncTaskPollingRate),
+                Config.<Integer>GetValue(ConfigValues.AsyncTaskPollingRate), TimeUnit.SECONDS);
 
-        scheduler.scheduleAFixedDelayJob(this, "_cacheTimer_Elapsed", new Class[] {},
-                new Object[] {}, Config.<Integer> GetValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
-                Config.<Integer> GetValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds), TimeUnit.SECONDS);
-        _cacheTimeInMinutes = Config.<Integer> GetValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
-        tasksInDbAfterRestart = new ConcurrentHashMap<Guid, List<AsyncTasks>>();
-        for (AsyncTasks task: DbFacade.getInstance().getAsyncTaskDao().getAll()) {
-            if (Guid.isNullOrEmpty(task.getVdsmTaskId())) {
-                log.infoFormat("Failing task {0} as it does not have a vdsm id.", task.getTaskId());
-                failTaskWithoutVdsmId(task);
-                continue;
+        scheduler.scheduleAFixedDelayJob(this, "_cacheTimer_Elapsed", new Class[]{},
+                new Object[]{}, Config.<Integer>GetValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
+                Config.<Integer>GetValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds), TimeUnit.SECONDS);
+        _cacheTimeInMinutes = Config.<Integer>GetValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
+        tasksInDbAfterRestart = new ConcurrentHashMap();
+        Map<Guid, List<AsyncTasks>> rootCommandIdToTasksMap = groupTasksByRootCommandId(DbFacade.getInstance().getAsyncTaskDao().getAll());
+        for (Entry<Guid, List<AsyncTasks>> entry : rootCommandIdToTasksMap.entrySet()) {
+            if (hasTasksWithoutVdsmId(rootCommandIdToTasksMap.get(entry.getKey()))) {
+                log.infoFormat("Root Command {0} has tasks without vdsm id.", entry.getKey());
+                handleTasksOfCommandWithEmptyVdsmId(rootCommandIdToTasksMap.get(entry.getKey()));
             }
-            tasksInDbAfterRestart.putIfAbsent(task.getStoragePoolId(), new ArrayList<AsyncTasks>());
-            List<AsyncTasks> tasksPerStoragePool = tasksInDbAfterRestart.get(task.getStoragePoolId());
-            tasksInDbAfterRestart.put(task.getStoragePoolId(), tasksPerStoragePool);
-            tasksPerStoragePool.add(task);
+            for (AsyncTasks task : entry.getValue()) {
+                if (!hasEmptyVdsmId(task)) {
+                    tasksInDbAfterRestart.putIfAbsent(task.getStoragePoolId(), new ArrayList<AsyncTasks>());
+                    tasksInDbAfterRestart.get(task.getStoragePoolId()).add(task);
+                }
+            }
         }
     }
 
@@ -112,7 +117,7 @@ public final class AsyncTaskManager {
 
             if (ThereAreTasksToPoll() && logChangedMap) {
                 log.infoFormat("Finished polling Tasks, will poll again in {0} seconds.",
-                               Config.<Integer> GetValue(ConfigValues.AsyncTaskPollingRate));
+                        Config.<Integer>GetValue(ConfigValues.AsyncTaskPollingRate));
 
                 // Set indication to false for not logging the same message next
                 // time.
@@ -137,10 +142,9 @@ public final class AsyncTaskManager {
      * (ClearedFailed), and been in that status for several minutes
      * (_cacheTimeInMinutes).
      *
-     * @param task
-     *            - Asynchronous task we check to cache or not.
+     * @param task - Asynchronous task we check to cache or not.
      * @return - true for uncached object , and false when the object should be
-     *         cached.
+     * cached.
      */
     public synchronized boolean CachingOver(SPMAsyncTask task) {
         // Get time in milliseconds that the task should be cached
@@ -180,7 +184,7 @@ public final class AsyncTaskManager {
         return false;
     }
 
-    public static void failTaskWithoutVdsmId(final AsyncTasks task) {
+    public void handleTasksOfCommandWithEmptyVdsmId(final List<AsyncTasks> tasks) {
         ThreadPoolUtil.execute(new Runnable() {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -188,7 +192,10 @@ public final class AsyncTaskManager {
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
                     @Override
                     public Object runInTransaction() {
-                        logAndFailTaskWithoutVdsmId(task);
+                        boolean isPartiallySubmittedCommand = isPartiallySubmittedCommand(tasks);
+                        for (AsyncTasks task : tasks) {
+                            handleTaskOfCommandWithEmptyVdsmId(isPartiallySubmittedCommand, task);
+                        }
                         return null;
                     }
                 });
@@ -196,16 +203,98 @@ public final class AsyncTaskManager {
         });
     }
 
-    private static void logAndFailTaskWithoutVdsmId(final AsyncTasks task) {
+    /**
+     * A command is considered partially submitted to the vdsm if some of its
+     * place holders have vdsm id and some have empty vdsm id, indicating that
+     * the server was restarted during command execution.
+     * @param tasks
+     * @return
+     */
+    private boolean isPartiallySubmittedCommand(List<AsyncTasks> tasks) {
+        for (AsyncTasks task : tasks) {
+            // if one of the tasks has a vdsm id, the command was partially
+            // submitted to vdsm
+            if (!hasEmptyVdsmId(task)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * We group the tasks by the root command id, so that we can identify the
+     * commands that were partially submitted to vdsm
+     * @param tasksInDB
+     * @return
+     */
+    private Map<Guid, List<AsyncTasks>> groupTasksByRootCommandId(List<AsyncTasks> tasksInDB) {
+        Map<Guid, List<AsyncTasks>> rootCommandIdToCommandsMap = new HashMap<>();
+        for (AsyncTasks task : tasksInDB) {
+            MultiValueMapUtils.addToMap(task.getRootCommandId(), task, rootCommandIdToCommandsMap);
+        }
+        return rootCommandIdToCommandsMap;
+    }
+
+    /**
+     * Determines if any of the tasks has an empty vdsm id.
+     * @param tasks
+     * @return
+     */
+    private boolean hasTasksWithoutVdsmId(List<AsyncTasks> tasks) {
+        for (AsyncTasks task : tasks) {
+            if (hasEmptyVdsmId(task)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasEmptyVdsmId(AsyncTasks task) {
+        return Guid.Empty.equals(task.getVdsmTaskId());
+    }
+
+    /**
+     * If a command is partially submitted to vdsm, the empty place holders
+     * can be removed from the database and we poll for the completion of tasks
+     * that were already submitted. Once the tasks that were submitted finish
+     * execution, they are marked to be failed by adding them to the
+     * partiallyCompletedCommandTasks list.
+     * If none of the tasks were submitted to vdsm, the empty place holders
+     * are deleted from the database and we endAction on the command with
+     * failure
+     * @param isPartiallySubmittedCommand
+     * @param task
+     */
+    private void handleTaskOfCommandWithEmptyVdsmId(
+            final boolean isPartiallySubmittedCommand,
+            final AsyncTasks task) {
+        if (isPartiallySubmittedCommand) {
+            if (hasEmptyVdsmId(task)) {
+                removeTaskFromDbByTaskId(task.getTaskId());
+                return;
+            }
+            partiallyCompletedCommandTasks.put(task.getVdsmTaskId(), task);
+            return;
+        }
+        TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                new TransactionMethod<Void>() {
+                    @Override
+                    public Void runInTransaction() {
+                        logAndFailTaskOfCommandWithEmptyVdsmId(task);
+                        return null;
+                    }
+                });
+    }
+
+    private static void logAndFailTaskOfCommandWithEmptyVdsmId(final AsyncTasks task) {
         log.infoFormat(
-                "Failing task with out vdsm id and AsyncTaskType {0} : Task '{1}' Parent Command {2}",
+                "Failing task with empty vdsm id AsyncTaskType {0} : Task '{1}' Parent Command {2}",
                 task.getTaskType(),
                 task.getTaskId(),
                 (task.getaction_type()));
         task.getTaskParameters().setTaskGroupSuccess(false);
-        ExecutionHandler.endTaskStep(task.getStepId(), JobExecutionStatus.FAILED);
-        removeTaskFromDbByTaskId(task.getTaskId());
-        if (task.getTaskType() == AsyncTaskType.unknown) {
+        if (task.getaction_type() == VdcActionType.Unknown) {
+            removeTaskFromDbByTaskId(task.getTaskId());
             log.infoFormat(
                     "Not calling endAction for task with out vdsm id and AsyncTaskType {0} : Task '{1}' Parent Command {2}",
                     task.getTaskType(),
@@ -213,14 +302,26 @@ public final class AsyncTaskManager {
                     (task.getaction_type()));
             return;
         }
-        Guid stepId = task.getStepId();
-        ExecutionContext context = null;
-        if (stepId != null) {
-            context = ExecutionHandler.createFinalizingContext(stepId);
+        log.infoFormat("Calling updateTask for task with out vdsm id and AsyncTaskType {0} : Task '{1}' Parent Command {2} Parameters class {3}",task.getTaskType(),
+                    task.getTaskId(),
+                    (task.getaction_type()));
+        AsyncTaskCreationInfo creationInfo = new AsyncTaskCreationInfo(Guid.Empty, task.getTaskType(), task.getStoragePoolId());
+        SPMAsyncTask spmTask = AsyncTaskFactory.construct(creationInfo, task);
+        AsyncTaskStatus failureStatus = new AsyncTaskStatus();
+        failureStatus.setStatus(AsyncTaskStatusEnum.finished);
+        failureStatus.setResult(AsyncTaskResultEnum.failure);
+        failureStatus.setMessage("Engine was restarted before all tasks of the command could be submitted to vdsm.");
+        spmTask.setState(AsyncTaskState.Ended);
+        spmTask.setLastTaskStatus(failureStatus);
+        spmTask.UpdateTask(failureStatus);
+    }
+
+    private static VdcActionType getEndActionType(AsyncTasks dbAsyncTask) {
+        VdcActionType commandType = dbAsyncTask.getActionParameters().getCommandType();
+        if (!VdcActionType.Unknown.equals(commandType)) {
+            return commandType;
         }
-        Backend.getInstance().endAction(task.getaction_type(),
-                task.getActionParameters(),
-                new CommandContext(context));
+        return dbAsyncTask.getaction_type();
     }
 
     protected static void removeTaskFromDbByTaskId(Guid taskId) {
@@ -243,7 +344,7 @@ public final class AsyncTaskManager {
 
     private void cleanZombieTasks() {
         long maxTime = DateTime.getNow()
-                .AddMinutes((-1) * Config.<Integer> GetValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes)).getTime();
+                .AddMinutes((-1) * Config.<Integer>GetValue(ConfigValues.AsyncTaskZombieTaskLifeInMinutes)).getTime();
         for (SPMAsyncTask task : _tasks.values()) {
 
             if (task.getParameters().getDbAsyncTask().getStartTime().getTime() < maxTime) {
@@ -318,8 +419,7 @@ public final class AsyncTaskManager {
     /**
      * Update task status based on asyncTaskMap.
      *
-     * @param asyncTaskMap
-     *            - Task statuses Map fetched from VDSM.
+     * @param asyncTaskMap - Task statuses Map fetched from VDSM.
      */
     private void updateTaskStatuses(
                                     Map<Guid, Map<Guid, AsyncTaskStatus>> poolsAllTasksMap) {
@@ -345,10 +445,10 @@ public final class AsyncTaskManager {
      * Call VDSCommand for each pool id fetched from poolsOfActiveTasks , and
      * Initialize a map with each storage pool Id task statuses.
      *
-     * @param poolsOfActiveTasks
-     *            - Set of all the active tasks fetched from _tasks.
+     * @param poolsOfActiveTasks - Set of all the active tasks fetched from
+     * _tasks.
      * @return poolsAsyncTaskMap - Map which contains tasks for each storage
-     *         pool id.
+     * pool id.
      */
     @SuppressWarnings("unchecked")
     private Map<Guid, Map<Guid, AsyncTaskStatus>> getSPMsTasksStatuses(Set<Guid> poolsOfActiveTasks) {
@@ -365,14 +465,14 @@ public final class AsyncTaskManager {
                     poolsAsyncTaskMap.put(storagePoolID, map);
                 }
             } catch (RuntimeException e) {
-                if ((e instanceof VdcBLLException) &&
-                        (((VdcBLLException) e).getErrorCode() == VdcBllErrors.VDS_NETWORK_ERROR)) {
-                    log.debugFormat("Get SPM task statuses: Calling Command {1}{2}, " +
-                            "with storagePoolId {3}) threw an exception.",
+                if ((e instanceof VdcBLLException)
+                        && (((VdcBLLException) e).getErrorCode() == VdcBllErrors.VDS_NETWORK_ERROR)) {
+                    log.debugFormat("Get SPM task statuses: Calling Command {1}{2}, "
+                            + "with storagePoolId {3}) threw an exception.",
                             VDSCommandType.SPMGetAllTasksStatuses, "VDSCommand", storagePoolID);
                 } else {
-                    log.debugFormat("Get SPM task statuses: Calling Command {1}{2}, " +
-                            "with storagePoolId {3}) threw an exception.",
+                    log.debugFormat("Get SPM task statuses: Calling Command {1}{2}, "
+                            + "with storagePoolId {3}) threw an exception.",
                             VDSCommandType.SPMGetAllTasksStatuses, "VDSCommand", storagePoolID, e);
                 }
             }
@@ -435,9 +535,7 @@ public final class AsyncTaskManager {
     private void addTaskToManager(SPMAsyncTask task) {
         if (task == null) {
             log.error("Cannot add a null task.");
-        }
-
-        else {
+        } else {
             if (!_tasks.containsKey(task.getVdsmTaskId())) {
                 log.infoFormat(
                         "Adding task '{0}' (Parent Command {1}, Parameters Type {2}), {3}.",
@@ -471,10 +569,8 @@ public final class AsyncTaskManager {
      * Adds new task to _tasks map , and set the log status to true. We set the
      * indication to true for logging _tasks status on next quartz execution.
      *
-     * @param guid
-     *            - Key of the map.
-     * @param asyncTask
-     *            - Value of the map.
+     * @param guid - Key of the map.
+     * @param asyncTask - Value of the map.
      */
     private void AddTaskToMap(Guid guid, SPMAsyncTask asyncTask) {
         _tasks.put(guid, asyncTask);
@@ -485,8 +581,7 @@ public final class AsyncTaskManager {
      * We set the indication to true when _tasks map changes for logging _tasks
      * status on next quartz execution.
      *
-     * @param asyncTaskMap
-     *            - Map to copy to _tasks map.
+     * @param asyncTaskMap - Map to copy to _tasks map.
      */
     private void setNewMap(ConcurrentMap<Guid, SPMAsyncTask> asyncTaskMap) {
         // If not the same set _tasks to be as asyncTaskMap.
@@ -500,7 +595,7 @@ public final class AsyncTaskManager {
     }
 
     public SPMAsyncTask CreateTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
-        return AsyncTaskFactory.Construct(taskType, taskParameters, false);
+        return AsyncTaskFactory.construct(taskType, taskParameters, false);
     }
 
     public synchronized void StartPollingTask(Guid vdsmTaskId) {
@@ -518,10 +613,7 @@ public final class AsyncTaskManager {
                     // task is still running or is still in the cache:
                     _tasks.get(vdsmTaskId).setLastStatusAccessTime();
                     returnValue.add(_tasks.get(vdsmTaskId).getLastTaskStatus());
-                }
-
-                else
-                // task doesn't exist in the manager (shouldn't happen) ->
+                } else // task doesn't exist in the manager (shouldn't happen) ->
                 // assume it has been ended successfully.
                 {
                     log.warnFormat(
@@ -543,8 +635,7 @@ public final class AsyncTaskManager {
      * Retrieves from the specified storage pool the tasks that exist on it and
      * adds them to the manager.
      *
-     * @param sp
-     *            the storage pool to retrieve running tasks from
+     * @param sp the storage pool to retrieve running tasks from
      */
     public void AddStoragePoolExistingTasks(StoragePool sp) {
         List<AsyncTaskCreationInfo> currPoolTasks = null;
@@ -568,7 +659,20 @@ public final class AsyncTaskManager {
                     creationInfo.setStoragePoolID(sp.getId());
                     if (!_tasks.containsKey(creationInfo.getVdsmTaskId())) {
                         try {
-                            SPMAsyncTask task = AsyncTaskFactory.Construct(creationInfo);
+                            SPMAsyncTask task;
+                            if (partiallyCompletedCommandTasks.containsKey(creationInfo.getVdsmTaskId())) {
+                                AsyncTasks asyncTaskInDb = partiallyCompletedCommandTasks.get(creationInfo.getVdsmTaskId());
+                                task = AsyncTaskFactory.construct(creationInfo, asyncTaskInDb);
+                                if (task.getEntitiesMap() == null) {
+                                    task.setEntitiesMap(new HashMap<Guid, VdcObjectType>());
+                                }
+                                partiallyCompletedCommandTasks.remove(task.getVdsmTaskId());
+                                // mark it as a task of a partially completed command
+                                // Will result in failure of the command
+                                task.setPartiallyCompletedCommandTask(true);
+                            } else {
+                                task = AsyncTaskFactory.construct(creationInfo);
+                            }
                             addTaskToManager(task);
                             newlyAddedTasks.add(task);
                         } catch (Exception e) {
@@ -580,7 +684,6 @@ public final class AsyncTaskManager {
                 }
 
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
                     @Override
                     public Void runInTransaction() {
                         for (SPMAsyncTask task : newlyAddedTasks) {
@@ -600,9 +703,7 @@ public final class AsyncTaskManager {
                         sp.getName(),
                         newlyAddedTasks.size());
             }
-        }
-
-        else {
+        } else {
             log.infoFormat("Discovered no tasks on Storage Pool {0}",
                     sp.getName());
         }
@@ -616,6 +717,7 @@ public final class AsyncTaskManager {
                 }
             }
         }
+
         //Either the tasks were only in DB - so they were removed from db, or they are polled -
         //in any case no need to hold them in the map that represents the tasksInDbAfterRestart
         tasksInDbAfterRestart.remove(sp.getId());
@@ -645,10 +747,10 @@ public final class AsyncTaskManager {
     }
 
     /**
-     * Stops all tasks, and set them to polling state, for clearing them up later.
+     * Stops all tasks, and set them to polling state, for clearing them up
+     * later.
      *
-     * @param vdsmTaskList
-     *            - List of tasks to stop.
+     * @param vdsmTaskList - List of tasks to stop.
      */
     public synchronized void CancelTasks(List<Guid> vdsmTaskList) {
         for (Guid vdsmTaskId : vdsmTaskList) {
@@ -683,5 +785,4 @@ public final class AsyncTaskManager {
 
         return false;
     }
-
 }

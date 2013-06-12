@@ -209,6 +209,14 @@ public class SPMAsyncTask {
             setLastStatusAccessTime();
         }
 
+        // A task that belongs to a partially submitted command needs to be
+        // failed no matter what the status of the task is.
+        if (isPartiallyCompletedCommandTask()) {
+            getParameters().getDbAsyncTask().getTaskParameters().setTaskGroupSuccess(false);
+            ExecutionHandler.endTaskStep(privateParameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
+            OnTaskEndFailure();
+        }
+
         if (HasTaskEndedSuccessfully()) {
             ExecutionHandler.endTaskStep(privateParameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FINISHED);
             OnTaskEndSuccess();
@@ -398,6 +406,13 @@ public class SPMAsyncTask {
     }
 
     public void clearAsyncTask() {
+        // if we are calling updateTask on a task which has not been submitted,
+        // to vdsm there is no need to clear the task. The task is just deleted
+        // from the database
+        if (Guid.Empty.equals(getVdsmTaskId())) {
+            RemoveTaskFromDB();
+            return;
+        }
         clearAsyncTask(false);
     }
 
@@ -463,4 +478,15 @@ public class SPMAsyncTask {
     }
 
     private static final Log log = LogFactory.getLog(SPMAsyncTask.class);
+
+    private boolean partiallyCompletedCommandTask = false;
+
+    public boolean isPartiallyCompletedCommandTask() {
+        return partiallyCompletedCommandTask;
+    }
+
+    public void setPartiallyCompletedCommandTask(boolean val) {
+        this.partiallyCompletedCommandTask = val;
+    }
+
 }

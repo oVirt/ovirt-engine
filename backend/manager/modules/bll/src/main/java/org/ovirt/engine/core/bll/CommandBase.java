@@ -374,7 +374,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         for (Guid asyncTaskId : getReturnValue().getTaskPlaceHolderIdList()) {
             AsyncTasks task = getAsyncTaskDao().get(asyncTaskId);
             if (Guid.isNullOrEmpty(task.getVdsmTaskId())) {
-                AsyncTaskManager.failTaskWithoutVdsmId(task);
+                AsyncTaskManager.removeTaskFromDbByTaskId(task.getTaskId());
             }
         }
     }
@@ -1574,7 +1574,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     public SPMAsyncTask CreateTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
-        return AsyncTaskFactory.Construct(taskType, taskParameters, false);
+        return AsyncTaskFactory.construct(taskType, taskParameters, false);
     }
 
     private AsyncTasks getAsyncTask(
