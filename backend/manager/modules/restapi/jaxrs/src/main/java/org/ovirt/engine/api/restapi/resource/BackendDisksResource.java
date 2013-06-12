@@ -90,6 +90,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
     }
 
     @Override
+    @SingleEntityResource
     public DiskResource getDeviceSubResource(String id) {
         return inject(new BackendDiskResource(id));
     }
