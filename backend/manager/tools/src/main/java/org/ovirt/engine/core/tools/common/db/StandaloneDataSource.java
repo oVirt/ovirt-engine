@@ -104,6 +104,14 @@ public class StandaloneDataSource implements DataSource {
         wrapper = null;
     }
 
+    /**
+     * test the connection by executing a simple query..
+     *
+     * Note: assuming connection is not null.
+     *
+     * @throws SQLException  if a database access error occurs
+     * or this method is called on a closed connection.
+     */
     @SuppressWarnings("resource")
     private void checkConnection() throws SQLException {
         Statement statement = null;
@@ -128,6 +136,9 @@ public class StandaloneDataSource implements DataSource {
     @Override
     public Connection getConnection () throws SQLException {
         try {
+            if (connection == null) {
+                openConnection();
+            }
             checkConnection();
         }
         catch (SQLException exception) {
