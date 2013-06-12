@@ -168,7 +168,11 @@ class Plugin(plugin.PluginBase):
                     comps = name.split('.')
                     if comps[0] == 'file':
                         files.setdefault(comps[1], {})[comps[2]] = value
-                return {f['name']: f['md5'] for f in files.values()}
+
+                # python 2.6 doesn't support dict comprehensions.
+                # TODO: we may move to it when minimal python version
+                # available is 2.7+
+                return dict((f['name'], f['md5']) for f in files.values())
 
             def getLines(section):
                 associated_lines = {}
