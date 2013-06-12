@@ -15,7 +15,8 @@ Create or replace FUNCTION InsertProvider(
     v_provider_type VARCHAR(32),
     v_auth_required BOOLEAN,
     v_auth_username VARCHAR(64),
-    v_auth_password TEXT)
+    v_auth_password TEXT,
+    v_custom_properties TEXT)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -27,7 +28,8 @@ BEGIN
         provider_type,
         auth_required,
         auth_username,
-        auth_password)
+        auth_password,
+        custom_properties)
     VALUES(
         v_id,
         v_name,
@@ -36,7 +38,8 @@ BEGIN
         v_provider_type,
         v_auth_required,
         v_auth_username,
-        v_auth_password);
+        v_auth_password,
+        v_custom_properties);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -52,7 +55,8 @@ Create or replace FUNCTION UpdateProvider(
     v_provider_type VARCHAR(32),
     v_auth_required BOOLEAN,
     v_auth_username VARCHAR(64),
-    v_auth_password TEXT)
+    v_auth_password TEXT,
+    v_custom_properties TEXT)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -64,6 +68,7 @@ BEGIN
            auth_required = v_auth_required,
            auth_username = v_auth_username,
            auth_password = v_auth_password,
+           custom_properties = v_custom_properties,
            _update_date = NOW()
     WHERE  id = v_id;
 END; $procedure$

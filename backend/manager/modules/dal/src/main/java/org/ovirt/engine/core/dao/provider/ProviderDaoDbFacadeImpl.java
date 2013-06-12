@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao.provider;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -10,6 +11,7 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
 
@@ -28,7 +30,9 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider,
                 .addValue("provider_type", EnumUtils.nameOrNull(entity.getType()))
                 .addValue("auth_required", entity.isRequiringAuthentication())
                 .addValue("auth_username", entity.getUsername())
-                .addValue("auth_password", DbFacadeUtils.encryptPassword(entity.getPassword()));
+                .addValue("auth_password", DbFacadeUtils.encryptPassword(entity.getPassword()))
+                .addValue("custom_properties",
+                        SerializationFactory.getSerializer().serialize(entity.getCustomProperties()));
     }
 
     @Override
@@ -56,6 +60,7 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider,
         }
 
         @Override
+        @SuppressWarnings("unchecked")
         public Provider mapRow(ResultSet rs, int index) throws SQLException {
             Provider entity = new Provider();
             entity.setId(Guid.createGuidFromString(rs.getString("id")));
@@ -66,6 +71,8 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider,
             entity.setRequiringAuthentication(rs.getBoolean("auth_required"));
             entity.setUsername(rs.getString("auth_username"));
             entity.setPassword(DbFacadeUtils.decryptPassword(rs.getString("auth_password")));
+            entity.setCustomProperties(SerializationFactory.getDeserializer()
+                    .deserialize(rs.getString("custom_properties"), HashMap.class));
             return entity;
         }
     }

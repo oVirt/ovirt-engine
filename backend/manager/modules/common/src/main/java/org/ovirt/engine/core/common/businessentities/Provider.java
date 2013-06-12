@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Map;
+
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
@@ -37,6 +39,8 @@ public class Provider extends IVdcQueryable implements BusinessEntity<Guid>, Nam
     private String username;
 
     private String password;
+
+    private Map<String, String> customProperties;
 
     @Override
     public String getName() {
@@ -105,6 +109,14 @@ public class Provider extends IVdcQueryable implements BusinessEntity<Guid>, Nam
         this.password = password;
     }
 
+    public Map<String, String> getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties(Map<String, String> customProperties) {
+        this.customProperties = customProperties;
+    }
+
     @Override
     public Object getQueryableId() {
         return getId();
@@ -122,6 +134,7 @@ public class Provider extends IVdcQueryable implements BusinessEntity<Guid>, Nam
         result = prime * result + ((getType() == null) ? 0 : getType().hashCode());
         result = prime * result + ((getUrl() == null) ? 0 : getUrl().hashCode());
         result = prime * result + ((getUsername() == null) ? 0 : getUsername().hashCode());
+        result = prime * result + ((getCustomProperties() == null) ? 0 : getCustomProperties().hashCode());
         return result;
     }
 
@@ -185,6 +198,13 @@ public class Provider extends IVdcQueryable implements BusinessEntity<Guid>, Nam
         } else if (!getUsername().equals(other.getUsername())) {
             return false;
         }
+        if (getCustomProperties() == null) {
+            if (other.getCustomProperties() != null) {
+                return false;
+            }
+        } else if (!getCustomProperties().equals(other.getCustomProperties())) {
+            return false;
+        }
         return true;
     }
 
@@ -207,6 +227,8 @@ public class Provider extends IVdcQueryable implements BusinessEntity<Guid>, Nam
                 .append(getUsername())
                 .append(", password=")
                 .append(getPassword() == null ? null : "******")
+                .append(", customProperties=")
+                .append(getCustomProperties())
                 .append("]");
         return builder.toString();
     }
