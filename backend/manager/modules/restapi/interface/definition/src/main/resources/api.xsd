@@ -597,18 +597,22 @@
   </xs:complexType>
 
   <xs:complexType name="Capabilities">
-    <xs:sequence>
-      <xs:element name="version" type="VersionCaps" maxOccurs="unbounded">
-        <xs:annotation>
-          <xs:appinfo>
-            <jaxb:property name="Versions"/>
-          </xs:appinfo>
-        </xs:annotation>
-      </xs:element>
-      <!-- TODO: (deprecated) remove these elements post 4.0 -->
-      <xs:element name="permits" type="Permits" minOccurs="0"/>
-      <xs:element name="scheduling_policies" type="SchedulingPolicies" minOccurs="0"/>
-    </xs:sequence>
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element name="version" type="VersionCaps" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="Versions"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+          <!-- TODO: (deprecated) remove these elements post 4.0 -->
+          <xs:element name="permits" type="Permits" minOccurs="0"/>
+          <xs:element name="scheduling_policies" type="SchedulingPolicies" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="scheduling_policies" type="SchedulingPolicies"/>
