@@ -156,7 +156,7 @@ $ $HOME/ovirt-engine/share/ovirt-engine/services/ovirt-engine.py start
 While the service is running, this command will not exit.
 Press <Ctrl>-C to stop service.
 
-Acess using HTTP or HTTPS:
+Access using HTTP or HTTPS:
  - http://<server>:8080
  - http://<server>:8443
 
@@ -181,7 +181,7 @@ DAO TESTS
 
 Create empty database for DAO tests refer to DATABASE CREATION.
 
-Provided user is 'engine', psasword is 'engine' and database is engine_dao.
+Provided user is 'engine', password is 'engine' and database is engine_dao.
 
 Create empty schema (one time):
 
