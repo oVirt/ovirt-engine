@@ -29,7 +29,7 @@ public class VmTemplateHandler {
     public static void Init() {
         mUpdateVmTemplate = new ObjectIdentityChecker(VmTemplateHandler.class);
         BlankVmTemplateId = new Guid("00000000-0000-0000-0000-000000000000");
-        mUpdateVmTemplate.AddPermittedFields(new String[] { "name", "description", "domain", "os", "osType",
+        mUpdateVmTemplate.AddPermittedFields(new String[] { "name", "description", "comment", "domain", "os", "osType",
                 "interfaces", "memSizeMb", "numOfSockets", "cpuPerSocket",
                 "vdsGroupId", "numOfMonitors", "allowConsoleReconnect", "usbPolicy", "timeZone", "diskMap",
                 "defaultBootSequence", "disabled",

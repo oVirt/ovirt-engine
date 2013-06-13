@@ -441,6 +441,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         template.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         template.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         template.setDescription((String) model.getDescription().getEntity());
+        template.setComment((String) model.getComment().getEntity());
         template.setDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         template.setMemSizeMb((Integer) model.getMemSize().getEntity());
         template.setMinAllocatedMem(((Integer) model.getMinAllocatedMemory().getEntity()));

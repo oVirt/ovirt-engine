@@ -77,6 +77,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
         }
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_description", pool.getVmPoolDescription())
+                .addValue("vm_pool_comment", pool.getComment())
                 .addValue("vm_pool_id", pool.getVmPoolId())
                 .addValue("vm_pool_name", pool.getName())
                 .addValue("vm_pool_type", pool.getVmPoolType())
@@ -92,6 +93,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     public void update(VmPool pool) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_pool_description", pool.getVmPoolDescription())
+                .addValue("vm_pool_comment", pool.getComment())
                 .addValue("vm_pool_id", pool.getVmPoolId())
                 .addValue("vm_pool_name", pool.getName())
                 .addValue("vm_pool_type", pool.getVmPoolType())
@@ -152,6 +154,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
             entity.setVmPoolDescription(rs
                     .getString("vm_pool_description"));
             entity.setVmPoolId(getGuidDefaultEmpty(rs, "vm_pool_id"));
+            entity.setComment(rs.getString("vm_pool_comment"));
             entity.setName(rs.getString("vm_pool_name"));
             entity.setVmPoolType(VmPoolType.forValue(rs
                     .getInt("vm_pool_type")));
@@ -175,6 +178,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
             entity.setVmPoolDescription(rs
                     .getString("vm_pool_description"));
             entity.setVmPoolId(getGuidDefaultEmpty(rs, "vm_pool_id"));
+            entity.setComment(rs.getString("vm_pool_comment"));
             entity.setName(rs.getString("vm_pool_name"));
             entity.setVmPoolType(VmPoolType.forValue(rs
                     .getInt("vm_pool_type")));

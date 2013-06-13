@@ -78,6 +78,7 @@ public class VmMapperTest extends
         assertEquals(model.getName(), transform.getName());
         assertEquals(model.getId(), transform.getId());
         assertEquals(model.getDescription(), transform.getDescription());
+        assertEquals(model.getComment(), transform.getComment());
         assertEquals(model.getType(), transform.getType());
         assertEquals(model.getOrigin(), transform.getOrigin());
         assertTrue(Math.abs(model.getMemory() - transform.getMemory()) <= (1024 * 1024));

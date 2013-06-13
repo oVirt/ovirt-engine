@@ -256,6 +256,7 @@
 								<e:EntityModelTextBoxOnlyEditor ui:field="nameEditor" addStyleNames="{style.nameEditor}" contentWidgetStyleName="{style.nameEditorContent}"/>
 							</g:FlowPanel>
 							<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+							<e:EntityModelTextBoxEditor ui:field="commentEditor" />
 
 <!-- 						New VM Pool							 -->
 							<e:EntityModelTextBoxEditor ui:field="numOfVmsEditor" />

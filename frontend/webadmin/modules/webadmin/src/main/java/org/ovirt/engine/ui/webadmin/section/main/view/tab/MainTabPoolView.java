@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabPoolPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -72,6 +73,8 @@ public class MainTabPoolView extends AbstractMainTabWithDetailsTableView<VmPool,
             }
         };
         getTable().addColumn(descColumn, constants.descriptionPool(), "300px"); //$NON-NLS-1$
+
+        getTable().addColumn(new CommentColumn<VmPool>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VmPool>(constants.newPool()) {
             @Override

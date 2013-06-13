@@ -192,6 +192,7 @@ public final class Cloner
         vm.setVdsGroupName(instance.getVdsGroupName());
         vm.setVmCreationDate(instance.getVmCreationDate());
         vm.setVmDescription(instance.getVmDescription());
+        vm.setComment(instance.getComment());
         vm.setVmDomain(instance.getVmDomain());
         vm.setId(instance.getId());
         vm.setVmHost(instance.getVmHost());
@@ -342,7 +343,6 @@ public final class Cloner
     {
         VmPool obj = new VmPool();
 
-        obj.setVmPoolDescription(instance.getVmPoolDescription());
         obj.setVmPoolId(instance.getVmPoolId());
         obj.setName(instance.getName());
         obj.setVmPoolType(instance.getVmPoolType());
@@ -356,6 +356,7 @@ public final class Cloner
         obj.setVdsGroupName(instance.getVdsGroupName());
         obj.setAssignedVmsCount(instance.getAssignedVmsCount());
         obj.setVmPoolDescription(instance.getVmPoolDescription());
+        obj.setComment(instance.getComment());
         obj.setRunningVmsCount(instance.getRunningVmsCount());
         obj.setPrestartedVms(instance.getPrestartedVms());
 
@@ -394,7 +395,7 @@ public final class Cloner
         obj.setCpuPerSocket(instance.getCpuPerSocket());
         obj.setCreationDate(instance.getCreationDate());
         obj.setDefaultBootSequence(instance.getDefaultBootSequence());
-        obj.setDescription(instance.getDescription());
+        obj.setComment(instance.getComment());
         obj.setDomain(instance.getDomain());
         obj.setFailBack(instance.isFailBack());
         obj.setStateless(instance.isStateless());
@@ -433,6 +434,7 @@ public final class Cloner
         obj.setCreationDate(instance.getCreationDate());
         obj.setDedicatedVmForVds(instance.getDedicatedVmForVds());
         obj.setDescription(instance.getDescription());
+        obj.setComment(instance.getComment());
         obj.setDomain(instance.getDomain());
         obj.setInitialized(instance.isInitialized());
         obj.setStateless(instance.isStateless());

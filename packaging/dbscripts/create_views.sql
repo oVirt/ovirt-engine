@@ -350,6 +350,7 @@ vm_templates.vm_guid as vmt_guid,
        vm_templates.cpu_per_socket as cpu_per_socket,
        vm_templates.num_of_sockets*vm_templates.cpu_per_socket as num_of_cpus,
        vm_templates.description as description,
+       vm_templates.free_text_comment as free_text_comment,
        vm_templates.vds_group_id as vds_group_id,
        vm_templates.domain as domain,
        vm_templates.num_of_monitors as num_of_monitors,
@@ -414,7 +415,7 @@ AS
 	SELECT            vm_templates.vm_guid AS vmt_guid, vm_templates.vm_name AS name, vm_templates.mem_size_mb,
                       vm_templates.os, vm_templates.creation_date,
                       vm_templates.child_count, vm_templates.num_of_sockets, vm_templates.cpu_per_socket,
-	                  vm_templates.num_of_sockets*vm_templates.cpu_per_socket AS num_of_cpus, vm_templates.description,
+	                  vm_templates.num_of_sockets*vm_templates.cpu_per_socket AS num_of_cpus, vm_templates.description, vm_templates.free_text_comment,
 	                  vm_templates.vds_group_id, vm_templates.domain, vm_templates.num_of_monitors, vm_templates.allow_console_reconnect, vm_templates.template_status AS status,
 	                  vm_templates.usb_policy, vm_templates.time_zone, vm_templates.fail_back,
 	                  vds_groups.name AS vds_group_name, vm_templates.vm_type, vm_templates.nice_level, storage_pool.id AS storage_pool_id, storage_pool.name
@@ -434,7 +435,7 @@ WHERE      entity_type = 'TEMPLATE'
 UNION
 SELECT                vm_templates_1.vm_guid AS vmt_guid, vm_templates_1.vm_name AS name, vm_templates_1.mem_size_mb, vm_templates_1.os, vm_templates_1.creation_date,
                       vm_templates_1.child_count, vm_templates_1.num_of_sockets, vm_templates_1.cpu_per_socket,
-                      vm_templates_1.num_of_sockets*vm_templates_1.cpu_per_socket AS num_of_cpus, vm_templates_1.description, vm_templates_1.vds_group_id,
+                      vm_templates_1.num_of_sockets*vm_templates_1.cpu_per_socket AS num_of_cpus, vm_templates_1.description, vm_templates_1.free_text_comment, vm_templates_1.vds_group_id,
                       vm_templates_1.domain, vm_templates_1.num_of_monitors, vm_templates_1.allow_console_reconnect, vm_templates_1.template_status AS status, vm_templates_1.usb_policy, vm_templates_1.time_zone,
                       vm_templates_1.fail_back, vds_groups_1.name AS vds_group_name, vm_templates_1.vm_type,
                       vm_templates_1.nice_level, storage_pool_1.id AS storage_pool_id,
@@ -536,7 +537,7 @@ tags ON tags_user_group_map.tag_id = tags.tag_id;
 CREATE OR REPLACE VIEW vms
 AS
 SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb, vm_static.nice_level as nice_level,
-                      vm_static.vmt_guid as vmt_guid, vm_static.os as vm_os, vm_static.description as vm_description, vm_static.vds_group_id as vds_group_id,
+                      vm_static.vmt_guid as vmt_guid, vm_static.os as vm_os, vm_static.description as vm_description, vm_static.free_text_comment as vm_comment, vm_static.vds_group_id as vds_group_id,
                       vm_static.domain as vm_domain, vm_static.creation_date as vm_creation_date, vm_static.auto_startup as auto_startup, vm_static.is_stateless as is_stateless, vm_static.is_smartcard_enabled as is_smartcard_enabled, vm_static.is_delete_protected as is_delete_protected, vm_static.dedicated_vm_for_vds as dedicated_vm_for_vds,
                       vm_static.fail_back as fail_back, vm_static.default_boot_sequence as default_boot_sequence, vm_static.vm_type as vm_type,
 					  vds_groups.name as vds_group_name, vds_groups.transparent_hugepages as transparent_hugepages, vds_groups.trusted_service as trusted_service,
@@ -579,7 +580,7 @@ WHERE vm_static.entity_type = 'VM';
 
 CREATE OR REPLACE VIEW vms_with_tags
 AS
-SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.vmt_guid, vms.vm_os, vms.vm_description,
+SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.vmt_guid, vms.vm_os, vms.vm_description, vms.vm_comment,
             vms.vds_group_id, vms.vm_domain, vms.vm_creation_date, vms.auto_startup, vms.is_stateless, vms.is_smartcard_enabled, vms.is_delete_protected,
             vms.dedicated_vm_for_vds, vms.fail_back, vms.default_boot_sequence, vms.vm_type,
             vms.vds_group_name, vms.storage_pool_id, vms.storage_pool_name,
@@ -773,7 +774,7 @@ WHERE     (users_2.user_group = 'group');
 
 
 CREATE OR REPLACE VIEW vm_pools_view AS
- SELECT vm_pools.vm_pool_id, vm_pools.vm_pool_name, vm_pools.vm_pool_description, vm_pools.vm_pool_type, vm_pools.parameters, vm_pools.prestarted_vms, vm_pools.vds_group_id, vds_groups.name AS vds_group_name, storage_pool.name as storage_pool_name, storage_pool.id as storage_pool_id, vm_pools.max_assigned_vms_per_user as max_assigned_vms_per_user
+ SELECT vm_pools.vm_pool_id, vm_pools.vm_pool_name, vm_pools.vm_pool_description, vm_pools.vm_pool_comment, vm_pools.vm_pool_type, vm_pools.parameters, vm_pools.prestarted_vms, vm_pools.vds_group_id, vds_groups.name AS vds_group_name, storage_pool.name as storage_pool_name, storage_pool.id as storage_pool_id, vm_pools.max_assigned_vms_per_user as max_assigned_vms_per_user
    FROM vm_pools
    JOIN vds_groups ON vm_pools.vds_group_id = vds_groups.vds_group_id
    JOIN storage_pool ON storage_pool.id = vds_groups.storage_pool_id;
@@ -781,7 +782,7 @@ CREATE OR REPLACE VIEW vm_pools_view AS
 
 
 CREATE OR REPLACE VIEW vm_pools_full_view AS
- SELECT vmp.vm_pool_id, vmp.vm_pool_name, vmp.vm_pool_description, vmp.vm_pool_type, vmp.parameters, vmp.prestarted_vms, vmp.vds_group_id, vmp.vds_group_name, vmp.max_assigned_vms_per_user, ( SELECT count(vm_pool_map.vm_pool_id) AS expr1
+ SELECT vmp.vm_pool_id, vmp.vm_pool_name, vmp.vm_pool_description, vmp.vm_pool_comment, vmp.vm_pool_type, vmp.parameters, vmp.prestarted_vms, vmp.vds_group_id, vmp.vds_group_name, vmp.max_assigned_vms_per_user, ( SELECT count(vm_pool_map.vm_pool_id) AS expr1
            FROM vm_pools_view v1
       LEFT JOIN vm_pool_map ON v1.vm_pool_id = vm_pool_map.vm_pool_id AND v1.vm_pool_id = vmp.vm_pool_id) AS assigned_vm_count, ( SELECT count(v2.vm_pool_id) AS expr1
            FROM vm_pools v2

@@ -195,6 +195,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     public void save(VM vm) {
         getCallsHandler().executeModification("InsertVm", getCustomMapSqlParameterSource()
                 .addValue("description", vm.getDescription())
+                .addValue("free_text_comment", vm.getComment())
                 .addValue("mem_size_mb", vm.getMemSizeMb())
                 .addValue("os", vm.getOs())
                 .addValue("vds_group_id", vm.getVdsGroupId())
@@ -303,6 +304,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setVmOs(rs.getInt("vm_os"));
             entity.setVmDescription(rs.getString("vm_description"));
             entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
+            entity.setComment(rs.getString("vm_comment"));
             entity.setVmDomain(rs.getString("vm_domain"));
             entity.setVmCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("vm_creation_date")));
             entity.setVdsGroupName(rs.getString("vds_group_name"));

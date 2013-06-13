@@ -43,6 +43,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
     private MapSqlParameterSource getFullParameterSource(VmStatic vm) {
         return getIdParamterSource(vm.getId())
                 .addValue("description", vm.getDescription())
+                .addValue("free_text_comment", vm.getComment())
                 .addValue("mem_size_mb", vm.getMemSizeMb())
                 .addValue("os", vm.getOsId())
                 .addValue("vds_group_id", vm.getVdsGroupId())

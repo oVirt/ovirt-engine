@@ -589,6 +589,7 @@ public class VmSnapshotListModel extends SearchableListModel
         getcurrentVm().setVmOs((Integer) model.getOSType().getSelectedItem());
         getcurrentVm().setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         getcurrentVm().setVmDescription((String) model.getDescription().getEntity());
+        getcurrentVm().setComment((String) model.getComment().getEntity());
         getcurrentVm().setVmDomain(model.getDomain().getIsAvailable() ?
                 (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         getcurrentVm().setVmMemSizeMb((Integer) model.getMemSize().getEntity());

@@ -52,6 +52,11 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     @WithElementId("description")
     EntityModelTextBoxEditor descriptionEditor;
 
+    @UiField
+    @Path(value = "comment.entity")
+    @WithElementId("comment")
+    EntityModelTextBoxEditor commentEditor;
+
     @UiField(provided = true)
     @Path(value = "dataCenterWithClustersList.selectedItem")
     @WithElementId("dataCenterWithCluster")
@@ -156,6 +161,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     void localize(CommonApplicationConstants constants) {
         nameEditor.setLabel(constants.makeTemplatePopupNameLabel());
         descriptionEditor.setLabel(constants.makeTemplatePopupDescriptionLabel());
+        commentEditor.setLabel(constants.commentLabel());
         clusterEditor.setLabel(constants.makeTemplateClusterLabel());
         quotaEditor.setLabel(constants.makeTemplateQuotaLabel());
         isTemplatePublicEditor.setLabel(constants.makeTemplateIsTemplatePublicEditorLabel());
@@ -204,6 +210,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     public int setTabIndexes(int nextTabIndex) {
         nameEditor.setTabIndex(nextTabIndex++);
         descriptionEditor.setTabIndex(nextTabIndex++);
+        commentEditor.setTabIndex(nextTabIndex++);
         clusterEditor.setTabIndex(nextTabIndex++);
         quotaEditor.setTabIndex(nextTabIndex++);
         nextTabIndex = disksAllocationView.setTabIndexes(nextTabIndex);

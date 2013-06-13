@@ -23,6 +23,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
@@ -158,7 +159,10 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(uptimeColumn, constants.uptimeVm(), "80px"); //$NON-NLS-1$
 
+        getTable().addColumn(new CommentColumn<VM>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
+
         getTable().addActionButton(new WebAdminButtonDefinition<VM>(constants.newVm()) {
+
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewVmCommand();

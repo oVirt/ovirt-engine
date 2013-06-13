@@ -127,6 +127,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("child_count", template.getChildCount())
                 .addValue("creation_date", template.getCreationDate())
                 .addValue("description", template.getDescription())
+                .addValue("free_text_comment", template.getComment())
                 .addValue("mem_size_mb", template.getMemSizeMb())
                 .addValue("name", template.getName())
                 .addValue("num_of_sockets", template.getNumOfSockets())

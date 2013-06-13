@@ -134,6 +134,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         // Update model state according to VM properties.
         getModel().getName().setEntity(vm.getName());
         getModel().getDescription().setEntity(vm.getVmDescription());
+        getModel().getComment().setEntity(vm.getComment());
         getModel().getMemSize().setEntity(vm.getVmMemSizeMb());
         getModel().getMinAllocatedMemory().setEntity(vm.getMinAllocatedMem());
         getModel().getOSType().setSelectedItem(vm.getVmOsId());

@@ -39,6 +39,9 @@ public class TemplateMapper {
         if (model.isSetDescription()) {
             entity.setDescription(model.getDescription());
         }
+        if (model.isSetComment()) {
+            entity.setComment(model.getComment());
+        }
         if (model.isSetCluster() && model.getCluster().getId() != null) {
             entity.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
         }
@@ -144,6 +147,9 @@ public class TemplateMapper {
         if (model.isSetDescription()) {
             staticVm.setDescription(model.getDescription());
         }
+        if (model.isSetComment()) {
+            staticVm.setComment(model.getComment());
+        }
         if (model.isSetCluster() && model.getCluster().getId() != null) {
             staticVm.setVdsGroupId(GuidUtils.asGuid(model.getCluster().getId()));
         }
@@ -243,6 +249,7 @@ public class TemplateMapper {
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
         model.setDescription(entity.getDescription());
+        model.setComment(entity.getComment());
         model.setMemory((long)entity.getMemSizeMb() * BYTES_PER_MB);
         model.setHighAvailability(new HighAvailability());
         model.getHighAvailability().setEnabled(entity.isAutoStartup());

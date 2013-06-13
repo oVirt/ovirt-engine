@@ -66,6 +66,7 @@ public class VmTemplate extends VmBase {
                 osId,
                 creationDate,
                 description,
+                "",
                 memSizeMb,
                 numOfSockets,
                 cpuPerSocket,

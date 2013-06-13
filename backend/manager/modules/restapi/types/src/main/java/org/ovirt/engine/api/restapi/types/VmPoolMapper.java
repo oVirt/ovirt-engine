@@ -21,6 +21,9 @@ public class VmPoolMapper {
         if (model.isSetDescription()) {
             entity.setVmPoolDescription(model.getDescription());
         }
+        if (model.isSetComment()) {
+            entity.setComment(model.getComment());
+        }
         if (model.isSetSize()) {
             entity.setAssignedVmsCount(model.getSize());
         }
@@ -62,6 +65,7 @@ public class VmPoolMapper {
         model.setId(entity.getVmPoolId().toString());
         model.setName(entity.getName());
         model.setDescription(entity.getVmPoolDescription());
+        model.setComment(entity.getComment());
         model.setSize(entity.getAssignedVmsCount());
         model.setPrestartedVms(entity.getPrestartedVms());
         if (entity.getVdsGroupId() != null ||

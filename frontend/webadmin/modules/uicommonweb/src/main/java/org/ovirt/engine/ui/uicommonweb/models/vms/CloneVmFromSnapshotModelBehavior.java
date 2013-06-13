@@ -50,6 +50,7 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
 
         getModel().getName().setEntity(""); //$NON-NLS-1$
         getModel().getDescription().setEntity(""); //$NON-NLS-1$
+        getModel().getComment().setEntity(""); //$NON-NLS-1$
         getModel().getProvisioning().setEntity(true);
         getModel().getProvisioning().setIsAvailable(true);
         getModel().getProvisioning().setIsChangable(false);

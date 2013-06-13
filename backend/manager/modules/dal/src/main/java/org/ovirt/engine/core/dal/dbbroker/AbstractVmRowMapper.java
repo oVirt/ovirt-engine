@@ -20,6 +20,7 @@ public abstract class AbstractVmRowMapper<T extends VmBase> implements RowMapper
     protected final void map(final ResultSet rs, final T entity) throws SQLException {
         entity.setOsId(rs.getInt("os"));
         entity.setDescription(rs.getString("description"));
+        entity.setComment(rs.getString("free_text_comment"));
         entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("creation_date")));
         entity.setNumOfSockets(rs.getInt("num_of_sockets"));
         entity.setCpuPerSocket(rs.getInt("cpu_per_socket"));

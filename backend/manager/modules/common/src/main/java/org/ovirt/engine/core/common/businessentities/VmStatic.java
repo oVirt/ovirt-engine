@@ -59,6 +59,7 @@ public class VmStatic extends VmBase {
                 vmStatic.getOsId(),
                 vmStatic.getCreationDate(),
                 vmStatic.getDescription(),
+                vmStatic.getComment(),
                 vmStatic.getMemSizeMb(),
                 vmStatic.getNumOfSockets(),
                 vmStatic.getCpuPerSocket(),

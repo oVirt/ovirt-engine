@@ -2250,7 +2250,6 @@
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
           <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
-
           <xs:element ref="vmpool" minOccurs="0" maxOccurs="1">
             <xs:annotation>
               <xs:appinfo>

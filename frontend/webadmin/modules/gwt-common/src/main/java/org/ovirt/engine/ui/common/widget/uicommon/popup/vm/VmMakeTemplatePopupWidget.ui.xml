@@ -30,6 +30,7 @@
 	<g:FlowPanel>
 		<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 		<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+		<e:EntityModelTextBoxEditor ui:field="commentEditor" />
 		<e:ListModelTypeAheadListBoxEditor ui:field="clusterEditor" />
 		<e:ListModelListBoxEditor ui:field="quotaEditor" />
 		<g:Label ui:field="disksAllocationLabel" addStyleNames="{style.disksAllocationLabel}" />

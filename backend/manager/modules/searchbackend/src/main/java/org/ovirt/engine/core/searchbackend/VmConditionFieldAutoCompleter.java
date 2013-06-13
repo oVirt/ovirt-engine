@@ -15,6 +15,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     public VmConditionFieldAutoCompleter() {
         // Building the basic vervs Dict
         mVerbs.add("NAME");
+        mVerbs.add("COMMENT");
         mVerbs.add("STATUS");
         mVerbs.add("IP");
         mVerbs.add("UPTIME");
@@ -41,6 +42,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
 
         // Building the types dict
         getTypeDictionary().put("NAME", String.class);
+        getTypeDictionary().put("COMMENT", String.class);
         getTypeDictionary().put("STATUS", VMStatus.class);
         getTypeDictionary().put("IP", String.class);
         getTypeDictionary().put("UPTIME", TimeSpan.class);
@@ -65,6 +67,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
 
         // building the ColumnName Dict
         columnNameDict.put("NAME", "vm_name");
+        columnNameDict.put("COMMENT", "vm_comment");
         columnNameDict.put("STATUS", "status");
         columnNameDict.put("IP", "vm_ip");
         columnNameDict.put("UPTIME", "elapsed_time");

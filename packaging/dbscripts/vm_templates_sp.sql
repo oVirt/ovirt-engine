@@ -10,6 +10,7 @@
 Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_creation_date TIMESTAMP WITH TIME ZONE,
  v_description VARCHAR(4000) ,
+ v_free_text_comment text,
  v_mem_size_mb INTEGER,
  v_name VARCHAR(40),
  v_num_of_sockets INTEGER,
@@ -57,6 +58,7 @@ INTO vm_static(
     child_count,
     creation_date,
     description,
+    free_text_comment,
     mem_size_mb,
     vm_name,
     num_of_sockets,
@@ -102,6 +104,7 @@ VALUES(
     v_child_count,
     v_creation_date,
     v_description,
+    v_free_text_comment,
     v_mem_size_mb,
     v_name,
     v_num_of_sockets,
@@ -156,6 +159,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_creation_date TIMESTAMP WITH TIME ZONE,
  v_description VARCHAR(4000) ,
+ v_free_text_comment text,
  v_mem_size_mb INTEGER,
  v_name VARCHAR(40),
  v_num_of_sockets INTEGER,
@@ -199,7 +203,7 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vm_static
-      SET child_count = v_child_count,creation_date = v_creation_date,description = v_description,
+      SET child_count = v_child_count,creation_date = v_creation_date,description = v_description, free_text_comment = v_free_text_comment,
       mem_size_mb = v_mem_size_mb,vm_name = v_name,num_of_sockets = v_num_of_sockets,
       cpu_per_socket = v_cpu_per_socket,os = v_os,
       vds_group_id = v_vds_group_id,domain = v_domain,num_of_monitors = v_num_of_monitors,

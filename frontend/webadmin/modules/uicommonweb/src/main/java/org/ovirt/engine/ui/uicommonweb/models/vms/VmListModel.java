@@ -1943,6 +1943,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
         getcurrentVm().setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         getcurrentVm().setVmDescription((String) model.getDescription().getEntity());
+        getcurrentVm().setComment((String) model.getComment().getEntity());
         getcurrentVm().setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem()
                 : ""); //$NON-NLS-1$
         getcurrentVm().setVmMemSizeMb((Integer) model.getMemSize().getEntity());

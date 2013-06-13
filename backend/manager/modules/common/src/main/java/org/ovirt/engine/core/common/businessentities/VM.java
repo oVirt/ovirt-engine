@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable {
+public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable, Commented {
     private static final long serialVersionUID = -4078140531074414263L;
     @Valid
     private VmStatic vmStatic;
@@ -191,6 +191,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
 
     public void setVmDescription(String value) {
         this.vmStatic.setDescription(value);
+    }
+
+    public String getComment() {
+        return this.vmStatic.getComment();
+    }
+
+    public void setComment(String value) {
+        this.vmStatic.setComment(value);
     }
 
     public int getNumOfMonitors() {

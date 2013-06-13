@@ -338,6 +338,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Description")
     String descriptionVmPopup();
 
+    @DefaultStringValue("Comment")
+    String commentLabel();
+
     @DefaultStringValue("Based on Template")
     String basedOnTemplateVmPopup();
 

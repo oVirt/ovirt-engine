@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Nameable {
+public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Nameable, Commented {
     private static final long serialVersionUID = 1078548170257965614L;
 
     @EditableField
@@ -53,6 +53,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @ValidDescription(message = "ACTION_TYPE_FAILED_DESCRIPTION_MAY_NOT_CONTAIN_SPECIAL_CHARS",
             groups = { CreateEntity.class, UpdateEntity.class })
     private String description;
+
+    @EditableField
+    private String comment;
 
     @EditableOnVmStatusField
     private int memSizeMb;
@@ -202,6 +205,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             int osId,
             Date creationDate,
             String description,
+            String comment,
             int memSizeMb,
             int numOfSockets,
             int cpusPerSocket,
@@ -235,6 +239,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.osId = osId;
         this.creationDate = creationDate;
         this.description = description;
+        this.comment = comment;
         this.memSizeMb = memSizeMb;
         this.numOfSockets = numOfSockets;
         this.cpuPerSocket = cpusPerSocket;
@@ -352,6 +357,14 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public void setDescription(String value) {
         this.description = value;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String value) {
+        comment = value;
     }
 
     public int getMemSizeMb() {

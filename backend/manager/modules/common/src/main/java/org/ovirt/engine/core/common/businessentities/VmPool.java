@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.TimeSpan;
 
-public class VmPool extends IVdcQueryable implements Serializable, Nameable {
+public class VmPool extends IVdcQueryable implements Serializable, Nameable, Commented {
 
     private static final long serialVersionUID = 4517650877696849024L;
 
@@ -29,6 +29,8 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable {
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String description;
+
+    private String comment;
 
     private VmPoolType type = VmPoolType.Automatic;
 
@@ -187,6 +189,14 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable {
 
     public void setVmPoolDescription(String value) {
         this.description = value;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String value) {
+        comment = value;
     }
 
     public Guid getVmPoolId() {

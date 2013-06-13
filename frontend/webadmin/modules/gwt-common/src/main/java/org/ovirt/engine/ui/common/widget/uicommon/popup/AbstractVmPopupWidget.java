@@ -140,6 +140,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("description")
     public EntityModelTextBoxEditor descriptionEditor;
 
+    @UiField
+    @Path(value = "comment.entity")
+    @WithElementId("comment")
+    public EntityModelTextBoxEditor commentEditor;
+
     @UiField(provided = true)
     @Path(value = "template.selectedItem")
     @WithElementId("template")
@@ -616,6 +621,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     private void initTextBoxEditors() {
         descriptionEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        commentEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         totalvCPUsEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         numOfVmsEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         cpuPinning = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
@@ -874,6 +880,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         quotaEditor.setLabel(constants.quotaVmPopup());
         nameLabel.setText(constants.nameVmPopup());
         descriptionEditor.setLabel(constants.descriptionVmPopup());
+        commentEditor.setLabel(constants.commentLabel());
         templateEditor.setLabel(constants.basedOnTemplateVmPopup());
 
         oSTypeEditor.setLabel(constants.osVmPopup());
@@ -1253,6 +1260,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         nameEditor.setTabIndex(nextTabIndex++);
         descriptionEditor.setTabIndex(nextTabIndex++);
+        commentEditor.setTabIndex(nextTabIndex++);
         isStatelessEditor.setTabIndex(nextTabIndex++);
         isRunAndPauseEditor.setTabIndex(nextTabIndex++);
         isDeleteProtectedEditor.setTabIndex(nextTabIndex++);

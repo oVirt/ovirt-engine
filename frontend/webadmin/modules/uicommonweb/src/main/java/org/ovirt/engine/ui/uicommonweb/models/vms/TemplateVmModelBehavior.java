@@ -140,6 +140,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         // Update model state according to VM properties.
         getModel().getName().setEntity(this.template.getName());
         getModel().getDescription().setEntity(this.template.getDescription());
+        getModel().getComment().setEntity(this.template.getComment());
         getModel().getMinAllocatedMemory().setEntity(this.template.getMinAllocatedMem());
         getModel().getMinAllocatedMemory().setIsChangable(false);
         getModel().getMemSize().setEntity(this.template.getMemSizeMb());

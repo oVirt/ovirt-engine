@@ -321,6 +321,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         model.initialize(getSystemTreeSelectedItem());
                         model.getName().setEntity(pool.getName());
                         model.getDescription().setEntity(pool.getVmPoolDescription());
+                        model.getComment().setEntity(pool.getComment());
                         model.getAssignedVms().setEntity(pool.getAssignedVmsCount());
                         model.getPrestartedVms().setEntity(pool.getPrestartedVms());
                         model.setPrestartedVmsHint("0-" + pool.getAssignedVmsCount()); //$NON-NLS-1$
@@ -450,6 +451,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         pool.setName((String) model.getName().getEntity());
                         pool.setVmPoolDescription((String) model.getDescription().getEntity());
                         pool.setVdsGroupId(model.getSelectedCluster().getId());
+                        pool.setComment((String) model.getComment().getEntity());
                         pool.setPrestartedVms(model.getPrestartedVms().asConvertible().integer());
                         pool.setMaxAssignedVmsPerUser(model.getMaxAssignedVmsPerUser().asConvertible().integer());
 

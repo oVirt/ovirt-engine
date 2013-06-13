@@ -117,6 +117,9 @@ public class VmMapper {
         if (vm.isSetDescription()) {
             staticVm.setDescription(vm.getDescription());
         }
+        if (vm.isSetComment()) {
+            staticVm.setComment(vm.getComment());
+        }
         if (vm.isSetMemory()) {
             staticVm.setMemSizeMb((int) (vm.getMemory() / BYTES_PER_MB));
         } else if (staticVm.getMemSizeMb()==0){
@@ -284,6 +287,7 @@ public class VmMapper {
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
         model.setDescription(entity.getVmDescription());
+        model.setComment(entity.getComment());
         model.setMemory((long) entity.getMemSizeMb() * BYTES_PER_MB);
         if (entity.getVmtGuid() != null) {
             model.setTemplate(new Template());

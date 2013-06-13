@@ -123,6 +123,7 @@ public class UnitVmModel extends Model {
             getDataCenterWithClustersList().setIsChangable(!value);
             getQuota().setIsChangable(false);
             getDescription().setIsChangable(false);
+            getComment().setIsChangable(false);
 
             getNumOfDesktops().setIsChangable(false);
             getPrestartedVms().setIsChangable(false);
@@ -478,6 +479,18 @@ public class UnitVmModel extends Model {
     private void setDescription(NotChangableForVmInPoolEntityModel value)
     {
         privateDescription = value;
+    }
+
+    private NotChangableForVmInPoolEntityModel privateComment;
+
+    public EntityModel getComment()
+    {
+        return privateComment;
+    }
+
+    private void setComment(NotChangableForVmInPoolEntityModel value)
+    {
+        privateComment = value;
     }
 
     private NotChangableForVmInPoolListModel privateDomain;
@@ -1078,6 +1091,7 @@ public class UnitVmModel extends Model {
         setNumOfMonitors(new NotChangableForVmInPoolListModel());
         setAllowConsoleReconnect(new NotChangableForVmInPoolEntityModel());
         setDescription(new NotChangableForVmInPoolEntityModel());
+        setComment(new NotChangableForVmInPoolEntityModel());
         setDomain(new NotChangableForVmInPoolListModel());
         setMinAllocatedMemory(new NotChangableForVmInPoolEntityModel());
         setUsbPolicy(new NotChangableForVmInPoolListModel());
@@ -2008,6 +2022,8 @@ public class UnitVmModel extends Model {
             if (getSelectedCluster() != null) {
                 AsyncDataProvider.getOsMaxRam(osType, ((VDSGroup) getSelectedCluster()).getcompatibility_version(), asyncQuery);
             }
+
+            getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
         }
 
         if (getIsAutoAssign().getEntity() != null && ((Boolean) getIsAutoAssign().getEntity()) == false) {
@@ -2057,7 +2073,7 @@ public class UnitVmModel extends Model {
         setIsFirstRunTabValid(getIsDisplayTabValid());
         setIsGeneralTabValid(getIsFirstRunTabValid());
 
-        setIsGeneralTabValid(getName().getIsValid() && getDescription().getIsValid()
+        setIsGeneralTabValid(getName().getIsValid() && getDescription().getIsValid() && getComment().getIsValid()
                 && getDataCenterWithClustersList().getIsValid()
                 && getTemplate().getIsValid() && getMemSize().getIsValid()
                 && getMinAllocatedMemory().getIsValid());
@@ -2070,7 +2086,7 @@ public class UnitVmModel extends Model {
         setIsCustomPropertiesTabValid(customPropertySheetValid);
 
         return getName().getIsValid() && getDescription().getIsValid() && getDataCenterWithClustersList().getIsValid()
-                && getDisksAllocationModel().getIsValid() && getTemplate().getIsValid()
+                && getDisksAllocationModel().getIsValid() && getTemplate().getIsValid() && getComment().getIsValid()
                 && getDefaultHost().getIsValid() && getMemSize().getIsValid() && getMinAllocatedMemory().getIsValid()
                 && getNumOfMonitors().getIsValid() && getDomain().getIsValid() && getUsbPolicy().getIsValid()
                 && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid()

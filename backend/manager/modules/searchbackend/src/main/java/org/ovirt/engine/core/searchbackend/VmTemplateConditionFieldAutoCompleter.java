@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public VmTemplateConditionFieldAutoCompleter() {
         mVerbs.add("NAME");
+        mVerbs.add("COMMENT");
         mVerbs.add("DOMAIN");
         mVerbs.add("OS");
         mVerbs.add("CREATIONDATE");
@@ -24,6 +25,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         mVerbs.add("_VMT_ID");
         // Building the types dict
         getTypeDictionary().put("NAME", String.class);
+        getTypeDictionary().put("COMMENT", String.class);
         getTypeDictionary().put("DOMAIN", String.class);
         getTypeDictionary().put("OS", String.class);
         getTypeDictionary().put("CREATIONDATE", java.util.Date.class);
@@ -38,6 +40,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
 
         // building the ColumnName Dict
         columnNameDict.put("NAME", "name");
+        columnNameDict.put("COMMENT", "free_text_comment");
         columnNameDict.put("DOMAIN", "domain");
         columnNameDict.put("OS", "os");
         columnNameDict.put("CREATIONDATE", "creation_date");

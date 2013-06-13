@@ -325,6 +325,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getName().setIsChangable(false);
         getModel().getDescription().setIsChangable(false);
         getModel().getDataCenterWithClustersList().setIsChangable(false);
+        getModel().getComment().setIsChangable(false);
         getModel().getStorageDomain().setIsChangable(false);
         getModel().getIsTemplatePublic().setIsChangable(false);
         getModel().getDefaultCommand().setIsAvailable(false);
