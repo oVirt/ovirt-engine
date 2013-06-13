@@ -212,6 +212,33 @@ public class ImportVmCommandTest {
         assertEquals("Disk alias not generated", "testVm_Disk1", collapsedDisk.getDiskAlias());
     }
 
+    /* Test import images with empty Guid is failing */
+
+    @Test
+    public void testEmptyGuidFails() {
+        ImportVmParameters params = createParameters();
+        params.setCopyCollapse(Boolean.TRUE);
+        DiskImage diskImage = params.getVm().getImages().get(0);
+        diskImage.setVmSnapshotId(Guid.Empty);
+        ImportVmCommand cmd = spy(new ImportVmCommand(params));
+        doReturn(true).when(cmd).validateNoDuplicateVm();
+        doReturn(true).when(cmd).validateVdsCluster();
+        doReturn(true).when(cmd).validateUsbPolicy();
+        doReturn(true).when(cmd).canAddVm();
+        doReturn(true).when(cmd).checkTemplateInStorageDomain();
+        doReturn(true).when(cmd).checkImagesGUIDsLegal();
+        doReturn(true).when(cmd).validateNoDuplicateDiskImages(any(Iterable.class));
+        doReturn(createSourceDomain()).when(cmd).getSourceDomain();
+        doReturn(createStorageDomain()).when(cmd).getStorageDomain(any(Guid.class));
+        doReturn(Collections.<VM> singletonList(params.getVm())).when(cmd).getVmsFromExportDomain();
+        doReturn(new VmTemplate()).when(cmd).getVmTemplate();
+        doReturn(new StoragePool()).when(cmd).getStoragePool();
+        assertFalse(cmd.canDoAction());
+        assertTrue(cmd.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID.toString()));
+    }
+
     @Test
     public void testAliasGenerationByAddVmImagesAndSnapshotsWithoutCollapse() {
         ImportVmParameters params = createParameters();

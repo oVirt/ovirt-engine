@@ -32,10 +32,11 @@ public class TryBackToAllSnapshotsOfVmCommandTest {
 
     private VM vm;
     private Snapshot snapshot;
+    Guid vmId;
 
     @Before
     public void setUp() {
-        Guid vmId = Guid.NewGuid();
+        vmId = Guid.NewGuid();
         vm = new VM();
         vm.setId(vmId);
         when(vmDao.get(vmId)).thenReturn(vm);
@@ -58,5 +59,15 @@ public class TryBackToAllSnapshotsOfVmCommandTest {
     public void testCanDoActionVmNotDown() {
         vm.setStatus(VMStatus.Up);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+    }
+
+    @Test
+    public void testCanDoActionWithEmptySnapshotGuid() {
+        TryBackToAllSnapshotsOfVmParameters params = new TryBackToAllSnapshotsOfVmParameters(vmId, Guid.Empty);
+        cmd = spy(new TryBackToAllSnapshotsOfVmCommand<TryBackToAllSnapshotsOfVmParameters>(params));
+        doNothing().when(cmd).updateVmDisksFromDb();
+        doReturn(snapshotDao).when(cmd).getSnapshotDao();
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+                VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
     }
 }

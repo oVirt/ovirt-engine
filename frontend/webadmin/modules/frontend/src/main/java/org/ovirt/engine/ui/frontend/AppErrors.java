@@ -49,6 +49,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM's Snapshot does not exist.")
     String ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The snapshot configuration is corrupted (snapshot ID is empty). Please contact the system administrator.")
+    String ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID();
+
     @DefaultStringValue("Cannot ${action} ${type}. The snapshot ${SnapshotName} of VM ${VmName} has no configuration available. Please choose a snapshot with configuration available.")
     String ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION();
 

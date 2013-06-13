@@ -221,6 +221,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             setVm(vm);
             // Iterate over all the VM images (active image and snapshots)
             for (DiskImage image : getVm().getImages()) {
+                if (Guid.Empty.equals(image.getVmSnapshotId())) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
+                }
+
                 if (getParameters().getCopyCollapse()) {
                     // If copy collapse sent then iterate over the images got from the parameters, until we got
                     // a match with the image from the VM.

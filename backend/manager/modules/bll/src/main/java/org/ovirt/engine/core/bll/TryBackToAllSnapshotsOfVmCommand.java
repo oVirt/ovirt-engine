@@ -214,6 +214,9 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     @Override
     protected boolean canDoAction() {
+        if (Guid.Empty.equals(getParameters().getDstSnapshotId())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
+        }
         Snapshot snapshot = getDstSnapshot();
         SnapshotsValidator snapshotsValidator = new SnapshotsValidator();
         VmValidator vmValidator = new VmValidator(getVm());
@@ -221,7 +224,6 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 || !validate(snapshotsValidator.snapshotExists(getVmId(), getParameters().getDstSnapshotId()))
                 || !validate(snapshotsValidator.vmNotDuringSnapshot(getVmId()))
                 || !validate(snapshotsValidator.vmNotInPreview(getVmId()))
-                || !validate(snapshotsValidator.snapshotExists(snapshot))
                 || !validate(snapshotsValidator.snapshotNotBroken(snapshot))) {
             return false;
         }

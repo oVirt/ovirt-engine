@@ -117,6 +117,11 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 ensureDomainMap(getParameters().getImages(), getParameters().getDestDomainId());
                 Map<Guid, DiskImage> imageMap = new HashMap<Guid, DiskImage>();
                 for (DiskImage image : images) {
+                    if (Guid.Empty.equals(image.getVmSnapshotId())) {
+                        retVal = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
+                        break;
+                    }
+
                     StorageDomain storageDomain =
                             getStorageDomain(imageToDestinationDomainMap.get(image.getId()));
                     StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
