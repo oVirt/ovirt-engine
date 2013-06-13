@@ -1981,4 +1981,19 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Are you sure you want to remove this Network QoS")
     String removeNetworkQoSMessage();
+
+    @DefaultStringValue("New Cluster Policy")
+    String newClusterPolicyTitle();
+
+    @DefaultStringValue("Edit Cluster Policy")
+    String editClusterPolicyTitle();
+
+    @DefaultStringValue("Clone Cluster Policy")
+    String copyClusterPolicyTitle();
+
+    @DefaultStringValue("Remove Cluster Policy")
+    String removeClusterPolicyTitle();
+
+    @DefaultStringValue("Cluster Policy(ies):")
+    String removeClusterPolicyMessage();
 }

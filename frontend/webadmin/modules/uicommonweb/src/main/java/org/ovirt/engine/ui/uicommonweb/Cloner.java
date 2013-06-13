@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map.Entry;
+
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -16,6 +21,9 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
+import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.Version;
 
@@ -80,7 +88,10 @@ public final class Cloner
         {
             return cloneVersion((Version) instance);
         }
-
+        if (instance instanceof ClusterPolicy)
+        {
+            return cloneClusterPolicy((ClusterPolicy) instance);
+        }
         // Throw exception to determine development needs.
         throw new NotImplementedException();
     }
@@ -511,4 +522,44 @@ public final class Cloner
 
         return obj;
     }
+
+    private static Object cloneClusterPolicy(ClusterPolicy clusterPolicy) {
+        ClusterPolicy obj = new ClusterPolicy();
+        if (clusterPolicy.getId() != null) {
+            obj.setId(clusterPolicy.getId());
+        }
+        obj.setName(clusterPolicy.getName());
+        obj.setDescription(clusterPolicy.getDescription());
+        obj.setLocked(clusterPolicy.isLocked());
+        obj.setDefaultPolicy(clusterPolicy.isDefaultPolicy());
+        if (clusterPolicy.getFilters() != null) {
+            obj.setFilters(new ArrayList<Guid>());
+            for (Guid policyUnitId : clusterPolicy.getFilters()) {
+                obj.getFilters().add(policyUnitId);
+            }
+        }
+        if (clusterPolicy.getFilterPositionMap() != null) {
+            obj.setFilterPositionMap(new HashMap<Guid, Integer>());
+            for (Entry<Guid, Integer> entry : clusterPolicy.getFilterPositionMap().entrySet()) {
+                obj.getFilterPositionMap().put(entry.getKey(), new Integer(entry.getValue()));
+            }
+        }
+        if (clusterPolicy.getFunctions() != null) {
+            obj.setFunctions(new ArrayList<Pair<Guid, Integer>>());
+            for (Pair<Guid, Integer> pair : clusterPolicy.getFunctions()) {
+                obj.getFunctions().add(new Pair<Guid, Integer>(pair.getFirst(), pair.getSecond()));
+            }
+        }
+        if (clusterPolicy.getBalance() != null) {
+            obj.setBalance(clusterPolicy.getBalance());
+        }
+        if (clusterPolicy.getParameterMap() != null) {
+            obj.setParameterMap(new LinkedHashMap());
+            for (Entry<String, String> entry : clusterPolicy.getParameterMap().entrySet()) {
+                obj.getParameterMap().put(entry.getKey(), entry.getValue());
+            }
+        }
+        return obj;
+    }
+
 }

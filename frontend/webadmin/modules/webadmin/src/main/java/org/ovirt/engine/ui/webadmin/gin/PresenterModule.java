@@ -64,6 +64,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.EditQuotaStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.ClusterPolicyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
@@ -260,6 +261,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.ChangeQuotaPop
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaClusterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaStoragePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.QuotaPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.DisksAllocationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindMultiDcPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindSingleDcPopupView;
@@ -443,6 +445,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(RolePopupPresenterWidget.class,
                 RolePopupPresenterWidget.ViewDef.class,
                 RolePopupView.class);
+        bindPresenterWidget(ClusterPolicyPopupPresenterWidget.class,
+                ClusterPolicyPopupPresenterWidget.ViewDef.class,
+                ClusterPolicyPopupView.class);
 
         // Main section: main tabs
         bindPresenter(MainTabPanelPresenter.class,
@@ -1230,8 +1235,8 @@ public class PresenterModule extends BasePresenterModule {
 
         // Event
         bindPresenterWidget(EventPopupPresenterWidget.class,
-            EventPopupPresenterWidget.ViewDef.class,
-            EventPopupView.class);
+                EventPopupPresenterWidget.ViewDef.class,
+                EventPopupView.class);
 
         // Provider
         bindPresenterWidget(ProviderPopupPresenterWidget.class,

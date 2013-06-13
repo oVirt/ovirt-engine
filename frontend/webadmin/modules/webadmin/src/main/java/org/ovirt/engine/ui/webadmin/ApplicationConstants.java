@@ -2965,4 +2965,65 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Mb")
     String mbLabelQoSPopup();
+
+    @DefaultStringValue("Cluster Policies")
+    String configureClusterPolicyTabLabel();
+
+    @DefaultStringValue("Name")
+    String clusterPolicyNameLabel();
+
+    @DefaultStringValue("Description")
+    String clusterPolicyDescriptionLabel();
+
+    @DefaultStringValue("New")
+    String newClusterPolicy();
+
+    @DefaultStringValue("Edit")
+    String editClusterPolicy();
+
+    @DefaultStringValue("Copy")
+    String copyClusterPolicy();
+
+    @DefaultStringValue("Remove")
+    String removeClusterPolicy();
+
+    @DefaultStringValue("Filter Modules")
+    String clusterPolicyFilterLabel();
+
+    @DefaultStringValue("Function Modules")
+    String clusterPolicyFunctionLabel();
+
+    @DefaultStringValue("Load Balancer")
+    String clusterPolicyLoadBalancerLabel();
+
+    @DefaultStringValue("Attached Clusters")
+    String clusterPolicyAttachedCluster();
+
+    @DefaultStringValue("Properties")
+    String clusterPolicyPropertiesLabel();
+
+    @DefaultStringValue("Select Policy")
+    String clusterPolicySelectPolicyLabel();
+
+    @DefaultStringValue("Enabled Filters")
+    String enabledFilters();
+
+    @DefaultStringValue("Disabled Filters")
+    String disabledFilters();
+
+    @DefaultStringValue("Enabled Functions & Factors")
+    String enabledFunctions();
+
+    @DefaultStringValue("Disabled Functions")
+    String disabledFunctions();
+
+    @DefaultStringValue("* Use context menu to move items")
+    String clusterPolicyExplanationMessage();
+
+    @DefaultStringValue("First")
+    String firstFilter();
+
+    @DefaultStringValue("Last")
+    String lastFilter();
+
 }

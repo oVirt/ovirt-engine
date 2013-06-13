@@ -1,0 +1,563 @@
+package org.ovirt.engine.ui.uicommonweb.models.configure.scheduling;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
+import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleListModel.CommandType;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.EventDefinition;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+
+public class NewClusterPolicyModel extends Model {
+    public static final Guid NONE_POLICY_UNIT = new Guid("38440000-8cf0-14bd-c43e-10b96e4ef00a"); //$NON-NLS-1$
+
+    private static final EventDefinition FILTERS_CHANGED_EVENT_DEFINITION = new EventDefinition("FiltersChanged", //$NON-NLS-1$
+            NewClusterPolicyModel.class);
+    private static final EventDefinition FUNCTIONS_CHANGED_EVENT_DEFINITION = new EventDefinition("FiltersChanged", //$NON-NLS-1$
+            NewClusterPolicyModel.class);
+
+    public static NewClusterPolicyModel createModel(CommandType commandType,
+            ClusterPolicy clusterPolicy,
+            EntityModel sourceModel, ArrayList<PolicyUnit> policyUnits) {
+        NewClusterPolicyModel clusterPolicyModel =
+                new NewClusterPolicyModel(commandType, clusterPolicy, sourceModel, policyUnits);
+        clusterPolicyModel.init();
+        return clusterPolicyModel;
+    }
+
+    private void init() {
+        initTitle();
+        initModels();
+        initCommands();
+    }
+
+    private void initModels() {
+        getName().setEntity(clusterPolicy.getName());
+        getName().setIsChangable(!clusterPolicy.isLocked());
+        getDescription().setEntity(clusterPolicy.getDescription());
+        getDescription().setIsChangable(!clusterPolicy.isLocked());
+
+        initFilters();
+        initFunctions();
+        initLoadBalance();
+        initCustomPropertySheet();
+    }
+
+    private void initCustomPropertySheet() {
+        setCustomPropertySheet(new KeyValueModel());
+        if (clusterPolicy.getParameterMap() != null) {
+            getCustomProperties().putAll(clusterPolicy.getParameterMap());
+        }
+        customPropertiesInitialized = true;
+        refreshCustomProperties(null);
+
+    }
+
+    private void refreshCustomProperties(PolicyUnit toRemove) {
+        if (!customPropertiesInitialized) {
+            return;
+        }
+        ArrayList<String> lines = new ArrayList<String>();
+        Map<Guid, PolicyUnit> allPolicyUnits = new HashMap<Guid, PolicyUnit>();
+        for (PolicyUnit policyUnit : getUsedFilters()) {
+            allPolicyUnits.put(policyUnit.getId(), policyUnit);
+        }
+        for (Pair<PolicyUnit, Integer> pair : getUsedFunctions()) {
+            allPolicyUnits.put(pair.getFirst().getId(), pair.getFirst());
+        }
+        if (toRemove != null && !allPolicyUnits.containsKey(toRemove.getId())) {
+            if (toRemove.getParameterRegExMap() != null) {
+                for (Entry<String, String> entry : toRemove.getParameterRegExMap().entrySet()) {
+                    getCustomProperties().remove(entry.getKey());
+                }
+            }
+        }
+
+        PolicyUnit selectedItem = (PolicyUnit) loadBalanceList.getSelectedItem();
+        allPolicyUnits.put(selectedItem.getId(), selectedItem);
+        for (PolicyUnit policyUnit : allPolicyUnits.values()) {
+            if (policyUnit.getParameterRegExMap() != null) {
+                for (Map.Entry<String, String> keyValue : policyUnit.getParameterRegExMap().entrySet()) {
+                    lines.add(keyValue.getKey() + '=' + keyValue.getValue());
+                }
+            }
+        }
+        getCustomPropertySheet().setKeyValueString(lines);
+        getCustomPropertySheet().setEntity(KeyValueModel.convertProperties(getCustomProperties()));
+    }
+
+    private void initFilters() {
+        getUsedFilters().clear();
+        getUnusedFilters().clear();
+        if (clusterPolicy.getFilters() == null) {
+            getUnusedFilters().addAll(getFilterPolicyUnits(policyUnits));
+            return;
+        }
+        HashMap<Guid, PolicyUnit> map =
+                (HashMap<Guid, PolicyUnit>) ((HashMap<Guid, PolicyUnit>) policyUnitsMap).clone();
+        for (Guid policyUnitId : clusterPolicy.getFilters()) {
+            map.remove(policyUnitId);
+            getUsedFilters().add(policyUnitsMap.get(policyUnitId));
+        }
+        initFilterPositions();
+        getUnusedFilters().addAll(getFilterPolicyUnits(new ArrayList<PolicyUnit>(map.values())));
+
+    }
+
+    private void initFilterPositions() {
+        if (clusterPolicy.getFilterPositionMap() != null) {
+            for (Entry<Guid, Integer> entry : clusterPolicy.getFilterPositionMap().entrySet()) {
+                getFilterPositionMap().put(entry.getKey(), entry.getValue());
+            }
+        }
+    }
+
+    private void initFunctions() {
+        getUsedFunctions().clear();
+        getUnusedFunctions().clear();
+        if (clusterPolicy.getFunctions() == null) {
+            getUnusedFunctions().addAll(getFunctionPolicyUnits(policyUnits));
+            return;
+        }
+        HashMap<Guid, PolicyUnit> map =
+                (HashMap<Guid, PolicyUnit>) ((HashMap<Guid, PolicyUnit>) policyUnitsMap).clone();
+        for (Pair<Guid, Integer> pair : clusterPolicy.getFunctions()) {
+            map.remove(pair.getFirst());
+            getUsedFunctions().add(new Pair<PolicyUnit, Integer>(policyUnitsMap.get(pair.getFirst()), pair.getSecond()));
+        }
+        getUnusedFunctions().addAll(getFunctionPolicyUnits(new ArrayList<PolicyUnit>(map.values())));
+    }
+
+    private void initLoadBalance() {
+        ArrayList<PolicyUnit> balancePolicyUnits = getBalancePolicyUnits(policyUnits);
+        getLoadBalanceList().setItems(balancePolicyUnits);
+
+        if (clusterPolicy.getBalance() != null) {
+            currentLoadBalance = policyUnitsMap.get(clusterPolicy.getBalance());
+        } else {
+            currentLoadBalance = policyUnitsMap.get(NONE_POLICY_UNIT);
+        }
+        getLoadBalanceList().setIsChangable(!clusterPolicy.isLocked());
+        getLoadBalanceList().setSelectedItem(currentLoadBalance);
+        getLoadBalanceList().getSelectedItemChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                refreshCustomProperties(currentLoadBalance);
+                currentLoadBalance = (PolicyUnit) getLoadBalanceList().getSelectedItem();
+            }
+        });
+    }
+
+    private ArrayList<PolicyUnit> getBalancePolicyUnits(ArrayList<PolicyUnit> list) {
+        if (list == null || list.size() == 0) {
+            return new ArrayList<PolicyUnit>();
+        }
+        ArrayList<PolicyUnit> balancePolicyUnits = new ArrayList<PolicyUnit>();
+        for (PolicyUnit policyUnit : list) {
+            if (policyUnit.isBalanceImplemeted()) {
+                balancePolicyUnits.add(policyUnit);
+            }
+        }
+        return balancePolicyUnits;
+    }
+
+    private ArrayList<PolicyUnit> getFilterPolicyUnits(ArrayList<PolicyUnit> list) {
+        if (list == null || list.size() == 0) {
+            return new ArrayList<PolicyUnit>();
+        }
+        ArrayList<PolicyUnit> filterPolicyUnits = new ArrayList<PolicyUnit>();
+        for (PolicyUnit policyUnit : list) {
+            if (policyUnit.isFilterImplemeted()) {
+                filterPolicyUnits.add(policyUnit);
+            }
+        }
+        return filterPolicyUnits;
+    }
+
+    private ArrayList<PolicyUnit> getFunctionPolicyUnits(ArrayList<PolicyUnit> list) {
+        if (list == null || list.size() == 0) {
+            return new ArrayList<PolicyUnit>();
+        }
+        ArrayList<PolicyUnit> functionPolicyUnits = new ArrayList<PolicyUnit>();
+        for (PolicyUnit policyUnit : list) {
+            if (policyUnit.isFunctionImplemeted()) {
+                functionPolicyUnits.add(policyUnit);
+            }
+        }
+        return functionPolicyUnits;
+    }
+
+    private void initCommands() {
+        UICommand command;
+        if (!clusterPolicy.isLocked() || commandType == CommandType.Clone) {
+            command = new UICommand("OnSave", this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            command.setIsDefault(true);
+            getCommands().add(command);
+            command = new UICommand("OnReset", this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().resetTitle());
+            getCommands().add(command);
+        }
+
+        command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(!clusterPolicy.isLocked() ? ConstantsManager.getInstance().getConstants().cancel()
+                : ConstantsManager.getInstance().getConstants().close());
+        command.setIsCancel(true);
+        getCommands().add(command);
+    }
+
+    private void initTitle() {
+        String title = null;
+        String hashName = null;
+        switch (commandType) {
+        case New:
+            title = ConstantsManager.getInstance().getConstants().newClusterPolicyTitle();
+            hashName = "new_cluster_policy"; //$NON-NLS-1$
+            break;
+        case Edit:
+            title = ConstantsManager.getInstance().getConstants().editClusterPolicyTitle();
+            hashName = "edit_cluster_policy"; //$NON-NLS-1$
+            break;
+        case Clone:
+            title = ConstantsManager.getInstance().getConstants().copyClusterPolicyTitle();
+            hashName = "copy_cluster_policy"; //$NON-NLS-1$
+            break;
+
+        }
+
+        setTitle(title);
+        setHashName(hashName);
+    }
+
+    private boolean customPropertiesInitialized = false;
+    private Event filtersChangedEvent;
+    private Event functionsChangedEvent;
+    private final EntityModel sourceModel;
+    private final ClusterPolicy clusterPolicy;
+    private final CommandType commandType;
+    private final Map<Guid, PolicyUnit> policyUnitsMap;
+    private final ArrayList<PolicyUnit> policyUnits;
+    private final ArrayList<PolicyUnit> usedFilters;
+    private final ArrayList<PolicyUnit> unusedFilters;
+    private final ArrayList<Pair<PolicyUnit, Integer>> usedFunctions;
+    private final ArrayList<PolicyUnit> unusedFunctions;
+    private final Map<Guid, Integer> filterPositionMap;
+    private KeyValueModel customPropertySheet;
+    private final Map<String, String> customProperties;
+    private EntityModel name;
+    private EntityModel description;
+    private ListModel filterList;
+    private ListModel functionList;
+    private ListModel loadBalanceList;
+    private PolicyUnit currentLoadBalance;
+
+    public NewClusterPolicyModel(CommandType commandType,
+            ClusterPolicy clusterPolicy,
+            EntityModel sourceModel,
+            ArrayList<PolicyUnit> policyUnits) {
+        this.commandType = commandType;
+        this.clusterPolicy = clusterPolicy;
+        this.sourceModel = sourceModel;
+        this.policyUnits = policyUnits;
+        policyUnitsMap = new HashMap<Guid, PolicyUnit>();
+        for (PolicyUnit policyUnit : policyUnits) {
+            policyUnitsMap.put(policyUnit.getId(), policyUnit);
+        }
+        usedFilters = new ArrayList<PolicyUnit>();
+        unusedFilters = new ArrayList<PolicyUnit>();
+        usedFunctions = new ArrayList<Pair<PolicyUnit, Integer>>();
+        unusedFunctions = new ArrayList<PolicyUnit>();
+        filterPositionMap = new HashMap<Guid, Integer>();
+        customProperties = new LinkedHashMap<String, String>();
+        setName(new EntityModel());
+        setDescription(new EntityModel());
+        setFilterList(new ListModel());
+        setFunctionList(new ListModel());
+        setLoadBalanceList(new ListModel());
+        setFiltersChangedEvent(new Event(FILTERS_CHANGED_EVENT_DEFINITION));
+        setFunctionsChangedEvent(new Event(FUNCTIONS_CHANGED_EVENT_DEFINITION));
+    }
+
+    public EntityModel getName() {
+        return name;
+    }
+
+    public void setName(EntityModel name) {
+        this.name = name;
+    }
+
+    public EntityModel getDescription() {
+        return description;
+    }
+
+    public void setDescription(EntityModel description) {
+        this.description = description;
+    }
+
+    public ListModel getFilterList() {
+        return filterList;
+    }
+
+    public void setFilterList(ListModel filterList) {
+        this.filterList = filterList;
+    }
+
+    public ListModel getFunctionList() {
+        return functionList;
+    }
+
+    public void setFunctionList(ListModel functionList) {
+        this.functionList = functionList;
+    }
+
+    public ListModel getLoadBalanceList() {
+        return loadBalanceList;
+    }
+
+    public void setLoadBalanceList(ListModel loadBalanceList) {
+        this.loadBalanceList = loadBalanceList;
+    }
+
+    public ClusterPolicy getClusterPolicy() {
+        return clusterPolicy;
+    }
+
+    public CommandType getCommandType() {
+        return commandType;
+    }
+
+    public ArrayList<PolicyUnit> getPolicyUnits() {
+        return policyUnits;
+    }
+
+    public Map<Guid, PolicyUnit> getPolicyUnitsMap() {
+        return policyUnitsMap;
+    }
+
+    public ArrayList<PolicyUnit> getUsedFilters() {
+        return usedFilters;
+    }
+
+    public ArrayList<PolicyUnit> getUnusedFilters() {
+        return unusedFilters;
+    }
+
+    public ArrayList<Pair<PolicyUnit, Integer>> getUsedFunctions() {
+        return usedFunctions;
+    }
+
+    public ArrayList<PolicyUnit> getUnusedFunctions() {
+        return unusedFunctions;
+    }
+
+    public Map<Guid, Integer> getFilterPositionMap() {
+        return filterPositionMap;
+    }
+
+    public Event getFiltersChangedEvent() {
+        return filtersChangedEvent;
+    }
+
+    public void setFiltersChangedEvent(Event filtersChangedEvent) {
+        this.filtersChangedEvent = filtersChangedEvent;
+    }
+
+    public KeyValueModel getCustomPropertySheet() {
+        return customPropertySheet;
+    }
+
+    public void setCustomPropertySheet(KeyValueModel customPropertySheet) {
+        this.customPropertySheet = customPropertySheet;
+    }
+
+    public Map<String, String> getCustomProperties() {
+        return customProperties;
+    }
+
+    public Event getFunctionsChangedEvent() {
+        return functionsChangedEvent;
+    }
+
+    public void setFunctionsChangedEvent(Event functionsChangedEvent) {
+        this.functionsChangedEvent = functionsChangedEvent;
+    }
+
+    @Override
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
+        if (command.getName().equals("Cancel")) { // $NON-NLS-1$
+            cancel();
+        } else if (command.getName().equals("OnSave")) { //$NON-NLS-1$
+            save();
+        } else if (command.getName().equals("OnReset")) { //$NON-NLS-1$
+            reset();
+        }
+    }
+
+    public void addFilter(PolicyUnit policyUnit, boolean used, int position) {
+        if (position != 0) {
+            Guid removeEntry = null;
+            for (Entry<Guid, Integer> entry : getFilterPositionMap().entrySet()) {
+                if (entry.getValue().equals(position)) {
+                    removeEntry = entry.getKey();
+                    break;
+                }
+            }
+            if (removeEntry != null) {
+                getFilterPositionMap().remove(removeEntry);
+            }
+
+        }
+        getFilterPositionMap().put(policyUnit.getId(), position);
+        if (!used) {
+            usedFilters.add(policyUnit);
+            for (int i = 0; i < unusedFilters.size(); i++) {
+                if (unusedFilters.get(i).getId().equals(policyUnit.getId())) {
+                    unusedFilters.remove(policyUnit);
+                    break;
+                }
+            }
+        }
+        refreshCustomProperties(null);
+        getFiltersChangedEvent().raise(this, EventArgs.Empty);
+    }
+
+    public void removeFilter(PolicyUnit policyUnit) {
+        unusedFilters.add(policyUnit);
+        for (int i = 0; i < usedFilters.size(); i++) {
+            if (usedFilters.get(i).getId().equals(policyUnit.getId())) {
+                usedFilters.remove(i);
+                break;
+            }
+        }
+        refreshCustomProperties(policyUnit);
+        getFiltersChangedEvent().raise(this, EventArgs.Empty);
+    }
+
+    public void addFunction(PolicyUnit policyUnit) {
+        usedFunctions.add(new Pair<PolicyUnit, Integer>(policyUnit, 1));
+        for (int i = 0; i < unusedFunctions.size(); i++) {
+            if (unusedFunctions.get(i).getId().equals(policyUnit.getId())) {
+                unusedFunctions.remove(policyUnit);
+                break;
+            }
+        }
+        refreshCustomProperties(null);
+        getFunctionsChangedEvent().raise(this, EventArgs.Empty);
+    }
+
+    public void removeFunction(PolicyUnit policyUnit) {
+        unusedFunctions.add(policyUnit);
+        for (int i = 0; i < usedFunctions.size(); i++) {
+            if (usedFunctions.get(i).getFirst().getId().equals(policyUnit.getId())) {
+                usedFunctions.remove(i);
+                break;
+            }
+        }
+        refreshCustomProperties(policyUnit);
+        getFunctionsChangedEvent().raise(this, EventArgs.Empty);
+    }
+
+    public void updateFactor(PolicyUnit policyUnit, Integer factor) {
+        for (int i = 0; i < usedFunctions.size(); i++) {
+            if (usedFunctions.get(i).getFirst().getId().equals(policyUnit.getId())) {
+                usedFunctions.get(i).setSecond(factor);
+                break;
+            }
+        }
+    }
+
+    private void cancel() {
+        sourceModel.setWindow(null);
+    }
+
+    private void save() {
+        if (getProgress() != null) {
+            return;
+        }
+        if (!validate()) {
+            return;
+        }
+        startProgress(null);
+        ClusterPolicy policy = new ClusterPolicy();
+        policy.setId(clusterPolicy.getId());
+        policy.setName((String) getName().getEntity());
+        policy.setDescription((String) getDescription().getEntity());
+        ArrayList<Guid> keys = new ArrayList<Guid>();
+        for (PolicyUnit clusterPolicy : getUsedFilters()) {
+            keys.add(clusterPolicy.getId());
+        }
+        policy.setFilters(keys);
+        policy.setFilterPositionMap(getFilterPositionMap());
+        ArrayList<Pair<Guid, Integer>> pairs = new ArrayList<Pair<Guid, Integer>>();
+        for (Pair<PolicyUnit, Integer> pair : getUsedFunctions()) {
+            pairs.add(new Pair<Guid, Integer>(pair.getFirst().getId(), pair.getSecond()));
+        }
+        policy.setFunctions(pairs);
+        policy.setBalance(((PolicyUnit) getLoadBalanceList().getSelectedItem()).getId());
+        policy.setParameterMap(KeyValueModel.convertProperties(getCustomPropertySheet().getEntity()));
+        Frontend.RunAction(commandType == CommandType.Edit ? VdcActionType.EditClusterPolicy
+                : VdcActionType.AddClusterPolicy,
+                new ClusterPolicyCRUDParameters(policy.getId(), policy), new IFrontendActionAsyncCallback() {
+
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        NewClusterPolicyModel.this.stopProgress();
+                        if (result.getReturnValue().getSucceeded()) {
+                            NewClusterPolicyModel.this.cancel();
+                        }
+                    }
+                });
+    }
+
+    private boolean validate() {
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new LengthValidation(50),
+                new AsciiNameValidation() });
+        getDescription().validateEntity(new IValidation[] { new LengthValidation(400), new AsciiOrNoneValidation() });
+        return getName().getIsValid() && getDescription().getIsValid();
+        //                && getCustomPropertySheet().validate();
+    }
+
+    private void reset() {
+        getName().setEntity(clusterPolicy.getName());
+        getDescription().setEntity(clusterPolicy.getDescription());
+        initFilters();
+        initFunctions();
+        if (clusterPolicy.getBalance() != null) {
+            getLoadBalanceList().setSelectedItem(policyUnitsMap.get(clusterPolicy.getBalance()));
+        }
+        getFiltersChangedEvent().raise(this, EventArgs.Empty);
+        getFunctionsChangedEvent().raise(this, EventArgs.Empty);
+        customProperties.clear();
+        if (clusterPolicy.getParameterMap() != null) {
+            customProperties.putAll(clusterPolicy.getParameterMap());
+        }
+        refreshCustomProperties(null);
+    }
+
+}

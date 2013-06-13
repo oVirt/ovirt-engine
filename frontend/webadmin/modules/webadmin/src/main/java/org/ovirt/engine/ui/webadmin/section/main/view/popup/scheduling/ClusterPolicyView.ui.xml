@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
+	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+	<ui:style>
+	</ui:style>
+
+	<g:VerticalPanel>
+		<g:SimplePanel ui:field="clusterPolicyTabContent" height="495px" />
+	</g:VerticalPanel>
+
+</ui:UiBinder>

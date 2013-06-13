@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyView;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -35,10 +36,16 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
     DialogTab rolesTab;
 
     @UiField
+    DialogTab clusterPoliciesTab;
+
+    @UiField
     DialogTab systemPermissionsTab;
 
     @UiField
     SimplePanel rolesTabPanel;
+
+    @UiField
+    SimplePanel clusterPoliciesTabPanel;
 
     @UiField
     SimplePanel systemPermissionTabPanel;
@@ -49,12 +56,15 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
             ApplicationResources resources,
             ApplicationConstants constants,
             RoleView roleView,
+            ClusterPolicyView clusterPolicyView,
             SystemPermissionView systemPermissionView) {
         super(eventBus, resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         roleView.setWidth("100%"); //$NON-NLS-1$
         rolesTabPanel.add(roleView);
+        clusterPolicyView.setWidth("100%"); //$NON-NLS-1$
+        clusterPoliciesTabPanel.add(clusterPolicyView);
         systemPermissionTabPanel.setWidth("100%"); //$NON-NLS-1$
         systemPermissionTabPanel.add(systemPermissionView);
     }
@@ -64,6 +74,7 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
         closeButton.setText(constants.closeButtonLabel());
 
         rolesTab.setLabel(constants.configureRoleTabLabel());
+        clusterPoliciesTab.setLabel(constants.configureClusterPolicyTabLabel());
         systemPermissionsTab.setLabel(constants.configureSystemPermissionTabLabel());
     }
 
@@ -80,6 +91,11 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
     @Override
     public void setPopupKeyPressHandler(PopupNativeKeyPressHandler handler) {
         asWidget().setKeyPressHandler(handler);
+    }
+
+    @Override
+    public void hideClusterPolicyTab() {
+        clusterPoliciesTab.setVisible(false);
     }
 
 }

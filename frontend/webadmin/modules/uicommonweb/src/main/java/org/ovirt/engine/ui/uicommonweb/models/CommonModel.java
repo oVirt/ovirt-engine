@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.SystemPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.ClusterPolicyListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.AlertListModel;
@@ -719,6 +720,7 @@ public class CommonModel extends ListModel
         getBookmarkList().stopRefresh();
         getRoleListModel().stopRefresh();
         getSystemPermissionListModel().stopRefresh();
+        getClusterPolicyListModel().stopRefresh();
 
         if (Frontend.getIsUserLoggedIn())
         {
@@ -748,7 +750,7 @@ public class CommonModel extends ListModel
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().ConfigureTitle());
         model.setHashName("configure"); //$NON-NLS-1$
-        model.setEntity(new Model[] { roleListModel, systemPermissionListModel });
+        model.setEntity(new Model[] { roleListModel, systemPermissionListModel, clusterPolicyListModel });
 
         UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
@@ -827,6 +829,7 @@ public class CommonModel extends ListModel
 
         roleListModel = new RoleListModel();
         systemPermissionListModel = new SystemPermissionListModel();
+        clusterPolicyListModel = new ClusterPolicyListModel();
 
         // Activate the default list model.
         setSelectedItem(getDefaultItem());
@@ -859,6 +862,7 @@ public class CommonModel extends ListModel
     private boolean executingSearch;
     private RoleListModel roleListModel;
     private SystemPermissionListModel systemPermissionListModel;
+    private ClusterPolicyListModel clusterPolicyListModel;
 
     @Override
     protected void onSelectedItemChanging(Object newValue, Object oldValue)
@@ -1299,5 +1303,9 @@ public class CommonModel extends ListModel
 
     public SystemPermissionListModel getSystemPermissionListModel() {
         return systemPermissionListModel;
+    }
+
+    public ClusterPolicyListModel getClusterPolicyListModel() {
+        return clusterPolicyListModel;
     }
 }

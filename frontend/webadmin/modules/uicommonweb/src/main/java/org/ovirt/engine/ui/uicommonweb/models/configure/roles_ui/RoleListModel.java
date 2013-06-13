@@ -38,9 +38,9 @@ import org.ovirt.engine.ui.uicompat.ObservableCollection;
 @SuppressWarnings("unused")
 public class RoleListModel extends ListWithDetailsModel
 {
-    private static final String COPY_OF = "Copy_of_"; //$NON-NLS-1$
+    public static final String COPY_OF = "Copy_of_"; //$NON-NLS-1$
 
-    private enum CommandType
+    public enum CommandType
     {
         New,
         Edit,

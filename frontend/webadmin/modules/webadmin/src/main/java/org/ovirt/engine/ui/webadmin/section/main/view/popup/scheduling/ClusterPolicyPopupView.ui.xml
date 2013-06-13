@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
+	xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.panels"
+	xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value">
+
+	<ui:with field='constants'
+		type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+	<ui:style>
+		.sectionLabel {
+		font-weight: bold;
+		font-size: 15px;
+		margin-top: 5px;
+		margin-bottom: 5px;
+		margin-left: 5px;
+		}
+		.labelStyle {
+		font-weight: bold;
+		margin-left: 5px;
+		}
+		.policyListPanel{
+		background-color:
+		#F6F6F6;
+		width:
+		250px;
+		height: 100px;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="700px" height="650px">
+		<d:content>
+			<g:VerticalPanel>
+				<g:FlowPanel>
+					<g:HorizontalPanel>
+						<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+						<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+					</g:HorizontalPanel>
+					<g:HTML>
+						<hr style="width:100%;" />
+					</g:HTML>
+					<g:Label addStyleNames="{style.sectionLabel}"
+						text="{constants.clusterPolicyFilterLabel}" />
+					<g:HorizontalPanel height="100px" width="100%">
+						<g:VerticalPanel>
+							<g:Label addStyleNames="{style.labelStyle}" text="{constants.enabledFilters}" />
+							<p:PolicyUnitListPanel ui:field="usedFilterPanel"
+								styleName="{style.policyListPanel}" />
+						</g:VerticalPanel>
+						<g:VerticalPanel>
+							<g:Label addStyleNames="{style.labelStyle}" text="{constants.disabledFilters}" />
+							<p:PolicyUnitListPanel ui:field="unusedFilterPanel"
+								styleName="{style.policyListPanel}" />
+						</g:VerticalPanel>
+					</g:HorizontalPanel>
+					<g:Label addStyleNames="{style.labelStyle}"
+						text="{constants.clusterPolicyExplanationMessage}" />
+					<g:HTML>
+						<hr style="width:100%;" />
+					</g:HTML>
+					<g:Label addStyleNames="{style.sectionLabel}"
+						text="{constants.clusterPolicyFunctionLabel}" />
+					<g:HorizontalPanel height="100px" width="100%">
+						<g:VerticalPanel>
+							<g:Label addStyleNames="{style.labelStyle}" text="{constants.enabledFunctions}" />
+							<p:PolicyUnitListPanel ui:field="usedFunctionPanel"
+								styleName="{style.policyListPanel}" />
+						</g:VerticalPanel>
+						<g:VerticalPanel>
+							<g:Label addStyleNames="{style.labelStyle}" text="{constants.disabledFunctions}" />
+							<p:PolicyUnitListPanel ui:field="unusedFunctionPanel"
+								styleName="{style.policyListPanel}" />
+						</g:VerticalPanel>
+					</g:HorizontalPanel>
+					<g:Label addStyleNames="{style.labelStyle}"
+						text="{constants.clusterPolicyExplanationMessage}" />
+					<g:HTML>
+						<hr style="width:100%;" />
+					</g:HTML>
+					<g:Label addStyleNames="{style.sectionLabel}"
+						text="{constants.clusterPolicyLoadBalancerLabel}" />
+					<e:ListModelListBoxOnlyEditor
+						ui:field="loadBalanceListEditor" />
+				</g:FlowPanel>
+				<g:HTML>
+					<hr style="width:100%;" />
+				</g:HTML>
+				<g:Label addStyleNames="{style.sectionLabel}"
+					text="{constants.clusterPolicyPropertiesLabel}" />
+				<g:ScrollPanel height="100px">
+					<k:KeyValueWidget ui:field="customPropertiesSheetEditor" />
+				</g:ScrollPanel>
+			</g:VerticalPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

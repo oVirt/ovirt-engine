@@ -21,6 +21,8 @@ import org.ovirt.engine.ui.webadmin.uicommon.WebAdminConfigurator;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyClusterModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
@@ -92,6 +94,12 @@ public class UiCommonModule extends BaseUiCommonModule {
 
         // SystemPermissionListModel
         bind(SystemPermissionModelProvider.class).asEagerSingleton();
+
+        // ClusterPolicyListModel
+        bind(ClusterPolicyModelProvider.class).asEagerSingleton();
+
+        // ClusterPolicyClusterListModel
+        bind(ClusterPolicyClusterModelProvider.class).asEagerSingleton();
     }
 
     void bindIntegration() {

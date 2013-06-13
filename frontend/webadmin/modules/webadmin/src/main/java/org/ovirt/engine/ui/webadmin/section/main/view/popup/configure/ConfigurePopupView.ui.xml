@@ -30,6 +30,13 @@
 						</t:content>
 					</t:DialogTab>
 				</t:tab>
+				<t:tab>
+					<t:DialogTab ui:field="clusterPoliciesTab">
+						<t:content>
+                            <g:SimplePanel addStyleNames="{style.panel}" ui:field="clusterPoliciesTabPanel" />
+						</t:content>
+					</t:DialogTab>
+				</t:tab>
 			</t:DialogTabPanel>
 		</d:content>
 
