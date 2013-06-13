@@ -9,10 +9,9 @@ public class Guid implements Serializable, Comparable<Guid> {
      */
     private static final long serialVersionUID = 27305745737022810L;
 
-    private static final String EMPTY_GUID_VALUE = "00000000-0000-0000-0000-000000000000";
     public static final Guid SYSTEM = new Guid("AAA00000-0000-0000-0000-123456789AAA");
     public static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");
-    public final static Guid Empty = new Guid(EMPTY_GUID_VALUE);
+    public final static Guid Empty = new Guid("00000000-0000-0000-0000-000000000000");
 
     private static final byte[] CHANGE_BYTE_ORDER_INDICES = { 3, 2, 1, 0,
             5, 4, 7, 6, 8, 9, 10, 11, 12, 13, 14, 15 };
@@ -37,7 +36,7 @@ public class Guid implements Serializable, Comparable<Guid> {
     public Guid(byte[] guid, boolean keepByteOrder) {
         String guidAsStr = getStrRepresentationOfGuid(guid, keepByteOrder);
         if (guidAsStr.isEmpty()) {
-            uuid = UUID.fromString(EMPTY_GUID_VALUE);
+            uuid = Empty.getUuid();
         } else {
             uuid = UUID.fromString(guidAsStr);
         }
@@ -49,7 +48,7 @@ public class Guid implements Serializable, Comparable<Guid> {
                     "candidate can not be null please use static method createGuidFromString");
         }
         if (candidate.isEmpty()) {
-            uuid = UUID.fromString(EMPTY_GUID_VALUE);
+            uuid = Empty.getUuid();
         } else {
             uuid = UUID.fromString(candidate);
         }
