@@ -310,6 +310,7 @@
 							<e:EntityModelCheckBoxEditor ui:field="isStatelessEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
 							<e:EntityModelCheckBoxEditor ui:field="isRunAndPauseEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
 							<e:EntityModelCheckBoxEditor ui:field="isDeleteProtectedEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
+                            <e:EntityModelCheckBoxEditor ui:field="copyTemplatePermissionsEditor" contentWidgetStyleName="{style.horizontallyAlignedCheckBoxContent}" addStyleNames="{style.horizontallyAlignedCheckBox}" />
 						</g:FlowPanel>
 						<g:FlowPanel ui:field="logicalNetworksEditorPanel" addStyleNames="{style.sectionPanel}">
                             <n:LogicalNetworksEditor ui:field="logicalNetworksEditor" />

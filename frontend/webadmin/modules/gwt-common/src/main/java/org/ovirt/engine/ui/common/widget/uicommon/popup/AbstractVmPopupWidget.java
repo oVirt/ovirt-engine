@@ -213,6 +213,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("isSoundcardEnabled")
     public EntityModelCheckBoxEditor isSoundcardEnabledEditor;
 
+    @UiField(provided = true)
+    @Path("copyPermissions.entity")
+    @WithElementId("copyTemplatePermissions")
+    public EntityModelCheckBoxEditor copyTemplatePermissionsEditor;
+
     // == Pools ==
     @UiField
     protected DialogTab poolTab;
@@ -576,6 +581,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         cdAttachedEditor = new EntityModelCheckBoxEditor(Align.LEFT, new ModeSwitchingVisibilityRenderer());
         allowConsoleReconnectEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSoundcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        copyTemplatePermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
 
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
@@ -876,6 +882,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isRunAndPauseEditor.setLabel(constants.runAndPauseVmPopup());
         isDeleteProtectedEditor.setLabel(constants.deleteProtectionPopup());
         isConsoleDeviceEnabledEditor.setLabel(constants.consoleDeviceEnabled());
+        copyTemplatePermissionsEditor.setLabel(constants.copyTemplatePermissions());
         isSmartcardEnabledEditor.setLabel(constants.smartcardVmPopup());
 
         // Pools Tab
@@ -1249,6 +1256,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isStatelessEditor.setTabIndex(nextTabIndex++);
         isRunAndPauseEditor.setTabIndex(nextTabIndex++);
         isDeleteProtectedEditor.setTabIndex(nextTabIndex++);
+        copyTemplatePermissionsEditor.setTabIndex(nextTabIndex++);
 
         numOfVmsEditor.setTabIndex(nextTabIndex++);
         prestartedVmsEditor.setTabIndex(nextTabIndex++);
@@ -1380,7 +1388,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         return Arrays.<Widget> asList(
                 memSizeEditor,
                 totalvCPUsEditor,
-                vcpusAdvancedParameterExpander
+                vcpusAdvancedParameterExpander,
+                copyTemplatePermissionsEditor
                 );
     }
 }

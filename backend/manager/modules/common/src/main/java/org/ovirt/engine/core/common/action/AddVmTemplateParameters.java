@@ -35,6 +35,8 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
     private String _description;
 
     private boolean publicUse = false;
+
+    private boolean copyVmPermissions = false;
     /*
      * This parameter is used to decide if to create sound device or not
      * if it is null then legacy logic will be used: create device for desktop type
@@ -130,4 +132,11 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
         this.consoleEnabled = consoleEnabled;
     }
 
+    public boolean isCopyVmPermissions() {
+        return copyVmPermissions;
+    }
+
+    public void setCopyVmPermissions(boolean copyVmPermissions) {
+        this.copyVmPermissions = copyVmPermissions;
+    }
 }

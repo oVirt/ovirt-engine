@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -551,6 +552,29 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // if the template is for public use, set EVERYONE as a TEMPLATE_USER.
         if (getParameters().isPublicUse()) {
             addPermissionForTemplate(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID, PredefinedRoles.TEMPLATE_USER);
+        }
+
+        copyVmPermissions();
+    }
+
+    private void copyVmPermissions() {
+        if (!isVmInDb || !getParameters().isCopyVmPermissions()) {
+            return;
+        }
+
+        PermissionDAO dao = getDbFacade().getPermissionDao();
+
+        List<permissions> vmPermissions = dao.getAllForEntity(getVmId(), getCurrentUser().getUserId(), false);
+
+        List<permissions> templatePermissions = new ArrayList<permissions>();
+
+        for (permissions vmPermission : vmPermissions) {
+            templatePermissions.add(new permissions(getCurrentUser().getUserId(), vmPermission.getrole_id(),
+                    getParameters().getVmTemplateId(), VdcObjectType.VmTemplate));
+        }
+
+        if (templatePermissions.size() > 0) {
+            MultiLevelAdministrationHandler.addPermission(templatePermissions.toArray(new permissions[templatePermissions.size()]));
         }
     }
 

@@ -72,6 +72,11 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     @WithElementId("isTemplatePublic")
     EntityModelCheckBoxEditor isTemplatePublicEditor;
 
+    @UiField(provided = true)
+    @Path(value = "copyPermissions.entity")
+    @WithElementId("copyVmPermissions")
+    EntityModelCheckBoxEditor copyVmPermissions;
+
     @UiField
     @Ignore
     FlowPanel messagePanel;
@@ -106,6 +111,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
 
     void addStyle() {
         isTemplatePublicEditor.setContentWidgetStyleName(style.editorLabel());
+        copyVmPermissions.setContentWidgetStyleName(style.editorLabel());
     }
 
     void initListBoxEditors() {
@@ -144,6 +150,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
 
     void initCheckBoxEditors() {
         isTemplatePublicEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        copyVmPermissions = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     void localize(CommonApplicationConstants constants) {
@@ -152,6 +159,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         clusterEditor.setLabel(constants.makeTemplateClusterLabel());
         quotaEditor.setLabel(constants.makeTemplateQuotaLabel());
         isTemplatePublicEditor.setLabel(constants.makeTemplateIsTemplatePublicEditorLabel());
+        copyVmPermissions.setLabel(constants.copyVmPermissions());
         disksAllocationLabel.setText(constants.disksAllocation());
     }
 
@@ -200,6 +208,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         quotaEditor.setTabIndex(nextTabIndex++);
         nextTabIndex = disksAllocationView.setTabIndexes(nextTabIndex);
         isTemplatePublicEditor.setTabIndex(nextTabIndex++);
+        copyVmPermissions.setTabIndex(nextTabIndex++);
         return nextTabIndex;
     }
 

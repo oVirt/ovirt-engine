@@ -21,7 +21,7 @@ public class VmMakeTemplatePopupView extends AbstractModelBoundWidgetPopupView<U
 
     @Inject
     public VmMakeTemplatePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, CommonApplicationTemplates applicationTemplates) {
-        super(eventBus, resources, new VmMakeTemplatePopupWidget(constants, applicationTemplates), "460px", "490px"); //$NON-NLS-1$ //$NON-NLS-2$
+        super(eventBus, resources, new VmMakeTemplatePopupWidget(constants, applicationTemplates), "460px", "510px"); //$NON-NLS-1$ //$NON-NLS-2$
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 

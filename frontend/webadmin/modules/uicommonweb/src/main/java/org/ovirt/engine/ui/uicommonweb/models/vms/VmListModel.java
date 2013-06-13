@@ -1395,6 +1395,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         addVmTemplateParameters.setDiskInfoDestinationMap(
                 model.getDisksAllocationModel().getImageToDestinationDomainMap());
         addVmTemplateParameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+        addVmTemplateParameters.setCopyVmPermissions((Boolean) model.getCopyPermissions().getEntity());
         model.startProgress(null);
         addVmTemplateParameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
@@ -2060,6 +2061,20 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
                             Frontend.RunAction(VdcActionType.AddVmFromTemplate, param, new NetworkCreateOrUpdateFrontendActionAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
+                            param.setCopyTemplatePermissions((Boolean) model.getCopyPermissions().getEntity());
+                            ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+                            parameters.add(param);
+
+                            Frontend.RunMultipleAction(VdcActionType.AddVmFromTemplate, parameters,
+                                    new IFrontendMultipleActionAsyncCallback() {
+                                        @Override
+                                        public void executed(FrontendMultipleActionAsyncResult result) {
+                                            VmListModel vmListModel1 = (VmListModel) result.getState();
+                                            vmListModel1.getWindow().stopProgress();
+                                            vmListModel1.cancel();
+                                        }
+                                    },
+                                    vmListModel);
                         }
                     };
                     AsyncDataProvider.getTemplateDiskList(_asyncQuery, template.getId());

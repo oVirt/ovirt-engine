@@ -59,6 +59,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.utils.customprop.ValidationError;
@@ -804,6 +805,36 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     getVmId(), VdcObjectType.VM);
             MultiLevelAdministrationHandler.addPermission(perms);
             getCompensationContext().snapshotNewEntity(perms);
+        }
+
+        if (getParameters().isCopyTemplatePermissions() && !getVmTemplateId().equals(VmTemplateHandler.BlankVmTemplateId)) {
+            copyTemplatePermissions();
+        }
+    }
+
+    private void copyTemplatePermissions() {
+        PermissionDAO dao = getDbFacade().getPermissionDao();
+
+        List<permissions> templatePermissions = dao.getAllForEntity(getVmTemplateId(), getCurrentUser().getUserId(), false);
+
+        List<permissions> vmPermissions = new ArrayList<permissions>();
+
+        for (permissions templatePermission : templatePermissions) {
+            boolean templateOwnerRole = templatePermission.getrole_id().equals(PredefinedRoles.TEMPLATE_OWNER.getId());
+            boolean templateUserRole = templatePermission.getrole_id().equals(PredefinedRoles.TEMPLATE_USER.getId());
+
+            if (templateOwnerRole || templateUserRole) {
+                continue;
+            }
+
+            vmPermissions.add(new permissions(getCurrentUser().getUserId(), templatePermission.getrole_id(),
+                    getVmId(), VdcObjectType.VM));
+
+        }
+
+        if (vmPermissions.size() > 0) {
+            MultiLevelAdministrationHandler.addPermission(vmPermissions.toArray(new permissions[vmPermissions.size()]));
+            getCompensationContext().snapshotNewEntities(vmPermissions);
         }
     }
 

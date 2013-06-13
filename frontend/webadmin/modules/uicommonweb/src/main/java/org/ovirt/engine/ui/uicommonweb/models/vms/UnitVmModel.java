@@ -656,6 +656,16 @@ public class UnitVmModel extends Model {
         this.privateIsDeleteProtected = deleteProtected;
     }
 
+    private NotChangableForVmInPoolEntityModel copyPermissions;
+
+    public EntityModel getCopyPermissions() {
+        return copyPermissions;
+    }
+
+    private void setCopyPermissions(NotChangableForVmInPoolEntityModel copyPermissions) {
+        this.copyPermissions = copyPermissions;
+    }
+
     private NotChangableForVmInPoolListModel privateDisplayProtocol;
 
     public ListModel getDisplayProtocol()
@@ -1076,6 +1086,10 @@ public class UnitVmModel extends Model {
         setIsSmartcardEnabled(new NotChangableForVmInPoolEntityModel());
         setIsDeleteProtected(new NotChangableForVmInPoolEntityModel());
         setConsoleDeviceEnabled(new NotChangableForVmInPoolEntityModel());
+        setCopyPermissions(new NotChangableForVmInPoolEntityModel());
+        // by default not available - only for new VM
+        getCopyPermissions().setIsAvailable(false);
+        getCopyPermissions().setEntity(false);
         setVncKeyboardLayout(new NotChangableForVmInPoolListModel());
         setVmType(new NotChangableForVmInPoolListModel());
         getVmType().setItems(Arrays.asList(VmType.Desktop, VmType.Server));

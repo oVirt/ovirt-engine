@@ -141,6 +141,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
                 getModel().getVmType().setSelectedItem(template.getVmType());
                 getModel().setIsBlankTemplate(false);
+                getModel().getCopyPermissions().setIsAvailable(true);
                 initDisks();
                 initSoundCard(template.getId());
             }
@@ -151,6 +152,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
                 getModel().setIsBlankTemplate(true);
                 getModel().setIsDisksAvailable(false);
+                getModel().getCopyPermissions().setIsAvailable(false);
                 getModel().setDisks(null);
             }
 

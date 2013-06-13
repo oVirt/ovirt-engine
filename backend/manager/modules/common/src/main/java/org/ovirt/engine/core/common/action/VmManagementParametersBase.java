@@ -25,6 +25,8 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private boolean balloonEnabled = true;
     private VM vm = null;
     private VmWatchdog watchdog = null;
+    private boolean copyTemplatePermissions = false;
+
     /*
      * This parameter is needed at update to make sure that when we get a null watchdog from rest-api it is not meant to
      * be removing the watchdog, rest-api will simply call watchdog commands directly. Default is false so to avoid
@@ -166,5 +168,13 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
 
     public void setSoundDeviceEnabled(boolean soundDeviceEnabled) {
         this.soundDeviceEnabled = soundDeviceEnabled;
+    }
+
+    public boolean isCopyTemplatePermissions() {
+        return copyTemplatePermissions;
+    }
+
+    public void setCopyTemplatePermissions(boolean copyTemplatePermissions) {
+        this.copyTemplatePermissions = copyTemplatePermissions;
     }
 }

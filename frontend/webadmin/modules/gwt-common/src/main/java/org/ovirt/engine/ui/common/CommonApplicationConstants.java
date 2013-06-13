@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common;
 
 import com.google.gwt.i18n.client.Constants;
-import com.google.gwt.i18n.client.Constants.DefaultStringValue;
 
 public interface CommonApplicationConstants extends Constants {
 
@@ -349,6 +348,10 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Delete Protection")
     String deleteProtectionPopup();
+
+
+    @DefaultStringValue("Copy Template Permissions")
+    String copyTemplatePermissions();
 
     @DefaultStringValue("Smartcard Enabled")
     String smartcardVmPopup();
@@ -1311,4 +1314,8 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("▲")
     String horizontalSplitTableUp();
+
+    @DefaultStringValue("Copy VM permissions")
+    String copyVmPermissions();
+
 }

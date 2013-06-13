@@ -644,6 +644,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 .getImageToDestinationDomainMap());
         addVmTemplateParameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
         addVmTemplateParameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+        addVmTemplateParameters.setCopyVmPermissions((Boolean) model.getCopyPermissions().getEntity());
 
         Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
@@ -1094,6 +1095,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                     unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
                                     Guid.Empty);
                             param.setMakeCreatorExplicitOwner(true);
+                            param.setCopyTemplatePermissions((Boolean) unitVmModel.getCopyPermissions().getEntity());
 
                             param.setSoundDeviceEnabled((Boolean) unitVmModel.getIsSoundcardEnabled().getEntity());
                             param.setConsoleEnabled((Boolean) unitVmModel.getIsConsoleDeviceEnabled().getEntity());

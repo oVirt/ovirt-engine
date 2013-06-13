@@ -44,6 +44,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getTemplate().setIsChangable(false);
 
         getModel().getVmType().setIsChangable(true);
+        getModel().getCopyPermissions().setIsAvailable(true);
 
         DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
         disksAllocationModel.setIsAliasChangable(true);

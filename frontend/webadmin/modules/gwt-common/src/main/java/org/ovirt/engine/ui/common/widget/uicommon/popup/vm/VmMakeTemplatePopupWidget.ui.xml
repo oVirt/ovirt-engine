@@ -36,6 +36,7 @@
 		<w:DisksAllocationView ui:field="disksAllocationView" listHeight="155px" listWidth="445px" addStyleNames="{style.disksAllocationPanel}" />
 		<g:FlowPanel>
 			<e:EntityModelCheckBoxEditor ui:field="isTemplatePublicEditor" />
+            <e:EntityModelCheckBoxEditor ui:field="copyVmPermissions" />
 			<g:ScrollPanel>
 				<g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" />
 			</g:ScrollPanel>
