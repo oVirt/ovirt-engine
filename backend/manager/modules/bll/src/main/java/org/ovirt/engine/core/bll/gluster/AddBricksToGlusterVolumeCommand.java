@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
@@ -12,11 +13,16 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
+import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeBricksActionVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 @LockIdNameAttribute(isWait = true)
@@ -64,25 +70,61 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
 
     @Override
     protected void executeCommand() {
+        final List<GlusterBrickEntity> bricksList = getParameters().getBricks();
+
+        // Add bricks in a single transaction
+        if (bricksList != null && bricksList.size() > 0) {
+            TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                    new TransactionMethod<Void>() {
+                        @Override
+                        public Void runInTransaction() {
+                            addGlusterVolumeBricks(bricksList,
+                                    getParameters().getReplicaCount(),
+                                    getParameters().getStripeCount());
+                            return null;
+                        }
+                    });
+        }
+    }
+
+    private void addGlusterVolumeBricks(List<GlusterBrickEntity> bricksList, int replicaCount, int stripeCount) {
         VDSReturnValue returnValue =
-                Backend
-                        .getInstance()
+                Backend.getInstance()
                         .getResourceManager()
-                        .RunVdsCommand(
-                                VDSCommandType.AddBricksToGlusterVolume,
+                        .RunVdsCommand(VDSCommandType.AddBricksToGlusterVolume,
                                 new GlusterVolumeBricksActionVDSParameters(upServer.getId(),
                                         getGlusterVolumeName(),
-                                        getParameters().getBricks(),
-                                        getParameters().getReplicaCount(),
-                                        getParameters().getStripeCount()));
+                                        bricksList,
+                                        replicaCount,
+                                        stripeCount));
+
         setSucceeded(returnValue.getSucceeded());
 
         if (getSucceeded()) {
-            addGlusterVolumeBricksInDb(getParameters().getBricks());
-            getReturnValue().setActionReturnValue(getBrickIds(getParameters().getBricks()));
+            addCustomValue(GlusterConstants.NO_OF_BRICKS, String.valueOf(bricksList.size()));
+            addGlusterVolumeBricksInDb(bricksList, replicaCount, stripeCount);
+            logAuditMessages(bricksList);
+            getReturnValue().setActionReturnValue(getBrickIds(bricksList));
         } else {
             handleVdsError(AuditLogType.GLUSTER_VOLUME_ADD_BRICK_FAILED, returnValue.getVdsError().getMessage());
             return;
+        }
+    }
+
+    private void logAuditMessages(List<GlusterBrickEntity> bricks) {
+        GlusterAuditLogUtil logUtil = GlusterAuditLogUtil.getInstance();
+        for (final GlusterBrickEntity brick : bricks) {
+            logUtil.logAuditMessage(null,
+                    null,
+                    null,
+                    AuditLogType.GLUSTER_VOLUME_BRICK_ADDED,
+                    new HashMap<String, String>() {
+                        {
+                            put(GlusterConstants.BRICK_PATH, brick.getBrickDirectory());
+                            put(GlusterConstants.SERVER_NAME, brick.getServerName());
+                            put(GlusterConstants.VOLUME_NAME, getGlusterVolumeName());
+                        }
+                    });
         }
     }
 
@@ -94,15 +136,15 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
         return brickIds;
     }
 
-    private void addGlusterVolumeBricksInDb(List<GlusterBrickEntity> newBricks) {
+    private void addGlusterVolumeBricksInDb(List<GlusterBrickEntity> newBricks, int replicaCount, int stripeCount) {
         // Reorder the volume bricks
         GlusterVolumeEntity volume = getGlusterVolume();
         List<GlusterBrickEntity> volumeBricks = volume.getBricks();
-        if (isReplicaCountIncreased() || isStripeCountIncreased()) {
+        if (isReplicaCountIncreased(replicaCount) || isStripeCountIncreased(stripeCount)) {
             GlusterBrickEntity brick;
             int brick_num = 0;
             int count =
-                    (isReplicaCountIncreased()) ? getParameters().getReplicaCount() : getParameters().getStripeCount();
+                    (isReplicaCountIncreased(replicaCount)) ? replicaCount : stripeCount;
 
             // Updating existing brick order
             for (int i = 0; i < volumeBricks.size(); i++) {
@@ -135,43 +177,41 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
         }
 
         // Update the volume replica/stripe count
-        if (isReplicaCountIncreased()) {
-            volume.setReplicaCount(getParameters().getReplicaCount());
+        if (isReplicaCountIncreased(replicaCount)) {
+            volume.setReplicaCount(replicaCount);
         }
 
         if (volume.getVolumeType() == GlusterVolumeType.REPLICATE
-                && getParameters().getReplicaCount() < (volume.getBricks().size() + getParameters().getBricks()
-                        .size())) {
+                && replicaCount < (volume.getBricks().size() + newBricks.size())) {
             volume.setVolumeType(GlusterVolumeType.DISTRIBUTED_REPLICATE);
         }
 
-        if (isStripeCountIncreased()) {
-            volume.setStripeCount(getParameters().getStripeCount());
+        if (isStripeCountIncreased(stripeCount)) {
+            volume.setStripeCount(stripeCount);
         }
 
         if (volume.getVolumeType() == GlusterVolumeType.STRIPE
-                && getParameters().getStripeCount() < (volume.getBricks().size() + getParameters().getBricks()
-                        .size())) {
+                && stripeCount < (volume.getBricks().size() + newBricks.size())) {
             volume.setVolumeType(GlusterVolumeType.DISTRIBUTED_STRIPE);
         }
 
         getGlusterVolumeDao().updateGlusterVolume(volume);
     }
 
-    private boolean isReplicaCountIncreased() {
+    private boolean isReplicaCountIncreased(int replicaCount) {
         if ((getGlusterVolume().getVolumeType() == GlusterVolumeType.REPLICATE
                 || getGlusterVolume().getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
-                && getParameters().getReplicaCount() > getGlusterVolume().getReplicaCount()) {
+                && replicaCount > getGlusterVolume().getReplicaCount()) {
             return true;
         } else {
             return false;
         }
     }
 
-    private boolean isStripeCountIncreased() {
+    private boolean isStripeCountIncreased(int stripeCount) {
         if ((getGlusterVolume().getVolumeType() == GlusterVolumeType.STRIPE
                 || getGlusterVolume().getVolumeType() == GlusterVolumeType.DISTRIBUTED_STRIPE)
-                && getParameters().getStripeCount() > getGlusterVolume().getStripeCount()) {
+                && stripeCount > getGlusterVolume().getStripeCount()) {
             return true;
         } else {
             return false;

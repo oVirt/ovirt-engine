@@ -12,6 +12,10 @@ public class GlusterConstants {
 
     public static final int DEFAULT_REPLICA_COUNT = 2;
     public static final int DEFAULT_STRIPE_COUNT = 4;
+    public static final String NO_OF_BRICKS = "NoOfBricks";
+    public static final String BRICK_PATH = "brickpath";
+    public static final String SERVER_NAME = "servername";
+    public static final String VOLUME_NAME = "glustervolumename";
 
     // Variables used in audit messages.
     // Keep the values lowercase to avoid call to String#toLowerCase()
