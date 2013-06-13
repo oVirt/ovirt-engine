@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.LocaleUtils;
+import org.ovirt.engine.core.utils.ResourceUtils;
 
 /**
  * This filter attempts to detect the locale of the user based on the following criteria.
@@ -146,7 +147,7 @@ public class LocaleFilter implements Filter {
     private static Properties getLanguageProperties() {
         Properties prop = new Properties();
         try {
-            prop.load(LocaleFilter.class.getResourceAsStream(LANGUAGES_FILE));
+            prop = ResourceUtils.loadProperties(LocaleFilter.class, LANGUAGES_FILE);
         } catch (IOException e) {
             log.error("Unable to load supported langauges file", e);
         }
