@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.ActionVersionMap;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ActionGroupDAOTest extends BaseDAOTestCase {
-    private static final int ACTION_GROUP_COUNT = 2;
+    private static final int ACTION_GROUP_COUNT = 3;
     private static final int ACTION_VERSION_MAP_COUNT = 2;
     private static final Guid EXISTING_ROLE_ID = new Guid("f5972bfa-7102-4d33-ad22-9dd421bfba78");
     private ActionGroupDAO dao;

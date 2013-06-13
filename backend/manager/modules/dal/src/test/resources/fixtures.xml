@@ -2975,6 +2975,19 @@
             <value>f5972bfa-7102-4d33-ad22-9dd421bfba70</value>
             <value>9</value>
         </row>
+        <row>
+            <value>f5972bfa-7102-4d33-ad22-9dd421bfba78</value>
+            <value>4</value>
+        </row>
+        <row>
+            <value>f5972bfa-7102-4d33-ad22-9dd421bfba78</value>
+            <value>901</value>
+        </row>
+         <row>
+            <value>f5972bfa-7102-4d33-ad22-9dd421bfba78</value>
+            <value>502</value>
+        </row>
+
     </table>
 
     <table name="permissions">
@@ -3486,19 +3499,6 @@
             <value>0</value>
             <value>0</value>
             <null />
-        </row>
-    </table>
-
-    <table name="roles_groups">
-        <column>role_id</column>
-        <column>action_group_id</column>
-        <row>
-            <value>f5972bfa-7102-4d33-ad22-9dd421bfba78</value>
-            <value>4</value>
-        </row>
-        <row>
-            <value>f5972bfa-7102-4d33-ad22-9dd421bfba78</value>
-            <value>901</value>
         </row>
     </table>
 

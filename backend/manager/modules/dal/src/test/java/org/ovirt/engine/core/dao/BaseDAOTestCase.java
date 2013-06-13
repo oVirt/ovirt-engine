@@ -25,7 +25,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dal.dbbroker.generic.DBConfigUtils;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
-import org.ovirt.engine.core.utils.ejb.EJBUtilsStrategy;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -53,7 +52,6 @@ public abstract class BaseDAOTestCase {
     protected static String initSql;
     protected static DataSource dataSource;
     private static IDataSet dataset;
-    private static EJBUtilsStrategy oldStrategy;
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();

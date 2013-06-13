@@ -116,7 +116,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
         assertEquals(2, result.size());
     }
 
-        @Test
+    @Test
     public void testGetFilteredWithPermissions() {
         List<DbUser> result = dao.getAll(PRIVILEGED_USER_ID, true);
         assertNotNull(result);
@@ -126,7 +126,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetFilteredWithoutPermissions() {
         List<DbUser> result = dao.getAll(UNPRIVILEGED_USER_ID, true);
-        assertNull(result);
+        assertNotNull(result);
         assertTrue(result.isEmpty());
     }
 
