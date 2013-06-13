@@ -9,7 +9,7 @@ public class Guid implements Serializable, Comparable<Guid> {
      */
     private static final long serialVersionUID = 27305745737022810L;
 
-    protected static final String EMPTY_GUID_VALUE = "00000000-0000-0000-0000-000000000000";
+    private static final String EMPTY_GUID_VALUE = "00000000-0000-0000-0000-000000000000";
     public static final Guid SYSTEM = new Guid("AAA00000-0000-0000-0000-123456789AAA");
     public static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");
     public final static Guid Empty = new Guid(EMPTY_GUID_VALUE);
@@ -19,7 +19,7 @@ public class Guid implements Serializable, Comparable<Guid> {
     private static final byte[] KEEP_BYTE_ORDER_INDICES = { 0, 1, 2, 3,
             4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
-    protected UUID uuid;
+    private UUID uuid;
 
     /**
      * This constructor should never be used directly - use {@link #Empty} instead.
