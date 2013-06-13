@@ -1217,12 +1217,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
 
                     if (storages != null && storages.size() > 0) {
-                        String storageName = storages.get(0).getStorageName();
-
-                        onFinish(storageListModel.context,
-                            false,
-                            storageListModel.storageModel,
-                            ConstantsManager.getInstance().getMessages().createFailedDomainAlreadyExistStorageMsg(storageName));
+                        handleDomainAlreadyExists(storageListModel, storages);
                     } else {
                         storageListModel.saveNewPosixStorage();
                     }
@@ -1350,12 +1345,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
 
                     if (storages != null && storages.size() > 0) {
-                        String storageName = storages.get(0).getStorageName();
-
-                        onFinish(storageListModel.context,
-                            false,
-                            storageListModel.storageModel,
-                            ConstantsManager.getInstance().getMessages().createFailedDomainAlreadyExistStorageMsg(storageName));
+                        handleDomainAlreadyExists(storageListModel, storages);
                     } else {
                         storageListModel.saveNewGlusterStorage();
                     }
@@ -1473,12 +1463,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     StorageListModel storageListModel = (StorageListModel) target;
                     ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
                     if (storages != null && storages.size() > 0) {
-                        String storageName = storages.get(0).getStorageName();
-
-                        onFinish(storageListModel.context,
-                            false,
-                            storageListModel.storageModel,
-                            ConstantsManager.getInstance().getMessages().createFailedDomainAlreadyExistStorageMsg(storageName));
+                        handleDomainAlreadyExists(storageListModel, storages);
                     } else {
                         storageListModel.saveNewNfsStorage();
                     }
@@ -1715,12 +1700,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     StorageListModel storageListModel = (StorageListModel) target;
                     ArrayList<StorageDomain> storages = (ArrayList<StorageDomain>) returnValue;
                     if (storages != null && storages.size() > 0) {
-                        String storageName = storages.get(0).getStorageName();
-
-                        onFinish(storageListModel.context,
-                            false,
-                            storageListModel.storageModel,
-                            ConstantsManager.getInstance().getMessages().createFailedDomainAlreadyExistStorageMsg(storageName));
+                        handleDomainAlreadyExists(storageListModel, storages);
                     } else {
                         storageListModel.saveNewLocalStorage();
                     }
@@ -1738,6 +1718,15 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 updateStorageDomain();
             }
         }
+    }
+
+    private void handleDomainAlreadyExists(StorageListModel storageListModel, ArrayList<StorageDomain> storages) {
+        String storageName = storages.get(0).getStorageName();
+
+        onFinish(storageListModel.context,
+            false,
+            storageListModel.storageModel,
+            ConstantsManager.getInstance().getMessages().createFailedDomainAlreadyExistStorageMsg(storageName));
     }
 
     public void saveNewLocalStorage()
