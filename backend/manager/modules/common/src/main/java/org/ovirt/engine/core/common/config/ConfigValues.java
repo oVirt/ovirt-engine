@@ -1396,6 +1396,10 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     VirtIoScsiUnsupportedOsList(514),
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("/usr/bin/vdsm-tool service-restart vdsmd")
+    SshSoftFencingCommand(515),
+
     Invalid(65535);
 
     private int intValue;

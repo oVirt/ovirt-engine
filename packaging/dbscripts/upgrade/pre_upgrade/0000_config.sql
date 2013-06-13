@@ -562,6 +562,11 @@ select fn_db_add_config_value('CustomDeviceProperties', '', '3.1');
 select fn_db_add_config_value('CustomDeviceProperties', '', '3.2');
 select fn_db_add_config_value('CustomDeviceProperties', '', '3.3');
 
+select fn_db_add_config_value('SshSoftFencingCommand', 'service vdsmd restart', '3.0');
+select fn_db_add_config_value('SshSoftFencingCommand', 'service vdsmd restart', '3.1');
+select fn_db_add_config_value('SshSoftFencingCommand', 'service vdsmd restart', '3.2');
+select fn_db_add_config_value('SshSoftFencingCommand', '/usr/bin/vdsm-tool service-restart vdsmd', '3.3');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
