@@ -497,7 +497,7 @@ select fn_db_add_config_value('VcpuConsumptionPercentage','10','general');
 select fn_db_add_config_value('VdcVersion','3.0.0.0','general');
 select fn_db_add_config_value('VDSAttemptsToResetCount','2','general');
 select fn_db_add_config_value('VdsCertificateValidityInYears','5','general');
-select fn_db_add_config_value('vdsConnectionTimeout','180','general');
+select fn_db_add_config_value('vdsConnectionTimeout','2','general');
 select fn_db_add_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.0');
 select fn_db_add_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.1');
 select fn_db_add_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ipmilan:;ilo3:;ilo4:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.2');
@@ -513,7 +513,7 @@ select fn_db_add_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','gener
 select fn_db_add_config_value('VdsLocalDisksLowFreeSpace','500','general');
 select fn_db_add_config_value('VdsRecoveryTimeoutInMintues','3','general');
 select fn_db_add_config_value('VdsRefreshRate','2','general');
-select fn_db_add_config_value('vdsRetries','3','general');
+select fn_db_add_config_value('vdsRetries','0','general');
 --Handling Host Selection Algorithm default for cluster
 select fn_db_add_config_value('VdsSelectionAlgorithm','None','general');
 select fn_db_add_config_value('vdsTimeout','180','general');
@@ -704,6 +704,12 @@ select fn_db_update_default_config_value('LDAPSecurityAuthentication','GSSAPI','
 select fn_db_update_default_config_value('LDAPSecurityAuthentication','SIMPLE','default:SIMPLE','general',false);
 select fn_db_update_default_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','500','general',false);
 select fn_db_update_default_config_value('VdsLocalDisksLowFreeSpace','500', '1000','general',false);
+
+-- Reduce the host connection timeout from 180 seconds to 2 seconds and
+-- disable retries for more predictable HA timing:
+select fn_db_update_default_config_value('vdsConnectionTimeout', '180', '2', 'general', false);
+select fn_db_update_default_config_value('vdsRetries', '3', '0', 'general', false);
+
 ------------------------------------------------------------------------------------
 --              Cleanup deprecated configuration values section
 ------------------------------------------------------------------------------------

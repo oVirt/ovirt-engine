@@ -40,24 +40,18 @@ public enum ConfigValues {
 
     /**
      * The number of times to retry host operations when there are IO errors.
-     * The default value is 3 to match the default value of the XML RPC library
-     * that we use, so there is no change in behaviour.
      */
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("3")
+    @DefaultValueAttribute("0")
     vdsRetries(393),
 
     /**
      * Timeout for establishment of connections with hosts. This should be quite
      * small, a few secones at most, as it the TCP handshake with hosts should
      * be very quick in most networks.
-     *
-     * At the moment we are using 3 minutes in order to preserve the behaviour
-     * before this modification, but this will probably be changed to a much
-     * smaller value (2 seconds, for example) in the future.
      */
     @TypeConverterAttribute(Integer.class)
-    @DefaultValueAttribute("180")
+    @DefaultValueAttribute("2")
     vdsConnectionTimeout(394),
 
     @TypeConverterAttribute(Integer.class)
