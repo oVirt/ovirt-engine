@@ -79,8 +79,8 @@ public class HostStatusCell extends AbstractCell<VDS> {
         sb.append(statusImageHtml);
         boolean getnet_config_dirty =
                 vds.getNetConfigDirty() == null ? false : vds.getNetConfigDirty().booleanValue();
-        boolean getpm_enabled = vds.getpm_enabled();
-        if (!getpm_enabled || getnet_config_dirty) {
+        boolean showPMAlert = vds.getVdsGroupSupportsVirtService() && !vds.getpm_enabled();
+        if (showPMAlert || getnet_config_dirty) {
             sb.append(alertImageHtml);
         }
         sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
