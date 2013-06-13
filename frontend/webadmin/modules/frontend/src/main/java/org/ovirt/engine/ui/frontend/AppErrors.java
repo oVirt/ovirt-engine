@@ -1135,7 +1135,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The Notification method is unsupported.")
     String EN_UNKNOWN_NOTIFICATION_METHOD();
 
-    @DefaultStringValue("The Notification event is unsupported.")
+    @DefaultStringValue("The notification event ${eventName} is unsupported.")
     String EN_UNSUPPORTED_NOTIFICATION_EVENT();
 
     @DefaultStringValue("Alert Notification.")

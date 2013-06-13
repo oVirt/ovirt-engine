@@ -60,6 +60,7 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
                         retValue = ValidateAdd(eventNotificationMethods, getParameters().getEventSubscriber(), user);
                     }
                 } else {
+                    addCanDoActionMessage(String.format("$eventName %1$s", eventName));
                     addCanDoActionMessage(VdcBllMessages.EN_UNSUPPORTED_NOTIFICATION_EVENT);
                     retValue = false;
                 }
