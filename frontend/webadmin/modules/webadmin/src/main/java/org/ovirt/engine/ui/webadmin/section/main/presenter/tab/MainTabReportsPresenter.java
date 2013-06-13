@@ -6,6 +6,7 @@ import java.util.Map;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
+import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -34,11 +35,9 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
     }
 
     public interface ViewDef extends View {
-        /**
-         * POST the Frame Data
-         */
-        void updateReportsPanel(String url,
-                Map<String, List<String>> params);
+
+        void updateReportsPanel(String url, Map<String, List<String>> params);
+
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
@@ -51,13 +50,19 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
     public MainTabReportsPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<Void, ReportsListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
-        getModel().getReportModelRefreshEvent().addListener(new IEventListener() {
 
+        getModel().getReportModelRefreshEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 getView().updateReportsPanel(getModel().getUrl(), getModel().getParams());
             }
         });
+    }
+
+    @Override
+    protected ActionTable<?> getTable() {
+        // Reports main tab view has no table widget associated
+        return null;
     }
 
     @Override
@@ -71,4 +76,5 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
     protected PlaceRequest getMainTabRequest() {
         return new PlaceRequest(ApplicationPlaces.reportsMainTabPlace);
     }
+
 }

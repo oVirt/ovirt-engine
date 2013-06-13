@@ -69,12 +69,11 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             }
 
             @Override
-            public String getCustomToolTip() {
+            public String getButtonToolTip() {
                 if (!getModel().isVmDown() && getModel().isHotPlugAvailable()
                         && !getModel().getIsDiskHotPlugSupported()) {
                     return constants.diskHotPlugNotSupported();
-                }
-                else {
+                } else {
                     return this.getTitle();
                 }
             }
@@ -89,7 +88,7 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
             }
 
             @Override
-            public String getCustomToolTip() {
+            public String getButtonToolTip() {
                 if (!getModel().isVmDown() && getModel().isHotPlugAvailable()
                         && !getModel().getIsDiskHotPlugSupported()) {
                     return constants.diskHotPlugNotSupported();

@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.common.presenter.main;
+package org.ovirt.engine.ui.common.presenter;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.utils.WebUtils;

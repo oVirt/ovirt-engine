@@ -103,12 +103,13 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         // Configure the button according to its definition
         newActionButton.setEnabledHtml(buttonDef.getEnabledHtml());
         newActionButton.setDisabledHtml(buttonDef.getDisabledHtml());
-        newActionButton.setTitle(buttonDef.getCustomToolTip() != null ? buttonDef.getCustomToolTip()
-                : buttonDef.getTitle());
 
         // Set button element ID for better accessibility
-        newActionButton.asWidget().getElement().setId(
-                ElementIdUtils.createElementId(elementId, buttonDef.getUniqueId()));
+        String buttonId = buttonDef.getUniqueId();
+        if (buttonId != null) {
+            newActionButton.asWidget().getElement().setId(
+                    ElementIdUtils.createElementId(elementId, buttonId));
+        }
 
         // Add the button to the action panel
         if (buttonDef.getCommandLocation().equals(CommandLocation.ContextAndToolBar)
@@ -284,20 +285,20 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
      * Ensures that the specified action button is visible or hidden and enabled or disabled as it should.
      */
     void updateActionButton(ActionButton button, ActionButtonDefinition<T> buttonDef) {
-        button.asWidget().setVisible(buttonDef.isAccessible() && buttonDef.isVisible(getSelectedItems()));
+        button.asWidget().setVisible(buttonDef.isAccessible(getSelectedItems()) && buttonDef.isVisible(getSelectedItems()));
         button.setEnabled(buttonDef.isEnabled(getSelectedItems()));
-        button.setTitle(buttonDef.getCustomToolTip() != null ? buttonDef.getCustomToolTip() : buttonDef.getTitle());
+        button.setTitle(buttonDef.getButtonToolTip() != null ? buttonDef.getButtonToolTip() : buttonDef.getTitle());
     }
 
     /**
      * Ensures that the specified menu item is visible or hidden and enabled or disabled as it should.
      */
     protected void updateMenuItem(MenuItem item, ActionButtonDefinition<T> buttonDef) {
-        item.setVisible(buttonDef.isAccessible() && buttonDef.isVisible(getSelectedItems()));
+        item.setVisible(buttonDef.isAccessible(getSelectedItems()) && buttonDef.isVisible(getSelectedItems()));
         item.setEnabled(buttonDef.isEnabled(getSelectedItems()));
 
-        if (buttonDef.getToolTip() != null) {
-            item.setTitle(buttonDef.getToolTip());
+        if (buttonDef.getMenuItemToolTip() != null) {
+            item.setTitle(buttonDef.getMenuItemToolTip());
         }
     }
 

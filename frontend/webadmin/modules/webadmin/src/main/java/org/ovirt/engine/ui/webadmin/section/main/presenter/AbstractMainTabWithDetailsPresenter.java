@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
+import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
@@ -13,7 +14,7 @@ import com.google.gwt.view.client.SelectionChangeEvent;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
+import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 /**
  * Base class for main tab presenters that work with {@link ListWithDetailsModel}.
@@ -27,7 +28,7 @@ import com.gwtplatform.mvp.client.proxy.ProxyPlace;
  * @param <P>
  *            Proxy type.
  */
-public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithDetailsModel, V extends AbstractMainTabWithDetailsPresenter.ViewDef<T>, P extends ProxyPlace<?>>
+public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithDetailsModel, V extends AbstractMainTabWithDetailsPresenter.ViewDef<T>, P extends TabContentProxyPlace<?>>
         extends AbstractMainTabPresenter<T, M, V, P> {
 
     public interface ViewDef<T> extends View, HasActionTable<T> {
@@ -39,10 +40,15 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     }
 
     @Override
+    protected ActionTable<T> getTable() {
+        return getView().getTable();
+    }
+
+    @Override
     protected void onBind() {
         super.onBind();
 
-        registerHandler(getView().getTable().getSelectionModel()
+        registerHandler(getTable().getSelectionModel()
                 .addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
                     @Override
                     public void onSelectionChange(SelectionChangeEvent event) {
@@ -81,10 +87,10 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
             setSubTabPanelVisible(false);
         }
 
-        getView().getTable().resetScrollPosition();
+        getTable().resetScrollPosition();
 
         // Set state to loading, so we see the loading image when switching tab.
-        getView().getTable().setLoadingState(LoadingState.LOADING);
+        getTable().setLoadingState(LoadingState.LOADING);
     }
 
     /**
@@ -103,7 +109,7 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
      * Returns items currently selected in the table.
      */
     protected List<T> getSelectedItems() {
-        return getView().getTable().getSelectionModel().getSelectedList();
+        return getTable().getSelectionModel().getSelectedList();
     }
 
     /**
@@ -114,10 +120,10 @@ public abstract class AbstractMainTabWithDetailsPresenter<T, M extends ListWithD
     }
 
     /**
-     * Deselects any selected values in the table.
+     * Deselects any items currently selected in the table.
      */
     protected void clearSelection() {
-        getView().getTable().getSelectionModel().clear();
+        getTable().getSelectionModel().clear();
     }
 
 }

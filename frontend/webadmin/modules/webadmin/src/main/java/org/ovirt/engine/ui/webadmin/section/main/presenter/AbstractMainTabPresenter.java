@@ -1,24 +1,24 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
+import org.ovirt.engine.ui.common.presenter.AbstractTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelSelectionChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.event.shared.EventBus;
-import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.ProxyPlace;
 import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
+import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 /**
  * Base class for main tab presenters.
  *
  * @param <T>
- *            Table row data type.
+ *            Table row data type or {@code Void} if tab view doesn't provide table widget.
  * @param <M>
  *            Main model type.
  * @param <V>
@@ -26,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
  * @param <P>
  *            Proxy type.
  */
-public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel, V extends View, P extends ProxyPlace<?>> extends Presenter<V, P> {
+public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel, V extends View, P extends TabContentProxyPlace<?>> extends AbstractTabPresenter<V, P> {
 
     protected final PlaceManager placeManager;
     protected final MainModelProvider<T, M> modelProvider;

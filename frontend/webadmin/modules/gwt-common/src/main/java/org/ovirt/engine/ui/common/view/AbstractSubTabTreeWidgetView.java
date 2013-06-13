@@ -107,6 +107,7 @@ public class AbstractSubTabTreeWidgetView<I, T, M extends ListWithDetailsModel, 
 
     @Override
     public ActionTable<?> getTable() {
+        // Tree-based sub tab views have no table widget associated
         return null;
     }
 

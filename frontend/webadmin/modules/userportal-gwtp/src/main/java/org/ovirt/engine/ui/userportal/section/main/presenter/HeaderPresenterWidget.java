@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
-import org.ovirt.engine.ui.common.presenter.main.AbstractHeaderPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.AbstractHeaderPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetHandler;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.auth.CurrentUserRole;

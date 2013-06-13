@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterPolicyModel;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.ClusterSelectionChangeEvent;
@@ -33,8 +32,6 @@ public class SubTabClusterPolicyPresenter extends AbstractSubTabPresenter<VDSGro
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDSGroup> {
     }
 
-    private final ApplicationConstants constants;
-
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
         return new ModelBoundTabData(ginjector.getApplicationConstants().clusterPolicySubTabLabel(), 1,
@@ -46,10 +43,8 @@ public class SubTabClusterPolicyPresenter extends AbstractSubTabPresenter<VDSGro
             ViewDef view,
             ProxyDef proxy,
             PlaceManager placeManager,
-            DetailModelProvider<ClusterListModel, ClusterPolicyModel> modelProvider,
-            ApplicationConstants constants) {
+            DetailModelProvider<ClusterListModel, ClusterPolicyModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
-        this.constants = constants;
     }
 
     @Override

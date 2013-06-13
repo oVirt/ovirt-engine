@@ -22,7 +22,6 @@ public class ReportActionsHelper {
         return INSTANCE;
     }
 
-
     private ReportActionsHelper() {
     }
 
@@ -33,8 +32,7 @@ public class ReportActionsHelper {
         Resource resource = ReportInit.getInstance().getResource(resourceType);
         if (resource != null) {
             for (Category category : resource.getCatergoriesList()) {
-                List<ActionButtonDefinition<T>> categerySubActions =
-                        getCategorySubActions(category, modelProvider);
+                List<ActionButtonDefinition<T>> categerySubActions = getCategorySubActions(category, modelProvider);
                 subActions.add(new WebAdminMenuBarButtonDefinition<T>(category.getName(), categerySubActions, true) {
                     @Override
                     public boolean isVisible(List<T> selectedItems) {
@@ -45,6 +43,7 @@ public class ReportActionsHelper {
                                 return true;
                             }
                         }
+
                         return isVisible;
                     }
                 });
@@ -59,7 +58,7 @@ public class ReportActionsHelper {
         List<ActionButtonDefinition<T>> subActions = new LinkedList<ActionButtonDefinition<T>>();
 
         for (final URI uri : category.getUriList()) {
-            subActions.add(new WebAdminButtonDefinition<T>(uri.getName(), true, false, null, true, uri.getDescription()) {
+            subActions.add(new WebAdminButtonDefinition<T>(uri.getName(), null, true, uri.getDescription()) {
 
                 @Override
                 public boolean isVisible(List<T> selectedItems) {
@@ -71,9 +70,11 @@ public class ReportActionsHelper {
 
                     return modelProvider.getModel().addOpenReportCommand(uri.getId(), uri.isMultiple(), uri.getValue());
                 }
+
             });
         }
 
         return subActions;
     }
+
 }

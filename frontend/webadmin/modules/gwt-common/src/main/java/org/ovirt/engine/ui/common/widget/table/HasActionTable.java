@@ -9,7 +9,7 @@ package org.ovirt.engine.ui.common.widget.table;
 public interface HasActionTable<T> {
 
     /**
-     * Returns the action table widget.
+     * Returns the action table widget or {@code null} if this widget isn't available.
      */
     ActionTable<T> getTable();
 

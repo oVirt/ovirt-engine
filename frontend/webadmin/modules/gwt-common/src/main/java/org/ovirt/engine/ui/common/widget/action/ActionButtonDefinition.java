@@ -2,8 +2,6 @@ package org.ovirt.engine.ui.common.widget.action;
 
 import java.util.List;
 
-import org.ovirt.engine.ui.common.widget.HasAccess;
-
 import com.google.gwt.event.logical.shared.HasInitializeHandlers;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
@@ -13,23 +11,27 @@ import com.google.gwt.safehtml.shared.SafeHtml;
  * @param <T>
  *            Action panel item type.
  */
-public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandlers {
+public interface ActionButtonDefinition<T> extends HasInitializeHandlers {
 
     /**
      * Action button click event callback.
-     *
-     * @param selectedItems
-     *            Items currently selected in the {@link ActionPanel}.
      */
     void onClick(List<T> selectedItems);
 
     /**
      * Checks whether or not this action button should be enabled for the given selection.
-     *
-     * @param selectedItems
-     *            Items currently selected in the {@link ActionPanel}.
      */
     boolean isEnabled(List<T> selectedItems);
+
+    /**
+     * Checks whether or not the current user has the right to access this action button.
+     */
+    boolean isAccessible(List<T> selectedItems);
+
+    /**
+     * Indicates whether this action button is visible.
+     */
+    boolean isVisible(List<T> selectedItems);
 
     /**
      * Returns the content to show when this button is enabled.
@@ -47,12 +49,12 @@ public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandl
     String getTitle();
 
     /**
-     * Returns the ID that uniquely identifies this button.
+     * Returns the ID that uniquely identifies this button or {@code null} if not available.
      */
     String getUniqueId();
 
     /**
-     * Indicates whether the functionality bound to this action button is implemented or not.
+     * Indicates whether the functionality bound to this action button is implemented.
      * <p>
      * This is only relevant for a tech-preview of the given application, where not all buttons might be implemented.
      * <p>
@@ -63,8 +65,8 @@ public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandl
     boolean isImplemented();
 
     /**
-     * If {@link #isImplemented()} is {@code true}, this method indicates whether this action button is available in
-     * UserPortal or not.
+     * If {@link #isImplemented} is {@code true}, this method indicates whether this action button is available in
+     * UserPortal.
      * <p>
      * This is only affecting the message that will be shown when the button is clicked.
      * <p>
@@ -90,18 +92,13 @@ public interface ActionButtonDefinition<T> extends HasAccess, HasInitializeHandl
     boolean isSubTitledAction();
 
     /**
-     * Indicates whether this action button is visible.
+     * Returns the tool-tip for this action button or {@code null} to use button title value.
      */
-    boolean isVisible(List<T> selectedItems);
+    String getButtonToolTip();
 
     /**
-     * Returns the default tool-tip associated with this button.
+     * Returns the tool-tip for the context menu item representing this action button.
      */
-    String getToolTip();
-
-    /**
-     * Returns the custom tool-tip associated with this button.
-     */
-    String getCustomToolTip();
+    String getMenuItemToolTip();
 
 }

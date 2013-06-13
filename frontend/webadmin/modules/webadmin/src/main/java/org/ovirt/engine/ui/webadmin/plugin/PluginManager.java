@@ -485,7 +485,12 @@ public class PluginManager {
             },
             addMainTabActionButton: function(entityTypeName, label, actionButtonInterface) {
                 if (canDoPluginAction(this.pluginName)) {
-                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addMainTabActionButton(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/ActionButtonInterface;)(getEntityType(entityTypeName),label,actionButtonInterface);
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addMainTabActionButton(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/ActionButtonInterface;)(getEntityType(entityTypeName),label,sanitizeObject(actionButtonInterface));
+                }
+            },
+            addSubTabActionButton: function(mainTabEntityTypeName, subTabEntityTypeName, label, actionButtonInterface) {
+                if (canDoPluginAction(this.pluginName)) {
+                    uiFunctions.@org.ovirt.engine.ui.webadmin.plugin.api.PluginUiFunctions::addSubTabActionButton(Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Lorg/ovirt/engine/ui/webadmin/plugin/entity/EntityType;Ljava/lang/String;Lorg/ovirt/engine/ui/webadmin/plugin/api/ActionButtonInterface;)(getEntityType(mainTabEntityTypeName),getEntityType(subTabEntityTypeName),label,sanitizeObject(actionButtonInterface));
                 }
             },
             showDialog: function(title, dialogToken, contentUrl, width, height, options) {

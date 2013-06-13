@@ -29,7 +29,7 @@ public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, 
     }
 
     @Override
-    public ActionTable<T> getTable() {
+    public ActionTable<?> getTable() {
         // Form-based sub tab views have no table widget associated
         return null;
     }

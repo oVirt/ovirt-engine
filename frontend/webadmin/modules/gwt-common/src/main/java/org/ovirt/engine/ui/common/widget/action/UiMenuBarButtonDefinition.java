@@ -63,14 +63,8 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
     }
 
     @Override
-    public boolean isAccessible() {
+    public boolean isAccessible(List<T> selectedItems) {
         return true;
-    }
-
-    @Override
-    public void setAccessible(boolean accessible) {
-        // Do nothing
-
     }
 
     @Override
@@ -136,7 +130,7 @@ public abstract class UiMenuBarButtonDefinition<T> extends ImageUiCommandButtonD
     }
 
     @Override
-    public String getToolTip() {
+    public String getMenuItemToolTip() {
         return null;
     }
 

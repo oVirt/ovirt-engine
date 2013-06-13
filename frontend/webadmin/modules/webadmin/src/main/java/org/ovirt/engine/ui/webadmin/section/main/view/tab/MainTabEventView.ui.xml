@@ -4,8 +4,9 @@
 
 	<ui:style>
 		.viewButtonPanel {
-			padding: 10px;
-			position: absolute;
+			float: left;
+			margin-top: 5px;
+			margin-left: 5px;
 		}
 
 		.viewButton {
