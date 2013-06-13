@@ -63,6 +63,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         result = prime * result + ((vdsGroupCpuName == null) ? 0 : vdsGroupCpuName.hashCode());
         result = prime * result + ((vdsGroupDescription == null) ? 0 : vdsGroupDescription.hashCode());
         result = prime * result + ((vdsGroupName == null) ? 0 : vdsGroupName.hashCode());
+        result = prime * result + ((vdsGroupVirtService == null) ? 0 : vdsGroupVirtService.hashCode());
+        result = prime * result + ((vdsGroupGlusterService == null) ? 0 : vdsGroupGlusterService.hashCode());
         return result;
     }
 
@@ -97,7 +99,9 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                 && ObjectUtils.objectsEqual(vdsGroupCompatibilityVersion, other.vdsGroupCompatibilityVersion)
                 && ObjectUtils.objectsEqual(vdsGroupCpuName, other.vdsGroupCpuName)
                 && ObjectUtils.objectsEqual(vdsGroupDescription, other.vdsGroupDescription)
-                && ObjectUtils.objectsEqual(vdsGroupName, other.vdsGroupName));
+                && ObjectUtils.objectsEqual(vdsGroupName, other.vdsGroupName)
+                && ObjectUtils.objectsEqual(vdsGroupVirtService, other.vdsGroupVirtService)
+                && ObjectUtils.objectsEqual(vdsGroupGlusterService, other.vdsGroupGlusterService));
     }
 
     public VDS(Guid vds_group_id, String vds_group_name, String vds_group_description, Guid vds_id, String vds_name,
@@ -330,6 +334,26 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     public void setVdsGroupCpuName(String value) {
         this.vdsGroupCpuName = value;
+    }
+
+    private Boolean vdsGroupVirtService;
+
+    public Boolean getVdsGroupSupportsVirtService() {
+        return this.vdsGroupVirtService;
+    }
+
+    public void setVdsGroupSupportsVirtService(Boolean value) {
+        this.vdsGroupVirtService = value;
+    }
+
+    private Boolean vdsGroupGlusterService;
+
+    public Boolean getVdsGroupSupportsGlusterService() {
+        return this.vdsGroupGlusterService;
+    }
+
+    public void setVdsGroupSupportsGlusterService(Boolean value) {
+        this.vdsGroupGlusterService = value;
     }
 
     @Override

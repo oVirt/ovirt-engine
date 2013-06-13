@@ -5124,6 +5124,14 @@
 		</row>
 		<row>
 		<value>vds</value>
+		<value>vds_group_virt_service</value>
+		</row>
+		<row>
+		<value>vds</value>
+		<value>vds_group_gluster_service</value>
+		</row>
+		<row>
+		<value>vds</value>
 		<value>vds_group_cpu_name</value>
 		</row>
 		<row>

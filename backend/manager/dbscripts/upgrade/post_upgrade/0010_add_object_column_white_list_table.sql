@@ -53,7 +53,7 @@ BEGIN
           'usage_network_percent', 'mem_available', 'mem_shared', 'swap_free', 'swap_total', 'ksm_cpu_percent',
           'ksm_pages', 'ksm_state', 'cpu_flags', 'vds_group_cpu_name', 'cpu_sockets', 'vds_spm_id',
           'otp_validity', 'spm_status', 'supported_cluster_levels', 'supported_engines',
-          'vds_group_compatibility_version', 'host_os', 'kvm_version', 'libvirt_version', 'spice_version', 'kernel_version',
+          'vds_group_compatibility_version', 'vds_group_virt_service', 'vds_group_gluster_service', 'host_os', 'kvm_version', 'libvirt_version', 'spice_version', 'kernel_version',
           'iscsi_initiator_name', 'transparent_hugepages_state', 'anonymous_hugepages',
           'non_operational_reason', 'recoverable', 'sshKeyFingerprint', 'count_threads_as_cores', 'cpu_threads',
           'hw_manufacturer', 'hw_product_name', 'hw_version', 'hw_serial_number', 'hw_uuid', 'hw_family'));
