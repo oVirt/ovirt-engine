@@ -1234,15 +1234,19 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 updatePath();
             }
             else {
-            Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(this.storageDomain), new IFrontendActionAsyncCallback() {
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
-                    StorageListModel storageListModel = (StorageListModel) result.getState();
-                    storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
-                }
-                }, this);
+                updateStorageDomain();
             }
         }
+    }
+
+    private void updateStorageDomain() {
+        Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(this.storageDomain), new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                StorageListModel storageListModel = (StorageListModel) result.getState();
+                storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
+            }
+        }, this);
     }
 
     public void saveNewPosixStorage() {
@@ -1359,15 +1363,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             }), null, path);
         } else {
 
-            Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(storageDomain), new IFrontendActionAsyncCallback() {
-                @Override
-                public void executed(FrontendActionAsyncResult result) {
-
-                    StorageListModel storageListModel = (StorageListModel) result.getState();
-                    storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
-
-                }
-            }, this);
+            updateStorageDomain();
         }
     }
 
@@ -1496,15 +1492,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 updatePath();
             }
             else {
-               Frontend.RunAction(VdcActionType.UpdateStorageDomain, new StorageDomainManagementParameter(this.storageDomain),
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-                        StorageListModel storageListModel = (StorageListModel) result.getState();
-                        storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
-
-                    }
-                }, this);
+                updateStorageDomain();
             }
         }
     }
@@ -1747,16 +1735,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 updatePath();
             }
             else {
-                Frontend.RunAction(VdcActionType.UpdateStorageDomain,
-                        new StorageDomainManagementParameter(this.storageDomain),
-                        new IFrontendActionAsyncCallback() {
-                            @Override
-                            public void executed(FrontendActionAsyncResult result) {
-                                StorageListModel storageListModel = (StorageListModel) result.getState();
-                                storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
-                            }
-                        },
-                        this);
+                updateStorageDomain();
             }
         }
     }
