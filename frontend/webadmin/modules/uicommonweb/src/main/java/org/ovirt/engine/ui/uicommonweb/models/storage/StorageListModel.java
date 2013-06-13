@@ -318,16 +318,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         model.initialize();
 
-
-        UICommand command;
-        command = new UICommand("OnSave", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
+        UICommand  command = createOKCommand("OnSave"); //$NON-NLS-1$
         model.getCommands().add(command);
 
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
+        command = createCancelCommand("Cancel"); //$NON-NLS-1$
         model.getCommands().add(command);
     }
 
@@ -418,20 +412,17 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         UICommand command;
         if (isStorageEditable) {
-            command = new UICommand("OnSave", this); //$NON-NLS-1$
-            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            command.setIsDefault(true);
+            command = createOKCommand("OnSave"); //$NON-NLS-1$
             model.getCommands().add(command);
 
-            command = new UICommand("Cancel", this); //$NON-NLS-1$
-            command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            command.setIsCancel(true);
+            command = createCancelCommand("Cancel"); //$NON-NLS-1$
             model.getCommands().add(command);
         }
         else {
-            command = new UICommand("Cancel", this); //$NON-NLS-1$
+            // close is created the same as cancel, but with a different title
+            // thus most of creation code can be reused.
+            command = createCancelCommand("Cancel"); //$NON-NLS-1$
             command.setTitle(ConstantsManager.getInstance().getConstants().close());
-            command.setIsCancel(true);
             model.getCommands().add(command);
         }
     }
@@ -645,16 +636,11 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         model.initialize();
 
-
         UICommand command;
-        command = new UICommand("OnImport", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
+        command = createOKCommand("OnImport"); //$NON-NLS-1$
         model.getCommands().add(command);
 
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
+        command = createCancelCommand("Cancel"); //$NON-NLS-1$
         model.getCommands().add(command);
     }
 
@@ -805,23 +791,16 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                                 || storage.getStorageDomainType() == StorageDomainType.ImportExport);
 
                 if (hosts.isEmpty()) {
-
-                    UICommand tempVar = new UICommand("Cancel", storageListModel); //$NON-NLS-1$
-                    tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
+                    UICommand tempVar = createCancelCommand("Cancel"); //$NON-NLS-1$
                     tempVar.setIsDefault(true);
-                    tempVar.setIsCancel(true);
                     removeStorageModel.getCommands().add(tempVar);
                 } else {
 
                     UICommand command;
-                    command = new UICommand("OnRemove", storageListModel); //$NON-NLS-1$
-                    command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                    command.setIsDefault(true);
+                    command = createOKCommand("OnRemove"); //$NON-NLS-1$
                     removeStorageModel.getCommands().add(command);
 
-                    command = new UICommand("Cancel", storageListModel); //$NON-NLS-1$
-                    command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                    command.setIsCancel(true);
+                    command = createCancelCommand("Cancel"); //$NON-NLS-1$
                     removeStorageModel.getCommands().add(command);
                 }
 
@@ -869,14 +848,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
 
         UICommand command;
-        command = new UICommand("OnDestroy", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
+        command = createOKCommand("OnDestroy"); //$NON-NLS-1$
         model.getCommands().add(command);
 
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
+        command = createCancelCommand("Cancel"); //$NON-NLS-1$
         model.getCommands().add(command);
     }
 
@@ -1037,15 +1012,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.setHashName("force_storage_domain_creation"); //$NON-NLS-1$
         model.setItems(usedLunsMessages);
 
-        UICommand command;
-        command = new UICommand("OnSaveSanStorage", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
+        UICommand command = createOKCommand("OnSaveSanStorage"); //$NON-NLS-1$
         model.getCommands().add(command);
 
-        command = new UICommand("CancelConfirm", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
+        command = createCancelCommand("CancelConfirm"); //$NON-NLS-1$
         model.getCommands().add(command);
     }
 
@@ -2267,5 +2237,20 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 }
             }
         }
+    }
+
+    private UICommand createCancelCommand(String commandName) {
+        UICommand command;
+        command = new UICommand(commandName, this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
+        return command;
+    }
+
+    private UICommand createOKCommand(String commandName) {
+        UICommand command = new UICommand(commandName, this);
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        command.setIsDefault(true);
+        return command;
     }
 }
