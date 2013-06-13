@@ -35,11 +35,7 @@ public class Guid implements Serializable, Comparable<Guid> {
 
     public Guid(byte[] guid, boolean keepByteOrder) {
         String guidAsStr = getStrRepresentationOfGuid(guid, keepByteOrder);
-        if (guidAsStr.isEmpty()) {
-            uuid = Empty.getUuid();
-        } else {
-            uuid = UUID.fromString(guidAsStr);
-        }
+        uuid = UUID.fromString(guidAsStr);
     }
 
     public Guid(String candidate) {
