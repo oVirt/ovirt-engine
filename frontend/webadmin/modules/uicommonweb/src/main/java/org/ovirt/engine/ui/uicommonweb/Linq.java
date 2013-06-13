@@ -109,17 +109,6 @@ public final class Linq
 
     }
 
-    public static class VmTemplateByNameComparer implements Comparator<VmTemplate>, Serializable
-    {
-
-        @Override
-        public int compare(VmTemplate x, VmTemplate y)
-        {
-            return x.getName().compareTo(y.getName());
-        }
-
-    }
-
     public static class DiskImageByLastModifiedComparer implements Comparator<DiskImage>, Serializable
     {
 
@@ -220,15 +209,6 @@ public final class Linq
             }
 
             return xAlias.compareTo(yAlias);
-        }
-    }
-
-    public static class NetworkByNameComparer implements Comparator<Network>, Serializable
-    {
-        @Override
-        public int compare(Network x, Network y)
-        {
-            return x.getName().compareTo(y.getName());
         }
     }
 

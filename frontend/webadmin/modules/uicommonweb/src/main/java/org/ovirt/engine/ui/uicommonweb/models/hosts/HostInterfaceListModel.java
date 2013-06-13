@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
@@ -884,7 +885,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         }
                     }
                 }
-                Collections.sort(networksToAdd, new Linq.NetworkByNameComparer());
+                Collections.sort(networksToAdd, new NameableComparator());
                 // Add a 'none' option to networks.
                 if (!StringHelper.isNullOrEmpty(item.getNetworkName()))
                 {

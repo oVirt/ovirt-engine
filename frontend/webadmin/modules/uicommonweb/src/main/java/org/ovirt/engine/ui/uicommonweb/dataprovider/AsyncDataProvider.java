@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
@@ -749,7 +750,7 @@ public final class AsyncDataProvider {
                         }
                     }
 
-                    Collections.sort(list, new Linq.VmTemplateByNameComparer());
+                    Collections.sort(list, new NameableComparator());
                 }
 
                 return list;
@@ -2438,7 +2439,7 @@ public final class AsyncDataProvider {
                     }
                 }
 
-                Collections.sort(list, new Linq.VmTemplateByNameComparer());
+                Collections.sort(list, new NameableComparator());
                 if (blankTemplate != null) {
                     list.add(0, blankTemplate);
                 }

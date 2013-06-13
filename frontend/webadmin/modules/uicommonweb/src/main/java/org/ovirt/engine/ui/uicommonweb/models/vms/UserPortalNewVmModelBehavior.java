@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.GetEntitiesWithPermittedActionParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -137,7 +138,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         }
 
         // Sort list and position "Blank" template as first
-        Collections.sort(templatesList, new Linq.VmTemplateByNameComparer());
+        Collections.sort(templatesList, new NameableComparator());
         if (blankTemplate != null && templates.contains(blankTemplate))
         {
             templatesList.add(0, blankTemplate);
