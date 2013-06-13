@@ -788,11 +788,12 @@ class MiniYum(object):
             raise
 
     def queryGroups(self):
+        ret = []
+
         try:
             with self._disableOutput:
                 installed, available = self._yb.doGroupLists()
 
-                ret = []
                 for grp in installed:
                     ret.append({
                         'operation': 'installed',
@@ -805,12 +806,14 @@ class MiniYum(object):
                         'name': grp.name,
                         'uservisible': grp.user_visible
                     })
-
-                return ret
-
+        except yum.Errors.GroupsError as e:
+            # rhbz#973383 empty groups raises an exception
+            self._sink.verbose('Ignoring group error: %s' % e)
         except Exception as e:
             self._sink.error(e)
             raise
+
+        return ret
 
     def queryPackages(self, pkgnarrow='all', patterns=None, showdups=None):
         try:
