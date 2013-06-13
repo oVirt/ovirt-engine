@@ -97,9 +97,6 @@ public class Guid implements Serializable, Comparable<Guid> {
 
     @Override
     public String toString() {
-        if (uuid == null) {
-            return "[null]";
-        }
         return uuid.toString();
     }
 
