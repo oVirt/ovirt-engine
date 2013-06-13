@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -49,7 +50,7 @@ public class BrandingServlet extends HttpServlet {
         String path = request.getPathInfo();
 
         // Locate the requested file:
-        String fullPath = getFullPath(path);
+        String fullPath = getFullPath(brandingManager.getBrandingRootPath(), path);
         if (fullPath != null) {
             File file = new File(fullPath);
             if (!file.exists() || !file.canRead() || file.isDirectory()) {
@@ -97,16 +98,19 @@ public class BrandingServlet extends HttpServlet {
     /**
      * Translate the passed in path into a real file path so we can locate
      * the appropriate file.
+     * @param brandingRootPath The path to the root of the branding. Cannot be null
      * @param path The path to translate.
      * @return A full absolute path for the passed in path.
      */
-    String getFullPath(final String path) {
+    String getFullPath(final File brandingRootPath, final String path) {
         String result = null;
-        if (path != null && ServletUtils.isSane(path)) {
+        String mergedPath = FileSystems.getDefault().getPath(brandingRootPath.getAbsolutePath(),
+                path == null ? "": path).toString();
+        if (path != null && ServletUtils.isSane(mergedPath)) {
             // Return a result relative to the branding root path.
-            result = brandingManager.getBrandingRootPath().getAbsolutePath() + path;
+            result = mergedPath;
         } else {
-            log.error("The path \"" + path + "\" is not sane"); //$NON-NLS-1$ //$NON-NLS-2$
+            log.error("The path \"" + mergedPath + "\" is not sane"); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return result;
     }

@@ -106,19 +106,19 @@ public class BrandingServletTest {
 
     @Test
     public void testGetFullPath_nullParameter() {
-        String fullPath = testServlet.getFullPath(null);
+        String fullPath = testServlet.getFullPath(mockFile, null);
         assertNull("Path should be null", fullPath); //$NON-NLS-1$
     }
 
     @Test
     public void testGetFullPath_NonSaneParameter() {
-        String fullPath = testServlet.getFullPath("../something"); //$NON-NLS-1$
+        String fullPath = testServlet.getFullPath(mockFile, "../something"); //$NON-NLS-1$
         assertNull("Path should be null", fullPath); //$NON-NLS-1$
     }
 
     @Test
     public void testGetFullPath_SaneParameter() {
-        String fullPath = testServlet.getFullPath("/branding/test"); //$NON-NLS-1$
+        String fullPath = testServlet.getFullPath(mockFile, "/branding/test"); //$NON-NLS-1$
         assertNotNull("Path should not be null", fullPath); //$NON-NLS-1$
         assertEquals("Path should be '/abs/test/branding/test'", //$NON-NLS-1$
                 "/abs/test/branding/test", fullPath); //$NON-NLS-1$
