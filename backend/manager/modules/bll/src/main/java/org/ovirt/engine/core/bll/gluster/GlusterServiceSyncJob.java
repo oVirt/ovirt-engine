@@ -242,8 +242,8 @@ public class GlusterServiceSyncJob extends GlusterJob {
                                     new HashMap<String, String>() {
                                         {
                                             put(GlusterConstants.SERVICE_NAME, fetchedService.getServiceName());
-                                            put(GlusterConstants.OLD_STATUS, oldStatus.name());
-                                            put(GlusterConstants.NEW_STATUS, newStatus.name());
+                                            put(GlusterConstants.OLD_STATUS, oldStatus.getStatusMsg());
+                                            put(GlusterConstants.NEW_STATUS, newStatus.getStatusMsg());
                                         }
                                     });
                             existingService.setStatus(fetchedService.getStatus());
@@ -320,8 +320,9 @@ public class GlusterServiceSyncJob extends GlusterJob {
                 AuditLogType.GLUSTER_CLUSTER_SERVICE_STATUS_CHANGED,
                 new HashMap<String, String>() {
                     {
-                        put(GlusterConstants.OLD_STATUS, oldStatus.name());
-                        put(GlusterConstants.NEW_STATUS, newStatus.name());
+                        put(GlusterConstants.SERVICE_TYPE, clusterService.getServiceType().name());
+                        put(GlusterConstants.OLD_STATUS, oldStatus.getStatusMsg());
+                        put(GlusterConstants.NEW_STATUS, newStatus.getStatusMsg());
                     }
                 });
     }
@@ -329,7 +330,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
     @SuppressWarnings("serial")
     private GlusterClusterService addClusterServiceToDb(VDSGroup cluster,
             final ServiceType serviceType,
-            GlusterServiceStatus status) {
+            final GlusterServiceStatus status) {
         GlusterClusterService clusterService = new GlusterClusterService();
         clusterService.setClusterId(cluster.getId());
         clusterService.setServiceType(serviceType);
@@ -343,10 +344,11 @@ public class GlusterServiceSyncJob extends GlusterJob {
         logUtil.logAuditMessage(clusterService.getClusterId(),
                 null,
                 null,
-                AuditLogType.GLUSTER_CLUSTER_SERVICE_STATUS_CHANGED,
+                AuditLogType.GLUSTER_CLUSTER_SERVICE_STATUS_ADDED,
                 new HashMap<String, String>() {
                     {
                         put(GlusterConstants.SERVICE_TYPE, serviceType.name());
+                        put(GlusterConstants.NEW_STATUS, status.getStatusMsg());
                     }
                 });
 
