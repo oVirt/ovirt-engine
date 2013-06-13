@@ -271,6 +271,8 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
                 engineCopy.setHookId(hookEntity.getId());
                 engineCopy.setServerName("Engine (Master)"); //$NON-NLS-1$
                 engineCopy.setStatus(hookEntity.getStatus());
+                engineCopy.setContentType(hookEntity.getContentType());
+                engineCopy.setChecksum(hookEntity.getChecksum());
                 EntityModel engineCopyModel = new EntityModel(engineCopy);
                 serverHookModels.add(engineCopyModel);
 
@@ -325,7 +327,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
 
         resolveConflictsModel.startProgress(null);
 
-        GlusterHookEntity hookEntity = resolveConflictsModel.getGlusterHookEntiry();
+        GlusterHookEntity hookEntity = resolveConflictsModel.getGlusterHookEntity();
 
         ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();

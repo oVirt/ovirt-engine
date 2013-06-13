@@ -254,13 +254,13 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
 
         contentSourcesTable.edit(object.getHookSources());
 
-        conflictReasonsContentDiffLabel.setVisible(object.getGlusterHookEntiry().isContentConflict());
-        conflictReasonsStatusDiffLabel.setVisible(object.getGlusterHookEntiry().isStatusConflict());
-        conflictReasonsMissingHookLabel.setVisible(object.getGlusterHookEntiry().isMissingHookConflict());
+        conflictReasonsContentDiffLabel.setVisible(object.getGlusterHookEntity().isContentConflict());
+        conflictReasonsStatusDiffLabel.setVisible(object.getGlusterHookEntity().isStatusConflict());
+        conflictReasonsMissingHookLabel.setVisible(object.getGlusterHookEntity().isMissingHookConflict());
 
-        resolveContentConflictPanel.setVisible(object.getGlusterHookEntiry().isContentConflict());
-        resolveStatusConflictPanel.setVisible(object.getGlusterHookEntiry().isStatusConflict());
-        resolveMissingConflictPanel.setVisible(object.getGlusterHookEntiry().isMissingHookConflict());
+        resolveContentConflictPanel.setVisible(object.getGlusterHookEntity().isContentConflict());
+        resolveStatusConflictPanel.setVisible(object.getGlusterHookEntity().isStatusConflict());
+        resolveMissingConflictPanel.setVisible(object.getGlusterHookEntity().isMissingHookConflict());
     }
 
     @Override

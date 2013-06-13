@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
@@ -37,7 +38,7 @@ public class GlusterHookResolveConflictsModel extends Model {
 
     private EntityModel resolveMissingConflictRemove;
 
-    public GlusterHookEntity getGlusterHookEntiry() {
+    public GlusterHookEntity getGlusterHookEntity() {
         return hookEntity;
     }
 
@@ -243,8 +244,6 @@ public class GlusterHookResolveConflictsModel extends Model {
             return;
         }
 
-        startProgress(null);
-
         GlusterServerHook selectedServer = (GlusterServerHook) selectedItem.getEntity();
         getServerHooksList().setSelectedItem(selectedServer);
 
@@ -252,32 +251,22 @@ public class GlusterHookResolveConflictsModel extends Model {
             getContentModel().getContent().setEntity(null);
             getContentModel().getStatus().setEntity(null);
             getContentModel().getMd5Checksum().setEntity(null);
-            stopProgress();
             return;
         }
 
-        AsyncDataProvider.getGlusterHookContent(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                String content = (String) returnValue;
-                getContentModel().getContent().setEntity(content);
-                stopProgress();
-            }
-        }), getGlusterHookEntiry().getId(), selectedServer.getServerId());
+        getContentModel().getStatus().setEntity(selectedServer.getStatus());
+        getContentModel().getMd5Checksum().setEntity(selectedServer.getChecksum());
 
-        if (selectedServer.getServerId() == null) {
-            getContentModel().getStatus().setEntity(getGlusterHookEntiry().getStatus());
-            getContentModel().getMd5Checksum().setEntity(getGlusterHookEntiry().getChecksum());
-        }
-        else {
-            for (GlusterServerHook serverHook : getGlusterHookEntiry().getServerHooks()) {
-                if (serverHook.getServerId() != null
-                        && serverHook.getServerId().equals(selectedServer.getServerId())) {
-                    getContentModel().getStatus().setEntity(serverHook.getStatus());
-                    getContentModel().getMd5Checksum().setEntity(serverHook.getChecksum());
-                    break;
+        if (selectedServer.getContentType() == GlusterHookContentType.TEXT) {
+            startProgress(null);
+            AsyncDataProvider.getGlusterHookContent(new AsyncQuery(this, new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object returnValue) {
+                    String content = (String) returnValue;
+                    getContentModel().getContent().setEntity(content);
+                    stopProgress();
                 }
-            }
+            }), getGlusterHookEntity().getId(), selectedServer.getServerId());
         }
     }
 
