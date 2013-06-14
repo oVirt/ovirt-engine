@@ -77,4 +77,12 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
         getGlusterHooksDao().saveGlusterServerHook(serverHook);
     }
 
+    protected void updateGlusterHook(GlusterHookEntity entity) {
+        if (entity.getConflictStatus() == 0) {
+            getGlusterHooksDao().removeGlusterServerHooks(entity.getId());
+        }
+        getGlusterHooksDao().updateGlusterHook(entity);
+
+    }
+
 }

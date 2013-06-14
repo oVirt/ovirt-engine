@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 /**
@@ -81,7 +82,7 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
     @Override
     protected void executeCommand() {
         //check source to copy hook from - if engine copy or server copy
-        final Boolean copyfromEngine = (getParameters().getSourceServerId() == null) ?  true : false;
+        final boolean copyfromEngine = (getParameters().getSourceServerId() == null);
 
         entity = getGlusterHook();
         addCustomValue(GlusterConstants.HOOK_NAME, entity.getName());
@@ -112,22 +113,37 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
         }
 
 
-        List<Callable<Pair<GlusterServerHook, VDSReturnValue>>> taskList = new ArrayList<Callable<Pair<GlusterServerHook, VDSReturnValue>>>();
-        for (final GlusterServerHook serverHook : getContentConflictServerHooks()) {
-            taskList.add(new Callable<Pair<GlusterServerHook, VDSReturnValue>>() {
+        List<Callable<Pair<Guid, VDSReturnValue>>> taskList = new ArrayList<Callable<Pair<Guid, VDSReturnValue>>>();
+        List<Guid> serverIdsToUpdate = new ArrayList<Guid>();
+        if (copyfromEngine) {
+            for (final GlusterServerHook serverHook : getContentConflictServerHooks()) {
+                serverIdsToUpdate.add(serverHook.getServerId());
+            }
+        } else {
+            // if copying from one of the servers, all servers other than source server
+            // need to be updated with hook content
+            for (final VDS server : getClusterUtils().getAllUpServers(entity.getClusterId())) {
+                if (!server.getId().equals(getParameters().getSourceServerId())) {
+                    serverIdsToUpdate.add(server.getId());
+                }
+            }
+        }
+
+        for (final Guid serverId : serverIdsToUpdate) {
+            taskList.add(new Callable<Pair<Guid, VDSReturnValue>>() {
                 @Override
-                public Pair<GlusterServerHook, VDSReturnValue> call() throws Exception {
+                public Pair<Guid, VDSReturnValue> call() throws Exception {
                     VDSReturnValue returnValue;
                         returnValue =
                                runVdsCommand(
                                        VDSCommandType.UpdateGlusterHook,
-                                       new GlusterHookVDSParameters(serverHook.getServerId(),
+                                       new GlusterHookVDSParameters(serverId,
                                                entity.getGlusterCommand(),
                                                entity.getStage(),
                                                entity.getName(),
                                                hookContent,
                                                hookChecksum));
-                     return new Pair<GlusterServerHook, VDSReturnValue>(serverHook, returnValue);
+                     return new Pair<Guid, VDSReturnValue>(serverId, returnValue);
 
                 }
             });
@@ -135,8 +151,8 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
 
         setSucceeded(true);
         if (!taskList.isEmpty()) {
-            List<Pair<GlusterServerHook, VDSReturnValue>> pairResults = ThreadPoolUtil.invokeAll(taskList);
-            for (Pair<GlusterServerHook, VDSReturnValue> pairResult : pairResults) {
+            List<Pair<Guid, VDSReturnValue>> pairResults = ThreadPoolUtil.invokeAll(taskList);
+            for (Pair<Guid, VDSReturnValue> pairResult : pairResults) {
 
                 VDSReturnValue retValue = pairResult.getSecond();
                 if (!retValue.getSucceeded() ) {
@@ -162,9 +178,10 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
         }
 
         if (getSucceeded()) {
-            entity.removeMissingConflict();
-            getGlusterHooksDao().updateGlusterHook(entity);
+            entity.removeContentConflict();
+            updateGlusterHook(entity);
         }
+
 
     }
 

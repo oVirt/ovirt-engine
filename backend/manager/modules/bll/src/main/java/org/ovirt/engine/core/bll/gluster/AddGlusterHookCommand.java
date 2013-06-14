@@ -135,7 +135,7 @@ public class AddGlusterHookCommand<T extends GlusterHookManageParameters> extend
 
         if (getSucceeded()) {
             entity.removeMissingConflict();
-            getGlusterHooksDao().updateGlusterHook(entity);
+            updateGlusterHook(entity);
         }
 
     }
