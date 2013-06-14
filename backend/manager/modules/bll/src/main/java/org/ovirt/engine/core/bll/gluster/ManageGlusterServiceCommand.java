@@ -69,10 +69,11 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
         this.serverId = params.getServerId();
         this.serviceType = params.getServiceType();
         this.actionType = params.getActionType();
+        if (serverId != null) {
+            setVdsId(serverId);
+        }
         if (clusterId != null) {
             setVdsGroupId(clusterId);
-        } else if (serverId != null) {
-            setVdsId(serverId);
         }
     }
 
@@ -124,6 +125,7 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
         } else if (!(Guid.isNullOrEmpty(clusterId))) {
             performActionForServicesOfCluster();
         }
+        addCustomValue(GlusterConstants.SERVICE_TYPE, getParameters().getServiceType().name());
     }
 
     private List<String> getServiceList() {
@@ -226,19 +228,6 @@ public class ManageGlusterServiceCommand extends GlusterCommandBase<GlusterServi
         } else {
             return manageActionDetailsMap.get(getParameters().getActionType()).getActionFailedActionLog();
         }
-    }
-
-    @Override
-    public Map<String, String> getCustomValues() {
-        if (clusterId != null) {
-            addCustomValue(GlusterConstants.SERVICE_GROUP_TYPE, GlusterConstants.SERVICE_GROUP_TYPE_CLUSTER);
-            addCustomValue(GlusterConstants.SERVICE_GROUP_NAME, getVdsGroupName());
-        } else if (serverId != null) {
-            addCustomValue(GlusterConstants.SERVICE_GROUP_TYPE, GlusterConstants.SERVICE_GROUP_TYPE_SERVER);
-            addCustomValue(GlusterConstants.SERVICE_GROUP_NAME, getVdsName());
-        }
-
-        return super.getCustomValues();
     }
 
     @Override
