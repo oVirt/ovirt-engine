@@ -119,6 +119,9 @@ EXTRA_BUILD_FLAGS_DEV_GWT [-D gwt.userAgent=gecko1_8]
 DEV_REBUILD [1]
     Disable if only packaging components were modified.
 
+DEV_BUILD_GWT_DRAFT [0]
+    Build draft gwt application without optimizations.
+
 SETUP
 
 To setup the product use the following command:
