@@ -6,13 +6,10 @@ import java.io.FileNotFoundException;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.PropertiesConfiguration;
 
-public class AppConfig<T extends PropertiesConfiguration> extends ConfigFile<T> {
+public class AppConfig extends ConfigFile<PropertiesConfiguration> {
 
     private static final String CONFIG_CONF = "engine-config.conf";
     private PropertiesConfiguration configFile;
-    private final String[] defaultFileLocations = new String[] {
-        new File(EngineConfig.DEFAULT_CONFIG_PATH, CONFIG_CONF).getAbsolutePath()
-    };
 
     public AppConfig(String optionalConfigDir) throws FileNotFoundException, ConfigurationException {
         File file = locate(optionalConfigDir);
@@ -20,8 +17,8 @@ public class AppConfig<T extends PropertiesConfiguration> extends ConfigFile<T> 
     }
 
     @Override
-    public T getFile() {
-        return (T) configFile;
+    public PropertiesConfiguration getFile() {
+        return configFile;
     }
 
     @Override

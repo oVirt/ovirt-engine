@@ -14,7 +14,6 @@ import java.util.Map;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.lang.StringUtils;
@@ -58,7 +57,7 @@ public class EngineConfigLogic {
      */
     private void init() throws Exception {
         log.debug("init: beginning initiation of EngineConfigLogic");
-        appConfig = new AppConfig<PropertiesConfiguration>(parser.getAlternateConfigFile()).getFile();
+        appConfig = new AppConfig(parser.getAlternateConfigFile()).getFile();
         keysConfig = new KeysConfig<HierarchicalConfiguration>(parser.getAlternatePropertiesFile()).getFile();
         populateAlternateKeyMap(keysConfig);
         ConfigKeyFactory.init(keysConfig, alternateKeysMap, parser);
