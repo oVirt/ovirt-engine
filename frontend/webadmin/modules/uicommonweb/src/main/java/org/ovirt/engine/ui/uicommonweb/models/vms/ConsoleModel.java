@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.TextArea;
 
 public abstract class ConsoleModel extends EntityModel {
     public static final String EjectLabel = "[" + ConstantsManager.getInstance().getConstants().eject() + "]"; //$NON-NLS-1$ //$NON-NLS-2$
-    public static final String GET_ATTACHMENT_SERVLET_URL = "/console/"; //$NON-NLS-1$
+    public static final String GET_ATTACHMENT_SERVLET_URL = "/ovirt-engine-attachment/"; //$NON-NLS-1$
 
     public static EventDefinition ErrorEventDefinition;
     private Event privateErrorEvent;

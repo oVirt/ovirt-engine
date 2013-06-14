@@ -54,7 +54,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>GetAttachmentServlet</servlet-name>
-    <url-pattern>/console/*</url-pattern>
+    <url-pattern>/ovirt-engine-attachment/*</url-pattern>
   </servlet-mapping>
 
   <!-- Documentation: -->
