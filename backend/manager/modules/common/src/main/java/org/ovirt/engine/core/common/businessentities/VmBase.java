@@ -195,6 +195,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableField
     private boolean runAndPause = false;
 
+    private Guid createdByUserId;
+
     public VmBase(Guid id,
             Guid vdsGroupId,
             int osId,
@@ -225,7 +227,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             Boolean tunnelMigration,
             String vncKeyboardLayout,
             int minAllocatedMem,
-            boolean runAndPause) {
+            boolean runAndPause,
+            Guid createdByUserId) {
         super();
         this.id = id;
         this.vdsGroupId = vdsGroupId;
@@ -257,6 +260,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.vncKeyboardLayout = vncKeyboardLayout;
         this.minAllocatedMem = minAllocatedMem;
         this.runAndPause = runAndPause;
+        this.createdByUserId = createdByUserId;
         setQuotaId(quotaId);
     }
 
@@ -577,6 +581,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((migrationSupport == null) ? 0 : migrationSupport.hashCode());
         result = prime * result + ((tunnelMigration == null) ? 0 : tunnelMigration.hashCode());
         result = prime * result + ((vncKeyboardLayout == null) ? 0 : vncKeyboardLayout.hashCode());
+        result = prime * result + ((createdByUserId == null) ? 0 : createdByUserId.hashCode());
         return result;
     }
 
@@ -623,7 +628,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && ObjectUtils.objectsEqual(dedicatedVmForVds, other.dedicatedVmForVds)
                 && migrationSupport == other.migrationSupport
                 && ObjectUtils.objectsEqual(tunnelMigration, other.tunnelMigration)
-                && ObjectUtils.objectsEqual(vncKeyboardLayout, other.vncKeyboardLayout));
+                && ObjectUtils.objectsEqual(vncKeyboardLayout, other.vncKeyboardLayout)
+                && ObjectUtils.objectsEqual(createdByUserId, other.createdByUserId));
     }
 
     public Guid getQuotaId() {
@@ -723,4 +729,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.runAndPause = runAndPause;
     }
 
+    public Guid getCreatedByUserId() {
+        return createdByUserId;
+    }
+
+    public void setCreatedByUserId(Guid createdByUserId) {
+        this.createdByUserId = createdByUserId;
+    }
 }

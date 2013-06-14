@@ -85,7 +85,8 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("host_cpu_flags", vm.isUseHostCpuFlags())
                 .addValue("tunnel_migration", vm.getTunnelMigration())
                 .addValue("vnc_keyboard_layout", vm.getVncKeyboardLayout())
-                .addValue("is_run_and_pause", vm.isRunAndPause());
+                .addValue("is_run_and_pause", vm.isRunAndPause())
+                .addValue("created_by_user_id", vm.getCreatedByUserId());
     }
 
     @Override

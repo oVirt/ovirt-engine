@@ -59,7 +59,7 @@ public class VmTemplate extends VmBase {
             int numOfMonitors, int status, int usbPolicy, String timeZone, int niceLevel,
             boolean failBack, BootSequence defaultBootSequence, VmType vmType,
             boolean smartcardEnabled, boolean deleteProtected, Boolean tunnelMigration, String vncKeyboardLayout,
-            int minAllocatedMem, boolean stateless, boolean runAndPause) {
+            int minAllocatedMem, boolean stateless, boolean runAndPause, Guid createdByUserId) {
         super(
                 vmtGuid,
                 vdsGroupId,
@@ -91,7 +91,8 @@ public class VmTemplate extends VmBase {
                 tunnelMigration,
                 vncKeyboardLayout,
                 minAllocatedMem,
-                runAndPause);
+                runAndPause,
+                createdByUserId);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
 

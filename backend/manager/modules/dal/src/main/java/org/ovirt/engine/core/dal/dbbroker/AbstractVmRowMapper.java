@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 
 /**
@@ -42,6 +43,7 @@ public abstract class AbstractVmRowMapper<T extends VmBase> implements RowMapper
         entity.setTunnelMigration((Boolean) rs.getObject("tunnel_migration"));
         entity.setVncKeyboardLayout(rs.getString("vnc_keyboard_layout"));
         entity.setRunAndPause(rs.getBoolean("is_run_and_pause"));
+        entity.setCreatedByUserId(Guid.createGuidFromString(rs.getString("created_by_user_id")));
     }
 
 }

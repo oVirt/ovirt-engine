@@ -164,7 +164,8 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("tunnel_migration", template.getTunnelMigration())
                 .addValue("vnc_keyboard_layout", template.getVncKeyboardLayout())
                 .addValue("min_allocated_mem", template.getMinAllocatedMem())
-                .addValue("is_run_and_pause", template.isRunAndPause());
+                .addValue("is_run_and_pause", template.isRunAndPause())
+                .addValue("created_by_user_id", template.getCreatedByUserId());
     }
 
     @Override

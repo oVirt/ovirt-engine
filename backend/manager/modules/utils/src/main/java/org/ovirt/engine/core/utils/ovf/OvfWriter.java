@@ -268,6 +268,12 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteStartElement("IsRunAndPause");
         _writer.WriteRaw(String.valueOf(vmBase.isRunAndPause()));
         _writer.WriteEndElement();
+
+        if (vmBase.getCreatedByUserId() != null) {
+            _writer.WriteStartElement("CreatedByUserId");
+            _writer.WriteRaw(String.valueOf(vmBase.getCreatedByUserId()));
+            _writer.WriteEndElement();
+        }
     }
 
     protected abstract void WriteAppList();

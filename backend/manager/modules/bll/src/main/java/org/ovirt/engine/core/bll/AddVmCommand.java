@@ -650,6 +650,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         vmStatic.setId(getVmId());
         vmStatic.setQuotaId(getQuotaId());
         vmStatic.setCreationDate(new Date());
+        vmStatic.setCreatedByUserId(getUserId());
         // Parses the custom properties field that was filled by frontend to
         // predefined and user defined fields
         if (vmStatic.getCustomProperties() != null) {

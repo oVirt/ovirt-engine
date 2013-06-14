@@ -1125,6 +1125,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         vmStatic.setRunAndPause(value);
     }
 
+    public Guid getCreatedByUserId() {
+        return vmStatic.getCreatedByUserId();
+    }
+
+    public void setCreatedByUserId(Guid value) {
+        vmStatic.setCreatedByUserId(value);
+    }
+
     public boolean isWin2kHackEnable() {
         return getDynamicData().getWin2kHackEnable();
     }

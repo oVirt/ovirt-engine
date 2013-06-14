@@ -459,6 +459,13 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
+        node = content.SelectSingleNode("CreatedByUserId");
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.InnerText)) {
+                vmBase.setCreatedByUserId(Guid.createGuidFromString(node.InnerText));
+            }
+        }
+
         readGeneralData(content);
     }
 
