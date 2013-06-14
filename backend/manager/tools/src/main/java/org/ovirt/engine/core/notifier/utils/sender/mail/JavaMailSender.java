@@ -2,7 +2,6 @@ package org.ovirt.engine.core.notifier.utils.sender.mail;
 
 import java.text.MessageFormat;
 import java.util.Date;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.mail.Address;

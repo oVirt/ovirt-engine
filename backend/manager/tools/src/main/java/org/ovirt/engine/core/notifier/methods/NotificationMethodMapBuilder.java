@@ -2,7 +2,6 @@ package org.ovirt.engine.core.notifier.methods;
 
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.businessentities.EventNotificationMethod;

@@ -2,12 +2,9 @@ package org.ovirt.engine.core.notifier.utils;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.ovirt.engine.core.notifier.NotificationServiceException;
 
 public class NotificationPropertiesTest {
 

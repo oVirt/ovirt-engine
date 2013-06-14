@@ -1,15 +1,6 @@
 package org.ovirt.engine.core.notifier.utils;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
-import org.ovirt.engine.core.notifier.NotificationServiceException;
 import org.ovirt.engine.core.utils.LocalConfig;
 
 /**

@@ -3,11 +3,11 @@ package org.ovirt.engine.core.notifier;
 import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+
 import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;

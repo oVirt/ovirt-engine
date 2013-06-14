@@ -10,13 +10,11 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -30,12 +28,9 @@ import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import javax.sql.DataSource;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.config.ConfigCommon;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
 import org.ovirt.engine.core.utils.EngineLocalConfig;

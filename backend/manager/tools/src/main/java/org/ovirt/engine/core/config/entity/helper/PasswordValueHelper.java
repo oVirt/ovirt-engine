@@ -3,14 +3,11 @@ package org.ovirt.engine.core.config.entity.helper;
 import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.ovirt.engine.core.config.EngineConfig;
 import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.EngineConfigLogic;
-import org.ovirt.engine.core.config.db.ConfigDAO;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.tools.ToolConsole;
 import org.ovirt.engine.core.utils.EngineLocalConfig;

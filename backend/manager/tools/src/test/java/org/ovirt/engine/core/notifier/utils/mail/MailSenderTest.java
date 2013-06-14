@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.notifier.utils.sender.EventSenderResult;
 import org.ovirt.engine.core.notifier.utils.sender.mail.EventSenderMailImpl;
-import org.ovirt.engine.core.notifier.utils.sender.mail.JavaMailSender;
 
 /**
  * A tester of the {@link JavaMailSender}. Tests both secured and non-secured methods of mail sending as SMTP and SMTP
