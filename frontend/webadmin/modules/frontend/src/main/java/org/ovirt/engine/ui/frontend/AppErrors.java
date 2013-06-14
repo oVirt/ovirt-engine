@@ -772,6 +772,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action refresh")
     String VAR__ACTION__REFRESH();
 
+    @DefaultStringValue("$action enable")
+    String VAR__ACTION__ENABLE();
+
+    @DefaultStringValue("$action disable")
+    String VAR__ACTION__DISABLE();
+
     @DefaultStringValue("$hostStatus Up")
     String VAR__HOST_STATUS__UP();
 
@@ -2307,4 +2313,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The server ${VdsName} is not UP.")
     String ACTION_TYPE_FAILED_SERVER_STATUS_NOT_UP();
+
+    @DefaultStringValue("One or more servers in the cluster is down.")
+    String CLUSTER_ALL_SERVERS_NOT_UP();
 }

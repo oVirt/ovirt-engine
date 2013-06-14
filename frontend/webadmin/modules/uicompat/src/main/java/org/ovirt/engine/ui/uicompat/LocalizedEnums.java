@@ -294,6 +294,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GLUSTER_HOOK_REFRESH_FAILED();
 
+    String AuditLogType___GLUSTER_HOOK_CONFLICT_DETECTED();
+
+    String AuditLogType___GLUSTER_HOOK_DETECTED_NEW();
+
+    String AuditLogType___GLUSTER_HOOK_DETECTED_DELETE();
+
     String AuditLogType___GLUSTER_SERVICE_STARTED();
 
     String AuditLogType___GLUSTER_SERVICE_START_FAILED();
