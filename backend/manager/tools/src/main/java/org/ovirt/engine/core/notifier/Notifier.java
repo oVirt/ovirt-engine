@@ -26,8 +26,6 @@ public class Notifier {
     private static final Logger log = Logger.getLogger(Notifier.class);
     private static ScheduledExecutorService notifyScheduler = Executors.newSingleThreadScheduledExecutor();
     private static ScheduledExecutorService monitorScheduler = Executors.newSingleThreadScheduledExecutor();
-    private static final long DEFAULT_NOTIFICATION_INTERVAL_IN_SECONDS = 120;
-    private static final long DEFAULT_ENGINE_MONITOR_INTERVAL_IN_SECONDS = 300;
 
     /**
      * @param args
@@ -41,8 +39,6 @@ public class Notifier {
 
         NotificationService notificationService = null;
         EngineMonitorService engineMonitorService = null;
-        long engineMonitorInterval;
-        long notificationInterval;
         try {
             NotificationProperties prop = NotificationProperties.getInstance();
 
