@@ -1898,4 +1898,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Please select an action to continue")
     String noActionSelectedManageGlusterSwift();
+
+    @DefaultStringValue("Time Zone is not changeable for Linux VMs")
+    String timeZoneNotChangeableForLinuxVms();
 }

@@ -1156,7 +1156,9 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         setAcpiEnable(vm.getAcpiEnable());
         setGuestCurrentUserName(vm.getGuestCurrentUserName());
         setWin2kHackEnable(vm.getWin2kHackEnable());
-        setUtcDiff(vm.getUtcDiff());
+        if (getOs() != null && !getOs().isLinux()) {
+            setUtcDiff(vm.getUtcDiff());
+        }
         setExitStatus(vm.getExitStatus());
         setExitMessage(vm.getExitMessage());
         setClientIp(vm.getClientIp());

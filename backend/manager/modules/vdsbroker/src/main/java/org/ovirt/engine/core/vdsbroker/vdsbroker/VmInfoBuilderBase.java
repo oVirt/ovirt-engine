@@ -204,7 +204,7 @@ public abstract class VmInfoBuilderBase {
         if (vm.getOs().isWindows()) {
             return Config.<String> GetValue(ConfigValues.DefaultWindowsTimeZone);
         } else {
-            return Config.<String> GetValue(ConfigValues.DefaultGeneralTimeZone);
+            return "Etc/GMT";
         }
     }
 
