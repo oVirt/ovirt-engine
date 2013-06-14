@@ -1934,10 +1934,10 @@ def _startNfsServices():
     rpcbindService = utils.Service("rpcbind")
     services.append(rpcbindService)
 
-    # Then we need the NFS service itself, but its name is "nfs-service"
+    # Then we need the NFS service itself, but its name is "nfs-server"
     # in some distributions like Fedora 18 and just "nfs" in other
     # distributions like RHEL or CentOS:
-    for nfsServiceName in ["nfs-service", "nfs"]:
+    for nfsServiceName in ["nfs-server", "nfs"]:
         nfsService = utils.Service(nfsServiceName)
         if nfsService.available():
             services.append(nfsService)
