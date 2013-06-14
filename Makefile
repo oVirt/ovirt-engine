@@ -502,7 +502,13 @@ install_service:
 
 gwt-debug:
 	[ -n "$(DEBUG_MODULE)" ] || ( echo "Please specify DEBUG_MODULE" && false )
-	cd "frontend/webadmin/modules/$(DEBUG_MODULE)" && $(MVN) gwt:debug -Pgwtdev,gwt-admin,gwt-user -Dgwt.noserver=true
+	cd "frontend/webadmin/modules/$(DEBUG_MODULE)" && \
+		$(MVN) \
+			$(EXTRA_BUILD_FLAGS_DEV) \
+			$(EXTRA_BUILD_FLAGS_DEV_GWT) \
+			-Dgwt.noserver=true \
+			-Pgwtdev,gwt-admin,gwt-user \
+			gwt:debug
 
 install-dev:
 	[ "$(DEV_REBUILD)" != 0 ] && rm -f "$(BUILD_FILE)" || :

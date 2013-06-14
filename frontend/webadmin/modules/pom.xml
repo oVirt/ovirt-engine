@@ -50,6 +50,8 @@
     <!-- Control target locales for GWT compilation, maps to 'locale' deferred binding property in *.gwt.xml -->
     <!-- By default, only English locale is supported, see 'all-langs' profile for a complete list -->
     <gwt.locale>en_US</gwt.locale>
+    <!-- By default, engine port is 8080 -->
+    <engine.port.http>8080</engine.port.http>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -157,7 +159,7 @@
           <configuration>
             <logLevel>INFO</logLevel>
             <style>OBF</style>
-            <port>8700</port>
+            <port>${engine.port.http}</port>
             <noServer>true</noServer>
             <bindAddress>0.0.0.0</bindAddress>
             <gen>${gwtGenDirectory}</gen>
