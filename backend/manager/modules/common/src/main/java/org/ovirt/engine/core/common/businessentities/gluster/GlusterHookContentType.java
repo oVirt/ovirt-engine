@@ -14,6 +14,14 @@ public enum GlusterHookContentType {
     /**
      * Hook Binary Content Type
      */
-    BINARY
+    BINARY;
 
+    public static GlusterHookContentType fromMimeType(String contentType) {
+        if (contentType != null && contentType.toLowerCase().startsWith("text/")) {
+            return GlusterHookContentType.TEXT;
+        }
+        else {
+            return GlusterHookContentType.BINARY;
+        }
+    }
 }

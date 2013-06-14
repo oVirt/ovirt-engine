@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 
@@ -43,7 +44,7 @@ public class GlusterHooksListReturnForXmlRpc extends StatusReturnForXmlRpc {
         hook.setGlusterCommand(map.get(COMMAND).toString());
         hook.setStage(map.get(LEVEL).toString());
         hook.setChecksum(map.get(CHECKSUM).toString());
-        hook.setContentType(map.get(CONTENT_TYPE).toString());
+        hook.setContentType(GlusterHookContentType.fromMimeType(map.get(CONTENT_TYPE).toString()));
         hook.setStatus(map.get(HOOK_STATUS).toString());
         return hook;
     }
