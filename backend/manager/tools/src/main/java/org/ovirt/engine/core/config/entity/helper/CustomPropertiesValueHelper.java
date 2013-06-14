@@ -7,9 +7,6 @@ import org.ovirt.engine.core.config.entity.ConfigKey;
 
 public class CustomPropertiesValueHelper extends StringValueHelper {
 
-    public CustomPropertiesValueHelper() {
-    }
-
     @Override
     public ValidationResult validate(ConfigKey key, String value) {
         String[] keyValuePairs = value.split(";");
