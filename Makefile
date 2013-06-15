@@ -55,10 +55,10 @@ endif
 ifeq ($(BUILD_UT),0)
 BUILD_FLAGS:=$(BUILD_FLAGS) -D skipTests
 endif
-EXTRA_BUILD_FLAGS_DEV=
-EXTRA_BUILD_FLAGS_DEV_GWT:=-D gwt.userAgent=gecko1_8
+DEV_EXTRA_BUILD_FLAGS=
+DEV_EXTRA_BUILD_FLAGS_GWT:=-D gwt.userAgent=gecko1_8
 ifneq ($(DEV_BUILD_GWT_DRAFT),0)
-EXTRA_BUILD_FLAGS_DEV_GWT:=$(EXTRA_BUILD_FLAGS_DEV_GWT) -Dgwt.draftCompile=true
+DEV_EXTRA_BUILD_FLAGS_GWT:=$(DEV_EXTRA_BUILD_FLAGS_GWT) -Dgwt.draftCompile=true
 endif
 BUILD_TARGET=deploy
 ENGINE_NAME=$(PACKAGE_NAME)
@@ -513,8 +513,8 @@ gwt-debug:
 	[ -n "$(DEBUG_MODULE)" ] || ( echo "Please specify DEBUG_MODULE" && false )
 	cd "frontend/webadmin/modules/$(DEBUG_MODULE)" && \
 		$(MVN) \
-			$(EXTRA_BUILD_FLAGS_DEV) \
-			$(EXTRA_BUILD_FLAGS_DEV_GWT) \
+			$(DEV_EXTRA_BUILD_FLAGS) \
+			$(DEV_EXTRA_BUILD_FLAGS_GWT) \
 			-Dgwt.noserver=true \
 			-Pgwtdev,gwt-admin,gwt-user \
 			gwt:debug
@@ -524,7 +524,7 @@ all-dev:
 	rm -f $(GENERATED)
 	$(MAKE) \
 		all \
-		EXTRA_BUILD_FLAGS="$(EXTRA_BUILD_FLAGS_DEV_GWT) $(EXTRA_BUILD_FLAGS_DEV)" \
+		EXTRA_BUILD_FLAGS="$(DEV_EXTRA_BUILD_FLAGS_GWT) $(DEV_EXTRA_BUILD_FLAGS)" \
 		$(NULL)
 
 install-dev:	\
@@ -533,7 +533,7 @@ install-dev:	\
 
 	$(MAKE) \
 		install \
-		EXTRA_BUILD_FLAGS="$(EXTRA_BUILD_FLAGS_DEV_GWT) $(EXTRA_BUILD_FLAGS_DEV)" \
+		EXTRA_BUILD_FLAGS="$(DEV_EXTRA_BUILD_FLAGS_GWT) $(DEV_EXTRA_BUILD_FLAGS)" \
 		PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
 		$(NULL)
 	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/tmp"

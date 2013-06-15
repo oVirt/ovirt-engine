@@ -102,21 +102,21 @@ BUILD_LOCALES [0]
 BUILD_UT [0]
     Perform unit tests during build.
 
-EXTRA_BUILD_FLAGS_DEV
+DEV_BUILD_GWT_DRAFT [0]
+    Build draft gwt application without optimizations.
+
+DEV_EXTRA_BUILD_FLAGS
     Any maven build flags requires for building.
 
     For example, if your machine is low on memory, use:
     EXTRA_BUILD_FLAGS_DEV="-Dgwt-plugin.localWorkers=2"
 
-EXTRA_BUILD_FLAGS_DEV_GWT [-D gwt.userAgent=gecko1_8]
+DEV_EXTRA_BUILD_FLAGS_GWT [-D gwt.userAgent=gecko1_8]
     By default, only the gecko1_8 support is built, building all
     permutations is possible by specifying EXTRA_BUILD_FLAGS_DEV_GWT="".
 
 DEV_REBUILD [1]
     Disable if only packaging components were modified.
-
-DEV_BUILD_GWT_DRAFT [0]
-    Build draft gwt application without optimizations.
 
 SETUP
 
