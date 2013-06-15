@@ -402,9 +402,9 @@ install_sec:
 	install -dm 755 "$(DESTDIR)$(PKG_PKI_DIR)/requests"
 
 	# Configuration files:
-	install -m 644 packaging/etc/pki/openssl.conf "$(DESTDIR)$(PKG_PKI_DIR)"
-	install -m 644 packaging/etc/pki/cacert.template.in "$(DESTDIR)$(PKG_PKI_DIR)"
-	install -m 644 packaging/etc/pki/cert.template.in "$(DESTDIR)$(PKG_PKI_DIR)"
+	install -m 644 packaging/pki/openssl.conf "$(DESTDIR)$(PKG_PKI_DIR)"
+	install -m 644 packaging/pki/cacert.template.in "$(DESTDIR)$(PKG_PKI_DIR)"
+	install -m 644 packaging/pki/cert.template.in "$(DESTDIR)$(PKG_PKI_DIR)"
 
 	# Scripts:
 	install -m 644 packaging/bin/pki-common.sh "$(DESTDIR)$(DATA_DIR)/bin"
