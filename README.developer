@@ -99,9 +99,8 @@ BUILD_GWT_WEBADMIN [1]
 BUILD_LOCALES [0]
     Build additional locales.
 
-BUILD_TEST_FLAGS [-D skipTests]
-    By default, unit tests are disabled, to enable specify
-    BUILD_TEST_FLAGS=""
+BUILD_UT [0]
+    Perform unit tests during build.
 
 EXTRA_BUILD_FLAGS_DEV
     Any maven build flags requires for building.

@@ -35,6 +35,7 @@ BUILD_GWT=1
 BUILD_GWT_USERPORTAL=1
 BUILD_GWT_WEBADMIN=1
 BUILD_LOCALES=0
+BUILD_UT=0
 DEV_BUILD_GWT_DRAFT=0
 
 MVN=mvn
@@ -51,7 +52,9 @@ endif
 ifneq ($(BUILD_LOCALES),0)
 BUILD_FLAGS:=$(BUILD_FLAGS) -P all-langs
 endif
-BUILD_TEST_FLAGS=-D skipTests
+ifeq ($(BUILD_UT),0)
+BUILD_FLAGS:=$(BUILD_FLAGS) -D skipTests
+endif
 EXTRA_BUILD_FLAGS_DEV=
 EXTRA_BUILD_FLAGS_DEV_GWT:=-D gwt.userAgent=gecko1_8
 ifneq ($(DEV_BUILD_GWT_DRAFT),0)
@@ -192,7 +195,6 @@ $(BUILD_FILE):
 	$(MVN) \
 		$(BUILD_FLAGS) \
 		$(EXTRA_BUILD_FLAGS) \
-		$(BUILD_TEST_FLAGS) \
 		-D altDeploymentRepository=install::default::file://$(MAVEN_OUTPUT_DIR) \
 		$(BUILD_TARGET)
 	touch $(BUILD_FILE)
