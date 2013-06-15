@@ -208,7 +208,7 @@ $(BUILD_FILE):
 		$(BUILD_FLAGS) \
 		-D altDeploymentRepository=install::default::file://$(MAVEN_OUTPUT_DIR) \
 		$(BUILD_TARGET)
-	touch $(BUILD_FILE)
+	touch "$(BUILD_FILE)"
 
 clean:
 	# Clean maven generated stuff:
@@ -241,7 +241,7 @@ install: \
 ovirt-engine.spec: version.mak
 
 dist:	ovirt-engine.spec
-	git ls-files | tar --files-from /proc/self/fd/0 -czf $(TARBALL) ovirt-engine.spec
+	git ls-files | tar --files-from /proc/self/fd/0 -czf "$(TARBALL)" ovirt-engine.spec
 	@echo
 	@echo You can use $(RPMBUILD) -tb $(TARBALL) to produce rpms
 	@echo
@@ -250,23 +250,23 @@ dist:	ovirt-engine.spec
 tarball:	dist
 
 srpm:	dist
-	rm -rf $(OUTPUT_RPMBUILD)
-	mkdir -p $(OUTPUT_RPMBUILD)/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
-	mkdir -p $(OUTPUT_DIR)
-	$(RPMBUILD) -ts --define="_topdir $(OUTPUT_RPMBUILD)" $(TARBALL)
-	mv $(OUTPUT_RPMBUILD)/SRPMS/*.rpm $(OUTPUT_DIR)
-	rm -rf $(OUTPUT_RPMBUILD)
+	rm -rf "$(OUTPUT_RPMBUILD)"
+	mkdir -p "$(OUTPUT_RPMBUILD)"/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
+	mkdir -p "$(OUTPUT_DIR)"
+	$(RPMBUILD) -ts --define="_topdir $(OUTPUT_RPMBUILD)" "$(TARBALL)"
+	mv "$(OUTPUT_RPMBUILD)/SRPMS"/*.rpm "$(OUTPUT_DIR)"
+	rm -rf "$(OUTPUT_RPMBUILD)"
 	@echo
 	@echo srpm is ready at $(OUTPUT_DIR)
 	@echo
 
 rpm:	srpm
-	rm -rf $(OUTPUT_RPMBUILD)
-	mkdir -p $(OUTPUT_RPMBUILD)/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
-	mkdir -p $(OUTPUT_DIR)
-	$(RPMBUILD) --define="_topdir $(OUTPUT_RPMBUILD)" $(RPMBUILD_EXTRA_ARGS) --rebuild $(SRPM)
-	mv $(OUTPUT_RPMBUILD)/RPMS/$(ARCH)/*.rpm $(OUTPUT_DIR)
-	rm -rf $(OUTPUT_RPMBUILD)
+	rm -rf "$(OUTPUT_RPMBUILD)"
+	mkdir -p "$(OUTPUT_RPMBUILD)"/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
+	mkdir -p "$(OUTPUT_DIR)"
+	$(RPMBUILD) --define="_topdir $(OUTPUT_RPMBUILD)" $(RPMBUILD_EXTRA_ARGS) --rebuild "$(SRPM)"
+	mv $(OUTPUT_RPMBUILD)/RPMS/$(ARCH)/*.rpm "$(OUTPUT_DIR)"
+	rm -rf "$(OUTPUT_RPMBUILD)"
 	@echo
 	@echo rpms are ready at $(OUTPUT_DIR)
 	@echo
@@ -287,26 +287,26 @@ rpm-quick:
 
 create_dirs:
 	@echo "*** Creating Directories"
-	@install -dm 755 $(DESTDIR)$(BIN_DIR)
-	@install -dm 755 $(DESTDIR)$(DATA_DIR)/bin
-	@install -dm 755 $(DESTDIR)$(DATA_DIR)/ui-plugins
-	@install -dm 755 $(DESTDIR)$(DATA_DIR)/conf
-	@install -dm 755 $(DESTDIR)$(DATA_DIR)/db-backups
-	@install -dm 755 $(DESTDIR)$(DATA_DIR)/ovirt-isos
-	@install -dm 755 $(DESTDIR)$(DATA_DIR)/scripts/plugins
-	@install -dm 755 $(DESTDIR)$(DATA_DIR)/scripts/dbutils
-	@install -dm 755 $(DESTDIR)$(DATA_DIR)/firewalld/base
-	@install -dm 755 $(DESTDIR)$(MAN_DIR)/man8
-	@install -dm 755 $(DESTDIR)$(PYTHON_DIR)/sos/plugins
-	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config
-	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains
-	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d
-	@install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/firewalld/services
+	@install -dm 755 "$(DESTDIR)$(BIN_DIR)"
+	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/bin"
+	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/ui-plugins"
+	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/conf"
+	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/db-backups"
+	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/ovirt-isos"
+	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/scripts/plugins"
+	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
+	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/firewalld/base"
+	@install -dm 755 "$(DESTDIR)$(MAN_DIR)/man8"
+	@install -dm 755 "$(DESTDIR)$(PYTHON_DIR)/sos/plugins"
+	@install -dm 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config"
+	@install -dm 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains"
+	@install -dm 755 "$(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d"
+	@install -dm 755 "$(DESTDIR)$(SYSCONF_DIR)/firewalld/services"
 
 install_artifacts:
 	@echo "*** Deploying EAR to $(DESTDIR)"
-	install -dm 755 $(DESTDIR)$(PKG_EAR_DIR)
-	install -dm 755 $(DESTDIR)$(MAVENPOM_DIR)
+	install -dm 755 "$(DESTDIR)$(PKG_EAR_DIR)"
+	install -dm 755 "$(DESTDIR)$(MAVENPOM_DIR)"
 
 	X=`find "$(MAVEN_OUTPUT_DIR)" -name 'engine-server-ear-$(POM_VERSION)*'.ear` && unzip -o "$$X" -d "$(DESTDIR)$(PKG_EAR_DIR)"
 
@@ -320,63 +320,63 @@ install_artifacts:
 		install -p -m 644 "$${POM}" "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-$${artifact_id}.pom"; \
 	done
 
-	sed -i "s/MYVERSION/$(DISPLAY_VERSION)/" $(DESTDIR)$(PKG_EAR_DIR)/root.war/engineVersion.js
+	sed -i "s/MYVERSION/$(DISPLAY_VERSION)/" "$(DESTDIR)$(PKG_EAR_DIR)/root.war/engineVersion.js"
 
 install_setup:
 	@echo "*** Deploying setup executables"
 
 	# Configuration files:
-	install -m 644 packaging/conf/engine-config-install.properties $(DESTDIR)$(DATA_DIR)/conf
-	install -m 644 packaging/conf/iptables.default.in $(DESTDIR)$(DATA_DIR)/conf
+	install -m 644 packaging/conf/engine-config-install.properties "$(DESTDIR)$(DATA_DIR)/conf"
+	install -m 644 packaging/conf/iptables.default.in "$(DESTDIR)$(DATA_DIR)/conf"
 	#FirewallD
-	install -m 644 packaging/firewalld/base/ovirt-nfs.xml.in $(DESTDIR)$(DATA_DIR)/firewalld/base/ovirt-nfs.xml.in
-	install -m 644 packaging/firewalld/base/ovirt-http.xml.in $(DESTDIR)$(DATA_DIR)/firewalld/base/ovirt-http.xml.in
-	install -m 644 packaging/firewalld/base/ovirt-https.xml.in $(DESTDIR)$(DATA_DIR)/firewalld/base/ovirt-https.xml.in
+	install -m 644 packaging/firewalld/base/ovirt-nfs.xml.in "$(DESTDIR)$(DATA_DIR)/firewalld/base/ovirt-nfs.xml.in"
+	install -m 644 packaging/firewalld/base/ovirt-http.xml.in "$(DESTDIR)$(DATA_DIR)/firewalld/base/ovirt-http.xml.in"
+	install -m 644 packaging/firewalld/base/ovirt-https.xml.in "$(DESTDIR)$(DATA_DIR)/firewalld/base/ovirt-https.xml.in"
 
-	install -m 644 packaging/conf/nfs.sysconfig.in $(DESTDIR)$(DATA_DIR)/conf
-	install -m 644 packaging/conf/ovirt-engine-proxy.conf.v2.in $(DESTDIR)$(DATA_DIR)/conf
-	install -m 644 packaging/conf/ovirt-engine-root-redirect.conf.in $(DESTDIR)$(DATA_DIR)/conf
+	install -m 644 packaging/conf/nfs.sysconfig.in "$(DESTDIR)$(DATA_DIR)/conf"
+	install -m 644 packaging/conf/ovirt-engine-proxy.conf.v2.in "$(DESTDIR)$(DATA_DIR)/conf"
+	install -m 644 packaging/conf/ovirt-engine-root-redirect.conf.in "$(DESTDIR)$(DATA_DIR)/conf"
 
 	# Shared python modules:
-	install -m 644 packaging/fedora/setup/nfsutils.py $(DESTDIR)$(DATA_DIR)/scripts
-	install -m 644 packaging/fedora/setup/basedefs.py $(DESTDIR)$(DATA_DIR)/scripts
-	install -m 644 packaging/fedora/setup/engine_validators.py $(DESTDIR)$(DATA_DIR)/scripts
-	install -m 644 packaging/fedora/setup/engine_firewalld.py $(DESTDIR)$(DATA_DIR)/scripts
-	install -m 644 packaging/fedora/setup/setup_params.py $(DESTDIR)$(DATA_DIR)/scripts
-	install -m 644 packaging/fedora/setup/setup_sequences.py $(DESTDIR)$(DATA_DIR)/scripts
-	install -m 644 packaging/fedora/setup/setup_controller.py $(DESTDIR)$(DATA_DIR)/scripts
-	install -m 644 packaging/fedora/setup/common_utils.py $(DESTDIR)$(DATA_DIR)/scripts
-	install -m 644 packaging/fedora/setup/miniyum.py $(DESTDIR)$(DATA_DIR)/scripts
-	install -m 644 packaging/fedora/setup/output_messages.py $(DESTDIR)$(DATA_DIR)/scripts
-	install -m 644 packaging/fedora/setup/post_upgrade.py $(DESTDIR)$(DATA_DIR)/scripts
+	install -m 644 packaging/fedora/setup/nfsutils.py "$(DESTDIR)$(DATA_DIR)/scripts"
+	install -m 644 packaging/fedora/setup/basedefs.py "$(DESTDIR)$(DATA_DIR)/scripts"
+	install -m 644 packaging/fedora/setup/engine_validators.py "$(DESTDIR)$(DATA_DIR)/scripts"
+	install -m 644 packaging/fedora/setup/engine_firewalld.py "$(DESTDIR)$(DATA_DIR)/scripts"
+	install -m 644 packaging/fedora/setup/setup_params.py "$(DESTDIR)$(DATA_DIR)/scripts"
+	install -m 644 packaging/fedora/setup/setup_sequences.py "$(DESTDIR)$(DATA_DIR)/scripts"
+	install -m 644 packaging/fedora/setup/setup_controller.py "$(DESTDIR)$(DATA_DIR)/scripts"
+	install -m 644 packaging/fedora/setup/common_utils.py "$(DESTDIR)$(DATA_DIR)/scripts"
+	install -m 644 packaging/fedora/setup/miniyum.py "$(DESTDIR)$(DATA_DIR)/scripts"
+	install -m 644 packaging/fedora/setup/output_messages.py "$(DESTDIR)$(DATA_DIR)/scripts"
+	install -m 644 packaging/fedora/setup/post_upgrade.py "$(DESTDIR)$(DATA_DIR)/scripts"
 
 	# Install man pages
-	install -m 644 packaging/man/engine-setup.8 $(DESTDIR)$(MAN_DIR)/man8/
-	install -m 644 packaging/man/engine-upgrade.8 $(DESTDIR)$(MAN_DIR)/man8/
+	install -m 644 packaging/man/engine-setup.8 "$(DESTDIR)$(MAN_DIR)/man8"
+	install -m 644 packaging/man/engine-upgrade.8 "$(DESTDIR)$(MAN_DIR)/man8"
 
 	# Example Plugin:
-	install -m 644 packaging/fedora/setup/plugins/example_plugin_000.py $(DESTDIR)$(DATA_DIR)/scripts/plugins
+	install -m 644 packaging/fedora/setup/plugins/example_plugin_000.py "$(DESTDIR)$(DATA_DIR)/scripts/plugins"
 
 	# Main programs and links:
-	install -m 755 packaging/fedora/setup/engine-setup.py $(DESTDIR)$(DATA_DIR)/scripts
-	ln -sf $(DATA_DIR)/scripts/engine-setup.py $(DESTDIR)$(BIN_DIR)/engine-setup
-	install -m 755 packaging/fedora/setup/engine-cleanup.py $(DESTDIR)$(DATA_DIR)/scripts
-	ln -sf $(DATA_DIR)/scripts/engine-cleanup.py $(DESTDIR)$(BIN_DIR)/engine-cleanup
-	install -m 755 packaging/fedora/setup/engine-upgrade.py $(DESTDIR)$(DATA_DIR)/scripts
-	ln -sf $(DATA_DIR)/scripts/engine-upgrade.py $(DESTDIR)$(BIN_DIR)/engine-upgrade
-	install -m 755 packaging/fedora/setup/engine-check-update $(DESTDIR)$(BIN_DIR)/
+	install -m 755 packaging/fedora/setup/engine-setup.py "$(DESTDIR)$(DATA_DIR)/scripts"
+	ln -sf $(DATA_DIR)/scripts/engine-setup.py "$(DESTDIR)$(BIN_DIR)/engine-setup"
+	install -m 755 packaging/fedora/setup/engine-cleanup.py "$(DESTDIR)$(DATA_DIR)/scripts"
+	ln -sf $(DATA_DIR)/scripts/engine-cleanup.py "$(DESTDIR)$(BIN_DIR)/engine-cleanup"
+	install -m 755 packaging/fedora/setup/engine-upgrade.py "$(DESTDIR)$(DATA_DIR)/scripts"
+	ln -sf $(DATA_DIR)/scripts/engine-upgrade.py "$(DESTDIR)$(BIN_DIR)/engine-upgrade"
+	install -m 755 packaging/fedora/setup/engine-check-update "$(DESTDIR)$(BIN_DIR)"
 
 	# Backups folder
-	install -dm 750 $(DESTDIR)$(ENGINE_STATE)/backups
+	install -dm 750 "$(DESTDIR)$(ENGINE_STATE)/backups"
 
 	# Task cleaner
-	install -dm 750 $(DESTDIR)$(DATA_DIR)/scripts/dbutils
-	install -m 750 backend/manager/tools/dbutils/common.sh $(DESTDIR)$(DATA_DIR)/scripts/dbutils
-	install -m 750 backend/manager/tools/dbutils/taskcleaner.sh $(DESTDIR)$(DATA_DIR)/scripts/dbutils
-	install -m 640 backend/manager/tools/dbutils/taskcleaner_sp.sql $(DESTDIR)$(DATA_DIR)/scripts/dbutils
-	install -m 750 backend/manager/tools/dbutils/fkvalidator.sh $(DESTDIR)$(DATA_DIR)/scripts/dbutils
-	install -m 640 backend/manager/tools/dbutils/fkvalidator_sp.sql $(DESTDIR)$(DATA_DIR)/scripts/dbutils
-	install -m 750 backend/manager/tools/dbutils/validatedb.sh $(DESTDIR)$(DATA_DIR)/scripts/dbutils
+	install -dm 750 "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
+	install -m 750 backend/manager/tools/dbutils/common.sh "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
+	install -m 750 backend/manager/tools/dbutils/taskcleaner.sh "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
+	install -m 640 backend/manager/tools/dbutils/taskcleaner_sp.sql "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
+	install -m 750 backend/manager/tools/dbutils/fkvalidator.sh "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
+	install -m 640 backend/manager/tools/dbutils/fkvalidator_sp.sql "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
+	install -m 750 backend/manager/tools/dbutils/validatedb.sh "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
 
 	( cd packaging && find setup -name '*.py' ) | while read f; do \
 		install -dm 755 "$$(dirname "$(DESTDIR)$(DATA_DIR)/$$f")"; \
@@ -390,104 +390,104 @@ install_setup:
 	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-remove" "$(DESTDIR)$(BIN_DIR)/engine-cleanup-2"
 
 install_aio_plugin:
-	install -m 644 packaging/fedora/setup/plugins/all_in_one_100.py $(DESTDIR)$(DATA_DIR)/scripts/plugins
-	install -dm 755 $(DESTDIR)$(DATA_DIR)/firewalld/aio
-	install -m 644 packaging/firewalld/aio/ovirt-aio.xml.in $(DESTDIR)$(DATA_DIR)/firewalld/aio/ovirt-aio.xml.in
+	install -m 644 packaging/fedora/setup/plugins/all_in_one_100.py "$(DESTDIR)$(DATA_DIR)/scripts/plugins"
+	install -dm 755 "$(DESTDIR)$(DATA_DIR)/firewalld/aio"
+	install -m 644 packaging/firewalld/aio/ovirt-aio.xml.in "$(DESTDIR)$(DATA_DIR)/firewalld/aio/ovirt-aio.xml.in"
 
 install_sec:
-	install -dm 755 $(DESTDIR)$(PKG_PKI_DIR)/certs
-	install -dm 755 $(DESTDIR)$(PKG_PKI_DIR)/keys
-	install -dm 750 $(DESTDIR)$(PKG_PKI_DIR)/private
-	install -dm 755 $(DESTDIR)$(PKG_PKI_DIR)/requests
+	install -dm 755 "$(DESTDIR)$(PKG_PKI_DIR)/certs"
+	install -dm 755 "$(DESTDIR)$(PKG_PKI_DIR)/keys"
+	install -dm 750 "$(DESTDIR)$(PKG_PKI_DIR)/private"
+	install -dm 755 "$(DESTDIR)$(PKG_PKI_DIR)/requests"
 
 	# Configuration files:
-	install -m 644 packaging/etc/pki/openssl.conf $(DESTDIR)$(PKG_PKI_DIR)
-	install -m 644 packaging/etc/pki/cacert.template.in $(DESTDIR)$(PKG_PKI_DIR)
-	install -m 644 packaging/etc/pki/cert.template.in $(DESTDIR)$(PKG_PKI_DIR)
+	install -m 644 packaging/etc/pki/openssl.conf "$(DESTDIR)$(PKG_PKI_DIR)"
+	install -m 644 packaging/etc/pki/cacert.template.in "$(DESTDIR)$(PKG_PKI_DIR)"
+	install -m 644 packaging/etc/pki/cert.template.in "$(DESTDIR)$(PKG_PKI_DIR)"
 
 	# Scripts:
-	install -m 644 packaging/bin/pki-common.sh $(DESTDIR)$(DATA_DIR)/bin
-	install -m 755 packaging/bin/pki-create-ca.sh $(DESTDIR)$(DATA_DIR)/bin
-	install -m 755 packaging/bin/pki-enroll-pkcs12.sh $(DESTDIR)$(DATA_DIR)/bin
-	install -m 755 packaging/bin/pki-enroll-request.sh $(DESTDIR)$(DATA_DIR)/bin
+	install -m 644 packaging/bin/pki-common.sh "$(DESTDIR)$(DATA_DIR)/bin"
+	install -m 755 packaging/bin/pki-create-ca.sh "$(DESTDIR)$(DATA_DIR)/bin"
+	install -m 755 packaging/bin/pki-enroll-pkcs12.sh "$(DESTDIR)$(DATA_DIR)/bin"
+	install -m 755 packaging/bin/pki-enroll-request.sh "$(DESTDIR)$(DATA_DIR)/bin"
 
 install_config:
 	@echo "*** Deploying engine-config & engine-manage-domains"
 
 	# Configuration files for the configuration tool:
-	install -m 644 packaging/etc/engine-config/engine-config.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
-	install -m 644 packaging/etc/engine-config/engine-config*.properties $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/
-	install -m 644 packaging/etc/engine-config/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/log4j.xml
+	install -m 644 packaging/etc/engine-config/engine-config.conf "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config"
+	install -m 644 packaging/etc/engine-config/engine-config*.properties "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config"
+	install -m 644 packaging/etc/engine-config/log4j.xml "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/log4j.xml"
 
 	# Main program for the configuration tool:
-	install -m 750 packaging/bin/engine-config.sh $(DESTDIR)$(DATA_DIR)/bin
-	ln -sf $(DATA_DIR)/bin/engine-config.sh $(DESTDIR)$(BIN_DIR)/engine-config
+	install -m 750 packaging/bin/engine-config.sh "$(DESTDIR)$(DATA_DIR)/bin"
+	ln -sf "$(DATA_DIR)/bin/engine-config.sh" "$(DESTDIR)$(BIN_DIR)/engine-config"
 
 	# Configuration files for the domain management tool:
-	install -m 644 packaging/etc/engine-manage-domains/engine-manage-domains.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/
-	install -m 644 packaging/etc/engine-manage-domains/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains/
+	install -m 644 packaging/etc/engine-manage-domains/engine-manage-domains.conf "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains"
+	install -m 644 packaging/etc/engine-manage-domains/log4j.xml "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains"
 
 	# Main program for the domain management tool:
-	install -m 750 packaging/bin/engine-manage-domains.sh $(DESTDIR)$(DATA_DIR)/bin
-	ln -sf $(DATA_DIR)/bin/engine-manage-domains.sh $(DESTDIR)$(BIN_DIR)/engine-manage-domains
+	install -m 750 packaging/bin/engine-manage-domains.sh "$(DESTDIR)$(DATA_DIR)/bin"
+	ln -sf "$(DATA_DIR)/bin/engine-manage-domains.sh" "$(DESTDIR)$(BIN_DIR)/engine-manage-domains"
 
 	# Install man pages
-	install -m 644 packaging/man/engine-manage-domains.8 $(DESTDIR)$(MAN_DIR)/man8/
-	install -m 644 packaging/man/engine-config.8 $(DESTDIR)$(MAN_DIR)/man8/
+	install -m 644 packaging/man/engine-manage-domains.8 "$(DESTDIR)$(MAN_DIR)/man8"
+	install -m 644 packaging/man/engine-config.8 "$(DESTDIR)$(MAN_DIR)/man8"
 
 install_sysprep:
 	@echo "*** Deploying sysperp"
-	@install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/sysprep
-	install -m 644 packaging/etc/sysprep/* $(DESTDIR)$(PKG_SYSCONF_DIR)/sysprep
+	@install -dm 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/sysprep"
+	install -m 644 packaging/etc/sysprep/* "$(DESTDIR)$(PKG_SYSCONF_DIR)/sysprep"
 
 install_notification_service:
 	@echo "*** Deploying notification service"
 
-	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier
+	install -dm 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/notifier"
 
-	install -m 644 packaging/etc/notifier/log4j.xml $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/log4j.xml
-	install -d -m 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/notifier.conf.d
-	install -m 644 packaging/conf/notifier.conf.defaults $(DESTDIR)$(DATA_DIR)/conf/notifier.conf.defaults
-	install -m 755 packaging/services/ovirt-engine-notifier.py $(DESTDIR)$(DATA_DIR)/services
-	install -m 755 packaging/services/ovirt-engine-notifier.systemd $(DESTDIR)$(DATA_DIR)/services
-	install -m 755 packaging/services/ovirt-engine-notifier.sysv $(DESTDIR)$(DATA_DIR)/services
+	install -m 644 packaging/etc/notifier/log4j.xml "$(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/log4j.xml"
+	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/notifier.conf.d"
+	install -m 644 packaging/conf/notifier.conf.defaults "$(DESTDIR)$(DATA_DIR)/conf/notifier.conf.defaults"
+	install -m 755 packaging/services/ovirt-engine-notifier.py "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 755 packaging/services/ovirt-engine-notifier.systemd "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 755 packaging/services/ovirt-engine-notifier.sysv "$(DESTDIR)$(DATA_DIR)/services"
 
 install_db_scripts:
 	@echo "*** Deploying Database scripts"
-	install -dm 755 $(DESTDIR)$(DATA_DIR)/dbscripts
-	cp -r backend/manager/dbscripts/* $(DESTDIR)$(DATA_DIR)/dbscripts
-	find $(DESTDIR)$(DATA_DIR)/dbscripts -type d -exec chmod 755 {} \;
-	find $(DESTDIR)$(DATA_DIR)/dbscripts -type f -name '*.sql' -exec chmod 644 {} \;
-	find $(DESTDIR)$(DATA_DIR)/dbscripts -type f -name '*.sh' -exec chmod 755 {} \;
+	install -dm 755 "$(DESTDIR)$(DATA_DIR)/dbscripts"
+	cp -r backend/manager/dbscripts/* "$(DESTDIR)$(DATA_DIR)/dbscripts"
+	find "$(DESTDIR)$(DATA_DIR)/dbscripts" -type d -exec chmod 755 {} \;
+	find "$(DESTDIR)$(DATA_DIR)/dbscripts" -type f -name '*.sql' -exec chmod 644 {} \;
+	find "$(DESTDIR)$(DATA_DIR)/dbscripts" -type f -name '*.sh' -exec chmod 755 {} \;
 
 install_misc:
 	@echo "*** Copying additional files"
 
 	# Shell scripts used by several programs:
-	install -m 755 packaging/bin/engine-prolog.sh $(DESTDIR)$(DATA_DIR)/bin
+	install -m 755 packaging/bin/engine-prolog.sh "$(DESTDIR)$(DATA_DIR)/bin"
 
 	# Other misc things:
-	install -m 644 packaging/conf/jaas.conf $(DESTDIR)$(DATA_DIR)/conf
-	install -m 644 packaging/conf/engine.conf.defaults $(DESTDIR)$(DATA_DIR)/conf
-	install -m 644 packaging/etc/engine.conf $(DESTDIR)$(PKG_SYSCONF_DIR)/
-	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/engine.conf.d
-	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/ovirt-websocket-proxy.conf.d
-	install -m 644 packaging/conf/ovirt-websocket-proxy.conf.defaults $(DESTDIR)$(DATA_DIR)/conf
-	install -dm 755 $(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d
-	install -m 644 packaging/conf/osinfo-defaults.properties $(DESTDIR)$(DATA_DIR)/conf
-	ln -sf $(DATA_DIR)/conf/osinfo-defaults.properties $(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d/00-defaults.properties
+	install -m 644 packaging/conf/jaas.conf "$(DESTDIR)$(DATA_DIR)/conf"
+	install -m 644 packaging/conf/engine.conf.defaults "$(DESTDIR)$(DATA_DIR)/conf"
+	install -m 644 packaging/etc/engine.conf "$(DESTDIR)$(PKG_SYSCONF_DIR)"
+	install -dm 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine.conf.d"
+	install -dm 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/ovirt-websocket-proxy.conf.d"
+	install -m 644 packaging/conf/ovirt-websocket-proxy.conf.defaults "$(DESTDIR)$(DATA_DIR)/conf"
+	install -dm 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d"
+	install -m 644 packaging/conf/osinfo-defaults.properties "$(DESTDIR)$(DATA_DIR)/conf"
+	ln -sf "$(DATA_DIR)/conf/osinfo-defaults.properties" "$(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d/00-defaults.properties"
 
 	# Service common
-	install -dm 755 $(DESTDIR)$(DATA_DIR)/services
-	install -m 644 packaging/services/__init__.py $(DESTDIR)$(DATA_DIR)/services
-	install -m 644 packaging/services/config.py $(DESTDIR)$(DATA_DIR)/services
-	install -m 644 packaging/services/service.py $(DESTDIR)$(DATA_DIR)/services
-	install -m 755 packaging/services/ovirt-websocket-proxy.py $(DESTDIR)$(DATA_DIR)/services
-	install -m 755 packaging/services/ovirt-websocket-proxy.systemd $(DESTDIR)$(DATA_DIR)/services
-	install -m 755 packaging/services/ovirt-websocket-proxy.sysv $(DESTDIR)$(DATA_DIR)/services
+	install -dm 755 "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 644 packaging/services/__init__.py "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 644 packaging/services/config.py "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 644 packaging/services/service.py "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 755 packaging/services/ovirt-websocket-proxy.py "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 755 packaging/services/ovirt-websocket-proxy.systemd "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 755 packaging/services/ovirt-websocket-proxy.sysv "$(DESTDIR)$(DATA_DIR)/services"
 
 	# USB filter:
-	install -m 644 packaging/etc/usbfilter.txt $(DESTDIR)$(PKG_SYSCONF_DIR)
+	install -m 644 packaging/etc/usbfilter.txt "$(DESTDIR)$(PKG_SYSCONF_DIR)"
 
 	# branding
 	( cd packaging/branding && find ovirt.brand -type f ) | while read f; do \
@@ -499,7 +499,7 @@ install_misc:
 	ln -s "$(DATA_DIR)/branding/ovirt.brand" "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
 
 	# Create a version file
-	echo $(DISPLAY_VERSION) > $(DESTDIR)$(DATA_DIR)/conf/version
+	echo "$(DISPLAY_VERSION)" > "$(DESTDIR)$(DATA_DIR)/conf/version"
 
 install_jboss_modules:
 	@echo "*** Deploying JBoss modules"
@@ -512,13 +512,13 @@ install_service:
 	@echo "*** Deploying service"
 
 	# Install the files:
-	install -m 644 packaging/services/ovirt-engine.xml.in $(DESTDIR)$(DATA_DIR)/services
-	install -m 644 packaging/services/ovirt-engine-logging.properties.in $(DESTDIR)$(DATA_DIR)/services
-	install -m 755 packaging/services/ovirt-engine.py $(DESTDIR)$(DATA_DIR)/services
-	install -m 755 packaging/services/ovirt-engine.systemd $(DESTDIR)$(DATA_DIR)/services
-	install -m 755 packaging/services/ovirt-engine.sysv $(DESTDIR)$(DATA_DIR)/services
-	install -dm 755 $(DESTDIR)$(SYSCONF_DIR)/logrotate.d
-	install -m 644 packaging/sys-etc/logrotate.d/ovirt-engine $(DESTDIR)$(SYSCONF_DIR)/logrotate.d
+	install -m 644 packaging/services/ovirt-engine.xml.in "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 644 packaging/services/ovirt-engine-logging.properties.in "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 755 packaging/services/ovirt-engine.py "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 755 packaging/services/ovirt-engine.systemd "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 755 packaging/services/ovirt-engine.sysv "$(DESTDIR)$(DATA_DIR)/services"
+	install -dm 755 "$(DESTDIR)$(SYSCONF_DIR)/logrotate.d"
+	install -m 644 packaging/sys-etc/logrotate.d/ovirt-engine "$(DESTDIR)$(SYSCONF_DIR)/logrotate.d"
 
 gwt-debug:
 	[ -n "$(DEBUG_MODULE)" ] || ( echo "Please specify DEBUG_MODULE" && false )
