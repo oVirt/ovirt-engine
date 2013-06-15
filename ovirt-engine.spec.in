@@ -548,8 +548,6 @@ fi
 
 # The main package owns most of the directories:
 %dir %{engine_data}
-%dir %{engine_data}/ovirt-isos
-%dir %{engine_data}/db-backups
 %dir %{engine_data}/scripts
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_cache}

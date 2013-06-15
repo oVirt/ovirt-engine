@@ -293,16 +293,12 @@ create_dirs:
 	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/ui-plugins"
 	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/conf"
 	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/db-backups"
-	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/ovirt-isos"
 	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/scripts/plugins"
 	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
 	@install -dm 755 "$(DESTDIR)$(DATA_DIR)/firewalld/base"
 	@install -dm 755 "$(DESTDIR)$(MAN_DIR)/man8"
-	@install -dm 755 "$(DESTDIR)$(PYTHON_DIR)/sos/plugins"
 	@install -dm 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config"
 	@install -dm 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains"
-	@install -dm 755 "$(DESTDIR)$(SYSCONF_DIR)/rc.d/init.d"
-	@install -dm 755 "$(DESTDIR)$(SYSCONF_DIR)/firewalld/services"
 
 install_artifacts:
 	@echo "*** Deploying EAR to $(DESTDIR)"
