@@ -21,52 +21,25 @@
 # information on the Apache Software Foundation, please see
 # <http://www.apache.org/>.
 
-include version.mak
-# major, minor, seq
-POM_VERSION:=$(shell cat pom.xml | grep '<engine.version>' | sed -e 's/.*>\(.*\)<.*/\1/' -e 's/-SNAPSHOT//')
-# major, minor from pom and fix
-APP_VERSION=$(shell echo $(POM_VERSION) | sed 's/\([^.]*\.[^.]\)\..*/\1/').$(FIX_RELEASE)
-RPM_VERSION=$(APP_VERSION)
-PACKAGE_VERSION=$(APP_VERSION)$(if $(MILESTONE),_$(MILESTONE))
-PACKAGE_NAME=ovirt-engine
-DISPLAY_VERSION=$(PACKAGE_VERSION)
-
+#
+# CUSTOMIZATION-BEGIN
+#
 BUILD_GWT=1
 BUILD_GWT_USERPORTAL=1
 BUILD_GWT_WEBADMIN=1
 BUILD_LOCALES=0
 BUILD_UT=0
-DEV_BUILD_GWT_DRAFT=0
-
-MVN=mvn
 EXTRA_BUILD_FLAGS=
-BUILD_FLAGS:=
-ifneq ($(BUILD_GWT),0)
-ifneq ($(BUILD_GWT_USERPORTAL),0)
-BUILD_FLAGS:=$(BUILD_FLAGS) -P gwt-user
-endif
-ifneq ($(BUILD_GWT_WEBADMIN),0)
-BUILD_FLAGS:=$(BUILD_FLAGS) -P gwt-admin
-endif
-endif
-ifneq ($(BUILD_LOCALES),0)
-BUILD_FLAGS:=$(BUILD_FLAGS) -P all-langs
-endif
-ifeq ($(BUILD_UT),0)
-BUILD_FLAGS:=$(BUILD_FLAGS) -D skipTests
-endif
-BUILD_FLAGS:=$(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
-
+DEV_REBUILD=1
+DEV_BUILD_GWT_DRAFT=0
 DEV_EXTRA_BUILD_FLAGS=
 DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS=-D gwt.userAgent=gecko1_8
-DEV_BUILD_FLAGS:=
-ifneq ($(DEV_BUILD_GWT_DRAFT),0)
-DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) -Dgwt.draftCompile=true
-endif
-DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) $(DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS)
-DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) $(DEV_EXTRA_BUILD_FLAGS)
-BUILD_TARGET=deploy
+
+PACKAGE_NAME=ovirt-engine
 ENGINE_NAME=$(PACKAGE_NAME)
+MVN=mvn
+RPMBUILD=rpmbuild
+PYTHON=python
 PREFIX=/usr/local
 LOCALSTATE_DIR=$(PREFIX)/var
 ENGINE_STATE=$(LOCALSTATE_DIR)/lib/$(ENGINE_NAME)
@@ -87,15 +60,49 @@ PKG_JBOSS_MODULES=$(DATA_DIR)/modules
 PKG_CACHE_DIR=$(LOCALSTATE_DIR)/cache/$(ENGINE_NAME)
 PKG_LOG_DIR=$(LOCALSTATE_DIR)/log/$(ENGINE_NAME)
 PKG_TMP_DIR=$(LOCALSTATE_DIR)/tmp/$(ENGINE_NAME)
+SPICE_DIR=/usr/share/spice
+JBOSS_HOME=/usr/share/jboss-as
+PYTHON_DIR=$(PYTHON_SYS_DIR)
 PKG_USER=ovirt
 PKG_GROUP=ovirt
-SPICE_DIR=/usr/share/spice
-RPMBUILD=rpmbuild
-PYTHON=python
-JBOSS_HOME=/usr/share/jboss-as
-PYTHON_SYS_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
-PYTHON_DIR=$(PYTHON_SYS_DIR)
+#
+# CUSTOMIZATION-END
+#
 
+include version.mak
+# major, minor, seq
+POM_VERSION:=$(shell cat pom.xml | grep '<engine.version>' | sed -e 's/.*>\(.*\)<.*/\1/' -e 's/-SNAPSHOT//')
+# major, minor from pom and fix
+APP_VERSION=$(shell echo $(POM_VERSION) | sed 's/\([^.]*\.[^.]\)\..*/\1/').$(FIX_RELEASE)
+RPM_VERSION=$(APP_VERSION)
+PACKAGE_VERSION=$(APP_VERSION)$(if $(MILESTONE),_$(MILESTONE))
+DISPLAY_VERSION=$(PACKAGE_VERSION)
+
+BUILD_FLAGS:=
+ifneq ($(BUILD_GWT),0)
+ifneq ($(BUILD_GWT_USERPORTAL),0)
+BUILD_FLAGS:=$(BUILD_FLAGS) -P gwt-user
+endif
+ifneq ($(BUILD_GWT_WEBADMIN),0)
+BUILD_FLAGS:=$(BUILD_FLAGS) -P gwt-admin
+endif
+endif
+ifneq ($(BUILD_LOCALES),0)
+BUILD_FLAGS:=$(BUILD_FLAGS) -P all-langs
+endif
+ifeq ($(BUILD_UT),0)
+BUILD_FLAGS:=$(BUILD_FLAGS) -D skipTests
+endif
+BUILD_FLAGS:=$(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
+
+DEV_BUILD_FLAGS:=
+ifneq ($(DEV_BUILD_GWT_DRAFT),0)
+DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) -Dgwt.draftCompile=true
+endif
+DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) $(DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS)
+DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) $(DEV_EXTRA_BUILD_FLAGS)
+
+PYTHON_SYS_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python_lib as f;print(f())")
 OUTPUT_RPMBUILD=$(shell pwd -P)/tmp.rpmbuild
 OUTPUT_DIR=output
 TARBALL=$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz
@@ -104,7 +111,7 @@ ARCH=noarch
 BUILD_FILE=tmp.built
 MAVEN_OUTPUT_DIR_DEFAULT=$(shell pwd -P)/tmp.repos
 MAVEN_OUTPUT_DIR=$(MAVEN_OUTPUT_DIR_DEFAULT)
-DEV_REBUILD=1
+BUILD_TARGET=deploy
 
 ARTIFACTS = \
 	backend \
