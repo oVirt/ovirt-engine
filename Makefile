@@ -352,8 +352,8 @@ install_setup:
 	install -m 644 packaging/fedora/setup/post_upgrade.py "$(DESTDIR)$(DATA_DIR)/scripts"
 
 	# Install man pages
-	install -m 644 packaging/man/engine-setup.8 "$(DESTDIR)$(MAN_DIR)/man8"
-	install -m 644 packaging/man/engine-upgrade.8 "$(DESTDIR)$(MAN_DIR)/man8"
+	install -m 644 packaging/man/man8/engine-setup.8 "$(DESTDIR)$(MAN_DIR)/man8"
+	install -m 644 packaging/man/man8/engine-upgrade.8 "$(DESTDIR)$(MAN_DIR)/man8"
 
 	# Example Plugin:
 	install -m 644 packaging/fedora/setup/plugins/example_plugin_000.py "$(DESTDIR)$(DATA_DIR)/scripts/plugins"
@@ -433,8 +433,8 @@ install_config:
 	ln -sf "$(DATA_DIR)/bin/engine-manage-domains.sh" "$(DESTDIR)$(BIN_DIR)/engine-manage-domains"
 
 	# Install man pages
-	install -m 644 packaging/man/engine-manage-domains.8 "$(DESTDIR)$(MAN_DIR)/man8"
-	install -m 644 packaging/man/engine-config.8 "$(DESTDIR)$(MAN_DIR)/man8"
+	install -m 644 packaging/man/man8/engine-manage-domains.8 "$(DESTDIR)$(MAN_DIR)/man8"
+	install -m 644 packaging/man/man8/engine-config.8 "$(DESTDIR)$(MAN_DIR)/man8"
 
 install_sysprep:
 	@echo "*** Deploying sysperp"
