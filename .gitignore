@@ -58,3 +58,9 @@ packaging/services/*.sysv
 packaging/setup/ovirt_engine_setup/config.py
 packaging/bin/ovirt-engine-log-setup-event.sh
 ovirt-engine.spec
+
+# dbscripts
+###########################
+packaging/dbscripts/*.scripts.md5
+packaging/dbscripts/*.schema
+packaging/dbscripts/*.log

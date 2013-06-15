@@ -452,9 +452,8 @@ install_notification_service:
 	install -m 755 packaging/services/ovirt-engine-notifier.sysv "$(DESTDIR)$(DATA_DIR)/services"
 
 install_db_scripts:
-	@echo "*** Deploying Database scripts"
 	install -dm 755 "$(DESTDIR)$(DATA_DIR)/dbscripts"
-	cp -r backend/manager/dbscripts/* "$(DESTDIR)$(DATA_DIR)/dbscripts"
+	cp -r packaging/dbscripts/* "$(DESTDIR)$(DATA_DIR)/dbscripts"
 	find "$(DESTDIR)$(DATA_DIR)/dbscripts" -type d -exec chmod 755 {} \;
 	find "$(DESTDIR)$(DATA_DIR)/dbscripts" -type f -name '*.sql' -exec chmod 644 {} \;
 	find "$(DESTDIR)$(DATA_DIR)/dbscripts" -type f -name '*.sh' -exec chmod 755 {} \;

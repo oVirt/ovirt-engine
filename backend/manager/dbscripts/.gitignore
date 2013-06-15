@@ -1,6 +1,0 @@
-# md5 file should be ignored (used only to track updated view/sp files)
-######################################################################
-*.scripts.md5
-#auto generated schema file
-.schema
-

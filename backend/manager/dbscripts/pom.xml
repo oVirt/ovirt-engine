@@ -34,7 +34,7 @@
                  </execution>
                </executions>
                <configuration>
-                 <executable>${project.basedir}/check_for_duplicate_upgrade_scripts.sh</executable>
+                 <executable>${project.basedir}/../../../packaging/dbscripts/check_for_duplicate_upgrade_scripts.sh</executable>
                </configuration>
              </plugin>
            </plugins>

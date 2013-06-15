@@ -149,7 +149,7 @@
               </goals>
               <configuration>
                 <skip>${skip.db.checksum.check}</skip>
-                <executable>${basedir}/../../dbscripts/db_schema_version_check/check_db_schema_checksum.sh</executable>
+                <executable>${basedir}/../../../packaging/dbscripts/db_schema_version_check/check_db_schema_checksum.sh</executable>
                 <arguments>
                   <argument>-u</argument>
                   <argument>${engine.db.username}</argument>
@@ -168,7 +168,7 @@
               </goals>
               <configuration>
                 <skip>${skip.db.checksum.store}</skip>
-                <executable>${basedir}/../../dbscripts/db_schema_version_check/store_db_schema_checksum.sh</executable>
+                <executable>${basedir}/../../../packaging/dbscripts/db_schema_version_check/store_db_schema_checksum.sh</executable>
               </configuration>
            </execution>
         </executions>
