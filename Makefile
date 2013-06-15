@@ -55,11 +55,16 @@ endif
 ifeq ($(BUILD_UT),0)
 BUILD_FLAGS:=$(BUILD_FLAGS) -D skipTests
 endif
+BUILD_FLAGS:=$(BUILD_FLAGS) $(EXTRA_BUILD_FLAGS)
+
 DEV_EXTRA_BUILD_FLAGS=
-DEV_EXTRA_BUILD_FLAGS_GWT:=-D gwt.userAgent=gecko1_8
+DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS=-D gwt.userAgent=gecko1_8
+DEV_BUILD_FLAGS:=
 ifneq ($(DEV_BUILD_GWT_DRAFT),0)
-DEV_EXTRA_BUILD_FLAGS_GWT:=$(DEV_EXTRA_BUILD_FLAGS_GWT) -Dgwt.draftCompile=true
+DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) -Dgwt.draftCompile=true
 endif
+DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) $(DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS)
+DEV_BUILD_FLAGS:=$(DEV_BUILD_FLAGS) $(DEV_EXTRA_BUILD_FLAGS)
 BUILD_TARGET=deploy
 ENGINE_NAME=$(PACKAGE_NAME)
 PREFIX=/usr/local
@@ -194,7 +199,6 @@ $(BUILD_FILE):
 	export MAVEN_OPTS="${MAVEN_OPTS} -XX:MaxPermSize=512m"
 	$(MVN) \
 		$(BUILD_FLAGS) \
-		$(EXTRA_BUILD_FLAGS) \
 		-D altDeploymentRepository=install::default::file://$(MAVEN_OUTPUT_DIR) \
 		$(BUILD_TARGET)
 	touch $(BUILD_FILE)
@@ -513,8 +517,7 @@ gwt-debug:
 	[ -n "$(DEBUG_MODULE)" ] || ( echo "Please specify DEBUG_MODULE" && false )
 	cd "frontend/webadmin/modules/$(DEBUG_MODULE)" && \
 		$(MVN) \
-			$(DEV_EXTRA_BUILD_FLAGS) \
-			$(DEV_EXTRA_BUILD_FLAGS_GWT) \
+			$(DEV_BUILD_FLAGS) \
 			-Dgwt.noserver=true \
 			-Pgwtdev,gwt-admin,gwt-user \
 			gwt:debug
@@ -524,7 +527,7 @@ all-dev:
 	rm -f $(GENERATED)
 	$(MAKE) \
 		all \
-		EXTRA_BUILD_FLAGS="$(DEV_EXTRA_BUILD_FLAGS_GWT) $(DEV_EXTRA_BUILD_FLAGS)" \
+		EXTRA_BUILD_FLAGS="$(DEV_BUILD_FLAGS)" \
 		$(NULL)
 
 install-dev:	\
@@ -533,7 +536,7 @@ install-dev:	\
 
 	$(MAKE) \
 		install \
-		EXTRA_BUILD_FLAGS="$(DEV_EXTRA_BUILD_FLAGS_GWT) $(DEV_EXTRA_BUILD_FLAGS)" \
+		EXTRA_BUILD_FLAGS="$(DEV_BUILD_FLAGS)" \
 		PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
 		$(NULL)
 	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/tmp"
