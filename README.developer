@@ -73,14 +73,11 @@ $ make clean install-dev PREFIX=$HOME/ovirt-engine
 
 BUILD TARGETS
 
-clean
-    Clean project.
-
-install-dev
-    Install a development environment at PREFIX.
-
-dist
-    Create source tarball.
+all             Build project.
+clean           Clean project.
+all-dev         Build project for development.
+install-dev     Install a development environment at PREFIX.
+dist            Create source tarball out of git repository.
 
 BUILD CUSTOMIZATION
 

@@ -517,9 +517,18 @@ gwt-debug:
 			-Pgwtdev,gwt-admin,gwt-user \
 			gwt:debug
 
-install-dev:
+all-dev:
 	[ "$(DEV_REBUILD)" != 0 ] && rm -f "$(BUILD_FILE)" || :
 	rm -f $(GENERATED)
+	$(MAKE) \
+		all \
+		EXTRA_BUILD_FLAGS="$(EXTRA_BUILD_FLAGS_DEV_GWT) $(EXTRA_BUILD_FLAGS_DEV)" \
+		$(NULL)
+
+install-dev:	\
+		all-dev \
+		$(NULL)
+
 	$(MAKE) \
 		install \
 		EXTRA_BUILD_FLAGS="$(EXTRA_BUILD_FLAGS_DEV_GWT) $(EXTRA_BUILD_FLAGS_DEV)" \
