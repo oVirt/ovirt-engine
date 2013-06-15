@@ -199,6 +199,7 @@ all: \
 
 generated-files:	$(GENERATED)
 	chmod a+x packaging/services/ovirt-engine.sysv
+	chmod a+x packaging/services/ovirt-engine-notifier.sysv
 	chmod a+x packaging/services/ovirt-websocket-proxy.sysv
 
 $(BUILD_FILE):
@@ -420,7 +421,7 @@ install_config:
 	install -m 644 packaging/etc/engine-config/log4j.xml "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine-config/log4j.xml"
 
 	# Main program for the configuration tool:
-	install -m 750 packaging/bin/engine-config.sh "$(DESTDIR)$(DATA_DIR)/bin"
+	install -m 755 packaging/bin/engine-config.sh "$(DESTDIR)$(DATA_DIR)/bin"
 	ln -sf "$(DATA_DIR)/bin/engine-config.sh" "$(DESTDIR)$(BIN_DIR)/engine-config"
 
 	# Configuration files for the domain management tool:
@@ -428,7 +429,7 @@ install_config:
 	install -m 644 packaging/etc/engine-manage-domains/log4j.xml "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains"
 
 	# Main program for the domain management tool:
-	install -m 750 packaging/bin/engine-manage-domains.sh "$(DESTDIR)$(DATA_DIR)/bin"
+	install -m 755 packaging/bin/engine-manage-domains.sh "$(DESTDIR)$(DATA_DIR)/bin"
 	ln -sf "$(DATA_DIR)/bin/engine-manage-domains.sh" "$(DESTDIR)$(BIN_DIR)/engine-manage-domains"
 
 	# Install man pages
@@ -449,7 +450,7 @@ install_notification_service:
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/notifier/notifier.conf.d"
 	install -m 644 packaging/conf/notifier.conf.defaults "$(DESTDIR)$(DATA_DIR)/conf/notifier.conf.defaults"
 	install -m 755 packaging/services/ovirt-engine-notifier.py "$(DESTDIR)$(DATA_DIR)/services"
-	install -m 755 packaging/services/ovirt-engine-notifier.systemd "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 644 packaging/services/ovirt-engine-notifier.systemd "$(DESTDIR)$(DATA_DIR)/services"
 	install -m 755 packaging/services/ovirt-engine-notifier.sysv "$(DESTDIR)$(DATA_DIR)/services"
 
 install_db_scripts:
@@ -464,7 +465,7 @@ install_misc:
 	@echo "*** Copying additional files"
 
 	# Shell scripts used by several programs:
-	install -m 755 packaging/bin/engine-prolog.sh "$(DESTDIR)$(DATA_DIR)/bin"
+	install -m 644 packaging/bin/engine-prolog.sh "$(DESTDIR)$(DATA_DIR)/bin"
 
 	# Other misc things:
 	install -m 644 packaging/conf/jaas.conf "$(DESTDIR)$(DATA_DIR)/conf"
@@ -483,7 +484,7 @@ install_misc:
 	install -m 644 packaging/services/config.py "$(DESTDIR)$(DATA_DIR)/services"
 	install -m 644 packaging/services/service.py "$(DESTDIR)$(DATA_DIR)/services"
 	install -m 755 packaging/services/ovirt-websocket-proxy.py "$(DESTDIR)$(DATA_DIR)/services"
-	install -m 755 packaging/services/ovirt-websocket-proxy.systemd "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 644 packaging/services/ovirt-websocket-proxy.systemd "$(DESTDIR)$(DATA_DIR)/services"
 	install -m 755 packaging/services/ovirt-websocket-proxy.sysv "$(DESTDIR)$(DATA_DIR)/services"
 
 	# USB filter:
@@ -515,7 +516,7 @@ install_service:
 	install -m 644 packaging/services/ovirt-engine.xml.in "$(DESTDIR)$(DATA_DIR)/services"
 	install -m 644 packaging/services/ovirt-engine-logging.properties.in "$(DESTDIR)$(DATA_DIR)/services"
 	install -m 755 packaging/services/ovirt-engine.py "$(DESTDIR)$(DATA_DIR)/services"
-	install -m 755 packaging/services/ovirt-engine.systemd "$(DESTDIR)$(DATA_DIR)/services"
+	install -m 644 packaging/services/ovirt-engine.systemd "$(DESTDIR)$(DATA_DIR)/services"
 	install -m 755 packaging/services/ovirt-engine.sysv "$(DESTDIR)$(DATA_DIR)/services"
 	install -dm 755 "$(DESTDIR)$(SYSCONF_DIR)/logrotate.d"
 	install -m 644 packaging/sys-etc/logrotate.d/ovirt-engine "$(DESTDIR)$(SYSCONF_DIR)/logrotate.d"
