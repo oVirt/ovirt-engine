@@ -2372,6 +2372,36 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}.Only Alerts can be removed.")
     String ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLRGAL_OPERATION();
 
+    @DefaultStringValue("$type External Job.")
+    String VAR__TYPE__EXTERNAL_JOB();
+
+    @DefaultStringValue("$type External Step.")
+    String VAR__TYPE__EXTERNAL_STEP();
+
+    @DefaultStringValue("$action End.")
+    String VAR__ACTION__END();
+
+    @DefaultStringValue("$action Clear.")
+    String VAR__ACTION__CLEAR();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Description can not be empty.")
+    String ACTION_TYPE_EMPTY_DESCRIPTION();
+
+    @DefaultStringValue("Cannot ${action} ${type}. External steps can be added only to external jobs or steps.")
+    String ACTION_TYPE_NOT_EXTERNAL();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Step should be a child of the Job or other Step.")
+    String ACTION_TYPE_NO_PARENT();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Job not found.")
+    String ACTION_TYPE_NO_JOB();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Step not found.")
+    String ACTION_TYPE_NO_STEP();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Non monitored command.")
+    String ACTION_TYPE_NON_MONITORED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Gluster hook id is required.")
     String ACTION_TYPE_FAILED_GLUSTER_HOOK_ID_IS_REQUIRED();
 
