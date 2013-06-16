@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.vdsbroker.gluster;
 
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionInfo;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
@@ -12,7 +12,7 @@ public final class GlusterVolumeOptionsInfoReturnForXmlRpc extends StatusReturnF
     // We are ignoring missing fields after the status, because on failure it is
     // not sent.
     // [XmlRpcMissingMapping(MappingAction.Ignore), XmlRpcMember("volumeOptionsDefaults")]
-    public Set<GlusterVolumeOptionInfo> optionsHelpSet = new HashSet<GlusterVolumeOptionInfo>();
+    public Set<GlusterVolumeOptionInfo> optionsHelpSet = new TreeSet<GlusterVolumeOptionInfo>();
 
     @SuppressWarnings("unchecked")
     public GlusterVolumeOptionsInfoReturnForXmlRpc(Map<String, Object> innerMap) {

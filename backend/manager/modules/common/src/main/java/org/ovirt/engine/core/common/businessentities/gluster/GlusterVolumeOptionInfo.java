@@ -7,7 +7,7 @@ import java.io.Serializable;
  *
  * @see GlusterVolumeOptionEntity
  */
-public class GlusterVolumeOptionInfo implements Serializable {
+public class GlusterVolumeOptionInfo implements Serializable, Comparable<GlusterVolumeOptionInfo> {
     private static final long serialVersionUID = -5145858224564431004L;
 
     private String key;
@@ -68,5 +68,13 @@ public class GlusterVolumeOptionInfo implements Serializable {
                 && option.getDefaultValue().equals(defaultValue)
                 && option.getDescription()
                 .equals(description));
+    }
+
+    @Override
+    public int compareTo(GlusterVolumeOptionInfo option) {
+        if (this.getKey() != null && option.getKey() != null) {
+            return this.getKey().compareTo(option.getKey());
+        }
+        return 0;
     }
 }
