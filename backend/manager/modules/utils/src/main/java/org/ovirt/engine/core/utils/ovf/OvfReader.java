@@ -184,7 +184,7 @@ public abstract class OvfReader implements IOvfBuilder {
      * @param vmBase
      * @param deviceId
      */
-    public void readVmDevice(XmlNode node, VmBase vmBase, Guid deviceId, boolean isManaged) {
+    public VmDevice readVmDevice(XmlNode node, VmBase vmBase, Guid deviceId, boolean isManaged) {
         VmDevice vmDevice = new VmDevice();
         vmDevice.setId(new VmDeviceId(deviceId, vmBase.getId()));
         if (node.SelectSingleNode(OvfProperties.VMD_ADDRESS, _xmlNS) != null
@@ -252,6 +252,7 @@ public abstract class OvfReader implements IOvfBuilder {
         } else {
             vmBase.getUnmanagedDeviceList().add(vmDevice);
         }
+        return vmDevice;
     }
 
     /**

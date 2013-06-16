@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmOsType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -105,7 +106,8 @@ public class OvfVmReader extends OvfReader {
                 if (last_modified_date != null) {
                     image.setLastModifiedDate(last_modified_date);
                 }
-                readVmDevice(node, _vm.getStaticData(), image.getId(), Boolean.TRUE);
+                VmDevice readDevice = readVmDevice(node, _vm.getStaticData(), image.getId(), Boolean.TRUE);
+                image.setPlugged(readDevice.getIsPlugged());
             } else if (OvfHardware.Network.equals(resourceType)) {
                 VmNetworkInterface iface = getNetwotkInterface(node);
                 updateSingleNic(node, iface);
