@@ -52,6 +52,18 @@ public class NotificationProperties extends LocalConfig {
      */
     public static final String DAYS_TO_SEND_ON_STARTUP = "DAYS_TO_SEND_ON_STARTUP";
 
+    /**
+     * Comma separated list of recipients to be informed in case
+     * the notification service cannot connect to the DB. can be empty.
+     */
+    public static final String FAILED_QUERIES_NOTIFICATION_RECIPIENTS = "FAILED_QUERIES_NOTIFICATION_RECIPIENTS";
+
+    /**
+     * Send a notification email after first failure to fetch notifications,
+     * and then once every failedQueriesNotificationThreshold times.
+     */
+    public static final String FAILED_QUERIES_NOTIFICATION_THRESHOLD = "FAILED_QUERIES_NOTIFICATION_THRESHOLD";
+
     private static final Logger log = Logger.getLogger(NotificationProperties.class);
 
     // Default files for defaults and overridden values:

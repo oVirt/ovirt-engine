@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.notifier;
 
+import java.net.ConnectException;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,14 +10,16 @@ import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.sql.DataSource;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
+import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.EventAuditLogSubscriber;
@@ -46,12 +49,17 @@ public class NotificationService implements Runnable {
     private NotificationMethodFactoryMapper methodsMapper = null;
     private int daysToKeepHistory = 0;
     private int daysToSendOnStartup = 0;
+    private EventSender failedQueriesEventSender;
+    private List<EventAuditLogSubscriber> failedQueriesEventSubscribers = Collections.emptyList();
+    private int failedQueriesNotificationThreshold;
+    private int failedQueries = 0;
 
     public NotificationService(NotificationProperties prop) throws NotificationServiceException {
         this.prop = prop;
         initConnectivity();
         initConfigurationProperties();
         initEvents();
+        initFailedQueriesEventSubscribers();
     }
 
     /**
@@ -60,13 +68,22 @@ public class NotificationService implements Runnable {
      * Validated properties are: <li>DAYS_TO_KEEP_HISTORY - property could be omitted, if specified should be a positive
      * <li>INTERVAL_IN_SECONDS - property is mandatory, if specified should be a positive <li>DB Connectivity
      * Credentials - if failed to obtain connection to database, fails
+     * <li>FAILED_QUERIES_NOTIFICATION_THRESHOLD - send db connectivity notification once every x query attempts.
+     *
      * @throws NotificationServiceException
      *             configuration setting error
      */
     private void initConfigurationProperties() throws NotificationServiceException {
         daysToKeepHistory = getNonNegativeIntegerProperty(NotificationProperties.DAYS_TO_KEEP_HISTORY);
         daysToSendOnStartup = getNonNegativeIntegerProperty(NotificationProperties.DAYS_TO_SEND_ON_STARTUP);
+        failedQueriesNotificationThreshold =
+                getNonNegativeIntegerProperty(NotificationProperties.FAILED_QUERIES_NOTIFICATION_THRESHOLD);
+        if (failedQueriesNotificationThreshold == 0) {
+            failedQueriesNotificationThreshold = 1;
+        }
         initMethodMapper();
+        failedQueriesEventSender =
+                methodsMapper.getMethod(EventNotificationMethods.EMAIL);
     }
 
     private int getNonNegativeIntegerProperty(final String name) throws NotificationServiceException {
@@ -215,7 +232,7 @@ public class NotificationService implements Runnable {
         Connection connection = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
-        List<EventAuditLogSubscriber> eventSubscribers  = new ArrayList<EventAuditLogSubscriber>();
+        List<EventAuditLogSubscriber> eventSubscribers  = new ArrayList<>();
         try {
             connection = ds.getConnection();
             ps =
@@ -226,6 +243,12 @@ public class NotificationService implements Runnable {
             while (rs.next()) {
                 eventSubscribers.add(getEventAuditLogSubscriber(rs));
             }
+
+        } catch (SQLException e) {
+            if (isConnectionException(e)){
+                handleQueryFailure();
+            }
+            throw e;
         } finally {
             DbUtils.closeQuietly(rs, ps, connection);
         }
@@ -250,6 +273,26 @@ public class NotificationService implements Runnable {
                 updateAuditLogEventProcessed(eventSubscriber);
             }
         }
+    }
+
+    private boolean isConnectionException(SQLException e) {
+        return e.getCause() instanceof ConnectException;
+    }
+
+    private void handleQueryFailure() {
+        if (failedQueries == 0) {
+            try {
+                for( EventAuditLogSubscriber failedQueriesEventSubscriber:failedQueriesEventSubscribers){
+                    failedQueriesEventSubscriber.setlog_time(new Date());
+                    failedQueriesEventSender.
+                            send(failedQueriesEventSubscriber, failedQueriesEventSubscriber.getmethod_address());
+                }
+            } catch (Exception e) {
+                log.error("Failed to dispatch query failure email message", e);
+                // Don't rethrow. we don't want to mask the original query exception.
+            }
+        }
+        failedQueries = (failedQueries + 1) % failedQueriesNotificationThreshold;
     }
 
     private void updateAuditLogEventProcessed(EventAuditLogSubscriber eventSubscriber) throws SQLException {
@@ -353,6 +396,25 @@ public class NotificationService implements Runnable {
         eals.setseverity(rs.getInt("severity"));
         eals.setmessage(rs.getString("message"));
         return eals;
+    }
+
+    private void initFailedQueriesEventSubscribers() {
+        String emailRecipients = prop.getProperty(NotificationProperties.FAILED_QUERIES_NOTIFICATION_RECIPIENTS, true);
+        if (StringUtils.isEmpty(emailRecipients)) {
+            return;
+        }
+        List<EventAuditLogSubscriber> failedQueriesEventSubscribers = new LinkedList<>();
+        for (String email:emailRecipients.split(",")){
+            EventAuditLogSubscriber eals = new EventAuditLogSubscriber();
+            eals.setevent_type(0);
+            eals.setevent_up_name("DATABASE_UNREACHABLE");
+            eals.setmethod_id(EventNotificationMethods.EMAIL.getValue());
+            eals.setmethod_address(StringUtils.strip(email));
+            eals.setmessage("Failed to query for notifications. Database Connection refused.");
+            eals.setseverity(AuditLogSeverity.ERROR.getValue());
+            failedQueriesEventSubscribers.add(eals);
+        }
+        this.failedQueriesEventSubscribers = failedQueriesEventSubscribers;
     }
 
 }
