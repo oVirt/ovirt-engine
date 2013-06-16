@@ -134,7 +134,7 @@ public class VdsUpdateRunTimeInfoTest {
 
     private void initVds() {
         vds = new VDS();
-        vds.setId(Guid.createGuidFromString("00000000-0000-0000-0000-000000000012"));
+        vds.setId(new Guid("00000000-0000-0000-0000-000000000012"));
     }
 
     @Test

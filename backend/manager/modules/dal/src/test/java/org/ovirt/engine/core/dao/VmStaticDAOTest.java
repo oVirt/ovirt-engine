@@ -212,7 +212,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAllNamesPinnedToHostReturnsNothingForHostButNotPinned() throws Exception {
-        assertTrue(dao.getAllNamesPinnedToHost(Guid.createGuidFromString("afce7a39-8e8c-4819-ba9c-796d316592e7")).isEmpty());
+        assertTrue(dao.getAllNamesPinnedToHost(new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7")).isEmpty());
     }
 
     @Test

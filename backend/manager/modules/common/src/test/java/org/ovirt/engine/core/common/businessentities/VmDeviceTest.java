@@ -9,8 +9,8 @@ public class VmDeviceTest {
 
 
     public void testSelfAndIdentifyEquality() {
-        Guid vmId = Guid.createGuidFromString("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2463");
-        Guid deviceId = Guid.createGuidFromString("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2464");
+        Guid vmId = new Guid("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2463");
+        Guid deviceId = new Guid("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2464");
         VmDevice device1 = createVmDevice(deviceId, vmId);
         assertTrue(device1.compareTo(device1) == 0);
         VmDevice device2 = createVmDevice(deviceId, vmId);
@@ -21,9 +21,9 @@ public class VmDeviceTest {
     @Test
     public void testCompareToVmIdsAreEqual() {
         // b23ad6d7-0df8-4d69-b4e5-d5b5e90c2463
-        Guid vmId = Guid.createGuidFromString("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2463");
-        Guid deviceId1 = Guid.createGuidFromString("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2464");
-        Guid deviceId2 = Guid.createGuidFromString("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2465");
+        Guid vmId = new Guid("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2463");
+        Guid deviceId1 = new Guid("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2464");
+        Guid deviceId2 = new Guid("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2465");
         VmDevice device1 = createVmDevice(deviceId1, vmId);
         VmDevice device2 = createVmDevice(deviceId2, vmId);
         assertCompareTo(device1, device2);
@@ -32,10 +32,10 @@ public class VmDeviceTest {
 
     @Test
     public void testCompareToVmIdsAreNotEqual() {
-        Guid vmId1 = Guid.createGuidFromString("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2463");
-        Guid vmId2 = Guid.createGuidFromString("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2464");
-        Guid deviceId1 = Guid.createGuidFromString("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2465");
-        Guid deviceId2 = Guid.createGuidFromString("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2466");
+        Guid vmId1 = new Guid("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2463");
+        Guid vmId2 = new Guid("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2464");
+        Guid deviceId1 = new Guid("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2465");
+        Guid deviceId2 = new Guid("b23ad6d7-0df8-4d69-b4e5-d5b5e90c2466");
         VmDevice device1 = createVmDevice(deviceId1, vmId1);
         VmDevice device2 = createVmDevice(deviceId2, vmId2);
         assertCompareTo(device1, device2);

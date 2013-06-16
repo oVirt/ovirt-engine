@@ -43,7 +43,7 @@ public class BackendVmApplicationsResource extends AbstractBackendResource<Appli
     }
 
     private String buildId(int index) {
-        return Guid.createGuidFromString("0-0-0-0-"+index).toString();
+        return new Guid("0-0-0-0-"+index).toString();
     }
 
     @Override

@@ -27,9 +27,9 @@ public class MultiThreadedDAOTest extends BaseDAOTestCase {
     private TagDAO dao;
     private Log log = LogFactory.getLog(MultiThreadedDAOTest.class);
     private static final Guid[] EXISTING_TAGS_IDS = {
-            Guid.createGuidFromString("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c"),
-            Guid.createGuidFromString("d3ec3e01-ca89-48e1-8b43-a9b38f873b0d"),
-            Guid.createGuidFromString("d3ec3e01-ca89-48e1-8b43-a9b38f873b0e") };
+            new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c"),
+            new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0d"),
+            new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0e") };
 
     private CountDownLatch latch = null;
 

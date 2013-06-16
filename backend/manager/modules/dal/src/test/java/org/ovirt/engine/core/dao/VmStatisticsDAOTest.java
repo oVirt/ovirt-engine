@@ -102,7 +102,7 @@ public class VmStatisticsDAOTest extends BaseDAOTestCase {
     @Test
     public void testUpdateAll() throws Exception {
         VmStatistics existingVm = dao.get(EXISTING_VM_ID);
-        VmStatistics existingVm2 = dao.get(Guid.createGuidFromString("77296e00-0cad-4e5a-9299-008a7b6f4356"));
+        VmStatistics existingVm2 = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356"));
         existingVm.setcpu_sys(50.0);
         existingVm2.setcpu_user(50.0);
 

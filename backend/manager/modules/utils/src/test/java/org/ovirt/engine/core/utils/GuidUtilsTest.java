@@ -32,8 +32,8 @@ public class GuidUtilsTest {
         String listValues = "e61f7070-cd52-46ca-88c2-686e1c70fe44,1eaa381a-fbf9-4ef5-bec2-6e4337f85d66";
         List<Guid> stringList = GuidUtils.getGuidListFromString(listValues);
         List<Guid> expectedList = new ArrayList<Guid>();
-        expectedList.add(Guid.createGuidFromString("e61f7070-cd52-46ca-88c2-686e1c70fe44"));
-        expectedList.add(Guid.createGuidFromString("1eaa381a-fbf9-4ef5-bec2-6e4337f85d66"));
+        expectedList.add(new Guid("e61f7070-cd52-46ca-88c2-686e1c70fe44"));
+        expectedList.add(new Guid("1eaa381a-fbf9-4ef5-bec2-6e4337f85d66"));
         assertEquals(expectedList, stringList);
     }
 
@@ -42,7 +42,7 @@ public class GuidUtilsTest {
         String listValues = "e61f7070-cd52-46ca-88c2-686e1c70fe44";
         List<Guid> stringList = GuidUtils.getGuidListFromString(listValues);
         List<Guid> expectedList = new ArrayList<Guid>();
-        expectedList.add(Guid.createGuidFromString("e61f7070-cd52-46ca-88c2-686e1c70fe44"));
+        expectedList.add(new Guid("e61f7070-cd52-46ca-88c2-686e1c70fe44"));
         assertEquals(expectedList, stringList);
     }
 

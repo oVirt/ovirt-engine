@@ -232,12 +232,12 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         assertEquals(quotaVdsGroupList.size(), 2);
         for (QuotaVdsGroup quotaVdsGroup : quotaVdsGroupList) {
             if (quotaVdsGroup.getQuotaVdsGroupId()
-                    .equals(Guid.createGuidFromString("68c96e11-0aad-4e3a-9091-12897b7f2388"))) {
+                    .equals(new Guid("68c96e11-0aad-4e3a-9091-12897b7f2388"))) {
                 assertEquals(quotaVdsGroup.getVirtualCpu(), new Integer("10"));
                 assertEquals(quotaVdsGroup.getMemSizeMB(), unlimited);
             }
             else if (quotaVdsGroup.getQuotaVdsGroupId()
-                    .equals(Guid.createGuidFromString("68c96e11-0aad-4e3a-9091-12897b7f2389"))) {
+                    .equals(new Guid("68c96e11-0aad-4e3a-9091-12897b7f2389"))) {
                 assertEquals(quotaVdsGroup.getVirtualCpu(), new Integer("1000"));
                 assertEquals(quotaVdsGroup.getMemSizeMB(), unlimited);
             }

@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NGuid;
 
 public class VmDynamicDAOTest extends BaseDAOTestCase {
     private static final Guid VDS_STATIC_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
@@ -116,7 +115,7 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testUpdateAll() throws Exception {
-        VmDynamic existingVm2 = dao.get(Guid.createGuidFromString("77296e00-0cad-4e5a-9299-008a7b6f4356"));
+        VmDynamic existingVm2 = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356"));
         existingVm.setStatus(VMStatus.Down);
         existingVm2.setVmIp("111");
 
@@ -132,8 +131,8 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdateConsoleUserWithOptimisticLockingSuccess() throws Exception {
-        VmDynamic vmWithoutConsoleUser = dao.get(Guid.createGuidFromString("77296e00-0cad-4e5a-9299-008a7b6f4356"));
-        vmWithoutConsoleUser.setConsoleUserId(NGuid.createGuidFromString("9bf7c640-b620-456f-a550-0348f366544b"));
+        VmDynamic vmWithoutConsoleUser = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356"));
+        vmWithoutConsoleUser.setConsoleUserId(new Guid("9bf7c640-b620-456f-a550-0348f366544b"));
 
         boolean result = dao.updateConsoleUserWithOptimisticLocking(vmWithoutConsoleUser);
 
@@ -146,8 +145,8 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdateConsoleUserWithOptimisticLockingFailure() throws Exception {
-        VmDynamic vmWithoutConsoleUser = dao.get(Guid.createGuidFromString("77296e00-0cad-4e5a-9299-008a7b6f4355"));
-        vmWithoutConsoleUser.setConsoleUserId(NGuid.createGuidFromString("9bf7c640-b620-456f-a550-0348f366544b"));
+        VmDynamic vmWithoutConsoleUser = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355"));
+        vmWithoutConsoleUser.setConsoleUserId(new Guid("9bf7c640-b620-456f-a550-0348f366544b"));
 
         boolean result = dao.updateConsoleUserWithOptimisticLocking(vmWithoutConsoleUser);
 

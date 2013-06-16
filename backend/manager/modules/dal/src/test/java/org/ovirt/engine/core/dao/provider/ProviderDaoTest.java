@@ -37,7 +37,7 @@ public class ProviderDaoTest extends BaseGenericDaoTestCase<Guid, Provider<?>, P
 
     @Override
     protected Guid getExistingEntityId() {
-        return Guid.createGuidFromString("1115c1c6-cb15-4832-b2a4-023770607111");
+        return new Guid("1115c1c6-cb15-4832-b2a4-023770607111");
     }
 
     @Override

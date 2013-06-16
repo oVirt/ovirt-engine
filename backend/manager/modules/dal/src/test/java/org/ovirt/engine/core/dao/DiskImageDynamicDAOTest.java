@@ -141,7 +141,7 @@ public class DiskImageDynamicDAOTest extends BaseDAOTestCase{
 
     @Test
     public void testUpdateAll() throws Exception {
-        DiskImageDynamic existingDynamic2 = dao.get(Guid.createGuidFromString("42058975-3d5e-484a-80c1-01c31207f579"));
+        DiskImageDynamic existingDynamic2 = dao.get(new Guid("42058975-3d5e-484a-80c1-01c31207f579"));
         existingDynamic.setactual_size(100);
         existingDynamic2.setread_rate(120);
         existingDynamic.setReadLatency(100d);

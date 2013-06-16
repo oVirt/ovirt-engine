@@ -44,8 +44,8 @@ public class ReplaceGlusterVolumeBrickCommandTest {
     private Guid serverId = new Guid("d7f10a21-bbf2-4ffd-aab6-4da0b3b2ccec");
     private Guid volumeId1 = new Guid("8bc6f108-c0ef-43ab-ba20-ec41107220f5");
     private Guid volumeId2 = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
-    private Guid volumeId3 = Guid.createGuidFromString("000000000000-0000-0000-0000-00000003");
-    private Guid volumeId4 = Guid.createGuidFromString("000000000000-0000-0000-0000-00000004");
+    private Guid volumeId3 = new Guid("000000000000-0000-0000-0000-00000003");
+    private Guid volumeId4 = new Guid("000000000000-0000-0000-0000-00000004");
 
     /**
      * The command under test.

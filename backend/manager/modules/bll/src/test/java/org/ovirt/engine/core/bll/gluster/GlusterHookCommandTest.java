@@ -34,13 +34,13 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class GlusterHookCommandTest<T extends GlusterHookCommandBase<? extends GlusterHookParameters>> {
 
-    protected static final Guid[] GUIDS = {Guid.createGuidFromString("afce7a39-8e8c-4819-ba9c-796d316592e6"),
-                                             Guid.createGuidFromString("afce7a39-8e8c-4819-ba9c-796d316592e7"),
-                                             Guid.createGuidFromString("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3"),
-                                             Guid.createGuidFromString("2001751e-549b-4e7a-aff6-32d36856c125")};
+    protected static final Guid[] GUIDS = {new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6"),
+                                             new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7"),
+                                             new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3"),
+                                             new Guid("2001751e-549b-4e7a-aff6-32d36856c125")};
     protected static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
-    protected static final Guid HOOK_ID = Guid.createGuidFromString("d2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
-    protected static final Guid HOOK_ID2 = Guid.createGuidFromString("d222f73-fa22-4a42-93f0-d5e4c069a43e");
+    protected static final Guid HOOK_ID = new Guid("d2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
+    protected static final Guid HOOK_ID2 = new Guid("d222f73-fa22-4a42-93f0-d5e4c069a43e");
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
