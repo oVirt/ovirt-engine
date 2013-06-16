@@ -20,8 +20,9 @@ public class BackendHostHookResource extends AbstractBackendSubResource<Hook, Ob
     }
 
     public Hook getHook(Hooks hooks) {
+        String hookId = guid.toString();
         for (Hook hook : hooks.getHooks()) {
-            if (hook.getId().equals(guid)) {
+            if (hook.getId().equals(hookId)) {
                 return hook;
             }
         }
