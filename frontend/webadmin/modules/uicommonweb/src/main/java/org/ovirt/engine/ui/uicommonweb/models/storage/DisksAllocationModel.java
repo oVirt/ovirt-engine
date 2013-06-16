@@ -24,12 +24,12 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class DisksAllocationModel extends EntityModel
 {
@@ -53,12 +53,22 @@ public class DisksAllocationModel extends EntityModel
     {
         disks = value;
         sortDisks();
-    }
 
-    private void registerToEvents() {
-        for (DiskModel disk : disks) {
-            disk.getStorageDomain().getSelectedItemChangedEvent().removeListener(quota_storageEventListener);
-            disk.getStorageDomain().getSelectedItemChangedEvent().addListener(quota_storageEventListener);
+        for (final DiskModel diskModel : disks) {
+            diskModel.getStorageDomain().getSelectedItemChangedEvent().removeListener(quota_storageEventListener);
+            diskModel.getStorageDomain().getSelectedItemChangedEvent().addListener(quota_storageEventListener);
+            diskModel.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener() {
+                @Override
+                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    DiskImage disk = (DiskImage) diskModel.getDisk();
+                    if (diskModel.getStorageDomain().getItems() != null && disk.getStorageIds() != null
+                            && !disk.getStorageIds().isEmpty()) {
+                        diskModel.getStorageDomain()
+                                .setSelectedItem(Linq.firstOrDefault(diskModel.getStorageDomain().getItems(),
+                                        new Linq.StoragePredicate(disk.getStorageIds().iterator().next())));
+                    }
+                }
+            });
         }
     }
 
@@ -166,12 +176,10 @@ public class DisksAllocationModel extends EntityModel
     protected void onPropertyChanged(PropertyChangedEventArgs e)
     {
         super.onPropertyChanged(e);
-
         if (e.PropertyName.equals("Disks")) //$NON-NLS-1$
         {
             updateStorageDomainsAvailability();
             updateQuotaAvailability();
-            registerToEvents();
         }
     }
 
