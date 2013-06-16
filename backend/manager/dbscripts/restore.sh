@@ -27,12 +27,42 @@ usage() {
     printf "for more options please run pg_restore --help\n"
     printf "\nThe recommended way for restoring your database is.\n"
     printf "\t1) Backup current database with backup.sh\n"
-    printf "\t2) Run restore.sh and give new database instance name as the target\n"
-    printf "\t3) Edit JBOSS standalone.xml to run the new restored database instance\n"
-    printf "\t4) Verify that all tasks in the application are completed\n"
-    printf "\t5) Restart JBOSS\n"
+    printf "\t2) Drop existing DB with dropdb or use the -r flag.\n"
+    printf "\t3) Create a new blank db with the same name with createdb.\n"
+    printf "\t4) Run restore.sh and give new database instance name as the target\n"
     popd>/dev/null
     exit 0
+}
+
+restore_from_tar() {
+    # Copy tar file to working dir
+    name=$(basename $FILE)
+    dir="/tmp/${name}_dir"
+    mkdir "${dir}"
+    chmod 777 "${dir}"
+    # Restoring SELinux default settings
+    chcon -Rt postgresql_db_t ${dir}
+    if [ $? -ne 0 ]; then
+        echo "Failed to restore SELinux default settings for ${dir}."
+        exit 5
+    fi
+    cp "${FILE}" "${dir}/${name}"
+    pushd "${dir}"
+    # Extracting the tar file to working dir
+    tar xf "${name}" > /dev/null
+    if [ $? -ne 0 ]; then
+        echo "Failed to extract TAR content to working directory ${dir}."
+        exit 6
+    fi
+    chmod 777 *
+    # dropping all statements we don't need on a clean DB from teh restore.sql file
+    sed -i -e '/^DROP /d' -e '/^CREATE SCHEMA/d' -e '/^ALTER TABLE ONLY public\./d' -e '/^ALTER FUNCTION public\.uuid_/d' -e '/^CREATE PROCEDURAL LANGUAGE plpgsql/d' -e '/^ALTER PROCEDURAL LANGUAGE plpgsql/d' -e 's/^CREATE FUNCTION uuid_/CREATE OR REPLACE FUNCTION uuid_/g' -e 's?/tmp?'`pwd`'?'  -e 's?\$\$PATH\$\$?'`pwd`'?' restore.sql
+
+    psql -w -h ${SERVERNAME} -p ${PORT} -U ${USERNAME} -f restore.sql ${DATABASE}
+    res=$?
+    popd
+    rm -rf "${dir}"
+    return $res
 }
 
 
@@ -63,7 +93,7 @@ if [ "${res}" =  "${DATABASE}" ]; then
         echo "Database ${DATABASE} exists, please use -r to force removing it."
         exit 1
     else
-        dropdb  -h ${SERVERNAME} -p ${PORT} -U ${USERNAME} ${DATABASE}
+        dropdb  -h ${SERVERNAME} -p ${PORT} -U postgres ${DATABASE}
         if [ $? -ne 0 ]; then
             echo "Failed to drop database ${DATABASE}."
             exit 2
@@ -72,7 +102,12 @@ if [ "${res}" =  "${DATABASE}" ]; then
 fi
 
 echo "Restore of database $DATABASE from $FILE started..."
-psql -w -h ${SERVERNAME} -p ${PORT} -U ${USERNAME} -f ${FILE}
+if file "${FILE}" | grep 'tar'; then
+    createdb -h ${SERVERNAME} -p ${PORT} -U postgres ${DATABASE}
+    restore_from_tar
+else
+    psql -w -h ${SERVERNAME} -p ${PORT} -U ${USERNAME} -f ${FILE}
+fi
 
 if [ $? -eq 0 ];then
     echo "Restore of database $DATABASE from $FILE completed."
@@ -83,11 +118,11 @@ if [ $? -eq 0 ];then
     popd>/dev/null
 else
     usage
-    exit 1
+    exit 3
 fi
 
 fn_db_set_dbobjects_ownership
 if [ $? -ne 0 ]; then
     echo "An error occurred whilst changing the ownership of objects in the database."
-    exit 2
+    exit 4
 fi
