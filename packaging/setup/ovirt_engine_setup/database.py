@@ -69,11 +69,13 @@ class Statement(base.Base):
                 return connection.autocommit
             else:
                 return connection.isolation_level
+
         def __restore_autocommit(connection, v):
             if hasattr(connection, 'autocommit'):
                 connection.autocommit = v
             else:
                 connection.set_isolation_level(v)
+
         def __set_autocommit(connection, autocommit):
             if hasattr(connection, 'autocommit'):
                 connection.autocommit = autocommit
