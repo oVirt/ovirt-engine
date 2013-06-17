@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -17,6 +18,7 @@ public class ProviderNetworkListModel extends SearchableListModel {
         setTitle(ConstantsManager.getInstance().getConstants().providerNetworksTitle());
         setHashName("networks"); //$NON-NLS-1$
         setDiscoverCommand(new UICommand(CMD_DISCOVER, this));
+        setComparator(new NameableComparator());
     }
 
     public UICommand getDiscoverCommand() {
