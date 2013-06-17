@@ -2,8 +2,8 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui">
 
-<ui:with field='constants' type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
-<ui:with field='dynamicConstants' type='org.ovirt.engine.ui.userportal.ApplicationDynamicConstants' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.userportal.ApplicationConstants' />
+    <ui:with field='dynamicMessages' type='org.ovirt.engine.ui.userportal.ApplicationDynamicMessages' />
 
     <ui:style>
         @external obrand_wrapper;
@@ -67,7 +67,7 @@
         <g:HTML addStyleNames="{style.obrand_mainTabsBackground}" />
         <g:SimplePanel addStyleNames="{style.obrand_barOuter}">
             <g:VerticalPanel addStyleNames="{style.barInner}">
-                <g:InlineLabel addStyleNames="{style.menuTitle}" text="{dynamicConstants.mainHeaderLabel}" />
+                <g:InlineLabel addStyleNames="{style.menuTitle}" text="{dynamicMessages.mainHeaderLabel}" />
                 <g:FlowPanel>
                     <g:HTMLPanel addStyleNames="{style.menu}">
                         <g:InlineLabel text="{constants.loggedInUser}:" />

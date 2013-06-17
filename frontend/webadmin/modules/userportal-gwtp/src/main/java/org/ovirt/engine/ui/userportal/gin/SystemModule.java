@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.common.gin.BaseSystemModule;
 import org.ovirt.engine.ui.common.section.DefaultLoginSectionPlace;
 import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
-import org.ovirt.engine.ui.userportal.ApplicationDynamicConstants;
+import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
@@ -45,7 +45,7 @@ public class SystemModule extends BaseSystemModule {
                 .to(ApplicationPlaces.DEFAULT_MAIN_SECTION_EXTENDED_PLACE);
 
         bindResourceConfiguration(ApplicationConstants.class, ApplicationMessages.class,
-                ApplicationResources.class, ApplicationTemplates.class, ApplicationDynamicConstants.class);
+                ApplicationResources.class, ApplicationTemplates.class, ApplicationDynamicMessages.class);
         bind(ApplicationResourcesWithLookup.class).in(Singleton.class);
     }
 

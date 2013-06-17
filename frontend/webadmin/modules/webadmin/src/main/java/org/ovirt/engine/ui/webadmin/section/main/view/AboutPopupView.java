@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationDynamicConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AboutPopupPresenterWidget;
 
@@ -36,25 +36,27 @@ public class AboutPopupView extends AbstractPopupView<SimpleDialogPanel> impleme
     @UiField
     Label copyrightNotice;
 
+    private final ApplicationDynamicMessages dynamicMessages;
+
     @Inject
     public AboutPopupView(EventBus eventBus, ApplicationResources resources,
             ApplicationConstants constants,
-            ApplicationDynamicConstants dynamicConstants) {
+            ApplicationDynamicMessages dynamicMessages) {
         super(eventBus, resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(constants, dynamicConstants);
+        this.dynamicMessages = dynamicMessages;
+        localize(constants, dynamicMessages);
     }
 
     void localize(ApplicationConstants constants,
-            ApplicationDynamicConstants dynamicConstants) {
-        titleLabel.setText(constants.aboutPopupCaption());
+            ApplicationDynamicMessages dynamicMessages) {
         closeButton.setText(constants.closeButtonLabel());
-        copyrightNotice.setText(dynamicConstants.copyRightNotice());
+        copyrightNotice.setText(dynamicMessages.copyRightNotice());
     }
 
     @Override
     public void setVersion(String text) {
-        versionLabel.setText(text);
+        versionLabel.setText(dynamicMessages.ovirtVersionAbout(text));
     }
 
     @Override

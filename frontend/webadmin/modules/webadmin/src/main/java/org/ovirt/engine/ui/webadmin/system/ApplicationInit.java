@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.webadmin.ApplicationDynamicConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.plugin.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
 
@@ -40,12 +40,12 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
             CurrentUser user, EventBus eventBus,
             Provider<LoginModel> loginModelProvider,
             LockInteractionManager lockInteractionManager,
-            ApplicationDynamicConstants constants,
+            ApplicationDynamicMessages dynamicMessages,
             RestApiSessionManager restApiSessionManager) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
                 user, eventBus, loginModelProvider, lockInteractionManager);
         this.restApiSessionManager = restApiSessionManager;
-        Window.setTitle(constants.applicationTitle());
+        Window.setTitle(dynamicMessages.applicationTitle());
 
         // Check for ApplicationMode configuration
         UiModeData uiModeData = UiModeData.instance();
