@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interceptors.ThreadLocalSessionCleanerInterceptor;
+import org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -78,13 +79,13 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 // The developer of the singleton is responsible for ensuring that the state
 // of the singleton is synchronized across all clients.
 @DependsOn("Scheduler")
-@Local({ BackendLocal.class, BackendInternal.class })
+@Local({ BackendLocal.class, BackendInternal.class, BackendCommandObjectsHandler.class })
 @Interceptors({ ThreadLocalSessionCleanerInterceptor.class })
 @Singleton
 @Startup
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
-public class Backend implements BackendInternal {
+public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
     private ITagsHandler mTagsHandler;
     private ErrorTranslator errorsTranslator;
@@ -330,26 +331,42 @@ public class Backend implements BackendInternal {
             VdcActionParametersBase parameters,
             boolean runAsInternal,
             CommandContext context) {
-        VdcReturnValueBase returnValue = null;
+        CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
+        return runAction(command, runAsInternal, context);
+    }
 
-        // Evaluate and set the correlationId on the parameters, fails on invalid correlation id
-        returnValue = ExecutionHandler.evaluateCorrelationId(parameters);
+    protected VdcReturnValueBase runAction(CommandBase<?> command,
+            boolean runAsInternal,
+            CommandContext context) {
+        VdcReturnValueBase returnValue = evaluateCorrelationId(command);
         if (returnValue != null) {
-            log.warnFormat("CanDoAction of action {0} failed. Reasons: {1}", actionType,
-                    StringUtils.join(returnValue.getCanDoActionMessages(), ','));
             return returnValue;
         }
-
-        CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
         command.setInternalExecution(runAsInternal);
         command.setContext(context);
-        ExecutionHandler.prepareCommandForMonitoring(command, actionType, runAsInternal);
+        ExecutionHandler.prepareCommandForMonitoring(command, command.getActionType(), runAsInternal);
 
         returnValue = command.executeAction();
-        returnValue.setCorrelationId(parameters.getCorrelationId());
+        returnValue.setCorrelationId(command.getParameters().getCorrelationId());
         returnValue.setJobId(command.getJobId());
         return returnValue;
     }
+
+    protected VdcReturnValueBase evaluateCorrelationId(CommandBase<?> commandBase) {
+        VdcReturnValueBase returnValue = null;
+
+        // Evaluate and set the correlationId on the parameters, fails on invalid correlation id
+        returnValue = ExecutionHandler.evaluateCorrelationId(commandBase.getParameters());
+        if (returnValue != null) {
+            log.warnFormat("CanDoAction of action {0} failed. Reasons: {1}", commandBase.getActionType(),
+                    StringUtils.join(returnValue.getCanDoActionMessages(), ','));
+
+        }
+        // Set the correlation-id on the command
+        commandBase.setCorrelationId(commandBase.getParameters().getCorrelationId());
+        return returnValue;
+    }
+
 
     @Override
     public VdcReturnValueBase EndAction(VdcActionType actionType, VdcActionParametersBase parameters) {
@@ -588,6 +605,16 @@ public class Backend implements BackendInternal {
         OsRepositoryImpl.INSTANCE.init(OsInfoPreferencesLoader.INSTANCE.getPreferences());
         OsRepository osRepository = OsRepositoryImpl.INSTANCE;
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+    }
+
+   @Override
+    public CommandBase<?> createAction(VdcActionType actionType, VdcActionParametersBase parameters) {
+        return CommandsFactory.CreateCommand(actionType, parameters);
+    }
+
+    @Override
+    public VdcReturnValueBase runAction(CommandBase<?> action, ExecutionContext executionContext) {
+        return runAction(action, true, ExecutionHandler.createDefaultContexForTasks(executionContext));
     }
 
     private static final Log log = LogFactory.getLog(Backend.class);

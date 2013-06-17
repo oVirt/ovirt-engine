@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.TransactionRolledbackLocalException;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.transaction.Status;
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -21,6 +23,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.context.DefaultCompensationContext;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
+import org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -105,6 +108,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     /* Multiplier used to convert GB to bytes or vice versa. */
     protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;
     private static final Guid[] EMPTY_GUID_ARRAY = new Guid[0];
+    private static final String BACKEND_COMMAND_OBJECTS_HANDLER_JNDI_NAME =
+            "java:global/engine/bll/Backend!org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler";
     private T _parameters;
     private VdcReturnValueBase _returnValue;
     private CommandActionState _actionState = CommandActionState.EXECUTE;
@@ -176,6 +181,24 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected CommandBase(Guid commandId) {
         this.commandId = commandId;
+    }
+
+    /**
+     * This method should be used only at {@link CommandBase} code for creating
+     * and execution {@link CommandBase} objects directly.
+     * This is the reason for the method being private and the JNDI name not introduced to
+     * the {@link BeanType} enum.
+     * @return proxy object to create the {@link CommandBase} objects and run them
+     */
+    private BackendCommandObjectsHandler getBackendCommandObjectsHandler() {
+        try {
+            InitialContext ctx = new InitialContext();
+            return (BackendCommandObjectsHandler) ctx.lookup(BACKEND_COMMAND_OBJECTS_HANDLER_JNDI_NAME);
+        } catch (NamingException e) {
+            log.error("Getting backend command objects handler failed" + e.getMessage());
+            log.debug("", e);
+            return null;
+        }
     }
 
     protected List<SPMAsyncTaskHandler> initTaskHandlers() {
