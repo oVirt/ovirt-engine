@@ -300,7 +300,7 @@ public class VdsDeploy implements SSHDialog.Sink {
             ) {
                 _messages.post(
                     InstallerMessages.Severity.INFO,
-                    "Host is ovirt-node"
+                    "Host is hypervisor"
                 );
                 _setNode();
             }
