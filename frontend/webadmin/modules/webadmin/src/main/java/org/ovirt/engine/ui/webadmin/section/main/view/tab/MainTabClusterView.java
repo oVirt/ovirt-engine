@@ -50,13 +50,15 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         };
         getTable().addColumn(nameColumn, constants.nameCluster(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VDSGroup> dataCenterColumn = new TextColumnWithTooltip<VDSGroup>() {
-            @Override
-            public String getValue(VDSGroup object) {
-                return object.getStoragePoolName();
-            }
-        };
-        getTable().addColumn(dataCenterColumn, constants.dcCluster(), "150px"); //$NON-NLS-1$
+        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
+            TextColumnWithTooltip<VDSGroup> dataCenterColumn = new TextColumnWithTooltip<VDSGroup>() {
+                @Override
+                public String getValue(VDSGroup object) {
+                    return object.getStoragePoolName();
+                }
+            };
+            getTable().addColumn(dataCenterColumn, constants.dcCluster(), "150px"); //$NON-NLS-1$
+        }
 
         TextColumnWithTooltip<VDSGroup> versionColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
