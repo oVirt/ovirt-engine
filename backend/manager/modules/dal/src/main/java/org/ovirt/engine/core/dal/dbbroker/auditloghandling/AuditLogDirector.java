@@ -350,6 +350,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_UPDATE_STORAGE_POOL_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_REMOVE_STORAGE_POOL, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_REMOVE_STORAGE_POOL_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.USER_FORCE_REMOVE_STORAGE_POOL, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_FORCE_REMOVE_STORAGE_POOL_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_ADD_STORAGE_DOMAIN, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_ADD_STORAGE_DOMAIN_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_UPDATE_STORAGE_DOMAIN, AuditLogSeverity.NORMAL);

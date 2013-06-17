@@ -365,6 +365,9 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
+        if (getParameters().getForceDelete()){
+            return getSucceeded() ? AuditLogType.USER_FORCE_REMOVE_STORAGE_POOL : AuditLogType.USER_FORCE_REMOVE_STORAGE_POOL_FAILED;
+        }
         return getSucceeded() ? AuditLogType.USER_REMOVE_STORAGE_POOL : AuditLogType.USER_REMOVE_STORAGE_POOL_FAILED;
     }
 
