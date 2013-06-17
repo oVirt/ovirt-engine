@@ -112,7 +112,7 @@ public class Guid implements Serializable, Comparable<Guid> {
      *            ActiveDirectory) it should be kept.
      * @return String representation of GUID
      */
-    public String getStrRepresentationOfGuid(byte[] inguid,
+    private static String getStrRepresentationOfGuid(byte[] inguid,
             boolean keepByteOrder) {
 
         StringBuilder strGUID = new StringBuilder();
