@@ -1,4 +1,6 @@
 package org.ovirt.engine.core.compat;
+
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
@@ -15,6 +17,23 @@ public class GuidTest {
         assertTrue(guid1.compareTo(guid2) < 0);
         assertTrue(guid1.compareTo(guid1) == 0);
         assertTrue(guid2.compareTo(guid1) > 0);
+    }
+
+    @Test
+    public void testStringCreation() {
+        Guid guid = Guid.newGuid();
+        Guid guidFromString = new Guid(guid.toString());
+        assertEquals(guidFromString, guid);
+
+        guidFromString = Guid.createGuidFromString(guid.toString());
+        assertEquals(guidFromString, guid);
+        guidFromString = Guid.createGuidFromString(null);
+        assertEquals(guidFromString, null);
+
+        guidFromString = Guid.createGuidFromStringDefaultEmpty(guid.toString());
+        assertEquals(guidFromString, guid);
+        guidFromString = Guid.createGuidFromStringDefaultEmpty(null);
+        assertEquals(guidFromString, Guid.Empty);
     }
 
 }

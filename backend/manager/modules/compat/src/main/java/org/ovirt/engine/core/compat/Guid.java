@@ -55,15 +55,16 @@ public class Guid implements Serializable, Comparable<Guid> {
     }
 
     public static Guid createGuidFromString(String candidate) {
-        if (candidate == null) {
-            return null;
-        }
-        return new Guid(candidate);
+        return createGuidFromStringWithDefault(candidate, null);
     }
 
     public static Guid createGuidFromStringDefaultEmpty(String candidate) {
+        return createGuidFromStringWithDefault(candidate, Guid.Empty);
+    }
+
+    private static Guid createGuidFromStringWithDefault(String candidate, Guid defaultValue) {
         if (candidate == null) {
-            return Guid.Empty;
+            return defaultValue;
         }
         return new Guid(candidate);
     }
