@@ -85,12 +85,26 @@ done
 
 [ -n "${NAME}" ] || die "Please specify name"
 
+# cannot use TMPDIR as we want the
+# same file at any environment
+# path must be local as remote filesystems
+# do not [always] support flock.
+LOCKFILE="/tmp/ovirt-engine-pki.lock"
+
+# create lock file if not already exists
+# make sure it is world readable so we can
+# lock file by any user.
+if ! [ -f "${LOCKFILE}" ]; then
+	touch "${LOCKFILE}" || die "Cannot create lockfile '${LOCKFILE}'"
+	chmod a+r "${LOCKFILE}"
+fi
+
 # Wait for lock on fd 9
 (
 	flock -e -w "${TIMEOUT}" 9 || die "Timeout waiting for lock. Giving up"
 	cd "${PKIDIR}"
 	sign "${NAME}" "${SUBJECT}" "${DAYS}"
-) 9< "${PKIDIR}/ca.pem"
+) 9< "${LOCKFILE}"
 result=$?
 
 exit $result
