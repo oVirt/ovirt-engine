@@ -622,6 +622,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("30")
     UserSessionTimeOutInterval(269),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("30")
+    UserSessionTimeOutInvalidationInterval(270),
+
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("/data/images/rhev")

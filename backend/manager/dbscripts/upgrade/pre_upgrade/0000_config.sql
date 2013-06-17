@@ -480,6 +480,7 @@ select fn_db_add_config_value('UserDefinedVMProperties','','3.2');
 select fn_db_add_config_value('UserDefinedVMProperties','','3.3');
 select fn_db_add_config_value('UserRefreshRate','3600','general');
 select fn_db_add_config_value('UserSessionTimeOutInterval','30','general');
+select fn_db_add_config_value('UserSessionTimeOutInvalidationInterval','30','general');
 --Handling Use Secure Connection with Hosts
 select fn_db_add_config_value('UseSecureConnectionWithServers','true','general');
 select fn_db_add_config_value('UtilizationThresholdInPercent','80','general');

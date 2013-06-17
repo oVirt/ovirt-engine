@@ -205,12 +205,13 @@ public class Backend implements BackendInternal {
         initExecutionMessageDirector();
 
         Integer sessionTimoutInterval = Config.<Integer> GetValue(ConfigValues.UserSessionTimeOutInterval);
+        Integer sessionTimeOutInvalidationInterval = Config.<Integer> GetValue(ConfigValues.UserSessionTimeOutInvalidationInterval);
         // negative value means session should never expire, therefore no need to clean sessions.
         if (sessionTimoutInterval > 0) {
             SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(SessionDataContainer.getInstance(),
                     "cleanExpiredUsersSessions", new Class[] {}, new Object[] {},
                     sessionTimoutInterval,
-                    sessionTimoutInterval, TimeUnit.MINUTES);
+                    sessionTimeOutInvalidationInterval, TimeUnit.MINUTES);
         }
 
         initOsRepository();
