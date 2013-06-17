@@ -137,7 +137,8 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
                 .addValue("quota_id", event.getQuotaId())
                 .addValue("quota_name", event.getQuotaName())
                 .addValue("gluster_volume_id", event.getGlusterVolumeId())
-                .addValue("gluster_volume_name", event.getGlusterVolumeName());
+                .addValue("gluster_volume_name", event.getGlusterVolumeName())
+                .addValue("call_stack", event.getCallStack());
     }
 
     private MapSqlParameterSource getExternalEventSqlMapper(AuditLog event) {
@@ -243,6 +244,7 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
             entity.setEventFloodInSec(rs.getInt("event_flood_in_sec"));
             entity.setCustomData(rs.getString("custom_data"));
             entity.setDeleted(rs.getBoolean("deleted"));
+            entity.setCallStack(rs.getString("call_stack"));
             return entity;
         }
     }

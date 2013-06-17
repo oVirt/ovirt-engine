@@ -46,6 +46,7 @@ public class AuditLog extends IVdcQueryable implements Serializable {
     private String storagePoolType;
     private String compatibilityVersion;
     private String quotaEnforcementType;
+    private String callStack;
 
     public AuditLog() {
     }
@@ -429,6 +430,7 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         result = prime * result + ((customData == null) ? 0 : customData.hashCode());
         result = prime * result + (external ? 1231 : 1237);
         result = prime * result + (deleted ? 1231 : 1237);
+        result = prime * result + ((callStack == null) ? 0 : callStack.hashCode());
         return result;
     }
 
@@ -464,6 +466,15 @@ public class AuditLog extends IVdcQueryable implements Serializable {
                 && eventFloodInSec == other.eventFloodInSec
                 && ObjectUtils.objectsEqual(customData, other.customData)
                 && external == other.external
-                && deleted == other.deleted);
+                && deleted == other.deleted
+                && ObjectUtils.objectsEqual(callStack, other.callStack));
+    }
+
+    public String getCallStack() {
+        return callStack;
+    }
+
+    public void setCallStack(String callStack) {
+        this.callStack = callStack;
     }
 }

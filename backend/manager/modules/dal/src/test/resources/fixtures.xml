@@ -3773,6 +3773,7 @@
         <column>event_flood_in_sec</column>
         <column>custom_data</column>
         <column>deleted</column>
+        <column>call_stack</column>
         <row>
             <value>44291</value>
             <value>9bf7c640-b620-456f-a550-0348f366544a</value>
@@ -3806,6 +3807,7 @@
             <value>30</value>
             <value></value>
             <value>false</value>
+            <value></value>
         </row>
         <row>
             <value>44292</value>

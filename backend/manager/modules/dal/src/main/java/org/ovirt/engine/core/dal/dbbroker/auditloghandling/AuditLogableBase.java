@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -82,6 +83,7 @@ public class AuditLogableBase extends TimeoutBase {
     private String quotaEnforcementType;
     private Guid quotaIdForLog;
     private String quotaNameForLog;
+    private String callStack;
 
     public AuditLogableBase() {
     }
@@ -116,6 +118,7 @@ public class AuditLogableBase extends TimeoutBase {
         this.mVmTemplateName = auditLog.getvm_template_name();
         this.origin = auditLog.getOrigin();
         this.external = auditLog.isExternal();
+        this.callStack = auditLog.getCallStack();
     }
     public NGuid getUserId() {
         if (mUserId != null && mUserId.equals(Guid.Empty) && getCurrentUser() != null) {
@@ -707,5 +710,31 @@ public class AuditLogableBase extends TimeoutBase {
 
     public void setQuotaNameForLog(String quotaNameForLog) {
         this.quotaNameForLog = quotaNameForLog;
+    }
+
+    public String getCallStack() {
+        return callStack;
+    }
+
+    /**
+     * Sets the call stack string
+     * If you have a Throwable object in hand you can use the updateCallStackFromThrowable method
+     *
+     * @param callStack
+     *            the call stack
+     */
+    public void setCallStack(String callStack) {
+        this.callStack = callStack;
+    }
+
+    /**
+     * Sets the call stack string from a Throwable object
+     * Also, the updateCallStackFromThrowable can be used in case you have a Throwable object with the call stack details.
+     *
+     * @param throwable
+     *            the Throwable object containing the call stack
+     */
+    public void updateCallStackFromThrowable(Throwable throwable) {
+        setCallStack(ExceptionUtils.getStackTrace(throwable));
     }
 }

@@ -897,6 +897,7 @@ public final class AuditLogDirector {
             auditLog.setExternal(auditLogable.isExternal());
             auditLog.setQuotaId(auditLogable.getQuotaIdForLog());
             auditLog.setQuotaName(auditLogable.getQuotaNameForLog());
+            auditLog.setCallStack(auditLogable.getCallStack());
             getDbFacadeInstance().getAuditLogDao().save(auditLog);
             if (!"".equals(loggerString)) {
                 log.infoFormat(loggerString, resolvedMessage);
