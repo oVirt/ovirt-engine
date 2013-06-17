@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import java.util.Map;
-
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StorageDomainListReturnForXmlRpc;
+
+import java.util.Map;
 
 
 public interface IIrsServer {
@@ -14,6 +14,8 @@ public interface IIrsServer {
     OneUuidReturnForXmlRpc copyImage(String sdUUID, String spUUID, String vmGUID, String srcImgGUID, String srcVolUUID,
             String dstImgGUID, String dstVolUUID, String descr, String dstSdUUID, int volType, int volFormat,
             int preallocate, String postZero, String force);
+
+    OneUuidReturnForXmlRpc downloadImage(Map methodInfo, String spUUID, String sdUUID, String dstImgGUID, String dstVolUUID);
 
     OneUuidReturnForXmlRpc mergeSnapshots(String sdUUID, String spUUID, String vmGUID, String imgGUID,
             String ancestorUUID, String successorUUID, String postZero);

@@ -16,6 +16,8 @@ public interface IrsServerConnector {
             String srcVolUUID, String dstImgGUID, String dstVolUUID, String descr, String dstSdUUID, int volType,
             int volFormat, int preallocate, String postZero, String force);
 
+    public Map<String, Object> downloadImage(Map methodInfo, String spUUID, String sdUUID, String dstImgGUID, String dstVolUUID);
+
     public Map<String, Object> mergeSnapshots(String sdUUID, String spUUID, String vmGUID, String imgGUID,
             String ancestorUUID, String successorUUID);
 
