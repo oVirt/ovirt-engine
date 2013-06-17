@@ -38,7 +38,7 @@ public class ClusterGeneralModel extends EntityModel {
     private Integer noOfVolumesDown;
 
     // set to true, if some hosts in the cluster has the console address overridden and some not
-    private Boolean consoleAddressPartiallyOverridden;
+    private Boolean consoleAddressPartiallyOverridden = Boolean.FALSE;
 
     public String getNoOfVolumesTotal() {
         return Integer.toString(noOfVolumesTotal);
@@ -131,7 +131,7 @@ public class ClusterGeneralModel extends EntityModel {
     private ClusterType clusterType;
 
     public void setConsoleAddressPartiallyOverridden(Boolean consoleAddressPartiallyOverridden) {
-        if ((this.consoleAddressPartiallyOverridden == null ? false : this.consoleAddressPartiallyOverridden.booleanValue()) !=
+        if (isConsoleAddressPartiallyOverridden().booleanValue() !=
             (consoleAddressPartiallyOverridden == null ? false : consoleAddressPartiallyOverridden.booleanValue())) {
             this.consoleAddressPartiallyOverridden = consoleAddressPartiallyOverridden;
             onPropertyChanged(new PropertyChangedEventArgs("consoleAddressPartiallyOverridden")); //$NON-NLS-1$
@@ -139,7 +139,7 @@ public class ClusterGeneralModel extends EntityModel {
     }
 
     public Boolean isConsoleAddressPartiallyOverridden() {
-        return consoleAddressPartiallyOverridden;
+        return consoleAddressPartiallyOverridden == null ? Boolean.FALSE : consoleAddressPartiallyOverridden;
     }
 
     @Override
