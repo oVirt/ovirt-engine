@@ -651,20 +651,9 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
             if (getSelectedItems() != null)
             {
-                if (getSelectedItems() instanceof ArrayList)
+                for (Object item : getSelectedItems())
                 {
-                    for (Object item : getSelectedItems())
-                    {
-                        lastSelectedItems.add((IVdcQueryable) item);
-                    }
-                }
-                else
-                {
-                    Iterator iterator = getSelectedItems().iterator();
-                    while (iterator.hasNext())
-                    {
-                        lastSelectedItems.add((IVdcQueryable) iterator.next());
-                    }
+                    lastSelectedItems.add((IVdcQueryable) item);
                 }
             }
 
@@ -686,20 +675,9 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                 IVdcQueryable newSelectedItem = null;
                 ArrayList<IVdcQueryable> newItems = new ArrayList<IVdcQueryable>();
 
-                if (value instanceof ArrayList)
+                for (Object item : value)
                 {
-                    for (Object item : value)
-                    {
-                        newItems.add((IVdcQueryable) item);
-                    }
-                }
-                else
-                {
-                    Iterator iterator = value.iterator();
-                    while (iterator.hasNext())
-                    {
-                        newItems.add((IVdcQueryable) iterator.next());
-                    }
+                    newItems.add((IVdcQueryable) item);
                 }
 
                 if (newItems != null)
