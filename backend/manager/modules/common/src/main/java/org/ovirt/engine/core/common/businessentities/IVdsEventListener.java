@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
 public interface IVdsEventListener {
-    void vdsNotResponding(VDS vds); // BLL
+    void vdsNotResponding(VDS vds, boolean executeSshSoftFencing); // BLL
 
     void vdsNonOperational(Guid vdsId, NonOperationalReason type, boolean logCommand, boolean saveToDb,
             Guid domainId); // BLL

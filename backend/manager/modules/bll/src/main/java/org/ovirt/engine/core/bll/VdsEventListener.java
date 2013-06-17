@@ -31,11 +31,11 @@ import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
@@ -115,7 +115,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void vdsNotResponding(final VDS vds) {
+    public void vdsNotResponding(final VDS vds, final boolean executeSshSoftFencing) {
         ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
         ThreadPoolUtil.execute(new Runnable() {
             @Override
@@ -123,9 +123,24 @@ public class VdsEventListener implements IVdsEventListener {
                 log.infoFormat("ResourceManager::vdsNotResponding entered for Host {0}, {1}",
                         vds.getId(),
                         vds.getHostName());
-                Backend.getInstance().runInternalAction(VdcActionType.VdsNotRespondingTreatment,
-                        new FenceVdsActionParameters(vds.getId(), FenceActionType.Restart),
-                        ExecutionHandler.createInternalJobContext());
+
+                boolean shouldExecRealFencing = true;
+
+                if (executeSshSoftFencing) {
+                    VdcReturnValueBase retVal =
+                            Backend.getInstance().runInternalAction(VdcActionType.SshSoftFencing,
+                                    new VdsActionParameters(vds.getId()),
+                                    ExecutionHandler.createInternalJobContext());
+                    // if SSH Soft Fencing command execution was successful, do not execute
+                    // standard fencing immediately, but wait to see if it helped
+                    shouldExecRealFencing = !retVal.getSucceeded();
+                }
+
+                if (shouldExecRealFencing) {
+                    Backend.getInstance().runInternalAction(VdcActionType.VdsNotRespondingTreatment,
+                            new FenceVdsActionParameters(vds.getId(), FenceActionType.Restart),
+                            ExecutionHandler.createInternalJobContext());
+                }
             }
         });
     }

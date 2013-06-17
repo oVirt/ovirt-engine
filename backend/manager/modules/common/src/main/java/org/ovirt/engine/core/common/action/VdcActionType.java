@@ -70,6 +70,8 @@ public enum VdcActionType {
     HandleVdsVersion(124, QuotaDependency.NONE),
     ChangeVDSCluster(125, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
     RefreshHostCapabilities(126, ActionGroup.MANIPUTLATE_HOST, false, QuotaDependency.NONE),
+    SshSoftFencing(127, QuotaDependency.NONE),
+
     // Network
     UpdateNetworkToVdsInterface(149, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
     AttachNetworkToVdsInterface(150, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),

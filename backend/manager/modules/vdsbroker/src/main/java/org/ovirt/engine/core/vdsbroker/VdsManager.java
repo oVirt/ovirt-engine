@@ -94,6 +94,7 @@ public class VdsManager {
 
     private final AtomicInteger mFailedToRunVmAttempts;
     private final AtomicInteger mUnrespondedAttempts;
+    private final AtomicBoolean sshSoftFencingExecuted;
 
     private static final int VDS_DURING_FAILURE_TIMEOUT_IN_MINUTES = Config
             .<Integer> GetValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes);
@@ -137,6 +138,7 @@ public class VdsManager {
         monitoringStrategy = MonitoringStrategyFactory.getMonitoringStrategyForVds(vds);
         mUnrespondedAttempts = new AtomicInteger();
         mFailedToRunVmAttempts = new AtomicInteger();
+        sshSoftFencingExecuted = new AtomicBoolean(false);
         monitoringLock = new EngineLock(Collections.singletonMap(_vdsId.toString(),
                 new Pair<String, String>(LockingGroup.VDS_INIT.name(), "")), null);
 
@@ -234,6 +236,7 @@ public class VdsManager {
                             _vdsUpdater = new VdsUpdateRunTimeInfo(VdsManager.this, _vds, monitoringStrategy);
                             _vdsUpdater.Refresh();
                             mUnrespondedAttempts.set(0);
+                            sshSoftFencingExecuted.set(false);
                             setLastUpdate();
                         }
                         if (!getInitialized() && _vds.getStatus() != VDSStatus.NonResponsive
@@ -522,6 +525,7 @@ public class VdsManager {
      */
     public void SuccededToRunVm(Guid vmId) {
         mUnrespondedAttempts.set(0);
+        sshSoftFencingExecuted.set(false);
         ResourceManager.getInstance().SuccededToRunVm(vmId, _vds.getId());
     }
 
@@ -603,11 +607,18 @@ public class VdsManager {
         if (spmStatus != VdsSpmStatus.None) {
             spmIndicator = 1;
         }
-        return TimeUnit.SECONDS.toMillis((int)(
+        int secToFence = (int)(
                 // delay time can be fracture number, casting it to int should be enough
                 Config.<Integer> GetValue(ConfigValues.TimeoutToResetVdsInSeconds) +
                 (Config.<Double> GetValue(ConfigValues.DelayResetForSpmInSeconds) * spmIndicator) +
-                (Config.<Double> GetValue(ConfigValues.DelayResetPerVmInSeconds) * vmCount)));
+                (Config.<Double> GetValue(ConfigValues.DelayResetPerVmInSeconds) * vmCount));
+
+        if (sshSoftFencingExecuted.get()) {
+            // VDSM restart by SSH has been executed, wait more to see if host is OK
+            secToFence = 2 * secToFence;
+        }
+
+        return TimeUnit.SECONDS.toMillis(secToFence);
     }
     /**
      * Handle network exception, return true if save vdsDynamic to DB is needed.
@@ -644,7 +655,11 @@ public class VdsManager {
             AuditLogableBase logable = new AuditLogableBase(vds.getId());
             logable.updateCallStackFromThrowable(ex);
             AuditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
-            ResourceManager.getInstance().getEventListener().vdsNotResponding(vds);
+            boolean executeSshSoftFencing = false;
+            if (!sshSoftFencingExecuted.getAndSet(true)) {
+                executeSshSoftFencing = true;
+            }
+            ResourceManager.getInstance().getEventListener().vdsNotResponding(vds, executeSshSoftFencing);
         }
         return true;
     }
@@ -710,4 +725,19 @@ public class VdsManager {
         return vdsMonitor;
     }
 
+    /**
+     * Resets counter to test VDS response and changes state to Connecting after successful SSH Soft Fencing execution.
+     * Changing state to Connecting tells VdsManager to monitor VDS and if VDS doesn't change state to Up, VdsManager
+     * will execute standard fencing after timeout interval.
+     *
+     * @param vds
+     *            VDS that SSH Soft Fencing has been executed on
+     */
+    public void finishSshSoftFencingExecution(VDS vds) {
+        // reset the unresponded counter to wait if VDSM restart helps
+        mUnrespondedAttempts.set(0);
+        // change VDS state to connecting
+        setStatus(VDSStatus.Connecting, vds);
+        UpdateDynamicData(vds.getDynamicData());
+    }
 }
