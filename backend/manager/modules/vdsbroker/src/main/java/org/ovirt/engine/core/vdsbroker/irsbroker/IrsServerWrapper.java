@@ -46,6 +46,12 @@ public class IrsServerWrapper implements IIrsServer {
     }
 
     @Override
+    public OneUuidReturnForXmlRpc uploadImage(Map methodInfo, String spUUID, String sdUUID, String srcImgGUID, String srcVolUUID) {
+        Map<String, Object> xmlRpcReturnValue = irsServer.uploadImage(methodInfo, spUUID, sdUUID, srcImgGUID, srcVolUUID);
+        return new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
+    }
+
+    @Override
     public OneUuidReturnForXmlRpc mergeSnapshots(String sdUUID, String spUUID, String vmGUID, String imgGUID,
             String ancestorUUID, String successorUUID, String postZero) {
         Map<String, Object> xmlRpcReturnValue = irsServer.mergeSnapshots(sdUUID, spUUID, vmGUID, imgGUID, ancestorUUID,
