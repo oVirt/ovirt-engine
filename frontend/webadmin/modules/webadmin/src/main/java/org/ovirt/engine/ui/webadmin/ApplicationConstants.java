@@ -2816,6 +2816,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Tenant Name")
     String tenantName();
 
+    @DefaultStringValue("Networking Plugin")
+    String pluginType();
+
     @DefaultStringValue("Add")
     String addProvider();
 

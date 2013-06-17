@@ -1,13 +1,16 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkPluginType;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
-import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -25,6 +28,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.UrlValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -53,6 +57,7 @@ public class ProviderModel extends Model {
     private EntityModel username = new EntityModel();
     private EntityModel password = new EntityModel();
     private EntityModel tenantName = new EntityModel();
+    private ListModel pluginType = new ListModel();
     private UICommand testCommand;
     private EntityModel testResult = new EntityModel();
 
@@ -62,6 +67,10 @@ public class ProviderModel extends Model {
 
     public ListModel getType() {
         return type;
+    }
+
+    private boolean isTypeOpenStackNetwork() {
+        return (ProviderType) getType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK;
     }
 
     public EntityModel getDescription() {
@@ -86,6 +95,10 @@ public class ProviderModel extends Model {
 
     public EntityModel getTenantName() {
         return tenantName;
+    }
+
+    public ListModel getPluginType() {
+        return pluginType;
     }
 
     public UICommand getTestCommand() {
@@ -117,7 +130,9 @@ public class ProviderModel extends Model {
         getType().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                getTenantName().setIsAvailable(((ProviderType) getType().getSelectedItem()) == ProviderType.OPENSTACK_NETWORK);
+                boolean openStackNetProvider = isTypeOpenStackNetwork();
+                getTenantName().setIsAvailable(openStackNetProvider);
+                getPluginType().setIsAvailable(openStackNetProvider);
             }
         });
 
@@ -128,11 +143,21 @@ public class ProviderModel extends Model {
         getUsername().setEntity(provider.getUsername());
         getPassword().setEntity(provider.getPassword());
         getTenantName().setIsAvailable(false);
+        getPluginType().setIsAvailable(false);
 
         getType().setItems(Arrays.asList(ProviderType.values()));
         getType().setSelectedItem(provider.getType());
-        if (getTenantName().getIsAvailable()) {
-            getTenantName().setEntity(((TenantProviderProperties) provider.getAdditionalProperties()).getTenantName());
+
+        List<String> pluginStrings = new ArrayList<String>();
+        for (OpenstackNetworkPluginType plugin : OpenstackNetworkPluginType.values()) {
+            pluginStrings.add(EnumTranslator.createAndTranslate(plugin));
+        }
+        getPluginType().setItems(pluginStrings);
+        if (isTypeOpenStackNetwork()) {
+            OpenstackNetworkProviderProperties properties =
+                    (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
+            getTenantName().setEntity(properties.getTenantName());
+            getPluginType().setSelectedItem(properties.getPluginType());
         }
 
         UICommand tempVar = new UICommand(CMD_SAVE, this);
@@ -149,14 +174,16 @@ public class ProviderModel extends Model {
     private boolean validate() {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getPluginType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getUsername().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getTenantName().validateEntity(new IValidation[] { new NotEmptyValidation()} );
         getUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
                 new UrlValidation(Uri.SCHEME_HTTP, Uri.SCHEME_HTTPS) });
 
-        return getName().getIsValid() && getType().getIsValid() && getUrl().getIsValid() && getUsername().getIsValid()
-                && getPassword().getIsValid() && getTenantName().getIsValid();
+        return getName().getIsValid() && getType().getIsValid() && getPluginType().getIsValid()
+                && getUrl().getIsValid() && getUsername().getIsValid() && getPassword().getIsValid()
+                && getTenantName().getIsValid();
     }
 
     private void cancel() {
@@ -169,13 +196,21 @@ public class ProviderModel extends Model {
         provider.setDescription((String) description.getEntity());
         provider.setUrl((String) url.getEntity());
 
+        if (isTypeOpenStackNetwork()) {
+            OpenstackNetworkProviderProperties properties = new OpenstackNetworkProviderProperties();
+            properties.setPluginType((String) getPluginType().getSelectedItem());
+            provider.setAdditionalProperties(properties);
+        }
+
         boolean authenticationRequired = (Boolean) requiresAuthentication.getEntity();
         provider.setRequiringAuthentication(authenticationRequired);
         if (authenticationRequired) {
             provider.setUsername((String) username.getEntity());
             provider.setPassword((String) password.getEntity());
-            if (getTenantName().getIsAvailable()) {
-                provider.setAdditionalProperties(new TenantProviderProperties((String) getTenantName().getEntity()));
+
+            if (isTypeOpenStackNetwork()) {
+                ((OpenstackNetworkProviderProperties) provider.getAdditionalProperties()).setTenantName(
+                        (String) getTenantName().getEntity());
             }
         }
     }

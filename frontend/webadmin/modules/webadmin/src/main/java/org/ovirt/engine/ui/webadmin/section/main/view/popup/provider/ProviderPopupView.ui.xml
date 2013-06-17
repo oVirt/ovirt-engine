@@ -53,6 +53,9 @@
 							<e:EntityModelPasswordBoxEditor ui:field="passwordEditor" addStyleNames="{style.authField}" />
 							<e:EntityModelTextBoxEditor ui:field="tenantNameEditor" addStyleNames="{style.authField}" />
 						</g:FlowPanel>
+						<g:FlowPanel addStyleNames="{style.sectionStyle}">
+							<e:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" />
+						</g:FlowPanel>
 					</g:FlowPanel>
 				</g:center>
 				<g:south size="30">

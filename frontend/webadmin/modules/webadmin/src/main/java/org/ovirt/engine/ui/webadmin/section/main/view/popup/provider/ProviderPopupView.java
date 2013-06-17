@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -93,6 +94,11 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @WithElementId
     EntityModelTextBoxEditor tenantNameEditor;
 
+    @UiField(provided = true)
+    @Path(value = "pluginType.selectedItem")
+    @WithElementId
+    ListModelSuggestBoxEditor pluginTypeEditor;
+
     @UiField
     Style style;
 
@@ -104,6 +110,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         super(eventBus, resources);
 
         typeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        pluginTypeEditor = new ListModelSuggestBoxEditor();
         requiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         this.resources = resources;
@@ -125,6 +132,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         usernameEditor.setLabel(constants.usernameProvider());
         passwordEditor.setLabel(constants.passwordProvider());
         tenantNameEditor.setLabel(constants.tenantName());
+        pluginTypeEditor.setLabel(constants.pluginType());
     }
 
     @Override
