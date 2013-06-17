@@ -60,10 +60,10 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterFeaturesUtil;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -72,11 +72,12 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ReversibleFlow;
+import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 @SuppressWarnings("unused")
 public class HostListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
@@ -264,6 +265,16 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             isPowerManagementEnabled = value;
             onPropertyChanged(new PropertyChangedEventArgs("isPowerManagementEnabled")); //$NON-NLS-1$
         }
+    }
+
+    private HostGlusterSwiftListModel glusterSwiftModel;
+
+    public HostGlusterSwiftListModel getGlusterSwiftModel() {
+        return glusterSwiftModel;
+    }
+
+    public void setGlusterSwiftModel(HostGlusterSwiftListModel glusterSwiftModel) {
+        this.glusterSwiftModel = glusterSwiftModel;
     }
 
     protected Object[] getSelectedKeys()
@@ -1406,6 +1417,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         HostGeneralModel generalModel = new HostGeneralModel();
         generalModel.getRequestEditEvent().addListener(this);
         generalModel.getRequestGOToEventsTabEvent().addListener(this);
+
+        setGlusterSwiftModel(new HostGlusterSwiftListModel());
+
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(generalModel);
         list.add(new HostHardwareGeneralModel());
@@ -1414,9 +1428,17 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         setHostEventListModel(new HostEventListModel());
         list.add(getHostEventListModel());
         list.add(new HostHooksListModel());
-        list.add(new HostGlusterSwiftListModel());
+        list.add(getGlusterSwiftModel());
         list.add(new PermissionListModel());
         setDetailModels(list);
+    }
+
+    @Override
+    protected void updateDetailsAvailability() {
+        super.updateDetailsAvailability();
+        VDS vds = (VDS) getSelectedItem();
+        getGlusterSwiftModel().setIsAvailable(vds != null && vds.getVdsGroupSupportsGlusterService()
+                && GlusterFeaturesUtil.isGlusterSwiftSupported(vds.getVdsGroupCompatibilityVersion()));
     }
 
     @Override

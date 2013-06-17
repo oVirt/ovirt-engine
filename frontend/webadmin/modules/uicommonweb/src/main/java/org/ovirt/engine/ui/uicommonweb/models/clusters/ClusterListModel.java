@@ -10,10 +10,10 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterFeaturesUtil;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostDetailModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MultipleHostsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -263,8 +264,9 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         VDSGroup vdsGroup = (VDSGroup) getSelectedItem();
         getClusterVmListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService());
         getClusterServiceModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()
-                && Version.v3_2.compareTo(vdsGroup.getcompatibility_version()) <= 0);
-        getClusterGlusterHookListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService());
+                && GlusterFeaturesUtil.isGlusterVolumeServicesSupported(vdsGroup.getcompatibility_version()));
+        getClusterGlusterHookListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()
+                && GlusterFeaturesUtil.isGlusterHookSupported(vdsGroup.getcompatibility_version()));
         getClusterPolicyModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService());
     }
 
