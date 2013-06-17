@@ -9,6 +9,7 @@
     <extension module="org.jboss.as.ee"/>
     <extension module="org.jboss.as.ejb3"/>
     <extension module="org.jboss.as.jaxrs"/>
+    <extension module="org.jboss.as.jmx"/>
     <extension module="org.jboss.as.jpa"/>
     <extension module="org.jboss.as.logging"/>
     <extension module="org.jboss.as.naming"/>
@@ -34,6 +35,27 @@
     <property name="org.apache.coyote.http11.Http11Protocol.COMPRESSION_MIME_TYPES" value="text/javascript,text/css,text/html,text/xml,text/json,application/x-yaml,application/xml,application/json"/>
 
   </system-properties>
+
+  <!-- We need to enable the management subsystem because it is an
+       indirect dependency of the Infinispan subsystem (since version
+       7.2 of the application server) but at the same time we don't
+       want anyone (other than the root and ovirt users) to be able
+       to connect to the management port, so we just use an empty
+       users file: -->
+  <management>
+    <security-realms>
+      <security-realm name="management">
+        <authentication>
+          <properties path="/dev/null"/>
+        </authentication>
+      </security-realm>
+    </security-realms>
+    <management-interfaces>
+      <native-interface security-realm="management">
+        <socket-binding native="management"/>
+      </native-interface>
+    </management-interfaces>
+  </management>
 
   <profile>
 
@@ -212,6 +234,11 @@
       </default-workmanager>
     </subsystem>
 
+    <subsystem xmlns="urn:jboss:domain:jmx:1.1">
+      <show-model value="true"/>
+      <remoting-connector/>
+    </subsystem>
+
     <subsystem xmlns="urn:jboss:domain:jpa:1.0">
       <jpa default-datasource=""/>
     </subsystem>
@@ -307,6 +334,7 @@
     <socket-binding name="remoting" port="8703"/>
     <socket-binding name="txn-recovery-environment" port="8704"/>
     <socket-binding name="txn-status-manager" port="8705"/>
+    <socket-binding name="management" port="8706"/>
   </socket-binding-group>
 
 </server>
