@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.uicommon.model;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
@@ -118,7 +120,7 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
      */
     @SuppressWarnings("unchecked")
     protected void updateData() {
-        List<T> items = (List<T>) getModel().getItems();
+        List<T> items = getModel().getItems() == null ? null : new ArrayList<T>((Collection<T>) getModel().getItems());
 
         if (items != null) {
             updateDataProvider(items);

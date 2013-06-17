@@ -1,11 +1,15 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -228,7 +232,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             return ""; //$NON-NLS-1$
         }
         int fromItemCount = getSearchPageSize() * (getSearchPageNumber() - 1) + 1;
-        int toItemCount = (fromItemCount - 1) + ((List) getItems()).size();
+        int toItemCount = (fromItemCount - 1) + ((Collection) getItems()).size();
 
         if (toItemCount == 0 || fromItemCount > toItemCount) {
             return ""; //$NON-NLS-1$
@@ -635,6 +639,26 @@ public abstract class SearchableListModel extends ListModel implements GridContr
     {
     }
 
+    private Comparator comparator;
+
+    protected void setComparator(Comparator comparator) {
+        if (comparator == this.comparator) {
+            return;
+        }
+        this.comparator = comparator;
+
+        Iterable items = getItems();
+        if (items == null) {
+            return;
+        }
+
+        Collection identicalItems = (comparator == null) ? new ArrayList() : new TreeSet(comparator);
+        for (Object item : items) {
+            identicalItems.add(item);
+        }
+        setItems(identicalItems);
+    }
+
     @Override
     public Iterable getItems()
     {
@@ -657,8 +681,21 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                 }
             }
 
-            itemsChanging(value, items);
-            items = value;
+            if (comparator == null
+                    || ((value instanceof SortedSet) && (((SortedSet) value).comparator() == comparator))) {
+                itemsChanging(value, items);
+                items = value;
+            } else {
+                TreeSet sortedValue = null;
+                if (value != null) {
+                    sortedValue = new TreeSet(comparator);
+                    for (Object item : value) {
+                        sortedValue.add(item);
+                    }
+                }
+                itemsChanging(sortedValue, items);
+                items = sortedValue;
+            }
             updatePagingAvailability();
             getItemsChangedEvent().raise(this, EventArgs.Empty);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
@@ -670,12 +707,12 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                 getSelectedItems().clear();
             }
 
-            if (lastSelectedItem != null && value != null)
+            if (lastSelectedItem != null && items != null)
             {
                 IVdcQueryable newSelectedItem = null;
                 ArrayList<IVdcQueryable> newItems = new ArrayList<IVdcQueryable>();
 
-                for (Object item : value)
+                for (Object item : items)
                 {
                     newItems.add((IVdcQueryable) item);
                 }
