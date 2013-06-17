@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +60,6 @@ public class GlusterSyncJob extends GlusterJob {
     public static GlusterSyncJob getInstance() {
         return instance;
     }
-
 
     /**
      * Refreshes details of all volume across all clusters being managed in the engine. It can end up doing the
@@ -277,7 +277,9 @@ public class GlusterSyncJob extends GlusterJob {
 
     private void setNonOperational(VDS server) {
         SetNonOperationalVdsParameters nonOpParams =
-                new SetNonOperationalVdsParameters(server.getId(), NonOperationalReason.GLUSTER_COMMAND_FAILED);
+                new SetNonOperationalVdsParameters(server.getId(),
+                        NonOperationalReason.GLUSTER_COMMAND_FAILED,
+                        Collections.singletonMap(GlusterConstants.COMMAND, "gluster peer probe"));
         nonOpParams.setSaveToDb(true);
         Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds,
                 nonOpParams,
@@ -483,8 +485,11 @@ public class GlusterSyncJob extends GlusterJob {
                         existingVolume.getName());
                 logUtil.logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
                         AuditLogType.GLUSTER_VOLUME_BRICK_REMOVED_FROM_CLI,
-                        new HashMap<String, String>() {{
-                            put(GlusterConstants.BRICK, existingBrick.getQualifiedName()); }});
+                        new HashMap<String, String>() {
+                            {
+                                put(GlusterConstants.BRICK, existingBrick.getQualifiedName());
+                            }
+                        });
             }
         }
         if (!idsToRemove.isEmpty()) {
@@ -511,7 +516,11 @@ public class GlusterSyncJob extends GlusterJob {
                     getBrickDao().save(fetchedBrick);
                     logUtil.logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
                             AuditLogType.GLUSTER_VOLUME_BRICK_ADDED_FROM_CLI,
-                            new HashMap<String, String>(){{ put(GlusterConstants.BRICK, fetchedBrick.getQualifiedName()); }});
+                            new HashMap<String, String>() {
+                                {
+                                    put(GlusterConstants.BRICK, fetchedBrick.getQualifiedName());
+                                }
+                            });
                 }
             } else {
                 // brick found. update it if required. Only property that could be different is the brick order
@@ -549,7 +558,11 @@ public class GlusterSyncJob extends GlusterJob {
                 if (!GlusterConstants.OPTION_GROUP.equals(existingOption.getKey())) {
                     logUtil.logAuditMessage(fetchedVolume.getClusterId(), fetchedVolume, null,
                             AuditLogType.GLUSTER_VOLUME_OPTION_RESET_FROM_CLI,
-                            new HashMap<String, String>(){{ put(GlusterConstants.OPTION_KEY, existingOption.getKey()); }});
+                            new HashMap<String, String>() {
+                                {
+                                    put(GlusterConstants.OPTION_KEY, existingOption.getKey());
+                                }
+                            });
                 }
             }
         }
