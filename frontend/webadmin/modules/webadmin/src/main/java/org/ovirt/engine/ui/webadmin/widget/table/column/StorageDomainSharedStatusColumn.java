@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 
 import com.google.gwt.resources.client.ImageResource;
 
@@ -11,7 +12,11 @@ public class StorageDomainSharedStatusColumn extends WebAdminImageResourceColumn
         setEnumTitle(sp.getStorageDomainSharedStatus());
         switch (sp.getStorageDomainSharedStatus()) {
         case Unattached:
-            return getApplicationResources().tornChainImage();
+            if (sp.getStorageType() == StorageType.GLANCE) {
+                return getApplicationResources().openstackImage();
+            } else {
+                return getApplicationResources().tornChainImage();
+            }
         case Active:
             return getApplicationResources().upImage();
         case InActive:

@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.common.widget.renderer;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.text.shared.AbstractRenderer;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 
 public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
 
@@ -10,6 +12,8 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
     }
 
     private final DiskSizeUnit unit;
+
+    private static final CommonApplicationConstants CONSTANTS = GWT.create(CommonApplicationConstants.class);
 
     public DiskSizeRenderer(DiskSizeUnit unit) {
         if (unit == null) {
@@ -21,8 +25,8 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
 
     @Override
     public String render(T size) {
-        if (size == null) {
-            return "< 1 GB"; //$NON-NLS-1$
+        if (size == null || size.longValue() == 0) {
+            return CONSTANTS.unAvailablePropertyLabel();
         }
 
         long sizeInGB = -1;

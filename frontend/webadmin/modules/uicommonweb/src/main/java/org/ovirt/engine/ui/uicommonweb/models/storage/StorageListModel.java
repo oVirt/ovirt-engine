@@ -185,8 +185,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
+    private EntityModel generalModel;
     private EntityModel vmBackupModel;
     private EntityModel templateBackupModel;
+    private ListModel dcListModel;
     private ListModel vmListModel;
     private ListModel templateListModel;
     private ListModel isoListModel;
@@ -209,6 +211,12 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     {
         super.initDetailModels();
 
+        generalModel = new StorageGeneralModel();
+        generalModel.setIsAvailable(false);
+
+        dcListModel = new StorageDataCenterListModel();
+        dcListModel.setIsAvailable(false);
+
         vmBackupModel = new VmBackupModel();
         vmBackupModel.setIsAvailable(false);
 
@@ -228,8 +236,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         diskListModel.setIsAvailable(false);
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new StorageGeneralModel());
-        list.add(new StorageDataCenterListModel());
+        list.add(generalModel);
+        list.add(dcListModel);
         list.add(vmBackupModel);
         list.add(templateBackupModel);
         list.add(vmListModel);
@@ -1066,7 +1074,14 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             boolean isDataStorage =
                     storage.getStorageDomainType() == StorageDomainType.Data
                             || storage.getStorageDomainType() == StorageDomainType.Master;
-            boolean isIsoStorage = storage.getStorageDomainType() == StorageDomainType.ISO;
+            boolean isImageStorage =
+                     storage.getStorageDomainType() == StorageDomainType.Image ||
+                     storage.getStorageDomainType() == StorageDomainType.ISO;
+            boolean isDataCenterAvailable = storage.getStorageType() != StorageType.GLANCE;
+            boolean isGeneralAvailable = storage.getStorageType() != StorageType.GLANCE;
+
+            generalModel.setIsAvailable(isGeneralAvailable);
+            dcListModel.setIsAvailable(isDataCenterAvailable);
 
             vmBackupModel.setIsAvailable(isBackupStorage);
             templateBackupModel.setIsAvailable(isBackupStorage);
@@ -1075,7 +1090,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             templateListModel.setIsAvailable(isDataStorage);
             diskListModel.setIsAvailable(isDataStorage);
 
-            isoListModel.setIsAvailable(isIsoStorage);
+            isoListModel.setIsAvailable(isImageStorage);
         }
     }
 
@@ -1110,6 +1125,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         getEditCommand().setIsExecutionAllowed(items.size() == 1 && isEditAvailable(item));
 
         getRemoveCommand().setIsExecutionAllowed(items.size() == 1
+                && items.get(0).getStorageType() != StorageType.GLANCE
                 && Linq.findAllStorageDomainsBySharedStatus(items, StorageDomainSharedStatus.Unattached).size() == items.size());
 
         getDestroyCommand().setIsExecutionAllowed(item != null && items.size() == 1

@@ -57,6 +57,8 @@ public interface Enums extends LocalizedEnums {
 
     String StorageType___GLUSTERFS();
 
+    String StorageType___GLANCE();
+
     String StorageType___UNKNOWN();
 
     String StorageFormatType___V1();
@@ -217,6 +219,8 @@ public interface Enums extends LocalizedEnums {
 
     String StorageDomainType___ImportExport();
 
+    String StorageDomainType___Image();
+
     String VmTemplateStatus___OK();
 
     String VmTemplateStatus___Locked();
@@ -322,6 +326,8 @@ public interface Enums extends LocalizedEnums {
     String OpenstackNetworkPluginType___LINUX_BRIDGE();
 
     String OpenstackNetworkPluginType___OPEN_VSWITCH();
+
+    String ProviderType___OPENSTACK_IMAGE();
 
     // Gluster enums
     String GlusterVolumeType___DISTRIBUTE();

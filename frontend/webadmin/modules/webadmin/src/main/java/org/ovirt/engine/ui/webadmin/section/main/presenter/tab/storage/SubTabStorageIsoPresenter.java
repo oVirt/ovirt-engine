@@ -35,7 +35,7 @@ public class SubTabStorageIsoPresenter extends AbstractSubTabPresenter<StorageDo
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().storageIsoSubTabLabel(), 6,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().storageImagesSubTabLabel(), 6,
                 ginjector.getSubTabStorageIsoModelProvider());
     }
 

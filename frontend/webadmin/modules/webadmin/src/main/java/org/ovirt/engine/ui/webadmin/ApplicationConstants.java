@@ -322,7 +322,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String storageTemplateSubTabLabel();
 
     @DefaultStringValue("Images")
-    String storageIsoSubTabLabel();
+    String storageImagesSubTabLabel();
 
     @DefaultStringValue("Permissions")
     String storagePermissionSubTabLabel();
