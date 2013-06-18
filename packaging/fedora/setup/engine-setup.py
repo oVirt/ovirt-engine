@@ -713,7 +713,7 @@ def _configureHttpdSslKeys():
         handler.open()
         handler.editParam("SSLCertificateFile", basedefs.FILE_APACHE_CERT, uncomment=True)
         handler.editParam("SSLCertificateKeyFile", basedefs.FILE_APACHE_PRIVATE_KEY, uncomment=True)
-        handler.editParam("SSLCertificateChainFile", basedefs.FILE_APACHE_CA_CRT_SRC, uncomment=True)
+        handler.editParam('SSLCACertificateFile', basedefs.FILE_APACHE_CA_CRT_SRC, uncomment=True)
         handler.close()
     except:
         logging.error(traceback.format_exc())

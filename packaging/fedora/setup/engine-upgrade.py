@@ -591,7 +591,8 @@ class CA():
                 if handler.getParam("SSLCertificateKeyFile") == '/etc/pki/tls/private/localhost.key':
                     handler.editParam("SSLCertificateKeyFile", basedefs.FILE_APACHE_PRIVATE_KEY)
                 if handler.getParam("SSLCertificateChainFile") == None:
-                    handler.editParam("SSLCertificateChainFile", basedefs.FILE_APACHE_CA_CRT_SRC)
+                    handler.renameParam("SSLCertificateChainFile", "SSLCACertificateFile")
+                    handler.getParam("SSLCACertificateFile", basedefs.FILE_APACHE_CA_CRT_SRC)
             finally:
                 handler.close()
 
