@@ -58,8 +58,10 @@ public abstract class VmInfoBuilderBase {
         }
         final String compatibilityVersion = vm.getVdsGroupCompatibilityVersion().toString();
         addCpuPinning(compatibilityVersion);
-        createInfo.put(VdsProperties.emulatedMachine, Config.<String> GetValue(
-                ConfigValues.EmulatedMachine, compatibilityVersion));
+        createInfo.put(VdsProperties.emulatedMachine, DbFacade.getInstance()
+                .getVdsGroupDao()
+                .get(vm.getVdsGroupId())
+                .getEmulatedMachine());
         // send cipher suite and spice secure channels parameters only if ssl
         // enabled.
         if (Config.<Boolean> GetValue(ConfigValues.SSLEnabled)) {

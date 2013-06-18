@@ -536,10 +536,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     SendSMPOnRunVm(215),
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("pc")
-    EmulatedMachine(216),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute(" WHERE RowNum BETWEEN %1$s AND %2$s")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.ValueDependent, dependentOn = ConfigValues.DBEngine,

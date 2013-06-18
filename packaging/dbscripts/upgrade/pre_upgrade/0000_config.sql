@@ -96,10 +96,6 @@ select fn_db_add_config_value('DirectLUNDiskEnabled','true','3.3');
 select fn_db_add_config_value('DocsURL','docs','general');
 --Handling NetBIOS Domain Name
 select fn_db_add_config_value('DomainName','example.com','general');
-select fn_db_add_config_value('EmulatedMachine','rhel6.0.0','3.0');
-select fn_db_add_config_value('EmulatedMachine','pc-0.14','3.1');
-select fn_db_add_config_value('EmulatedMachine','pc-0.14','3.2');
-select fn_db_add_config_value('EmulatedMachine','pc-0.14','3.3');
 -- Host time drift
 select fn_db_add_config_value('EnableHostTimeDrift','false','general');
 --Handling Enable Spice Root Certification Validation
@@ -695,7 +691,6 @@ select fn_db_update_default_config_value('AdUserPassword','example.com:SamplePas
 -- Increase AsyncTaskZombieTaskLifeInMinutes to 50 hours if it's the default 5 hours.
 select fn_db_update_default_config_value('AsyncTaskZombieTaskLifeInMinutes','300','3000','general',false);
 select fn_db_update_default_config_value('DomainName','example.com','','general',false);
-select fn_db_update_default_config_value('EmulatedMachine','rhel6.0.0', 'pc-0.14','3.0',false);
 select fn_db_update_default_config_value('LDAPSecurityAuthentication','GSSAPI','default:GSSAPI','general',false);
 select fn_db_update_default_config_value('LDAPSecurityAuthentication','SIMPLE','default:SIMPLE','general',false);
 select fn_db_update_default_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','500','general',false);
@@ -805,6 +800,7 @@ select fn_db_delete_config_value('LiveStorageMigrationEnabled','3.2');
 select fn_db_delete_config_value('DiskConfigurationList','general');
 select fn_db_delete_config_value('DefaultTimeZone','general');
 select fn_db_delete_config_value('NumberOfVmsForTopSizeVms','general');
+select fn_db_delete_config_value_all_versions('EmulatedMachine');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
