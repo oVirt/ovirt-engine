@@ -127,6 +127,15 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 parameterSource);
     }
 
+    @Override
+    public void setEmulatedMachine(Guid vdsGroupId, String emulatedMachine) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vds_group_id", vdsGroupId)
+                .addValue("emulated_machine", emulatedMachine);
+
+        getCallsHandler().executeModification("UpdateVdsGroupEmulatedMachine", parameterSource);
+    }
+
     private MapSqlParameterSource getVdsGroupParamSource(VDSGroup group) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("description", group.getdescription())

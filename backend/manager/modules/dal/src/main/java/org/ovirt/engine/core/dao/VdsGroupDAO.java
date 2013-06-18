@@ -135,4 +135,11 @@ public interface VdsGroupDAO extends DAO, SearchDAO<VDSGroup> {
      * @return list of clusters
      */
     List<VDSGroup> getClustersWithPermittedAction(Guid userId, ActionGroup actionGroup);
+
+    /**
+     * Sets the cluster's emulated machine value
+     * @param vdsGroupId
+     *  @param emulatedMachine
+     */
+    void setEmulatedMachine(Guid vdsGroupId, String emulatedMachine);
 }

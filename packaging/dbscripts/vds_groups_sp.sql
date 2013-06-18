@@ -199,4 +199,11 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+--This SP updates the vds_group emulated machine
+Create or replace FUNCTION UpdateVdsGroupEmulatedMachine(v_vds_group_id UUID, v_emulated_machine varchar(40)) RETURNS VOID
+   AS $procedure$
+BEGIN
+    UPDATE vds_groups set emulated_machine = v_emulated_machine where vds_group_id = v_vds_group_id;
+END; $procedure$
+LANGUAGE plpgsql;
 

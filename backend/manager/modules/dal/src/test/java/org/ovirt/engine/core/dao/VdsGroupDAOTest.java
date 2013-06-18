@@ -3,15 +3,16 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
@@ -333,6 +334,19 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         VDSGroup result = dao.get(groupWithNoRunningVms.getId());
 
         assertNull(result);
+    }
+
+    @Test
+    public void testUpdateEmulatedMachine() {
+        String preUpdate = existingVdsGroup.getEmulatedMachine();
+        String updatedValue = "pc-version-1.2.3";
+
+        assertNotSame(preUpdate, updatedValue);
+
+        existingVdsGroup.setEmulatedMachine(updatedValue);
+        dao.setEmulatedMachine(existingVdsGroup.getId(), updatedValue);
+
+        assertEquals(updatedValue, dao.get(existingVdsGroup.getId()).getEmulatedMachine());
     }
 
     /**
