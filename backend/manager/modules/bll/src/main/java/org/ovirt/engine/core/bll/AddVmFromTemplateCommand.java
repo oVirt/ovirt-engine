@@ -88,27 +88,12 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
             }
             VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
             for (DiskImage disk : getVmTemplate().getDiskMap().values()) {
-                DiskImageBase diskInfo = getParameters().getDiskInfoDestinationMap().get(disk.getId());
-                CreateCloneOfTemplateParameters p = new CreateCloneOfTemplateParameters(disk.getImageId(),
-                        getParameters().getVmStaticData().getId(), diskInfo);
-                p.setStorageDomainId(disk.getStorageIds().get(0));
-                p.setDestStorageDomainId(diskInfoDestinationMap.get(disk.getId()).getStorageIds().get(0));
-                p.setDiskAlias(diskInfoDestinationMap.get(disk.getId()).getDiskAlias());
-                p.setVmSnapshotId(getVmSnapshotId());
-                p.setParentCommand(VdcActionType.AddVmFromTemplate);
-                p.setParentParameters(getParameters());
-                p.setEntityId(getParameters().getEntityId());
-                p.setQuotaId(diskInfoDestinationMap.get(disk.getId()).getQuotaId() != null ? diskInfoDestinationMap.get(disk.getId())
-                        .getQuotaId()
-                        : null);
                 VdcReturnValueBase result = Backend.getInstance().runInternalAction(
                                 VdcActionType.CreateCloneOfTemplate,
-                                p,
+                                buildCreateCloneOfTemplateParameters(disk),
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
-                /**
-                 * if couldnt create snapshot then stop the transaction and the command
-                 */
+                // if couldnt create snapshot then stop the transaction and the command
                 if (!result.getSucceeded()) {
                     throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
                 } else {
@@ -118,6 +103,22 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
             }
         }
         return true;
+    }
+
+    private CreateCloneOfTemplateParameters buildCreateCloneOfTemplateParameters(DiskImage disk) {
+        DiskImageBase diskInfo = getParameters().getDiskInfoDestinationMap().get(disk.getId());
+        CreateCloneOfTemplateParameters params = new CreateCloneOfTemplateParameters(disk.getImageId(),
+                getParameters().getVmStaticData().getId(), diskInfo);
+        params.setStorageDomainId(disk.getStorageIds().get(0));
+        params.setDestStorageDomainId(diskInfoDestinationMap.get(disk.getId()).getStorageIds().get(0));
+        params.setDiskAlias(diskInfoDestinationMap.get(disk.getId()).getDiskAlias());
+        params.setVmSnapshotId(getVmSnapshotId());
+        params.setParentCommand(VdcActionType.AddVmFromTemplate);
+        params.setParentParameters(getParameters());
+        params.setEntityId(getParameters().getEntityId());
+        params.setQuotaId(diskInfoDestinationMap.get(disk.getId()).getQuotaId() != null ?
+                diskInfoDestinationMap.get(disk.getId()).getQuotaId() : null);
+        return params;
     }
 
     @Override

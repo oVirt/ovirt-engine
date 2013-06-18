@@ -162,22 +162,27 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             @Override
             public Void runInTransaction() {
                 for (DiskImage disk : disks) {
-                    MoveOrCopyImageGroupParameters p = new MoveOrCopyImageGroupParameters(containerID, disk
-                            .getId(), disk.getImageId(), getParameters().getStorageDomainId(),
-                            getMoveOrCopyImageOperation());
-                    p.setParentCommand(getActionType());
-                    p.setEntityId(getParameters().getEntityId());
-                    p.setAddImageDomainMapping(getMoveOrCopyImageOperation() == ImageOperation.Copy);
-                    p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getStorageIds().get(0));
-                    p.setParentParameters(getParameters());
                     VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
                             getImagesActionType(),
-                            p,
+                            buildModeOrCopyImageGroupParameters(containerID, disk),
                             ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
                     getReturnValue().getTaskIdList().addAll(vdcRetValue.getInternalTaskIdList());
                 }
                 return null;
+            }
+
+            private MoveOrCopyImageGroupParameters buildModeOrCopyImageGroupParameters(
+                    final Guid containerID, DiskImage disk) {
+                MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(
+                        containerID, disk.getId(), disk.getImageId(),
+                        getParameters().getStorageDomainId(), getMoveOrCopyImageOperation());
+                params.setParentCommand(getActionType());
+                params.setEntityId(getParameters().getEntityId());
+                params.setAddImageDomainMapping(getMoveOrCopyImageOperation() == ImageOperation.Copy);
+                params.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getStorageIds().get(0));
+                params.setParentParameters(getParameters());
+                return params;
             }
         });
     }
