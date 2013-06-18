@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.UrlValidation;
@@ -45,7 +46,7 @@ public class ProviderModel extends Model {
     private static final String CMD_CANCEL_IMPORT = "CancelImport"; //$NON-NLS-1$
     private static final String EMPTY_ERROR_MESSAGE = ""; //$NON-NLS-1$
 
-    protected final ListModel sourceListModel;
+    protected final SearchableListModel sourceListModel;
     private final VdcActionType action;
     protected final Provider provider;
 
@@ -113,7 +114,7 @@ public class ProviderModel extends Model {
         return testResult;
     }
 
-    public ProviderModel(ListModel sourceListModel, VdcActionType action, Provider provider) {
+    public ProviderModel(SearchableListModel sourceListModel, VdcActionType action, Provider provider) {
         this.sourceListModel = sourceListModel;
         this.action = action;
         this.provider = provider;
@@ -221,7 +222,13 @@ public class ProviderModel extends Model {
 
     protected void actualSave() {
         flush();
-        Frontend.RunAction(action, new ProviderParameters(provider));
+        Frontend.RunAction(action, new ProviderParameters(provider), new IFrontendActionAsyncCallback() {
+
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                sourceListModel.getSearchCommand().execute();
+            }
+        });
         cancel();
     }
 

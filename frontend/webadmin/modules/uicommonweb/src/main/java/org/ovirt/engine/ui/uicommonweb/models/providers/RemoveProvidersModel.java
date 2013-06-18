@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ProviderParameters;
@@ -11,8 +12,10 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("deprecation")
 public class RemoveProvidersModel extends ConfirmationModel {
@@ -20,11 +23,11 @@ public class RemoveProvidersModel extends ConfirmationModel {
     private static final String CMD_REMOVE = "OnRemove"; //$NON-NLS-1$
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
 
-    private final ListModel sourceListModel;
+    private final SearchableListModel sourceListModel;
     private final List<Provider> providers;
 
     @SuppressWarnings("unchecked")
-    public RemoveProvidersModel(ListModel sourceListModel) {
+    public RemoveProvidersModel(SearchableListModel sourceListModel) {
         this.sourceListModel = sourceListModel;
         providers = (List<Provider>) sourceListModel.getSelectedItems();
 
@@ -53,12 +56,18 @@ public class RemoveProvidersModel extends ConfirmationModel {
     }
 
     private void onRemove() {
-        ArrayList<VdcActionParametersBase> parameterList = new ArrayList<VdcActionParametersBase>();
+        List<VdcActionParametersBase> parameterList = new LinkedList<VdcActionParametersBase>();
         for (Provider provider : providers) {
             parameterList.add(new ProviderParameters(provider));
         }
 
-        Frontend.RunMultipleAction(VdcActionType.RemoveProvider, parameterList);
+        Frontend.RunMultipleActions(VdcActionType.RemoveProvider, parameterList, new IFrontendActionAsyncCallback() {
+
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                sourceListModel.getSearchCommand().execute();
+            }
+        });
         cancel();
     }
 

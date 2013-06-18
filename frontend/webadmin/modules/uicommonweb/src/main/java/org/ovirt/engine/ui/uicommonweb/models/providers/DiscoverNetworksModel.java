@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
@@ -21,7 +22,10 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 @SuppressWarnings("deprecation")
 public class DiscoverNetworksModel extends Model {
@@ -29,7 +33,7 @@ public class DiscoverNetworksModel extends Model {
     private static final String CMD_DISCOVER = "OnDiscover"; //$NON-NLS-1$
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
 
-    private final ListModel sourceListModel;
+    private final SearchableListModel sourceListModel;
     private final Provider provider;
 
     private ListModel dataCenters = new ListModel();
@@ -43,7 +47,7 @@ public class DiscoverNetworksModel extends Model {
         return networkList;
     }
 
-    public DiscoverNetworksModel(ListModel sourceListModel, Provider provider) {
+    public DiscoverNetworksModel(SearchableListModel sourceListModel, Provider provider) {
         this.sourceListModel = sourceListModel;
         this.provider = provider;
 
@@ -112,8 +116,8 @@ public class DiscoverNetworksModel extends Model {
 
     @SuppressWarnings("unchecked")
     public void onDiscover() {
-        ArrayList<VdcActionParametersBase> mulipleActionParameters =
-                new ArrayList<VdcActionParametersBase>();
+        List<VdcActionParametersBase> mulipleActionParameters =
+                new LinkedList<VdcActionParametersBase>();
 
         for (ExternalNetwork externalNetwork : (Iterable<ExternalNetwork>) getNetworkList().getItems()) {
             if (externalNetwork.isAttached()) {
@@ -126,7 +130,13 @@ public class DiscoverNetworksModel extends Model {
             }
         }
 
-        Frontend.RunMultipleAction(VdcActionType.AddNetwork, mulipleActionParameters);
+        Frontend.RunMultipleActions(VdcActionType.AddNetwork, mulipleActionParameters, new IFrontendActionAsyncCallback() {
+
+            @Override
+            public void executed(FrontendActionAsyncResult result) {
+                sourceListModel.getSearchCommand().execute();
+            }
+        });
         cancel();
     }
 
