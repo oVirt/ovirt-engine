@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -304,7 +305,7 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
 
             // Merge VMs and Pools, and create item models.
             List all = Linq.concat(getvms(), filteredPools);
-            Linq.sort(all, new Linq.VmAndPoolByNameComparer());
+            Linq.sort(all, new NameableComparator());
 
             ArrayList<Model> items = new ArrayList<Model>();
             for (Object item : all)

@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -1384,7 +1385,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
             // Merge VMs and Pools, and create item models.
             List all = Linq.concat(getvms(), filteredPools);
-            Linq.sort(all, new Linq.VmAndPoolByNameComparer());
+            Linq.sort(all, new NameableComparator());
 
             ArrayList<Model> items = new ArrayList<Model>();
             for (Object item : all)

@@ -25,8 +25,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
@@ -35,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -65,29 +62,6 @@ public final class Linq
             long yid = y.getaudit_log_id();
 
             return (Long.valueOf(xid)).compareTo(yid);
-        }
-    }
-
-    public static class VmAndPoolByNameComparer implements Comparator, Serializable
-    {
-        @Override
-        public int compare(Object x, Object y)
-        {
-            return getValue(x).compareTo(getValue(y));
-        }
-
-        private String getValue(Object obj)
-        {
-            if (obj instanceof VM)
-            {
-                return ((VM) obj).getName();
-            }
-            if (obj instanceof VmPool)
-            {
-                return ((VmPool) obj).getName();
-            }
-
-            throw new NotImplementedException();
         }
     }
 
