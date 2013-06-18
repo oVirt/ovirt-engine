@@ -4,63 +4,62 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.errors.VDSError;
 
 public class VDSReturnValue {
-    private boolean _succeeded;
-    private String _exceptionString;
-    private Object _returnValue;
-    private RuntimeException _exceptionObject;
+
+    private boolean succeeded;
+    private String exceptionString;
+    private Object returnValue;
+    private RuntimeException exceptionObject;
+    private AsyncTaskCreationInfo creationInfo;
+    private VDSError vdsError;
+
+    public VDSReturnValue() {
+    }
 
     public Object getReturnValue() {
-        return _returnValue;
+        return returnValue;
     }
 
     public void setReturnValue(Object value) {
-        _returnValue = value;
+        returnValue = value;
     }
 
     public String getExceptionString() {
-        return _exceptionString;
+        return exceptionString;
     }
 
     public void setExceptionString(String value) {
-        _exceptionString = value;
+        exceptionString = value;
     }
 
     public boolean getSucceeded() {
-        return _succeeded;
+        return succeeded;
     }
 
     public void setSucceeded(boolean value) {
-        _succeeded = value;
+        succeeded = value;
     }
 
     public RuntimeException getExceptionObject() {
-        return _exceptionObject;
+        return exceptionObject;
     }
 
     public void setExceptionObject(RuntimeException value) {
-        _exceptionObject = value;
+        exceptionObject = value;
     }
 
-    private AsyncTaskCreationInfo privateCreationInfo;
-
     public AsyncTaskCreationInfo getCreationInfo() {
-        return privateCreationInfo;
+        return creationInfo;
     }
 
     public void setCreationInfo(AsyncTaskCreationInfo value) {
-        privateCreationInfo = value;
+        creationInfo = value;
     }
 
-    private VDSError privateVdsError;
-
     public VDSError getVdsError() {
-        return privateVdsError;
+        return vdsError;
     }
 
     public void setVdsError(VDSError value) {
-        privateVdsError = value;
-    }
-
-    public VDSReturnValue() {
+        vdsError = value;
     }
 }
