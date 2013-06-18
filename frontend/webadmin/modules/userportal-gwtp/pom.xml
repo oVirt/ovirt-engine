@@ -250,14 +250,6 @@
         <plugins>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
-            <artifactId>gwt-maven-plugin</artifactId>
-            <configuration>
-              <style>DETAILED</style>
-              <draftCompile>true</draftCompile>
-            </configuration>
-          </plugin>
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
             <artifactId>build-helper-maven-plugin</artifactId>
             <version>${build-helper-maven-plugin.version}</version>
             <executions>
