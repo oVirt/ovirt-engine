@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.OpenstackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -34,11 +35,16 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
         if (entity.getAdditionalProperties() != null) {
             switch (entity.getType()) {
             case OPENSTACK_NETWORK:
-                OpenstackNetworkProviderProperties properties =
+                OpenstackNetworkProviderProperties networkProperties =
                         (OpenstackNetworkProviderProperties) entity.getAdditionalProperties();
-                tenantName = properties.getTenantName();
-                pluginType = properties.getPluginType();
-                agentConfiguration = properties.getAgentConfiguration();
+                tenantName = networkProperties.getTenantName();
+                pluginType = networkProperties.getPluginType();
+                agentConfiguration = networkProperties.getAgentConfiguration();
+                break;
+            case OPENSTACK_IMAGE:
+                OpenstackImageProviderProperties imageProperties =
+                        (OpenstackImageProviderProperties) entity.getAdditionalProperties();
+                tenantName = imageProperties.getTenantName();
                 break;
             default:
                 break;
@@ -111,12 +117,16 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
         private AdditionalProperties mapAdditionalProperties(ResultSet rs, Provider<?> entity) throws SQLException {
             switch (entity.getType()) {
             case OPENSTACK_NETWORK:
-                OpenstackNetworkProviderProperties properties = new OpenstackNetworkProviderProperties();
-                properties.setTenantName(rs.getString("tenant_name"));
-                properties.setPluginType(rs.getString("plugin_type"));
-                properties.setAgentConfiguration(SerializationFactory.getDeserializer()
+                OpenstackNetworkProviderProperties networkProperties = new OpenstackNetworkProviderProperties();
+                networkProperties.setTenantName(rs.getString("tenant_name"));
+                networkProperties.setPluginType(rs.getString("plugin_type"));
+                networkProperties.setAgentConfiguration(SerializationFactory.getDeserializer()
                         .deserialize(rs.getString("agent_configuration"), AgentConfiguration.class));
-                return properties;
+                return networkProperties;
+            case OPENSTACK_IMAGE:
+                OpenstackImageProviderProperties imageProperties = new OpenstackImageProviderProperties();
+                imageProperties.setTenantName(rs.getString("tenant_name"));
+                return imageProperties;
             default:
                 return null;
             }

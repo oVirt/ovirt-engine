@@ -143,6 +143,18 @@
       <artifactId>infinispan-core</artifactId>
     </dependency>
 
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>keystone-client</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>glance-client</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>

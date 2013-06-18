@@ -10,7 +10,8 @@ import org.ovirt.engine.core.common.VdcObjectType;
  */
 public enum ProviderType implements Identifiable {
     OPENSTACK_NETWORK(0, VdcObjectType.Network),
-    FOREMAN(1, VdcObjectType.VDS);
+    FOREMAN(1, VdcObjectType.VDS),
+    OPENSTACK_IMAGE(2, VdcObjectType.Storage);
 
     private int value;
     private Set<VdcObjectType> providedTypes;

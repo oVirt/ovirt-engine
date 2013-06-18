@@ -4,6 +4,7 @@ import java.util.Arrays;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.OpenstackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -124,6 +125,10 @@ public class ProviderModel extends Model {
         return (ProviderType) getType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK;
     }
 
+    private boolean isTypeOpenStackImage() {
+        return (ProviderType) getType().getSelectedItem() == ProviderType.OPENSTACK_IMAGE;
+    }
+
     private String getDefaultUrl(ProviderType type) {
         if (type == null) {
             return new String();
@@ -131,6 +136,8 @@ public class ProviderModel extends Model {
         switch (type) {
             case OPENSTACK_NETWORK:
                 return "http://localhost:9696"; //$NON-NLS-1$
+            case OPENSTACK_IMAGE:
+                return "http://localhost:9292"; //$NON-NLS-1$
             case FOREMAN:
             default:
                 return "http://localhost"; //$NON-NLS-1$
@@ -232,6 +239,9 @@ public class ProviderModel extends Model {
             properties.setPluginType(NeutronPluginTranslator.
                     getPluginNameForDisplayString((String) getPluginType().getSelectedItem()));
             provider.setAdditionalProperties(properties);
+        } else if (isTypeOpenStackImage()) {
+            OpenstackImageProviderProperties properties = new OpenstackImageProviderProperties();
+            provider.setAdditionalProperties(properties);
         }
 
         boolean authenticationRequired = (Boolean) requiresAuthentication.getEntity();
@@ -242,6 +252,9 @@ public class ProviderModel extends Model {
 
             if (isTypeOpenStackNetwork()) {
                 ((OpenstackNetworkProviderProperties) provider.getAdditionalProperties()).setTenantName(
+                        (String) getTenantName().getEntity());
+            } else if (isTypeOpenStackImage()) {
+                ((OpenstackImageProviderProperties) provider.getAdditionalProperties()).setTenantName(
                         (String) getTenantName().getEntity());
             }
         }

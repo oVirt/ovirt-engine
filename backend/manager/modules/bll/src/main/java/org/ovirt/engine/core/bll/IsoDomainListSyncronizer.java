@@ -12,14 +12,18 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.ovirt.engine.core.bll.provider.OpenstackImageProviderProxy;
+import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -34,6 +38,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.RepoFileMetaDataDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -58,6 +63,7 @@ public class IsoDomainListSyncronizer {
     private static final ConcurrentMap<Object, Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<Object, Lock>();
     private int isoDomainRefreshRate;
     RepoFileMetaDataDAO repoStorageDom;
+    ProviderDao providerDao;
     public static final String TOOL_CLUSTER_LEVEL = "clusterLevel";
     public static final String TOOL_VERSION = "toolVersion";
     public static final String REGEX_TOOL_PATTERN =
@@ -81,6 +87,7 @@ public class IsoDomainListSyncronizer {
     protected void init() {
         log.info("Start initializing " + getClass().getSimpleName());
         repoStorageDom = DbFacade.getInstance().getRepoFileMetaDataDao();
+        providerDao = DbFacade.getInstance().getProviderDao();
         isoDomainRefreshRate = Config.<Integer> GetValue(ConfigValues.AutoRepoDomainRefreshTime) * MIN_TO_MILLISECONDS;
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
                 "fetchIsoDomains",
@@ -174,26 +181,57 @@ public class IsoDomainListSyncronizer {
         return repoList;
     }
 
-    private boolean refreshRepos(Guid storageDomainId, ImageFileType imageType, boolean forceRefresh) {
-        boolean res = true;
+    private boolean refreshRepos(Guid storageDomainId, ImageFileType imageType) {
+        boolean refreshResult = false;
         List<RepoImage> tempProblematicRepoFileList = new ArrayList<RepoImage>();
-        // If user choose to force refresh.
-        if (forceRefresh) {
-            // Add an audit log if refresh succeeded.
-            if (refreshIsoDomain(storageDomainId, tempProblematicRepoFileList, imageType)) {
-                // Print log Indicating the problematic pools (If was any).
-                handleErrorLog(tempProblematicRepoFileList);
+        StorageDomain storageDomain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
 
-                // If refresh succeeded print an audit log Indicating that.
-                StorageDomain storageDomain = DbFacade.getInstance().getStorageDomainDao().get(storageDomainId);
-                addToAuditLogSuccessMessage(storageDomain.getStorageName(), imageType.name());
-            } else {
-                // Print log Indicating the problematic pools.
-                handleErrorLog(tempProblematicRepoFileList);
-                res=false;
-            }
+        if (storageDomain.getStorageDomainType() == StorageDomainType.ISO) {
+            refreshResult = refreshIsoDomain(storageDomainId, tempProblematicRepoFileList, imageType);
+        } else if (storageDomain.getStorageDomainType() == StorageDomainType.Image &&
+                storageDomain.getStorageType() == StorageType.GLANCE) {
+            refreshResult = refreshImageDomain(storageDomain, tempProblematicRepoFileList, imageType);
+        } else {
+            log.errorFormat("Unable to refresh the storage domain {0}, Storage Domain Type {1} not supported",
+                    storageDomainId, storageDomain.getStorageDomainType());
+            return false;
         }
-        return res;
+
+        handleErrorLog(tempProblematicRepoFileList);
+
+        // If refresh succeeded update the audit log
+        if (refreshResult) {
+            addToAuditLogSuccessMessage(storageDomain.getStorageName(), imageType.name());
+        }
+
+        return refreshResult;
+    }
+
+    private boolean refreshImageDomain(final StorageDomain storageDomain,
+            List<RepoImage> problematicRepoFileList, final ImageFileType imageType) {
+        final RepoFileMetaDataDAO repoFileMetaDataDao = repoStorageDom;
+
+        Provider provider = providerDao.get(new Guid(storageDomain.getStorage()));
+        final OpenstackImageProviderProxy client = ProviderProxyFactory.getInstance().create(provider);
+
+        Lock syncObject = getSyncObject(storageDomain.getId(), imageType);
+        try {
+            syncObject.lock();
+            return (Boolean) TransactionSupport.executeInScope(TransactionScopeOption.RequiresNew,
+                    new TransactionMethod<Object>() {
+                        @Override
+                        public Object runInTransaction() {
+                            repoFileMetaDataDao.removeRepoDomainFileList(storageDomain.getId(), imageType);
+                            for (RepoImage repoImage : client.getAllImagesAsRepoImages()) {
+                                repoImage.setRepoDomainId(storageDomain.getId());
+                                repoFileMetaDataDao.addRepoFileMap(repoImage);
+                            }
+                            return true;
+                        }
+                    });
+        } finally {
+            syncObject.unlock();
+        }
     }
 
     /**
@@ -698,8 +736,8 @@ public class IsoDomainListSyncronizer {
             log.error("Storage domain ID received from command query is null.");
             return false;
         }
-        if (!refreshRepos(storageDomainId, imageType, forceRefresh)) {
-            return false;
+        if (forceRefresh) {
+            return refreshRepos(storageDomainId, imageType);
         }
         return true;
     }
