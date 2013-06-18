@@ -727,6 +727,7 @@ public enum AuditLogType {
     IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES(9600, AuditLogTimeInterval.MINUTE.getValue()),
     VDS_SET_NON_OPERATIONAL_VM_NETWORK_IS_BRIDGELESS(9601, AuditLogTimeInterval.MINUTE.getValue()),
 
+    EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER(9604, AuditLogTimeInterval.MINUTE.getValue()),
 
     /**
     * A highly available virtual machine went down.
