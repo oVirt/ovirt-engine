@@ -286,66 +286,70 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = true;
         if (getVmTemplate() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
+
         if (getVmTemplate().isDisabled()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_DISABLED);
         }
-        returnValue = buildAndCheckDestStorageDomains();
-        if (returnValue) {
-            storageToDisksMap =
-                    ImagesHandler.buildStorageToDiskMap(getImagesToCheckDestinationStorageDomains(),
-                            diskInfoDestinationMap);
-            returnValue = canDoAddVmCommand();
+
+        if (!buildAndCheckDestStorageDomains()) {
+            return false;
+        }
+        // otherwise..
+        storageToDisksMap =
+                ImagesHandler.buildStorageToDiskMap(getImagesToCheckDestinationStorageDomains(),
+                        diskInfoDestinationMap);
+
+        if (!canDoAddVmCommand()) {
+            return false;
         }
 
-        String vmName = getParameters().getVm().getName();
-        if (vmName == null || vmName.isEmpty()) {
-            returnValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
-        } else {
-            // check that VM name is not too long
-            boolean vmNameValidLength = isVmNameValidLength(getParameters().getVm());
-            if (!vmNameValidLength) {
-                returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
-            }
+        VM vmFromParams = getParameters().getVm();
+
+        if (StringUtils.isEmpty(vmFromParams.getName())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
+        }
+
+        // check that VM name is not too long
+        if (!isVmNameValidLength(vmFromParams)) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
         }
 
         // check for Vm Payload
-        if (returnValue && getParameters().getVmPayload() != null) {
-            returnValue = checkPayload(getParameters().getVmPayload(),
-                    getParameters().getVmStaticData().getIsoPath());
-            if (returnValue) {
-                // we save the content in base64 string
-                getParameters().getVmPayload().setContent(Base64.encodeBase64String(
-                        getParameters().getVmPayload().getContent().getBytes()));
+        if (getParameters().getVmPayload() != null) {
+            if (!checkPayload(getParameters().getVmPayload(),
+                    getParameters().getVmStaticData().getIsoPath())) {
+                return false;
             }
+
+            // otherwise, we save the content in base64 string
+            getParameters().getVmPayload().setContent(Base64.encodeBase64String(
+                    getParameters().getVmPayload().getContent().getBytes()));
         }
 
         // Check that the USB policy is legal
-        if (!VmHandler.isUsbPolicyLegal(getParameters().getVm().getUsbPolicy(),
-                getParameters().getVm().getOs(),
-                getVdsGroup(),
-                getReturnValue().getCanDoActionMessages())) {
-            returnValue = false;
+        if (!VmHandler.isUsbPolicyLegal(vmFromParams.getUsbPolicy(), vmFromParams.getOs(),
+                getVdsGroup(), getReturnValue().getCanDoActionMessages())) {
+            return false;
         }
 
         // check cpuPinning if the check haven't failed yet
-        if (returnValue) {
-            VM vmFromParams = getParameters().getVm();
-            returnValue = isCpuPinningValid(vmFromParams.getCpuPinning(), vmFromParams.getStaticData());
+        if (!isCpuPinningValid(vmFromParams.getCpuPinning(), vmFromParams.getStaticData())) {
+            return false;
         }
 
-        if (getParameters().getVm().isUseHostCpuFlags()
-                && getParameters().getVm().getMigrationSupport() == MigrationSupport.MIGRATABLE) {
+        if (vmFromParams.isUseHostCpuFlags()
+                && vmFromParams.getMigrationSupport() == MigrationSupport.MIGRATABLE) {
             return failCanDoAction(VdcBllMessages.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
         }
 
-        return returnValue && checkCpuSockets();
+        if (!checkCpuSockets()){
+            return false;
+        }
+
+        return true;
     }
 
     protected boolean checkCpuSockets() {
