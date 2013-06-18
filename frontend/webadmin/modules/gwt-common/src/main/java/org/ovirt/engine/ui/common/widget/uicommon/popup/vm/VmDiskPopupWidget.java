@@ -271,7 +271,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         datacenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((StoragePool) object).getname();
+                return ((StoragePool) object).getName();
             }
         });
 

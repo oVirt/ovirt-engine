@@ -20,7 +20,7 @@ public class DataCenterMapper {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetName()) {
-            entity.setname(model.getName());
+            entity.setName(model.getName());
         }
         if (model.isSetDescription()) {
             entity.setdescription(model.getDescription());
@@ -51,7 +51,7 @@ public class DataCenterMapper {
     public static DataCenter map(StoragePool entity, DataCenter template) {
         DataCenter model = template != null ? template : new DataCenter();
         model.setId(entity.getId().toString());
-        model.setName(entity.getname());
+        model.setName(entity.getName());
         if (!StringUtils.isEmpty(entity.getdescription())) {
                 model.setDescription(entity.getdescription());
         }

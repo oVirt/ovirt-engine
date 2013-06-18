@@ -265,7 +265,7 @@ public class ConfigureLocalStorageModel extends Model {
         if (candidate != null) {
 
             getDataCenter().setDataCenterId(candidate.getId());
-            getDataCenter().getName().setEntity(candidate.getname());
+            getDataCenter().getName().setEntity(candidate.getName());
             getDataCenter().getDescription().setEntity(candidate.getdescription());
 
             Version version = candidate.getcompatibility_version();
@@ -339,7 +339,7 @@ public class ConfigureLocalStorageModel extends Model {
             names = new ArrayList<String>();
 
             for (StoragePool dataCenter : dataCenters) {
-                names.add(dataCenter.getname());
+                names.add(dataCenter.getName());
             }
 
             getDataCenter().getName().setEntity(availableName(names));
@@ -472,7 +472,7 @@ public class ConfigureLocalStorageModel extends Model {
                     @Override
                     public void run(StoragePool item, AsyncIteratorCallback callback) {
 
-                        AsyncDataProvider.getLocalStorageHost(callback.getAsyncQuery(), item.getname());
+                        AsyncDataProvider.getLocalStorageHost(callback.getAsyncQuery(), item.getName());
                     }
                 },
                 new AsyncIteratorPredicate<StoragePool>() {
@@ -614,7 +614,7 @@ public class ConfigureLocalStorageModel extends Model {
         // for (storage_pool dataCenter : dataCenterList)
         // {
         // //Need to check if the new DC is without host.
-        // if (IsLocalDataCenterEmpty(dataCenter) && DataProvider.GetLocalStorageHost(dataCenter.getname()) == null)
+        // if (IsLocalDataCenterEmpty(dataCenter) && DataProvider.GetLocalStorageHost(dataCenter.getName()) == null)
         // {
         // candidate = dataCenter;
         // break;
@@ -626,7 +626,7 @@ public class ConfigureLocalStorageModel extends Model {
         // if(candidate != null)
         // {
         // getDataCenter().setDataCenterId(candidate.getId());
-        // getDataCenter().getName().setEntity(candidate.getname());
+        // getDataCenter().getName().setEntity(candidate.getName());
         // getDataCenter().getDescription().setEntity(candidate.getdescription());
         // Version compVersion = candidate.getcompatibility_version();
         // getDataCenter().getVersion().setSelectedItem(compVersion);
@@ -660,7 +660,7 @@ public class ConfigureLocalStorageModel extends Model {
         // listNames = new ArrayList<String>();
         // for (VDSGroup cluster : listClusters)
         // {
-        // listNames.add(cluster.getname());
+        // listNames.add(cluster.getName());
         // }
         // getCluster().getName().setEntity(AvailableName(listNames));
         // }
@@ -691,7 +691,7 @@ public class ConfigureLocalStorageModel extends Model {
         // listNames = new ArrayList<String>();
         // for (storage_pool storagePool : dataCenterList)
         // {
-        // listNames.add(storagePool.getname());
+        // listNames.add(storagePool.getName());
         // }
         // getDataCenter().getName().setEntity(AvailableName(listNames));
         //

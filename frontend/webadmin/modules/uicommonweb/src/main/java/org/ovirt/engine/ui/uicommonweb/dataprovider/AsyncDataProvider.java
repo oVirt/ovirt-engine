@@ -404,7 +404,7 @@ public final class AsyncDataProvider {
 
                 // sort data centers
                 final ArrayList<StoragePool> storagePoolList = (ArrayList<StoragePool>) source;
-                Collections.sort(storagePoolList, new Linq.StoragePoolByNameComparer());
+                Collections.sort(storagePoolList, new NameableComparator());
                 return source;
             }
         };

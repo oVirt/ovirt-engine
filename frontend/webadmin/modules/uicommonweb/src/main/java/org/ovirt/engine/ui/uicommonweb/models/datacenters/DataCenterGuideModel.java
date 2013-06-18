@@ -221,7 +221,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     }
                 }), getEntity().getId());
 
-        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Hosts: datacenter!= " + getEntity().getname() //$NON-NLS-1$
+        Frontend.RunQuery(VdcQueryType.Search, new SearchParameters("Hosts: datacenter!= " + getEntity().getName() //$NON-NLS-1$
                 + " status=maintenance or status=pendingapproval ", SearchType.VDS), new AsyncQuery(this, //$NON-NLS-1$
                 new INewAsyncCallback() {
                     @Override
@@ -246,7 +246,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                         }
                                         dataCenterGuideModel.updateOptionsLocalFS();
                                     }
-                                }), dataCenterGuideModel.getEntity().getname());
+                                }), dataCenterGuideModel.getEntity().getName());
                     }
                 }));
     }
@@ -605,7 +605,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         model.getCommands().add(tempVar2);
                     }
                 }),
-                getEntity().getname());
+                getEntity().getName());
     }
 
     public void addIsoStorage()

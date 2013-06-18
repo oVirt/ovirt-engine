@@ -497,7 +497,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     {
         StoragePool tempVar = new StoragePool();
         tempVar.setId(UnassignedDataCenterId);
-        tempVar.setname("(none)"); //$NON-NLS-1$
+        tempVar.setName("(none)"); //$NON-NLS-1$
         dataCenters.add(tempVar);
     }
 

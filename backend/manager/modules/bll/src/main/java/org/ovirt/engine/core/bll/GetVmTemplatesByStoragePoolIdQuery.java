@@ -20,7 +20,7 @@ public class GetVmTemplatesByStoragePoolIdQuery<P extends IdQueryParameters>
     @Override
     protected void executeQueryCommand() {
         StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(getParameters().getId());
-        SearchParameters p = new SearchParameters(String.format("Templates: DataCenter = %1$s", pool.getname()),
+        SearchParameters p = new SearchParameters(String.format("Templates: DataCenter = %1$s", pool.getName()),
                 SearchType.VmTemplate);
         p.setMaxCount(Integer.MAX_VALUE);
         VdcQueryReturnValue returnValue = Backend.getInstance().runInternalQuery(VdcQueryType.Search, p);

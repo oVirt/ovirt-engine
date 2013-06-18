@@ -388,7 +388,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((StoragePool) object).getname();
+                return ((StoragePool) object).getName();
             }
         });
 

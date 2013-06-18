@@ -226,7 +226,7 @@ public class BackendDataCentersResourceTest
 
     static StoragePool setUpEntityExpectations(StoragePool entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getname()).andReturn(NAMES[index]).anyTimes();
+        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         expect(entity.getstorage_pool_type()).andReturn(
                 org.ovirt.engine.core.common.businessentities.StorageType.NFS).anyTimes();

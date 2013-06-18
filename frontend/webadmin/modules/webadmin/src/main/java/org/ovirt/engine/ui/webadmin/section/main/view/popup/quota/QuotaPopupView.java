@@ -404,7 +404,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((StoragePool) object).getname();
+                return ((StoragePool) object).getName();
             }
         });
     }

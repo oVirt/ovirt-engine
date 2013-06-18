@@ -123,7 +123,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         return runVdsCommand(VDSCommandType.ReconstructMaster,
                 new ReconstructMasterVDSCommandParameters(getVds().getId(),
                         getVds().getVdsSpmId(), getStoragePool().getId(),
-                        getStoragePool().getname(), _newMasterStorageDomainId, domains,
+                        getStoragePool().getName(), _newMasterStorageDomainId, domains,
                         getStoragePool().getmaster_domain_version())).getSucceeded();
 
     }

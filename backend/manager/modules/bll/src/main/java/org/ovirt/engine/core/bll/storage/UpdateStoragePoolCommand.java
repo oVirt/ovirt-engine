@@ -57,10 +57,10 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     protected void executeCommand() {
         updateQuotaCache();
         if (_oldStoragePool.getstatus() == StoragePoolStatus.Up) {
-            if (!StringUtils.equals(_oldStoragePool.getname(), getStoragePool().getname())) {
+            if (!StringUtils.equals(_oldStoragePool.getName(), getStoragePool().getName())) {
                 runVdsCommand(VDSCommandType.SetStoragePoolDescription,
                     new SetStoragePoolDescriptionVDSCommandParameters(
-                        getStoragePool().getId(), getStoragePool().getname())
+                        getStoragePool().getId(), getStoragePool().getName())
                 );
             }
         }
@@ -170,8 +170,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     protected boolean canDoAction() {
         boolean returnValue = checkStoragePool();
         _oldStoragePool = getStoragePoolDAO().get(getStoragePool().getId());
-        if (returnValue && !StringUtils.equals(_oldStoragePool.getname(), getStoragePool().getname())
-                && getStoragePoolDAO().getByName(getStoragePool().getname()) != null) {
+        if (returnValue && !StringUtils.equals(_oldStoragePool.getName(), getStoragePool().getName())
+                && getStoragePoolDAO().getByName(getStoragePool().getName()) != null) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         }
@@ -272,12 +272,12 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     @Override
     public String getEntityOldName() {
-        return _oldStoragePool.getname();
+        return _oldStoragePool.getName();
     }
 
     @Override
     public String getEntityNewName() {
-        return getParameters().getStoragePool().getname();
+        return getParameters().getStoragePool().getName();
     }
 
     @Override

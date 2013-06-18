@@ -319,7 +319,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public String getStoragePoolName() {
         if (getStoragePool() != null) {
-            return getStoragePool().getname();
+            return getStoragePool().getName();
         }
         return "";
     }

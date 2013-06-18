@@ -491,7 +491,7 @@ public final class AsyncTaskManager {
             log.error(
                     String.format(
                             "Getting existing tasks on Storage Pool %1$s failed.",
-                            sp.getname()),
+                            sp.getName()),
                     e);
         }
 
@@ -532,14 +532,14 @@ public final class AsyncTaskManager {
                 log.infoFormat(
                         "Discovered {0} tasks on Storage Pool '{1}', {2} added to manager.",
                         currPoolTasks.size(),
-                        sp.getname(),
+                        sp.getName(),
                         newlyAddedTasks.size());
             }
         }
 
         else {
             log.infoFormat("Discovered no tasks on Storage Pool {0}",
-                    sp.getname());
+                    sp.getName());
         }
 
 
@@ -564,7 +564,7 @@ public final class AsyncTaskManager {
      */
     public synchronized void StopStoragePoolTasks(final StoragePool sp) {
         log.infoFormat("Attempting to get and stop tasks on storage pool '{0}'",
-                sp.getname());
+                sp.getName());
 
         AddStoragePoolExistingTasks(sp);
 

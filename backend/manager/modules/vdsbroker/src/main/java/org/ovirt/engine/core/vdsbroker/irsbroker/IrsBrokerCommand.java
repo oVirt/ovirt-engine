@@ -252,7 +252,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         if (_errorAttempts < Config.<Integer> GetValue(ConfigValues.SPMFailOverAttempts)) {
                             _errorAttempts++;
                             log.warnFormat("failed getting spm status for pool {0}:{1}, attempt number {2}",
-                                    _storagePoolId, storagePool.getname(), _errorAttempts);
+                                    _storagePoolId, storagePool.getName(), _errorAttempts);
                         } else {
                             nullifyInternalProxies();
                             _errorAttempts = 0;
@@ -623,7 +623,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     mCurrentVdsId = selectedVds.getId();
                     boolean performedPoolConnect = false;
                     log.infoFormat("hostFromVds::selectedVds - {0}, spmStatus {1}, storage pool {2}",
-                            selectedVds.getName(), spmStatus.getSpmStatus().toString(), storagePool.getname());
+                            selectedVds.getName(), spmStatus.getSpmStatus().toString(), storagePool.getName());
                     if (spmStatus.getSpmStatus() == SpmStatus.Unknown_Pool) {
                         Guid masterId = DbFacade.getInstance().getStorageDomainDao()
                                 .getMasterStorageDomainIdForPool(_storagePoolId);
@@ -650,7 +650,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                 "hostFromVds::Connected host to pool - selectedVds - {0}, spmStatus {1}, storage pool {2}",
                                 selectedVds.getName(),
                                 spmStatus.getSpmStatus().toString(),
-                                storagePool.getname());
+                                storagePool.getName());
                     }
                     RefObject<VDS> tempRefObject = new RefObject<VDS>(selectedVds);
                     spmStatus =
@@ -868,7 +868,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         } else {
                             log.errorFormat(
                                     "SPM Init: could not find reported vds or not up - pool:{0} vds_spm_id: {1}",
-                                    storagePool.getname(), spmStatus.getSpmId());
+                                    storagePool.getName(), spmStatus.getSpmId());
                             vdsSpmIdToFence = spmStatus.getSpmId();
                         }
                     } catch (Exception ex) {
@@ -918,7 +918,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     });
 
                     log.infoFormat("starting spm on vds {0}, storage pool {1}, prevId {2}, LVER {3}",
-                            selectedVds.argvalue.getName(), storagePool.getname(), spmStatus.getSpmId(),
+                            selectedVds.argvalue.getName(), storagePool.getName(), spmStatus.getSpmId(),
                             spmStatus.getSpmLVER());
                     spmStatus = (SpmStatusResult) ResourceManager
                             .getInstance()

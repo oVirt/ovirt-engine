@@ -35,7 +35,7 @@ public class RefreshStoragePoolAndDisconnectAsyncOperation extends ActivateDeact
                     .disconnectStorageFromDomainByVdsId(getStorageDomain(), getVdss().get(iterationId).getId());
         } catch (RuntimeException e) {
             log.errorFormat("Failed to connect/refresh storagePool. Host {0} to storage pool {1}. Exception: {3}",
-                    getVdss().get(iterationId).getName(), getStoragePool().getname(), e);
+                    getVdss().get(iterationId).getName(), getStoragePool().getName(), e);
         }
 
     }

@@ -87,30 +87,30 @@ public class OvfDataUpdater {
         for (StoragePool pool : storagePools) {
             try {
                 log.infoFormat("Attempting to update VM OVFs in Data Center {0}",
-                        pool.getname());
+                        pool.getName());
                 initProcessedInfoLists();
 
                 updateOvfForVmsOfStoragePool(pool.getId());
 
                 log.infoFormat("Successfully updated VM OVFs in Data Center {0}",
-                        pool.getname());
+                        pool.getName());
                 log.infoFormat("Attempting to update template OVFs in Data Center {0}",
-                        pool.getname());
+                        pool.getName());
 
                 updateOvfForTemplatesOfStoragePool(pool.getId());
 
                 log.infoFormat("Successfully updated templates OVFs in Data Center {0}",
-                        pool.getname());
+                        pool.getName());
                 log.infoFormat("Attempting to remove unneeded template/vm OVFs in Data Center {0}",
-                        pool.getname());
+                        pool.getName());
 
                 removeOvfForTemplatesAndVmsOfStoragePool(pool.getId());
 
                 log.infoFormat("Successfully removed unneeded template/vm OVFs in Data Center {0}",
-                        pool.getname());
+                        pool.getName());
             } catch (Exception ex) {
-                addAuditLogError(pool.getname());
-                log.errorFormat("Exception while trying to update or remove VMs/Templates ovf in Data Center {0}.", pool.getname(), ex);
+                addAuditLogError(pool.getName());
+                log.errorFormat("Exception while trying to update or remove VMs/Templates ovf in Data Center {0}.", pool.getName(), ex);
             }
         }
         proccessedIdsInfo = null;

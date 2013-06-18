@@ -31,7 +31,7 @@ public class DataCenterClusterListModel extends ClusterListModel
     {
         if (getEntity() != null)
         {
-            setSearchString("clusters: datacenter.name=" + getEntity().getname()); //$NON-NLS-1$
+            setSearchString("clusters: datacenter.name=" + getEntity().getName()); //$NON-NLS-1$
             super.search();
         }
     }

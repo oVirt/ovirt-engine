@@ -116,7 +116,7 @@ public class ClusterGuideModel extends GuideModel
                         clusterGuideModel.localStorageHost = localStorageHost;
                         clusterGuideModel.updateOptionsLocalFS();
                     }
-                }), dataCenter.getname());
+                }), dataCenter.getName());
     }
 
     private void updateOptionsNonLocalFS() {

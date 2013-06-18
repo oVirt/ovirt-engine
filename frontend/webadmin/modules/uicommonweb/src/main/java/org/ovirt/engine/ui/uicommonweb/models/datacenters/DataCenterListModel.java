@@ -298,7 +298,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.setDataCenterId(dataCenter.getId());
         model.setTitle(ConstantsManager.getInstance().getConstants().editDataCenterTitle());
         model.setHashName("edit_data_center"); //$NON-NLS-1$
-        model.getName().setEntity(dataCenter.getname());
+        model.getName().setEntity(dataCenter.getName());
 
         if (getSystemTreeSelectedItem() != null
                 && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter)
@@ -309,7 +309,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         model.getDescription().setEntity(dataCenter.getdescription());
         model.getComment().setEntity(dataCenter.getComment());
-        model.setOriginalName(dataCenter.getname());
+        model.setOriginalName(dataCenter.getName());
 
         AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -356,7 +356,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         ArrayList<String> list = new ArrayList<String>();
         for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
         {
-            list.add(a.getname());
+            list.add(a.getName());
         }
         model.setItems(list);
 
@@ -383,7 +383,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         ArrayList<String> list = new ArrayList<String>();
         for (StoragePool a : Linq.<StoragePool> cast(getSelectedItems()))
         {
-            list.add(a.getname());
+            list.add(a.getName());
         }
         model.setItems(list);
 
@@ -691,7 +691,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         cancelConfirmation();
 
         // Save changes.
-        dataCenter.setname((String) model.getName().getEntity());
+        dataCenter.setName((String) model.getName().getEntity());
         dataCenter.setdescription((String) model.getDescription().getEntity());
         dataCenter.setComment((String) model.getComment().getEntity());
         dataCenter.setstorage_pool_type((StorageType) model.getStorageTypeList().getSelectedItem());

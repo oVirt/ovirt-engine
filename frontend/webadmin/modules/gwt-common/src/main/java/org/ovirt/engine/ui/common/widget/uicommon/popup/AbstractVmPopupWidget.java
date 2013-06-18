@@ -654,7 +654,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                     @Override
                     public String getReplacementStringNullSafe(Object data) {
                         return ((DataCenterWithCluster) data).getCluster().getName() + "/" //$NON-NLS-1$
-                                + ((DataCenterWithCluster) data).getDataCenter().getname();
+                                + ((DataCenterWithCluster) data).getDataCenter().getName();
                     }
 
                     @Override
@@ -665,7 +665,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                         return typeAheadNameDescriptionTemplateNullSafe(
                                 ((DataCenterWithCluster) data).getCluster().getName(),
                                 !StringHelper.isNullOrEmpty(dcDescription) ? dcDescription
-                                        : ((DataCenterWithCluster) data).getDataCenter().getname()
+                                        : ((DataCenterWithCluster) data).getDataCenter().getName()
                         );
                     }
 

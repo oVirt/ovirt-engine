@@ -133,7 +133,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                         formattedString += ")"; //$NON-NLS-1$
                     }
 
-                    formattedString = storage.getname() + formattedString;
+                    formattedString = storage.getName() + formattedString;
                 }
 
                 return formattedString;

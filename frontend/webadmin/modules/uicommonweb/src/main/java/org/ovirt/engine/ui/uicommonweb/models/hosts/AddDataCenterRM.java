@@ -79,7 +79,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         DataCenterModel dataCenterModel = configureModel.getDataCenter();
         String dataCenterName = (String) dataCenterModel.getName().getEntity();
 
-        if (candidate == null || !StringHelper.stringsEqual(candidate.getname(), dataCenterName)) {
+        if (candidate == null || !StringHelper.stringsEqual(candidate.getName(), dataCenterName)) {
 
             // Try to find existing data center with the specified name.
             StoragePool dataCenter = context.dataCenterFoundByName;
@@ -93,7 +93,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
             } else {
 
                 dataCenter = new StoragePool();
-                dataCenter.setname(dataCenterName);
+                dataCenter.setName(dataCenterName);
                 dataCenter.setdescription((String) dataCenterModel.getDescription().getEntity());
                 dataCenter.setComment((String) dataCenterModel.getComment().getEntity());
                 dataCenter.setstorage_pool_type((StorageType) dataCenterModel.getStorageTypeList().getSelectedItem());
@@ -317,7 +317,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
     // else
     // {
     // dataCenter = new storage_pool();
-    // dataCenter.setname(name);
+    // dataCenter.setName(name);
     // dataCenter.setdescription((String) m.getDescription().getEntity());
     // dataCenter.setstorage_pool_type((StorageType) m.getStorageTypeList().getSelectedItem());
     // dataCenter.setcompatibility_version((Version) m.getVersion().getSelectedItem());

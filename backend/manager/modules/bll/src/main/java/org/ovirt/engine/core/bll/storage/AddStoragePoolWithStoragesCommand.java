@@ -210,7 +210,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
     private VDSReturnValue addStoragePoolInIrs() {
         return runVdsCommand(VDSCommandType.CreateStoragePool,
                 new CreateStoragePoolVDSCommandParameters(getVds().getId(), getStoragePool()
-                        .getstorage_pool_type(), getStoragePool().getId(), getStoragePool().getname(),
+                        .getstorage_pool_type(), getStoragePool().getId(), getStoragePool().getName(),
                         masterStorageDomain.getId(), getParameters().getStorages(), getStoragePool()
                                 .getmaster_domain_version()));
     }

@@ -630,7 +630,7 @@ public class AuditLogableBaseTest {
     public void storagePoolName() {
         final AuditLogableBase b = new AuditLogableBase();
         final StoragePool p = new StoragePool();
-        p.setname(NAME);
+        p.setName(NAME);
         b.setStoragePool(p);
         final String s = b.getStoragePoolName();
         assertEquals(NAME, s);

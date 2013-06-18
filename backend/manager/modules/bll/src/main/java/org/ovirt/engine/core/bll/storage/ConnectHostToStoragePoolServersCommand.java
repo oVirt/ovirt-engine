@@ -39,13 +39,13 @@ public class ConnectHostToStoragePoolServersCommand extends
         if (getNeedToConnectIso()) {
             if (!connectStorageServer(getIsoType(), getIsoConnections())) {
                 log.infoFormat("Failed to connect host {0} to StoragePool {1} Iso domain/s connections", getVds()
-                        .getName(), getStoragePool().getname());
+                        .getName(), getStoragePool().getName());
             }
         }
         if (getNeedToConnectExport()) {
             if (!connectStorageServer(getExportType(), getExportConnections())) {
                 log.infoFormat("Failed to connect host {0} to StoragePool {1} Export domain/s connections", getVds()
-                        .getName(), getStoragePool().getname());
+                        .getName(), getStoragePool().getName());
             }
         }
 

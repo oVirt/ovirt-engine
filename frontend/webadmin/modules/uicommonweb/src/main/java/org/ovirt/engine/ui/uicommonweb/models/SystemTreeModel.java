@@ -430,7 +430,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             SystemTreeItemModel dataCenterItem = new SystemTreeItemModel();
             dataCenterItem.setType(SystemTreeItemType.DataCenter);
             dataCenterItem.setApplicationMode(ApplicationMode.VirtOnly);
-            dataCenterItem.setTitle(getDataCenters().get(count).getname());
+            dataCenterItem.setTitle(getDataCenters().get(count).getName());
             dataCenterItem.setParent(systemItem);
             dataCenterItem.setEntity(getDataCenters().get(count));
             dataCentersItem.getChildren().add(dataCenterItem);

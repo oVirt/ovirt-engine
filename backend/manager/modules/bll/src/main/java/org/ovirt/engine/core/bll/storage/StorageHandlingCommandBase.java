@@ -274,7 +274,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
 
     protected boolean checkStoragePoolNameLengthValid() {
         boolean result = true;
-        if (getStoragePool().getname().length() > getStoragePoolNameSizeLimit()) {
+        if (getStoragePool().getName().length() > getStoragePoolNameSizeLimit()) {
             result = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
         }

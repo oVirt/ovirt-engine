@@ -38,7 +38,7 @@ public class DataCenterEventListModel extends SubTabEventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString("Events: event_datacenter=" + getEntity().getname()); //$NON-NLS-1$
+            setSearchString("Events: event_datacenter=" + getEntity().getName()); //$NON-NLS-1$
             super.search();
         }
     }

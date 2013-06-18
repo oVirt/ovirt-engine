@@ -115,7 +115,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((StoragePool) object).getname();
+                return ((StoragePool) object).getName();
             }
         });
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);

@@ -10,8 +10,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-
-public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, Commented {
+public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, Nameable, Commented {
     private static final long serialVersionUID = 6162262095329980112L;
 
     private Guid id = Guid.Empty;
@@ -97,11 +96,12 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, 
         this.id = id;
     }
 
-    public String getname() {
+    @Override
+    public String getName() {
         return this.name;
     }
 
-    public void setname(String value) {
+    public void setName(String value) {
         this.name = value;
     }
 

@@ -27,7 +27,7 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
     public void execute(int iterationId) {
         try {
             log.infoFormat("After deactivate treatment vds: {0},pool {1}", getVdss().get(iterationId).getName(),
-                    getStoragePool().getname());
+                    getStoragePool().getName());
             if (!_isLastMaster) {
                 Backend.getInstance()
                         .getResourceManager()
@@ -49,7 +49,7 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
             }
         } catch (RuntimeException e) {
             log.errorFormat("Failed to refresh storagePool. Host {0} to storage pool {1}. Exception: {3}", getVdss()
-                    .get(iterationId).getName(), getStoragePool().getname(), e);
+                    .get(iterationId).getName(), getStoragePool().getName(), e);
         }
     }
 

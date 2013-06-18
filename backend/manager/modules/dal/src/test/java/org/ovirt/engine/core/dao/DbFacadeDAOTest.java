@@ -471,7 +471,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     public void testGetEntityNameByIdAndTypeForDataCenter() {
         StoragePool storagePool = dbFacade.getStoragePoolDao().get(STORAGE_POOL_ID);
         assertNotNull(storagePool);
-        String name = storagePool.getname();
+        String name = storagePool.getName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(STORAGE_POOL_ID, VdcObjectType.StoragePool)));
     }
 

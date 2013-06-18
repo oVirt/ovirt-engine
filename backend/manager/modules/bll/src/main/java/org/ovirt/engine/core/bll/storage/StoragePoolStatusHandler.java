@@ -90,7 +90,7 @@ public final class StoragePoolStatusHandler {
             changeStatus = true;
         }
         if (changeStatus) {
-            log.info("Moving data center " + pool.getname() + " with Id " + pool.getId()
+            log.info("Moving data center " + pool.getName() + " with Id " + pool.getId()
                     + " to status Problematic from status NotOperational on a one time basis to try to recover");
             Backend.getInstance().runInternalAction(
                     VdcActionType.SetStoragePoolStatus,

@@ -55,7 +55,7 @@ public final class EntityObject extends JavaScriptObject {
 
         // DataCenter
         if (businessEntity instanceof StoragePool) {
-            obj.setProperty("name", ((StoragePool) businessEntity).getname()); //$NON-NLS-1$
+            obj.setProperty("name", ((StoragePool) businessEntity).getName()); //$NON-NLS-1$
         }
 
         // Cluster

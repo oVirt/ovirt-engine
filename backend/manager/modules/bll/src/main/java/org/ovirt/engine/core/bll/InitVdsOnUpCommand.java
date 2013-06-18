@@ -185,10 +185,10 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 log.infoFormat("Could not connect host {0} to pool {1}, as the master domain is in inactive/unknown status - not failing the operation",
                         vds.getName(),
                         storagePool
-                                .getname());
+                                .getName());
             } else {
                 log.errorFormat("Could not connect host {0} to pool {1}", vds.getName(), storagePool
-                        .getname());
+                        .getName());
                 result.setSuccess(false);
             }
         }
@@ -211,7 +211,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 log.errorFormat("One of the Storage Domains of host {0} in pool {1} is problematic",
                         getVds().getName(),
                         getStoragePool()
-                                .getname());
+                                .getName());
                 returnValue = false;
             }
         } catch (VdcBLLException e) {

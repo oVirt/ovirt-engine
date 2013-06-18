@@ -243,14 +243,6 @@ public final class Linq
 
     }
 
-    public static class StoragePoolByNameComparer implements Comparator<StoragePool>, Serializable {
-
-        @Override
-        public int compare(StoragePool x, StoragePool y) {
-            return x.getname().compareTo(y.getname());
-        }
-    }
-
     public static boolean isHostBelongsToAnyOfClusters(ArrayList<VDSGroup> clusters, VDS host)
     {
         for (VDSGroup cluster : clusters)

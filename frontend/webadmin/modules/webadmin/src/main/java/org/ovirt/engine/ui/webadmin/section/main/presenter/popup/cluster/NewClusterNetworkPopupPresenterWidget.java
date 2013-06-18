@@ -29,7 +29,7 @@ public class NewClusterNetworkPopupPresenterWidget extends NewNetworkPopupPresen
         model.getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                ((ViewDef) getView()).setDataCenterName(((StoragePool) model.getDataCenters().getSelectedItem()).getname());
+                ((ViewDef) getView()).setDataCenterName(((StoragePool) model.getDataCenters().getSelectedItem()).getName());
             }
         });
     }

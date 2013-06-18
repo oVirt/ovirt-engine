@@ -528,7 +528,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 ArrayList<StoragePool> dataCenterList = new ArrayList<StoragePool>();
                 StoragePool dataCenter = new StoragePool();
                 dataCenter.setId(quota.getStoragePoolId());
-                dataCenter.setname(quota.getStoragePoolName());
+                dataCenter.setName(quota.getStoragePoolName());
                 dataCenterList.add(dataCenter);
                 qModel.getDataCenter().setItems(dataCenterList);
                 qModel.getDataCenter().setSelectedItem(dataCenter);

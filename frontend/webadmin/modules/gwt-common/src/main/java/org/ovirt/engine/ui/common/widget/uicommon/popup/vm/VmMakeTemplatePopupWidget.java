@@ -115,14 +115,14 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
                     @Override
                     public String getReplacementStringNullSafe(Object data) {
                         return ((DataCenterWithCluster) data).getCluster().getName() + "/" //$NON-NLS-1$
-                                + ((DataCenterWithCluster) data).getDataCenter().getname();
+                                + ((DataCenterWithCluster) data).getDataCenter().getName();
                     }
 
                     @Override
                     public String getDisplayStringNullSafe(Object data) {
 
                         String clusterName = ((DataCenterWithCluster) data).getCluster().getName();
-                        String dcName = ((DataCenterWithCluster) data).getDataCenter().getname();
+                        String dcName = ((DataCenterWithCluster) data).getDataCenter().getName();
                         String dcDescription =
                                 ((DataCenterWithCluster) data).getDataCenter().getdescription();
                         // description takes priority

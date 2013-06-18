@@ -40,7 +40,7 @@ public class ConntectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOp
         } catch (RuntimeException e) {
             log.errorFormat("Failed to connect host {0} to storage pool {1}. Exception: {3}",
                     vds.getName(),
-                    getStoragePool().getname(),
+                    getStoragePool().getName(),
                     e);
         }
     }

@@ -38,7 +38,7 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
         table.addEntityModelColumn(new EntityModelTextColumn<StoragePool>() {
             @Override
             public String getText(StoragePool storage) {
-                return storage.getname();
+                return storage.getName();
             }
         }, constants.nameDc());
 

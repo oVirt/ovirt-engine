@@ -40,7 +40,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
         storageDomain = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
 
         newPool = new StoragePool();
-        newPool.setname("newPoolDude");
+        newPool.setName("newPoolDude");
         newPool.setcompatibility_version(new Version("3.0"));
 
     }
@@ -101,7 +101,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByName() {
-        StoragePool result = dao.getByName(existingPool.getname());
+        StoragePool result = dao.getByName(existingPool.getName());
 
         assertGetResult(result);
     }
@@ -230,7 +230,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
     public void testSave() {
         dao.save(newPool);
 
-        StoragePool result = dao.getByName(newPool.getname());
+        StoragePool result = dao.getByName(newPool.getName());
 
         assertNotNull(result);
         assertEquals(newPool, result);

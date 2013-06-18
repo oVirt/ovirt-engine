@@ -51,7 +51,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         TextColumnWithTooltip<StoragePool> nameColumn = new TextColumnWithTooltip<StoragePool>() {
             @Override
             public String getValue(StoragePool object) {
-                return object.getname();
+                return object.getName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameDc(), "150px"); //$NON-NLS-1$
