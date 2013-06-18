@@ -109,12 +109,15 @@ DEV_EXTRA_BUILD_FLAGS
     Any maven build flags requires for building.
 
     For example, if your machine is low on memory, use:
-    EXTRA_BUILD_FLAGS_DEV="-Dgwt-plugin.localWorkers=2"
+    EXTRA_BUILD_FLAGS_DEV="-Dgwt.compiler.localWorkers=2"
 
 DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS [-D gwt.userAgent=gecko1_8]
     By default, only the gecko1_8 (Mozilla Firefox) support is built,
     building all permutations is possible by specifying
     EXTRA_BUILD_FLAGS_DEV_GWT_DEFAULTS="".
+
+    A list of all supported browsers is available at gwt.userAgent
+    property within frontend/webadmin/modules/pom.xml.
 
 DEV_REBUILD [1]
     Disable if only packaging components were modified.
