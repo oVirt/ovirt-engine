@@ -222,7 +222,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         List<String> lowLevelClusters = new ArrayList<String>();
         for (VDSGroup cluster : clusters) {
             if (getStoragePool().getcompatibility_version().compareTo(cluster.getcompatibility_version()) > 0) {
-                lowLevelClusters.add(cluster.getname());
+                lowLevelClusters.add(cluster.getName());
             }
         }
         if (!lowLevelClusters.isEmpty()) {

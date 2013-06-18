@@ -55,15 +55,15 @@ public class GlusterServiceSyncJob extends GlusterJob {
                     List<VDS> upServers = getClusterUtils().getAllUpServers(cluster.getId());
                     if (upServers == null || upServers.isEmpty()) {
                         log.debugFormat("No UP servers found in cluster {0}, not refreshing status of services.",
-                                cluster.getname());
+                                cluster.getName());
                         continue;
                     }
 
-                    log.debugFormat("Syncing gluster related services for cluster {0}", cluster.getname());
+                    log.debugFormat("Syncing gluster related services for cluster {0}", cluster.getName());
                     refreshClusterServices(cluster, ThreadPoolUtil.invokeAll(createTaskList(upServers)));
                 } catch (Exception e) {
                     log.errorFormat("Error while refreshing service statuses of cluster {0}!",
-                            cluster.getname(),
+                            cluster.getName(),
                             e);
                 }
             }
@@ -318,7 +318,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
 
         log.infoFormat("Service type {0} not mapped to cluster {1}. Mapped it now.",
                 serviceType,
-                cluster.getname());
+                cluster.getName());
         logUtil.logAuditMessage(clusterService.getClusterId(),
                 null,
                 null,

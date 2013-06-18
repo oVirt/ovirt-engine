@@ -1412,7 +1412,7 @@ public abstract class HostModel extends Model
         if (getCluster().getItems() == null)
         {
             VDSGroup tempVar = new VDSGroup();
-            tempVar.setname(vds.getVdsGroupName());
+            tempVar.setName(vds.getVdsGroupName());
             tempVar.setId(vds.getVdsGroupId());
             tempVar.setcompatibility_version(vds.getVdsGroupCompatibilityVersion());
             getCluster()

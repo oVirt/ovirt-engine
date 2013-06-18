@@ -1375,7 +1375,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         // Save changes.
         Version version = (Version) model.getVersion().getSelectedItem();
 
-        cluster.setname((String) model.getName().getEntity());
+        cluster.setName((String) model.getName().getEntity());
         cluster.setdescription((String) model.getDescription().getEntity());
         cluster.setStoragePoolId(((StoragePool) model.getDataCenter().getSelectedItem()).getId());
         if (model.getCPU().getSelectedItem() != null)

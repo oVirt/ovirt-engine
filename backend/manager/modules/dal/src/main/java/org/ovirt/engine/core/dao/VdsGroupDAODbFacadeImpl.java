@@ -130,7 +130,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
     private MapSqlParameterSource getVdsGroupParamSource(VDSGroup group) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("description", group.getdescription())
-                .addValue("name", group.getname())
+                .addValue("name", group.getName())
                 .addValue("vds_group_id", group.getId())
                 .addValue("cpu_name", group.getcpu_name())
                 .addValue("selection_algorithm", group.getselection_algorithm())
@@ -162,7 +162,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 throws SQLException {
             VDSGroup entity = new VDSGroup();
             entity.setdescription(rs.getString("description"));
-            entity.setname(rs.getString("name"));
+            entity.setName(rs.getString("name"));
             entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
                     .getString("vds_group_id")));
             entity.setcpu_name(rs.getString("cpu_name"));

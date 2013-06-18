@@ -31,7 +31,7 @@ public class ClusterMapper {
             entity.setId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetName()) {
-            entity.setname(model.getName());
+            entity.setName(model.getName());
         }
         if (model.isSetDescription()) {
             entity.setdescription(model.getDescription());
@@ -76,7 +76,7 @@ public class ClusterMapper {
     public static Cluster map(VDSGroup entity, Cluster template) {
         Cluster model = template != null ? template : new Cluster();
         model.setId(entity.getId().toString());
-        model.setName(entity.getname());
+        model.setName(entity.getName());
         model.setDescription(entity.getdescription());
         if (entity.getcpu_name() != null) {
             CPU cpu = new CPU();

@@ -32,7 +32,7 @@ public abstract class VdsGroupCommandBase<T extends VdsGroupParametersBase> exte
     @Override
     public String getVdsGroupName() {
         if (getVdsGroup() != null) {
-            return getVdsGroup().getname();
+            return getVdsGroup().getName();
         } else {
             return null;
         }

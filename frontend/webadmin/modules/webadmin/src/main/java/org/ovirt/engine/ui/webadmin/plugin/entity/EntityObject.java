@@ -60,7 +60,7 @@ public final class EntityObject extends JavaScriptObject {
 
         // Cluster
         else if (businessEntity instanceof VDSGroup) {
-            obj.setProperty("name", ((VDSGroup) businessEntity).getname()); //$NON-NLS-1$
+            obj.setProperty("name", ((VDSGroup) businessEntity).getName()); //$NON-NLS-1$
         }
 
         // Host

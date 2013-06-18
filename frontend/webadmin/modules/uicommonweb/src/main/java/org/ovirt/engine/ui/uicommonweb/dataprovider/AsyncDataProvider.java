@@ -599,7 +599,7 @@ public final class AsyncDataProvider {
                 if (source != null)
                 {
                     ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
-                    Collections.sort(list, new Linq.VdsGroupByNameComparer());
+                    Collections.sort(list, new NameableComparator());
                     return list;
                 }
                 return new ArrayList<VDSGroup>();
@@ -651,7 +651,7 @@ public final class AsyncDataProvider {
                 if (source != null)
                 {
                     ArrayList<VDSGroup> list = getClusterByServiceList((ArrayList<VDSGroup>) source, supportsVirtService, supportsGlusterService);
-                    Collections.sort(list, new Linq.VdsGroupByNameComparer());
+                    Collections.sort(list, new NameableComparator());
                     return list;
                 }
                 return new ArrayList<VDSGroup>();
@@ -668,7 +668,7 @@ public final class AsyncDataProvider {
                 if (source != null)
                 {
                     ArrayList<VDSGroup> list = (ArrayList<VDSGroup>) source;
-                    Collections.sort(list, new Linq.VdsGroupByNameComparer());
+                    Collections.sort(list, new NameableComparator());
                     return list;
                 }
                 return new ArrayList<VDSGroup>();
@@ -3120,7 +3120,7 @@ public final class AsyncDataProvider {
         }
 
         // sort by cluster name
-        Collections.sort(filteredList, new Linq.VdsGroupByNameComparer());
+        Collections.sort(filteredList, new NameableComparator());
         return filteredList;
     }
 

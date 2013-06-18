@@ -66,7 +66,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
         if (jobProperties == null) {
             jobProperties = new HashMap<String, String>();
             VDSGroup vdsGroup = getVdsGroup();
-            jobProperties.put(GlusterConstants.CLUSTER, vdsGroup == null ? null : vdsGroup.getname());
+            jobProperties.put(GlusterConstants.CLUSTER, vdsGroup == null ? null : vdsGroup.getName());
         }
 
         return jobProperties;
@@ -93,7 +93,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
         upServer = getUpServer();
         if (upServer == null) {
-            addCanDoActionMessage(String.format("$clusterName %1$s", getVdsGroup().getname()));
+            addCanDoActionMessage(String.format("$clusterName %1$s", getVdsGroup().getName()));
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
             return false;
         }

@@ -17,7 +17,7 @@ public class NetworkClusterModel extends EntityModel {
     }
 
     public String getName() {
-        return getEntity().getname();
+        return getEntity().getName();
     }
 
     public boolean isAttached() {

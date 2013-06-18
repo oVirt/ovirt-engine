@@ -49,7 +49,7 @@ public final class VdsLoadBalancer {
                 VdsLoadBalancingAlgorithm loadBalancingAlgorithm = VdsLoadBalancingAlgorithm
                         .CreateVdsLoadBalancingAlgorithm(group);
                 log.infoFormat("VdsLoadBalancer: Starting load balance for cluster: {0}, algorithm: {1}.",
-                        group.getname(), group.getselection_algorithm().toString());
+                        group.getName(), group.getselection_algorithm().toString());
                 log.infoFormat("VdsLoadBalancer: high util: {0}, low util: {1}, duration: {2}, threashold: {3}",
                         group.gethigh_utilization(), group.getlow_utilization(),
                         group.getcpu_over_commit_duration_minutes(),
@@ -57,7 +57,7 @@ public final class VdsLoadBalancer {
                 migrationHandler.migrateVMs(loadBalancingAlgorithm.LoadBalance());
             } else {
                 log.debugFormat("VdsLoadBalancer: Cluster {0} skipped because no selection algorithm selected.",
-                        group.getname());
+                        group.getName());
             }
         }
     }

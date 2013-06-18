@@ -163,7 +163,7 @@ public class GlusterSyncJobTest {
     private void createCluster(Version version) {
         existingCluster = new VDSGroup();
         existingCluster.setId(CLUSTER_ID);
-        existingCluster.setname("cluster");
+        existingCluster.setName("cluster");
         existingCluster.setGlusterService(true);
         existingCluster.setVirtService(false);
         existingCluster.setcompatibility_version(version);

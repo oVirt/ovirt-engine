@@ -428,7 +428,7 @@ public class AuditLogableBase extends TimeoutBase {
 
     public String getVdsGroupName() {
         if (getVdsGroup() != null) {
-            return getVdsGroup().getname();
+            return getVdsGroup().getName();
         }
         return "";
     }

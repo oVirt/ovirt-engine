@@ -73,7 +73,7 @@ public class AddClusterRM extends IEnlistmentNotification {
         ClusterModel clusterModel = configureModel.getCluster();
         String clusterName = (String) clusterModel.getName().getEntity();
 
-        if (candidate == null || !StringHelper.stringsEqual(candidate.getname(), clusterName)) {
+        if (candidate == null || !StringHelper.stringsEqual(candidate.getName(), clusterName)) {
 
             // Try to find existing cluster with the specified name.
             VDSGroup cluster = context.clusterFoundByName;
@@ -89,7 +89,7 @@ public class AddClusterRM extends IEnlistmentNotification {
                 Version version = (Version) clusterModel.getVersion().getSelectedItem();
 
                 cluster = new VDSGroup();
-                cluster.setname(clusterName);
+                cluster.setName(clusterName);
                 cluster.setdescription((String) clusterModel.getDescription().getEntity());
                 cluster.setStoragePoolId(enlistmentContext.getDataCenterId());
                 cluster.setcpu_name(((ServerCpu) clusterModel.getCPU().getSelectedItem()).getCpuName());

@@ -50,7 +50,7 @@ public class RefreshGlusterHooksCommandTest {
     private VDSGroup getVdsGroup() {
         VDSGroup cluster = new VDSGroup();
         cluster.setId(CLUSTER_ID);
-        cluster.setname("TestCluster");
+        cluster.setName("TestCluster");
         return cluster;
     }
 

@@ -126,8 +126,8 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             result = false;
         }
         // check that if name was changed, it was done to the same cluster
-        if (result && !StringUtils.equals(oldGroup.getname(), getVdsGroup().getname())) {
-            VDSGroup groupWithName = getVdsGroupDAO().getByName(getVdsGroup().getname());
+        if (result && !StringUtils.equals(oldGroup.getName(), getVdsGroup().getName())) {
+            VDSGroup groupWithName = getVdsGroupDAO().getByName(getVdsGroup().getName());
             if (groupWithName != null && !groupWithName.getId().equals(getVdsGroup().getId())) {
                 addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE);
                 result = false;
@@ -228,7 +228,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                             // are running VMs - but we should warn they
                             // cannot not be hibernated
                             AuditLogableBase logable = new AuditLogableBase();
-                            logable.addCustomValue("VdsGroup", getParameters().getVdsGroup().getname());
+                            logable.addCustomValue("VdsGroup", getParameters().getVdsGroup().getName());
                             AuditLogDirector.log(logable,
                                     AuditLogType.CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE);
                         }
@@ -349,12 +349,12 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
     @Override
     public String getEntityOldName() {
-        return oldGroup.getname();
+        return oldGroup.getName();
     }
 
     @Override
     public String getEntityNewName() {
-        return getParameters().getVdsGroup().getname();
+        return getParameters().getVdsGroup().getName();
     }
 
     @Override

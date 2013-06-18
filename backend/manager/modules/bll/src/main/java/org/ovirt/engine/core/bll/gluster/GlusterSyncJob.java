@@ -81,7 +81,7 @@ public class GlusterSyncJob extends GlusterJob {
                     refreshClusterData(cluster);
                 } catch (Exception e) {
                     log.errorFormat("Error while refreshing Gluster lightweight data of cluster {0}!",
-                            cluster.getname(),
+                            cluster.getName(),
                             e);
                 }
             }
@@ -89,12 +89,12 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void refreshClusterData(VDSGroup cluster) {
-        log.debugFormat("Refreshing Gluster lightweight Data for cluster {0}", cluster.getname());
+        log.debugFormat("Refreshing Gluster lightweight Data for cluster {0}", cluster.getName());
 
         List<VDS> existingServers = getVdsDao().getAllForVdsGroup(cluster.getId());
         VDS upServer = getClusterUtils().getUpServer(cluster.getId());
         if (upServer == null) {
-            log.debugFormat("No server UP in cluster {0}. Can't refresh it's data at this point.", cluster.getname());
+            log.debugFormat("No server UP in cluster {0}. Can't refresh it's data at this point.", cluster.getName());
             return;
         }
 
@@ -118,7 +118,7 @@ public class GlusterSyncJob extends GlusterJob {
             // have been removed from the Gluster cluster using the Gluster cli, as they could potentially be used for
             // running VMs
             log.debugFormat("As cluster {0} supports virt service as well, it's servers will not be synced with glusterfs",
-                    cluster.getname());
+                    cluster.getName());
             return;
         }
 
@@ -219,7 +219,7 @@ public class GlusterSyncJob extends GlusterJob {
 
         if (fetchedServers == null) {
             log.errorFormat("gluster peer status command failed on all servers of the cluster {0}."
-                    + "Can't refresh it's data at this point.", cluster.getname());
+                    + "Can't refresh it's data at this point.", cluster.getName());
             return null;
         }
 
@@ -235,7 +235,7 @@ public class GlusterSyncJob extends GlusterJob {
                 if (upServer == null) {
                     log.warnFormat("The only UP server in cluster {0} seems to have been removed from it using gluster CLI. "
                             + "Can't refresh it's data at this point.",
-                            cluster.getname());
+                            cluster.getName());
                     return null;
                 }
 
@@ -243,7 +243,7 @@ public class GlusterSyncJob extends GlusterJob {
                 if (fetchedServers == null) {
                     log.warnFormat("The only UP server in cluster {0} (or the only one on which gluster peer status "
                             + "command is working) seems to have been removed from it using gluster CLI. "
-                            + "Can't refresh it's data at this point.", cluster.getname());
+                            + "Can't refresh it's data at this point.", cluster.getName());
                     return null;
                 }
             }
@@ -309,7 +309,7 @@ public class GlusterSyncJob extends GlusterJob {
             Map<Guid, GlusterVolumeEntity> volumesMap = fetchVolumes(upServer, new ArrayList<VDS>(existingServers));
             if (volumesMap == null) {
                 log.errorFormat("gluster volume info command failed on all servers of the cluster {0}."
-                        + "Can't refresh it's data at this point.", cluster.getname());
+                        + "Can't refresh it's data at this point.", cluster.getName());
                 return;
             }
 
@@ -693,7 +693,7 @@ public class GlusterSyncJob extends GlusterJob {
                     refreshClusterHeavyWeightData(cluster);
                 } catch (Exception e) {
                     log.errorFormat("Error while refreshing Gluster heavyweight data of cluster {0}!",
-                            cluster.getname(),
+                            cluster.getName(),
                             e);
                 }
             }
@@ -703,14 +703,14 @@ public class GlusterSyncJob extends GlusterJob {
     private void refreshClusterHeavyWeightData(VDSGroup cluster) {
         VDS upServer = getClusterUtils().getUpServer(cluster.getId());
         if (upServer == null) {
-            log.debugFormat("No server UP in cluster {0}. Can't refresh it's data at this point.", cluster.getname());
+            log.debugFormat("No server UP in cluster {0}. Can't refresh it's data at this point.", cluster.getName());
             return;
         }
 
         for (GlusterVolumeEntity volume : getVolumeDao().getByClusterId(cluster.getId())) {
             log.debugFormat("Refreshing brick statuses for volume {0} of cluster {1}",
                     volume.getName(),
-                    cluster.getname());
+                    cluster.getName());
             // brick statuses can be fetched only for started volumes
             if (volume.isOnline()) {
                 acquireLock(cluster.getId());
@@ -719,7 +719,7 @@ public class GlusterSyncJob extends GlusterJob {
                 } catch (Exception e) {
                     log.errorFormat("Error while refreshing brick statuses for volume {0} of cluster {1}",
                             volume.getName(),
-                            cluster.getname(),
+                            cluster.getName(),
                             e);
                 } finally {
                     releaseLock(cluster.getId());

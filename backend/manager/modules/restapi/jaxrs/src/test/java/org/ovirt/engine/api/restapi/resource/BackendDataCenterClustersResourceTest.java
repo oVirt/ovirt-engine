@@ -224,7 +224,7 @@ public class BackendDataCenterClustersResourceTest extends
 
     static VDSGroup setUpEntityExpectations(VDSGroup entity, int index) {
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getname()).andReturn(NAMES[index]).anyTimes();
+        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         return entity;
     }

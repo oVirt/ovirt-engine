@@ -28,7 +28,7 @@ public class SubTabDataCenterClusterView extends AbstractSubTabTableView<Storage
         TextColumnWithTooltip<VDSGroup> nameColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
-                return object.getname();
+                return object.getName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameCluster(), "300px"); //$NON-NLS-1$

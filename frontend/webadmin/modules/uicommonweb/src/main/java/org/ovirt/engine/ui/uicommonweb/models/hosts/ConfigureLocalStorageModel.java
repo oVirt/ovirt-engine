@@ -306,7 +306,7 @@ public class ConfigureLocalStorageModel extends Model {
 
                     ArrayList<VDSGroup> listClusters = context.clusterList;
                     for (VDSGroup cluster : listClusters) {
-                        names.add(cluster.getname());
+                        names.add(cluster.getName());
                     }
 
                     getCluster().getName().setEntity(availableName(names));
@@ -316,7 +316,7 @@ public class ConfigureLocalStorageModel extends Model {
                     VDSGroup cluster = Linq.firstOrDefault(clusters);
 
                     getCluster().setClusterId(cluster.getId());
-                    getCluster().getName().setEntity(cluster.getname());
+                    getCluster().getName().setEntity(cluster.getName());
                     getCluster().getDescription().setEntity(cluster.getdescription());
 
                     cluster =
@@ -372,7 +372,7 @@ public class ConfigureLocalStorageModel extends Model {
             names = new ArrayList<String>();
             if (clusters != null) {
                 for (VDSGroup cluster : clusters) {
-                    names.add(cluster.getname());
+                    names.add(cluster.getName());
                 }
             }
             getCluster().getName().setEntity(availableName(names));

@@ -119,13 +119,13 @@ public class UpdateStoragePoolCommandTest {
         // Create new supported cluster.
         VDSGroup secondCluster = new VDSGroup();
         secondCluster.setcompatibility_version(VERSION_1_2);
-        secondCluster.setname("secondCluster");
+        secondCluster.setName("secondCluster");
         clusterList.add(secondCluster);
 
         // Create new unsupported cluster.
         VDSGroup thirdCluster = new VDSGroup();
         thirdCluster.setcompatibility_version(VERSION_1_1);
-        thirdCluster.setname("thirdCluster");
+        thirdCluster.setName("thirdCluster");
         clusterList.add(thirdCluster);
 
         // Test upgrade
@@ -225,7 +225,7 @@ public class UpdateStoragePoolCommandTest {
         List<VDSGroup> clusters = new ArrayList<VDSGroup>();
         VDSGroup cluster = new VDSGroup();
         cluster.setcompatibility_version(VERSION_1_0);
-        cluster.setname("firstCluster");
+        cluster.setName("firstCluster");
         clusters.add(cluster);
         return clusters;
     }

@@ -218,7 +218,7 @@ public class ClusterGeneralModel extends EntityModel {
     private void updateProperties() {
         VDSGroup vdsGroup = getEntity();
 
-        setName(vdsGroup.getname());
+        setName(vdsGroup.getName());
         setDescription(vdsGroup.getdescription());
         setCpuName(vdsGroup.getcpu_name());
         setDataCenterName(vdsGroup.getStoragePoolName());
@@ -634,7 +634,7 @@ public class ClusterGeneralModel extends EntityModel {
                 setNoOfVolumesDown(volumesDown);
             }
         };
-        AsyncDataProvider.getVolumeList(_asyncQuery, getEntity().getname());
+        AsyncDataProvider.getVolumeList(_asyncQuery, getEntity().getName());
 
         getManageGlusterSwiftCommand().setIsExecutionAllowed(getGlusterSwiftStatus() != GlusterServiceStatus.NOT_AVAILABLE);
 

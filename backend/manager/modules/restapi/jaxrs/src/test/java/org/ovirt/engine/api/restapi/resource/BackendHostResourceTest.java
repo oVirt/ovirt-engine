@@ -247,7 +247,7 @@ public class BackendHostResourceTest
     private VDSGroup getVdsGroup(String name, Guid id) {
         VDSGroup vdsGroup = control.createMock(VDSGroup.class);
         expect(vdsGroup.getId()).andReturn(id).anyTimes();
-        expect(vdsGroup.getname()).andReturn(name).anyTimes();
+        expect(vdsGroup.getName()).andReturn(name).anyTimes();
         return vdsGroup;
     }
 

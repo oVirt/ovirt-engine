@@ -81,7 +81,7 @@ public class ClusterGuideModel extends GuideModel
                         clusterGuideModel.hosts = hosts;
                         clusterGuideModel.updateOptionsNonLocalFS();
                     }
-                }), getEntity().getname());
+                }), getEntity().getName());
 
         AsyncDataProvider.getHostList(new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -102,7 +102,7 @@ public class ClusterGuideModel extends GuideModel
                             isAnyHostUpInCluster = (Boolean) returnValue;
                             clusterGuideModel.updateOptionsNonLocalFS();
                         }
-                    }), getEntity().getname());
+                    }), getEntity().getName());
         }
     }
 

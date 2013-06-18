@@ -384,7 +384,7 @@ public class SnapshotsManager {
                 if (vdsGroup != null) {
                     vm.setStoragePoolId(vdsGroup.getStoragePoolId());
                     vm.setVdsGroupCompatibilityVersion(vdsGroup.getcompatibility_version());
-                    vm.setVdsGroupName(vdsGroup.getname());
+                    vm.setVdsGroupName(vdsGroup.getName());
                     vm.setVdsGroupCpuName(vdsGroup.getcpu_name());
                 }
             }

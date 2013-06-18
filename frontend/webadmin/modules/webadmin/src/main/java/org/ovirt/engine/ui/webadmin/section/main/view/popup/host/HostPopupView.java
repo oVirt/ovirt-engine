@@ -358,7 +358,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         clusterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((VDSGroup) object).getname();
+                return ((VDSGroup) object).getName();
             }
         });
 

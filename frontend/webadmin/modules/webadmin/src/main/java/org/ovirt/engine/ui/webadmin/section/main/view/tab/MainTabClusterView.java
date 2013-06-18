@@ -45,7 +45,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         TextColumnWithTooltip<VDSGroup> nameColumn = new TextColumnWithTooltip<VDSGroup>() {
             @Override
             public String getValue(VDSGroup object) {
-                return object.getname();
+                return object.getName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameCluster(), "150px"); //$NON-NLS-1$

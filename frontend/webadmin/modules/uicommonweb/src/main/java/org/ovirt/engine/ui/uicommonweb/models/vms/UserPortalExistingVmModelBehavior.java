@@ -9,13 +9,13 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 
@@ -50,7 +50,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                         List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
 
                         if (containsVmCluster(clusters)) {
-                            Collections.sort(clusters, new Linq.VdsGroupByNameComparer());
+                            Collections.sort(clusters, new NameableComparator());
                             model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getVdsGroupId());
                         } else {
                             // Add VM's cluster if not contained in the cluster list
@@ -100,7 +100,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                         {
                             clusterList.add(cluster);
                         }
-                        Collections.sort(clusterList, new Linq.VdsGroupByNameComparer());
+                        Collections.sort(clusterList, new NameableComparator());
                         model.setDataCentersAndClusters(model, dataCenters, clusters, vm.getVdsGroupId());
                     }
                 }, getModel().getHash()), vm.getVdsGroupId());

@@ -67,7 +67,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                             VM currentVm = behavior.vm;
                             VDSGroup tempVar = new VDSGroup();
                             tempVar.setId(currentVm.getVdsGroupId());
-                            tempVar.setname(currentVm.getVdsGroupName());
+                            tempVar.setName(currentVm.getVdsGroupName());
                             tempVar.setcompatibility_version(currentVm.getVdsGroupCompatibilityVersion());
                             tempVar.setStoragePoolId(currentVm.getStoragePoolId());
                             VDSGroup cluster = tempVar;

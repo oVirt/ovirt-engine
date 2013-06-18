@@ -927,7 +927,7 @@ public class AuditLogableBaseTest {
     public void getVdsGroupName() {
         final AuditLogableBase b = new TestAuditLogableBase();
         final VDSGroup g = new VDSGroup();
-        g.setname(NAME);
+        g.setName(NAME);
         b.setVdsGroup(g);
         final String n = b.getVdsGroupName();
         assertEquals(NAME, n);

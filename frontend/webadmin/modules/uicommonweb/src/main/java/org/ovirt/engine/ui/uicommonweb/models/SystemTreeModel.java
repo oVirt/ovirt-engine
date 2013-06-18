@@ -503,7 +503,7 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
                     SystemTreeItemModel clusterItem = new SystemTreeItemModel();
                     clusterItem.setType(cluster.supportsGlusterService() ? SystemTreeItemType.Cluster_Gluster
                             : SystemTreeItemType.Cluster);
-                    clusterItem.setTitle(cluster.getname());
+                    clusterItem.setTitle(cluster.getName());
                     clusterItem.setParent(clustersItem);
                     clusterItem.setEntity(cluster);
                     clustersItem.getChildren().add(clusterItem);

@@ -172,7 +172,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         clusterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return ((VDSGroup) object).getname();
+                return ((VDSGroup) object).getName();
             }
         });
 

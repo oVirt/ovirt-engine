@@ -61,7 +61,7 @@ public class GlusterHookSyncJob extends GlusterJob {
             return;
         }
 
-        log.debugFormat("Syncing hooks for cluster {0}", cluster.getname());
+        log.debugFormat("Syncing hooks for cluster {0}", cluster.getName());
         List<VDS> upServers = getClusterUtils().getAllUpServers(cluster.getId());
 
         if (upServers == null || upServers.isEmpty()) {

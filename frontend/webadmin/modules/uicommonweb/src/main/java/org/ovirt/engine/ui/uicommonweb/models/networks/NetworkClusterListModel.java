@@ -39,7 +39,7 @@ public class NetworkClusterListModel extends SearchableListModel
             new Comparator<ClusterNetworkModel>() {
                 @Override
                 public int compare(ClusterNetworkModel o1, ClusterNetworkModel o2) {
-                    return o1.getCluster().getname().compareTo(o2.getCluster().getname());
+                    return o1.getCluster().getName().compareTo(o2.getCluster().getName());
                 }
             };
 
@@ -76,7 +76,7 @@ public class NetworkClusterListModel extends SearchableListModel
             ClusterNetworkModel networkManageModel = new ClusterNetworkModel(network) {
                 @Override
                 public String getDisplayedName() {
-                    return getCluster().getname();
+                    return getCluster().getName();
                 }
             };
             networkManageModel.setCluster((VDSGroup) Cloner.clone(item.getFirst()));
@@ -115,7 +115,7 @@ public class NetworkClusterListModel extends SearchableListModel
         final ArrayList<VdcActionParametersBase> toDetach = new ArrayList<VdcActionParametersBase>();
 
         for (ClusterNetworkModel manageModel : manageList) {
-            PairQueryable<VDSGroup, NetworkCluster> item = getItem(manageModel.getCluster().getname());
+            PairQueryable<VDSGroup, NetworkCluster> item = getItem(manageModel.getCluster().getName());
             boolean wasAttached = item.getSecond() != null;
 
             boolean needsAttach = manageModel.isAttached() && !wasAttached;
@@ -181,7 +181,7 @@ public class NetworkClusterListModel extends SearchableListModel
         List<PairQueryable<VDSGroup, NetworkCluster>> items =
                 (List<PairQueryable<VDSGroup, NetworkCluster>>) getItems();
         for (PairQueryable<VDSGroup, NetworkCluster> item : items) {
-            if (item.getFirst().getname().equals(clusterName)) {
+            if (item.getFirst().getName().equals(clusterName)) {
                 return item;
             }
         }
@@ -245,7 +245,7 @@ public class NetworkClusterListModel extends SearchableListModel
                     @Override
                     public int compare(PairQueryable<VDSGroup, NetworkCluster> arg0,
                             PairQueryable<VDSGroup, NetworkCluster> arg1) {
-                        return arg0.getFirst().getname().compareTo(arg1.getFirst().getname());
+                        return arg0.getFirst().getName().compareTo(arg1.getFirst().getName());
                     }
                 });
         super.setItems(value);

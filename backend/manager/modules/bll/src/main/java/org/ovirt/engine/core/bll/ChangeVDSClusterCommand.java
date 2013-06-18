@@ -104,7 +104,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     }
 
     private void addNoUpServerMessage(VDSGroup cluster) {
-        addCanDoActionMessage(String.format("$clusterName %1$s", cluster.getname()));
+        addCanDoActionMessage(String.format("$clusterName %1$s", cluster.getName()));
         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
     }
 

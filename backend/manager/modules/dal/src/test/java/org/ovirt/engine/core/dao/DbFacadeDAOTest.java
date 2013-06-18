@@ -455,7 +455,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     public void testGetEntityNameByIdAndTypeForCluster() {
         VDSGroup vdsGroup = dbFacade.getVdsGroupDao().get(CLUSTER_ID);
         assertNotNull(vdsGroup);
-        String name = vdsGroup.getname();
+        String name = vdsGroup.getName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(CLUSTER_ID, VdcObjectType.VdsGroups)));
     }
 

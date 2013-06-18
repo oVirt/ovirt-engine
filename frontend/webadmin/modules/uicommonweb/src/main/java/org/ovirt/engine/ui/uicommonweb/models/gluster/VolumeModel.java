@@ -335,7 +335,7 @@ public class VolumeModel extends Model {
                 volumeBrickModel.getServers().setItems(hostList);
             }
         };
-        AsyncDataProvider.getHostListByCluster(_asyncQuery, ((VDSGroup) getCluster().getSelectedItem()).getname());
+        AsyncDataProvider.getHostListByCluster(_asyncQuery, ((VDSGroup) getCluster().getSelectedItem()).getName());
 
         // TODO: fetch the mount points to display
         if (getBricks().getItems() != null)
@@ -502,7 +502,7 @@ public class VolumeModel extends Model {
                     }
 
                 }
-            }), cluster.getname());
+            }), cluster.getName());
         }
         else
         {

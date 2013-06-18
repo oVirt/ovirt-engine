@@ -203,7 +203,7 @@ public class GlusterHookSyncJobTest {
     private VDSGroup createCluster(int index) {
         VDSGroup cluster = new VDSGroup();
         cluster.setId(CLUSTER_GUIDS[index]);
-        cluster.setname("cluster");
+        cluster.setName("cluster");
         cluster.setGlusterService(true);
         cluster.setVirtService(false);
         cluster.setcompatibility_version(Version.v3_2);

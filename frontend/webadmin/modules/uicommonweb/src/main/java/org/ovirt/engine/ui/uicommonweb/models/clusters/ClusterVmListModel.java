@@ -34,7 +34,7 @@ public class ClusterVmListModel extends VmListModel
     {
         if (getEntity() != null)
         {
-            setSearchString("Vms: cluster=" + getEntity().getname()); //$NON-NLS-1$
+            setSearchString("Vms: cluster=" + getEntity().getName()); //$NON-NLS-1$
             super.search();
         }
     }

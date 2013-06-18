@@ -61,7 +61,7 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         TextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>> nameColumn = new TextColumnWithTooltip<PairQueryable<VDSGroup, NetworkCluster>>() {
             @Override
             public String getValue(PairQueryable<VDSGroup, NetworkCluster> object) {
-                return object.getFirst().getname();
+                return object.getFirst().getName();
             }
         };
         getTable().addColumn(nameColumn, constants.nameCluster(), "400px"); //$NON-NLS-1$

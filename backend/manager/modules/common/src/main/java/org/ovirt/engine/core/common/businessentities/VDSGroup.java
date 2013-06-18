@@ -14,8 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 @ValidVdsGroup(groups = { CreateEntity.class })
-public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid> {
-
+public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable {
 
     private static final long serialVersionUID = 5659359762655478095L;
 
@@ -98,11 +97,12 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         setId(value);
     }
 
-    public String getname() {
+    @Override
+    public String getName() {
         return name;
     }
 
-    public void setname(String value) {
+    public void setName(String value) {
         name = value;
     }
 
@@ -300,5 +300,4 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && glusterService == other.glusterService
                 && tunnelMigration == other.tunnelMigration);
     }
-
 }

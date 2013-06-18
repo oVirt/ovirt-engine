@@ -110,7 +110,7 @@ public class ClusterServiceModel extends EntityModel {
         List<VDS> hostList = (List<VDS>) getHostList().getItems();
         if (hostList != null && hostList.size() > 1) {
             for(VDS vds : hostList) {
-                if (vds != null && !vds.getVdsGroupName().equals(getEntity().getname())) {
+                if (vds != null && !vds.getVdsGroupName().equals(getEntity().getName())) {
                     refreshNeeded = true;
                     break;
                 }
@@ -137,7 +137,7 @@ public class ClusterServiceModel extends EntityModel {
                 getHostList().setItems(hostList);
             }
         };
-        AsyncDataProvider.getHostListByCluster(asyncQuery, getEntity().getname());
+        AsyncDataProvider.getHostListByCluster(asyncQuery, getEntity().getName());
     }
 
     private void updateServiceTypeList() {

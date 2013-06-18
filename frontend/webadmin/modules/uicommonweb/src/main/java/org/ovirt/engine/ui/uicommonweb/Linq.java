@@ -91,24 +91,6 @@ public final class Linq
         }
     }
 
-    /**
-     * Checks if host belongs to any of clusters from list.
-     *
-     * @param clusters
-     * @param host
-     * @return
-     */
-    public static class VdsGroupByNameComparer implements Comparator<VDSGroup>, Serializable
-    {
-
-        @Override
-        public int compare(VDSGroup x, VDSGroup y)
-        {
-            return x.getname().compareTo(y.getname());
-        }
-
-    }
-
     public static class DiskImageByLastModifiedComparer implements Comparator<DiskImage>, Serializable
     {
 

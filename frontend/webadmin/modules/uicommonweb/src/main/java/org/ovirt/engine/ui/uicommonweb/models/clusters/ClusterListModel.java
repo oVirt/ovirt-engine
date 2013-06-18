@@ -355,8 +355,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         setWindow(clusterModel);
         clusterModel.setTitle(ConstantsManager.getInstance().getConstants().editClusterTitle());
         clusterModel.setHashName("edit_cluster"); //$NON-NLS-1$
-        clusterModel.setOriginalName(cluster.getname());
-        clusterModel.getName().setEntity(cluster.getname());
+        clusterModel.setOriginalName(cluster.getName());
+        clusterModel.getName().setEntity(cluster.getName());
         clusterModel.getEnableOvirtService().setEntity(cluster.supportsVirtService());
         clusterModel.getEnableOvirtService().setIsChangable(true);
         clusterModel.getEnableGlusterService().setEntity(cluster.supportsGlusterService());
@@ -390,7 +390,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                         }
                     }
                 };
-                AsyncDataProvider.getVolumeList(asyncQuery, cluster.getname());
+                AsyncDataProvider.getVolumeList(asyncQuery, cluster.getName());
 
                 AsyncQuery asyncQuery1 = new AsyncQuery();
                 asyncQuery1.setModel(clusterModel);
@@ -409,7 +409,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                         }
                     }
                 };
-                AsyncDataProvider.getVmListByClusterName(asyncQuery1, cluster.getname());
+                AsyncDataProvider.getVmListByClusterName(asyncQuery1, cluster.getName());
             }
         }));
 
@@ -444,7 +444,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         ArrayList<String> list = new ArrayList<String>();
         for (VDSGroup a : Linq.<VDSGroup> cast(getSelectedItems()))
         {
-            list.add(a.getname());
+            list.add(a.getName());
         }
         model.setItems(list);
 
@@ -601,7 +601,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         Version version = (Version) model.getVersion().getSelectedItem();
 
-        cluster.setname((String) model.getName().getEntity());
+        cluster.setName((String) model.getName().getEntity());
         cluster.setdescription((String) model.getDescription().getEntity());
         cluster.setStoragePoolId(((StoragePool) model.getDataCenter().getSelectedItem()).getId());
         if (model.getCPU().getSelectedItem() != null)

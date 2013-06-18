@@ -44,7 +44,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         groupWithNoRunningVms = dbFacade.getVdsGroupDao().get(FixturesTool.VDS_GROUP_NO_RUNNING_VMS);
 
         newGroup = new VDSGroup();
-        newGroup.setname("New VDS Group");
+        newGroup.setName("New VDS Group");
         newGroup.setcompatibility_version(new Version("3.0"));
         newGroup.setVirtService(true);
         newGroup.setGlusterService(false);
@@ -146,20 +146,20 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByName() {
-        VDSGroup result = dao.getByName(existingVdsGroup.getname());
+        VDSGroup result = dao.getByName(existingVdsGroup.getName());
 
         assertCorrectVDSGroup(result);
     }
 
     @Test
     public void testGetByNameForPrivilegedUser() {
-        VDSGroup result = dao.getByName(existingVdsGroup.getname(), PRIVILEGED_USER_ID, false);
+        VDSGroup result = dao.getByName(existingVdsGroup.getName(), PRIVILEGED_USER_ID, false);
         assertCorrectVDSGroup(result);
     }
 
     @Test
     public void testGetByNameForUnprivilegedUser() {
-        VDSGroup result = dao.getByName(existingVdsGroup.getname(), UNPRIVILEGED_USER_ID, true);
+        VDSGroup result = dao.getByName(existingVdsGroup.getName(), UNPRIVILEGED_USER_ID, true);
         assertNull(result);
     }
 
@@ -295,7 +295,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
     public void testSave() {
         dao.save(newGroup);
 
-        VDSGroup result = dao.getByName(newGroup.getname());
+        VDSGroup result = dao.getByName(newGroup.getName());
 
         assertNotNull(result);
         assertEquals(newGroup, result);
@@ -306,9 +306,9 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdate() {
-        String oldName = existingVdsGroup.getname();
+        String oldName = existingVdsGroup.getName();
 
-        existingVdsGroup.setname("This is the new name");
+        existingVdsGroup.setName("This is the new name");
         existingVdsGroup.setVirtService(false);
         existingVdsGroup.setGlusterService(true);
 

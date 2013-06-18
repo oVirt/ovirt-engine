@@ -318,7 +318,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         if (vdsGroupID != null && !vdsGroupID.equals(Guid.Empty)) {
             VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().getWithRunningVms(vdsGroupID);
             if (vdsGroup != null) {
-                clustersWithRunningVms.add(vdsGroup.getname());
+                clustersWithRunningVms.add(vdsGroup.getName());
             }
         }
     }

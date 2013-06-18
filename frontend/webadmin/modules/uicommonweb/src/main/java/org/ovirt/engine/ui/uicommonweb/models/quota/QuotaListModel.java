@@ -207,7 +207,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                         for (VDSGroup vdsGroup : clusterList) {
                             quotaVdsGroup = new QuotaVdsGroup();
                             quotaVdsGroup.setVdsGroupId(vdsGroup.getId());
-                            quotaVdsGroup.setVdsGroupName(vdsGroup.getname());
+                            quotaVdsGroup.setVdsGroupName(vdsGroup.getName());
                             quotaVdsGroup.setMemSizeMB(null);
                             quotaVdsGroup.setMemSizeMBUsage((long) 0);
                             quotaVdsGroup.setVirtualCpu(null);
@@ -445,7 +445,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                 for (VDSGroup vdsGroup : clusterList) {
                                     quotaVdsGroup = new QuotaVdsGroup();
                                     quotaVdsGroup.setVdsGroupId(vdsGroup.getId());
-                                    quotaVdsGroup.setVdsGroupName(vdsGroup.getname());
+                                    quotaVdsGroup.setVdsGroupName(vdsGroup.getName());
                                     quotaVdsGroup.setQuotaId(quota.getId());
                                     boolean containCluster = false;
                                     for (QuotaVdsGroup iter : quota.getQuotaVdsGroups()) {

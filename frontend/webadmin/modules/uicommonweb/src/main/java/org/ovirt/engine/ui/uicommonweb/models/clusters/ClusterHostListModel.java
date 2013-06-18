@@ -34,7 +34,7 @@ public class ClusterHostListModel extends HostListModel
     {
         if (getEntity() != null)
         {
-            setSearchString("hosts: cluster=" + getEntity().getname()); //$NON-NLS-1$
+            setSearchString("hosts: cluster=" + getEntity().getName()); //$NON-NLS-1$
             super.search();
         }
     }

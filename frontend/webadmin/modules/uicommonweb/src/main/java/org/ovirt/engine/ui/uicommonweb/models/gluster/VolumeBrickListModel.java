@@ -246,7 +246,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                         volumeBrickModel.getServers().setItems(hostList);
                     }
                 };
-                AsyncDataProvider.getHostListByCluster(_asyncQueryInner, cluster.getname());
+                AsyncDataProvider.getHostListByCluster(_asyncQueryInner, cluster.getName());
             }
         };
         AsyncDataProvider.getClusterById(_asyncQuery, volumeEntity.getClusterId());
@@ -703,7 +703,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                         brickModel.getServers().setItems(hostList);
                     }
                 };
-                AsyncDataProvider.getHostListByCluster(_asyncQueryInner, cluster.getname());
+                AsyncDataProvider.getHostListByCluster(_asyncQueryInner, cluster.getName());
             }
         };
         AsyncDataProvider.getClusterById(_asyncQuery, volumeEntity.getClusterId());

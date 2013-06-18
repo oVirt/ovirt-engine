@@ -48,7 +48,7 @@ public class NetworkClusterHelper {
             // Search all vds in cluster that have the specify network, if not the
             // network is not active
             SearchParameters searchParams = new SearchParameters("hosts: cluster = "
-                    + vdsGroup.getname(), SearchType.VDS);
+                    + vdsGroup.getName(), SearchType.VDS);
             searchParams.setMaxCount(Integer.MAX_VALUE);
             List<VDS> vdsList = (List<VDS>) Backend.getInstance()
                     .runInternalQuery(VdcQueryType.Search, searchParams).getReturnValue();
