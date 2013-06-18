@@ -126,6 +126,11 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             return false;
         }
 
+        if (dom.getStorageType() == StorageType.GLANCE) {
+            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_MANAGE_STORAGE_DOMAIN);
+            return false;
+        }
+
         return true;
     }
 

@@ -14,6 +14,7 @@ public class StorageTypeTest {
         Assert.assertTrue(StorageType.LOCALFS.isFileDomain());
         Assert.assertTrue(StorageType.POSIXFS.isFileDomain());
         Assert.assertTrue(StorageType.GLUSTERFS.isFileDomain());
+        Assert.assertTrue(StorageType.GLANCE.isFileDomain());
     }
 
     @Test
@@ -24,10 +25,11 @@ public class StorageTypeTest {
         Assert.assertFalse(StorageType.LOCALFS.isBlockDomain());
         Assert.assertFalse(StorageType.POSIXFS.isBlockDomain());
         Assert.assertFalse(StorageType.GLUSTERFS.isBlockDomain());
+        Assert.assertFalse(StorageType.GLANCE.isBlockDomain());
     }
 
     @Test
     public void testNewStorageTypes() {
-        Assert.assertTrue("A storage type was added/removed. Update this test, and the isFileDomain/isBlockDomain method accordingly", StorageType.values().length == 8);
+        Assert.assertTrue("A storage type was added/removed. Update this test, and the isFileDomain/isBlockDomain method accordingly", StorageType.values().length == 9);
     }
 }

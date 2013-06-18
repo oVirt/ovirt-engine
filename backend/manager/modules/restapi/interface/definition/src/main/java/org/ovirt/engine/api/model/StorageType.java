@@ -22,7 +22,8 @@ public enum StorageType {
     NFS,
     LOCALFS,
     POSIXFS,
-    GLUSTERFS;
+    GLUSTERFS,
+    GLANCE;
 
     public String value() {
         return name().toLowerCase();

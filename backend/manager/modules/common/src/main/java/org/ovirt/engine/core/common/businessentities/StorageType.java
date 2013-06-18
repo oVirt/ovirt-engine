@@ -10,6 +10,7 @@ public enum StorageType implements Identifiable {
     LOCALFS(4, true),
     POSIXFS(6, true),
     GLUSTERFS(7, true),
+    GLANCE(8, true),
     // CIFS(5)
     ALL(-1, false);
 
@@ -44,7 +45,7 @@ public enum StorageType implements Identifiable {
     }
 
     public boolean isFileDomain() {
-        return this == NFS || this == POSIXFS || this == LOCALFS || this == GLUSTERFS;
+        return this == NFS || this == POSIXFS || this == LOCALFS || this == GLUSTERFS || this == GLANCE;
     }
 
     public boolean isBlockDomain() {

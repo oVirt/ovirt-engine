@@ -17,7 +17,7 @@
 package org.ovirt.engine.api.model;
 
 public enum StorageDomainType {
-    DATA, ISO, EXPORT;
+    DATA, ISO, EXPORT, IMAGE;
 
     public String value() {
         return name().toLowerCase();

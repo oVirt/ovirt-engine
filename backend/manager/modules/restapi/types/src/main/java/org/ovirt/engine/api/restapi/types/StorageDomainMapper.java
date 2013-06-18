@@ -62,6 +62,8 @@ public class StorageDomainMapper {
                     break;
                 case FCP:
                     break;
+                case GLANCE:
+                    break;
                 case NFS:
                     if (storage.isSetAddress() && storage.isSetPath()) {
                         entity.setconnection(storage.getAddress() + ":" + storage.getPath());
@@ -157,6 +159,8 @@ public class StorageDomainMapper {
             return org.ovirt.engine.core.common.businessentities.StorageType.POSIXFS;
         case GLUSTERFS:
             return org.ovirt.engine.core.common.businessentities.StorageType.GLUSTERFS;
+        case GLANCE:
+            return org.ovirt.engine.core.common.businessentities.StorageType.GLANCE;
         default:
             return null;
         }
@@ -177,6 +181,8 @@ public class StorageDomainMapper {
             return StorageType.POSIXFS.value();
         case GLUSTERFS:
             return StorageType.GLUSTERFS.value();
+        case GLANCE:
+            return StorageType.GLANCE.value();
         default:
             return null;
         }
@@ -193,6 +199,8 @@ public class StorageDomainMapper {
             return org.ovirt.engine.core.common.businessentities.StorageDomainType.ISO;
         case EXPORT:
             return org.ovirt.engine.core.common.businessentities.StorageDomainType.ImportExport;
+        case IMAGE:
+            return org.ovirt.engine.core.common.businessentities.StorageDomainType.Image;
         default:
             return null;
         }
@@ -209,6 +217,8 @@ public class StorageDomainMapper {
             return StorageDomainType.ISO.value();
         case ImportExport:
             return StorageDomainType.EXPORT.value();
+        case Image:
+            return StorageDomainType.IMAGE.value();
         case Unknown:
         default:
             return null;
