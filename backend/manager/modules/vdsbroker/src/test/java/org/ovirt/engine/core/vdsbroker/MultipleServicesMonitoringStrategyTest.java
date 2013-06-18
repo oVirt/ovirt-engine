@@ -5,13 +5,18 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+
+import java.util.Map;
 
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.dao.VdsGroupDAO;
 
 public class MultipleServicesMonitoringStrategyTest {
     VirtMonitoringStrategy virtStrategy;
@@ -22,9 +27,9 @@ public class MultipleServicesMonitoringStrategyTest {
     public ExpectedException exception = ExpectedException.none();
 
     public MultipleServicesMonitoringStrategyTest() {
-        virtStrategy = spy(new VirtMonitoringStrategy());
+        virtStrategy = spy(new VirtMonitoringStrategy(mock(VdsGroupDAO.class)));
         glusterStrategy = spy(new GlusterMonitoringStrategy());
-        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class));
+        doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class),any(NonOperationalReason.class),any(Map.class));
         strategy = spy(new MultipleServicesMonitoringStrategy());
         strategy.addMonitoringStrategy(virtStrategy);
         strategy.addMonitoringStrategy(glusterStrategy);

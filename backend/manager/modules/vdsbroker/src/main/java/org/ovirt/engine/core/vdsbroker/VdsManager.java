@@ -572,6 +572,7 @@ public class VdsManager {
             // We process the software capabilities.
             VDSStatus oldStatus = vds.getStatus();
             monitoringStrategy.processSoftwareCapabilities(vds);
+
             returnStatus = vds.getStatus();
 
             if (returnStatus != oldStatus && returnStatus == VDSStatus.NonOperational) {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.utils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -129,4 +130,20 @@ public class ListUtils {
         return addedElements;
     }
 
+    /**
+     * @param src    The list on which we iterate to match against the lookup.
+     * @param lookup The list being matched against an entry for the source.<br>
+     * </br> The first match breaks the loop and is sufficient.
+     * @return the first match between a value in src against the lookup.
+     */
+    public static String firstMatch(List<String> src, String... lookup) {
+        Arrays.sort(lookup);
+        for (String s : src) {
+            int matchedIndex = Arrays.binarySearch(lookup, s);
+            if (matchedIndex >= 0) {
+                return lookup[matchedIndex];
+            }
+        }
+        return null;
+    }
 }
