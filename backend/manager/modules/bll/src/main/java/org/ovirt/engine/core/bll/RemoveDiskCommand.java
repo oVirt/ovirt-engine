@@ -151,7 +151,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     private void setVmTemplateIdParameter() {
         Map<Boolean, VmTemplate> templateMap =
                 // Disk image is the only disk type that can be part of the template disks.
-                getDbFacade().getVmTemplateDao().getAllForImage(getDiskImage().getImageId());
+                getVmTemplateDAO().getAllForImage(getDiskImage().getImageId());
 
         if (!templateMap.isEmpty()) {
             setVmTemplateId(templateMap.values().iterator().next().getId());
@@ -170,40 +170,49 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     }
 
     private boolean canRemoveTemplateDisk() {
-        boolean retValue = true;
-        DiskImage diskImage = getDiskImage();
         if (getVmTemplate().getStatus() == VmTemplateStatus.Locked) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
+            return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
         }
-        if (retValue && diskImage.getStorageIds().size() == 1) {
-            retValue = false;
-            addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_LAST_DOMAIN);
+
+        DiskImage diskImage = getDiskImage();
+
+        if (diskImage.getStorageIds().size() == 1) {
+            return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IMAGE_LAST_DOMAIN);
         }
-        if (retValue) {
-            List<String> problematicVmNames = new ArrayList<String>();
-            List<VM> vms = DbFacade.getInstance().getVmDao().getAllWithTemplate(getVmTemplateId());
-            for (VM vm : vms) {
-                List<Disk> vmDisks = DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId());
-                for (Disk vmDisk : vmDisks) {
-                    if (vmDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                        DiskImage vmDiskImage = (DiskImage) vmDisk;
-                        if (vmDiskImage.getImageTemplateId().equals(diskImage.getImageId())) {
-                            if (vmDiskImage.getStorageIds().contains(getParameters().getStorageDomainId())) {
-                                retValue = false;
-                                problematicVmNames.add(vm.getName());
-                            }
-                            break;
+
+        if (!checkDerivedVmFromTemplateExists(diskImage)){
+            return false;
+        }
+
+        return true;
+    }
+
+    private boolean checkDerivedVmFromTemplateExists(DiskImage diskImage) {
+        List<String> vmNames = getNamesOfDerivedVmsFromTemplate(diskImage);
+        if (!vmNames.isEmpty()) {
+            addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM);
+            addCanDoActionMessage(String.format("$vmsList %1$s", StringUtils.join(vmNames, ",")));
+            return false;
+        }
+        return true;
+    }
+
+    private List<String> getNamesOfDerivedVmsFromTemplate(DiskImage diskImage) {
+        List<String> result = new ArrayList<String>();
+        for (VM vm : getVmDAO().getAllWithTemplate(getVmTemplateId())) {
+            for (Disk vmDisk : getDiskDao().getAllForVm(vm.getId())) {
+                if (vmDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    DiskImage vmDiskImage = (DiskImage) vmDisk;
+                    if (vmDiskImage.getImageTemplateId().equals(diskImage.getImageId())) {
+                        if (vmDiskImage.getStorageIds().contains(getParameters().getStorageDomainId())) {
+                            result.add(vm.getName());
                         }
+                        break;
                     }
                 }
             }
-            if (!retValue) {
-                addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_REMOVE_DETECTED_DERIVED_VM);
-                addCanDoActionMessage(String.format("$vmsList %1$s", StringUtils.join(problematicVmNames, ",")));
-            }
         }
-        return retValue;
+        return result;
     }
 
     private boolean canRemoveVmImageDisk() {
