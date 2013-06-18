@@ -21,12 +21,12 @@ public class MemorySizeParser implements Parser<Object> {
             return 0;
         }
 
-        if (suffix.equalsIgnoreCase("GB")) { //$NON-NLS-1$
+        if (suffix.equalsIgnoreCase("GB") || suffix.equalsIgnoreCase("G")) {  //$NON-NLS-1$ $NON-NLS-2$
             size *= 1024;
             return size;
         }
 
-        if (suffix.equalsIgnoreCase("MB")) { //$NON-NLS-1$
+        if (suffix.equalsIgnoreCase("MB") || suffix.equalsIgnoreCase("M")) { //$NON-NLS-1$ $NON-NLS-2$
             return Integer.parseInt(prefix);
         }
 
