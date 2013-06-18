@@ -2154,6 +2154,9 @@ def main(configFile=None):
     ):
         return 0
     try:
+        cmd = [ basedefs.EXEC_LOG_SETUP_EVENT, "--notes=Start of engine-setup (monolithic)" ]
+        utils.execCmd(cmdList=cmd, failOnError=False)
+
         logging.debug("Entered main(configFile='%s')"%(configFile))
         print output_messages.INFO_HEADER
 
@@ -2237,6 +2240,8 @@ def main(configFile=None):
                 enginePath=enginePath,
             )
         )
+        cmd = [ basedefs.EXEC_LOG_SETUP_EVENT, "--notes=End of engine-setup (monolithic)" ]
+        utils.execCmd(cmdList=cmd, failOnError=False)
         _printAdditionalMessages()
 
     finally:

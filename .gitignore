@@ -56,4 +56,5 @@ packaging/services/config.py
 packaging/services/*.systemd
 packaging/services/*.sysv
 packaging/setup/ovirt_engine_setup/config.py
+packaging/bin/ovirt-engine-log-setup-event.sh
 ovirt-engine.spec

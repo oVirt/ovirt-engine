@@ -189,6 +189,7 @@ GENERATED = \
 	packaging/services/ovirt-websocket-proxy.systemd \
 	packaging/services/ovirt-websocket-proxy.sysv \
 	packaging/setup/ovirt_engine_setup/config.py \
+	packaging/bin/ovirt-engine-log-setup-event.sh \
 	ovirt-engine.spec \
 	$(NULL)
 
@@ -407,6 +408,7 @@ install_sec:
 	install -m 755 packaging/bin/pki-create-ca.sh "$(DESTDIR)$(DATA_DIR)/bin"
 	install -m 755 packaging/bin/pki-enroll-pkcs12.sh "$(DESTDIR)$(DATA_DIR)/bin"
 	install -m 755 packaging/bin/pki-enroll-request.sh "$(DESTDIR)$(DATA_DIR)/bin"
+	install -m 755 packaging/bin/ovirt-engine-log-setup-event.sh "$(DESTDIR)$(DATA_DIR)/bin"
 
 install_config:
 	@echo "*** Deploying engine-config & engine-manage-domains"

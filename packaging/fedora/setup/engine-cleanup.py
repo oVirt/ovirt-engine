@@ -483,6 +483,9 @@ def main(options):
     db = DB()
     ca = CA()
 
+    cmd = [ basedefs.EXEC_LOG_SETUP_EVENT, "--notes=Start of engine-cleanup (monolithic)" ]
+    utils.execCmd(cmdList=cmd, failOnError=False)
+
     if not options.unattended_clean:
         # Ask user to proceed
         if not askForUserApproval():
@@ -519,6 +522,9 @@ def main(options):
 
     # Clean configuration
     runFunc(cleanConfiguration, MSG_INFO_CLEANING_CONFIG)
+
+    cmd = [ basedefs.EXEC_LOG_SETUP_EVENT, "--notes=End of engine-cleanup (monolithic)" ]
+    utils.execCmd(cmdList=cmd, failOnError=False)
 
     if len(err_messages) == 0:
         print MSG_INFO_CLEANUP_OK

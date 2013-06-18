@@ -739,6 +739,9 @@ fi
 %{engine_data}/scripts/engine-upgrade.py*
 %{engine_data}/scripts/post_upgrade.py*
 
+# Log setup event script
+%{engine_data}/bin/ovirt-engine-log-setup-event.sh
+
 # DB-related tools
 %{engine_data}/scripts/dbutils
 

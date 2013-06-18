@@ -1289,6 +1289,9 @@ def main(options):
     miniyum.selinux_role()
     # END: PROCESS-INITIALIZATION
 
+    cmd = [ basedefs.EXEC_LOG_SETUP_EVENT, "--notes=Start of engine-upgrade (monolithic)" ]
+    utils.execCmd(cmdList=cmd, failOnError=False)
+
     # we do not wish to be interrupted
     signal.signal(signal.SIGINT, signal.SIG_IGN)
 
@@ -1509,6 +1512,9 @@ def main(options):
     finally:
         # start engine after the rollback
         runFunc([startEngine], MSG_INFO_START_ENGINE % engineService)
+
+    cmd = [ basedefs.EXEC_LOG_SETUP_EVENT, "--notes=End of engine-upgrade (monolithic)" ]
+    utils.execCmd(cmdList=cmd, failOnError=False)
 
     # Print log location on success
     addAdditionalMessages(etlService.isServiceAvailable())

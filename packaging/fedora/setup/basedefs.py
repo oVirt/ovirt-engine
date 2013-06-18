@@ -209,6 +209,9 @@ DIR_DBUTILS = "%s/ovirt-engine/scripts/dbutils" % DIR_USR_SHARE
 EXEC_TASK_CLEANER = "%s/taskcleaner.sh" % DIR_DBUTILS
 EXEC_DBVALIDATOR = "%s/validatedb.sh" % DIR_DBUTILS
 
+# log-setup-event
+EXEC_LOG_SETUP_EVENT = "%s/ovirt-engine-log-setup-event.sh" % DIR_ENGINE_BIN
+
 CONST_BASE_MAC_ADDR="00:1A:4A"
 CONST_DEFAULT_MAC_RANGE="00:1a:4a:16:84:02-00:1a:4a:16:84:fd"
 CONST_MINIMUM_SPACE_ISODOMAIN=350
