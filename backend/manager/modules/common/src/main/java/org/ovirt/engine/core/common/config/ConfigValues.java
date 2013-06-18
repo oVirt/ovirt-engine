@@ -1404,6 +1404,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("/usr/bin/vdsm-tool service-restart vdsmd")
     SshSoftFencingCommand(515),
 
+    @TypeConverterAttribute(java.util.List.class)
+    @DefaultValueAttribute("rhel6.2.0,pc-1.0")
+    ClusterEmulatedMachines(516),
+
     Invalid(65535);
 
     private int intValue;

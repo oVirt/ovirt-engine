@@ -69,6 +69,10 @@ select fn_db_add_config_value('CipherSuite','DEFAULT','general');
 --Handling Configuration directory for ENGINE
 select fn_db_add_config_value('ConfigDir','/etc/engine','general');
 select fn_db_add_config_value('ConnectToServerTimeoutInSeconds','20','general');
+select fn_db_add_config_value('ClusterEmulatedMachines','rhel6.2.0,pc-1.0','3.0');
+select fn_db_add_config_value('ClusterEmulatedMachines','rhel6.3.0,pc-1.0','3.1');
+select fn_db_add_config_value('ClusterEmulatedMachines','rhel6.4.0,pc-1.0','3.2');
+select fn_db_add_config_value('ClusterEmulatedMachines','rhel6.4.0,pc-1.0','3.3');
 select fn_db_add_config_value('CpuOverCommitDurationMinutes','2','general');
 --Handling Data directory for ENGINE
 select fn_db_add_config_value('DataDir','/usr/share/engine','general');
