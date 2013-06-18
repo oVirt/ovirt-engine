@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -327,7 +328,7 @@ public abstract class AbstractDiskModel extends DiskModel
                     }
                 }
 
-                Linq.sort(filteredStorageDomains, new Linq.StorageDomainByNameComparer());
+                Linq.sort(filteredStorageDomains, new NameableComparator());
                 StorageDomain storage = Linq.firstOrDefault(filteredStorageDomains);
 
                 diskModel.getStorageDomain().setItems(filteredStorageDomains);

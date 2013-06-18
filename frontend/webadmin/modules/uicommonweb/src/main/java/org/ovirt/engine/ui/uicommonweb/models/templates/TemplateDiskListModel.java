@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -20,7 +21,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
-import org.ovirt.engine.ui.uicommonweb.Linq.StorageDomainByNameComparer;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
@@ -158,7 +158,7 @@ public class TemplateDiskListModel extends SearchableListModel
                             TemplateDiskListModel model = (TemplateDiskListModel) target;
                             ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
 
-                            Linq.sort(storageDomains, new StorageDomainByNameComparer());
+                            Linq.sort(storageDomains, new NameableComparator());
                             setStorageDomains(storageDomains);
                             setItems(model.value);
                         }

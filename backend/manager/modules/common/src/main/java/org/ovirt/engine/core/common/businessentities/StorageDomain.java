@@ -2,11 +2,12 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.Set;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid> {
+public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = -6162192446628804305L;
 
     public StorageDomain() {
@@ -109,6 +110,12 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
 
     public void setStorage(String storage) {
         getStorageStaticData().setStorage(storage);
+    }
+
+    @JsonIgnore
+    @Override
+    public String getName() {
+        return getStorageName();
     }
 
     public String getStorageName() {

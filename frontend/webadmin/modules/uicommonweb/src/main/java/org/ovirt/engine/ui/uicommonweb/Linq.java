@@ -124,17 +124,6 @@ public final class Linq
 
     }
 
-    public static class StorageDomainByNameComparer implements Comparator<StorageDomain>, Serializable
-    {
-
-        @Override
-        public int compare(StorageDomain x, StorageDomain y)
-        {
-            return x.getStorageName().compareTo(y.getStorageName());
-        }
-
-    }
-
     public static class StorageDomainModelByNameComparer implements Comparator<StorageDomainModel>, Serializable
     {
 

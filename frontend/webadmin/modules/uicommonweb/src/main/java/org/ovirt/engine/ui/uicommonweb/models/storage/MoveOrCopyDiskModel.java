@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -118,7 +119,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                 getActiveStorageDomains().add(storage);
             }
         }
-        Collections.sort(getActiveStorageDomains(), new Linq.StorageDomainByNameComparer());
+        Collections.sort(getActiveStorageDomains(), new NameableComparator());
 
         if (!getActiveStorageDomains().isEmpty()) {
             AsyncDataProvider.getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
@@ -167,8 +168,8 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
             }
 
             // Sort and add storage domains
-            Collections.sort(destStorageDomains, new Linq.StorageDomainByNameComparer());
-            Collections.sort(sourceStorageDomains, new Linq.StorageDomainByNameComparer());
+            Collections.sort(destStorageDomains, new NameableComparator());
+            Collections.sort(sourceStorageDomains, new NameableComparator());
             disk.getStorageDomain().setItems(destStorageDomains);
             disk.getSourceStorageDomain().setItems(sourceStorageDomains);
             addSourceStorageDomainName(disk, sourceStorageDomains);

@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -301,7 +302,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         ArrayList<DiskModel> disks =
                                 (ArrayList<DiskModel>) behavior.getModel().getDisksAllocationModel().getDisks();
 
-                        Linq.sort(activeStorageDomainList, new Linq.StorageDomainByNameComparer());
+                        Linq.sort(activeStorageDomainList, new NameableComparator());
                         if (disks != null) {
                             for (DiskModel diskModel : disks) {
                                 diskModel.getStorageDomain().setItems(activeStorageDomainList);

@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -552,7 +553,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                 boolean provisioning = (Boolean) behavior.getModel().getProvisioning().getEntity();
                 ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
-                Linq.sort(activeStorageDomains, new Linq.StorageDomainByNameComparer());
+                Linq.sort(activeStorageDomains, new NameableComparator());
 
                 for (DiskModel diskModel : disks) {
                     ArrayList<StorageDomain> availableDiskStorageDomains;
@@ -565,7 +566,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                     // Set target storage domains
                     availableDiskStorageDomains = provisioning ? activeStorageDomains : activeDiskStorageDomains;
-                    Linq.sort(availableDiskStorageDomains, new Linq.StorageDomainByNameComparer());
+                    Linq.sort(availableDiskStorageDomains, new NameableComparator());
                     diskModel.getStorageDomain().setItems(availableDiskStorageDomains);
 
                     diskModel.getStorageDomain().setChangeProhibitionReason(
