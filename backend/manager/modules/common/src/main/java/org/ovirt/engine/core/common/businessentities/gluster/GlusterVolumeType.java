@@ -57,4 +57,8 @@ public enum GlusterVolumeType {
     public boolean isReplicatedType() {
         return value().contains("REPLICATE");
     }
+
+    public boolean isDistributedType() {
+        return value().contains("DISTRIBUTE");
+    }
 }
