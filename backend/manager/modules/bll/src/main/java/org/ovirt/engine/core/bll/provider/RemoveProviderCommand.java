@@ -55,7 +55,14 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
 
     @Override
     protected void executeCommand() {
-        getProviderDao().remove(getParameters().getProvider().getId());
+        final Guid providerId = getParameters().getProvider().getId();
+
+        ProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(getParameters().getProvider());
+        if (providerProxy != null) {
+            providerProxy.onRemoval();
+        }
+
+        getProviderDao().remove(providerId);
         setSucceeded(true);
     }
 

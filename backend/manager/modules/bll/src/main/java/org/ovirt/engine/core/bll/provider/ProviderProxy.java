@@ -18,4 +18,17 @@ public interface ProviderProxy {
      * @return List of Certificate objects
      */
     List<? extends Certificate> getCertificateChain();
+
+    /**
+     * Callback executed when the provider is added.<br>
+     * Useful to add provider-specific operations when the provider is added.
+     */
+    void onAddition();
+
+    /**
+     * Callback executed when the provider is removed.<br>
+     * Useful to add provider-specific operations when the provider is removed.
+     */
+    void onRemoval();
+
 }

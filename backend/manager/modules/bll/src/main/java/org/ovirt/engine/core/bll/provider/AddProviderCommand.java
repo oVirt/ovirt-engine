@@ -42,6 +42,12 @@ public class AddProviderCommand<P extends ProviderParameters> extends CommandBas
     protected void executeCommand() {
         getProvider().setId(Guid.newGuid());
         getDbFacade().getProviderDao().save(getProvider());
+
+        ProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(getProvider());
+        if (providerProxy != null) {
+            providerProxy.onAddition();
+        }
+
         getReturnValue().setActionReturnValue(getProvider().getId());
         setSucceeded(true);
     }

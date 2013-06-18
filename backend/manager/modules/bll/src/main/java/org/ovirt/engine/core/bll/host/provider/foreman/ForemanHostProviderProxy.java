@@ -101,6 +101,14 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         runHttpMethod(httpClient, httpMethod);
     }
 
+    @Override
+    public void onAddition() {
+    }
+
+    @Override
+    public void onRemoval() {
+    }
+
     private void runHttpMethod(HttpClient httpClient, HttpMethod httpMethod) {
         try {
             int result = httpClient.executeMethod(httpMethod);
