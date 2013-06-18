@@ -346,6 +346,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         command.setContext(context);
         ExecutionHandler.prepareCommandForMonitoring(command, command.getActionType(), runAsInternal);
 
+        command.insertAsyncTaskPlaceHolders();
         returnValue = command.executeAction();
         returnValue.setCorrelationId(command.getParameters().getCorrelationId());
         returnValue.setJobId(command.getJobId());
@@ -516,6 +517,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         case LoginUser:
         case LoginAdminUser:
             CommandBase<?> command = CommandsFactory.CreateCommand(parameters.getActionType(), parameters);
+            command.insertAsyncTaskPlaceHolders();
             return command.executeAction();
         default:
             return getErrorCommandReturnValue(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);

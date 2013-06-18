@@ -46,6 +46,8 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
 
+    private static final String DELETE_PRIMARY_IMAGE_TASK_KEY = "DELETE_PRIMARY_IMAGE_TASK_KEY";
+    private static final String DELETE_SECONDARY_IMAGES_TASK_KEY = "DELETE_SECONDARY_IMAGES_TASK_KEY";
     private static final int Kb = 1024;
     protected final static int MAX_NETWORK_INTERFACES_SUPPORTED = 8;
     private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
@@ -282,7 +284,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                                 }
                             }).size() > 0;
 
-            Guid taskId1 = persistAsyncTaskPlaceHolder(parentCommand);
+            Guid taskId1 = persistAsyncTaskPlaceHolder(parentCommand, DELETE_PRIMARY_IMAGE_TASK_KEY);
 
             // delete first image
             // the next 'DeleteImageGroup' command should also take care of the image removal:
@@ -299,7 +301,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
                     createTask(taskId1, vdsRetValue1.getCreationInfo(), parentCommand, VdcObjectType.Storage, guids[0]);
             getTaskIdList().add(guid1);
 
-            Guid taskId2 = persistAsyncTaskPlaceHolder(parentCommand);
+            Guid taskId2 = persistAsyncTaskPlaceHolder(parentCommand, DELETE_SECONDARY_IMAGES_TASK_KEY);
             // delete second image
             // the next 'DeleteImageGroup' command should also take care of the image removal:
             VDSReturnValue vdsRetValue2 = runVdsCommand(

@@ -118,7 +118,7 @@ public class CommandBaseTest {
         VdcActionParametersBase parameterMock = mock(VdcActionParametersBase.class);
         when(parameterMock.getTransactionScopeOption()).thenReturn(TransactionScopeOption.Required);
         CommandBase<VdcActionParametersBase> command = spy(new CommandBaseDummy(parameterMock));
-
+        command.insertAsyncTaskPlaceHolders();
         command.executeAction();
         verify(command).executeCommand();
     }

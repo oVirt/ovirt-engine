@@ -119,6 +119,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             // set the _isRerun flag to false before calling executeAction so that we'll know if
             // there is another rerun attempt within the method
             _isRerun = false;
+            insertAsyncTaskPlaceHolders();
             executeAction();
 
             // if there was no rerun attempt in the previous executeAction call and the command

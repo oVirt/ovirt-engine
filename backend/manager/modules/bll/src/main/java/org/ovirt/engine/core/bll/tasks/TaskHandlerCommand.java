@@ -36,5 +36,12 @@ public interface TaskHandlerCommand<T extends VdcActionParametersBase> {
 
     Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand);
 
+    Guid persistAsyncTaskPlaceHolder(VdcActionType actionType, String key);
+
+    Guid getAsyncTaskId(String key);
+
+    Guid getAsyncTaskId();
+
     ArrayList<Guid> getTaskIdList();
+
 }

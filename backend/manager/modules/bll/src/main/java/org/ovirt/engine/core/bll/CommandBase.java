@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.ejb.TransactionRolledbackLocalException;
@@ -107,6 +108,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     /* Multiplier used to convert GB to bytes or vice versa. */
     protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;
+    private static final String DEFAULT_TASK_KEY = "DEFAULT_TASK_KEY";
     private static final Guid[] EMPTY_GUID_ARRAY = new Guid[0];
     private static final String BACKEND_COMMAND_OBJECTS_HANDLER_JNDI_NAME =
             "java:global/engine/bll/Backend!org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler";
@@ -136,6 +138,27 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     /** Handlers for performing the logical parts of the command */
     private List<SPMAsyncTaskHandler> taskHandlers;
+
+    private Map<Guid, CommandBase<?>> childCommandsMap = new HashMap<>();
+    private Map<Guid, Pair<VdcActionType, VdcActionParametersBase>> childCommandInfoMap = new HashMap<>();
+
+    public void addChildCommandInfo(Guid id, VdcActionType vdcActionType, VdcActionParametersBase parameters) {
+        childCommandInfoMap.put(id, new Pair<VdcActionType, VdcActionParametersBase>(vdcActionType, parameters));
+    }
+
+    protected List<VdcReturnValueBase> executeChildCommands() {
+        List<VdcReturnValueBase> results = new ArrayList<>(childCommandsMap.size());
+        for (Entry<Guid, CommandBase<?>> entry : childCommandsMap.entrySet()) {
+            results.add(executeChildCommand(entry.getKey()));
+        }
+        return results;
+    }
+
+    protected VdcReturnValueBase executeChildCommand(Guid idInCommandsMap) {
+        CommandBase<?> command = childCommandsMap.get(idInCommandsMap);
+        return getBackendCommandObjectsHandler().runAction(command, getExecutionContext());
+    }
+
 
     protected CommandActionState getActionState() {
         return _actionState;
@@ -327,11 +350,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         getReturnValue().setDescription((tempVar != null) ? tempVar : getReturnValue().getDescription());
         setActionMessageParameters();
 
-        boolean actionAllowed = false;
         Step validatingStep = ExecutionHandler.addStep(getExecutionContext(), StepEnum.VALIDATING, null);
 
         try {
-            actionAllowed = getReturnValue().getCanDoAction() || internalCanDoAction();
+            boolean actionAllowed = getReturnValue().getCanDoAction() || internalCanDoAction();
             ExecutionHandler.endStep(getExecutionContext(), validatingStep, actionAllowed);
 
             if (actionAllowed) {
@@ -1235,7 +1257,48 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return annotation != null && annotation.forceCompensation();
     }
 
+    /**
+     * This method is called before executeAction to insert the async task
+     * placeholders for the child commands.
+     */
+    protected void insertAsyncTaskPlaceHolders() {
+        TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                new TransactionMethod<Void>() {
+                    @Override
+                    public Void runInTransaction() {
+                        buildChildCommandInfos();
+                        for (Map.Entry<Guid, Pair<VdcActionType, VdcActionParametersBase>> entry : childCommandInfoMap.entrySet()) {
+                            CommandBase<?> command =
+                                    getBackendCommandObjectsHandler().createAction(entry.getValue().getFirst(),
+                                            entry.getValue().getSecond());
+                            command.insertAsyncTaskPlaceHolders();
+                            childCommandsMap.put(entry.getKey(), command);
+                        }
+                        return null;
+                    }
+                });
+    }
+
     protected abstract void executeCommand();
+
+    /**
+     * provides the information on child commands
+     */
+    protected void buildChildCommandInfos() {
+    }
+
+    /**
+     * calls execute action the child command.
+     * @param command
+     * @param parameters
+     * @return
+     */
+    protected VdcReturnValueBase runCommand(CommandBase<?> command) {
+        VdcReturnValueBase returnValue = command.executeAction();
+        returnValue.setCorrelationId(command.getParameters().getCorrelationId());
+        returnValue.setJobId(command.getJobId());
+        return returnValue;
+    }
 
     private void logCommand() {
         Class<?> type = getClass();
@@ -1289,18 +1352,27 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         _returnValue.setFault(fault);
     }
 
-    public Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand) {
-        Guid taskId = Guid.Empty;
+    Map<String, Guid> taskKeyToTaskIdMap = new HashMap<>();
 
+    public Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand) {
+        return persistAsyncTaskPlaceHolder(parentCommand, DEFAULT_TASK_KEY);
+    }
+
+    public Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand, String taskKey) {
+        if (taskKeyToTaskIdMap.containsKey(taskKey)) {
+            return taskKeyToTaskIdMap.get(taskKey);
+        }
+
+        Guid taskId = Guid.Empty;
         try {
             AsyncTasks task = createAsyncTask(new AsyncTaskCreationInfo(), parentCommand);
             taskId = task.getTaskId();
             AsyncTaskUtils.addOrUpdateTaskInDB(task, null, EMPTY_GUID_ARRAY);
+            taskKeyToTaskIdMap.put(taskKey, taskId);
             addToReturnValueTaskPlaceHolderIdList(taskId);
         } catch (RuntimeException ex) {
-            log.errorFormat("Error during persistAsyncTaskPlaceHolders for command: {0}. Exception {1}", getClass().getName(), ex);
+            log.errorFormat("Error during persistAsyncTaskPlaceHolder for command: {0}. Exception {1}", getClass().getName(), ex);
         }
-
         return taskId;
     }
 
@@ -1308,6 +1380,28 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (!getReturnValue().getTaskPlaceHolderIdList().contains(taskId)) {
             getReturnValue().getTaskPlaceHolderIdList().add(taskId);
         }
+    }
+
+    public void deleteAsyncTaskPlaceHolder() {
+        deleteAsyncTaskPlaceHolder(DEFAULT_TASK_KEY);
+    }
+
+    public void deleteAsyncTaskPlaceHolder(String taskKey) {
+        Guid taskId = taskKeyToTaskIdMap.remove(taskKey);
+        if (!Guid.isNullOrEmpty(taskId)) {
+            AsyncTaskManager.removeTaskFromDbByTaskId(taskId);
+        }
+    }
+
+    public Guid getAsyncTaskId() {
+        return getAsyncTaskId(DEFAULT_TASK_KEY);
+    }
+
+    public Guid getAsyncTaskId(String taskKey) {
+        if (!taskKeyToTaskIdMap.containsKey(taskKey)) {
+            return Guid.Empty;
+        }
+        return taskKeyToTaskIdMap.get(taskKey);
     }
     /**
      * Use this method in order to create task in the AsyncTaskManager in a safe way. If you use this method within a
@@ -1452,6 +1546,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(taskId);
         }
         if (asyncTask != null) {
+            asyncTask.setaction_type(parentCommand);
             asyncTask.setVdsmTaskId(asyncTaskCreationInfo.getVdsmTaskId());
             asyncTask.setActionParameters(getParentParameters(parentCommand));
             asyncTask.setTaskParameters(getParameters());

@@ -35,6 +35,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOperationCommandBase<T> {
+    private static final String SAVE_IMAGE_TASK_KEY = "SAVE_IMAGE_TASK_KEY";
+    private static final String SAVE_RAM_STATE_TASK_KEY = "SAVE_RAM_STATE_TASK_KEY";
     private boolean isHibernateVdsProblematic = false;
 
     /** The size for the snapshot's meta data which is vm related properties at the
@@ -105,7 +107,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
                         }
                     });
 
-            final Guid taskId1 = persistAsyncTaskPlaceHolder(VdcActionType.HibernateVm);
+            final Guid taskId1 = persistAsyncTaskPlaceHolder(VdcActionType.HibernateVm, SAVE_IMAGE_TASK_KEY);
 
             Guid image1GroupId = Guid.newGuid();
             // this is temp code until SPM will implement the new verb that does
@@ -149,7 +151,7 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
 
             getReturnValue().getVdsmTaskIdList().add(guid1);
 
-            Guid taskId2 = persistAsyncTaskPlaceHolder(VdcActionType.HibernateVm);
+            Guid taskId2 = persistAsyncTaskPlaceHolder(VdcActionType.HibernateVm, SAVE_RAM_STATE_TASK_KEY);
 
             // second vol should be 10kb
             Guid image2GroupId = Guid.newGuid();

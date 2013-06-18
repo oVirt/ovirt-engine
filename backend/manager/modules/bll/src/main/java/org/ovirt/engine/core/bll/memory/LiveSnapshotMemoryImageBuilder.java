@@ -19,6 +19,9 @@ import org.ovirt.engine.core.compat.Guid;
  * This builder creates the memory images for live snapshots with memory operation
  */
 public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
+    private static final String CREATE_IMAGE_FOR_VM_TASK_KEY = "CREATE_IMAGE_FOR_VM_TASK_KEY";
+    private static final String CREATE_IMAGE_FOR_MEMORY_DUMP_TASK_KEY = "CREATE_IMAGE_FOR_MEMORY_DUMP_TASK_KEY";
+
     private Guid storageDomainId;
     private Guid memoryDumpImageGroupId;
     private Guid memoryDumpVolumeId;
@@ -68,7 +71,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                     "Failed to create image for vm configuration!");
         }
 
-        Guid taskId = enclosingCommand.persistAsyncTaskPlaceHolder(enclosingCommand.getActionType());
+        Guid taskId = enclosingCommand.persistAsyncTaskPlaceHolder(enclosingCommand.getActionType(), CREATE_IMAGE_FOR_VM_TASK_KEY);
         Guid guid = enclosingCommand.createTask(
                 taskId,
                 retVal.getCreationInfo(),
@@ -99,7 +102,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                     "Failed to create image for memory!");
         }
 
-        Guid taskId = enclosingCommand.persistAsyncTaskPlaceHolder(enclosingCommand.getActionType());
+        Guid taskId = enclosingCommand.persistAsyncTaskPlaceHolder(enclosingCommand.getActionType(), CREATE_IMAGE_FOR_MEMORY_DUMP_TASK_KEY);
         Guid guid =
                 enclosingCommand.createTask(taskId,
                         retVal.getCreationInfo(),

@@ -171,6 +171,7 @@ public class MultipleActionsRunner {
                     command.isInternalExecution());
         }
         ThreadLocalParamsContainer.setCorrelationId(command.getCorrelationId());
+        command.insertAsyncTaskPlaceHolders();
         command.executeAction();
     }
 
