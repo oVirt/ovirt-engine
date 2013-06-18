@@ -24,6 +24,7 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         removeImageParams.setStorageDomainId(storageDomainId);
         removeImageParams.setParentCommand(VdcActionType.RemoveImage);
         removeImageParams.setDbOperationScope(ImageDbOperationScope.NONE);
+        removeImageParams.setShouldLockImage(false);
         //TODO: should be removed as async task manager issues would be resolved, done in order
         // to avoid operations on the image to wait for this remove operation as currently async
         // task manager calls the end methods of command based on the entity id.
