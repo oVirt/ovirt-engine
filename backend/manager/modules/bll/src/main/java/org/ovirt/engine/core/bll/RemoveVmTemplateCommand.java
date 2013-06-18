@@ -70,20 +70,17 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
         // check not blank template
         if (VmTemplateHandler.BlankVmTemplateId.equals(vmTemplateId)) {
-            addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_REMOVE_BLANK_TEMPLATE);
-            return false;
+            return failCanDoAction(VdcBllMessages.VMT_CANNOT_REMOVE_BLANK_TEMPLATE);
         }
 
         // check storage pool valid
         if (getStoragePool() == null || getStoragePool().getstatus() != StoragePoolStatus.Up) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
         }
 
         // check if delete protected
         if (template.isDeleteProtected()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
         }
 
         fetchImageTemplates();
@@ -100,12 +97,8 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
             List<String> problematicDomains = new ArrayList<String>();
             for (Guid domainId : storageDomainsList) {
                 if (!allDomainsList.contains(domainId)) {
-                    StorageDomainStatic domain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
-                    if (domain == null) {
-                        problematicDomains.add(domainId.toString());
-                    } else {
-                        problematicDomains.add(domain.getStorageName());
-                    }
+                    StorageDomainStatic domain = getDbFacade().getStorageDomainStaticDao().get(domainId);
+                    problematicDomains.add(domain == null ? domainId.toString() : domain.getStorageName());
                 }
             }
             if (!problematicDomains.isEmpty()) {
@@ -132,14 +125,14 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         // check no vms from this template on selected domains
-        List<VM> vms = DbFacade.getInstance().getVmDao().getAllWithTemplate(vmTemplateId);
+        List<VM> vms = getVmDAO().getAllWithTemplate(vmTemplateId);
         List<String> problematicVmNames = new ArrayList<String>();
         for (VM vm : vms) {
             if (getParameters().isRemoveTemplateFromDb()) {
                 problematicVmNames.add(vm.getName());
             } else {
                 List<DiskImage> vmDIsks =
-                        ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId()),
+                        ImagesHandler.filterImageDisks(getDbFacade().getDiskDao().getAllForVm(vm.getId()),
                                 false,
                                 false);
                 Set<Guid> domainsIds = getStorageDoaminsByDisks(vmDIsks, false);
