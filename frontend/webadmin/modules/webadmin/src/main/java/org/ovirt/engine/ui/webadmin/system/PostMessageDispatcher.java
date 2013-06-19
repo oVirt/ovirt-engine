@@ -31,15 +31,17 @@ public class PostMessageDispatcher implements HasHandlers {
     private native void registerMessageEventListener() /*-{
         var context = this;
 
-        // Browsers compliant with postMessage API: window.addEventListener('message', callback, false)
-        // IE versions prior to IE9: window.attachEvent('onmessage', callback)
-        var eventListenerMethod = $wnd.addEventListener ? 'addEventListener' : 'attachEvent';
-        var eventerFunction = $wnd[eventListenerMethod];
-        var messageEventType = (eventListenerMethod == 'attachEvent') ? 'onmessage' : 'message';
-
-        eventerFunction(messageEventType, function(event) {
+        var callback = function(event) {
             context.@org.ovirt.engine.ui.webadmin.system.PostMessageDispatcher::onMessage(Ljava/lang/String;Ljava/lang/Object;Lcom/google/gwt/core/client/JavaScriptObject;)(event.origin,event.data,event.source);
-        }, false);
+        };
+
+        if ($wnd.addEventListener) {
+            // Modern web browsers, including IE9+
+            $wnd.addEventListener('message', callback, false);
+        } else {
+            // IE8
+            $wnd.attachEvent('onmessage', callback);
+        }
     }-*/;
 
 }
