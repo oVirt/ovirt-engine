@@ -186,7 +186,7 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
         }
 
         @Override
-        @Source({ "org/ovirt/engine/ui/webadmin/css/AssignTagTree.css" })
+        @Source({ "org/ovirt/engine/ui/webadmin/css/NotificationsTree.css" })
         TableStyle cellTreeStyle();
 
     }
