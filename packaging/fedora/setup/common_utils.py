@@ -1262,6 +1262,16 @@ def editEngineSysconfigJava(javaHome):
         logging.debug("Engine has been configured")
         handler.close()
 
+
+def editEngineSysconfigJBOSS(jbossHome):
+    for f in (basedefs.FILE_ENGINE_SERVICE_CONFIG_JBOSS, basedefs.FILE_ENGINE_NOTIFIER_CONFIG_JBOSS):
+        handler = TextConfigFileHandler(f, readExisting=False)
+        handler.open()
+        handler.editParam("JBOSS_HOME", jbossHome)
+        logging.debug("JBOSS has been configured")
+        handler.close()
+
+
 def editEngineSysconfigPKI(
     pkidir,
     caCerticate,
@@ -1569,6 +1579,16 @@ def findJavaHome():
 
     # Return the result:
     return javaHome
+
+
+def findJBOSSHome():
+    jbossHome = None
+    for jbossDir in basedefs.JBOSS_HOME_DIRS:
+        if os.path.exists(jbossDir):
+            jbossHome = jbossDir
+            break
+    return jbossHome
+
 
 def configureTasksTimeout(timeout,
                           engineConfigBin=basedefs.FILE_ENGINE_CONFIG_BIN,

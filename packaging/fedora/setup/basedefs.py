@@ -151,6 +151,9 @@ FILE_ENGINE_NOTIFIER_CONF_JAVA="%s/10-setup-java.conf" % DIR_ENGINE_NOTIFIER_CON
 # File containing the setup generated java configuration of the engine:
 FILE_ENGINE_CONF_PKI="%s/10-setup-pki.conf" % DIR_ENGINE_CONF
 
+FILE_ENGINE_SERVICE_CONFIG_JBOSS = '%s/10-setup-jboss.conf' % DIR_ENGINE_CONF
+FILE_ENGINE_NOTIFIER_CONFIG_JBOSS = '%s/10-setup-jboss.conf missing' % DIR_ENGINE_NOTIFIER_CONF
+
 # This file will be automatically created when the engine goes into
 # maintenance mode during upgrades and automatically removed when the
 # engine goes back into normal mode once the upgrade is finished:
@@ -274,6 +277,11 @@ RPM_LOCK_LIST = """
 # The list of directories where JVMs will be searched for:
 JAVA_DIRS = [
     "/usr/lib/jvm",
+]
+
+JBOSS_HOME_DIRS = [
+    "/usr/share/jboss-as",
+    "/usr/share/jbossas"
 ]
 
 # Accepted JVMs should give an string matching this when executed with

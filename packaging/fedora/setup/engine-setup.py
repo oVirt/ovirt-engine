@@ -16,7 +16,6 @@ import pwd
 import getpass
 import copy
 import time
-import datetime
 import nfsutils
 import basedefs
 import output_messages
@@ -120,6 +119,8 @@ def initSequences():
                                                 'functions' : [setMaxSharedMemory] },
                                               { 'title'     : output_messages.INFO_FIND_JAVA,
                                                 'functions' : [_findJavaHome, _editSysconfigJava]},
+                                              { 'title'     : output_messages.INFO_FIND_JBOSS,
+                                                'functions' : [_findJBOSSHome, _editSysconfigJBOSS]},
                                               { 'title'     : output_messages.INFO_CREATE_CA,
                                                 'functions' : [_createCA, _editSysconfigPKI]},
                                               { 'title'     : output_messages.INFO_UPD_ENGINE_CONF,
@@ -2092,6 +2093,9 @@ def _editSysconfigProtocols():
 def _editSysconfigJava():
     utils.editEngineSysconfigJava(javaHome=controller.CONF["JAVA_HOME"])
 
+def _editSysconfigJBOSS():
+    utils.editEngineSysconfigJBOSS(jbossHome=controller.CONF["JBOSS_HOME"])
+
 def _editSysconfigPKI():
     utils.editEngineSysconfigPKI(
         pkidir=basedefs.DIR_OVIRT_PKI,
@@ -2129,6 +2133,18 @@ def _findJavaHome():
 
     # Save the result:
     controller.CONF["JAVA_HOME"] = javaHome
+
+
+def _findJBOSSHome():
+    # Find it:
+    jbossHome = utils.findJBOSSHome()
+    if not jbossHome:
+        logging.error("Can't find any supported JBOSS home.")
+        raise Exception(output_messages.ERR_EXP_CANT_FIND_SUPPORTED_JBOSS)
+
+    # Save the result:
+    controller.CONF["JBOSS_HOME"] = jbossHome
+
 
 def isSecondRun():
     if os.path.exists(basedefs.FILE_ENGINE_KEYSTORE):
