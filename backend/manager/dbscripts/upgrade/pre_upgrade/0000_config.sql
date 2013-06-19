@@ -630,7 +630,7 @@ select fn_db_update_config_value('MaxNumOfVmCpus','160','3.2');
 select fn_db_update_config_value('MigrationSupportForNativeUsb','false','3.0');
 select fn_db_update_config_value('MigrationSupportForNativeUsb','false','3.1');
 select fn_db_update_config_value('MigrationSupportForNativeUsb','true','3.2');
-select fn_db_update_config_value('MinimalETLVersion','3.2.0','general');
+select fn_db_update_config_value('MinimalETLVersion','3.3.0','general');
 select fn_db_update_config_value('OvirtInitialSupportedIsoVersion','2.5.5','general');
 select fn_db_update_config_value('OvirtIsoPrefix','ovirt-node','general');
 select fn_db_update_config_value('oVirtISOsRepositoryPath','/usr/share/ovirt-node-iso','general');
