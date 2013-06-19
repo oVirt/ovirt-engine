@@ -34,6 +34,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     TextBoxLabel noOfVolumesUp = new TextBoxLabel();
     TextBoxLabel noOfVolumesDown = new TextBoxLabel();
     TextBoxLabel compatibilityVersion = new TextBoxLabel();
+    TextBoxLabel emulatedMachine = new TextBoxLabel();
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -85,6 +86,8 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
         formBuilder.addFormItem(new FormItem(constants.memoryOptimizationCluster(), memoryOverCommit, 2, 1, virtSupported)
                 .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
         formBuilder.addFormItem(new FormItem(constants.resiliencePolicyCluster(), resiliencePolicy, 3, 1, virtSupported)
+                .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
+        formBuilder.addFormItem(new FormItem(constants.emulatedMachine(), emulatedMachine, 4, 1)
                 .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
 
         // properties for gluster support

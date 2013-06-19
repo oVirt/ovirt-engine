@@ -2733,6 +2733,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Resilience Policy")
     String resiliencePolicyCluster();
 
+    @DefaultStringValue("Emulated Machine")
+    String emulatedMachine();
+
     @Override
     @DefaultStringValue("High Priority Only")
     String highPriorityOnly();

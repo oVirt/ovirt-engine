@@ -159,6 +159,7 @@ public class ClusterGeneralModel extends EntityModel {
     private MigrateOnErrorOptions resiliencePolicy;
     private boolean cpuThreads;
     private ClusterType clusterType;
+    private String emulatedMachine;
 
     public void setConsoleAddressPartiallyOverridden(Boolean consoleAddressPartiallyOverridden) {
         if (isConsoleAddressPartiallyOverridden().booleanValue() !=
@@ -225,6 +226,7 @@ public class ClusterGeneralModel extends EntityModel {
         setMemoryOverCommit(vdsGroup.getmax_vds_memory_over_commit());
         setCpuThreads(vdsGroup.getCountThreadsAsCores());
         setResiliencePolicy(vdsGroup.getMigrateOnError());
+        setEmulatedMachine(vdsGroup.getEmulatedMachine());
         setCompatibilityVersion(vdsGroup.getcompatibility_version().getValue());
         generateClusterType(vdsGroup.supportsGlusterService(), vdsGroup.supportsVirtService());
     }
@@ -809,5 +811,13 @@ public class ClusterGeneralModel extends EntityModel {
         START,
         STOP,
         RESTART
+    }
+
+    public String getEmulatedMachine() {
+        return emulatedMachine;
+    }
+
+    public void setEmulatedMachine(String emulatedMachine) {
+        this.emulatedMachine = emulatedMachine;
     }
 }
