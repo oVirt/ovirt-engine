@@ -327,6 +327,7 @@ public class VdsManager {
             DbFacade.getInstance().getVdsDynamicDao().updateStatus(_vds.getId(), VDSStatus.Initializing);
             AuditLogableBase logable = new AuditLogableBase(_vds.getId());
             logable.addCustomValue("ErrorMessage", ex.getMessage());
+            logable.updateCallStackFromThrowable(ex);
             AuditLogDirector.log(logable, AuditLogType.VDS_INITIALIZING);
             log.warnFormat(
                     "Failed to refresh VDS , vds = {0} : {1}, error = {2}, continuing.",
@@ -544,6 +545,7 @@ public class VdsManager {
                         new VdsIdAndVdsVDSCommandParametersBase(vds));
                 if (!ret.getSucceeded()) {
                     AuditLogableBase logable = new AuditLogableBase(vds.getId());
+                    logable.updateCallStackFromThrowable(ret.getExceptionObject());
                     AuditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_GET_HOST_HARDWARE_INFO);
                 }
             }
@@ -639,6 +641,7 @@ public class VdsManager {
                     TimeUnit.MILLISECONDS.toSeconds(timeoutToFence), ex.getMessage());
 
             AuditLogableBase logable = new AuditLogableBase(vds.getId());
+            logable.updateCallStackFromThrowable(ex);
             AuditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
             ResourceManager.getInstance().getEventListener().vdsNotResponding(vds);
         }

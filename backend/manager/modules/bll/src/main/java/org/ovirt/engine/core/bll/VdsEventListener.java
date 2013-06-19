@@ -277,7 +277,7 @@ public class VdsEventListener implements IVdsEventListener {
 
         // Alert if the restart fails:
         if (!result.getSucceeded()) {
-                AuditLogDirector.log(event, AuditLogType.HA_VM_RESTART_FAILED);
+            AuditLogDirector.log(event, AuditLogType.HA_VM_RESTART_FAILED);
         }
     }
 

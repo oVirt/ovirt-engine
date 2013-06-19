@@ -332,7 +332,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             handleSpecificCommandActions();
             setFenceSucceeded(true);
         } else {
-            handleError(lastStatus, primaryResult.getValue(),FenceAgentOrder.Primary);
+            handleError(lastStatus, primaryResult.getValue(), FenceAgentOrder.Primary);
             handleError(lastStatus, secondaryResult.getValue(), FenceAgentOrder.Secondary);
         }
     }
@@ -393,7 +393,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             log.errorFormat("Failed to {0} VDS using {1} Power Management agent", getParameters().getAction()
                     .name()
                     .toLowerCase(), order.name());
-            AlertIfPowerManagementOperationSkipped(getParameters().getAction().name());
+            Throwable vdsReturnValueException = vdsReturnValue != null? vdsReturnValue.getExceptionObject() : null;
+            AlertIfPowerManagementOperationSkipped(getParameters().getAction().name(), vdsReturnValueException);
             throw new VdcBLLException(VdcBllErrors.VDS_FENCE_OPERATION_FAILED);
         } else { // Fence operation was skipped because Host is already in the requested state.
             setStatus(lastStatus);

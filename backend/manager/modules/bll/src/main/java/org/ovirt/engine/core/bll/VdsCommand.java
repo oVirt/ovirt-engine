@@ -105,6 +105,25 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     }
 
     /**
+     * Alerts the specified log type.
+     *
+     * @param logType
+     *            Type of the log.
+     * @param operation
+     *            Operation name.
+     * @param throwable
+     *            Throwable object with exception details.
+     */
+    private void Alert(AuditLogType logType, String operation, Throwable throwable) {
+        AuditLogableBase alert = new AuditLogableBase();
+        alert.setVdsId(getVds().getId());
+        String op = (operation == null) ? getActionType().name(): operation;
+        alert.addCustomValue("Operation",op);
+        alert.updateCallStackFromThrowable(throwable);
+        AlertDirector.Alert(alert, logType);
+    }
+
+    /**
      * Alerts if power management not configured.
      *
      * @param vdsStatic
@@ -150,8 +169,8 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      * Alerts if power management operation skipped.
      * @param operation The operation name.
      */
-    protected void AlertIfPowerManagementOperationSkipped(String operation) {
-        Alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED,operation);
+    protected void AlertIfPowerManagementOperationSkipped(String operation, Throwable throwable) {
+        Alert(AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED,operation, throwable);
     }
 
     protected void LogSettingVmToDown(Guid vdsId, Guid vmId) {

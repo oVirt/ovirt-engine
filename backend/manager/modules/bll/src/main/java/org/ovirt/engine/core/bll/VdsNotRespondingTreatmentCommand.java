@@ -74,7 +74,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         }
         _vmsMovedToUnknown = true;
         log.errorFormat("Failed to run Fence script on vds:{0}, VMs moved to UnKnown instead.", getVdsName());
-        AlertIfPowerManagementOperationSkipped(RESTART);
+        AlertIfPowerManagementOperationSkipped(RESTART, null);
     }
 
     @Override

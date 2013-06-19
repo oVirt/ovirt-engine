@@ -350,6 +350,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 ExceptionUtils.getMessage(e));
         addCustomValue("SnapshotName", getSnapshotName());
         addCustomValue("VmName", getVmName());
+        updateCallStackFromThrowable(e);
         AuditLogDirector.log(this, AuditLogType.USER_CREATE_LIVE_SNAPSHOT_FINISHED_FAILURE);
     }
 

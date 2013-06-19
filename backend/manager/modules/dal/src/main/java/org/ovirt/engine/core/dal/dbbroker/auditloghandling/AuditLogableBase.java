@@ -729,12 +729,14 @@ public class AuditLogableBase extends TimeoutBase {
 
     /**
      * Sets the call stack string from a Throwable object
-     * Also, the updateCallStackFromThrowable can be used in case you have a Throwable object with the call stack details.
+     * Also, the updateCallStackFromThrowable can be used in case you have a Throwable object with the call stack details
      *
      * @param throwable
-     *            the Throwable object containing the call stack
+     *            the Throwable object containing the call stack. Can be null, which will cause no changes to this object
      */
     public void updateCallStackFromThrowable(Throwable throwable) {
-        setCallStack(ExceptionUtils.getStackTrace(throwable));
+        if (throwable != null) {
+            setCallStack(ExceptionUtils.getStackTrace(throwable));
+        }
     }
 }

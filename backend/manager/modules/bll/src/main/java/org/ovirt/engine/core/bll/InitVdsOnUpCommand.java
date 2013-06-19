@@ -329,7 +329,9 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         if (!returnValue.getSucceeded()) {
             getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
             getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
-            AuditLogDirector.log(new AuditLogableBase(upServerId), AuditLogType.GLUSTER_SERVERS_LIST_FAILED);
+            AuditLogableBase logable = new AuditLogableBase(upServerId);
+            logable.updateCallStackFromThrowable(returnValue.getExceptionObject());
+            AuditLogDirector.log(logable, AuditLogType.GLUSTER_SERVERS_LIST_FAILED);
             glusterPeerListSucceeded = false;
         } else {
             glusterServers = (List<GlusterServerInfo>) returnValue.getReturnValue();
@@ -344,7 +346,9 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             if (!returnValue.getSucceeded()) {
                 getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
                 getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
-                AuditLogDirector.log(new AuditLogableBase(getVdsId()), AuditLogType.GLUSTER_SERVER_ADD_FAILED);
+                AuditLogableBase logable = new AuditLogableBase(getVdsId());
+                logable.updateCallStackFromThrowable(returnValue.getExceptionObject());
+                AuditLogDirector.log(logable, AuditLogType.GLUSTER_SERVER_ADD_FAILED);
                 glusterPeerProbeSucceeded = false;
             }
             return returnValue.getSucceeded();
