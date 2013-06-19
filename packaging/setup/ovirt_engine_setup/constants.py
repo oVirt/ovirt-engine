@@ -126,6 +126,20 @@ class FileLocations(object):
         '.pgpass',
     )
 
+    OVIRT_ENGINE_DB_UTILS_DIR = os.path.join(
+        OVIRT_ENGINE_DATADIR,
+        'setup',
+        'dbutils'
+    )
+    OVIRT_ENGINE_DB_VALIDATOR = os.path.join(
+        OVIRT_ENGINE_DB_UTILS_DIR,
+        'validatedb.sh'
+    )
+    OVIRT_ENGINE_TASKCLEANER = os.path.join(
+        OVIRT_ENGINE_DB_UTILS_DIR,
+        'taskcleaner.sh'
+    )
+
     OVIRT_ENGINE_DB_DIR = os.path.join(
         OVIRT_ENGINE_DATADIR,
         'dbscripts',
@@ -416,6 +430,7 @@ class Defaults(object):
     DEFAULT_DB_PASSWORD = ''
     DEFAULT_DB_SECURED = False
     DEFAULT_DB_SECURED_HOST_VALIDATION = False
+    DEFAULT_CLEAR_TASKS_WAIT_PERIOD = 20
 
     DEFAULT_PKI_COUNTRY = 'US'
     DEFAULT_PKI_STORE_PASS = 'mypass'
@@ -675,6 +690,12 @@ class DBEnv(object):
     )
     def REMOVE_EMPTY_DATABASE(self):
         return 'OVESETUP_DB/cleanupRemove'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def FIX_DB_VIOLATIONS(self):
+        return 'OVESETUP_DB/fixDbViolations'
 
 
 @util.export
@@ -965,6 +986,21 @@ class AIODefaults(object):
 @util.codegen
 class AIOConst(object):
     MINIMUM_SPACE_STORAGEDOMAIN_MB = 10240
+
+
+class AsyncTasksEnv(object):
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def CLEAR_TASKS(self):
+        return 'OVESETUP_ASYNC/clearTasks'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def CLEAR_TASKS_WAIT_PERIOD(self):
+        return 'OVESETUP_ASYNC/clearTasksWait'
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

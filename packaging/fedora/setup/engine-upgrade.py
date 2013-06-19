@@ -911,7 +911,7 @@ def zombieTasksFound():
                               envDict=utils.getPgEnv(),
                              )
 
-    if rc > 1:
+    if rc:
         raise Exception(output_messages.ERR_CANT_GET_ZOMBIE_TASKS)
 
     # If tasks has content and exit status 0, return True
