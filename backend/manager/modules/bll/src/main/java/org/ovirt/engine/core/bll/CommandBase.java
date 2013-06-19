@@ -102,9 +102,8 @@ import org.springframework.dao.DataAccessException;
 @SuppressWarnings("serial")
 public abstract class CommandBase<T extends VdcActionParametersBase> extends AuditLogableBase implements
         RollbackHandler, TransactionMethod<Object> {
-    /**
-     * Multiplier used to convert GB to bytes or vice versa.
-     */
+
+    /* Multiplier used to convert GB to bytes or vice versa. */
     protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;
     private static final Guid[] EMPTY_GUID_ARRAY = new Guid[0];
     private T _parameters;
@@ -114,17 +113,21 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private final List<Class<?>> validationGroups = new ArrayList<Class<?>>();
     private final Guid commandId;
     private boolean quotaChanged = false;
+    private String _description = "";
+    private TransactionScopeOption scope;
+    private TransactionScopeOption endActionScope;
+    private List<QuotaConsumptionParameter> consumptionParameters;
+    /** Indicates whether the acquired locks should be released after the execute method or not */
+    private boolean releaseLocksAtEndOfExecute = true;
+    /** Object which is representing a lock that some commands will acquire */
+    private EngineLock commandLock;
 
     protected Log log = LogFactory.getLog(getClass());
 
-    /**
-     * The context defines how to monitor the command and handle its compensation
-     */
+    /** The context defines how to monitor the command and handle its compensation */
     private final CommandContext context = new CommandContext();
 
-    /**
-     * A map contains the properties for describing the job
-     */
+    /** A map contains the properties for describing the job */
     protected Map<String, String> jobProperties;
 
     /** Handlers for performing the logical parts of the command */
@@ -286,10 +289,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     public void setCompensationContext(CompensationContext compensationContext) {
         context.setCompensationContext(compensationContext);
     }
-
-    private String _description = "";
-    private TransactionScopeOption scope;
-    private TransactionScopeOption endActionScope;
 
     public VdcReturnValueBase canDoActionOnly() {
         setActionMessageParameters();
@@ -609,8 +608,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             }
         }
     }
-
-    private List<QuotaConsumptionParameter> consumptionParameters;
 
     protected List<QuotaConsumptionParameter> getQuotaConsumptionParameters() {
 
@@ -1477,13 +1474,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
     }
 
-    private boolean isReleaseExecute = true;
-
-    /**
-     * Object which is representing a lock that some commands will acquire
-     */
-    private EngineLock commandLock = null;
-
     protected EngineLock getLock() {
         return commandLock;
     }
@@ -1496,7 +1486,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         LockIdNameAttribute annotation = getClass().getAnnotation(LockIdNameAttribute.class);
         boolean returnValue = true;
         if (annotation != null) {
-            isReleaseExecute = annotation.isReleaseAtEndOfExecute();
+            releaseLocksAtEndOfExecute = annotation.isReleaseAtEndOfExecute();
             if (!annotation.isWait()) {
                 returnValue = acquireLockInternal();
             } else {
@@ -1514,8 +1504,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         LockIdNameAttribute annotation = getClass().getAnnotation(LockIdNameAttribute.class);
         boolean returnValue = true;
         if (annotation != null) {
-            isReleaseExecute = annotation.isReleaseAtEndOfExecute();
-            if (!isReleaseExecute) {
+            releaseLocksAtEndOfExecute = annotation.isReleaseAtEndOfExecute();
+            if (!releaseLocksAtEndOfExecute) {
                 returnValue = acquireLockInternal();
             }
         }
@@ -1584,7 +1574,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private void freeLockExecute() {
-        if (isReleaseExecute || !getSucceeded()) {
+        if (releaseLocksAtEndOfExecute || !getSucceeded()) {
             freeLock();
         }
     }
