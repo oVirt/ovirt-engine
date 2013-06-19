@@ -5,7 +5,9 @@ import com.woorea.openstack.base.client.OpenStackRequest;
 import com.woorea.openstack.base.client.OpenStackTokenProvider;
 import com.woorea.openstack.glance.Glance;
 import com.woorea.openstack.glance.model.Image;
+import com.woorea.openstack.glance.model.ImageDownload;
 import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.OpenstackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -16,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -23,9 +26,13 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.security.cert.Certificate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class OpenstackImageProviderProxy implements ProviderProxy {
@@ -61,6 +68,12 @@ public class OpenstackImageProviderProxy implements ProviderProxy {
     }
 
     private static final String API_VERSION = "/v1";
+
+    private static final int QCOW2_SIGNATURE = 0x514649fb;
+
+    private static final int QCOW2_VERSION = 2;
+
+    private static final int QCOW2_SIZE_OFFSET = 24;
 
     private Provider<OpenstackImageProviderProperties> provider;
 
@@ -126,6 +139,15 @@ public class OpenstackImageProviderProxy implements ProviderProxy {
         return provider;
     }
 
+    public static OpenstackImageProviderProxy getFromStorageDomainId(Guid storageDomainId) {
+        StorageDomainStatic storageDomainStatic = getDbFacade().getStorageDomainStaticDao().get(storageDomainId);
+        if (storageDomainStatic != null) {
+            Provider provider = getDbFacade().getProviderDao().get(new Guid(storageDomainStatic.getStorage()));
+            return ProviderProxyFactory.getInstance().create(provider);
+        }
+        return null;
+    }
+
     private OpenStackTokenProvider getTokenProvider() {
         if (tokenProvider == null && getProvider().isRequiringAuthentication()) {
             String tenantName = provider.getAdditionalProperties().getTenantName();
@@ -141,6 +163,12 @@ public class OpenstackImageProviderProxy implements ProviderProxy {
             client.setTokenProvider(getTokenProvider());
         }
         return client;
+    }
+
+    protected void validateContainerFormat(Image glanceImage) {
+        if (!glanceImage.getContainerFormat().equals(GlanceImageContainer.BARE.getValue())) {
+            throw new RuntimeException("Unsupported container format");
+        }
     }
 
     private static RepoImage imageToRepoImage(Image glanceImage) {
@@ -182,4 +210,100 @@ public class OpenstackImageProviderProxy implements ProviderProxy {
         return repoImages;
     }
 
+    public RepoImage getImageAsRepoImage(String id) {
+        RepoImage repoImage = imageToRepoImage(getClient().images().show(id).execute());
+        repoImage.setLastRefreshed(System.currentTimeMillis());
+        return repoImage;
+    }
+
+    public DiskImage getImageAsDiskImage(String id) {
+        DiskImage diskImage = new DiskImage();
+        Image glanceImage = getClient().images().show(id).execute();
+
+        validateContainerFormat(glanceImage);
+
+        String shortHash = glanceImage.getId().substring(0, 7);
+
+        diskImage.setDiskAlias("GlanceDisk-" + shortHash);
+
+        if (glanceImage.getName() != null) {
+            diskImage.setDiskDescription(glanceImage.getName() + " (" + shortHash + ")");
+        } else {
+            diskImage.setDiskDescription("Glance disk: " + shortHash);
+        }
+
+        diskImage.setSize(getImageVirtualSize(glanceImage));
+        diskImage.setActualSizeInBytes(glanceImage.getSize());
+
+        if (glanceImage.getDiskFormat().equals(GlanceImageFormat.RAW.getValue())) {
+            diskImage.setvolumeFormat(VolumeFormat.RAW);
+        } else if (glanceImage.getDiskFormat().equals(GlanceImageFormat.COW.getValue())) {
+            diskImage.setvolumeFormat(VolumeFormat.COW);
+        } else {
+            throw new RuntimeException("Unknown disk format: " + glanceImage.getDiskFormat());
+        }
+
+        return diskImage;
+    }
+
+    private long getCowVirtualSize(String id) throws IOException {
+        // For the qcow2 format we need to download the image header and read the virtual size from there
+        byte[] imgContent = new byte[72];
+        ImageDownload downloadImage = getClient().images().download(id).execute();
+
+        try {
+            int bytesRead = downloadImage.getInputStream().read(imgContent, 0, imgContent.length);
+            if (bytesRead != imgContent.length) {
+                throw new RuntimeException("Unable to read image header: " + bytesRead);
+            }
+        }
+        finally {
+            downloadImage.getInputStream().close();
+        }
+
+        ByteBuffer b = ByteBuffer.wrap(imgContent);
+
+        if (b.getInt() == QCOW2_SIGNATURE && b.getInt() == QCOW2_VERSION) {
+            b.position(QCOW2_SIZE_OFFSET);
+            return b.getLong();
+        }
+
+        throw new RuntimeException("Unable to recognize QCOW2 format");
+    }
+
+    protected long getImageVirtualSize(Image glanceImage) {
+        validateContainerFormat(glanceImage);
+
+        if (glanceImage.getDiskFormat().equals(GlanceImageFormat.RAW.getValue())
+                || glanceImage.getDiskFormat().equals(GlanceImageFormat.ISO.getValue())) {
+            return glanceImage.getSize();
+        } else if (glanceImage.getDiskFormat().equals(GlanceImageFormat.COW.getValue())) {
+            try {
+                return getCowVirtualSize(glanceImage.getId());
+            } catch (IOException e) {
+                throw new RuntimeException("Unsupported image format");
+            }
+        }
+
+        throw new RuntimeException("Unsupported image format");
+    }
+
+    public long getImageVirtualSize(String id) {
+        Image glanceImage = getClient().images().show(id).execute();
+        return getImageVirtualSize(glanceImage);
+    }
+
+    public Map<String, String> getDownloadHeaders() {
+        HashMap<String, String> httpHeaders = new HashMap<>();
+
+        if (getTokenProvider() != null) {
+            httpHeaders.put("X-Auth-Token", getTokenProvider().getToken());
+        }
+
+        return httpHeaders;
+    }
+
+    public String getImageUrl(String id) {
+        return getProvider().getUrl() + API_VERSION  + "/images/" + id;
+    }
 }

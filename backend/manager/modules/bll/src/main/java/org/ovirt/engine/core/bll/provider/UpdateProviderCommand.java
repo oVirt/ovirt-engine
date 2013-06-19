@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.provider.ProviderDao;
 
 public class UpdateProviderCommand<P extends ProviderParameters> extends CommandBase<P>
         implements RenamedEntityInfoProvider {
@@ -86,10 +85,6 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.PROVIDER_UPDATED : AuditLogType.PROVIDER_UPDATE_FAILED;
-    }
-
-    private ProviderDao getProviderDao() {
-        return getDbFacade().getProviderDao();
     }
 
     @Override

@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class RemoveProviderCommand<P extends ProviderParameters> extends CommandBase<P> {
@@ -88,10 +87,6 @@ public class RemoveProviderCommand<P extends ProviderParameters> extends Command
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.PROVIDER_REMOVED : AuditLogType.PROVIDER_REMOVAL_FAILED;
-    }
-
-    private ProviderDao getProviderDao() {
-        return getDbFacade().getProviderDao();
     }
 
     protected static class RemoveProviderValidator extends ProviderValidator {

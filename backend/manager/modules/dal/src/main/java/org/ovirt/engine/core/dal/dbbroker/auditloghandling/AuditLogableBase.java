@@ -42,6 +42,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -616,6 +617,10 @@ public class AuditLogableBase extends TimeoutBase {
 
     public AsyncTaskDAO getAsyncTaskDao() {
         return getDbFacade().getAsyncTaskDao();
+    }
+
+    public ProviderDao getProviderDao() {
+        return getDbFacade().getProviderDao();
     }
 
     protected DbFacade getDbFacade() {
