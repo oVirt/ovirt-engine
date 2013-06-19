@@ -38,6 +38,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.ImportExportImagePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDestroyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
@@ -184,10 +185,21 @@ public class StorageModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> getStorageIsoListProvider(ClientGinjector ginjector) {
+    public SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> getStorageIsoListProvider(ClientGinjector ginjector,
+            final Provider<ImportExportImagePopupPresenterWidget> importExportPopupProvider) {
         return new SearchableDetailTabModelProvider<RepoImage, StorageListModel, StorageIsoListModel>(ginjector,
                 StorageListModel.class,
-                StorageIsoListModel.class);
+                StorageIsoListModel.class) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageIsoListModel source,
+                    UICommand lastExecutedCommand, Model windowModel) {
+                if (lastExecutedCommand == getModel().getImportImagesCommand()) {
+                    return importExportPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+        };
     }
 
     @Provides

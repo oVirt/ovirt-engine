@@ -537,6 +537,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Move Disk(s)")
     String moveDisksTitle();
 
+    @DefaultStringValue("Import Image(s)")
+    String importImagesTitle();
+
     @DefaultStringValue("Snapshots")
     String snapshotsTitle();
 

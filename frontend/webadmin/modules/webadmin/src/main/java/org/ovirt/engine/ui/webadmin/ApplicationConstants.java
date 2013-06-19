@@ -2275,6 +2275,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Type")
     String typeIso();
 
+    @DefaultStringValue("Import")
+    String importImage();
+
     // Storage tree
     @DefaultStringValue("Name")
     String nameStorageTree();

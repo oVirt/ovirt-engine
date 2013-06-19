@@ -5,12 +5,14 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageIsoListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageIsoPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.inject.Inject;
 
@@ -51,6 +53,13 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
             }
         };
         getTable().addColumn(sizeColumn, constants.actualSizeTemplate(), "100px"); //$NON-NLS-1$
+
+        getTable().addActionButton(new WebAdminButtonDefinition<RepoImage>(constants.importImage()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getImportImagesCommand();
+            }
+        });
 
         getTable().showRefreshButton();
     }

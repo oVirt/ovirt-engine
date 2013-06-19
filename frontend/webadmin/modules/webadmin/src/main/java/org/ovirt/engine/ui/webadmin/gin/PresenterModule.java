@@ -68,6 +68,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.Clus
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.ImportExportImagePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageDestroyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
@@ -265,6 +266,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPo
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.DisksAllocationPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindMultiDcPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.FindSingleDcPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.ImportExportImagePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageDestroyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageForceCreatePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StoragePopupView;
@@ -1053,6 +1055,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ChangeQuotaPopupPresenterWidget.class,
                 ChangeQuotaPopupPresenterWidget.ViewDef.class,
                 ChangeQuotaPopupView.class);
+        bindPresenterWidget(ImportExportImagePopupPresenterWidget.class,
+                ImportExportImagePopupPresenterWidget.ViewDef.class,
+                ImportExportImagePopupView.class);
 
         // Storage Remove
         bindPresenterWidget(StorageRemovePopupPresenterWidget.class,

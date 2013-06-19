@@ -7,12 +7,14 @@ import java.util.Comparator;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -23,9 +25,22 @@ public class StorageIsoListModel extends SearchableListModel
     public StorageIsoListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().imagesTitle());
-        setHashName("images"); // $//$NON-NLS-1$
+        setHashName("images"); //$NON-NLS-1$
+
+        setImportImagesCommand(new UICommand("Import", this)); //$NON-NLS-1$
+        updateActionAvailability();
 
         setIsTimerDisabled(true);
+    }
+
+    private UICommand importImagesCommand;
+
+    public UICommand getImportImagesCommand() {
+        return importImagesCommand;
+    }
+
+    public void setImportImagesCommand(UICommand importImagesCommand) {
+        this.importImagesCommand = importImagesCommand;
     }
 
     @Override
@@ -98,18 +113,18 @@ public class StorageIsoListModel extends SearchableListModel
                     return;
                 }
 
-                ArrayList<RepoImage> repoFileList = (ArrayList<RepoImage>)
-                        returnValue.getReturnValue();
+                @SuppressWarnings("unchecked")
+                ArrayList<RepoImage> repoImageList = (ArrayList<RepoImage>) returnValue.getReturnValue();
 
-                Collections.sort(repoFileList, new Comparator<RepoImage>() {
+                Collections.sort(repoImageList, new Comparator<RepoImage>() {
                     @Override
                     public int compare(RepoImage a, RepoImage b) {
                         return a.getRepoImageId().compareToIgnoreCase(b.getRepoImageId());
                     }
                 });
 
-                setItems(repoFileList);
-                setIsEmpty(repoFileList.isEmpty());
+                setItems(repoImageList);
+                setIsEmpty(repoImageList.isEmpty());
             }
         };
 
@@ -119,5 +134,61 @@ public class StorageIsoListModel extends SearchableListModel
     @Override
     protected String getListName() {
         return "StorageIsoListModel"; //$NON-NLS-1$
+    }
+
+    private void importImages() {
+        @SuppressWarnings("unchecked")
+        ArrayList<RepoImage> repoImages = (ArrayList<RepoImage>) getSelectedItems();
+
+        if (repoImages == null || getWindow() != null) {
+            return;
+        }
+
+        ImportRepoImageModel model = new ImportRepoImageModel();
+        setWindow(model);
+
+        model.setTitle(ConstantsManager.getInstance().getConstants().importImagesTitle());
+        model.setHashName("import_images"); //$NON-NLS-1$
+        model.setEntity(this);
+        model.init((StorageDomain) getEntity(), repoImages);
+
+        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+
+        model.setCancelCommand(cancelCommand);
+        model.getCommands().add(cancelCommand);
+    }
+
+    public void cancel() {
+        setWindow(null);
+        Frontend.Unsubscribe();
+    }
+
+    private void updateActionAvailability() {
+        StorageDomain storageDomain = (StorageDomain) getEntity();
+        @SuppressWarnings("unchecked")
+        ArrayList<RepoImage> selectedImages =
+                getSelectedItems() != null ? (ArrayList<RepoImage>) getSelectedItems() : new ArrayList<RepoImage>();
+        getImportImagesCommand().setIsExecutionAllowed(storageDomain != null &&
+                storageDomain.getStorageType() == StorageType.GLANCE && selectedImages.size() > 0);
+    }
+
+    @Override
+    protected void selectedItemsChanged() {
+        super.selectedItemsChanged();
+        updateActionAvailability();
+    }
+
+    @Override
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
+
+        if (getImportImagesCommand().equals(command)) {
+            importImages();
+        }
+        else if (command.getName().equals("Cancel")) { //$NON-NLS-1$
+            cancel();
+        }
     }
 }
