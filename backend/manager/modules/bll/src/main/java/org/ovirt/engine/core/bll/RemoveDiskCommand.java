@@ -357,22 +357,36 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             return null;
         }
 
-        Map<String, Pair<String, String>> result = null;
-        if (getDisk().getVmEntityType() == VmEntityType.VM) {
-            List<VM> listVms = getVmsForDiskId();
-            if (!listVms.isEmpty()) {
-                result = new HashMap<String, Pair<String, String>>();
-                for (VM vm : listVms) {
-                    result.put(vm.getId().toString(),
-                            LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingRemovedLockMessage()));
-                }
-            }
-        } else if (getDisk().getVmEntityType() == VmEntityType.TEMPLATE) {
-            setVmTemplateIdParameter();
-            result = Collections.singletonMap(getVmTemplateId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getDiskIsBeingRemovedLockMessage()));
+        switch (getDisk().getVmEntityType()) {
+        case VM:
+            return createSharedLocksForVmDisk();
+        case TEMPLATE:
+            return createSharedLocksForTemplateDisk();
+        default:
+            log.warnFormat("No shared locks are taken while removing disk of entity: {0}",
+                    getDisk().getVmEntityType());
+            return null;
+        }
+    }
+
+    private Map<String, Pair<String, String>> createSharedLocksForVmDisk() {
+        List<VM> listVms = getVmsForDiskId();
+        if (listVms.isEmpty()) {
+            return null;
+        }
+
+        Map<String, Pair<String, String>> result = new HashMap<String, Pair<String, String>>();
+        for (VM vm : listVms) {
+            result.put(vm.getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingRemovedLockMessage()));
         }
         return result;
+    }
+
+    private Map<String, Pair<String, String>> createSharedLocksForTemplateDisk() {
+        setVmTemplateIdParameter();
+        return Collections.singletonMap(getVmTemplateId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getDiskIsBeingRemovedLockMessage()));
     }
 
     protected Disk getDisk() {
