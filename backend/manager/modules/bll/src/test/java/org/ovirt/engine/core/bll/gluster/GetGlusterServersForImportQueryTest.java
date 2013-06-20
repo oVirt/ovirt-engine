@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,7 +44,7 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
         setupMock();
     }
 
-    private void setupMock() throws AuthenticationException {
+    private void setupMock() throws AuthenticationException, IOException {
         vdsStaticDao = mock(VdsStaticDAO.class);
         doReturn(vdsStaticDao).when(getQuery()).getVdsStaticDao();
         doReturn(null).when(vdsStaticDao).getByHostName(NEW_SERVER);

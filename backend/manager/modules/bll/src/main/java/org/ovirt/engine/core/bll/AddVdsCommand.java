@@ -56,6 +56,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.gluster.GlusterUtil;
 import org.ovirt.engine.core.utils.ssh.ConstraintByteArrayOutputStream;
+import org.ovirt.engine.core.utils.ssh.EngineSSHClient;
 import org.ovirt.engine.core.utils.ssh.SSHClient;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -363,7 +364,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         Long timeout =
                 TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(ConfigValues.ConnectToServerTimeoutInSeconds));
 
-        SSHClient sshclient = new SSHClient();
+        SSHClient sshclient = new EngineSSHClient();
         sshclient.setHardTimeout(timeout);
         sshclient.setSoftTimeout(timeout);
         sshclient.setHost(hostname);

@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.Set;
 
@@ -18,7 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.utils.ssh.SSHClient;
+import org.ovirt.engine.core.utils.ssh.EngineSSHClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GlusterUtilTest {
@@ -36,7 +37,7 @@ public class GlusterUtilTest {
     private static final String OUTPUT_XML_NO_PEERS = "<cliOutput><peerStatus/></cliOutput>";
 
     @Mock
-    private SSHClient client;
+    private EngineSSHClient client;
 
     @Spy
     private GlusterUtil glusterUtil;
@@ -46,9 +47,9 @@ public class GlusterUtilTest {
         setupMock();
     }
 
-    private void setupMock() throws AuthenticationException {
+    private void setupMock() throws AuthenticationException, IOException {
         doReturn(client).when(glusterUtil).connect(SERVER_NAME1);
-        doReturn(FINGER_PRINT1).when(glusterUtil).getFingerprint(client);
+        doReturn(FINGER_PRINT1).when(client).getHostFingerprint();
         doReturn(FINGER_PRINT1).when(glusterUtil).getFingerprint(SERVER_NAME1);
         doReturn(FINGER_PRINT2).when(glusterUtil).getFingerprint(SERVER_NAME2);
         doReturn(OUTPUT_XML).when(glusterUtil).executePeerStatusCommand(client);
@@ -57,7 +58,7 @@ public class GlusterUtilTest {
     }
 
     @Test
-    public void testGetPeersWithFingerprint() throws AuthenticationException {
+    public void testGetPeersWithFingerprint() throws AuthenticationException, IOException {
         Map<String, String> peers = glusterUtil.getPeers(SERVER_NAME1, PASSWORD, FINGER_PRINT1);
         assertNotNull(peers);
         peers.containsKey(SERVER_NAME1);

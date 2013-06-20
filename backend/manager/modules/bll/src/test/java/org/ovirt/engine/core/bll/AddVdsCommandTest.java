@@ -30,6 +30,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.gluster.GlusterUtil;
 import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.ssh.EngineSSHClient;
 import org.ovirt.engine.core.utils.ssh.SSHClient;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -51,7 +52,7 @@ public class AddVdsCommandTest {
     @Mock
     private GlusterDBUtils glusterDBUtils;
     @Mock
-    private SSHClient sshClient;
+    private EngineSSHClient sshClient;
     @Mock
     private Log log;
 

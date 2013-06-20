@@ -31,8 +31,6 @@ public class SSHDialog {
 
     private static final int BUFFER_SIZE = 10 * 1024;
     private static final int DEFAULT_SSH_PORT = 22;
-    private static final long DEFAULT_SOFT_TIMEOUT = 5 * 60;
-    private static final long DEFAULT_HARD_TIMEOUT = 15 * 60;
 
     /**
      * Control interface.
@@ -85,17 +83,17 @@ public class SSHDialog {
     private String _user = "root";
     private KeyPair _keyPair;
     private String _password;
-    private long _softTimeout = DEFAULT_SOFT_TIMEOUT;
-    private long _hardTimeout = DEFAULT_HARD_TIMEOUT;
+    private long _softTimeout = 0;
+    private long _hardTimeout = 0;
 
-    private SSHClient _client;
+    protected SSHClient _client;
 
     /**
      * Get SSH Client.
      * Used for mocking.
      * @internal
      */
-    SSHClient _getSSHClient() {
+    protected SSHClient _getSSHClient() {
         return new SSHClient();
     }
 
@@ -233,8 +231,12 @@ public class SSHDialog {
             }
 
             _client = _getSSHClient();
-            _client.setHardTimeout(_hardTimeout);
-            _client.setSoftTimeout(_softTimeout);
+            if (_hardTimeout != 0) {
+                _client.setHardTimeout(_hardTimeout);
+            }
+            if (_softTimeout != 0) {
+                _client.setSoftTimeout(_softTimeout);
+            }
             _client.setHost(_host, _port);
 
             log.debug("connecting");

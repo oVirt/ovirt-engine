@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.utils.gluster;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.security.AccessControlException;
-import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -14,10 +14,10 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.XmlUtils;
-import org.ovirt.engine.core.utils.crypt.OpenSSHUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ssh.ConstraintByteArrayOutputStream;
+import org.ovirt.engine.core.utils.ssh.EngineSSHClient;
 import org.ovirt.engine.core.utils.ssh.SSHClient;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -53,7 +53,7 @@ public class GlusterUtil {
      *             If SSH authentication with given root password fails
      */
     public Set<String> getPeers(String server, String password) throws AuthenticationException {
-        SSHClient client = null;
+        EngineSSHClient client = null;
 
         try {
             client = connect(server);
@@ -96,12 +96,19 @@ public class GlusterUtil {
      *             If SSH authentication with given root password fails
      */
     public Map<String, String> getPeers(String server, String rootPassword, String fingerprint)
-            throws AuthenticationException {
-        SSHClient client = null;
+            throws AuthenticationException, IOException {
+        EngineSSHClient client = null;
 
         try {
             client = connect(server);
-            validateFingerprint(client, fingerprint);
+            if (!fingerprint.equals(client.getHostFingerprint())) {
+                throw new AccessControlException(
+                        String.format(
+                                "SSH Fingerprint of server '%1$s' did not match expected fingerprint '%2$s'",
+                                client.getDisplayHost(),
+                                fingerprint
+                                ));
+            }
             authenticate(client, USER, rootPassword);
             String serversXml = executePeerStatusCommand(client);
             return getFingerprints(extractServers(serversXml));
@@ -112,8 +119,8 @@ public class GlusterUtil {
         }
     }
 
-    protected SSHClient connect(String serverName) {
-        SSHClient client = new SSHClient();
+    protected EngineSSHClient connect(String serverName) {
+        EngineSSHClient client = new EngineSSHClient();
         Integer timeout = Config.<Integer> GetValue(ConfigValues.ConnectToServerTimeoutInSeconds) * 1000;
         client.setHardTimeout(timeout);
         client.setSoftTimeout(timeout);
@@ -124,17 +131,6 @@ public class GlusterUtil {
         } catch (Exception e) {
             log.debug(String.format("Could not connect to server %1$s: %2$s", serverName, e.getMessage()));
             throw new RuntimeException(e);
-        }
-    }
-
-    protected void validateFingerprint(SSHClient client, String fingerprint) {
-        if (!fingerprint.equals(getFingerprint(client))) {
-            throw new AccessControlException(
-                    String.format(
-                            "SSH Fingerprint of server '%1$s' did not match expected fingerprint '%2$s'",
-                            client.getDisplayHost(),
-                            fingerprint
-                            ));
         }
     }
 
@@ -163,21 +159,14 @@ public class GlusterUtil {
         }
     }
 
-    protected String getFingerprint(SSHClient client) {
-        PublicKey hostKey = client.getHostKey();
-        if (hostKey == null) {
-            log.error("Could not get server key");
-            return null;
-        }
-
-        return OpenSSHUtils.getKeyFingerprintString(hostKey);
-    }
-
     public String getFingerprint(String hostName) {
-        SSHClient client = null;
+        EngineSSHClient client = null;
         try {
             client = connect(hostName);
-            return getFingerprint(client);
+            return client.getHostFingerprint();
+        } catch (IOException e) {
+            log.error("Could not get server key");
+            return null;
         } finally {
             if (client != null) {
                 client.disconnect();
