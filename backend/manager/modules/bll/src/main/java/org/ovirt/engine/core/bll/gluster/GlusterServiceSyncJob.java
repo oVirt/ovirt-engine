@@ -11,6 +11,7 @@ import java.util.concurrent.Callable;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterService;
@@ -22,10 +23,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServicesListVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class GlusterServiceSyncJob extends GlusterJob {
     private static final Log log = LogFactory.getLog(GlusterHookSyncJob.class);
@@ -52,15 +56,11 @@ public class GlusterServiceSyncJob extends GlusterJob {
         for (VDSGroup cluster : clusters) {
             if (supportsGlusterServicesFeature(cluster)) {
                 try {
-                    List<VDS> upServers = getClusterUtils().getAllUpServers(cluster.getId());
-                    if (upServers == null || upServers.isEmpty()) {
-                        log.debugFormat("No UP servers found in cluster {0}, not refreshing status of services.",
-                                cluster.getName());
-                        continue;
+                    List<VDS> serversList = getClusterUtils().getAllServers(cluster.getId());
+                    List<Callable<Map<String, GlusterServiceStatus>>> taskList = createTaskList(serversList);
+                    if (taskList != null && taskList.size() > 0) {
+                        refreshClusterServices(cluster, ThreadPoolUtil.invokeAll(taskList));
                     }
-
-                    log.debugFormat("Syncing gluster related services for cluster {0}", cluster.getName());
-                    refreshClusterServices(cluster, ThreadPoolUtil.invokeAll(createTaskList(upServers)));
                 } catch (Exception e) {
                     log.errorFormat("Error while refreshing service statuses of cluster {0}!",
                             cluster.getName(),
@@ -70,10 +70,22 @@ public class GlusterServiceSyncJob extends GlusterJob {
         }
     }
 
-    private List<Callable<Map<String, GlusterServiceStatus>>> createTaskList(List<VDS> upServers) {
+    private Map<String, GlusterServiceStatus> updateGlusterServicesStatusForStoppedServer(VDS server) {
+        Map<String, GlusterServiceStatus> retMap = new HashMap<String, GlusterServiceStatus>();
+        List<GlusterServerService> serviceList =
+                getGlusterServerServiceDao().getByServerId(server.getId());
+        for (GlusterServerService service : serviceList) {
+            retMap.put(service.getServiceName(), GlusterServiceStatus.UNKNOWN);
+            service.setStatus(GlusterServiceStatus.UNKNOWN);
+            getGlusterServerServiceDao().update(service);
+        }
+        return retMap;
+    }
+
+    private List<Callable<Map<String, GlusterServiceStatus>>> createTaskList(List<VDS> serversList) {
         List<Callable<Map<String, GlusterServiceStatus>>> taskList =
                 new ArrayList<Callable<Map<String, GlusterServiceStatus>>>();
-        for (final VDS upServer : upServers) {
+        for (final VDS server : serversList) {
             taskList.add(new Callable<Map<String, GlusterServiceStatus>>() {
                 /**
                  * Fetches and updates status of all services of the given server, <br>
@@ -81,7 +93,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
                  */
                 @Override
                 public Map<String, GlusterServiceStatus> call() throws Exception {
-                    return refreshServerServices(upServer);
+                    return refreshServerServices(server);
                 }
             });
         }
@@ -181,64 +193,73 @@ public class GlusterServiceSyncJob extends GlusterJob {
      * @return map of service name to it's status
      */
     @SuppressWarnings({ "unchecked", "serial" })
-    private Map<String, GlusterServiceStatus> refreshServerServices(VDS server) {
+    private Map<String, GlusterServiceStatus> refreshServerServices(final VDS server) {
         Map<String, GlusterServiceStatus> serviceStatusMap = new HashMap<String, GlusterServiceStatus>();
+        if (server.getStatus() != VDSStatus.Up) {
+            // Update the status of all the services of stopped server in single transaction
+            TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                    new TransactionMethod<Map<String, GlusterServiceStatus>>() {
+                        @Override
+                        public Map<String, GlusterServiceStatus> runInTransaction() {
+                            return updateGlusterServicesStatusForStoppedServer(server);
+                        }
+                    });
+        } else {
+            acquireLock(server.getId());
+            try {
+                Map<Guid, GlusterServerService> existingServicesMap = getExistingServicesMap(server);
+                List<GlusterServerService> servicesToUpdate = new ArrayList<GlusterServerService>();
 
-        acquireLock(server.getId());
-        try {
-            Map<Guid, GlusterServerService> existingServicesMap = getExistingServicesMap(server);
-            List<GlusterServerService> servicesToUpdate = new ArrayList<GlusterServerService>();
+                VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GlusterServicesList,
+                        new GlusterServicesListVDSParameters(server.getId(), getServiceNameMap().keySet()));
+                if (!returnValue.getSucceeded()) {
+                    log.errorFormat("Couldn't fetch services statuses from server {0}, error: {1}! " +
+                            "Updating statuses of all services on this server to UNKNOWN.",
+                            server.getHostName(),
+                            returnValue.getVdsError().getMessage());
+                    logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVICES_LIST_FAILED);
+                    return updateStatusToUnknown(existingServicesMap.values());
+                }
 
-            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GlusterServicesList,
-                    new GlusterServicesListVDSParameters(server.getId(), getServiceNameMap().keySet()));
-
-            if (!returnValue.getSucceeded()) {
-                log.errorFormat("Couldn't fetch services statuses from server {0}, error: {1}! " +
-                        "Updating statuses of all services on this server to UNKNOWN.",
-                        server.getHostName(),
-                        returnValue.getVdsError().getMessage());
-                logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVICES_LIST_FAILED);
-                return updateStatusToUnknown(existingServicesMap.values());
-            }
-
-            for (final GlusterServerService fetchedService : (List<GlusterServerService>) returnValue.getReturnValue()) {
-                serviceStatusMap.put(fetchedService.getServiceName(), fetchedService.getStatus());
-                GlusterServerService existingService = existingServicesMap.get(fetchedService.getServiceId());
-                if (existingService == null) {
-                    insertServerService(server, fetchedService);
-                } else {
-                    final GlusterServiceStatus oldStatus = existingService.getStatus();
-                    final GlusterServiceStatus newStatus = fetchedService.getStatus();
-                    if (oldStatus != newStatus) {
-                        log.infoFormat("Status of service {0} on server {1} changed from {2} to {3}. Updating in engine now.",
-                                fetchedService.getServiceName(),
-                                server.getHostName(),
-                                oldStatus.name(),
-                                newStatus.name());
-                        logUtil.logAuditMessage(server.getVdsGroupId(),
-                                null,
-                                server,
-                                AuditLogType.GLUSTER_SERVER_SERVICE_STATUS_CHANGED,
-                                new HashMap<String, String>() {
-                                    {
-                                        put(GlusterConstants.SERVICE_NAME, fetchedService.getServiceName());
-                                        put(GlusterConstants.OLD_STATUS, oldStatus.name());
-                                        put(GlusterConstants.NEW_STATUS, newStatus.name());
-                                    }
-                                });
-                        existingService.setStatus(fetchedService.getStatus());
-                        servicesToUpdate.add(existingService);
+                for (final GlusterServerService fetchedService : (List<GlusterServerService>) returnValue.getReturnValue()) {
+                    serviceStatusMap.put(fetchedService.getServiceName(), fetchedService.getStatus());
+                    GlusterServerService existingService = existingServicesMap.get(fetchedService.getServiceId());
+                    if (existingService == null) {
+                        insertServerService(server, fetchedService);
+                    } else {
+                        final GlusterServiceStatus oldStatus = existingService.getStatus();
+                        final GlusterServiceStatus newStatus = fetchedService.getStatus();
+                        if (oldStatus != newStatus) {
+                            log.infoFormat("Status of service {0} on server {1} changed from {2} to {3}. Updating in engine now.",
+                                    fetchedService.getServiceName(),
+                                    server.getHostName(),
+                                    oldStatus.name(),
+                                    newStatus.name());
+                            logUtil.logAuditMessage(server.getVdsGroupId(),
+                                    null,
+                                    server,
+                                    AuditLogType.GLUSTER_SERVER_SERVICE_STATUS_CHANGED,
+                                    new HashMap<String, String>() {
+                                        {
+                                            put(GlusterConstants.SERVICE_NAME, fetchedService.getServiceName());
+                                            put(GlusterConstants.OLD_STATUS, oldStatus.name());
+                                            put(GlusterConstants.NEW_STATUS, newStatus.name());
+                                        }
+                                    });
+                            existingService.setStatus(fetchedService.getStatus());
+                            servicesToUpdate.add(existingService);
+                        }
                     }
                 }
+                if (servicesToUpdate.size() > 0) {
+                    getGlusterServerServiceDao().updateAll(servicesToUpdate);
+                }
+            } finally {
+                releaseLock(server.getId());
             }
-            if (servicesToUpdate.size() > 0) {
-                getGlusterServerServiceDao().updateAll(servicesToUpdate);
-            }
-
-            return serviceStatusMap;
-        } finally {
-            releaseLock(server.getId());
         }
+
+        return serviceStatusMap;
     }
 
     private Map<String, GlusterServiceStatus> updateStatusToUnknown(Collection<GlusterServerService> existingServices) {

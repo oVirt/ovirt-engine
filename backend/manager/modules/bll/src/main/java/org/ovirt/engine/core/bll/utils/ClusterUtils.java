@@ -40,6 +40,10 @@ public class ClusterUtils {
         return getVdsDao().getAllForVdsGroupWithStatus(clusterId, VDSStatus.Up);
     }
 
+    public List<VDS> getAllServers(Guid clusterId) {
+        return getVdsDao().getAllForVdsGroup(clusterId);
+    }
+
     public boolean hasMultipleServers(Guid clusterId) {
         return getServerCount(clusterId) > 1;
     }

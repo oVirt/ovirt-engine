@@ -29,6 +29,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterService;
@@ -124,6 +125,7 @@ public class GlusterServiceSyncJobTest {
         doReturn(createServerServices(SERVER3_ID, GlusterServiceStatus.RUNNING)).when(serverServiceDao)
                 .getByServerId(SERVER3_ID);
         doReturn(existingClusterServices).when(clusterServiceDao).getByClusterId(CLUSTER_ID);
+        doReturn(createServers()).when(clusterUtil).getAllServers(CLUSTER_ID);
 
         doNothing().when(syncJob).acquireLock(SERVER1_ID);
         doNothing().when(syncJob).releaseLock(SERVER1_ID);
@@ -131,6 +133,15 @@ public class GlusterServiceSyncJobTest {
         doNothing().when(syncJob).releaseLock(SERVER2_ID);
         doNothing().when(syncJob).acquireLock(SERVER3_ID);
         doNothing().when(syncJob).releaseLock(SERVER3_ID);
+    }
+
+    private List<VDS> createServers() {
+        List<VDS> serverList = new ArrayList<VDS>();
+        VDS server1 = createUpServer(SERVER1_ID); server1.setStatus(VDSStatus.Up);serverList.add(server1);
+        VDS server2 = createUpServer(SERVER2_ID); server2.setStatus(VDSStatus.Up);serverList.add(server2);
+        VDS server3 = createUpServer(SERVER3_ID); server3.setStatus(VDSStatus.Up);serverList.add(server3);
+
+        return serverList;
     }
 
     private Map<String, GlusterService> createServiceNameMap() {
@@ -248,8 +259,8 @@ public class GlusterServiceSyncJobTest {
         // all clusters fetched from db
         verify(clusterDao, times(1)).getAll();
 
-        // get all UP servers of the cluster
-        verify(clusterUtil, times(1)).getAllUpServers(CLUSTER_ID);
+        // get all servers of the cluster
+        verify(clusterUtil, times(1)).getAllServers(CLUSTER_ID);
 
         // Fetch existing services from server1
         verify(serverServiceDao, times(1)).getByServerId(SERVER1_ID);
