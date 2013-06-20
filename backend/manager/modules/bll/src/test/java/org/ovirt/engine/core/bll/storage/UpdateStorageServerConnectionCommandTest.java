@@ -295,8 +295,7 @@ public class UpdateStorageServerConnectionCommandTest {
         List<StorageDomain> domains = new ArrayList<StorageDomain>();
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
     @Test
@@ -334,7 +333,7 @@ public class UpdateStorageServerConnectionCommandTest {
     }
 
     @Test
-    public void succeedUpdateNFSCommand() {
+    public void succeedUpdateNFSCommandWithDomain() {
         StorageServerConnections  newNFSConnection = createNFSConnection(
                        "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
                         StorageType.NFS,
@@ -361,6 +360,26 @@ public class UpdateStorageServerConnectionCommandTest {
     }
 
     @Test
+    public void succeedUpdateNFSCommandNoDomain() {
+        StorageServerConnections  newNFSConnection = createNFSConnection(
+                       "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                        StorageType.NFS,
+                        NfsVersion.V4,
+                        300,
+                        0);
+        VDSReturnValue returnValueConnectSuccess = new VDSReturnValue();
+        StoragePoolIsoMap map = new StoragePoolIsoMap();
+        doReturn(map).when(command).getStoragePoolIsoMap();
+        doReturn(false).when(command).doDomainsUseConnection();
+        returnValueConnectSuccess.setSucceeded(true);
+        doReturn(true).when(command).connectToStorage();
+        doNothing().when(storageConnDao).update(newNFSConnection);
+        doNothing().when(command).disconnectFromStorage();
+        command.executeCommand();
+        CommandAssertUtils.checkSucceeded(command, true);
+    }
+
+    @Test
     public void failUpdateStats() {
         StorageServerConnections  newNFSConnection = createNFSConnection(
                        "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
@@ -370,6 +389,7 @@ public class UpdateStorageServerConnectionCommandTest {
                         0);
         VDSReturnValue returnValueUpdate = new VDSReturnValue();
         returnValueUpdate.setSucceeded(false);
+        doReturn(true).when(command).doDomainsUseConnection();
         StoragePoolIsoMap map = new StoragePoolIsoMap();
         doReturn(map).when(command).getStoragePoolIsoMap();
         doReturn(returnValueUpdate).when(command).getStatsForDomain();

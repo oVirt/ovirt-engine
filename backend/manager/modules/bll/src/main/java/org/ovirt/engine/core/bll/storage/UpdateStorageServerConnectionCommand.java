@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-
 import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
@@ -67,7 +66,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         }
 
         if (checkIsConnectionFieldEmpty(newConnectionDetails)) {
-           return false;
+            return false;
         }
 
         Guid vdsmId = getParameters().getVdsId();
@@ -100,26 +99,22 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         if (domains == null) {
             domains = getStorageDomainsByConnId(newConnectionDetails.getid());
         }
-        if (domains.isEmpty()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+        if (doDomainsUseConnection()) {
+            if (domains.size() == 1) {
+                setStorageDomain(domains.get(0));
+            }
+            else {
+                String domainNames = createDomainNamesList(domains);
+                addCanDoActionMessage(String.format("$domainNames %1$s", domainNames));
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
+            }
+            // Check that the storage domain is in proper state to be edited
+            if (!isConnectionEditable(getStorageDomain())) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE);
+            }
         }
-        else if (domains.size() == 1) {
-            setStorageDomain(domains.get(0));
-        }
-        else {
-            String domainNames = createDomainNamesList(domains);
-            addCanDoActionMessage(String.format("$domainNames %1$s", domainNames));
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
-        }
-
-        // Check that the storage domain is in proper state to be edited
-        if (!isConnectionEditable(getStorageDomain())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE);
-        }
-
         return super.canDoAction();
     }
-
 
     protected String createDomainNamesList(List<StorageDomain> domains) {
         // Build domain names list to display in the error
@@ -142,9 +137,11 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     @Override
     protected void executeCommand() {
+        boolean isDomainUpdateRequired = doDomainsUseConnection();
         StoragePoolIsoMap map = getStoragePoolIsoMap();
-
-        changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Locked);
+        if (isDomainUpdateRequired) {
+            changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Locked);
+        }
         // connect to the new path
         boolean hasConnectStorageSucceeded = connectToStorage();
         VDSReturnValue returnValueUpdatedStorageDomain = null;
@@ -156,24 +153,39 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             getReturnValue().setFault(f);
             return;
         }
-        // update info such as free space - because we switched to a different server
-        returnValueUpdatedStorageDomain = getStatsForDomain();
 
-        if (returnValueUpdatedStorageDomain.getSucceeded()) {
-            final StorageDomain updatedStorageDomain = (StorageDomain) returnValueUpdatedStorageDomain.getReturnValue();
-            executeInNewTransaction(new TransactionMethod<Void>() {
-                @Override
-                public Void runInTransaction() {
-                    getStorageConnDao().update(getParameters().getStorageServerConnection());
-                    getStorageDomainDynamicDao().update(updatedStorageDomain.getStorageDynamicData());
-                    return null;
-                }
-            });
+        if (isDomainUpdateRequired) {
+            // update info such as free space - because we switched to a different server
+            returnValueUpdatedStorageDomain = getStatsForDomain();
+            if (returnValueUpdatedStorageDomain.getSucceeded()) {
+                final StorageDomain updatedStorageDomain =
+                        (StorageDomain) returnValueUpdatedStorageDomain.getReturnValue();
+                executeInNewTransaction(new TransactionMethod<Void>() {
+                    @Override
+                    public Void runInTransaction() {
+                        getStorageDomainDynamicDao().update(updatedStorageDomain.getStorageDynamicData());
+                        return null;
+                    }
+                });
 
-            setSucceeded(true);
+            }
+            else {
+                restoreStateAfterUpdate(map, false);
+                return;
+            }
         }
+        getStorageConnDao().update(getParameters().getStorageServerConnection());
+        restoreStateAfterUpdate(map, true);
+    }
+
+    protected void restoreStateAfterUpdate(StoragePoolIsoMap map, boolean setSucceeded) {
         updateStatus(map, StorageDomainStatus.Maintenance);
         disconnectFromStorage();
+        setSucceeded(setSucceeded);
+    }
+
+    protected boolean doDomainsUseConnection() {
+        return domains != null && !domains.isEmpty();
     }
 
     protected StoragePoolIsoMap getStoragePoolIsoMap() {
@@ -254,8 +266,6 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     protected StoragePoolIsoMapDAO getStoragePoolIsoMapDao() {
         return getDbFacade().getStoragePoolIsoMapDao();
     }
-
-
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
