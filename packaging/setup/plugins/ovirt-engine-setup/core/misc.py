@@ -49,6 +49,9 @@ class Plugin(plugin.PluginBase):
             otopicons.CoreEnv.LOG_FILE_NAME_PREFIX,
             osetupcons.FileLocations.OVIRT_OVIRT_SETUP_LOG_PREFIX
         )
+        self.environment[
+            osetupcons.CoreEnv.ACTION
+        ] = osetupcons.Const.ACTION_SETUP
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,

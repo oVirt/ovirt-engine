@@ -515,6 +515,9 @@ class Const(object):
 
     FILE_GROUP_SECTION_PREFIX = 'file_group_'
 
+    ACTION_SETUP = 'setup'
+    ACTION_REMOVE = 'cleanup'
+
 
 @util.export
 @util.codegen
@@ -530,6 +533,7 @@ class CoreEnv(object):
     REGISTER_UNINSTALL_GROUPS = 'OVESETUP_CORE/registerUninstallGroups'
     CONFIRM_UNINSTALL_GROUPS = 'OVESETUP_CORE/confirmUninstallGroups'
     UPGRADE_SUPPORTED_VERSIONS = 'OVESETUP_CORE/upgradeSupportedVersions'
+    ACTION = 'OVESETUP_CORE/action'
 
     @osetupattrs(
         answerfile=True,

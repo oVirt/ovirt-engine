@@ -50,6 +50,9 @@ class Plugin(plugin.PluginBase):
             otopicons.CoreEnv.LOG_FILE_NAME_PREFIX,
             osetupcons.FileLocations.OVIRT_OVIRT_REMOVE_LOG_PREFIX
         )
+        self.environment[
+            osetupcons.CoreEnv.ACTION
+        ] = osetupcons.Const.ACTION_REMOVE
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
