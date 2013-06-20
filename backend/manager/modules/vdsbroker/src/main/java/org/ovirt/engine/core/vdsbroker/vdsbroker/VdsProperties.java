@@ -163,6 +163,7 @@ public final class VdsProperties {
     public static final String image_group_id = "imageID";
     // vm configuration (i.e. VmStatic)
     public static final String mem_size_mb = "memSize";
+    public static final String mem_guaranteed_size_mb = "memGuaranteedSize";
     public static final String num_of_monitors = "spiceMonitors";
     public static final String num_of_cpus = "smp";
     public static final String cores_per_socket = "smpCoresPerSocket";
