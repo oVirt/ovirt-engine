@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -18,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -29,11 +31,15 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> extends AddVmCommand<T> {
     public AddVmFromScratchCommand(T parameters) {
         super(parameters);
-        getParameters().setDontCheckTemplateImages(true);
     }
 
     protected AddVmFromScratchCommand(Guid commandId) {
         super(commandId);
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        return null;
     }
 
     @Override
@@ -56,6 +62,11 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
             setStorageDomainId(storageDomainId);
         }
         return storageDomainId;
+    }
+
+    @Override
+    protected boolean checkTemplateImages(List<String> reasons) {
+        return true;
     }
 
     @Override

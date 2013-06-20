@@ -67,6 +67,11 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     }
 
     @Override
+    protected boolean checkTemplateImages(List<String> reasons) {
+        return true;
+    }
+
+    @Override
     public Guid getStorageDomainId() {
         if (storageDomainId == null) {
             // This is needed for logging the command using CommandBase.logCommand

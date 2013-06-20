@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -14,20 +12,14 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> extends AddVmCommand<T> {
 
-    private String cachedDiskSharedLockMessage;
-
     public AddVmFromTemplateCommand(T parameters) {
         super(parameters);
-        parameters.setDontCheckTemplateImages(true);
     }
 
     protected AddVmFromTemplateCommand(Guid commandId) {
@@ -37,33 +29,6 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     @Override
     protected boolean validateIsImagesOnDomains() {
         return true;
-    }
-
-    @Override
-    protected Map<String, Pair<String, String>> getSharedLocks() {
-        Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
-        locks.put(getVmTemplateId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getTemplateSharedLockMessage()));
-        for (DiskImage image: getImagesToCheckDestinationStorageDomains()) {
-            locks.put(image.getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskSharedLockMessage()));
-        }
-        return locks;
-    }
-
-    private String getTemplateSharedLockMessage() {
-        return new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM.name())
-                .append(String.format("$VmName %1$s", getVmName()))
-                .toString();
-    }
-
-    private String getDiskSharedLockMessage() {
-        if (cachedDiskSharedLockMessage == null) {
-            cachedDiskSharedLockMessage = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_USED_FOR_CREATE_VM.name())
-            .append(String.format("$VmName %1$s", getVmName()))
-            .toString();
-        }
-        return cachedDiskSharedLockMessage;
     }
 
     @Override
@@ -77,6 +42,15 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         if (getTaskIdList().isEmpty()) {
             endSuccessfully();
         }
+    }
+
+    /**
+     * TODO: need to see why those checks are not executed
+     * for this command
+     */
+    @Override
+    protected boolean checkTemplateImages(List<String> reasons) {
+        return true;
     }
 
     @Override

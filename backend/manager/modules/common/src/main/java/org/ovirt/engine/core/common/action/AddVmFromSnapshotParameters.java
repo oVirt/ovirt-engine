@@ -17,6 +17,15 @@ public class AddVmFromSnapshotParameters extends VmManagementParametersBase impl
     @NotNull(message="VALIDATION.SOURCE_SNAPSHOT_ID.NOT_NULL")
     private Guid sourceSnapshotId;
 
+    public AddVmFromSnapshotParameters() {
+    }
+
+    public AddVmFromSnapshotParameters(VmStatic vmStatic, Guid sourceSnapshotId) {
+        super(vmStatic);
+        setVmId(Guid.Empty);
+        this.sourceSnapshotId = sourceSnapshotId;
+    }
+
     public Guid getSourceSnapshotId() {
         return sourceSnapshotId;
     }
@@ -24,16 +33,4 @@ public class AddVmFromSnapshotParameters extends VmManagementParametersBase impl
     public void setSourceSnapshotId(Guid sourceSnapshotId) {
         this.sourceSnapshotId = sourceSnapshotId;
     }
-
-    public AddVmFromSnapshotParameters() {
-        setDontCheckTemplateImages(true);
-    }
-
-    public AddVmFromSnapshotParameters(VmStatic vmStatic, Guid sourceSnapshotId) {
-        super(vmStatic);
-        setVmId(Guid.Empty);
-        this.sourceSnapshotId = sourceSnapshotId;
-        setDontCheckTemplateImages(true);
-    }
-
 }

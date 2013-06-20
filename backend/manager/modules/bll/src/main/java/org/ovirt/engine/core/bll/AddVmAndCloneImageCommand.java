@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -43,6 +44,11 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
     @Override
     protected boolean validateIsImagesOnDomains() {
         return true;
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        return null;
     }
 
     protected void copyDiskImage(

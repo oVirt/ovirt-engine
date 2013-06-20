@@ -70,7 +70,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 
 @DisableInPrepareMode
-@LockIdNameAttribute
+@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 @NonTransactiveCommandAttribute
 public class AddVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
         implements QuotaStorageDependent, QuotaVdsDependent {
@@ -78,6 +78,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<Guid, StorageDomain>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
+    private String cachedDiskSharedLockMessage;
 
     /**
      * A list of the new disk images which were saved for the VM.
@@ -111,6 +112,33 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected AddVmCommand(Guid commandId) {
         super(commandId);
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
+        locks.put(getVmTemplateId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getTemplateSharedLockMessage()));
+        for (DiskImage image: getImagesToCheckDestinationStorageDomains()) {
+            locks.put(image.getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskSharedLockMessage()));
+        }
+        return locks;
+    }
+
+    private String getTemplateSharedLockMessage() {
+        return new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_USED_FOR_CREATE_VM.name())
+                .append(String.format("$VmName %1$s", getVmName()))
+                .toString();
+    }
+
+    private String getDiskSharedLockMessage() {
+        if (cachedDiskSharedLockMessage == null) {
+            cachedDiskSharedLockMessage = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_USED_FOR_CREATE_VM.name())
+            .append(String.format("$VmName %1$s", getVmName()))
+            .toString();
+        }
+        return cachedDiskSharedLockMessage;
     }
 
     protected void initStoragePoolId() {
@@ -351,6 +379,21 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return true;
     }
 
+    protected boolean checkTemplateImages(List<String> reasons) {
+        if (getParameters().getParentCommand() == VdcActionType.AddVmPoolWithVms) {
+            return true;
+        }
+
+        for (StorageDomain storage : destStorages.values()) {
+            if (!VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), storage.getId(),
+                    reasons, false, false, true, true,
+                    storageToDisksMap.get(storage.getId()))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     protected boolean checkCpuSockets() {
         return AddVmCommand.CheckCpuSockets(getParameters().getVmStaticData().getNumOfSockets(),
                 getParameters().getVmStaticData().getCpuPerSocket(), getVdsGroup().getcompatibility_version()
@@ -454,14 +497,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return false;
         }
 
-        if (!getParameters().getDontCheckTemplateImages()) {
-            boolean checkTemplateLock = getParameters().getParentCommand() != VdcActionType.AddVmPoolWithVms;
-            for (StorageDomain storage : destStorages.values()) {
-                if (!VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), storage.getId(),
-                        reasons, false, checkTemplateLock, true, true, storageToDisksMap.get(storage.getId()))) {
-                    return false;
-                }
-            }
+        if (!checkTemplateImages(reasons)) {
+            return false;
         }
 
         return true;

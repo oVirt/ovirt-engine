@@ -19,7 +19,6 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private VmStatic _vmStatic;
     private boolean makeCreatorExplicitOwner;
     private Guid privateStorageDomainId = Guid.Empty;
-    private boolean privateDontCheckTemplateImages;
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private VmPayload payload;
     private boolean clearPayload;
@@ -66,14 +65,6 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
 
     public void setStorageDomainId(Guid value) {
         privateStorageDomainId = value;
-    }
-
-    public boolean getDontCheckTemplateImages() {
-        return privateDontCheckTemplateImages;
-    }
-
-    public void setDontCheckTemplateImages(boolean value) {
-        privateDontCheckTemplateImages = value;
     }
 
     private boolean privateDontAttachToDefaultTag;

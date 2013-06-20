@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
@@ -8,6 +10,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.utils.Pair;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
@@ -36,6 +39,11 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         }
     }
 
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        return null;
+    }
+
     private VdcReturnValueBase addVmFromScratch(VmStatic vmStatic) {
         AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(vmStatic, getParameters()
                 .getDiskInfoList(), getParameters().getStorageDomainId());
@@ -50,7 +58,6 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
     private VdcReturnValueBase addVm(VmStatic vmStatic) {
         VmManagementParametersBase parameters = new VmManagementParametersBase(vmStatic);
         parameters.setSessionId(getParameters().getSessionId());
-        parameters.setDontCheckTemplateImages(true);
         parameters.setDontAttachToDefaultTag(true);
         parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
         parameters.setSoundDeviceEnabled(getParameters().isSoundDeviceEnabled());
