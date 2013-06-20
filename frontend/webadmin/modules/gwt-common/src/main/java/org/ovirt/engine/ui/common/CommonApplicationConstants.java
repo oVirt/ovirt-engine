@@ -1039,9 +1039,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Format")
     String formatSanImStorage();
 
-    @DefaultStringValue("In Use")
-    String statusSanStorage();
-
     @DefaultStringValue("N/A")
     String notAvailableLabel();
 
