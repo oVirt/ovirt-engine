@@ -222,6 +222,10 @@ class Plugin(plugin.PluginBase):
             osetupcons.ConfigEnv.ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT,
             osetupcons.FileLocations.ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT
         )
+        self.environment.setdefault(
+            osetupcons.ConfigEnv.ISO_DOMAIN_EXISTS,
+            False
+        )
 
         self.environment[
             osetupcons.ConfigEnv.ISO_DOMAIN_STORAGE_DIR
@@ -239,9 +243,10 @@ class Plugin(plugin.PluginBase):
         before=[
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
         ],
-        condition=lambda self: self.environment[
-            osetupcons.SystemEnv.NFS_CONFIG_ENABLED
-        ],
+        condition=lambda self: (
+            self.environment[osetupcons.SystemEnv.NFS_CONFIG_ENABLED] and
+            not self.environment[osetupcons.ConfigEnv.ISO_DOMAIN_EXISTS]
+        ),
     )
     def _customization(self):
         """
@@ -334,9 +339,10 @@ class Plugin(plugin.PluginBase):
         after=[
             osetupcons.Stages.DB_CONNECTION_AVAILABLE,
         ],
-        condition=lambda self: self.environment[
-            osetupcons.SystemEnv.NFS_CONFIG_ENABLED
-        ],
+        condition=lambda self: (
+            self.environment[osetupcons.SystemEnv.NFS_CONFIG_ENABLED] and
+            not self.environment[osetupcons.ConfigEnv.ISO_DOMAIN_EXISTS]
+        ),
     )
     def _add_iso_domain_to_db(self):
         """
@@ -392,6 +398,7 @@ class Plugin(plugin.PluginBase):
                 used=0,
             ),
         )
+        self.environment[osetupcons.ConfigEnv.ISO_DOMAIN_EXISTS] = True
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

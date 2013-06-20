@@ -677,6 +677,7 @@ class SystemEnv(object):
         answerfile=True,
         summary=True,
         description=_('NFS setup'),
+        postinstallfile=True,
     )
     def NFS_CONFIG_ENABLED(self):
         return 'OVESETUP_SYSTEM/nfsConfigEnabled'
@@ -718,8 +719,23 @@ class ConfigEnv(object):
 
     MAC_RANGE_POOL = 'OVESETUP_CONFIG/macRangePool'
 
-    ISO_DOMAIN_SD_UUID = 'OVESETUP_CONFIG/isoDomainSdUuid'
-    ISO_DOMAIN_STORAGE_DIR = 'OVESETUP_CONFIG/isoDomainStorageDir'
+    @osetupattrs(
+        postinstallfile=True,
+    )
+    def ISO_DOMAIN_EXISTS(self):
+        return 'OVESETUP_CONFIG/isoDomainExists'
+
+    @osetupattrs(
+        postinstallfile=True,
+    )
+    def ISO_DOMAIN_SD_UUID(self):
+        return 'OVESETUP_CONFIG/isoDomainSdUuid'
+
+    @osetupattrs(
+        postinstallfile=True,
+    )
+    def ISO_DOMAIN_STORAGE_DIR(self):
+        return 'OVESETUP_CONFIG/isoDomainStorageDir'
 
     @osetupattrs(
         answerfile=True,
@@ -741,6 +757,7 @@ class ConfigEnv(object):
         answerfile=True,
         summary=True,
         description=_('Host fqdn'),
+        postinstallfile=True,
     )
     def FQDN(self):
         return 'OVESETUP_CONFIG/fqdn'
@@ -758,12 +775,14 @@ class ConfigEnv(object):
         answerfile=True,
         summary=True,
         description=_('NFS mount point'),
+        postinstallfile=True,
     )
     def ISO_DOMAIN_NFS_MOUNT_POINT(self):
         return 'OVESETUP_CONFIG/isoDomainMountPoint'
 
     @osetupattrs(
         answerfile=True,
+        postinstallfile=True
     )
     def ISO_DOMAIN_NAME(self):
         return 'OVESETUP_CONFIG/isoDomainName'
@@ -772,6 +791,7 @@ class ConfigEnv(object):
         answerfile=True,
         summary=True,
         description=_('Firewall manager'),
+        postinstallfile=True,
     )
     def FIREWALL_MANAGER(self):
         return 'OVESETUP_CONFIG/firewallManager'
@@ -820,6 +840,7 @@ class ApacheEnv(object):
         answerfile=True,
         summary=True,
         description=_('Configure Apache SSL'),
+        postinstallfile=True,
     )
     def CONFIGURE_SSL(self):
         return 'OVESETUP_APACHE/configureSsl'
@@ -828,6 +849,7 @@ class ApacheEnv(object):
         answerfile=True,
         summary=True,
         description=_('Set application as default page'),
+        postinstallfile=True,
     )
     def CONFIGURE_ROOT_REDIRECTION(self):
         return 'OVESETUP_APACHE/configureRootRedirection'
