@@ -55,10 +55,14 @@ class Plugin(plugin.PluginBase):
             osetupcons.SystemEnv.NFS_CONFIG_ENABLED,
             None
         )
+        self.environment.setdefault(
+            osetupcons.SystemEnv.NFS_SERVICE_NAME,
+            None
+        )
         self._enabled = True
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
+        stage=plugin.Stages.STAGE_LATE_SETUP,
     )
     def _setup(self):
         self._enabled = not self.environment[
@@ -69,6 +73,18 @@ class Plugin(plugin.PluginBase):
                 _('Unsupported distribution disabling nfs export')
             )
             self._enabled = False
+
+        if self.environment[
+            osetupcons.SystemEnv.NFS_SERVICE_NAME
+        ] is None:
+            for service in ('nfs-server', 'nfs'):
+                if self.services.exists(name=service):
+                    self.environment[
+                        osetupcons.SystemEnv.NFS_SERVICE_NAME
+                    ] = service
+                    break
+            else:
+                self._enabled = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -175,17 +191,18 @@ class Plugin(plugin.PluginBase):
             )
 
         self.services.startup(
-            name='nfs-server',
+            name=self.environment[
+                osetupcons.SystemEnv.NFS_SERVICE_NAME
+            ],
             state=True,
         )
-        self.services.state(
-            name='nfs-server',
-            state=False,
-        )
-        self.services.state(
-            name='nfs-server',
-            state=True,
-        )
+        for state in (False, True):
+            self.services.state(
+                name=self.environment[
+                    osetupcons.SystemEnv.NFS_SERVICE_NAME
+                ],
+                state=state,
+            )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

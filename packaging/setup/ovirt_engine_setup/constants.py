@@ -665,6 +665,8 @@ class SystemEnv(object):
     SELINUX_CONTEXTS = 'OVESETUP_SYSTEM/selinuxContexts'
     SELINUX_RESTORE_PATHS = 'OVESETUP_SYSTEM/selinuxRestorePaths'
 
+    NFS_SERVICE_NAME = 'OVESETUP_SYSTEM/nfsServiceName'
+
     @osetupattrs(
         answerfile=True,
         summary=True,
