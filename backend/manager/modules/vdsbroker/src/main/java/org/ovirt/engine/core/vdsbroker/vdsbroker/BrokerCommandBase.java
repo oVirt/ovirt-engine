@@ -205,7 +205,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         try {
             VdcBllErrors bllErrors = VdcBllErrors.forValue(xmlRpcStatus.mCode);
             if (bllErrors == null) {
-                log.warn("Weird return value: " + xmlRpcStatus);
+                log.warn("Unexpected return value: " + xmlRpcStatus);
                 bllErrors = VdcBllErrors.unexpected;
             }
             return bllErrors;
