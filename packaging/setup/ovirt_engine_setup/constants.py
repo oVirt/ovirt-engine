@@ -47,6 +47,7 @@ def osetupattrs(
     answerfile=False,
     summary=False,
     description=None,
+    postinstallfile=False,
 ):
     class decorator(classproperty):
         def __init__(self, o):
@@ -55,6 +56,7 @@ def osetupattrs(
                 answerfile=answerfile,
                 summary=summary,
                 description=description,
+                postinstallfile=postinstallfile
             )
     return decorator
 
@@ -291,6 +293,10 @@ class FileLocations(object):
     OVIRT_ENGINE_UNINSTALL_DIR = os.path.join(
         OVIRT_ENGINE_SYSCONFDIR,
         'uninstall.d'
+    )
+    OVIRT_SETUP_POST_INSTALL_CONFIG = os.path.join(
+        '%s.d' % OVIRT_OVIRT_SETUP_CONFIG_FILE,
+        '20-setup-ovirt-post.conf'
     )
 
     ISO_DOMAIN_DEFAULT_NFS_MOUNT_POINT = os.path.join(

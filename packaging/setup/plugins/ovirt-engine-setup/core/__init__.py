@@ -24,12 +24,14 @@ from otopi import util
 
 from . import misc
 from . import uninstall
+from . import postinstall
 
 
 @util.export
 def createPlugins(context):
     misc.Plugin(context=context)
     uninstall.Plugin(context=context)
+    postinstall.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
