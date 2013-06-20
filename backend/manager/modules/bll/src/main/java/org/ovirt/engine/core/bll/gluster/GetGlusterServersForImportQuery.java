@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameter
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.utils.gluster.GlusterUtil;
-import org.ovirt.engine.core.utils.ssh.SSHClient;
 
 /**
  * Query to fetch list of gluster servers via ssh using the given serverName and password.
@@ -36,8 +35,6 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
             throw new RuntimeException(VdcBllMessages.SERVER_ALREADY_EXISTS_IN_ANOTHER_CLUSTER.toString());
         }
 
-        SSHClient client = null;
-
         try {
             Map<String, String> serverFingerPrintMap =
                     getGlusterUtil().getPeers(getParameters().getServerName(),
@@ -59,10 +56,6 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
             throw re;
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            if (client != null) {
-                client.disconnect();
-            }
         }
     }
 
