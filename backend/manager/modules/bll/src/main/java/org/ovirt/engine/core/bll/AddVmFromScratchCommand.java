@@ -122,22 +122,16 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
 
     @Override
     protected boolean canDoAction() {
-        boolean result = (getVdsGroup() != null || !Guid.Empty.equals(super.getStorageDomainId()));
-        if (!result) {
-            addCanDoActionMessage(VdcBllMessages.VM_CLUSTER_IS_NOT_VALID);
-        } else {
-            result = ImagesHandler.CheckImagesConfiguration(getStorageDomainId(),
-                                                            getParameters().getDiskInfoList(),
-                                                            getReturnValue().getCanDoActionMessages());
+        if (getVdsGroup() == null && Guid.Empty.equals(super.getStorageDomainId())) {
+            return failCanDoAction(VdcBllMessages.VM_CLUSTER_IS_NOT_VALID);
         }
 
-        if (!result) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-        } else {
-            result = super.canDoAction();
+        if (!ImagesHandler.CheckImagesConfiguration(getStorageDomainId(),
+                getParameters().getDiskInfoList(), getReturnValue().getCanDoActionMessages())) {
+            return false;
         }
-        return result;
+
+        return super.canDoAction();
     }
 
     @Override

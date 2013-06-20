@@ -444,23 +444,18 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected boolean canAddVm(List<String> reasons, String name, Guid storagePoolId,
             int vmPriority) {
-        boolean returnValue;
         // Checking if a desktop with same name already exists
-        boolean exists = isVmWithSameNameExists(name);
-
-        if (exists) {
-            if (reasons != null) {
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED.toString());
-            }
-
+        if (isVmWithSameNameExists(name)) {
+            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED.name());
             return false;
         }
 
-        boolean checkTemplateLock = getParameters().getParentCommand() == VdcActionType.AddVmPoolWithVms ? false : true;
+        if (!verifyAddVM(reasons, vmPriority)) {
+            return false;
+        }
 
-        returnValue = verifyAddVM(reasons, vmPriority);
-
-        if (returnValue && !getParameters().getDontCheckTemplateImages()) {
+        if (!getParameters().getDontCheckTemplateImages()) {
+            boolean checkTemplateLock = getParameters().getParentCommand() != VdcActionType.AddVmPoolWithVms;
             for (StorageDomain storage : destStorages.values()) {
                 if (!VmTemplateCommand.isVmTemplateImagesReady(getVmTemplate(), storage.getId(),
                         reasons, false, checkTemplateLock, true, true, storageToDisksMap.get(storage.getId()))) {
@@ -469,7 +464,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             }
         }
 
-        return returnValue;
+        return true;
     }
 
     protected boolean verifyAddVM(List<String> reasons, int vmPriority) {
