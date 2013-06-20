@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao.network;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -65,9 +66,19 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
 
     @Override
     public void massUpdateStatisticsForVds(Collection<VdsNetworkStatistics> statistics) {
+        List<MapSqlParameterSource> executions = new ArrayList<>(statistics.size());
         for (VdsNetworkStatistics stats : statistics) {
-            update(stats);
+            executions.add(getCustomMapSqlParameterSource()
+                    .addValue("id", stats.getId())
+                    .addValue("rx_drop", stats.getReceiveDropRate())
+                    .addValue("rx_rate", stats.getReceiveRate())
+                    .addValue("tx_drop", stats.getTransmitDropRate())
+                    .addValue("tx_rate", stats.getTransmitRate())
+                    .addValue("iface_status", stats.getStatus())
+                    .addValue("vds_id", stats.getVdsId()));
         }
+        getCallsHandler().executeStoredProcAsBatch("Updatevds_interface_statistics",
+                executions);
     }
 
     /**

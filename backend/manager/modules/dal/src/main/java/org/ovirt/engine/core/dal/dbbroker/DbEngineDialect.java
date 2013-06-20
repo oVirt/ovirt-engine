@@ -46,4 +46,13 @@ public interface DbEngineDialect {
      * {@link SimpleJdbcCallOperations#execute()}.
      */
     public String getFunctionReturnKey();
+
+    /**
+     * This function create a call SQL command for a specific procedure, for a specific database
+     * @param procSchemaFromDB
+     * @param procNameFromDB
+     * @param params
+     */
+    public String createSqlCallCommand(String procSchemaFromDB,
+            String procNameFromDB, String params);
 }

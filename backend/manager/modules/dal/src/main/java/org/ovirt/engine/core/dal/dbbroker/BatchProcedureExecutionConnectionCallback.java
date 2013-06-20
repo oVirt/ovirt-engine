@@ -1,0 +1,225 @@
+package org.ovirt.engine.core.dal.dbbroker;
+
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.ConnectionCallback;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.springframework.jdbc.core.simple.SimpleJdbcCall;
+
+public final class BatchProcedureExecutionConnectionCallback implements ConnectionCallback<Object> {
+    private static final Log log = LogFactory.getLog(BatchProcedureExecutionConnectionCallback.class);
+    private static ConcurrentMap<String, StoredProcedureMetaData> storedProceduresMap =
+            new ConcurrentHashMap<>();
+
+    private String procName;
+    private List<MapSqlParameterSource> executions;
+    private SimpleJdbcCallsHandler handler;
+
+    public BatchProcedureExecutionConnectionCallback(SimpleJdbcCallsHandler handler,
+            String procName,
+            List<MapSqlParameterSource> executions) {
+        this.handler = handler;
+        this.procName = procName;
+        this.executions = executions;
+    }
+
+    @Override
+    public Object doInConnection(Connection con) throws SQLException,
+            DataAccessException {
+        log.debugFormat("Executing batch for prcoedure %s", procName);
+        StoredProcedureMetaData procMetaData = getStoredProcedureMetaData(
+                procName, con);
+
+        try (CallableStatement stmt = con.prepareCall(procMetaData.getSqlCommand())) {
+
+            for (MapSqlParameterSource execution : executions) {
+                mapParams(stmt, execution,
+                        procMetaData.getParamatersMetaData());
+                stmt.addBatch();
+            }
+
+            stmt.executeBatch();
+            log.debug("Executed batch");
+        } catch (SQLException e) {
+            log.fatal("Can't execute batch: ", e);
+
+            if (e.getNextException() != null) {
+                log.fatal("Can't execute batch. Next exception is: ",
+                        e.getNextException());
+            }
+            throw e;
+        }
+
+        return null;
+    }
+
+    private StoredProcedureMetaData getStoredProcedureMetaData(
+            String procName, Connection con) throws SQLException {
+
+        if (!storedProceduresMap.containsKey(procName)) {
+            StoredProcedureMetaData procMetaData = new StoredProcedureMetaData();
+            fillProcMetaData(procName, con, procMetaData);
+            storedProceduresMap.putIfAbsent(procName, procMetaData);
+        }
+        return storedProceduresMap.get(procName);
+    }
+
+    private void fillProcMetaData(String procName, Connection con,
+            StoredProcedureMetaData procMetaData) throws SQLException {
+        SimpleJdbcCall call = handler.getCall(procName,
+                handler.createCallForModification(procName));
+
+        Map<String, SqlCallParameter> paramOrder = new HashMap<>();
+        String procNameFromDB = null;
+        String procSchemaFromDB = null;
+        StringBuilder params = new StringBuilder();
+        try (ResultSet rs2 = con.getMetaData().getProcedureColumns(null,
+                null, call.getProcedureName().toLowerCase(), "%")) {
+
+
+            int internalCounter = 1;
+
+            while (rs2.next()) {
+                ProcData procData = fillProcData(rs2, internalCounter);
+                if (procData != null) {
+                    ++internalCounter;
+                    paramOrder.put(procData.getColName(), new SqlCallParameter(
+                            procData.getOrdinal(), procData.getColName(), procData.getDataType()));
+                    procNameFromDB = procData.getProcName();
+                    procSchemaFromDB = procData.getSchemaName();
+                    params.append("CAST (? AS ").append(procData.getDbTypeName())
+                            .append("),");
+                }
+            }
+
+            if (params.length() > 0) {
+                params.deleteCharAt(params.length() - 1);
+            }
+        } catch (SQLException e) {
+            log.fatalFormat("Can't get procedure %s meta data",
+                    procName);
+            log.fatal(e.getMessage(), e);
+        }
+
+        procMetaData.setSqlCommand(handler.getDialect().createSqlCallCommand(
+                procSchemaFromDB, procNameFromDB, params.toString()));
+        procMetaData.setDbName(procNameFromDB);
+        procMetaData.setParamatersMetaData(paramOrder);
+        procMetaData.setSchemaName(procSchemaFromDB);
+    }
+
+    private ProcData fillProcData(ResultSet rs, int internalCounter) throws SQLException {
+        String colName = rs.getString("COLUMN_NAME");
+
+        if (colName.equalsIgnoreCase("returnValue")) {
+            return null;
+        }
+        ProcData retValue = new ProcData();
+
+        retValue.setColName(colName);
+
+        try {
+            retValue.setOrdinal(rs.getInt("ORDINAL_POSITION"));
+        } catch (SQLException e) {
+            // TODO: Delete when moving to Postgres Driver 9.1
+            // For some reason, some postgres drivers don't
+            // provide ORDINAL_POSITION
+
+            retValue.setOrdinal(internalCounter);
+        }
+        retValue.setDataType(rs.getInt("DATA_TYPE"));
+        retValue.setDbTypeName(rs.getString("TYPE_NAME"));
+        retValue.setProcName(rs.getString("PROCEDURE_NAME"));
+        retValue.setSchemaName(rs.getString("PROCEDURE_SCHEM"));
+
+        return retValue;
+    }
+
+    private void mapParams(PreparedStatement stmt,
+            MapSqlParameterSource paramSource,
+            Map<String, SqlCallParameter> paramOrder)
+            throws SQLException {
+
+        Map<String, Object> values = paramSource.getValues();
+        for (Map.Entry<String, SqlCallParameter> paramOrderEntry : paramOrder.entrySet())
+        {
+            String paramName = paramOrderEntry.getKey();
+            Object value = values.get(paramName);
+            SqlCallParameter sqlParam = paramOrderEntry.getValue();
+            int ordinal = sqlParam.getOrdinal();
+            stmt.setObject(ordinal, value);
+        }
+
+        log.debugFormat("Mapped params %s", values.keySet());
+    }
+
+    private  static class ProcData {
+        private String colName;
+        private int ordinal;
+        private int dataType;
+        private String procName;
+        private String schemaName;
+        private String dbTypeName;
+
+        public String getColName() {
+            return colName;
+        }
+
+        public void setColName(String colName) {
+            this.colName = colName;
+        }
+
+        public int getOrdinal() {
+            return ordinal;
+        }
+
+        public void setOrdinal(int ordinal) {
+            this.ordinal = ordinal;
+        }
+
+        public int getDataType() {
+            return dataType;
+        }
+
+        public void setDataType(int dataType) {
+            this.dataType = dataType;
+        }
+
+        public String getProcName() {
+            return procName;
+        }
+
+        public void setProcName(String procName) {
+            this.procName = procName;
+        }
+
+        public String getSchemaName() {
+            return schemaName;
+        }
+
+        public void setSchemaName(String schemaName) {
+            this.schemaName = schemaName;
+        }
+
+        public String getDbTypeName() {
+            return dbTypeName;
+        }
+
+        public void setDbTypeName(String dbTypeName) {
+            this.dbTypeName = dbTypeName;
+        }
+
+    }
+}

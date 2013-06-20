@@ -195,4 +195,13 @@ public class PostgresDbEngineDialect implements DbEngineDialect {
     public String getFunctionReturnKey() {
         return "returnvalue";
     }
+
+    @Override
+    public String createSqlCallCommand(String procSchemaFromDB,
+            String procNameFromDB, String params) {
+        StringBuilder sqlCommand = new StringBuilder();
+        sqlCommand.append("{call ").append(procSchemaFromDB).append(".")
+                .append(procNameFromDB).append("(").append(params).append(")}");
+        return sqlCommand.toString();
+    }
 }
