@@ -106,7 +106,6 @@ PYTHON_SYS_DIR:=$(shell $(PYTHON) -c "from distutils.sysconfig import get_python
 OUTPUT_RPMBUILD=$(shell pwd -P)/tmp.rpmbuild
 OUTPUT_DIR=output
 TARBALL=$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz
-SRPM=$(OUTPUT_DIR)/$(PACKAGE_NAME)-$(RPM_VERSION)*.src.rpm
 ARCH=noarch
 BUILD_FILE=tmp.built
 MAVEN_OUTPUT_DIR_DEFAULT=$(shell pwd -P)/tmp.repos
@@ -266,7 +265,7 @@ rpm:	srpm
 	rm -rf "$(OUTPUT_RPMBUILD)"
 	mkdir -p "$(OUTPUT_RPMBUILD)"/{SPECS,RPMS,SRPMS,SOURCES,BUILD,BUILDROOT}
 	mkdir -p "$(OUTPUT_DIR)"
-	$(RPMBUILD) --define="_topdir $(OUTPUT_RPMBUILD)" $(RPMBUILD_EXTRA_ARGS) --rebuild "$(SRPM)"
+	$(RPMBUILD) --define="_topdir $(OUTPUT_RPMBUILD)" $(RPMBUILD_EXTRA_ARGS) --rebuild "$(OUTPUT_DIR)/$(PACKAGE_NAME)-$(RPM_VERSION)"*.src.rpm
 	mv $(OUTPUT_RPMBUILD)/RPMS/$(ARCH)/*.rpm "$(OUTPUT_DIR)"
 	rm -rf "$(OUTPUT_RPMBUILD)"
 	@echo
