@@ -15,6 +15,7 @@ public class GlusterAsyncTask implements Serializable{
     private GlusterTaskType type;
     private String message;
     private Guid stepId;
+    private GlusterTaskParameters taskParameters;
 
     public GlusterAsyncTask(){
 
@@ -51,6 +52,14 @@ public class GlusterAsyncTask implements Serializable{
 
     public void setStepId(Guid stepId) {
         this.stepId = stepId;
+    }
+
+    public GlusterTaskParameters getTaskParameters() {
+        return taskParameters;
+    }
+
+    public void setTaskParameters(GlusterTaskParameters taskParameters) {
+        this.taskParameters = taskParameters;
     }
 
     @Override

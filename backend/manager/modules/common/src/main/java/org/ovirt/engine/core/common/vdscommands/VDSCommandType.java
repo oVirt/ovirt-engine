@@ -149,6 +149,7 @@ public enum VDSCommandType {
     RemoveGlusterHook("org.ovirt.engine.core.vdsbroker.gluster"),
     ManageGlusterService("org.ovirt.engine.core.vdsbroker.gluster"),
     GetDiskAlignment("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    GlusterTasksList("org.ovirt.engine.core.vdsbroker.gluster"),
     ;
 
     String packageName;

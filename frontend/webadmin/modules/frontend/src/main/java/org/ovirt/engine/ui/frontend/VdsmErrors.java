@@ -777,4 +777,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Gluster service action not supported")
     String GlusterServiceActionNotSupported();
+
+    @DefaultStringValue("Failed to get gluster tasks list")
+    String GlusterVolumeStatusAllFailedException();
 }

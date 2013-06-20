@@ -102,7 +102,7 @@ public class StopRebalanceGlusterVolumeCommandTest {
         GlusterVolumeEntity volume = getVolume(volumeId);
         GlusterAsyncTask asyncTask = new GlusterAsyncTask();
         asyncTask.setStatus(JobExecutionStatus.STARTED);
-        asyncTask.setType(GlusterTaskType.REBALANCE_VOLUME);
+        asyncTask.setType(GlusterTaskType.REBALANCE);
         volume.setAsyncTask(asyncTask);
         return volume;
     }

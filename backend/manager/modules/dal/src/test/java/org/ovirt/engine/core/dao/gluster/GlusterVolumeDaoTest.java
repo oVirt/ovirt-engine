@@ -175,7 +175,7 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         assertNotNull("Volume : "+ existingDistVol.getId() +" doesn't exists",volume);
         assertTrue("Task ID is not getting updated",volume.getAsyncTask().getTaskId().equals(REBALANCING_VOLUME_TASKID));
         assertTrue("Invalid Task status",JobExecutionStatus.STARTED ==volume.getAsyncTask().getStatus());
-        assertTrue("Invalid Task type", GlusterTaskType.REBALANCE_VOLUME ==volume.getAsyncTask().getType());
+        assertTrue("Invalid Task type", GlusterTaskType.REBALANCE ==volume.getAsyncTask().getType());
     }
 
     @Test

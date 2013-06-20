@@ -37,7 +37,7 @@ public class StopRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<G
         }
 
         if (glusterVolume.getAsyncTask() == null
-                || glusterVolume.getAsyncTask().getType() != GlusterTaskType.REBALANCE_VOLUME
+                || glusterVolume.getAsyncTask().getType() != GlusterTaskType.REBALANCE
                 || glusterVolume.getAsyncTask().getStatus() != JobExecutionStatus.STARTED) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_REBALANCE_NOT_STARTED);
         }

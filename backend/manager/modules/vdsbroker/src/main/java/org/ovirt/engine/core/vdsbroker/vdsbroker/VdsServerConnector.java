@@ -248,4 +248,6 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterServicesAction(String[] serviceNames, String action);
 
     public Map<String, Object> getStoragePoolInfo(String spUUID);
+
+    public Map<String, Object> glusterTasksList();
 }

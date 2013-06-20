@@ -6,7 +6,7 @@ import java.util.Map;
 import org.ovirt.engine.core.common.job.StepEnum;
 
 public enum GlusterTaskType {
-    REBALANCE_VOLUME(StepEnum.REBALANCING_VOLUME),
+    REBALANCE(StepEnum.REBALANCING_VOLUME),
     ;
 
     private StepEnum step;
