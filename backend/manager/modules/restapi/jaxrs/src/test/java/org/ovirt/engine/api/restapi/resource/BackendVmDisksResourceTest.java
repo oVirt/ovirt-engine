@@ -63,7 +63,7 @@ public class BackendVmDisksResourceTest
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
                                            RemoveDiskParameters.class,
-                                           new String[] { "EntityId" },
+                                           new String[] { "DiskId" },
                                            new Object[] { GUIDS[0] },
                                            true,
                                            true));
@@ -92,7 +92,7 @@ public class BackendVmDisksResourceTest
         setUpGetEntityExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.RemoveDisk,
                                            RemoveDiskParameters.class,
-                                           new String[] { "EntityId" },
+                                           new String[] { "DiskId" },
                                            new Object[] { GUIDS[0] },
                                            canDo,
                                            success));

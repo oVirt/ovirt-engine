@@ -4,7 +4,8 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveDiskParameters extends VdcActionParametersBase {
 
-    private static final long serialVersionUID = -9133825126638788603L;
+    private static final long serialVersionUID = -3691440035048144457L;
+    private Guid diskId;
     private Guid storageDomainId;
     private boolean forceDelete;
 
@@ -12,12 +13,20 @@ public class RemoveDiskParameters extends VdcActionParametersBase {
     }
 
     public RemoveDiskParameters(Guid diskId) {
-        setEntityId(diskId);
+        this.diskId = diskId;
     }
 
     public RemoveDiskParameters(Guid diskId, Guid storageDomainId) {
         this(diskId);
         this.storageDomainId = storageDomainId;
+    }
+
+    public Guid getDiskId() {
+        return diskId;
+    }
+
+    public void setDiskId(Guid diskId) {
+        this.diskId = diskId;
     }
 
     public void setStorageDomainId(Guid storageId) {

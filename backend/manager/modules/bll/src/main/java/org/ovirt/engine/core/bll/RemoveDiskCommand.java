@@ -164,7 +164,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
      */
     private List<VM> getVmsForDiskId() {
         if (listVms == null) {
-            listVms = getVmDAO().getVmsListForDisk((Guid) getParameters().getEntityId());
+            listVms = getVmDAO().getVmsListForDisk((Guid) getParameters().getDiskId());
         }
         return listVms;
     }
@@ -266,7 +266,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         result.setTransactionScopeOption(TransactionScopeOption.Suppress);
         result.setDiskImage(diskImage);
         result.setParentCommand(VdcActionType.RemoveDisk);
-        result.setEntityId(getParameters().getEntityId());
+        result.setEntityId(getParameters().getDiskId());
         result.setParentParameters(getParameters());
         result.setRemoveFromSnapshots(true);
         result.setStorageDomainId(getParameters().getStorageDomainId());
@@ -329,7 +329,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getParameters().getEntityId().toString(),
+        return Collections.singletonMap(getParameters().getDiskId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskIsBeingRemovedLockMessage()));
     }
 
@@ -368,7 +368,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     protected Disk getDisk() {
         if (disk == null) {
-            disk = getDiskDao().get((Guid) getParameters().getEntityId());
+            disk = getDiskDao().get(getParameters().getDiskId());
         }
 
         return disk;
