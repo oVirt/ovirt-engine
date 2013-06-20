@@ -65,40 +65,35 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
             }
         };
 
+        boolean virtSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly);
+        boolean glusterSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly);
+
         formBuilder.addFormItem(new FormItem(constants.nameCluster(), name, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionCluster(), description, 1, 0));
-        if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            formBuilder.addFormItem(new FormItem(constants.dcCluster(), dataCenterName, 2, 0));
-        }
+        formBuilder.addFormItem(new FormItem(constants.dcCluster(), dataCenterName, 2, 0, virtSupported));
         formBuilder.addFormItem(new FormItem(constants.compatibilityVersionCluster(), compatibilityVersion, 3, 0));
 
         // Show the cluster type only if the application is running in both the modes
-        if (ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)
-                && ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly)) {
-            formBuilder.addFormItem(new FormItem(constants.clusterType(), clusterType, 4, 0));
-        }
+        formBuilder.addFormItem(new FormItem(constants.clusterType(), clusterType, 4, 0, virtSupported
+                && glusterSupported));
 
         // properties for virt support
-        if (ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly)) {
-            formBuilder.addFormItem(new FormItem(constants.cpuNameCluster(), cpuName, 0, 1)
-                    .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
-            formBuilder.addFormItem(new FormItem(constants.cpuThreadsCluster(), cpuThreads, 1, 1)
-                    .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
-            formBuilder.addFormItem(new FormItem(constants.memoryOptimizationCluster(), memoryOverCommit, 2, 1)
-                    .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
-            formBuilder.addFormItem(new FormItem(constants.resiliencePolicyCluster(), resiliencePolicy, 3, 1)
-                    .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
-        }
+        formBuilder.addFormItem(new FormItem(constants.cpuNameCluster(), cpuName, 0, 1, virtSupported)
+                .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
+        formBuilder.addFormItem(new FormItem(constants.cpuThreadsCluster(), cpuThreads, 1, 1, virtSupported)
+                .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
+        formBuilder.addFormItem(new FormItem(constants.memoryOptimizationCluster(), memoryOverCommit, 2, 1, virtSupported)
+                .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
+        formBuilder.addFormItem(new FormItem(constants.resiliencePolicyCluster(), resiliencePolicy, 3, 1, virtSupported)
+                .withDefaultValue(constants.notAvailableLabel(), virtServiceNotSupported));
 
         // properties for gluster support
-        if (ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly)) {
-            formBuilder.addFormItem(new FormItem(constants.clusterVolumesTotalLabel(), noOfVolumesTotal, 0, 2)
-                    .withDefaultValue(constants.notAvailableLabel(), glusterServiceNotSupported));
-            formBuilder.addFormItem(new FormItem(constants.clusterVolumesUpLabel(), noOfVolumesUp, 1, 2)
-                    .withDefaultValue(constants.notAvailableLabel(), glusterServiceNotSupported));
-            formBuilder.addFormItem(new FormItem(constants.clusterVolumesDownLabel(), noOfVolumesDown, 2, 2)
-                    .withDefaultValue(constants.notAvailableLabel(), glusterServiceNotSupported));
-        }
+        formBuilder.addFormItem(new FormItem(constants.clusterVolumesTotalLabel(), noOfVolumesTotal, 0, 2, glusterSupported)
+                .withDefaultValue(constants.notAvailableLabel(), glusterServiceNotSupported));
+        formBuilder.addFormItem(new FormItem(constants.clusterVolumesUpLabel(), noOfVolumesUp, 1, 2, glusterSupported)
+                .withDefaultValue(constants.notAvailableLabel(), glusterServiceNotSupported));
+        formBuilder.addFormItem(new FormItem(constants.clusterVolumesDownLabel(), noOfVolumesDown, 2, 2, glusterSupported)
+                .withDefaultValue(constants.notAvailableLabel(), glusterServiceNotSupported));
     }
 
     @Override

@@ -40,11 +40,25 @@ public class FormItem {
         this(name, valueWidget, row, column, null);
     }
 
+    public FormItem(String name, Widget valueWidget, int row, int column, boolean isAvailable) {
+        this(name, valueWidget, row, column, null, isAvailable);
+    }
+
     public FormItem(String name, Widget valueWidget, int row, int column, String isAvailablePropertyName) {
+        this(name, valueWidget, row, column, isAvailablePropertyName, true);
+    }
+
+    public FormItem(String name,
+            Widget valueWidget,
+            int row,
+            int column,
+            String isAvailablePropertyName,
+            boolean isAvailable) {
         this.row = row;
         this.column = column;
         this.isAvailablePropertyName = isAvailablePropertyName;
         this.valueWidget = valueWidget;
+        this.isAvailable = isAvailable;
 
         // Add trailing ':' to the item name, if necessary
         if (name != null && !name.trim().isEmpty() && !name.endsWith(":")) { //$NON-NLS-1$
