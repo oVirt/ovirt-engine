@@ -105,7 +105,9 @@ public enum ConfigurationValues {
     QoSOutboundBurstDefaultValue,
     MaxVmNameLengthWindows(ConfigAuthType.User),
     MaxVmNameLengthNonWindows(ConfigAuthType.User),
-    AttestationServer
+    AttestationServer,
+    DefaultGeneralTimeZone,
+    DefaultWindowsTimeZone
     ;
 
     public static enum ConfigAuthType {

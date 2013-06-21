@@ -61,7 +61,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class VmHandler {
 
     private static ObjectIdentityChecker mUpdateVmsStatic;
-    private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    private static OsRepository osRepository;
+
     private static final Log log = LogFactory.getLog(VmHandler.class);
 
     private static Set<VdcActionType> COMMANDS_ALLOWED_ON_EXTERNAL_VMS = new HashSet<>();
@@ -78,6 +79,8 @@ public class VmHandler {
                 VM.class,
                 VmStatic.class,
                 VmDynamic.class };
+
+        osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
         mUpdateVmsStatic =
                 new ObjectIdentityChecker(VmHandler.class, Arrays.asList(inspectedClassNames), VMStatus.class);

@@ -75,6 +75,13 @@ public class UpdateVmCommandTest {
 
     @Before
     public void setUp() {
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        when(osRepository.getMinimumRam(0, Version.v3_0)).thenReturn(0);
+        when(osRepository.getMinimumRam(0, null)).thenReturn(0);
+        when(osRepository.getMaximumRam(0, Version.v3_0)).thenReturn(256);
+        when(osRepository.getMaximumRam(0, null)).thenReturn(256);
+        when(osRepository.isWindows(0)).thenReturn(false);
+
         VmHandler.Init();
         vm = new VM();
         vmStatic = new VmStatic();
@@ -84,12 +91,6 @@ public class UpdateVmCommandTest {
 
         vm.setVdsGroupId(group.getId());
         vmStatic.setVdsGroupId(group.getId());
-
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
-        when(osRepository.getMinimumRam(0, Version.v3_0)).thenReturn(0);
-        when(osRepository.getMinimumRam(0, null)).thenReturn(0);
-        when(osRepository.getMaximumRam(0, Version.v3_0)).thenReturn(256);
-        when(osRepository.getMaximumRam(0, null)).thenReturn(256);
 
         VmManagementParametersBase params = new VmManagementParametersBase();
         params.setCommandType(VdcActionType.UpdateVm);

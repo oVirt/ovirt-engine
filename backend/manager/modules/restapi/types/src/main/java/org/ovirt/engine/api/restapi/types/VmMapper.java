@@ -238,7 +238,11 @@ public class VmMapper {
             staticVm.setMinAllocatedMem(memGuaranteed.intValue());
         }
         if (vm.isSetTimezone()) {
-            staticVm.setTimeZone(vm.getTimezone());
+            String timezone = vm.getTimezone();
+            if (timezone.isEmpty()) {
+                timezone = null;  // normalize default timezone representation
+            }
+            staticVm.setTimeZone(timezone);
         }
         if (vm.isSetCustomProperties()) {
             staticVm.setCustomProperties(CustomPropertiesParser.parse(vm.getCustomProperties().getCustomProperty()));

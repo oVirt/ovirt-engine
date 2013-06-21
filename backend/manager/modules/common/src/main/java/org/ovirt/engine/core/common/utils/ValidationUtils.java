@@ -11,7 +11,6 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
@@ -56,8 +55,7 @@ public class ValidationUtils {
     /**
      * @return A list of error message keys representing the violations, or empty list if no violations occurred.
      */
-    public static <T extends VdcActionParametersBase> List<String> validateInputs(List<Class<?>> validationGroupList,
-            T parameters) {
+    public static <T> List<String> validateInputs(List<Class<?>> validationGroupList, T parameters) {
 
         List<String> messages = Collections.emptyList();
         Set<ConstraintViolation<T>> violations = ValidationUtils.getValidator().validate(parameters,

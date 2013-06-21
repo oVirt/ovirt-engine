@@ -16,9 +16,8 @@ public class Match {
         Groups = new MatchGroups();
         if (success) {
             this.Success = success;
-            int size = success ? mr.groupCount() : 0;
-            for (int x = 1; x <= size; x++) {
-                Groups.add(new Match(mr.group(x), success));
+            for (int x = 1; x <= mr.groupCount(); x++) {
+                Groups.add(new Match(mr.group(x)));
             }
             Value = mr.group();
         } else {
@@ -26,7 +25,7 @@ public class Match {
         }
     }
 
-    public Match(String value, boolean success) {
+    public Match(String value) {
         this.Value = value;
         this.Success = true;
     }

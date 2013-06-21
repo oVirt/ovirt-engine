@@ -11,25 +11,30 @@ import com.google.gwt.regexp.shared.MatchResult;
  */
 public class Match {
 
-    private final int length;
     private final boolean success;
     private final String value;
+    private final MatchGroups groups = new MatchGroups();
 
     public Match(MatchResult matchResult) {
         if (matchResult != null) {
             value = matchResult.getGroup(0);
-            length = matchResult.getGroupCount();
+            for (int i = 1; i <= matchResult.getGroupCount(); i++) {
+                groups.add(new Match(matchResult.getGroup(i)));
+            }
             success = true;
         } else {
             value = "";
-            length = 0;
             success = false;
-
         }
     }
 
-    public int getLength() {
-        return length;
+    public Match(String value) {
+        this.value = value;
+        this.success = true;
+    }
+
+    public MatchGroups Groups() {
+        return groups;
     }
 
     public String getValue() {

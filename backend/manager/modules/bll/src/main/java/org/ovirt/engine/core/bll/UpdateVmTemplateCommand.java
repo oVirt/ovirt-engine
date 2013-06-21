@@ -62,6 +62,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (mOldTemplate.getStatus() == VmTemplateStatus.Locked) {
             return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IS_LOCKED);
         }
+
         if (!StringUtils.equals(mOldTemplate.getName(), getVmTemplate().getName())
                 && isVmTemlateWithSameNameExist(getVmTemplateName())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);

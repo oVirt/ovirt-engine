@@ -17,10 +17,14 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.annotation.NullOrStringContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
+import org.ovirt.engine.core.common.validation.annotation.ValidTimeZone;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.common.validation.group.ImportEntity;
+import org.ovirt.engine.core.common.validation.group.StartEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
+@ValidTimeZone(groups = {CreateEntity.class, UpdateEntity.class, ImportEntity.class, StartEntity.class})
 public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Nameable, Commented {
     private static final long serialVersionUID = 1078548170257965614L;
 

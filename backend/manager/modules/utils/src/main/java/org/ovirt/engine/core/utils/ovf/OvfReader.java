@@ -333,7 +333,9 @@ public abstract class OvfReader implements IOvfBuilder {
 
         node = content.SelectSingleNode("TimeZone");
         if (node != null) {
-            vmBase.setTimeZone(node.InnerText);
+            if (StringUtils.isNotEmpty(node.InnerText)) {
+                vmBase.setTimeZone(node.InnerText);
+            }
         }
 
         node = content.SelectSingleNode("default_boot_sequence");

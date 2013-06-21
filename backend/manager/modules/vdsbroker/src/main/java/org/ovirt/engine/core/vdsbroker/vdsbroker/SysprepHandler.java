@@ -25,11 +25,6 @@ public final class SysprepHandler {
     public static final Map<String, Integer> timeZoneIndex = new HashMap<String, Integer>();
     private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
-    // we get a string like "(GMT-04:30) Afghanistan Standard Time"
-    // we use regex to extract the time only and replace it to number
-    // in this sample we get -430
-    public static String TimzeZoneExtractTimePattern = ".*(GMT[+,-]\\d{2}:\\d{2}).*";
-
     private static Log log = LogFactory.getLog(SysprepHandler.class);
 
     static {

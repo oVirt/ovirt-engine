@@ -190,28 +190,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateDefaultTimeZone()
     {
-        TimeZoneModel.withLoadedDefaultTimeZoneKey(getTimeZoneType(), new Runnable() {
-
-            @Override
-            public void run() {
-                doUpdateTimeZone(null);
-            }
-
-        });
+        doUpdateTimeZone(null);
     }
 
     private void doUpdateTimeZone(final String selectedTimeZone) {
-        TimeZoneModel.withLoadedTimeZones(getTimeZoneType(), new Runnable() {
-
-            @Override
-            public void run() {
-                final Iterable<TimeZoneModel> timeZones = TimeZoneModel.getTimeZones(getTimeZoneType());
-                getModel().getTimeZone().setItems(timeZones);
-                getModel().getTimeZone().setSelectedItem(Linq.firstOrDefault(timeZones, new Linq.TimeZonePredicate(selectedTimeZone)));
-                getModel().getTimeZone().setChangeProhibitionReason(constants.timeZoneNotChangeableForLinuxVms());
-                getModel().getTimeZone().setIsChangable(!getModel().getIsLinuxOS());
-            }
-        });
+        final Iterable<TimeZoneModel> timeZones = TimeZoneModel.getTimeZones(getTimeZoneType());
+        getModel().getTimeZone().setItems(timeZones);
+        getModel().getTimeZone().setSelectedItem(Linq.firstOrDefault(timeZones, new Linq.TimeZonePredicate(selectedTimeZone)));
+        getModel().getTimeZone().setChangeProhibitionReason(constants.timeZoneNotChangeableForLinuxVms());
+        getModel().getTimeZone().setIsChangable(!getModel().getIsLinuxOS());
     }
 
     public TimeZoneType getTimeZoneType() {

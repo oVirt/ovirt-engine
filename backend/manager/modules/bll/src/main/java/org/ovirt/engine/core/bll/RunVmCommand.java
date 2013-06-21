@@ -64,9 +64,8 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.common.validation.group.StartEntity;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ResumeVDSCommandParameters;
@@ -100,7 +99,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     /** This flag is used to indicate that the disks might be dirty since the memory
      *  from the active snapshot was restored so the memory should not be used */
     private boolean memoryFromSnapshotIrrelevant;
-    private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     public static final String ISO_PREFIX = "iso://";
 
@@ -771,6 +769,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
+        if (!validate(vm.getStaticData())) {
+            return false;
+        }
+
         if (!canRunActionOnNonManagedVm()) {
             return false;
         }
@@ -819,6 +821,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         return true;
+    }
+
+    @Override
+    protected List<Class<?>> getValidationGroups() {
+        addValidationGroup(StartEntity.class);
+        return super.getValidationGroups();
     }
 
     protected VmValidator getVmValidator(VM vm) {

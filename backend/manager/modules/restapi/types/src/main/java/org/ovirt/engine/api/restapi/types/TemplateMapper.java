@@ -132,7 +132,11 @@ public class TemplateMapper {
             entity.setDomain(model.getDomain().getName());
         }
         if (model.isSetTimezone()) {
-            entity.setTimeZone(model.getTimezone());
+            String timezone = model.getTimezone();
+            if (timezone.isEmpty()) {
+                timezone = null;  // normalize default timezone representation
+            }
+            entity.setTimeZone(timezone);
         }
         if (model.isSetTunnelMigration()) {
             entity.setTunnelMigration(model.isTunnelMigration());

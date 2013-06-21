@@ -809,7 +809,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *         validation
      */
     protected boolean validateInputs() {
-        List<String> messages = ValidationUtils.validateInputs(getValidationGroups(), getParameters());
+        return validate(getParameters());
+    }
+
+    protected <T> boolean validate(T value) {
+        List<String> messages = ValidationUtils.validateInputs(getValidationGroups(), value);
         if (!messages.isEmpty()) {
             getReturnValue().getCanDoActionMessages().addAll(messages);
             return false;
