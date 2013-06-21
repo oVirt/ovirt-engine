@@ -112,6 +112,12 @@ class FileLocations(object):
         'ovirt-engine.conf',
     )
 
+    LEGACY_OVIRT_ENGINE_SYSCONFIG = os.path.join(
+        SYSCONFDIR,
+        'sysconfig',
+        'ovirt-engine',
+    )
+
     LEGACY_PSQL_PASS_FILE = os.path.join(
         OVIRT_ENGINE_SYSCONFDIR,
         '.pgpass',
@@ -343,6 +349,12 @@ class FileLocations(object):
         'ovirt-engine-root-redirect.conf.in',
     )
 
+    HTTPD_CONF_OVIRT_ENGINE_LEGACY = os.path.join(
+        DIR_HTTPD,
+        'conf.d',
+        'ovirt-engine.conf',
+    )
+
     AIO_VDSM_PATH = os.path.join(
         DATADIR,
         'vdsm',
@@ -473,6 +485,8 @@ class Stages(object):
     AIO_CONFIG_ROOT_PASSWORD = 'osetup.aio.config.rootpassword'
     AIO_CONFIG_STORAGE = 'osetup.aio.config.storage'
 
+    UPGRADE_FROM_LEGACY_CONFIG = 'osetup.legacy.upgrade'
+
 
 @util.export
 @util.codegen
@@ -532,6 +546,7 @@ class CoreEnv(object):
     REGISTER_UNINSTALL_GROUPS = 'OVESETUP_CORE/registerUninstallGroups'
     CONFIRM_UNINSTALL_GROUPS = 'OVESETUP_CORE/confirmUninstallGroups'
     UPGRADE_SUPPORTED_VERSIONS = 'OVESETUP_CORE/upgradeSupportedVersions'
+    UPGRADE_FROM_LEGACY = 'OVESETUP_CORE/upgradeFromLegacy'
     ACTION = 'OVESETUP_CORE/action'
 
     @osetupattrs(

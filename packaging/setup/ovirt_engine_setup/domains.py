@@ -27,6 +27,28 @@ from otopi import util
 
 
 @util.export
+class StorageDomainType(object):
+    #See: org.ovirt.engine.core.common.businessentities.StorageDomainType
+    MASTER = 0
+    DATA = 1
+    ISO = 2
+    IMPORT_EXPORT = 3
+    UNKNOWN = 4
+
+
+@util.export
+class StorageType(object):
+    #See: org.ovirt.engine.core.common.businessentities.StorageType
+    UNKNOWN = 0
+    NFS = 1
+    FCP = 2
+    ISCSI = 3
+    LOCALFS = 4
+    POSIXFS = 6
+    GLUSTERFS = 7
+
+
+@util.export
 class DomainChecker(base.Base):
     """
     Domains utility.
