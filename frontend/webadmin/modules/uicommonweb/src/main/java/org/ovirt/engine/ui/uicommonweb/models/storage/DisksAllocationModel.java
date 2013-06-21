@@ -52,6 +52,11 @@ public class DisksAllocationModel extends EntityModel
     public void setDisks(List<DiskModel> value)
     {
         disks = value;
+
+        if (disks == null) {
+            return;
+        }
+
         sortDisks();
 
         for (final DiskModel diskModel : disks) {
