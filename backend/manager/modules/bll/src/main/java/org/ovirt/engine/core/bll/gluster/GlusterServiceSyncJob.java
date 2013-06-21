@@ -131,10 +131,15 @@ public class GlusterServiceSyncJob extends GlusterJob {
             if (foundStatus == null) {
                 fetchedServiceTypeStatusMap.put(type, status);
             } else if (foundStatus != status) {
-                fetchedServiceTypeStatusMap.put(type, GlusterServiceStatus.MIXED);
+                GlusterServiceStatus finalStatus = getFinalStatus(status, foundStatus);
+                fetchedServiceTypeStatusMap.put(type, finalStatus);
             }
         }
         return fetchedServiceTypeStatusMap;
+    }
+
+    private GlusterServiceStatus getFinalStatus(GlusterServiceStatus firstStatus, GlusterServiceStatus secondStatus) {
+        return firstStatus.getCompositeStatus(secondStatus);
     }
 
     private Map<String, GlusterServiceStatus> mergeServiceStatusMaps(List<Map<String, GlusterServiceStatus>> serviceStatusMaps) {
@@ -147,7 +152,8 @@ public class GlusterServiceSyncJob extends GlusterJob {
                 if (alreadyFoundStatus == null) {
                     mergedServiceStatusMap.put(serviceName, status);
                 } else if (alreadyFoundStatus != status && alreadyFoundStatus != GlusterServiceStatus.MIXED) {
-                    mergedServiceStatusMap.put(serviceName, GlusterServiceStatus.MIXED);
+                    GlusterServiceStatus finalStatus = getFinalStatus(status, alreadyFoundStatus);
+                    mergedServiceStatusMap.put(serviceName, finalStatus);
                 }
             }
         }
