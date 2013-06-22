@@ -560,6 +560,7 @@ fi
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_cache}
 
 %dir %{engine_data}/conf
+%{engine_data}/conf/version
 
 # Engine configuration files:
 %dir %{engine_etc}
@@ -762,7 +763,6 @@ fi
 
 # Configuration files
 %{engine_data}/conf/ovirt-engine-root-redirect.conf.in
-%{engine_data}/conf/version
 %{engine_data}/conf/ovirt-engine-proxy.conf.v2.in
 %{engine_data}/conf/iptables.default.in
 %{engine_data}/conf/nfs.sysconfig.in
