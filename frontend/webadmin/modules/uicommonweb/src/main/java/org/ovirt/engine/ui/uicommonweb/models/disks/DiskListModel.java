@@ -452,14 +452,12 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         boolean isCopyAllowed = true;
         boolean isMoveAllowed = true;
 
-        Disk firstDisk = disks.get(0);
-
-        if (disks == null || disks.isEmpty() || firstDisk.getDiskStorageType() != DiskStorageType.IMAGE) {
+        if (disks == null || disks.isEmpty() || disks.get(0).getDiskStorageType() != DiskStorageType.IMAGE) {
             disableMoveAndCopyCommands();
             return;
         }
 
-        NGuid datacenterId = ((DiskImage) firstDisk).getStoragePoolId();
+        NGuid datacenterId = ((DiskImage) disks.get(0)).getStoragePoolId();
 
         for (Disk disk : disks) {
             if ((!isCopyAllowed && !isMoveAllowed) || disk.getDiskStorageType() != DiskStorageType.IMAGE) {
