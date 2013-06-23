@@ -100,6 +100,7 @@ that this system was previously installed and that there's a password file at %s
 (basedefs.DB_PASS_FILE, basedefs.ORIG_PASS_FILE)
 MSG_ERROR_FAILED_CONVERT_ENGINE_KEY = "Error: Can't convert engine key to PKCS#12 format"
 MSG_ERROR_FAILED_SYNTHESIS_ENGINE_KEY = "Error: Can't synthesis engine key to PKCS#12 format"
+MSG_ERROR_FAILED_CREATE_TRUSTSTORE = "Error: Can't create trust store"
 MSG_ERROR_SSH_KEY_SYMLINK = "Error: SSH key should not be symlink"
 MSG_ERROR_UUID_VALIDATION_FAILED = (
     "Pre-upgade host UUID validation failed\n"
@@ -472,8 +473,11 @@ class CA():
 
     JKSKEYSTORE = "/etc/pki/ovirt-engine/.keystore"
     TMPAPACHECONF = basedefs.FILE_HTTPD_SSL_CONFIG + ".tmp"
+    TMPTRUSTSTORE = basedefs.FILE_TRUSTSTORE + ".tmp"
 
     def prepare(self):
+        mask = [basedefs.CONST_KEY_PASS]
+
         if os.path.exists(self.JKSKEYSTORE):
             logging.debug("PKI: convert JKS to PKCS#12")
 
@@ -482,8 +486,6 @@ class CA():
                 fd, tmpPKCS12 = tempfile.mkstemp()
                 os.close(fd)
                 os.unlink(tmpPKCS12)    # java does not like empty files as keystore
-
-                mask = [basedefs.CONST_KEY_PASS]
 
                 cmd = [
                     basedefs.EXEC_KEYTOOL,
@@ -564,6 +566,25 @@ class CA():
             except OSError:
                 logging.error("PKI: Cannot dup ca for jboss")
                 raise
+
+        # re-create truststore see rhbz#976671
+        logging.debug('Converting truststore')
+        if os.path.exists(self.TMPTRUSTSTORE):
+            os.unlink(self.TMPTRUSTSTORE)
+        cmd = [
+            basedefs.EXEC_KEYTOOL,
+            "-import",
+            "-noprompt",
+            "-keystore", self.TMPTRUSTSTORE,
+            "-storepass", basedefs.CONST_KEY_PASS,
+            "-keypass", basedefs.CONST_KEY_PASS,
+            "-alias", "cacert",
+            "-trustcacerts",
+            "-file", basedefs.FILE_CA_CRT_SRC,
+        ]
+        utils.execCmd(cmdList=cmd, maskList=mask, failOnError=True, msg=MSG_ERROR_FAILED_CREATE_TRUSTSTORE)
+        os.chmod(self.TMPTRUSTSTORE, 0644)
+
         logging.debug('Checking if Apache proxy was already enabled')
         conf_file = basedefs.FILE_ENGINE_CONF_PROTOCOLS
         if not os.path.exists(conf_file):
@@ -599,6 +620,8 @@ class CA():
     def commit(self):
         if os.path.exists(self.TMPAPACHECONF):
             shutil.move(self.TMPAPACHECONF, basedefs.FILE_HTTPD_SSL_CONFIG)
+        if os.path.exists(self.TMPTRUSTSTORE):
+            shutil.move(self.TMPTRUSTSTORE, basedefs.FILE_TRUSTSTORE)
 
         utils.editEngineSysconfigPKI(
             pkidir=basedefs.DIR_OVIRT_PKI,
@@ -633,6 +656,8 @@ class CA():
                     os.remove(f)
                 except OSError:
                     logging.error("PKI: cannot remove '%s'" % f)
+        if os.path.exists(self.TMPTRUSTSTORE):
+            os.remove(self.TMPTRUSTSTORE)
 
 def stopEngine(service=basedefs.ENGINE_SERVICE_NAME):
     logging.debug("stopping %s service.", service)
