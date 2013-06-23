@@ -23,6 +23,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, SnapshotDao> {
 
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
+    private static final Guid EXISTING_VM_ID2 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
     private static final Guid EXISTING_SNAPSHOT_ID = new Guid("a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89");
     private static final Guid EXISTING_SNAPSHOT_ID2 = new Guid("a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f11");
     private static final String EXISTING_MEMORY_VOLUME =
@@ -290,11 +291,11 @@ public class SnapshotDaoTest extends BaseGenericDaoTestCase<Guid, Snapshot, Snap
     }
 
     @Test
-    public void removeMemoryFromSnapshot() throws Exception {
+    public void removeMemoryFromActiveSnapshot() throws Exception {
         Snapshot snapshot = dao.get(EXISTING_SNAPSHOT_ID2);
         assertEquals(EXISTING_MEMORY_VOLUME, snapshot.getMemoryVolume());
 
-        dao.removeMemoryFromSnapshot(EXISTING_SNAPSHOT_ID2);
+        dao.removeMemoryFromActiveSnapshot(EXISTING_VM_ID2);
 
         snapshot = dao.get(EXISTING_SNAPSHOT_ID2);
         assertEquals(StringUtils.EMPTY, snapshot.getMemoryVolume());

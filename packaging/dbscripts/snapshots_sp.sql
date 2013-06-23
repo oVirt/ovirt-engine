@@ -327,15 +327,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION UpdateMemoryOfSnapshot(
-    v_snapshot_id UUID,
-    v_memory_volume VARCHAR(255))
+Create or replace FUNCTION RemoveMemoryFromSnapshotByVmIdAndType(
+    v_vm_id UUID,
+    v_snapshot_type VARCHAR(32))
 RETURNS VOID
 AS $procedure$
 BEGIN
     UPDATE snapshots
-    SET    memory_volume = v_memory_volume
-    WHERE  snapshot_id = v_snapshot_id;
+    SET    memory_volume = NULL
+    WHERE  vm_id = v_vm_id
+    AND    snapshot_type = v_snapshot_type;
 END; $procedure$
 LANGUAGE plpgsql;
 

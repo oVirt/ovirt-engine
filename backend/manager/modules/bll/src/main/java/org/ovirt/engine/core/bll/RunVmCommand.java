@@ -154,18 +154,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (getVm().getStatus() != VMStatus.Suspended) {
                 memorySnapshotSupported = FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion());
                 // If the VM is not hibernated, save the hibernation volume from the baseline snapshot
-                memoryVolumeFromSnapshot = getBaselineSnapshot().getMemoryVolume();
+                memoryVolumeFromSnapshot = getActiveSnapshot().getMemoryVolume();
             }
         }
     }
 
-    /**
-     * Returns the snapshot the vm is based on - either the active snapshot (usually) or
-     * the stateless snapshot in case the VM is running in stateless mode
-     */
-    private Snapshot getBaselineSnapshot() {
-        return getSnapshotDao().get(getVm().getId(),
-                isVmRunningStateless() ? SnapshotType.STATELESS : SnapshotType.ACTIVE);
+    private Snapshot getActiveSnapshot() {
+        return getSnapshotDao().get(getVm().getId(), SnapshotType.ACTIVE);
     }
 
     private SnapshotDao getSnapshotDao() {
@@ -872,7 +867,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             setSucceeded(vdcReturnValue.getSucceeded());
             // we are not running the VM, of course,
-            // since we couldn't create a snpashot.
+            // since we couldn't create a snapshot.
         }
 
         else {
@@ -882,19 +877,19 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     @Override
     public void runningSucceded() {
-        removeMemoryFromSnapshot();
+        removeMemoryFromActiveSnapshot();
         super.runningSucceded();
     }
 
     @Override
     protected void failedToRunVm() {
         if (memoryFromSnapshotIrrelevant) {
-            removeMemoryFromSnapshot();
+            removeMemoryFromActiveSnapshot();
         }
         super.failedToRunVm();
     }
 
-    private void removeMemoryFromSnapshot() {
+    private void removeMemoryFromActiveSnapshot() {
         if (memoryVolumeFromSnapshot.isEmpty()) {
             return;
         }
@@ -903,7 +898,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolumeFromSnapshot) == 1) {
             removeMemoryVolumes(memoryVolumeFromSnapshot, getActionType(), true);
         }
-        getSnapshotDao().removeMemoryFromSnapshot(getBaselineSnapshot().getId());
+        getSnapshotDao().removeMemoryFromActiveSnapshot(getVmId());
     }
 
     private boolean isVmRunningStateless() {
