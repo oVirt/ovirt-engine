@@ -45,53 +45,10 @@ public class BrandingServlet extends HttpServlet {
     public void doGet(final HttpServletRequest request,
             final HttpServletResponse response) throws IOException,
             ServletException {
-        // Get the requested path:
-        String path = request.getPathInfo();
 
-        // Locate the requested file:
-        String fullPath = getFullPath(brandingManager.getBrandingRootPath(), path);
-        if (fullPath != null) {
-            File file = new File(fullPath);
-            if (!file.exists() || !file.canRead() || file.isDirectory()) {
-                log.error("Unable to retrieve file: " + file.getAbsolutePath() //$NON-NLS-1$
-                        + ", will send a 404 error response."); //$NON-NLS-1$
-                response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            } else {
-                String etag = generateEtag(file);
-                if (etag.equals(request.getHeader(GwtDynamicHostPageServlet.
-                        IF_NONE_MATCH_HEADER))) {
-                    response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-                } else {
-                    String mime = ServletUtils.getMimeMap().
-                            getContentType(file);
-                    response.addHeader(GwtDynamicHostPageServlet.ETAG_HEADER,
-                            etag);
-                    // Send the content of the file:
-                    ServletUtils.sendFile(request, response, file, mime);
-                }
-            }
-        } else {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        }
-    }
-
-    /**
-     * Generate an ETAG based on the file length, and last modified date
-     * of the passed in file.
-     * @param file The {@code File} object to check.
-     * @return A {@code String} representing the ETag.
-     */
-    String generateEtag(final File file) {
-        StringBuilder builder = new StringBuilder();
-        // Start of ETag
-        builder.append("W/\""); //$NON-NLS-1$
-        builder.append(file.length());
-        // Divider between length and last modified date.
-        builder.append('-'); //$NON-NLS-1$
-        builder.append(file.lastModified());
-        // End of ETag
-        builder.append("\""); //$NON-NLS-1$
-        return builder.toString();
+        // serve the file
+        ServletUtils.sendFile(request, response,
+            getFile(brandingManager.getBrandingRootPath(), request.getPathInfo()), null);
     }
 
     /**
@@ -101,12 +58,12 @@ public class BrandingServlet extends HttpServlet {
      * @param path The path to translate.
      * @return A full absolute path for the passed in path.
      */
-    String getFullPath(final File brandingRootPath, final String path) {
-        String result = null;
+    File getFile(final File brandingRootPath, final String path) {
+        File result = null;
         String mergedPath = new File(brandingRootPath.getAbsolutePath(), path == null ? "": path).getAbsolutePath();
         if (path != null && ServletUtils.isSane(mergedPath)) {
             // Return a result relative to the branding root path.
-            result = mergedPath;
+            result = new File(mergedPath);
         } else {
             log.error("The path \"" + mergedPath + "\" is not sane"); //$NON-NLS-1$ //$NON-NLS-2$
         }

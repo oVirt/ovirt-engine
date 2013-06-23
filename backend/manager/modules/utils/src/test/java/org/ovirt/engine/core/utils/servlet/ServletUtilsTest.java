@@ -221,4 +221,85 @@ public class ServletUtilsTest {
             return null;
         }
     }
+
+    /**
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
+     * @throws IOException
+     */
+    @Test
+    public void test_ETag_Format() throws IOException {
+        File mockFile = mock(File.class);
+        when(mockFile.length()).thenReturn(1234L);
+        when(mockFile.lastModified()).thenReturn(8271L);
+        assertEquals("ETag does not match", "W/\"1234-8271\"", ServletUtils.getETag(mockFile));
+    }
+
+    /**
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
+     * @throws IOException
+     */
+    @Test
+    public void testSendFile_ETag_None() throws IOException {
+       HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+       HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+       ServletOutputStream responseOut = mock(ServletOutputStream.class);
+       when(mockResponse.getOutputStream()).thenReturn(responseOut);
+       when(mockRequest.getHeader("If-None-Match")).thenReturn(null);
+       File file = createTempPng();
+       ServletUtils.sendFile(mockRequest, mockResponse, file, null);
+       verify(mockResponse).setHeader("ETag", ServletUtils.getETag(file));
+       verify(responseOut).write((byte[]) anyObject(), eq(0), anyInt());
+    }
+
+    /**
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
+     * @throws IOException
+     */
+    @Test
+    public void testSendFile_ETag_Same() throws IOException {
+       HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+       HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+       ServletOutputStream responseOut = mock(ServletOutputStream.class);
+       File file = createTempPng();
+       when(mockResponse.getOutputStream()).thenReturn(responseOut);
+       when(mockRequest.getHeader("If-None-Match")).thenReturn(ServletUtils.getETag(file));
+       ServletUtils.sendFile(mockRequest, mockResponse, file, null);
+       verify(mockResponse).setHeader("ETag", ServletUtils.getETag(file));
+       verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+    }
+
+    /**
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
+     * @throws IOException
+     */
+    @Test
+    public void testSendFile_ETag_All() throws IOException {
+       HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+       HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+       ServletOutputStream responseOut = mock(ServletOutputStream.class);
+       File file = createTempPng();
+       when(mockResponse.getOutputStream()).thenReturn(responseOut);
+       when(mockRequest.getHeader("If-None-Match")).thenReturn("*");
+       ServletUtils.sendFile(mockRequest, mockResponse, file, null);
+       verify(mockResponse).setHeader("ETag", ServletUtils.getETag(file));
+       verify(mockResponse).setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+    }
+
+    /**
+     * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#sendFile(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse, java.io.File, java.lang.String)}.
+     * @throws IOException
+     */
+    @Test
+    public void testSendFile_ETag_Different() throws IOException {
+       HttpServletRequest mockRequest = mock(HttpServletRequest.class);
+       HttpServletResponse mockResponse = mock(HttpServletResponse.class);
+       ServletOutputStream responseOut = mock(ServletOutputStream.class);
+       File file = createTempPng();
+       when(mockResponse.getOutputStream()).thenReturn(responseOut);
+       when(mockRequest.getHeader("If-None-Match")).thenReturn("xxxx");
+       ServletUtils.sendFile(mockRequest, mockResponse, file, null);
+       verify(mockResponse).setHeader("ETag", ServletUtils.getETag(file));
+       verify(responseOut).write((byte[]) anyObject(), eq(0), anyInt());
+    }
+
 }

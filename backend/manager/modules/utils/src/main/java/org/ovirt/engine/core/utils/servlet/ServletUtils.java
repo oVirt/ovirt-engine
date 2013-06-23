@@ -47,6 +47,20 @@ public class ServletUtils {
     }
 
     /**
+     * Contruct ETag to file.
+     * @param file File.
+     * @return ETag.
+     * Here to allow UT.
+     */
+    protected static String getETag(File file) {
+        return String.format(
+            "W/\"%s-%s\"",
+            file.length(),
+            file.lastModified()
+        );
+    }
+
+    /**
      * Send a file to the output stream of the response passed into the method.
      * @param request The {@code HttpServletRequest} so we can get the path of the file.
      * @param response The {@code HttpServletResponse} so we can get the output stream and set response headers.
@@ -58,21 +72,35 @@ public class ServletUtils {
         // Make sure the file exits and is readable and send a 404 error
         // response if it doesn't:
         if (!canReadFile(file)) {
-            log.error("Can't read file \"" + file.getAbsolutePath() + "\" for request \"" + request.getRequestURI() + "\", will send a 404 error response.");
+            log.error("Can't read file \"" + (file != null ? file.getAbsolutePath() : "") + "\" for request \"" + request.getRequestURI() + "\", will send a 404 error response.");
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
-            return;
         }
+        else {
+            String eTag = getETag(file);
 
-        // Find the MIME type:
-        String mime = defaultType;
-        if (mime == null) {
-            mime = mimeMap.getContentType(file);
+            // Always include ETag on response
+            response.setHeader("ETag", eTag);
+
+            String IfNoneMatch = request.getHeader("If-None-Match");
+            if ("*".equals(IfNoneMatch)) {
+                response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
+            }
+            else if (eTag.equals(IfNoneMatch)) {
+                response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            }
+            else {
+                // Send metadata
+                String mime = defaultType;
+                if (mime == null) {
+                    mime = mimeMap.getContentType(file);
+                }
+                response.setContentType(mime);
+                response.setContentLength((int) getFileSize(file));
+
+                // Send content
+                writeFileToStream(response.getOutputStream(), file);
+            }
         }
-        // Set the content type:
-        response.setContentType(mime);
-        response.setContentLength((int) getFileSize(file));
-
-        writeFileToStream(response.getOutputStream(), file);
     }
 
     /**
@@ -81,7 +109,7 @@ public class ServletUtils {
      * @return
      */
     public static boolean canReadFile(final File file) {
-        return file != null && file.exists() && file.canRead();
+        return file != null && file.exists() && file.canRead() && !file.isDirectory();
     }
 
     /**

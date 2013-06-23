@@ -3,13 +3,13 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
 
 import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
@@ -42,7 +42,7 @@ public class BrandingServletTest {
     ServletOutputStream mockResponseOutputStream;
 
     BrandingServlet testServlet;
-    String testFileEtag;
+    File testFile;
 
     @Before
     public void setUp() throws Exception {
@@ -52,10 +52,9 @@ public class BrandingServletTest {
         when(mockFile.getAbsolutePath()).thenReturn("/abs/test"); //$NON-NLS-1$
         when(mockRequest.getPathInfo()).thenReturn("/test/something.txt"); //$NON-NLS-1$
         when(mockResponse.getOutputStream()).thenReturn(mockResponseOutputStream);
-        File testFile = new File(this.getClass().getClassLoader().
+        testFile = new File(this.getClass().getClassLoader().
                 getResource("./org/ovirt/engine/ui/frontend/server/gwt/BrandingServletTest.class") //$NON-NLS-1$
                 .getFile());
-        testFileEtag = testServlet.generateEtag(testFile);
     }
 
     @Test
@@ -79,49 +78,27 @@ public class BrandingServletTest {
         when(mockFile.getAbsolutePath()).thenReturn(this.getClass().getClassLoader().
                 getResource(".").getFile()); //$NON-NLS-1$
         testServlet.doGet(mockRequest, mockResponse);
-        verify(mockResponse).addHeader(GwtDynamicHostPageServlet.ETAG_HEADER, testFileEtag);
-    }
-
-    @Test
-    public void testDoGet_ExistingFile_NotModified() throws IOException, ServletException {
-        when(mockRequest.getPathInfo())
-            .thenReturn("/org/ovirt/engine/ui/frontend/server/gwt/BrandingServletTest.class"); //$NON-NLS-1$
-        when(mockFile.getAbsolutePath()).thenReturn(this.getClass().getClassLoader().
-                getResource(".").getFile()); //$NON-NLS-1$
-        when(mockRequest.getHeader(GwtDynamicHostPageServlet.IF_NONE_MATCH_HEADER)).thenReturn(testFileEtag);
-        testServlet.doGet(mockRequest, mockResponse);
-        verify(mockResponse).setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-    }
-
-    @Test
-    public void testGenerateEtag() {
-        File mockFile = mock(File.class);
-        when(mockFile.length()).thenReturn(1234L);
-        Date lastModifiedDate = new Date();
-        when(mockFile.lastModified()).thenReturn(lastModifiedDate.getTime());
-        String result = testServlet.generateEtag(mockFile);
-        assertNotNull("There should be a result", result); //$NON-NLS-1$
-        assertEquals("W/\"1234-" + lastModifiedDate.getTime() + "\"", result); //$NON-NLS-1$ //$NON-NLS-2$
+        verify(mockResponse).setHeader(eq("ETag"), anyString()); //$NON-NLS-1$
     }
 
     @Test
     public void testGetFullPath_nullParameter() {
-        String fullPath = testServlet.getFullPath(mockFile, null);
-        assertNull("Path should be null", fullPath); //$NON-NLS-1$
+        File file = testServlet.getFile(mockFile, null);
+        assertNull("Path should be null", file); //$NON-NLS-1$
     }
 
     @Test
     public void testGetFullPath_NonSaneParameter() {
-        String fullPath = testServlet.getFullPath(mockFile, "../something"); //$NON-NLS-1$
-        assertNull("Path should be null", fullPath); //$NON-NLS-1$
+        File file = testServlet.getFile(mockFile, "../something"); //$NON-NLS-1$
+        assertNull("Path should be null", file); //$NON-NLS-1$
     }
 
     @Test
     public void testGetFullPath_SaneParameter() {
-        String fullPath = testServlet.getFullPath(mockFile, "/branding/test"); //$NON-NLS-1$
-        assertNotNull("Path should not be null", fullPath); //$NON-NLS-1$
+        File file = testServlet.getFile(mockFile, "/branding/test"); //$NON-NLS-1$
+        assertNotNull("Path should not be null", file); //$NON-NLS-1$
         assertEquals("Path should be '/abs/test/branding/test'", //$NON-NLS-1$
-                "/abs/test/branding/test", fullPath); //$NON-NLS-1$
+                "/abs/test/branding/test", file.getAbsolutePath()); //$NON-NLS-1$
     }
 
 }
