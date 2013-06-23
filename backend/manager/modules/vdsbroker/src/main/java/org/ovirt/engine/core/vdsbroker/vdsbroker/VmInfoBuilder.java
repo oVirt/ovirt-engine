@@ -503,6 +503,14 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             struct.put(VdsProperties.PORT_MIRRORING, networks);
         }
 
+        addCustomPropertiesForDevice(struct, vm, vmDevice, clusterVersion);
+        addNetworkFiltersToNic(struct, clusterVersion);
+    }
+
+    public static void addCustomPropertiesForDevice(Map<String, Object> struct,
+            VM vm,
+            VmDevice vmDevice,
+            Version clusterVersion) {
         if (FeatureSupported.deviceCustomProperties(clusterVersion)) {
             Map<String, String> customProperties = new HashMap<>(vmDevice.getCustomProperties());
 
@@ -513,8 +521,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
             struct.put(VdsProperties.Custom, customProperties);
         }
-
-        addNetworkFiltersToNic(struct, clusterVersion);
     }
 
     public static void addNetworkFiltersToNic(Map<String, Object> struct, Version clusterVersion) {

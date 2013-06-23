@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
 public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends VdsBrokerCommand<P> {
@@ -43,7 +44,8 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
         map.put(VdsProperties.MAC_ADDR, nic.getMacAddress());
         map.put(VdsProperties.NETWORK, StringUtils.defaultString(nic.getNetworkName()));
 
-        if (FeatureSupported.networkLinking(getParameters().getVm().getVdsGroupCompatibilityVersion())) {
+        Version clusterVersion = getParameters().getVm().getVdsGroupCompatibilityVersion();
+        if (FeatureSupported.networkLinking(clusterVersion)) {
             map.put(VdsProperties.LINK_ACTIVE, String.valueOf(nic.isLinked()));
         }
         addAddress(map, vmDevice.getAddress());
@@ -60,11 +62,8 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
                     ? Collections.<String> emptyList() : Collections.singletonList(nic.getNetworkName()));
         }
 
-        if (FeatureSupported.deviceCustomProperties(getParameters().getVm().getVdsGroupCompatibilityVersion())) {
-            map.put(VdsProperties.Custom, vmDevice.getCustomProperties());
-        }
-
-        VmInfoBuilder.addNetworkFiltersToNic(map, getParameters().getVm().getVdsGroupCompatibilityVersion());
+        VmInfoBuilder.addCustomPropertiesForDevice(map, getParameters().getVm(), vmDevice, clusterVersion);
+        VmInfoBuilder.addNetworkFiltersToNic(map, clusterVersion);
         return map;
     }
 

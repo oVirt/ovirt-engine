@@ -1,18 +1,23 @@
 package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
+import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.config.Config;
@@ -33,6 +38,8 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     private VmDevice vmDevice;
 
+    private Network network;
+
     public ActivateDeactivateVmNicCommand(T parameters) {
         super(parameters);
         setVmId(parameters.getVmId());
@@ -52,7 +59,10 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
                 return false;
             }
 
-            if (getNetworkName() != null && !networkAttachedToVds(getNetworkName(), getVdsId())) {
+            // External networks are handled by their provider, so only check if exists on host for internal networks.
+            if (getNetwork() != null
+                    && getNetwork().getProvidedBy() == null
+                    && !networkAttachedToVds(getNetworkName(), getVdsId())) {
                 addCanDoActionMessage(VdcBllMessages.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
                 return false;
             }
@@ -69,6 +79,14 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         }
 
         return true;
+    }
+
+    public Network getNetwork() {
+        if (getNetworkName() != null && network == null) {
+            network = getNetworkDAO().getByNameAndCluster(getNetworkName(), getVm().getVdsGroupId());
+        }
+
+        return network;
     }
 
     private String getNetworkName() {
@@ -89,6 +107,10 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     protected void executeVmCommand() {
         // HotPlug in the host is called only if the Vm is UP
         if (hotPlugVmNicRequired(getVm().getStatus())) {
+            if (getNetwork() != null && getNetwork().getProvidedBy() != null) {
+                handleExternalNetworks();
+            }
+
             runVdsCommand(getParameters().getAction().getCommandType(),
                     new VmNicDeviceVDSParameters(getVdsId(),
                             getVm(),
@@ -98,6 +120,16 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
         // In any case, the device is updated
         TransactionSupport.executeInNewTransaction(updateDevice());
         setSucceeded(true);
+    }
+
+    private void handleExternalNetworks() {
+        Provider<?> provider = getDbFacade().getProviderDao().get(getNetwork().getProvidedBy().getProviderId());
+        NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(provider);
+        Map<String, String> runtimeProperties = providerProxy.allocate(getNetwork(), getParameters().getNic());
+
+        if (runtimeProperties != null) {
+            getVm().getRuntimeDeviceCustomProperties().put(vmDevice, runtimeProperties);
+        }
     }
 
     private TransactionMethod<Void> updateDevice() {
