@@ -86,8 +86,7 @@ public class PluginResourceServlet extends HttpServlet {
 
         // Send the content of the file
         response.setHeader("Cache-Control", "no-cache"); //$NON-NLS-1$ //$NON-NLS-2$
-        String mimeType = ServletUtils.getMimeMap().getContentType(file);
-        ServletUtils.sendFile(request, response, file, mimeType);
+        ServletUtils.sendFile(request, response, file, null);
     }
 
     private PluginData getPluginData(String pluginName) {
