@@ -94,13 +94,9 @@ public class FileServlet extends HttpServlet {
         // Locate the requested file:
         File file = ServletUtils.makeFileFromSanePath(request.getPathInfo(), base);
         file = checkForIndex(request, response, file, request.getPathInfo());
-        if (file == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND);
-        } else {
-            // Send the content of the file:
-            // type is the default MIME type of the Servlet.
-            ServletUtils.sendFile(request, response, file, type);
-        }
+        // Send the content of the file:
+        // type is the default MIME type of the Servlet.
+        ServletUtils.sendFile(request, response, file, type);
     }
 
     protected File checkForIndex(HttpServletRequest request, HttpServletResponse response, File file, String path) throws IOException {
@@ -124,8 +120,6 @@ public class FileServlet extends HttpServlet {
                 log.error("There is no index page for directory \"" + file.getAbsolutePath() + "\", will send a 404 error response.");
                 file = null;
             }
-        } else if (!ServletUtils.canReadFile(file)) {
-            file = null;
         }
         return file;
     }
