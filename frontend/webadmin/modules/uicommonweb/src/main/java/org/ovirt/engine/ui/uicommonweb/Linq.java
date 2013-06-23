@@ -166,17 +166,6 @@ public final class Linq
         }
     }
 
-    public static class CaseInsensitiveComparer implements Comparator<String>, Serializable
-    {
-
-        @Override
-        public int compare(String str1, String str2)
-        {
-            return str1.toLowerCase().compareTo(str2.toLowerCase());
-        }
-
-    }
-
     public static class DiskImageByCreationDateComparer implements Comparator<DiskImage>, Serializable
     {
 

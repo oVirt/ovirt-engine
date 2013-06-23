@@ -270,7 +270,7 @@ public final class AsyncDataProvider {
                         fileNameList.add(RepoFileMetaData.getRepoImageId());
                     }
 
-                    Collections.sort(fileNameList, new Linq.CaseInsensitiveComparer());
+                    Collections.sort(fileNameList, String.CASE_INSENSITIVE_ORDER);
                     return fileNameList;
                 }
                 return new ArrayList<String>();
@@ -296,7 +296,7 @@ public final class AsyncDataProvider {
                         fileNameList.add(RepoFileMetaData.getRepoImageId());
                     }
 
-                    Collections.sort(fileNameList, new Linq.CaseInsensitiveComparer());
+                    Collections.sort(fileNameList, String.CASE_INSENSITIVE_ORDER);
                     return fileNameList;
                 }
                 return new ArrayList<String>();
