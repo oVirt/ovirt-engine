@@ -278,6 +278,6 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__DOMAIN);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__CONNECTION);
     }
 }

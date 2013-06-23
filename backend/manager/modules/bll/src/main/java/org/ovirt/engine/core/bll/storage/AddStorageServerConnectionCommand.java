@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @LockIdNameAttribute
 @InternalCommandAttribute
@@ -32,16 +31,15 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
     @Override
     protected void executeCommand() {
-        StorageServerConnections currConnection = getConnection();
+        StorageServerConnections connection = getConnection();
         boolean isValidConnection = true;
-        Pair<Boolean, Integer> result = connect(getVds().getId());
+        Pair<Boolean, Integer> result = connectHostToStorage();
         isValidConnection = result.getFirst();
 
-        // Add storage Connection to the database.
-        if (isValidConnection && (StringUtils.isNotEmpty(currConnection.getid())
-                || getDbFacade().getStorageServerConnectionDao().get(currConnection.getid()) == null)) {
-            currConnection.setid(Guid.NewGuid().toString());
-            getDbFacade().getStorageServerConnectionDao().save(currConnection);
+        // Add storage connection to the database.
+        if (isValidConnection) {
+            connection.setid(Guid.NewGuid().toString());
+            saveConnection(connection);
             getReturnValue().setActionReturnValue(getConnection().getid());
             setSucceeded(true);
         }
@@ -53,25 +51,34 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         }
     }
 
-    @Override
-    protected StorageServerConnections getConnection() {
-        if (StringUtils.isEmpty(getParameters().getStorageServerConnection().getid())) {
-            List<StorageServerConnections> connections;
-            if ((connections = DbFacade.getInstance().getStorageServerConnectionDao().getAllForStorage(
-                    getParameters().getStorageServerConnection().getconnection())).size() != 0) {
-                getParameters().setStorageServerConnection(connections.get(0));
-            }
-        }
-        return (getParameters()).getStorageServerConnection();
+    protected StorageServerConnections getConnectionFromDbById(String connectionId) {
+        return getDbFacade().getStorageServerConnectionDao().get(connectionId);
+    }
+
+    protected Pair<Boolean, Integer> connectHostToStorage() {
+        Guid vdsId = getVds().getId();
+        Pair<Boolean, Integer> result = connect(vdsId);
+        return result;
+    }
+
+    protected void saveConnection(StorageServerConnections connection) {
+        getDbFacade().getStorageServerConnectionDao().save(connection);
+    }
+
+    protected boolean isConnWithSameDetailsExists() {
+        String connection = getConnection().getconnection();
+        return getDbFacade().getStorageServerConnectionDao().getAllForStorage(connection).size() != 0;
     }
 
     @Override
     protected boolean canDoAction() {
-        if (!super.canDoAction()) {
-            return false;
+        boolean returnValue = true;
+        StorageServerConnections paramConnection = getConnection();
+        // if an id was sent - it's not ok since only the backend should allocate ids
+        if (StringUtils.isNotEmpty(paramConnection.getid())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_NOT_EMPTY);
         }
 
-        StorageServerConnections paramConnection = getParameters().getStorageServerConnection();
         if (paramConnection.getstorage_type() == StorageType.NFS
                 && !new NfsMountPointConstraint().isValid(paramConnection.getconnection(), null)) {
             return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID);
@@ -80,6 +87,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
                 && (StringUtils.isEmpty(paramConnection.getVfsType()))) {
             return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
         }
+
         if (paramConnection.getstorage_type() == StorageType.ISCSI
                 && StringUtils.isEmpty(paramConnection.getiqn())) {
             return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
@@ -87,6 +95,10 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
         if (checkIsConnectionFieldEmpty(paramConnection)) {
            return false;
+        }
+
+        if (isConnWithSameDetailsExists()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
 
         if (getParameters().getVdsId().equals(Guid.Empty)) {
@@ -114,5 +126,11 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         return Collections.singletonMap(getParameters().getStorageServerConnection().getconnection(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                         VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__STORAGE__CONNECTION);
     }
 }

@@ -757,8 +757,13 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     }
 
     private void cleanConnection(StorageServerConnections connection, Guid hostId) {
-        Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId),
+        // if create connection command was the one to fail and didn't create a connection
+        // then the id of connection will be empty, and there's nothing to delete.
+        if (connection.getid() != null && !connection.getid().equals("")) {  //$NON-NLS-1$
+            Frontend.RunAction(VdcActionType.RemoveStorageServerConnection, new StorageServerConnectionParametersBase(connection, hostId),
                 null, this);
+        }
+
     }
 
     private void remove()
