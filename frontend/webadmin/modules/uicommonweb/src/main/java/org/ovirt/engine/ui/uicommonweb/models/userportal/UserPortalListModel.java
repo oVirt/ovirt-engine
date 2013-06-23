@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -1385,7 +1386,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
             // Merge VMs and Pools, and create item models.
             List all = Linq.concat(getvms(), filteredPools);
-            Linq.sort(all, new NameableComparator());
+            Collections.sort(all, new NameableComparator());
 
             ArrayList<Model> items = new ArrayList<Model>();
             for (Object item : all)

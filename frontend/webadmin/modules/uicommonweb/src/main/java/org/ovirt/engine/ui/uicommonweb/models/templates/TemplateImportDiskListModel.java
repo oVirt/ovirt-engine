@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.Linq.DiskByAliasComparer;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
@@ -32,7 +32,7 @@ public class TemplateImportDiskListModel extends SearchableListModel
             for (Map.Entry<VmTemplate, List<DiskImage>> item : extendedItems) {
                 if (item.getKey().getQueryableId().equals(template.getQueryableId())) {
                     list.addAll(item.getValue());
-                    Linq.sort(list, new DiskByAliasComparer());
+                    Collections.sort(list, new DiskByAliasComparer());
                     setItems(list);
                     return;
                 }

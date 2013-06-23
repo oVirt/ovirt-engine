@@ -705,13 +705,6 @@ public final class Linq
         return list;
     }
 
-    /**
-     * Sorts a not typed list. Allows to do a sort on a list containing elements of different types.
-     */
-    public static void sort(List source, Comparator comparer) {
-        Collections.sort(source, comparer);
-    }
-
     public static List concat(List... lists)
     {
         List result = new ArrayList<Object>();

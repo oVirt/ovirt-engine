@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
@@ -236,7 +237,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         ArrayList<Disk> disks =
                 value != null ? Linq.<Disk> cast(value) : new ArrayList<Disk>();
 
-        Linq.sort(disks, new DiskByAliasComparer());
+        Collections.sort(disks, new DiskByAliasComparer());
         super.setItems(disks);
 
         updateActionAvailability();

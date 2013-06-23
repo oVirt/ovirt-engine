@@ -302,7 +302,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         ArrayList<DiskModel> disks =
                                 (ArrayList<DiskModel>) behavior.getModel().getDisksAllocationModel().getDisks();
 
-                        Linq.sort(activeStorageDomainList, new NameableComparator());
+                        Collections.sort(activeStorageDomainList, new NameableComparator());
                         if (disks != null) {
                             for (DiskModel diskModel : disks) {
                                 diskModel.getStorageDomain().setItems(activeStorageDomainList);

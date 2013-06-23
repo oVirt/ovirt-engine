@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
@@ -145,7 +146,7 @@ public class TemplateDiskListModel extends SearchableListModel
             ArrayList<DiskImage> disks =
                     value != null ? Linq.<DiskImage> cast(value) : new ArrayList<DiskImage>();
 
-            Linq.sort(disks, new DiskByAliasComparer());
+            Collections.sort(disks, new DiskByAliasComparer());
             super.setItems(disks);
         }
         else
@@ -158,7 +159,7 @@ public class TemplateDiskListModel extends SearchableListModel
                             TemplateDiskListModel model = (TemplateDiskListModel) target;
                             ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
 
-                            Linq.sort(storageDomains, new NameableComparator());
+                            Collections.sort(storageDomains, new NameableComparator());
                             setStorageDomains(storageDomains);
                             setItems(model.value);
                         }

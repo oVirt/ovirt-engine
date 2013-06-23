@@ -553,7 +553,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                 boolean provisioning = (Boolean) behavior.getModel().getProvisioning().getEntity();
                 ArrayList<DiskModel> disks = (ArrayList<DiskModel>) behavior.getModel().getDisks();
-                Linq.sort(activeStorageDomains, new NameableComparator());
+                Collections.sort(activeStorageDomains, new NameableComparator());
 
                 for (DiskModel diskModel : disks) {
                     ArrayList<StorageDomain> availableDiskStorageDomains;
@@ -566,7 +566,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                     // Set target storage domains
                     availableDiskStorageDomains = provisioning ? activeStorageDomains : activeDiskStorageDomains;
-                    Linq.sort(availableDiskStorageDomains, new NameableComparator());
+                    Collections.sort(availableDiskStorageDomains, new NameableComparator());
                     diskModel.getStorageDomain().setItems(availableDiskStorageDomains);
 
                     diskModel.getStorageDomain().setChangeProhibitionReason(

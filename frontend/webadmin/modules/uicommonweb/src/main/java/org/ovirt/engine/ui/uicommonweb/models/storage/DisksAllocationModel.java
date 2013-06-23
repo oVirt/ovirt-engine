@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -79,7 +80,7 @@ public class DisksAllocationModel extends EntityModel
 
     public void sortDisks() {
         if (disks != null) {
-            Linq.sort(disks, new DiskModelByAliasComparer());
+            Collections.sort(disks, new DiskModelByAliasComparer());
             onPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
         }
     }

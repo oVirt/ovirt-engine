@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -328,7 +329,7 @@ public abstract class AbstractDiskModel extends DiskModel
                     }
                 }
 
-                Linq.sort(filteredStorageDomains, new NameableComparator());
+                Collections.sort(filteredStorageDomains, new NameableComparator());
                 StorageDomain storage = Linq.firstOrDefault(filteredStorageDomains);
 
                 diskModel.getStorageDomain().setItems(filteredStorageDomains);
@@ -593,7 +594,7 @@ public abstract class AbstractDiskModel extends DiskModel
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel model = (AbstractDiskModel) target;
                     ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
-                    Linq.sort(disks, new Linq.DiskByAliasComparer());
+                    Collections.sort(disks, new Linq.DiskByAliasComparer());
                     ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
 
                     model.getInternalAttachableDisks().setItems(Linq.toEntityModelList(
@@ -607,7 +608,7 @@ public abstract class AbstractDiskModel extends DiskModel
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel model = (AbstractDiskModel) target;
                     ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
-                    Linq.sort(disks, new Linq.DiskByAliasComparer());
+                    Collections.sort(disks, new Linq.DiskByAliasComparer());
                     ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
 
                     model.getExternalAttachableDisks().setItems(Linq.toEntityModelList(

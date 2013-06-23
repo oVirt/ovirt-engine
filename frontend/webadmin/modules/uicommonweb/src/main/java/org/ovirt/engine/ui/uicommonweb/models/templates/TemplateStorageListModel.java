@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -92,7 +93,7 @@ public class TemplateStorageListModel extends SearchableListModel
     {
         if (storageDomainModels != null)
         {
-            Linq.sort(storageDomainModels, new StorageDomainModelByNameComparer());
+            Collections.sort(storageDomainModels, new StorageDomainModelByNameComparer());
             itemsChanging(value, items);
             items = storageDomainModels;
             itemsChanged();
@@ -126,7 +127,7 @@ public class TemplateStorageListModel extends SearchableListModel
                                     }
                                 }
 
-                                Linq.sort(disks, new DiskByAliasComparer());
+                                Collections.sort(disks, new DiskByAliasComparer());
                                 storageDomainModel.setDisks(disks);
                                 storageDomainModels.add(storageDomainModel);
                             }
