@@ -629,7 +629,7 @@ public class AddDiskToVmCommandTest {
         vm.setVdsGroupCompatibilityVersion(Version.v3_3);
 
         //  mock osrepo
-        SimpleDependecyInjector.getInstance().bind(osRepository);
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
         HashMap<Integer, String> uniqueOsNames = new HashMap<Integer, String>();
         uniqueOsNames.put(7, "RHEL5");
         when(osRepository.getUniqueOsNames()).thenReturn(uniqueOsNames);
