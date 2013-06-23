@@ -440,8 +440,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         getNewCommand().setIsExecutionAllowed(true);
         getEditCommand().setIsExecutionAllowed(disk != null && disks != null && disks.size() == 1 && !isDiskLocked);
         getRemoveCommand().setIsExecutionAllowed(disks != null && disks.size() > 0 && isRemoveCommandAvailable());
-        getMoveCommand().setIsExecutionAllowed(disks != null && disks.size() > 0 && isMoveCommandAvailable());
-        getCopyCommand().setIsExecutionAllowed(disks != null && disks.size() > 0 && isCopyCommandAvailable());
+        updateCopyAndMoveCommandAvailability(disks);
 
         ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? (List<Disk>) getItems() : null,
                 getSelectedItems() != null ? (List<Disk>) getSelectedItems() : null,
@@ -449,58 +448,46 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
                 getChangeQuotaCommand());
     }
 
-    private boolean isMoveCommandAvailable() {
-        ArrayList<Disk> disks =
-                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
+    private void updateCopyAndMoveCommandAvailability(List<Disk> disks) {
+        boolean isCopyAllowed = true;
+        boolean isMoveAllowed = true;
 
         Disk firstDisk = disks.get(0);
-        if (firstDisk.getDiskStorageType() != DiskStorageType.IMAGE) {
-            return false;
+
+        if (disks == null || disks.isEmpty() || firstDisk.getDiskStorageType() != DiskStorageType.IMAGE) {
+            disableMoveAndCopyCommands();
+            return;
         }
 
         NGuid datacenterId = ((DiskImage) firstDisk).getStoragePoolId();
 
-        for (Disk disk : disks)
-        {
-            if (disk.getDiskStorageType() != DiskStorageType.IMAGE) {
-                return false;
+        for (Disk disk : disks) {
+            if ((!isCopyAllowed && !isMoveAllowed) || disk.getDiskStorageType() != DiskStorageType.IMAGE) {
+                disableMoveAndCopyCommands();
+                return;
             }
 
             DiskImage diskImage = (DiskImage) disk;
-            if (disk.getDiskStorageType() != DiskStorageType.IMAGE ||
-                    diskImage.getImageStatus() != ImageStatus.OK ||
-                    disk.getVmEntityType() == VmEntityType.TEMPLATE ||
-                    !datacenterId.equals(diskImage.getStoragePoolId()))
-            {
-                return false;
+            if (diskImage.getImageStatus() != ImageStatus.OK || !datacenterId.equals(diskImage.getStoragePoolId())) {
+                disableMoveAndCopyCommands();
+                return;
+            }
+
+            if (disk.getVmEntityType() == VmEntityType.TEMPLATE) {
+                isMoveAllowed = false;
+            }
+            else {
+                isCopyAllowed = false;
             }
         }
 
-        return true;
+        getCopyCommand().setIsExecutionAllowed(isCopyAllowed);
+        getMoveCommand().setIsExecutionAllowed(isMoveAllowed);
     }
 
-    private boolean isCopyCommandAvailable() {
-        ArrayList<Disk> disks =
-                getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
-
-        Disk firstDisk = disks.get(0);
-        if (firstDisk.getDiskStorageType() != DiskStorageType.IMAGE) {
-            return false;
-        }
-
-        NGuid datacenterId = ((DiskImage) firstDisk).getStoragePoolId();
-
-        for (Disk disk : disks)
-        {
-            DiskImage diskImage = (DiskImage) disk;
-            if (diskImage.getImageStatus() != ImageStatus.OK || disk.getVmEntityType() != VmEntityType.TEMPLATE ||
-                    !datacenterId.equals(diskImage.getStoragePoolId()))
-            {
-                return false;
-            }
-        }
-
-        return true;
+    private void disableMoveAndCopyCommands() {
+        getCopyCommand().setIsExecutionAllowed(false);
+        getMoveCommand().setIsExecutionAllowed(false);
     }
 
     private boolean isRemoveCommandAvailable() {
