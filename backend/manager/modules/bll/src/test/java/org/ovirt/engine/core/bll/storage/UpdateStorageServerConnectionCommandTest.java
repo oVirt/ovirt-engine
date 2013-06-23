@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
@@ -111,6 +112,16 @@ public class UpdateStorageServerConnectionCommandTest {
         return connectionDetails;
     }
 
+    private StorageServerConnections createISCSIConnection(String connection, StorageType type, String iqn, String user, String password) {
+        Guid id = Guid.newGuid();
+        StorageServerConnections connectionDetails = populateBasicConnectionDetails(id, connection, type);
+        connectionDetails.setiqn(iqn);
+        connectionDetails.setuser_name(user);
+        connectionDetails.setpassword(password);
+        return connectionDetails;
+    }
+
+
     private StorageServerConnections populateBasicConnectionDetails(Guid id, String connection, StorageType type) {
         StorageServerConnections connectionDetails = new StorageServerConnections();
         connectionDetails.setid(id.toString());
@@ -150,11 +161,11 @@ public class UpdateStorageServerConnectionCommandTest {
     @Test
     public void updateIScsiConnection() {
           StorageServerConnections  newNFSConnection = createNFSConnection(
-                        "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
-                        StorageType.ISCSI,
-                        NfsVersion.V4,
-                        300,
-                        0);
+                  "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                  StorageType.ISCSI,
+                  NfsVersion.V4,
+                  300,
+                  0);
         parameters.setStorageServerConnection(newNFSConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE);
@@ -231,6 +242,7 @@ public class UpdateStorageServerConnectionCommandTest {
         connections.add(conn2);
         when(storageConnDao.getAllForStorage(newNFSConnection.getconnection())).thenReturn(connections);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
+        doReturn(true).when(command).isConnWithSameDetailsExists(newNFSConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
     }
@@ -257,6 +269,7 @@ public class UpdateStorageServerConnectionCommandTest {
         domains.add(domain2);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
+        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection);
         List<String> messages =
                 CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                         VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
@@ -279,6 +292,7 @@ public class UpdateStorageServerConnectionCommandTest {
         parameters.setStorageServerConnection(newNFSConnection);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
+        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE);
     }
@@ -301,11 +315,11 @@ public class UpdateStorageServerConnectionCommandTest {
     @Test
     public void succeedCanDoActionNFS() {
         StorageServerConnections  newNFSConnection = createNFSConnection(
-                       "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
-                        StorageType.NFS,
-                        NfsVersion.V4,
-                        300,
-                        0);
+                "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                StorageType.NFS,
+                NfsVersion.V4,
+                300,
+                0);
         parameters.setStorageServerConnection(newNFSConnection);
         List<StorageDomain> domains = new ArrayList<StorageDomain>();
         StorageDomain domain1 = new StorageDomain();
@@ -313,13 +327,14 @@ public class UpdateStorageServerConnectionCommandTest {
         domain1.setStatus(StorageDomainStatus.Maintenance);
         domains.add(domain1);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
+        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
     @Test
     public void succeedCanDoActionPosix() {
-        StorageServerConnections newPosixConnection = createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1", StorageType.POSIXFS, "nfs" , "timeo=30");
+        StorageServerConnections newPosixConnection = createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1", StorageType.POSIXFS, "nfs", "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
         List<StorageDomain> domains = new ArrayList<StorageDomain>();
         StorageDomain domain1 = new StorageDomain();
@@ -329,6 +344,7 @@ public class UpdateStorageServerConnectionCommandTest {
         parameters.setStorageServerConnection(newPosixConnection);
         when(storageConnDao.get(newPosixConnection.getid())).thenReturn(oldPosixConnection);
         doReturn(domains).when(command).getStorageDomainsByConnId(newPosixConnection.getid());
+        doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
@@ -425,6 +441,95 @@ public class UpdateStorageServerConnectionCommandTest {
         StorageDomainDynamic domainDynamic = new StorageDomainDynamic();
         verify(storageDomainDynamicDao, never()).update(domainDynamic);
         verify(storageConnDao, never()).update(newNFSConnection);
+    }
+
+    @Test
+    public void isConnWithSameDetailsExistFileDomains() {
+       StorageServerConnections  newNFSConnection = createNFSConnection(
+                       "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                        StorageType.NFS,
+                        NfsVersion.V4,
+                        300,
+                        0);
+
+       List<StorageServerConnections> connections = new ArrayList<>();
+       StorageServerConnections connection1 = createNFSConnection(
+                       "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                        StorageType.NFS,
+                        NfsVersion.V4,
+                        300,
+                        0);
+       connections.add(connection1);
+       StorageServerConnections connection2 = createNFSConnection(
+                       "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                        StorageType.NFS,
+                        NfsVersion.V4,
+                        600,
+                        0);
+       connections.add(connection2);
+
+       when(storageConnDao.getAllForStorage(newNFSConnection.getconnection())).thenReturn(connections);
+       boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection);
+       assertTrue(isExists);
+    }
+
+    @Test
+    public void isConnWithSameDetailsExistSameConnection() {
+       StorageServerConnections  newNFSConnection = createNFSConnection(
+                       "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                        StorageType.NFS,
+                        NfsVersion.V4,
+                        300,
+                        0);
+
+       List<StorageServerConnections> connections = new ArrayList<>();
+       StorageServerConnections connection1 = newNFSConnection;
+       connections.add(connection1);
+
+       when(storageConnDao.getAllForStorage(newNFSConnection.getconnection())).thenReturn(connections);
+       boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection);
+       assertFalse(isExists);
+    }
+
+    @Test
+    public void isConnWithSameDetailsExistNoConnections() {
+       StorageServerConnections  newNFSConnection = createNFSConnection(
+                       "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                        StorageType.NFS,
+                        NfsVersion.V4,
+                        300,
+                        0);
+
+       List<StorageServerConnections> connections = new ArrayList<>();
+
+       when(storageConnDao.getAllForStorage(newNFSConnection.getconnection())).thenReturn(connections);
+       boolean isExists = command.isConnWithSameDetailsExists(newNFSConnection);
+       assertFalse(isExists);
+    }
+
+    @Test
+    public void isConnWithSameDetailsExistBlockDomains() {
+       StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI,"iqn.2013-04.myhat.com:aaa-target1","user1","mypassword123");
+
+       List<StorageServerConnections> connections = new ArrayList<>();
+       StorageServerConnections connection1 = createISCSIConnection("1.2.3.4", StorageType.ISCSI,"iqn.2013-04.myhat.com:aaa-target1","user1","mypassword123");
+       connections.add(connection1);
+
+       when(storageConnDao.getAllForConnection(newISCSIConnection)).thenReturn(connections);
+       boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection);
+       assertTrue(isExists);
+    }
+
+    @Test
+    public void isConnWithSameDetailsExistCheckSameConn() {
+       StorageServerConnections  newISCSIConnection = createISCSIConnection("1.2.3.4", StorageType.ISCSI,"iqn.2013-04.myhat.com:aaa-target1","user1","mypassword123");
+
+       List<StorageServerConnections> connections = new ArrayList<>();
+       connections.add(newISCSIConnection);
+
+       when(storageConnDao.getAllForConnection(newISCSIConnection)).thenReturn(connections);
+       boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection);
+       assertFalse(isExists);
     }
 
 }

@@ -52,7 +52,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
     }
 
     protected StorageServerConnections getConnectionFromDbById(String connectionId) {
-        return getDbFacade().getStorageServerConnectionDao().get(connectionId);
+        return getStorageConnDao().get(connectionId);
     }
 
     protected Pair<Boolean, Integer> connectHostToStorage() {
@@ -63,11 +63,6 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
     protected void saveConnection(StorageServerConnections connection) {
         getDbFacade().getStorageServerConnectionDao().save(connection);
-    }
-
-    protected boolean isConnWithSameDetailsExists() {
-        String connection = getConnection().getconnection();
-        return getDbFacade().getStorageServerConnectionDao().getAllForStorage(connection).size() != 0;
     }
 
     @Override
@@ -94,10 +89,10 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         }
 
         if (checkIsConnectionFieldEmpty(paramConnection)) {
-           return false;
+            return false;
         }
 
-        if (isConnWithSameDetailsExists()) {
+        if (isConnWithSameDetailsExists(paramConnection)) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
 

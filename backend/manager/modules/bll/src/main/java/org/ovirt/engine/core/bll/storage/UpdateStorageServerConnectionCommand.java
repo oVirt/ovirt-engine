@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
-import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -87,13 +86,8 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_CHANGE_STORAGE_TYPE);
         }
 
-        if (!oldConnection.getconnection().equals(newConnectionDetails.getconnection())) {
-            // Check that there is no other connection with the new suggested path
-            List<StorageServerConnections> connections =
-                    getStorageConnDao().getAllForStorage(newConnectionDetails.getconnection());
-            if (!connections.isEmpty()) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
-            }
+        if (isConnWithSameDetailsExists(newConnectionDetails)) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
 
         if (domains == null) {
@@ -253,10 +247,6 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                         new ArrayList<StorageServerConnections>(Arrays
                                 .asList(storageServerConnection)));
         return newConnectionParametersForVdsm;
-    }
-
-    protected StorageServerConnectionDAO getStorageConnDao() {
-        return getDbFacade().getStorageServerConnectionDao();
     }
 
     protected StorageDomainDynamicDAO getStorageDomainDynamicDao() {
