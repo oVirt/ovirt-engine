@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -140,9 +140,16 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getConnection().getconnection(),
+        Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
+        locks.put(getConnection().getconnection(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                         VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        // lock connection's id to avoid editing or removing this connection at the same time
+        // by another user
+        locks.put(getConnection().getid(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
+                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        return locks;
     }
 
     @Override

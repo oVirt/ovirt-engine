@@ -277,9 +277,14 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
                             VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
-        // lock the path to NFS to avoid at the same time if some other user tries to:
-        // add new storage domain to same path or edit another storage server connection to point to same path
+        // lock the path to avoid at the same time if some other user tries to:
+        // add new storage connection to same path or edit another storage server connection to point to same path
         locks.put(getParameters().getStorageServerConnection().getconnection(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
+                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        // lock connection's id to avoid editing or removing this connection at the same time
+        // by another user
+        locks.put(getParameters().getStorageServerConnection().getid(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                         VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         return locks;
