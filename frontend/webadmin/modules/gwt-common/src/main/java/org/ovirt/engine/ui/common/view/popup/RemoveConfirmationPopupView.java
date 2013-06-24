@@ -144,6 +144,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
             }
         });
 
+        setNote(object.getNote());
         // Bind "Note"
         object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override

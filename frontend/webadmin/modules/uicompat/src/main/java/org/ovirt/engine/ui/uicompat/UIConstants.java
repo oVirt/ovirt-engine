@@ -1945,6 +1945,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("The given mappings are of an invalid format.")
     String interfaceMappingsInvalid();
 
+    @DefaultStringValue("Note: this will only remove the listed networks from the system.\nThey will remain intact on any external providers.")
+    String removeProvidedNetworksNote();
+
     // Gluster Hook
     @DefaultStringValue("Please select a resolve action to continue")
     String noResolveActionSelectedGlusterHook();

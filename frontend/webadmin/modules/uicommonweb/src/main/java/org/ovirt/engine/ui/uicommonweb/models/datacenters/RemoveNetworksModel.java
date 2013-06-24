@@ -18,6 +18,7 @@ public class RemoveNetworksModel extends ConfirmationModel {
 
     private final ListModel sourceListModel;
 
+    @SuppressWarnings("unchecked")
     public RemoveNetworksModel(ListModel sourceListModel) {
         this.sourceListModel = sourceListModel;
 
@@ -26,10 +27,11 @@ public class RemoveNetworksModel extends ConfirmationModel {
         setMessage(ConstantsManager.getInstance().getConstants().logicalNetworksMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        for (Object a : sourceListModel.getSelectedItems())
+        boolean hasNetworkWithProvider = false;
+        for (Network network : (Iterable<Network>) sourceListModel.getSelectedItems())
         {
-            if (a instanceof NetworkView) {
-                NetworkView netView = (NetworkView) a;
+            if (network instanceof NetworkView) {
+                NetworkView netView = (NetworkView) network;
                 if (netView.getDescription() == null
                         || netView.getDescription().trim().equals("")) { //$NON-NLS-1$
                     list.add(ConstantsManager.getInstance()
@@ -43,13 +45,16 @@ public class RemoveNetworksModel extends ConfirmationModel {
                                     netView.getDescription()));
                 }
 
-            } else if (a instanceof Network) {
-                Network network = (Network) a;
+            } else {
                 if (network.getDescription() == null || "".equals(network.getDescription().trim())) { //$NON-NLS-1$
                     list.add(network.getName());
                 } else {
                     list.add(StringFormat.format("%1$s (%2$s)", network.getName(), network.getDescription())); //$NON-NLS-1$
                 }
+            }
+
+            if (network.isExternal()) {
+                setNote(ConstantsManager.getInstance().getConstants().removeProvidedNetworksNote());
             }
         }
         setItems(list);
