@@ -265,6 +265,8 @@
 		<include name="common/queries/gluster/*.java"/>
 		<include name="common/constants/gluster/GlusterConstants.java"/>
 		<include name="common/utils/gluster/GlusterCoreUtil.java"/>
+		<!-- Scheduling -->
+		<include name="common/scheduling/*.java"/>
 	</source>
 
 	<super-source path="ui/uioverrides" />
