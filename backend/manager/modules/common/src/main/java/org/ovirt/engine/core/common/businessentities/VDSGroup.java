@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -71,6 +72,10 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     private String emulatedMachine;
 
     private boolean trustedService = false;
+
+    private Guid clusterPolicyId;
+
+    private Map<String, String> clusterPolicyProperties;
 
     public VDSGroup() {
         selection_algorithm = VdsSelectionAlgorithm.None;
@@ -262,6 +267,22 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         return trustedService;
     }
 
+    public Guid getClusterPolicyId() {
+        return clusterPolicyId;
+    }
+
+    public void setClusterPolicyId(Guid clusterPolicyId) {
+        this.clusterPolicyId = clusterPolicyId;
+    }
+
+    public Map<String, String> getClusterPolicyProperties() {
+        return clusterPolicyProperties;
+    }
+
+    public void setClusterPolicyProperties(Map<String, String> clusterPolicyProperties) {
+        this.clusterPolicyProperties = clusterPolicyProperties;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -287,6 +308,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (tunnelMigration ? 1231 : 1237);
         result = prime * result + (emulatedMachine == null ? 0 : emulatedMachine.hashCode());
         result = prime * result + (trustedService ? 1231 : 1237);
+        result = prime * result + ((clusterPolicyId == null) ? 0 : clusterPolicyId.hashCode());
+        result = prime * result + (clusterPolicyProperties == null ? 0 : clusterPolicyProperties.hashCode());
         return result;
     }
 
@@ -322,6 +345,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && glusterService == other.glusterService
                 && tunnelMigration == other.tunnelMigration
                 && ObjectUtils.objectsEqual(emulatedMachine, other.emulatedMachine)
-                && trustedService == other.trustedService);
+                && trustedService == other.trustedService
+                && ObjectUtils.objectsEqual(clusterPolicyId, other.clusterPolicyId)
+                && ObjectUtils.objectsEqual(clusterPolicyProperties, other.clusterPolicyProperties));
     }
 }
