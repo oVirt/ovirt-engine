@@ -50,13 +50,28 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         canChooseInactiveDomainAsMaster = parameters.isCanChooseInactiveDomainAsMaster();
     }
 
+    private boolean checkIsDomainLocked(StoragePoolIsoMap domainMap) {
+        if (StorageDomainStatus.Locked == domainMap.getstatus()) {
+            addInvalidSDStatusMessage(StorageDomainStatus.Locked);
+            return true;
+        }
+
+        return false;
+    }
+
     @Override
     protected boolean canDoAction() {
+        // This check is done here to handle a race in which the returned domain from
+        // getStorageDomain() is with LOCKED status. Having this domain with LOCKED status might
+        // cause to the command to apply the compensation data and leave the domain as LOCKED.
+        if (checkIsDomainLocked(getStorageDomain().getStoragePoolIsoMapData())) {
+            return false;
+        }
+
         List<StoragePoolIsoMap> poolDomains = DbFacade.getInstance()
                 .getStoragePoolIsoMapDao().getAllForStoragePool(getStoragePool().getId());
         for (StoragePoolIsoMap poolDomain : poolDomains) {
-            if (poolDomain.getstatus() == StorageDomainStatus.Locked) {
-                addInvalidSDStatusMessage(poolDomain.getstatus());
+            if (checkIsDomainLocked(poolDomain)) {
                 return false;
             }
         }
