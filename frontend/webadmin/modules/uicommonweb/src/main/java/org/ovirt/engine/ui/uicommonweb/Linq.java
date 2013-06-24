@@ -612,32 +612,6 @@ public final class Linq
         return list;
     }
 
-    // public static TSource First<TSource>(IEnumerable<TSource> source, Func<TSource, bool> predicate)
-    // {
-    // foreach (TSource item in source)
-    // {
-    // if (predicate(item))
-    // {
-    // return item;
-    // }
-    // }
-
-    // throw new InvalidOperationException();
-    // }
-
-    // public static bool Any<TSource>(IEnumerable<TSource> source, Func<TSource, bool> predicate)
-    // {
-    // foreach (TSource item in source)
-    // {
-    // if (predicate(item))
-    // {
-    // return true;
-    // }
-    // }
-
-    // return false;
-    // }
-
     public static <TSource> ArrayList<TSource> distinct(ArrayList<TSource> source,
             IEqualityComparer<TSource> comparer)
     {
