@@ -214,7 +214,7 @@ class Plugin(plugin.PluginBase):
         )
 
         self.execute(
-            (
+            args=(
                 self.command.get('openssl'),
                 'pkcs12',
                 '-in', (
@@ -229,6 +229,7 @@ class Plugin(plugin.PluginBase):
                     osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY
                 ),
             ),
+            logStreams=False,
         )
         uninstall_files.append(
             osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY
