@@ -264,6 +264,11 @@ public enum VdcQueryType implements Serializable {
 
     GetDeviceCustomProperties(VdcQueryAuthType.User),
 
+    // Scheduling
+    GetClusterPolicies,
+    GetClusterPolicyById,
+    GetAllPolicyUnits,
+    GetAttachedClustersByClusterPolicyId,
     // Default type instead of having to null check
     Unknown(VdcQueryAuthType.User);
 

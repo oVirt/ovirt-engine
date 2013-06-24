@@ -753,6 +753,14 @@ public enum AuditLogType {
     //watchdog
     WATCHDOG_EVENT(9901),
 
+    // cluster policy
+    USER_ADD_CLUSTER_POLICY(9910),
+    USER_FAILED_TO_ADD_CLUSTER_POLICY(9911),
+    USER_UPDATE_CLUSTER_POLICY(9912),
+    USER_FAILED_TO_UPDATE_CLUSTER_POLICY(9913),
+    USER_REMOVE_CLUSTER_POLICY(9914),
+    USER_FAILED_TO_REMOVE_CLUSTER_POLICY(9915),
+
     //trusted service
     VDS_UNTRUSTED(10000, AuditLogTimeInterval.MINUTE.getValue()),
     // External tasks

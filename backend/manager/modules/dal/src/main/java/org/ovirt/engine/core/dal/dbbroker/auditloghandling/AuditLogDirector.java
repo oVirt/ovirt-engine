@@ -58,6 +58,7 @@ public final class AuditLogDirector {
         initConfigSeverities();
         initUserAccountSeverities();
         initCommonSeverities();
+        initClusterPolicySeverities();
     }
 
     private static void initProviderSeverities() {
@@ -786,6 +787,15 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.DWH_STOPPED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.DWH_STARTED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.DWH_ERROR, AuditLogSeverity.ERROR);
+    }
+
+    private static void initClusterPolicySeverities() {
+        severities.put(AuditLogType.USER_ADD_CLUSTER_POLICY, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_FAILED_TO_ADD_CLUSTER_POLICY, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.USER_REMOVE_CLUSTER_POLICY, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_FAILED_TO_REMOVE_CLUSTER_POLICY, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.USER_UPDATE_CLUSTER_POLICY, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_FAILED_TO_UPDATE_CLUSTER_POLICY, AuditLogSeverity.ERROR);
     }
 
     private static void initMessages() {

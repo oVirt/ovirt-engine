@@ -247,7 +247,10 @@ public enum VdcActionType {
     RemoveGlusterHook(1418,ActionGroup.MANIPULATE_GLUSTER_HOOK,QuotaDependency.NONE),
     RefreshGlusterHooks(1419, ActionGroup.MANIPULATE_GLUSTER_HOOK, QuotaDependency.NONE),
     ManageGlusterService(1420, ActionGroup.MANIPULATE_GLUSTER_SERVICE, QuotaDependency.NONE),
-
+    // Cluster Policy
+    AddClusterPolicy(1450, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
+    EditClusterPolicy(1451, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
+    RemoveClusterPolicy(1452, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
     // External events
     AddExternalEvent(1500, ActionGroup.INJECT_EXTERNAL_EVENTS, QuotaDependency.NONE),
     RemoveExternalEvent(1501, ActionGroup.INJECT_EXTERNAL_EVENTS, QuotaDependency.NONE),

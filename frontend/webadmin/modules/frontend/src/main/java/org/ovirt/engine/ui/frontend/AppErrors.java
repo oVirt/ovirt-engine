@@ -661,6 +661,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type SPM")
     String VAR__TYPE__SPM();
 
+    @DefaultStringValue("$type Cluster Policy")
+    String VAR__TYPE__CLUSTER_POLICY();
+
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
 
@@ -2494,4 +2497,37 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$action extend image size")
     String VAR__ACTION__EXTEND_IMAGE_SIZE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Parameters are invalid.")
+    String ACTION_TYPE_FAILED_CLUSTER_POLICY_PARAMETERS_INVALID();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Name is in use.")
+    String ACTION_TYPE_FAILED_CLUSTER_POLICY_NAME_INUSE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Cluster Policy is locked, and cannot be editable.")
+    String ACTION_TYPE_FAILED_CLUSTER_POLICY_LOCKED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Cluster Policy is attached to cluster(s), please assign these cluster(s) to other policy.")
+    String ACTION_TYPE_FAILED_CLUSTER_POLICY_INUSE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Policy unit is unknown.")
+    String ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Policy unit doesn't implement Filtering.")
+    String ACTION_TYPE_FAILED_CLUSTER_POLICY_FILTER_NOT_IMPLEMENTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Policy unit doesn't implement score function.")
+    String ACTION_TYPE_FAILED_CLUSTER_POLICY_FUNCTION_NOT_IMPLEMENTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Policy unit doesn't implement load balancing logic.")
+    String ACTION_TYPE_FAILED_CLUSTER_POLICY_BALANCE_NOT_IMPLEMENTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Only a single filter can be selected as first.")
+    String ACTION_TYPE_FAILED_CLUSTER_POLICY_ONLY_ONE_FILTER_CAN_BE_FIRST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Only a single filter can be selected as last.")
+    String ACTION_TYPE_FAILED_CLUSTER_POLICY_ONLY_ONE_FILTER_CAN_BE_LAST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Function factor cannot be negative.")
+    String ACTION_TYPE_FAILED_CLUSTER_POLICY_FUNCTION_FACTOR_NEGATIVE();
 }
