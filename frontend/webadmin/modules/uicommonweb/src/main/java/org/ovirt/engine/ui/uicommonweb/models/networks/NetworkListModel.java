@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
@@ -112,12 +113,15 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     private void initDcList(final NetworkModel networkModel) {
+        networkModel.startProgress(null);
+
         SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, getSystemTreeSelectedItem());
         if (treeSelectedDc != null) {
             StoragePool dc = (StoragePool) treeSelectedDc.getEntity();
             networkModel.getDataCenters().setItems(Arrays.asList(dc));
             networkModel.getDataCenters().setSelectedItem(dc);
             networkModel.getDataCenters().setIsChangable(false);
+            initExternalNetworksList(networkModel);
             return;
         }
 
@@ -137,9 +141,31 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
                 } else {
                     networkModel.getDataCenters().setSelectedItem(Linq.firstOrDefault(dataCenters));
                 }
-
+                initExternalNetworksList(networkModel);
             }
         }));
+    }
+
+    private void initExternalNetworksList(final NetworkModel networkModel) {
+        if (networkModel instanceof NewNetworkModel) {
+            AsyncQuery getProvidersQuery = new AsyncQuery();
+            getProvidersQuery.asyncCallback = new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object result)
+                {
+                    List<Provider> providers = Linq.toList(Linq.filterNetworkProviders((List<Provider>) result));
+                    networkModel.getExternalProviders().setItems(providers);
+                    networkModel.getExternalProviders().setSelectedItem(Linq.firstOrDefault(providers));
+                    networkModel.stopProgress();
+                }
+            };
+            AsyncDataProvider.GetAllProviders(getProvidersQuery);
+        } else {
+            Provider provider = new Provider();
+            provider.setName(((NetworkView) getSelectedItem()).getProviderName());
+            networkModel.getExternalProviders().setSelectedItem(provider);
+            networkModel.stopProgress();
+        }
     }
 
     private StoragePool findDc(Guid dcId, List<StoragePool> dataCenters) {

@@ -8,9 +8,11 @@ import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -77,7 +79,7 @@ public class NewNetworkModel extends NetworkModel {
 
     protected NetworkClusterModel createNetworkClusterModel(VDSGroup cluster) {
         NetworkClusterModel networkClusterModel = new NetworkClusterModel(cluster);
-        networkClusterModel.setAttached(false);
+        networkClusterModel.setAttached(true);
 
         return networkClusterModel;
     }
@@ -95,28 +97,41 @@ public class NewNetworkModel extends NetworkModel {
 
     @Override
     protected void executeSave() {
-        // New network
-        final AddNetworkStoragePoolParameters parameters =
-                new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork());
-        parameters.setPublicUse((Boolean) getPublicUse().getEntity());
-        Frontend.RunAction(VdcActionType.AddNetwork,
-                parameters,
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result1) {
-                        VdcReturnValueBase retVal = result1.getReturnValue();
-                        boolean succeeded = false;
-                        if (retVal != null && retVal.getSucceeded())
-                        {
-                            succeeded = true;
-                        }
-                        postSaveAction(succeeded ? (Guid) retVal.getActionReturnValue()
-                                : null,
-                                succeeded);
+        IFrontendActionAsyncCallback addNetworkCallback = new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result1) {
+                VdcReturnValueBase retVal = result1.getReturnValue();
+                boolean succeeded = false;
+                if (retVal != null && retVal.getSucceeded())
+                {
+                    succeeded = true;
+                }
+                postSaveAction(succeeded ? (Guid) retVal.getActionReturnValue()
+                        : null,
+                        succeeded);
 
-                    }
-                },
-                null);
+            }
+        };
+
+        // New network
+        if ((Boolean) getExport().getEntity()) {
+            Provider externalProvider = (Provider) getExternalProviders().getSelectedItem();
+            ProviderNetwork providerNetwork = new ProviderNetwork();
+            providerNetwork.setProviderId(externalProvider.getId());
+            getNetwork().setProvidedBy(providerNetwork);
+            final AddNetworkStoragePoolParameters parameters =
+                    new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork());
+            Frontend.RunAction(VdcActionType.AddNetworkOnProvider,
+                    parameters, addNetworkCallback, null);
+        } else {
+            final AddNetworkStoragePoolParameters parameters =
+                    new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork());
+            parameters.setPublicUse((Boolean) getPublicUse().getEntity());
+            Frontend.RunAction(VdcActionType.AddNetwork,
+                    parameters,
+                    addNetworkCallback,
+                    null);
+        }
     }
 
     @Override
@@ -136,8 +151,12 @@ public class NewNetworkModel extends NetworkModel {
             Network tempVar = new Network();
             tempVar.setId(networkId);
             tempVar.setName(getNetwork().getName());
+
             // Init default NetworkCluster values (required, display, status)
-            tempVar.setCluster(new NetworkCluster());
+            NetworkCluster networkCluster = new NetworkCluster();
+            networkCluster.setRequired(!((Boolean) getExport().getEntity()));
+            tempVar.setCluster(networkCluster);
+
             actionParameters1.add(new AttachNetworkToVdsGroupParameter(attachNetworkToCluster, tempVar));
         }
 

@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.webadmin;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 
+import com.google.gwt.i18n.client.Constants.DefaultStringValue;
+
 public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("oVirt Engine Web Administration")
@@ -171,6 +173,18 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Description")
     String descriptionLabel();
+
+    @DefaultStringValue("Export")
+    String exportLabel();
+
+    @DefaultStringValue("Create on external provider")
+    String exportCheckboxLabel();
+
+    @DefaultStringValue("External Provider")
+    String externalProviderLabel();
+
+    @DefaultStringValue("Network Label")
+    String networkLabel();
 
     @DefaultStringValue("Host")
     String hostQpid();
@@ -1022,6 +1036,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String maintenanceStorageDc();
 
     // Network
+    @DefaultStringValue("General")
+    String generalTabNetworkPopup();
+
+    @DefaultStringValue("Cluster")
+    String clusterTabNetworkPopup();
+
     @DefaultStringValue("General")
     String networkGeneralSubTabLabel();
 

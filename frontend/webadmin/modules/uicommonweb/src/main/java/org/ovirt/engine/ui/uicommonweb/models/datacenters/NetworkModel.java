@@ -27,6 +27,9 @@ public abstract class NetworkModel extends Model
 
     private EntityModel privateName;
     private EntityModel privateDescription;
+    private EntityModel export;
+    private ListModel externalProviders;
+    private EntityModel networkLabel;
     private EntityModel privateVLanTag;
     private EntityModel privateIsStpEnabled;
     private EntityModel privateHasVLanTag;
@@ -59,23 +62,55 @@ public abstract class NetworkModel extends Model
                 syncWithBackend();
             }
         });
-        setVLanTag(new EntityModel());
+        setExport(new EntityModel(false));
+        getExport().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                onExportChanged();
+            }
+        });
+
+        setExternalProviders(new ListModel());
+        setNetworkLabel(new EntityModel());
+
         EntityModel stpEnabled = new EntityModel();
         stpEnabled.setEntity(false);
         setIsStpEnabled(stpEnabled);
+
+        setVLanTag(new EntityModel());
         EntityModel hasVlanTag = new EntityModel();
         hasVlanTag.setEntity(false);
         setHasVLanTag(hasVlanTag);
+        getHasVLanTag().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                updateVlanTagChangeability();
+            }
+        });
+
         setMtu(new EntityModel());
         EntityModel hasMtu = new EntityModel();
         hasMtu.setEntity(false);
         setHasMtu(hasMtu);
+        getHasMtu().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                updateMtuChangeability();
+            }
+        });
+
         EntityModel isVmNetwork = new EntityModel();
         isVmNetwork.setEntity(true);
         setIsVmNetwork(isVmNetwork);
         EntityModel publicUse = new EntityModel();
         publicUse.setEntity(true);
         setPublicUse(publicUse);
+
+        // Update changeability according to initial values
+        onExportChanged();
+        updateVlanTagChangeability();
+        updateMtuChangeability();
     }
 
     public EntityModel getName()
@@ -96,6 +131,30 @@ public abstract class NetworkModel extends Model
     private void setDescription(EntityModel value)
     {
         privateDescription = value;
+    }
+
+    public EntityModel getExport() {
+        return export;
+    }
+
+    private void setExport(EntityModel value) {
+        export = value;
+    }
+
+    public ListModel getExternalProviders() {
+        return externalProviders;
+    }
+
+    public void setExternalProviders(ListModel externalProviders) {
+        this.externalProviders = externalProviders;
+    }
+
+    public EntityModel getNetworkLabel() {
+        return networkLabel;
+    }
+
+    public void setNetworkLabel(EntityModel networkLabel) {
+        this.networkLabel = networkLabel;
     }
 
     public EntityModel getVLanTag()
@@ -257,8 +316,10 @@ public abstract class NetworkModel extends Model
             getMtu().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar5 });
         }
 
+        getExternalProviders().validateSelectedItem(new IValidation [] { new NotEmptyValidation() });
+
         return getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()
-                && getMtu().getIsValid();
+                && getMtu().getIsValid() && getExternalProviders().getIsValid();
     }
 
     protected boolean firstInit = true;
@@ -284,7 +345,7 @@ public abstract class NetworkModel extends Model
 
     }
 
-    protected void addCommands(){
+    protected void addCommands() {
         UICommand tempVar2 = new UICommand("OnSave", this); //$NON-NLS-1$
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar2.setIsDefault(true);
@@ -304,10 +365,11 @@ public abstract class NetworkModel extends Model
         network.setName((String) getName().getEntity());
         network.setStp((Boolean) getIsStpEnabled().getEntity());
         network.setDescription((String) getDescription().getEntity());
+        network.setLabel((String) getNetworkLabel().getEntity());
         network.setVmNetwork((Boolean) getIsVmNetwork().getEntity());
 
         network.setMtu(0);
-        if (getMtu().getEntity() != null)
+        if ((Boolean) getHasMtu().getEntity())
         {
             network.setMtu(Integer.parseInt(getMtu().getEntity().toString()));
         }
@@ -370,4 +432,26 @@ public abstract class NetworkModel extends Model
     protected abstract void initMtu();
 
     protected abstract void initIsVm();
+
+    private void onExportChanged() {
+        boolean externalNetwork = (Boolean) getExport().getEntity();
+        getExternalProviders().setIsChangable(externalNetwork);
+        getNetworkLabel().setIsChangable(externalNetwork);
+        getHasVLanTag().setIsChangable(!externalNetwork);
+        getIsVmNetwork().setIsChangable(!externalNetwork);
+        getHasMtu().setIsChangable(!externalNetwork);
+        if (externalNetwork) {
+            getHasVLanTag().setEntity(false);
+            getIsVmNetwork().setEntity(true);
+            getHasMtu().setEntity(false);
+        }
+    }
+
+    private void updateVlanTagChangeability() {
+        getVLanTag().setIsChangable((Boolean) getHasVLanTag().getEntity() && !((Boolean) getExport().getEntity()));
+    }
+
+    private void updateMtuChangeability() {
+        getMtu().setIsChangable((Boolean) getHasMtu().getEntity() && !((Boolean) getExport().getEntity()));
+    }
 }

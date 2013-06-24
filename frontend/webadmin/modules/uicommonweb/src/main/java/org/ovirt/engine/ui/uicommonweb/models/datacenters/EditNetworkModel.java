@@ -31,6 +31,7 @@ public class EditNetworkModel extends NetworkModel {
         getVLanTag().setEntity((getNetwork().getVlanId() == null ? Integer.valueOf(0) : getNetwork().getVlanId()));
         initMtu();
         initIsVm();
+        getExport().setEntity(getNetwork().isExternal());
     }
 
     @Override

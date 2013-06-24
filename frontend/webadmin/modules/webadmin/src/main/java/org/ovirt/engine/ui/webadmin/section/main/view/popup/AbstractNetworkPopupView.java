@@ -2,11 +2,13 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
@@ -54,6 +56,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @UiField
     @Ignore
+    public Label exportLabel;
+
+    @UiField
+    @Ignore
     public Label assignLabel;
 
     @UiField(provided = true)
@@ -68,6 +74,16 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @UiField
     @Path(value = "description.entity")
     public EntityModelTextBoxEditor descriptionEditor;
+
+    @UiField(provided = true)
+    @Path(value = "export.entity")
+    @WithElementId("export")
+    public EntityModelCheckBoxEditor exportEditor;
+
+    @UiField(provided = true)
+    @Path(value = "externalProviders.selectedItem")
+    @WithElementId("externalProviders")
+    public ListModelListBoxEditor<Object> externalProviderEditor;
 
     @UiField(provided = true)
     @Path(value = "isVmNetwork.entity")
@@ -107,6 +123,18 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Path(value = "publicUse.entity")
     public final EntityModelCheckBoxEditor publicUseEditor;
 
+    @UiField
+    @Path(value = "networkLabel.entity")
+    public EntityModelTextBoxEditor networkLabel;
+
+    @UiField
+    @Ignore
+    public DialogTab generalTab;
+
+    @UiField
+    @Ignore
+    public DialogTab clusterTab;
+
     @Inject
     public AbstractNetworkPopupView(EventBus eventBus, ApplicationResources resources,
             ApplicationConstants constants, ApplicationTemplates templates) {
@@ -118,6 +146,13 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
                 return ((StoragePool) object).getName();
             }
         });
+        externalProviderEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((Provider) object).getName();
+            }
+        });
+        exportEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         hasMtuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -130,10 +165,17 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     }
 
     protected void localize(ApplicationConstants constants) {
+        generalTab.setLabel(constants.generalTabNetworkPopup());
+        clusterTab.setLabel(constants.clusterTabNetworkPopup());
+
         dataCenterEditor.setLabel(constants.networkPopupDataCenterLabel());
         assignLabel.setText(constants.networkPopupAssignLabel());
         nameEditor.setLabel(constants.nameLabel());
         descriptionEditor.setLabel(constants.descriptionLabel());
+        exportLabel.setText(constants.exportLabel());
+        exportEditor.setLabel(constants.exportCheckboxLabel());
+        externalProviderEditor.setLabel(constants.externalProviderLabel());
+        networkLabel.setLabel(constants.networkLabel());
         isVmNetworkEditor.setLabel(constants.vmNetworkLabel());
         vlanTagging.setLabel(constants.enableVlanTagLabel());
         hasMtuEditor.setLabel(constants.overrideMtuLabel());
@@ -156,16 +198,6 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Override
     public void focusInput() {
         nameEditor.setFocus(true);
-    }
-
-    @Override
-    public void setVLanTagEnabled(boolean flag) {
-        vlanTag.setEnabled(flag);
-    }
-
-    @Override
-    public void setMtuEnabled(boolean flag) {
-        mtuEditor.setEnabled(flag);
     }
 
     @Override
