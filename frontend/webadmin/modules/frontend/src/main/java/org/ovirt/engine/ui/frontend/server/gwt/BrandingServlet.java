@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -104,8 +103,7 @@ public class BrandingServlet extends HttpServlet {
      */
     String getFullPath(final File brandingRootPath, final String path) {
         String result = null;
-        String mergedPath = FileSystems.getDefault().getPath(brandingRootPath.getAbsolutePath(),
-                path == null ? "": path).toString();
+        String mergedPath = new File(brandingRootPath.getAbsolutePath(), path == null ? "": path).getAbsolutePath();
         if (path != null && ServletUtils.isSane(mergedPath)) {
             // Return a result relative to the branding root path.
             result = mergedPath;
