@@ -10,7 +10,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -190,18 +189,6 @@ public class VdsSelector {
         VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate, List<Guid> vdsBlackList);
     }
 
-    public static Integer getEffectiveCpuCores(VDS vds) {
-        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vds.getVdsGroupId());
-
-        if (vds.getCpuThreads() != null
-                && vdsGroup != null
-                && Boolean.TRUE.equals(vdsGroup.getCountThreadsAsCores())) {
-            return vds.getCpuThreads();
-        } else {
-            return vds.getCpuCores();
-        }
-    }
-
     @SuppressWarnings("serial")
     final List<HostValidator> hostValidators = Collections.unmodifiableList(new ArrayList<HostValidator>(){
         {
@@ -245,7 +232,7 @@ public class VdsSelector {
             add(new HostValidator() {
                 @Override
                 public VdcBllMessages validate(VDS vds, StringBuilder sb, boolean isMigrate, List<Guid> vdsBlackList) {
-                    Integer cores = getEffectiveCpuCores(vds);
+                    Integer cores = SlaValidator.getEffectiveCpuCores(vds);
                     if (cores != null && getVm().getNumOfCpus() > cores) {
                         sb.append("has less cores(").append(cores).append(") than ").append(getVm().getNumOfCpus());
                         return VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS;

@@ -11,7 +11,7 @@ public class EvenlyDistributeComparer extends VdsComparer {
         int vcpu = Config.<Integer> GetValue(ConfigValues.VcpuConsumptionPercentage);
         int spmCpu = (vds.getSpmStatus() == VdsSpmStatus.None) ? 0 : Config
                 .<Integer> GetValue(ConfigValues.SpmVCpuConsumption);
-        int hostCores = VdsSelector.getEffectiveCpuCores(vds);
+        int hostCores = SlaValidator.getEffectiveCpuCores(vds);
         double hostCpu = vds.getUsageCpuPercent();
         double pendingVcpus = vds.getPendingVcpusCount();
 
@@ -20,8 +20,8 @@ public class EvenlyDistributeComparer extends VdsComparer {
 
     @Override
     public boolean isBetter(VDS x, VDS y, VM vm) {
-        if (VdsSelector.getEffectiveCpuCores(x) == null
-                || VdsSelector.getEffectiveCpuCores(y) == null
+        if (SlaValidator.getEffectiveCpuCores(x) == null
+                || SlaValidator.getEffectiveCpuCores(y) == null
                 || x.getUsageCpuPercent() == null
                 || y.getUsageCpuPercent() == null
                 || x.getPendingVcpusCount() == null

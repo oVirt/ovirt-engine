@@ -102,7 +102,7 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
                 public boolean eval(VDS p) {
                     return p.getUsageCpuPercent() <= p.getLowUtilization()
                             && p.getCpuOverCommitTimestamp() != null
-                            && (new Date().getTime() - p.getCpuOverCommitTimestamp().getTime()) >= (long)p
+                            && (new Date().getTime() - p.getCpuOverCommitTimestamp().getTime()) >= p
                                     .getCpuOverCommitDurationMinutes() * 60L * 1000L;
                 }
             });
@@ -172,7 +172,7 @@ public class VdsCpuVdsLoadBalancingAlgorithm extends VdsLoadBalancingAlgorithm {
         }
 
         private int calculateCpuUsage(VDS o1) {
-            return o1.getUsageCpuPercent() * VdsSelector.getEffectiveCpuCores(o1) / o1.getVdsStrength();
+            return o1.getUsageCpuPercent() * SlaValidator.getEffectiveCpuCores(o1) / o1.getVdsStrength();
         }
     }
 

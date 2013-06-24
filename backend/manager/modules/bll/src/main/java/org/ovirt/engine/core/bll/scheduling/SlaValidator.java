@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.bll.scheduling;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -52,7 +54,7 @@ public class SlaValidator {
         }
         // The predicted CPU is actually the CPU that the VM will take considering how many cores it has and now many
         // cores the host has. This is why we take both parameters into consideration.
-        int predictedVmCpu = (vm.getUsageCpuPercent() * vm.getNumOfCpus()) / VdsSelector.getEffectiveCpuCores(vds);
+        int predictedVmCpu = (vm.getUsageCpuPercent() * vm.getNumOfCpus()) / getEffectiveCpuCores(vds);
         boolean result = vds.getUsageCpuPercent() + predictedVmCpu <= vds.getHighUtilization();
         if (log.isDebugEnabled()) {
             log.debugFormat("Host {0} has {1}% CPU load; VM {2} is predicted to have {3}% CPU load; " +
@@ -65,6 +67,18 @@ public class SlaValidator {
                     (result ? "" : "not "));
         }
         return result;
+    }
+
+    public static Integer getEffectiveCpuCores(VDS vds) {
+        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vds.getVdsGroupId());
+
+        if (vds.getCpuThreads() != null
+                && vdsGroup != null
+                && Boolean.TRUE.equals(vdsGroup.getCountThreadsAsCores())) {
+            return vds.getCpuThreads();
+        } else {
+            return vds.getCpuCores();
+        }
     }
 
 }
