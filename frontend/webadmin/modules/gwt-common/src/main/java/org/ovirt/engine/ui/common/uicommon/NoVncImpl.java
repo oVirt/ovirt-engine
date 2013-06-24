@@ -21,7 +21,7 @@ public class NoVncImpl extends AbstractVnc implements INoVnc {
     private String connectionTicket;
 
     private String getTargetOrigin() {
-        return "http://" + Location.getHost(); //$NON-NLS-1$
+        return Location.getProtocol() + "//" + Location.getHost(); //$NON-NLS-1$
     }
 
     public String getProxyHost() {
@@ -37,7 +37,7 @@ public class NoVncImpl extends AbstractVnc implements INoVnc {
     }
 
     private String getClientUrl() {
-        return "http://" + Location.getHost() + "/ovirt-engine-novnc-main.html?host=" + getProxyHost() + "&port=" + getProxyPort();//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+        return Location.getProtocol() + "//" + Location.getHost() + "/ovirt-engine-novnc-main.html?host=" + getProxyHost() + "&port=" + getProxyPort();//$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
     }
 
     public NoVncImpl() {
