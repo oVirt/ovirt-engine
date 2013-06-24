@@ -86,6 +86,19 @@ begin
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- Deletes a key from vdc_options if exists, for all its versions
+create or replace FUNCTION fn_db_delete_config_value_all_versions(v_option_name varchar(100))
+returns void
+AS $procedure$
+begin
+    if (exists (select 1 from vdc_options where option_name ilike v_option_name)) then
+        begin
+            delete from vdc_options where option_name ilike v_option_name;
+        end;
+    end if;
+END; $procedure$
+LANGUAGE plpgsql;
+
 -- Deletes a key from vdc_options (if exists)
 create or replace FUNCTION fn_db_delete_config_value(v_option_name varchar(100), v_version text)
 returns void
