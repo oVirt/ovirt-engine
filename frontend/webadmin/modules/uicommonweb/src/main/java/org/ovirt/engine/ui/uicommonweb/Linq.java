@@ -33,7 +33,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -185,14 +184,6 @@ public final class Linq
             return 0;
         }
 
-    }
-
-    public static class RpmVersionComparer implements Comparator<RpmVersion>, Serializable {
-
-        @Override
-        public int compare(RpmVersion x, RpmVersion y) {
-            return x.compareTo(y);
-        }
     }
 
     public static class SnapshotByCreationDateCommparer implements Comparator<Snapshot>, Serializable

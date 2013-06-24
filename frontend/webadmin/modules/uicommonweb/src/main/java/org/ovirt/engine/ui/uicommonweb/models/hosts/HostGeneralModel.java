@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
@@ -835,7 +836,7 @@ public class HostGeneralModel extends EntityModel
                             InstallModel model = (InstallModel) target;
 
                             ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
-                            isos = Linq.orderByDescending(isos, new Linq.RpmVersionComparer());
+                            Collections.sort(isos, Collections.reverseOrder());
                             model.getOVirtISO().setItems(isos);
                             model.getOVirtISO().setSelectedItem(Linq.firstOrDefault(isos));
                             model.getOVirtISO().setIsAvailable(true);
