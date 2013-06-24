@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+	<ui:style type="org.ovirt.engine.ui.common.widget.HorizontalSplitTable.Style">
+		.centerPanel {
+			height: 100%;
+			width: 100%;
+			border-top: solid thin;
+			border-bottom: solid thin;
+		}
+	</ui:style>
+
+	<g:DockLayoutPanel ui:field="splitLayoutPanel" height="520px" width="100%">
+		<g:north size="230">
+			<g:ScrollPanel>
+				<e:EntityModelCellTable ui:field="topTable" />
+			</g:ScrollPanel>
+		</g:north>
+		<g:center>
+			<g:HorizontalPanel ui:field="centerPanel" addStyleNames="{style.centerPanel}" >
+				<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+					<g:Button ui:field="downButton" />
+				</g:cell>
+				<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
+					<g:Button ui:field="upButton" />
+				</g:cell>
+			</g:HorizontalPanel>
+		</g:center>
+		<g:south size="230">
+			<g:ScrollPanel>
+				<e:EntityModelCellTable ui:field="bottomTable" />
+			</g:ScrollPanel>
+		</g:south>
+	</g:DockLayoutPanel>
+
+</ui:UiBinder>

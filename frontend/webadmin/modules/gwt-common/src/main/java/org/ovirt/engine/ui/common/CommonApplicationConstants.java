@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common;
 
 import com.google.gwt.i18n.client.Constants;
+import com.google.gwt.i18n.client.Constants.DefaultStringValue;
 
 public interface CommonApplicationConstants extends Constants {
 
@@ -1295,4 +1296,10 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Optimized for")
     String optimizedFor();
+
+    @DefaultStringValue("▼")
+    String horizontalSplitTableDown();
+
+    @DefaultStringValue("▲")
+    String horizontalSplitTableUp();
 }
