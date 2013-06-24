@@ -12,6 +12,7 @@ import org.ovirt.engine.api.model.VCpuPin;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmDeviceType;
 import org.ovirt.engine.api.model.VmType;
+import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -122,7 +123,7 @@ public class VmMapperTest extends
         vmDynamic.setStatus(VMStatus.Up);
         vmDynamic.setVmIp("2.2.2.2");
         vm.setDynamicData(vmDynamic);
-
+        OsTypeMockUtils.mockOsTypes();
         VM map = VmMapper.map(vm, null);
         assertNotNull(map.getGuestInfo().getIps().getIPs().get(0));
         assertEquals(map.getGuestInfo().getIps().getIPs().get(0).getAddress(), "2.2.2.2");
@@ -135,7 +136,7 @@ public class VmMapperTest extends
         vmDynamic.setStatus(VMStatus.Up);
         vmDynamic.setVmIp("2.2.2.2 2.2.2.3 2.2.2.4");
         vm.setDynamicData(vmDynamic);
-
+        OsTypeMockUtils.mockOsTypes();
         VM map = VmMapper.map(vm, null);
         assertNotNull(map.getGuestInfo().getIps().getIPs().get(0));
         assertEquals(map.getGuestInfo().getIps().getIPs().get(0).getAddress(), "2.2.2.2");

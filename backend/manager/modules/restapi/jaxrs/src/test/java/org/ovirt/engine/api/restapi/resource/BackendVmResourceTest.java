@@ -15,7 +15,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.codec.binary.Base64;
-import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Boot;
@@ -37,6 +36,7 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Ticket;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
+import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
@@ -64,7 +64,6 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -89,7 +88,7 @@ public class BackendVmResourceTest
         resource.getParent().mappingLocator = resource.mappingLocator;
         resource.getParent().httpHeaders = httpHeaders;
         resource.getParent().messageBundle = messageBundle;
-        mockOsRepository();
+        OsTypeMockUtils.mockOsTypes();
     }
 
     @Test
@@ -876,11 +875,4 @@ public class BackendVmResourceTest
                 CERTIFICATE);
     }
 
-    private void mockOsRepository() {
-        osNames.put(0, "Unassigned");
-        OsRepository osRepository = control.createMock(OsRepository.class);
-        EasyMock.expect(osRepository.getOsNames()).andStubReturn(osNames);
-        EasyMock.expect(osRepository.osNameUpperCasedAndUnderscored("Unassigned")).andStubReturn("UNASSIGNED");
-        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
-    }
 }

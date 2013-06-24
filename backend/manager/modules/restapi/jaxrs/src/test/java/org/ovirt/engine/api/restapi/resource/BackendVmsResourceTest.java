@@ -26,6 +26,7 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
+import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -59,6 +60,12 @@ public class BackendVmsResourceTest
 
     public BackendVmsResourceTest() {
         super(new BackendVmsResource(), SearchType.VM, "VMs : ");
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        OsTypeMockUtils.mockOsTypes();
     }
 
     @Test

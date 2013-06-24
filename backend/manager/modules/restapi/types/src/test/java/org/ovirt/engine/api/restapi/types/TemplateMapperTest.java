@@ -5,14 +5,21 @@ import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VmType;
+import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 
 public class TemplateMapperTest
-    extends AbstractInvertibleMappingTest<Template, VmTemplate, VmTemplate> {
+        extends AbstractInvertibleMappingTest<Template, VmTemplate, VmTemplate> {
 
     public TemplateMapperTest() {
         super(Template.class, VmTemplate.class, VmTemplate.class);
+    }
+
+    @Override
+    public void setUp() {
+        super.setUp();
+        OsTypeMockUtils.mockOsTypes();
     }
 
     @Override
@@ -47,16 +54,15 @@ public class TemplateMapperTest
         assertNotNull(transform.getCpu());
         assertNotNull(transform.getCpu().getTopology());
         assertTrue(Math.abs(model.getCpu().getTopology().getCores() -
-                            transform.getCpu().getTopology().getCores()) <
-                   model.getCpu().getTopology().getSockets());
+                transform.getCpu().getTopology().getCores()) < model.getCpu().getTopology().getSockets());
         assertEquals(model.getCpu().getTopology().getSockets(),
-                     transform.getCpu().getTopology().getSockets());
+                transform.getCpu().getTopology().getSockets());
         assertNotNull(transform.isSetOs());
         assertTrue(transform.getOs().isSetBoot());
         assertEquals(model.getOs().getBoot().size(), transform.getOs().getBoot().size());
         for (int i = 0; i < model.getOs().getBoot().size(); i++) {
             assertEquals(model.getOs().getBoot().get(i).getDev(),
-                         transform.getOs().getBoot().get(i).getDev());
+                    transform.getOs().getBoot().get(i).getDev());
         }
         assertEquals(model.getOs().getKernel(), transform.getOs().getKernel());
         assertEquals(model.getOs().getInitrd(), transform.getOs().getInitrd());
