@@ -39,7 +39,7 @@ public abstract class FenceQueryBase<P extends VdcQueryParametersBase> extends Q
      * @param reason
      *            The reason.
      */
-    private void Alert(AuditLogType logType, String reason) {
+    private void alert(AuditLogType logType, String reason) {
         AuditLogableBase alert = new AuditLogableBase();
         alert.setVdsId(getVdsId());
         alert.addCustomValue("Reason", reason);
@@ -49,7 +49,7 @@ public abstract class FenceQueryBase<P extends VdcQueryParametersBase> extends Q
     /**
      * Alerts if power management status failed.
      */
-    protected void AlertPowerManagementStatusFailed(String reason) {
-        Alert(AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, reason);
+    protected void alertPowerManagementStatusFailed(String reason) {
+        alert(AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, reason);
     }
 }
