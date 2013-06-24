@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -635,21 +634,6 @@ public final class Linq
         {
             TResult item = (TResult) a;
             list.add(item);
-        }
-
-        return list;
-    }
-
-    public static <T> ArrayList<T> orderByDescending(List<T> source, Comparator<T> comparer)
-    {
-        ArrayList<T> list = new ArrayList<T>();
-
-        ArrayList<T> sorted = new ArrayList<T>(source);
-        Collections.sort(sorted, comparer);
-
-        for (int i = sorted.size(); i > 0; i--)
-        {
-            list.add(sorted.get(i - 1));
         }
 
         return list;

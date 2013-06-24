@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -240,8 +241,7 @@ public class VmSnapshotListModel extends SearchableListModel
         ArrayList<Snapshot> snapshots =
                 value != null ? Linq.<Snapshot> cast(value) : new ArrayList<Snapshot>();
 
-        snapshots = Linq.orderByDescending(snapshots, new SnapshotByCreationDateCommparer());
-
+        Collections.sort(snapshots, Collections.reverseOrder(new SnapshotByCreationDateCommparer()));
         ArrayList<Snapshot> sortedSnapshots = new ArrayList<Snapshot>();
 
         for (Snapshot snapshot : snapshots) {
