@@ -12,11 +12,11 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -85,9 +85,10 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             if (!hasUpServer(getSourceCluster())) {
                 return false;
             }
+
         }
 
-        if (getTargetCluster().supportsGlusterService() && !hasUpServer(getTargetCluster())) {
+        if (getTargetCluster().supportsGlusterService() && !hasUpServerInTarget(getTargetCluster())) {
             return false;
         }
         return true;
@@ -96,8 +97,21 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     private boolean hasUpServer(VDSGroup cluster) {
         if (getClusterUtils().hasMultipleServers(cluster.getId())
                 && getClusterUtils().getUpServer(cluster.getId()) == null) {
-            addCanDoActionMessage(String.format("$clusterName %1$s", cluster.getname()));
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
+            addNoUpServerMessage(cluster);
+            return false;
+        }
+        return true;
+    }
+
+    private void addNoUpServerMessage(VDSGroup cluster) {
+        addCanDoActionMessage(String.format("$clusterName %1$s", cluster.getname()));
+        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_UP_SERVER_FOUND);
+    }
+
+    private boolean hasUpServerInTarget(VDSGroup cluster) {
+        if (getClusterUtils().hasServers(cluster.getId())
+                && getClusterUtils().getUpServer(cluster.getId()) == null) {
+            addNoUpServerMessage(cluster);
             return false;
         }
         return true;
