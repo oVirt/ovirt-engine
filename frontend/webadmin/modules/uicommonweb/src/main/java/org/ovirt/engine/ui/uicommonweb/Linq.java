@@ -640,21 +640,6 @@ public final class Linq
         return list;
     }
 
-    public static <T extends Comparable<T>> ArrayList<T> orderByDescending(List<T> source)
-    {
-        ArrayList<T> list = new ArrayList<T>();
-
-        ArrayList<T> sorted = new ArrayList<T>(source);
-        Collections.sort(sorted);
-
-        for (int i = sorted.size(); i > 0; i--)
-        {
-            list.add(sorted.get(i - 1));
-        }
-
-        return list;
-    }
-
     public static <T> ArrayList<T> orderByDescending(List<T> source, Comparator<T> comparer)
     {
         ArrayList<T> list = new ArrayList<T>();
