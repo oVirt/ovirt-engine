@@ -203,7 +203,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public TimeZoneType getTimeZoneType() {
-        int vmOsType = (Integer) getModel().getOSType().getSelectedItem();
+        // can be null as a consequence of setItems on ListModel
+        Integer vmOsType = (Integer) getModel().getOSType().getSelectedItem();
         return AsyncDataProvider.isWindowsOsType(vmOsType) ? TimeZoneType.WINDOWS_TIMEZONE
                 : TimeZoneType.GENERAL_TIMEZONE;
     }

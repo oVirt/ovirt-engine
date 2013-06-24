@@ -2920,11 +2920,21 @@ public final class AsyncDataProvider {
         return new Guid();
     }
 
-    public static boolean isWindowsOsType(int osType) {
+    public static boolean isWindowsOsType(Integer osType) {
+        // can be null as a consequence of setItems on ListModel
+        if (osType == null) {
+            return false;
+        }
+
         return windowsOsIds.contains(osType);
     }
 
-    public static boolean isLinuxOsType(int osId) {
+    public static boolean isLinuxOsType(Integer osId) {
+        // can be null as a consequence of setItems on ListModel
+        if (osId == null) {
+            return false;
+        }
+
         return linuxOsIds.contains(osId);
     }
 
@@ -2987,7 +2997,12 @@ public final class AsyncDataProvider {
         });
     }
 
-    public static String getOsName(int osId) {
+    public static String getOsName(Integer osId) {
+        // can be null as a consequence of setItems on ListModel
+        if (osId == null) {
+            return "";
+        }
+
         return osNames.get(osId);
     }
 
