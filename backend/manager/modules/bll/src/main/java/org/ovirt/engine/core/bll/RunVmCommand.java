@@ -21,8 +21,8 @@ import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
+import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
-import org.ovirt.engine.core.bll.scheduling.VdsSelector;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
@@ -49,7 +49,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -143,9 +142,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         if (getVm() != null) {
-            Guid destVdsId = (getDestinationVds() != null) ? (Guid) getDestinationVds().getId() : null;
-            setVdsSelector(new VdsSelector(getVm(), destVdsId, new VdsFreeMemoryChecker(this)));
-
             refreshBootParameters(runVmParameters);
             getVm().setLastStartTime(new Date());
 
@@ -643,9 +639,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     protected boolean getVdsToRunOn() {
         // use destination vds or default vds or none
-        List<VDS> vdsList = getVdsDAO()
-                .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode });
-        Guid vdsToRunOn = getVdsSelector().getVdsToRunOn(vdsList, getRunVdssList(), false);
+        VDS destinationVds = getDestinationVds();
+        Guid vdsToRunOn =
+                SchedulingManager.getInstance().schedule(getVdsGroup(),
+                        getVm(),
+                        getRunVdssList(),
+                        null,
+                        destinationVds == null ? null : destinationVds.getId(),
+                        new ArrayList<String>(),
+                        new VdsFreeMemoryChecker(this));
         setVdsId(vdsToRunOn);
         if (vdsToRunOn != null && !Guid.Empty.equals(vdsToRunOn)) {
             getRunVdssList().add(vdsToRunOn);
@@ -765,6 +767,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
         List<String> messages = getReturnValue().getCanDoActionMessages();
         List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
+        VDS destVds = getDestinationVds();
         boolean canDoAction =
                 getRunVmValidator().canRunVm(vm,
                         messages,
@@ -775,8 +778,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         getParameters().getDiskPath(),
                         getParameters().getFloppyPath(),
                         getParameters().getRunAsStateless(),
-                        getVdsSelector(),
-                        getRunVdssList()) &&
+                        getRunVdssList(),
+                        destVds == null ? null : destVds.getId(),
+                        getVdsGroup()) &&
                         validateNetworkInterfaces();
 
         // check for Vm Payload

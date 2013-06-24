@@ -23,7 +23,7 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
     }
 
     @Override
-    protected VDSGroup getVdsGroup() {
+    public VDSGroup getVdsGroup() {
         return getParameters().getVdsGroup();
     }
 

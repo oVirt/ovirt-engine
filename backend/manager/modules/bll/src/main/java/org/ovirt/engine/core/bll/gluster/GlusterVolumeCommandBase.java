@@ -27,7 +27,7 @@ public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters
     }
 
     @Override
-    protected VDSGroup getVdsGroup() {
+    public VDSGroup getVdsGroup() {
         if (getGlusterVolume() != null) {
             setVdsGroupId(getGlusterVolume().getClusterId());
         }

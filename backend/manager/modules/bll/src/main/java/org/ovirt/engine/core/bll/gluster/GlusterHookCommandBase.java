@@ -28,7 +28,7 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
     }
 
     @Override
-    protected VDSGroup getVdsGroup() {
+    public VDSGroup getVdsGroup() {
         if (getGlusterHook() != null) {
             setVdsGroupId(getGlusterHook().getClusterId());
         }

@@ -22,7 +22,7 @@ public abstract class VdsGroupCommandBase<T extends VdsGroupParametersBase> exte
     }
 
     @Override
-    protected VDSGroup getVdsGroup() {
+    public VDSGroup getVdsGroup() {
         if (_vdsGroup == null) {
             _vdsGroup = getVdsGroupDAO().get(getParameters().getVdsGroupId());
         }

@@ -16,7 +16,6 @@ import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
-import org.ovirt.engine.core.bll.scheduling.VdsSelector;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -52,7 +51,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
 
     private static Log log = LogFactory.getLog(RunVmCommandBase.class);
     protected static final HashMap<Guid, Integer> _vds_pending_vm_count = new HashMap<Guid, Integer>();
-    private VdsSelector privateVdsSelector;
     protected boolean _isRerun = false;
     protected VDS _destinationVds;
     private SnapshotsValidator snapshotsValidator=new SnapshotsValidator();
@@ -67,14 +65,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     protected abstract VDS getDestinationVds();
-
-    protected VdsSelector getVdsSelector() {
-        return privateVdsSelector;
-    }
-
-    protected void setVdsSelector(VdsSelector value) {
-        privateVdsSelector = value;
-    }
 
     public SnapshotsValidator getSnapshotsValidator() {
         return snapshotsValidator;

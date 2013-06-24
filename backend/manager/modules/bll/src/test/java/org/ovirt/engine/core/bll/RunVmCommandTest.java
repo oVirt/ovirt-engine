@@ -28,7 +28,6 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.bll.scheduling.VdsSelector;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.action.RunVmParams;
@@ -38,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
@@ -320,11 +320,10 @@ public class RunVmCommandTest {
         final VM vm = new VM();
         vm.setStatus(VMStatus.Down);
         doReturn(new StoragePool()).when(command).getStoragePool();
-        VdsSelector vdsSelector = mock(VdsSelector.class);
-        doReturn(vdsSelector).when(command).getVdsSelector();
         doReturn(vm).when(command).getVm();
         doReturn(true).when(command).validateNetworkInterfaces();
         doReturn(true).when(command).checkPayload(any(VmPayload.class), anyString());
+        doReturn(new VDSGroup()).when(command).getVdsGroup();
         assertTrue(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
     }
@@ -363,8 +362,9 @@ public class RunVmCommandTest {
                 anyString(),
                 anyString(),
                 anyBoolean(),
-                any(VdsSelector.class),
-                Matchers.anyListOf(Guid.class))).thenReturn(true);
+                Matchers.anyListOf(Guid.class),
+                any(Guid.class),
+                any(VDSGroup.class))).thenReturn(true);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }

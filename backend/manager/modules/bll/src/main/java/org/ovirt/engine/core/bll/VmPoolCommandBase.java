@@ -5,9 +5,6 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.scheduling.NonWaitingDelayer;
-import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
-import org.ovirt.engine.core.bll.scheduling.VdsSelector;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -22,11 +19,14 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
+import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -213,7 +213,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     protected static boolean canRunPoolVm(Guid vmId, ArrayList<String> messages) {
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
-
+        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vm.getVdsGroupId());
         if (vm == null) {
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.name());
             return false;
@@ -224,11 +224,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         VmHandler.updateNetworkInterfacesFromDb(vm);
 
         RunVmParams runVmParams = new RunVmParams(vmId);
-        VdsSelector vdsSelector =
-                new VdsSelector(vm,
-                        runVmParams.getDestinationVdsId() != null ?
-                                runVmParams.getDestinationVdsId() : vm.getDedicatedVmForVds(),
-                        new VdsFreeMemoryChecker(new NonWaitingDelayer()));
+        runVmParams.setUseVnc(OsRepositoryImpl.INSTANCE.isLinux(vm.getVmOsId()) || vm.getVmType() == VmType.Server);
 
         return getRunVmValidator().canRunVm(vm,
                 messages,
@@ -239,8 +235,9 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
                 runVmParams.getDiskPath(),
                 runVmParams.getFloppyPath(),
                 runVmParams.getRunAsStateless(),
-                vdsSelector,
-                new ArrayList<Guid>());
+                new ArrayList<Guid>(),
+                null,
+                vdsGroup);
     }
 
     private static DiskDao getDiskDao() {

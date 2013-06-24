@@ -13,7 +13,7 @@ import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.bll.scheduling.VdsSelector;
+import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -26,8 +26,8 @@ import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -354,8 +354,9 @@ public class RunVmValidator {
             String diskPath,
             String floppyPath,
             Boolean runAsStateless,
-            VdsSelector vdsSelector,
-            List<Guid> vdsBlackList) {
+            List<Guid> vdsBlackList,
+            Guid destVds,
+            VDSGroup vdsGroup) {
         if (!validateVmProperties(vm, messages)) {
             return false;
         }
@@ -406,10 +407,12 @@ public class RunVmValidator {
                 return false;
             }
         }
-        if (!vdsSelector.canFindVdsToRunOn(getVdsDao().getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }),
+        if (!SchedulingManager.getInstance().canSchedule(vdsGroup,
+                vm,
                 vdsBlackList,
-                messages,
-                false)) {
+                null,
+                destVds,
+                messages)) {
             return false;
         }
         result = validateVmStatusUsingMatrix(vm);

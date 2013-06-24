@@ -404,7 +404,7 @@ public class AuditLogableBase extends TimeoutBase {
         mVdsGroupId = value;
     }
 
-    protected VDSGroup getVdsGroup() {
+    public VDSGroup getVdsGroup() {
         if (mVdsGroup == null) {
             if (mVdsGroupId != null) {
                 mVdsGroup = getVdsGroupDAO().get(mVdsGroupId);

@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
-import org.ovirt.engine.core.bll.scheduling.VdsSelector;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -14,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -40,7 +40,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     public MigrateVmCommand(T parameters) {
         super(parameters);
-        setVdsSelector(new VdsSelector(getVm(), getVdsDestinationId(), new VdsFreeMemoryChecker(this)));
         forcedMigrationForNonMigratableVM = parameters.isForceMigrationForNonMigratableVM();
     }
 
@@ -83,8 +82,15 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     protected void initVdss() {
         setVdsIdRef(new Guid(getVm().getRunOnVds().toString()));
-        Guid vdsToRunOn = getVdsSelector().getVdsToRunOn(getVdsDAO()
-                .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }), getRunVdssList(), true);
+        VDS destVds = getDestinationVds();
+        Guid vdsToRunOn =
+                SchedulingManager.getInstance().schedule(getVdsGroup(),
+                        getVm(),
+                        getRunVdssList(),
+                        getParameters().getInitialHosts(),
+                        destVds == null ? null : destVds.getId(),
+                        new ArrayList<String>(),
+                        new VdsFreeMemoryChecker(this));
         setVdsDestinationId(vdsToRunOn);
         if (vdsToRunOn != null && !Guid.Empty.equals(vdsToRunOn)) {
             getRunVdssList().add(vdsToRunOn);
@@ -269,11 +275,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 // This check was added to prevent migration of VM while its disks are being migrated
                 // TODO: replace it with a better solution
                 && validate(new DiskImagesValidator(ImagesHandler.getPluggedImagesForVm(vm.getId())).diskImagesNotLocked())
-                && getVdsSelector().canFindVdsToRunOn(getVdsDAO()
-                        .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode }),
+                && SchedulingManager.getInstance().canSchedule(getVdsGroup(),
+                        getVm(),
                         getRunVdssList(),
-                        getReturnValue().getCanDoActionMessages(),
-                        true);
+                        getParameters().getInitialHosts(),
+                        getVdsDestinationId(),
+                        getReturnValue().getCanDoActionMessages());
     }
 
     @Override

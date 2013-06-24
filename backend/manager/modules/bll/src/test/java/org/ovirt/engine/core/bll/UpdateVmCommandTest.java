@@ -97,7 +97,7 @@ public class UpdateVmCommandTest {
 
         command = spy(new UpdateVmCommand<VmManagementParametersBase>(params) {
             @Override
-            protected VDSGroup getVdsGroup() {
+            public VDSGroup getVdsGroup() {
                 return group;
             }
         });
