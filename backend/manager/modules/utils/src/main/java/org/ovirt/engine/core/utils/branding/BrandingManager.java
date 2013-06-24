@@ -68,8 +68,17 @@ public class BrandingManager {
         /**
          * Instance of the BrandingManager.
          */
-        static final BrandingManager instance =
-                new BrandingManager(EngineLocalConfig.getInstance().getEtcDir());
+        static final BrandingManager instance;
+
+        static {
+            File etcDir;
+            try {
+                etcDir = EngineLocalConfig.getInstance().getEtcDir();
+            } catch (IllegalArgumentException iae) {
+                etcDir = new File(""); // Can't find etcDir, most likely unit tests, pretend there is no branding.
+            }
+            instance = new BrandingManager(etcDir);
+        }
     }
 
     /**
