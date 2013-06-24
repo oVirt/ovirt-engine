@@ -108,30 +108,8 @@ OUTPUT_DIR=output
 TARBALL=$(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz
 ARCH=noarch
 BUILD_FILE=tmp.built
-MAVEN_OUTPUT_DIR_DEFAULT=$(shell pwd -P)/tmp.repos
-MAVEN_OUTPUT_DIR=$(MAVEN_OUTPUT_DIR_DEFAULT)
-BUILD_TARGET=deploy
-
-ARTIFACTS = \
-	backend \
-	bll \
-	common \
-	compat \
-	dal \
-	tools \
-	interface-common-jaxrs \
-	manager \
-	manager-modules \
-	restapi-definition \
-	restapi-jaxrs \
-	restapi-parent \
-	restapi-types \
-	root \
-	scheduler \
-	searchbackend \
-	utils \
-	vdsbroker \
-	$(NULL)
+MAVEN_OUTPUT_DIR=.
+BUILD_TARGET=install
 
 # Don't use any of the bultin rules, in particular don't use the rule
 # for .sh files, as that means that we can't generate .sh files from
@@ -202,20 +180,21 @@ generated-files:	$(GENERATED)
 	chmod a+x packaging/services/ovirt-engine-notifier.sysv
 	chmod a+x packaging/services/ovirt-websocket-proxy.sysv
 
-$(BUILD_FILE):
-	-[ "$(MAVEN_OUTPUT_DIR_DEFAULT)" = "$(MAVEN_OUTPUT_DIR)" ] && rm -fr "$(MAVEN_OUTPUT_DIR)"
+# support force run of maven
+maven:
 	export MAVEN_OPTS="${MAVEN_OPTS} -XX:MaxPermSize=512m"
 	$(MVN) \
 		$(BUILD_FLAGS) \
-		-D altDeploymentRepository=install::default::file://$(MAVEN_OUTPUT_DIR) \
 		$(BUILD_TARGET)
 	touch "$(BUILD_FILE)"
+
+$(BUILD_FILE):
+	$(MAKE) maven
 
 clean:
 	# Clean maven generated stuff:
 	$(MVN) clean $(EXTRA_BUILD_FLAGS)
 	rm -rf $(OUTPUT_RPMBUILD) $(OUTPUT_DIR) $(BUILD_FILE)
-	-[ "$(MAVEN_OUTPUT_DIR_DEFAULT)" = "$(MAVEN_OUTPUT_DIR)" ] && rm -fr "$(MAVEN_OUTPUT_DIR)"
 
 	# Clean files generated from templates:
 	rm -rf $(GENERATED)
@@ -227,6 +206,7 @@ install: \
 	all \
 	create_dirs \
 	install_artifacts \
+	install_poms \
 	install_config \
 	install_sysprep \
 	install_db_scripts \
@@ -234,7 +214,6 @@ install: \
 	install_misc \
 	install_sec \
 	install_aio_plugin \
-	install_jboss_modules \
 	install_service \
 	install_notification_service \
 	$(NULL)
@@ -301,23 +280,36 @@ create_dirs:
 	@install -dm 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/engine-manage-domains"
 
 install_artifacts:
-	@echo "*** Deploying EAR to $(DESTDIR)"
-	install -dm 755 "$(DESTDIR)$(PKG_EAR_DIR)"
-	install -dm 755 "$(DESTDIR)$(MAVENPOM_DIR)"
+	# we must exclude tmp.repos directory so we
+	# won't get artifacts of older branches
+	# we should use search MAVEN_OUTPUT_DIR as it may contain
+	# pre-compiled artifacts at different hierarchy.
+	find "$(MAVEN_OUTPUT_DIR)" -name '*-modules.zip' | grep -v tmp.repos | xargs -n 1 unzip -q -o -d "$(DESTDIR)$(PKG_JBOSS_MODULES)"
+	find "$(MAVEN_OUTPUT_DIR)" -name '*.ear' -type f | grep -v tmp.repos | xargs -n 1 unzip -q -o -d "$(DESTDIR)$(PKG_EAR_DIR)"
 
-	X=`find "$(MAVEN_OUTPUT_DIR)" -name 'engine-server-ear-$(POM_VERSION)*'.ear` && unzip -o "$$X" -d "$(DESTDIR)$(PKG_EAR_DIR)"
-
-	for artifact_id in  $(ARTIFACTS); do \
-		POM=`find "$(MAVEN_OUTPUT_DIR)" -name "$${artifact_id}-$(POM_VERSION)*.pom"`; \
-		if ! [ -f "$${POM}" ]; then \
-			echo "ERROR: Cannot find artifact $${artifact_id}"; \
-			exit 1; \
-		fi; \
-		JAR=`echo "$${POM}" | sed 's/\.pom/.jar/'`; \
-		install -p -m 644 "$${POM}" "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-$${artifact_id}.pom"; \
-	done
-
+	# TODO: remove some day
 	sed -i "s/MYVERSION/$(DISPLAY_VERSION)/" "$(DESTDIR)$(PKG_EAR_DIR)/root.war/engineVersion.js"
+
+install_poms:
+	install -dm 755 "$(DESTDIR)$(MAVENPOM_DIR)"
+	install -m 644 backend/manager/modules/bll/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-bll.pom"
+	install -m 644 backend/manager/modules/common/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-common.pom"
+	install -m 644 backend/manager/modules/compat/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-compat.pom"
+	install -m 644 backend/manager/modules/dal/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-dal.pom"
+	install -m 644 backend/manager/modules/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-manager-modules.pom"
+	install -m 644 backend/manager/modules/restapi/interface/common/jaxrs/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-interface-common-jaxrs.pom"
+	install -m 644 backend/manager/modules/restapi/interface/definition/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-restapi-definition.pom"
+	install -m 644 backend/manager/modules/restapi/jaxrs/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-restapi-jaxrs.pom"
+	install -m 644 backend/manager/modules/restapi/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-restapi-parent.pom"
+	install -m 644 backend/manager/modules/restapi/types/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-restapi-types.pom"
+	install -m 644 backend/manager/modules/scheduler/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-scheduler.pom"
+	install -m 644 backend/manager/modules/searchbackend/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-searchbackend.pom"
+	install -m 644 backend/manager/modules/utils/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-utils.pom"
+	install -m 644 backend/manager/modules/vdsbroker/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-vdsbroker.pom"
+	install -m 644 backend/manager/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-manager.pom"
+	install -m 644 backend/manager/tools/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-tools.pom"
+	install -m 644 backend/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-backend.pom"
+	install -m 644 pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-root.pom"
 
 install_setup:
 	@echo "*** Deploying setup executables"
@@ -497,13 +489,6 @@ install_misc:
 
 	# Create a version file
 	echo "$(DISPLAY_VERSION)" > "$(DESTDIR)$(DATA_DIR)/conf/version"
-
-install_jboss_modules:
-	@echo "*** Deploying JBoss modules"
-
-	# Uncompress and install the contents of the modules archives to
-	# the directory containing engine modules:
-	find "$(MAVEN_OUTPUT_DIR)" -name "*-$(POM_VERSION)*-modules.zip" -exec unzip -o {} -d "$(DESTDIR)$(PKG_JBOSS_MODULES)" \;
 
 install_service:
 	@echo "*** Deploying service"

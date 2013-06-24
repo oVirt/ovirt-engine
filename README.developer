@@ -78,6 +78,7 @@ clean           Clean project.
 all-dev         Build project for development.
 install-dev     Install a development environment at PREFIX.
 dist            Create source tarball out of git repository.
+maven           Force execution of maven.
 
 BUILD CUSTOMIZATION
 
@@ -198,7 +199,7 @@ $ PGPASSWORD=engine \
 
 Run build as:
 
-$ make BUILD_TEST_FLAGS="-P enable-dao-tests \
+$ make maven BUILD_GWT=0 BUILD_UT=1 EXTRA_BUILD_FLAGS="-P enable-dao-tests \
     -D engine.db.username=engine \
     -D engine.db.password=engine \
     -D engine.db.url=jdbc:postgresql://localhost/engine_dao"
