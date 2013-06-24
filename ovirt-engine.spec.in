@@ -364,6 +364,12 @@ Requires(postun): systemd
 %systemd_preun ovirt-websocket-proxy.service
 %endif
 
+%if %{install_systemv}
+if [ $1 -eq 0 ] ; then
+    service ovirt-websocket-proxy stop > /dev/null 2>&1 || true
+fi
+%endif
+
 
 %package setup-plugin-allinone
 Summary: All-in-one plugin for %{product_name_short}'s setup

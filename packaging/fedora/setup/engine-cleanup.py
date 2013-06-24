@@ -448,6 +448,12 @@ def stopNotifier():
         if notifier.available():
             notifier.stop(True)
 
+def stopWebSocketProxy():
+    logging.debug("stoping websocket proxy service.")
+
+    proxy = utils.Service(basedefs.WEBSOCKET_PROXY_SERVICE_NAME)
+    proxy.stop(True)
+
 def runFunc(funcs, dispString):
     sys.stdout.write("%s..." % dispString)
     sys.stdout.flush()
@@ -514,8 +520,8 @@ def main(options):
     runFunc(clearProxyConfig, MSG_INFO_CLEANING_PROXY)
 
 
-    # Stop notifierd service
-    runFunc(stopNotifier, MSG_INFO_STOP_NOTIFIERD)
+    # Stop other services
+    runFunc([stopNotifier, stopWebSocketProxy], MSG_INFO_STOP_NOTIFIERD)
 
     # Clean NFS exports
     runFunc(cleanNFSExports, MSG_INFO_CLEANING_NFS)

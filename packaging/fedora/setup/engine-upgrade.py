@@ -87,8 +87,10 @@ MSG_ERROR_RPM_QUERY = "Error: Unable to retrieve rpm versions"
 MSG_ERROR_CHECK_LOG = "Error: Upgrade failed.\nplease check log at %s"
 MSG_ERROR_CONNECT_DB = "Error: Failed to connect to database"
 MSG_ERR_FAILED_START_ENGINE_SERVICE = "Error: Can't start ovirt-engine"
+MSG_ERR_FAILED_START_WEBSOCKET_PROXYSERVICE = "Error: Can't start websocket proxy"
 MSG_ERR_FAILED_ENGINE_SERVICE_STILL_RUN = "Error: Can't stop ovirt-engine service. Please shut it down manually."
 MSG_ERR_FAILED_STOP_ENGINE_SERVICE = "Error: Can't stop ovirt-engine"
+MSG_ERR_FAILED_STOP_WEBSOCKET_PROXY_SERVICE = "Error: Can't stop websocket proxy"
 MSG_ERR_FAILED_STATUS_ENGINE_SERVICE = "Error: Can't get ovirt-engine service status"
 MSG_ERR_FAILED_START_SERVICE = "Error: Can't start the %s service"
 MSG_ERR_FAILED_STOP_SERVICE = "Error: Can't stop the %s service"
@@ -666,12 +668,26 @@ def stopEngine(service=basedefs.ENGINE_SERVICE_NAME):
     ]
     output, rc = utils. execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_STOP_ENGINE_SERVICE)
 
+def stopWebSocketProxy():
+    logging.debug("stopping websocket-proxy service.")
+    cmd = [
+        basedefs.EXEC_SERVICE, basedefs.WEBSOCKET_PROXY_SERVICE_NAME, "stop",
+    ]
+    utils. execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_STOP_WEBSOCKET_PROXY_SERVICE)
+
 def startEngine(service=basedefs.ENGINE_SERVICE_NAME):
     logging.debug("starting %s service.", service)
     cmd = [
         basedefs.EXEC_SERVICE, service, "start",
     ]
     output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_START_ENGINE_SERVICE)
+
+def startWebSocketProxy():
+    logging.debug("starting websocket-proxy service.")
+    cmd = [
+        basedefs.EXEC_SERVICE, basedefs.WEBSOCKET_PROXY_SERVICE_NAME, "start",
+    ]
+    output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_START_WEBSOCKET_PROXYSERVICE)
 
 def runPost():
     logging.debug("Running post script")
@@ -1348,8 +1364,8 @@ def main(options):
 
     # Functions/parameters definitions
     currentDbName = basedefs.DB_NAME
-    stopEngineService = [stopEngine]
-    startEngineService = [startEngine]
+    stopEngineService = [stopEngine, stopWebSocketProxy]
+    startEngineService = [startEngine, startWebSocketProxy]
     preupgradeFunc = [preupgradeUUIDCheck]
     upgradeFunc = [
         rhyum.update,
@@ -1537,7 +1553,7 @@ def main(options):
 
     finally:
         # start engine after the rollback
-        runFunc([startEngine], MSG_INFO_START_ENGINE % engineService)
+        runFunc(startEngineService, MSG_INFO_START_ENGINE % engineService)
 
     cmd = [ basedefs.EXEC_LOG_SETUP_EVENT, "--notes=End of engine-upgrade (monolithic)" ]
     utils.execCmd(cmdList=cmd, failOnError=False)

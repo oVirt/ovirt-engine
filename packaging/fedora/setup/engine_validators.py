@@ -377,6 +377,12 @@ def validatePing(param, options=[]):
     print "\n" + output_messages.ERR_PING + ".\n"
     return False
 
+def validateWebSocketProxy(param, options=[]):
+    param['CONFIG_WEBSOCKET_PROXY'] = "no"
+    ret = utils.Service('ovirt-websocket-proxy').available()
+    logging.debug("validateWebSocketProxy %s", ret)
+    return ret
+
 def _checkDbConnection(dbAdminUser, dbHost, dbPort):
     """ _checkDbConnection checks connection to the DB"""
 

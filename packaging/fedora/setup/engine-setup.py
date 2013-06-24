@@ -158,6 +158,12 @@ def initSequences():
                         'steps'           : [ { 'title'     : output_messages.INFO_UPD_CONF % "Postgresql",
                                                 'functions' : [editPostgresConf] } ]
                        },
+                      { 'description'     : 'Config WebSocket Proxy',
+                        'condition'       : [utils.compareStrIgnoreCase, controller.CONF["CONFIG_WEBSOCKET_PROXY"], "yes"],
+                        'condition_match' : [True],
+                        'steps'           : [ { 'title'     : output_messages.INFO_CFG_WEBSOCKET_PROXY,
+                                                'functions' : [_configWebSocketProxy] } ]
+                       },
                       { 'description'     : 'Config NFS',
                         'condition'       : [utils.compareStrIgnoreCase, controller.CONF["CONFIG_NFS"], "yes"],
                         'condition_match' : [True],
@@ -434,6 +440,20 @@ def initConfig():
                 "USE_DEFAULT"     : False,
                 "NEED_CONFIRM"    : False,
                 "CONDITION"       : False},]
+           ,
+           "WEBSOCKET_PROXY": [
+             {  "CMD_OPTION"      :"config-websocket-proxy",
+                "USAGE"           :output_messages.INFO_CONF_PARAMS_CONFIG_WEBSOCKET_PROXY_USAGE,
+                "PROMPT"          :output_messages.INFO_CONF_PARAMS_CONFIG_WEBSOCKET_PROXY_PROMPT,
+                "OPTION_LIST"     :["yes","no"],
+                "VALIDATION_FUNC" :validate.validateOptions,
+                "DEFAULT_VALUE"   :"yes",
+                "MASK_INPUT"      : False,
+                "LOOSE_VALIDATION": False,
+                "CONF_NAME"       : "CONFIG_WEBSOCKET_PROXY",
+                "USE_DEFAULT"     : False,
+                "NEED_CONFIRM"    : False,
+                "CONDITION"       : False} ]
           ,
           "NFS": [
              {  "CMD_OPTION"      :"nfs-mp",
@@ -507,6 +527,12 @@ def initConfig():
                       "DESCRIPTION"           : output_messages.INFO_GRP_LOCAL_DB,
                       "PRE_CONDITION"         : validate.validateRemoteHost,
                       "PRE_CONDITION_MATCH"   : False,
+                      "POST_CONDITION"        : False,
+                      "POST_CONDITION_MATCH"  : True},
+                    { "GROUP_NAME"            : "WEBSOCKET_PROXY",
+                      "DESCRIPTION"           : output_messages.INFO_GRP_WEBSOCKET_PROXY,
+                      "PRE_CONDITION"         : validate.validateWebSocketProxy,
+                      "PRE_CONDITION_MATCH"   : True,
                       "POST_CONDITION"        : False,
                       "POST_CONDITION_MATCH"  : True},
                     { "GROUP_NAME"            : "NFS",
@@ -915,6 +941,8 @@ def _configFirewall():
     # Create Sample configuration files
     _createIptablesConfig()
     firewalld_services = ['ovirt-http', 'ovirt-https']
+    if utils.compareStrIgnoreCase(controller.CONF['CONFIG_WEBSOCKET_PROXY'], 'yes'):
+        firewalld_services.append('ovirt-websocket-proxy')
     if utils.compareStrIgnoreCase(controller.CONF['CONFIG_NFS'], 'yes'):
         firewalld_services.append('ovirt-nfs')
     if basedefs.CONST_CONFIG_EXTRA_FIREWALLD_RULES in controller.CONF:
@@ -963,7 +991,8 @@ def _createFirewalldConfig(services):
     logging.debug("Creating firewalld configuration")
     services_config = {
         '@HTTP_PORT@': controller.CONF['HTTP_PORT'],
-        '@HTTPS_PORT@': controller.CONF['HTTPS_PORT']
+        '@HTTPS_PORT@': controller.CONF['HTTPS_PORT'],
+        '@WEBSOCKET_PROXY@': basedefs.CONST_WEBSOCKET_PORXY_PORT,
     }
     for service in services:
         template_file = glob.glob(
@@ -1021,6 +1050,12 @@ def _createIptablesConfig():
         for port in [controller.CONF["HTTP_PORT"], controller.CONF["HTTPS_PORT"]]:
             ports.append({
                 'port': port,
+                'protocol': ['tcp']
+            })
+
+        if utils.compareStrIgnoreCase(controller.CONF["CONFIG_WEBSOCKET_PROXY"], "yes"):
+            ports.append({
+                'port': basedefs.CONST_WEBSOCKET_PORXY_PORT,
                 'protocol': ['tcp']
             })
 
@@ -1801,6 +1836,57 @@ def _configNfsShare():
     except:
         logging.error(traceback.format_exc())
         raise Exception(output_messages.ERR_FAILED_CFG_NFS_SHARE)
+
+def _configWebSocketProxy():
+    utils.execCmd(
+        cmdList=(
+            os.path.join(basedefs.DIR_ENGINE_BIN, "pki-enroll-pkcs12.sh"),
+            "--name=%s" % 'websocket-proxy',
+            "--password=%s" % basedefs.CONST_CA_PASS,
+            "--subject=/C=%s/O=%s/CN=%s" % (
+                basedefs.CONST_CA_COUNTRY,
+                controller.CONF["ORG_NAME"],
+                controller.CONF["HOST_FQDN"],
+            ),
+        ),
+        failOnError=True,
+        msg=output_messages.ERR_RC_CODE,
+        maskList=[basedefs.CONST_CA_PASS],
+    )
+    cmd = [
+        basedefs.EXEC_OPENSSL,
+        "pkcs12",
+        "-in", basedefs.FILE_WEBSOCKET_PROXY_KEYSTORE,
+        "-passin", "pass:" + basedefs.CONST_KEY_PASS,
+        "-nodes",
+        "-nocerts",
+        "-out", basedefs.FILE_WEBSOCKET_PROXY_PRIVATE_KEY
+    ]
+    out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_RC_CODE, maskList=[basedefs.CONST_KEY_PASS])
+    os.chmod(basedefs.FILE_WEBSOCKET_PROXY_PRIVATE_KEY, 0600)
+    utils.chownToEngine(basedefs.FILE_WEBSOCKET_PROXY_PRIVATE_KEY)
+
+    with open(basedefs.FILE_WEBSOCKET_PROXY_CONF, 'w') as f:
+        f.write(
+            (
+                "PROXY_PORT={port}\n"
+                "SSL_CERTIFICATE={certificate}\n"
+                "SSL_KEY={key}\n"
+                "FORCE_DATA_VERIFICATION=True\n"
+                "CERT_FOR_DATA_VERIFICATION={engine_cert}\n"
+                "SSL_ONLY=True\n"
+            ).format(
+                port=basedefs.CONST_WEBSOCKET_PORXY_PORT,
+                certificate=basedefs.FILE_WEBSOCKET_PROXY_CERT,
+                key=basedefs.FILE_WEBSOCKET_PROXY_PRIVATE_KEY,
+                engine_cert=basedefs.FILE_ENGINE_CERT,
+            )
+        )
+
+    utils.updateVDCOption("WebSocketProxy", "Engine:%s" % basedefs.CONST_WEBSOCKET_PORXY_PORT)
+    service = utils.Service(basedefs.WEBSOCKET_PROXY_SERVICE_NAME)
+    service.start()
+    service.autoStart()
 
 def setMaxSharedMemory():
     """

@@ -72,6 +72,7 @@ class FileLocations(object):
     OVIRT_ENGINE_LOCALSTATEDIR = config.ENGINE_LOCALSTATEDIR
     OVIRT_ENGINE_TMPDIR = config.ENGINE_TMP
     OVIRT_ENGINE_SERVICE_CONFIG = config.ENGINE_SERVICE_CONFIG
+    OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIG = config.ENGINE_WEBSOCKET_PROXY_CONFIG
     OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIG = \
         config.ENGINE_NOTIFIER_SERVICE_CONFIG
 
@@ -192,6 +193,14 @@ class FileLocations(object):
         OVIRT_ENGINE_PKIKEYSDIR,
         'apache.key.nopass',
     )
+    OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_STORE = os.path.join(
+        OVIRT_ENGINE_PKIKEYSDIR,
+        'websocket-proxy.p12',
+    )
+    OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_KEY = os.path.join(
+        OVIRT_ENGINE_PKIKEYSDIR,
+        'websocket-proxy.key.nopass',
+    )
     OVIRT_ENGINE_PKI_JBOSS_STORE = os.path.join(
         OVIRT_ENGINE_PKIKEYSDIR,
         'jboss.p12',
@@ -207,6 +216,10 @@ class FileLocations(object):
     OVIRT_ENGINE_PKI_APACHE_CERT = os.path.join(
         OVIRT_ENGINE_PKICERTSDIR,
         'apache.cer',
+    )
+    OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_CERT = os.path.join(
+        OVIRT_ENGINE_PKICERTSDIR,
+        'websocket-proxy.cer',
     )
     OVIRT_ENGINE_PKI_ENGINE_TRUST_STORE = os.path.join(
         OVIRT_ENGINE_PKIDIR,
@@ -251,6 +264,14 @@ class FileLocations(object):
     OVIRT_ENGINE_SERVICE_CONFIG_PKI = os.path.join(
         OVIRT_ENGINE_SERVICE_CONFIGD,
         '10-setup-pki.conf',
+    )
+
+    OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIGD = (
+        '%s.d' % OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIG
+    )
+    OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIG_SETUP = os.path.join(
+        OVIRT_ENGINE_WEBSOCKET_PROXY_CONFIGD,
+        '10-setup.conf',
     )
 
     OVIRT_ENGINE_NOTIFIER_SERVICE_CONFIGD = (
@@ -403,6 +424,7 @@ class Defaults(object):
     DEFAULT_NETWORK_JBOSS_HTTPS_PORT = 8443
     DEFAULT_NETWORK_JBOSS_AJP_PORT = 8702
     DEFAULT_NETWORK_JBOSS_DEBUG_ADDRESS = '127.0.0.1:8787'
+    DEFAULT_WEBSOCKET_PROXY_PORT = 6100
 
     DEFAULT_CONFIG_APPLICATION_MODE = 'Both'
     DEFAULT_CONFIG_STORAGE_TYPE = 'NFS'
@@ -498,6 +520,7 @@ class Const(object):
     USER_ADMIN = 'admin'
     DOMAIN_INTERNAL = 'internal'
     ENGINE_SERVICE_NAME = 'ovirt-engine'
+    WEBSOCKET_PROXY_SERVICE_NAME = 'ovirt-websocket-proxy'
     PKI_PASSWORD = 'mypass'
     DEFAULT_CLUSTER_ID = '99408929-82CF-4DC7-A532-9D998063FA95'
     MINIMUM_SPACE_ISODOMAIN_MB = 350
@@ -719,6 +742,7 @@ class ConfigEnv(object):
     JBOSS_HTTPS_PORT = 'OVESETUP_CONFIG/jbossHttpsPort'
     JBOSS_AJP_PORT = 'OVESETUP_CONFIG/jbossAjpPort'
     JBOSS_DEBUG_ADDRESS = 'OVESETUP_CONFIG/jbossDebugAddress'
+    WEBSOCKET_PROXY_PORT = 'OVESETUP_CONFIG/websocketProxyPort'
 
     MAC_RANGE_POOL = 'OVESETUP_CONFIG/macRangePool'
 
@@ -801,6 +825,14 @@ class ConfigEnv(object):
 
     FQDN_REVERSE_VALIDATION = 'OVESETUP_CONFIG/fqdnReverseValidation'
     FQDN_NON_LOOPBACK_VALIDATION = 'OVESETUP_CONFIG/fqdnNonLoopback'
+
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('Configure WebSocket Proxy'),
+    )
+    def WEBSOCKET_PROXY_CONFIG(self):
+        return 'OVESETUP_CONFIG/websocketProxyConfig'
 
 
 @util.export

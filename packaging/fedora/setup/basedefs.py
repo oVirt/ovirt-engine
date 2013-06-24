@@ -21,6 +21,7 @@ HTTPD_SERVICE_NAME="httpd"
 HTTP_PORT_POLICY="http_port_t"
 NOTIFIER_SERVICE_NAME = "ovirt-engine-notifier"
 NOTIFIER_SERVICE_OLD_NAME = "engine-notifierd"
+WEBSOCKET_PROXY_SERVICE_NAME = "ovirt-websocket-proxy"
 ETL_SERVICE_NAME = "ovirt-engine-dwhd"
 PGPASS_FILE_HEADER_LINE = "# This section was created during %s setup.\n\
 # DO NOT CHANGE IT MANUALLY - OTHER UTILITIES AND TOOLS DEPEND ON ITS STRUCTURE." % APP_NAME
@@ -79,6 +80,7 @@ FILE_CA_CRT_TEMPLATE="%s/cacert.template"%(DIR_OVIRT_PKI)
 FILE_CERT_TEMPLATE="%s/cert.template"%(DIR_OVIRT_PKI)
 FILE_ENGINE_CERT="%s/certs/engine.cer"%(DIR_OVIRT_PKI)
 FILE_APACHE_CERT="%s/certs/apache.cer"%(DIR_OVIRT_PKI)
+FILE_WEBSOCKET_PROXY_CERT="%s/certs/websocket-proxy.cer"%(DIR_OVIRT_PKI)
 FILE_JBOSSAS_CONF="/etc/%s/%s.conf" % (ENGINE_SERVICE_NAME, ENGINE_SERVICE_NAME)
 FILE_DB_INSTALL_SCRIPT="engine-db-install.sh"
 FILE_DB_UPGRADE_SCRIPT="upgrade.sh"
@@ -97,7 +99,9 @@ FILE_TRUSTSTORE="%s/.truststore"%(DIR_OVIRT_PKI)
 FILE_ENGINE_KEYSTORE="%s/keys/engine.p12"%(DIR_OVIRT_PKI)
 FILE_APACHE_KEYSTORE="%s/keys/apache.p12"%(DIR_OVIRT_PKI)
 FILE_JBOSS_KEYSTORE="%s/keys/jboss.p12"%(DIR_OVIRT_PKI)
+FILE_WEBSOCKET_PROXY_KEYSTORE="%s/keys/websocket-proxy.p12"%(DIR_OVIRT_PKI)
 FILE_APACHE_PRIVATE_KEY="%s/keys/apache.key.nopass"%(DIR_OVIRT_PKI)
+FILE_WEBSOCKET_PROXY_PRIVATE_KEY="%s/keys/websocket-proxy.key.nopass"%(DIR_OVIRT_PKI)
 FILE_SSH_PRIVATE_KEY="%s/keys/engine_id_rsa"%(DIR_OVIRT_PKI)
 FILE_YUM_VERSION_LOCK="/etc/yum/pluginconf.d/versionlock.list"
 FILE_PSQL_CONF="/var/lib/pgsql/data/postgresql.conf"
@@ -159,6 +163,9 @@ FILE_ENGINE_NOTIFIER_CONFIG_JBOSS = '%s/10-setup-jboss.conf missing' % DIR_ENGIN
 # engine goes back into normal mode once the upgrade is finished:
 FILE_ENGINE_CONF_MAINTENANCE="%s/99-maintenance.conf" % DIR_ENGINE_CONF
 
+DIR_WEBSOCKET_PROXY_CONF = "/etc/ovirt-engine/ovirt-websocket-proxy.conf.d"
+FILE_WEBSOCKET_PROXY_CONF = "%s/10-setup.conf" % DIR_WEBSOCKET_PROXY_CONF
+
 # ISO FILES
 VIRTIO_WIN_FILE_LIST = [
     "/usr/share/virtio-win/virtio-win_x86.vfd",
@@ -218,6 +225,7 @@ EXEC_LOG_SETUP_EVENT = "%s/ovirt-engine-log-setup-event.sh" % DIR_ENGINE_BIN
 CONST_BASE_MAC_ADDR="00:1A:4A"
 CONST_DEFAULT_MAC_RANGE="00:1a:4a:16:84:02-00:1a:4a:16:84:fd"
 CONST_MINIMUM_SPACE_ISODOMAIN=350
+CONST_WEBSOCKET_PORXY_PORT=6100
 CONST_HTTP_BASE_PORT="8700"
 CONST_HTTPS_BASE_PORT="8701"
 CONST_AJP_BASE_PORT="8702"

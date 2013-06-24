@@ -34,6 +34,7 @@ from . import options
 from . import tools
 from . import iso_domain
 from . import macrange
+from . import websocket_proxy
 
 
 @util.export
@@ -50,6 +51,7 @@ def createPlugins(context):
     tools.Plugin(context=context)
     iso_domain.Plugin(context=context)
     macrange.Plugin(context=context)
+    websocket_proxy.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

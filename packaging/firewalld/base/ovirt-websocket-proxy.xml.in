@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>ovirt-websocket-proxy</short>
+  <description>oVirt configured WebSocket Proxy service</description>
+  <port protocol="tcp" port="@WEBSOCKET_PROXY_PORT@"/>
+</service>
