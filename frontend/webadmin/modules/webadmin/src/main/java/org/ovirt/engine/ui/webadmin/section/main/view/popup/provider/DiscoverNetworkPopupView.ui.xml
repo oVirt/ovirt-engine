@@ -1,16 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor">
-
-	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
 	<d:SimpleDialogPanel ui:field="mainPanel" width="620px" height="520px">
 		<d:content>
-			<g:ScrollPanel>
-				<e:EntityModelCellTable ui:field="networksTable" />
-			</g:ScrollPanel>
+			<w:HorizontalSplitTable ui:field="splitTable" />
 		</d:content>
 	</d:SimpleDialogPanel>
 

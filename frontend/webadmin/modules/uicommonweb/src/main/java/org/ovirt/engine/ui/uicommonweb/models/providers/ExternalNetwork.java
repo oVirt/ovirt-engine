@@ -6,9 +6,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
 public class ExternalNetwork extends EntityModel {
 
-    Network network;
-    ListModel dcList;
-    boolean attached;
+    private Network network;
+    private ListModel dcList;
     private boolean publicUse;
 
     public ExternalNetwork() {
@@ -25,14 +24,6 @@ public class ExternalNetwork extends EntityModel {
 
     public ListModel getDataCenters() {
         return dcList;
-    }
-
-    public boolean isAttached() {
-        return attached;
-    }
-
-    public void setAttached(boolean attached) {
-        this.attached = attached;
     }
 
     public boolean isPublicUse() {

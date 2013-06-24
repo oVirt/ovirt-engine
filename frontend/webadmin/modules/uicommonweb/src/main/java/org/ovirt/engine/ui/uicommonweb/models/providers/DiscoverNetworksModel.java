@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -37,14 +36,19 @@ public class DiscoverNetworksModel extends Model {
     private final Provider provider;
 
     private ListModel dataCenters = new ListModel();
-    private ListModel networkList = new ListModel();
+    private final ListModel providerNetworks = new ListModel();
+    private final ListModel importedNetworks = new ListModel();
 
     public ListModel getDataCenters() {
         return dataCenters;
     }
 
-    public ListModel getNetworkList() {
-        return networkList;
+    public ListModel getProviderNetworks() {
+        return providerNetworks;
+    }
+
+    public ListModel getImportedNetworks() {
+        return importedNetworks;
     }
 
     public DiscoverNetworksModel(SearchableListModel sourceListModel, Provider provider) {
@@ -72,12 +76,10 @@ public class DiscoverNetworksModel extends Model {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 Iterable<Network> networks = (Iterable<Network>) returnValue;
-                List<ExternalNetwork> items = new ArrayList<ExternalNetwork>();
+                List<ExternalNetwork> items = new LinkedList<ExternalNetwork>();
                 for (Network network : networks) {
                     ExternalNetwork externalNetwork = new ExternalNetwork();
                     externalNetwork.setNetwork(network);
-                    externalNetwork.setAttached(false);
-                    externalNetwork.getDataCenters().setIsChangable(false);
                     Iterable<StoragePool> dcList = getDataCenters().getItems();
                     externalNetwork.getDataCenters().setItems(dcList);
                     externalNetwork.getDataCenters().setSelectedItem(Linq.firstOrDefault(dcList));
@@ -85,7 +87,7 @@ public class DiscoverNetworksModel extends Model {
                     items.add(externalNetwork);
                 }
                 Collections.sort(items, new Linq.ExternalNetworkComparator());
-                getNetworkList().setItems(items);
+                providerNetworks.setItems(items);
 
                 stopProgress();
             }
@@ -119,15 +121,13 @@ public class DiscoverNetworksModel extends Model {
         List<VdcActionParametersBase> mulipleActionParameters =
                 new LinkedList<VdcActionParametersBase>();
 
-        for (ExternalNetwork externalNetwork : (Iterable<ExternalNetwork>) getNetworkList().getItems()) {
-            if (externalNetwork.isAttached()) {
-                Guid dcId = ((StoragePool) externalNetwork.getDataCenters().getSelectedItem()).getId();
-                externalNetwork.getNetwork().setDataCenterId(dcId);
-                AddNetworkStoragePoolParameters params =
-                        new AddNetworkStoragePoolParameters(dcId, externalNetwork.getNetwork());
-                params.setPublicUse(externalNetwork.isPublicUse());
-                mulipleActionParameters.add(params);
-            }
+        for (ExternalNetwork externalNetwork : (Iterable<ExternalNetwork>) importedNetworks.getItems()) {
+            Guid dcId = ((StoragePool) externalNetwork.getDataCenters().getSelectedItem()).getId();
+            externalNetwork.getNetwork().setDataCenterId(dcId);
+            AddNetworkStoragePoolParameters params =
+                    new AddNetworkStoragePoolParameters(dcId, externalNetwork.getNetwork());
+            params.setPublicUse(externalNetwork.isPublicUse());
+            mulipleActionParameters.add(params);
         }
 
         Frontend.RunMultipleActions(VdcActionType.AddNetwork, mulipleActionParameters, new IFrontendActionAsyncCallback() {

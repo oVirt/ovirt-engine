@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.HorizontalSplitTable;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.ListModelListBoxColumn;
@@ -29,6 +29,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.Column;
 import com.google.inject.Inject;
 
 public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<DiscoverNetworksModel> implements DiscoverNetworkPopupPresenterWidget.ViewDef {
@@ -42,8 +43,13 @@ public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<Discov
     }
 
     @UiField(provided = true)
+    HorizontalSplitTable splitTable;
+
     @Ignore
-    public final EntityModelCellTable<ListModel> networksTable;
+    EntityModelCellTable<ListModel> providerNetworks;
+
+    @Ignore
+    EntityModelCellTable<ListModel> importedNetworks;
 
     private ListModelListBoxColumn<EntityModel, StoragePool> dcColumn;
 
@@ -52,75 +58,43 @@ public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<Discov
             ApplicationConstants constants, ApplicationTemplates templates) {
         super(eventBus, resources);
         // Initialize Editors
-        this.networksTable = new EntityModelCellTable<ListModel>(SelectionMode.NONE, true);
+        providerNetworks = new EntityModelCellTable<ListModel>(true, false, true);
+        importedNetworks = new EntityModelCellTable<ListModel>(true, false, true);
+        splitTable = new HorizontalSplitTable(providerNetworks, importedNetworks, constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        initEntityModelCellTable(constants, templates);
+        initEntityModelCellTables(constants, templates);
         driver.initialize(this);
     }
 
     @SuppressWarnings("unchecked")
-    Iterable<ExternalNetwork> getNetworksTableItems() {
-        ListModel tableModel = networksTable.flush();
+    Iterable<ExternalNetwork> getAllImportedNetworks() {
+        ListModel tableModel = importedNetworks.flush();
         return tableModel != null && tableModel.getItems() != null ? tableModel.getItems()
                 : new ArrayList<ExternalNetwork>();
     }
 
-    void refreshNetworksTable() {
-        networksTable.edit(networksTable.flush());
+    public void refreshImportedNetworks() {
+        importedNetworks.edit(importedNetworks.flush());
     }
 
-    void initEntityModelCellTable(final ApplicationConstants constants, final ApplicationTemplates templates) {
-        CheckboxHeader assignAllHeader = new CheckboxHeader(templates.textForCheckBoxHeader("")) { //$NON-NLS-1$
+    void initEntityModelCellTables(final ApplicationConstants constants, final ApplicationTemplates templates) {
+        Column<EntityModel, String> nameColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
-            protected void selectionChanged(Boolean value) {
-                for (ExternalNetwork model : getNetworksTableItems()) {
-                    model.setAttached(value);
-                }
-                refreshNetworksTable();
-            }
-
-            @Override
-            public Boolean getValue() {
-                for (ExternalNetwork model : getNetworksTableItems()) {
-                    if (!model.isAttached()) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-
-            @Override
-            public boolean isEnabled() {
-                return true;
+            public String getValue(EntityModel model) {
+                return ((ExternalNetwork) model).getNetwork().getName();
             }
         };
+        providerNetworks.addColumn(nameColumn, constants.nameNetworkHeader());
+        importedNetworks.addColumn(nameColumn, constants.nameNetworkHeader());
 
-        networksTable.addColumn(new CheckboxColumn<EntityModel>(new FieldUpdater<EntityModel, Boolean>() {
+        Column<EntityModel, String> idColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
-            public void update(int index, EntityModel model, Boolean value) {
-                ExternalNetwork externalNetwork = (ExternalNetwork) model;
-                externalNetwork.setAttached(value);
-                externalNetwork.getDataCenters().setIsChangable(value);
-                refreshNetworksTable();
+            public String getValue(EntityModel model) {
+                return ((ExternalNetwork) model).getNetwork().getProvidedBy().getExternalId();
             }
-        }) {
-            @Override
-            public Boolean getValue(EntityModel model) {
-                return ((ExternalNetwork) model).isAttached();
-            }
-
-            @Override
-            protected boolean canEdit(EntityModel model) {
-                return true;
-            }
-
-            @Override
-            public void render(Context context, EntityModel object, SafeHtmlBuilder sb) {
-                super.render(context, object, sb);
-                sb.append(templates.textForCheckBox("")); //$NON-NLS-1$
-            }
-
-        }, assignAllHeader, "80px"); //$NON-NLS-1$
+        };
+        providerNetworks.addColumn(idColumn, constants.idNetworkHeader());
+        importedNetworks.addColumn(idColumn, constants.idNetworkHeader());
 
         dcColumn = new ListModelListBoxColumn<EntityModel, StoragePool>(new NullSafeRenderer<StoragePool>() {
             @Override
@@ -134,35 +108,21 @@ public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<Discov
                 return ((ExternalNetwork) network).getDataCenters();
             }
         };
-        networksTable.addColumn(dcColumn);
-
-        networksTable.addEntityModelColumn(new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel model) {
-                return ((ExternalNetwork) model).getNetwork().getName();
-            }
-        }, constants.nameNetworkHeader());
-
-        networksTable.addEntityModelColumn(new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel model) {
-                return ((ExternalNetwork) model).getNetwork().getProvidedBy().getExternalId();
-            }
-        }, constants.idNetworkHeader());
+        importedNetworks.addColumn(dcColumn, constants.dcNetworkHeader()); //$NON-NLS-1$
 
         CheckboxHeader publicAllHeader =
-                new CheckboxHeader(templates.textForCheckBoxHeader(constants.publicAllNetworks())) {
+                new CheckboxHeader(templates.textForCheckBoxHeader(constants.publicNetwork())) {
                     @Override
                     protected void selectionChanged(Boolean value) {
-                        for (ExternalNetwork model : getNetworksTableItems()) {
+                        for (ExternalNetwork model : getAllImportedNetworks()) {
                             model.setPublicUse(value);
                         }
-                        refreshNetworksTable();
+                        refreshImportedNetworks();
                     }
 
                     @Override
                     public Boolean getValue() {
-                        for (ExternalNetwork model : getNetworksTableItems()) {
+                        for (ExternalNetwork model : getAllImportedNetworks()) {
                             if (!model.isPublicUse()) {
                                 return false;
                             }
@@ -176,12 +136,12 @@ public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<Discov
                     }
                 };
 
-        networksTable.addColumn(new CheckboxColumn<EntityModel>(new FieldUpdater<EntityModel, Boolean>() {
+        importedNetworks.addColumn(new CheckboxColumn<EntityModel>(new FieldUpdater<EntityModel, Boolean>() {
             @Override
             public void update(int index, EntityModel model, Boolean value) {
                 ExternalNetwork externalNetwork = (ExternalNetwork) model;
                 externalNetwork.setPublicUse(value);
-                refreshNetworksTable();
+                refreshImportedNetworks();
             }
         }) {
             @Override
@@ -197,7 +157,7 @@ public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<Discov
             @Override
             public void render(Context context, EntityModel object, SafeHtmlBuilder sb) {
                 super.render(context, object, sb);
-                sb.append(templates.textForCheckBox(constants.publicNetwork()));
+                sb.append(templates.textForCheckBox("")); //$NON-NLS-1$
             }
 
         }, publicAllHeader, "80px"); //$NON-NLS-1$
@@ -205,7 +165,8 @@ public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<Discov
 
     @Override
     public void edit(DiscoverNetworksModel model) {
-        networksTable.edit(model.getNetworkList());
+        providerNetworks.edit(model.getProviderNetworks());
+        importedNetworks.edit(model.getImportedNetworks());
         dcColumn.edit(model.getDataCenters());
         driver.edit(model);
     }
