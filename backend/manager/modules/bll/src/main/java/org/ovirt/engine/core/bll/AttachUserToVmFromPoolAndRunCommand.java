@@ -203,6 +203,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             runVmParams.setSessionId(getParameters().getSessionId());
             runVmParams.setParentParameters(getParameters());
             runVmParams.setEntityId(vmToAttach);
+            runVmParams.setReinitialize(getParameters().isReinitialize());
             runVmParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
             runVmParams.setRunAsStateless(true);
             ExecutionContext runVmContext = createRunVmContext();

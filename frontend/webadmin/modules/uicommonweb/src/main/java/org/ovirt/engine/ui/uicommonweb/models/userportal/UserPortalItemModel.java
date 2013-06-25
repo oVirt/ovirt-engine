@@ -27,6 +27,17 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class UserPortalItemModel extends EntityModel implements HasConsoleModel
 {
 
+    // the is_initialized flag
+    private boolean initialized;
+
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    public void setInitialized(boolean initialized) {
+        this.initialized = initialized;
+    }
+
     @Override
     public ConsoleProtocol getUserSelectedProtocol() {
         return userSelectedDisplayProtocolManager.resolveSelectedProtocol(this);
