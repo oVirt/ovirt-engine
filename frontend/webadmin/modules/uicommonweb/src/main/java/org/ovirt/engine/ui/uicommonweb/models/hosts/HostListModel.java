@@ -888,6 +888,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             parameters.setPassword(""); //$NON-NLS-1$
             parameters.setInstallVds(false);
             parameters.setRebootAfterInstallation(isVirt) ;
+            parameters.setAuthMethod(model.getAuthenticationMethod());
 
             if (!oldClusterId.equals(newClusterId))
             {

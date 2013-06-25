@@ -820,7 +820,7 @@ public class HostGeneralModel extends EntityModel
         model.setTitle(constants.installHostTitle());
         model.setHashName("install_host"); //$NON-NLS-1$
         model.getOVirtISO().setIsAvailable(false);
-        model.getRootPassword().setIsAvailable(false);
+
         model.getOverrideIpTables().setIsAvailable(false);
 
         model.getHostVersion().setEntity(getEntity().getHostOs());
@@ -854,8 +854,8 @@ public class HostGeneralModel extends EntityModel
                     }),
                     getEntity().getId());
         } else {
-            model.getRootPassword().setIsAvailable(true);
-            model.getRootPassword().setIsChangable(true);
+            model.getUserPassword().setIsAvailable(true);
+            model.getUserPassword().setIsChangable(true);
 
             Version v3 = new Version(3, 0);
             boolean isLessThan3 = getEntity().getVdsGroupCompatibilityVersion().compareTo(v3) < 0;
@@ -906,11 +906,12 @@ public class HostGeneralModel extends EntityModel
         UpdateVdsActionParameters param = new UpdateVdsActionParameters();
         param.setvds(getEntity());
         param.setVdsId(getEntity().getId());
-        param.setPassword((String) model.getRootPassword().getEntity());
+        param.setPassword((String) model.getUserPassword().getEntity());
         param.setIsReinstallOrUpgrade(true);
         param.setInstallVds(true);
         param.setoVirtIsoFile(isOVirt ? ((RpmVersion) model.getOVirtISO().getSelectedItem()).getRpmName() : null);
         param.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
+        param.setAuthMethod(model.getAuthenticationMethod());
 
         AsyncDataProvider.getClusterById(new AsyncQuery(param, new INewAsyncCallback() {
 
