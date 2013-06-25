@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.dal.dbbroker.EntityToMapSqlParameterMapper;
 
 /**
  * Data Access Object which supports mass operations for the given entity type.
@@ -39,4 +40,11 @@ public interface MassOperationsDao<T extends BusinessEntity<?>, ID extends Seria
      * @param ids
      */
     void removeAll(Collection<ID> ids);
+
+    /**
+     * Calls an update stored procedure multiple timse in a batch
+     * @param procedureName
+     * @param entities
+     */
+    void updateAllInBatch(String procedureName, Collection<T> paramValues, EntityToMapSqlParameterMapper<T> mapper);
 }
