@@ -53,6 +53,8 @@ public final class Linq
 {
     public static class AuditLogComparer implements Comparator<AuditLog>, Serializable
     {
+        private static final long serialVersionUID = 7488030875073130111L;
+
         @Override
         public int compare(AuditLog x, AuditLog y)
         {
@@ -65,6 +67,8 @@ public final class Linq
 
     public static class DiskImageByLastModifiedComparer implements Comparator<DiskImage>, Serializable
     {
+
+        private static final long serialVersionUID = -6085272225112945238L;
 
         @Override
         public int compare(DiskImage x, DiskImage y)
@@ -87,6 +91,8 @@ public final class Linq
     public static class DiskImageByLastModifiedTimeOfDayComparer implements Comparator<DiskImage>, Serializable
     {
 
+        private static final long serialVersionUID = 7206189809641328921L;
+
         @Override
         public int compare(DiskImage x, DiskImage y)
         {
@@ -99,6 +105,8 @@ public final class Linq
     public static class StorageDomainModelByNameComparer implements Comparator<StorageDomainModel>, Serializable
     {
 
+        private static final long serialVersionUID = 5142897643241941178L;
+
         @Override
         public int compare(StorageDomainModel x, StorageDomainModel y)
         {
@@ -109,6 +117,8 @@ public final class Linq
 
     public static class DiskByAliasComparer implements Comparator<Disk>, Serializable
     {
+
+        private static final long serialVersionUID = 7683690514569802083L;
 
         @Override
         public int compare(Disk x, Disk y)
@@ -133,6 +143,8 @@ public final class Linq
 
     public static class DiskModelByAliasComparer implements Comparator<DiskModel>, Serializable
     {
+        private static final long serialVersionUID = -3838651062327707058L;
+
         @Override
         public int compare(DiskModel x, DiskModel y)
         {
@@ -157,6 +169,8 @@ public final class Linq
 
     public static class SanTargetModelComparer implements Comparator<SanTargetModel>, Serializable
     {
+        private static final long serialVersionUID = -5674954613952206979L;
+
         @Override
         public int compare(SanTargetModel x, SanTargetModel y)
         {
@@ -166,6 +180,8 @@ public final class Linq
 
     public static class DiskImageByCreationDateComparer implements Comparator<DiskImage>, Serializable
     {
+
+        private static final long serialVersionUID = -5909501177227219287L;
 
         @Override
         public int compare(DiskImage x, DiskImage y)
@@ -187,6 +203,8 @@ public final class Linq
 
     public static class SnapshotByCreationDateCommparer implements Comparator<Snapshot>, Serializable
     {
+
+        private static final long serialVersionUID = -4063737182979806402L;
 
         @Override
         public int compare(Snapshot x, Snapshot y)
@@ -1046,6 +1064,8 @@ public final class Linq
     }
 
     public final static class RoleNameComparer implements Comparator<Role>, Serializable {
+        private static final long serialVersionUID = -8611835505533367419L;
+
         @Override
         public int compare(Role left, Role right) {
             return left.getname().compareTo(right.getname());
@@ -1054,6 +1074,7 @@ public final class Linq
 
     public final static class InterfaceComparator implements Comparator<VdsNetworkInterface>, Serializable {
 
+        private static final long serialVersionUID = -6806871048546270786L;
         LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
@@ -1065,6 +1086,7 @@ public final class Linq
 
     public final static class NetworkComparator implements Comparator<Network>, Serializable {
 
+        private static final long serialVersionUID = 990203400356561587L;
         private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
@@ -1082,6 +1104,7 @@ public final class Linq
 
     public final static class ClusterNetworkModelComparator implements Comparator<ClusterNetworkModel>, Serializable {
 
+        private static final long serialVersionUID = -8571840939180248617L;
         private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
