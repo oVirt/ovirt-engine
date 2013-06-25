@@ -726,7 +726,7 @@ class ConfigEnv(object):
     @osetupattrs(
         answerfile=True,
         summary=True,
-        description=_('Datacenter strage type'),
+        description=_('Datacenter storage type'),
     )
     def STORAGE_TYPE(self):
         return 'OVESETUP_CONFIG/storageType'
