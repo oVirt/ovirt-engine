@@ -19,7 +19,7 @@ public enum OsRepositoryImpl implements OsRepository {
     INSTANCE;
 
     private static final String OS_ROOT_NODE = "/os/";
-    private static Pattern firstDigitOrUpperCased = Pattern.compile("(\\w[a-z]*+)([A-Z0-9])(.*)");
+    private static Pattern firstDigitOrUpperCased = Pattern.compile("(\\w)([a-z]*)?([0-9]*)?([a-zA-Z]*)?([0-9]*)?(.*)?");
     /**
      * the configuration tree holding all the os data.
      */
@@ -292,7 +292,19 @@ public enum OsRepositoryImpl implements OsRepository {
         // underscore position is the first digit or second camel-cased word
         Matcher matcher = firstDigitOrUpperCased.matcher(name);
         if (matcher.matches()) {
-            return (matcher.group(1) + "_" + matcher.group(2) + matcher.group(3)).toUpperCase();
+            StringBuilder sb = new StringBuilder();
+            sb.append(matcher.group(1)).append(matcher.group(2));
+            if (!matcher.group(3).isEmpty()) {
+                sb.append("_").append(matcher.group(3)).append(matcher.group(4)).append(matcher.group(5));
+            }
+            else if (!matcher.group(5).isEmpty()) {
+                sb.append(matcher.group(4)).append("_").append(matcher.group(5));
+            }
+            else if (!matcher.group(4).isEmpty()) {
+                sb.append("_").append(matcher.group(4));
+            }
+            sb.append(matcher.group(6));
+            return sb.toString().toUpperCase();
         } else {
             return name;
         }
