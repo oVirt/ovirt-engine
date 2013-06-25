@@ -402,6 +402,20 @@ delete from roles_groups where role_id = v_VM_ADMIN_ID;
 INSERT INTO roles(id,name,description,is_readonly,role_type) select v_VM_ADMIN_ID,'UserVmManager','User Role, with permission for any operation on Vms',true,2 where
 not exists (select id,name,description,is_readonly,role_type from roles where id=v_VM_ADMIN_ID and name='UserVmManager' and description='User Role, with permission for any operation on Vms' and is_readonly=true and role_type=2);
 
+-- insert local admin user to users table and assign superuser permissions
+insert into users(user_id,name,domain,username,groups,status)
+        select 'fdfc627c-d875-11e0-90f0-83df133b58cc', 'admin', 'internal', 'admin@internal','',1
+        where not exists (select 1 from users where user_id = 'fdfc627c-d875-11e0-90f0-83df133b58cc');
+
+insert into permissions(id,role_id,ad_element_id,object_id,object_type_id)
+        select uuid_generate_v1(), '00000000-0000-0000-0000-000000000001', 'fdfc627c-d875-11e0-90f0-83df133b58cc', getGlobalIds('system'), 1
+        where not exists
+                (select 1 from permissions
+                 where role_id = '00000000-0000-0000-0000-000000000001' and
+                       ad_element_id = 'fdfc627c-d875-11e0-90f0-83df133b58cc' and
+                       object_id= getGlobalIds('system') and
+                       object_type_id = 1);
+
 ---Vm Groups
 --CREATE_VM
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,1);
