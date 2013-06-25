@@ -32,7 +32,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class GlusterServiceSyncJob extends GlusterJob {
-    private static final Log log = LogFactory.getLog(GlusterHookSyncJob.class);
+    private static final Log log = LogFactory.getLog(GlusterServiceSyncJob.class);
     private static final GlusterServiceSyncJob instance = new GlusterServiceSyncJob();
     private final Map<String, GlusterService> serviceNameMap = new HashMap<String, GlusterService>();
 
