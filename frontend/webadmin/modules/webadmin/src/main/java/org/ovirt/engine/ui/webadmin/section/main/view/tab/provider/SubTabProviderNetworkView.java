@@ -59,7 +59,7 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
         };
         getTable().addColumn(dcColumn, constants.dataCenterProviderNetwork(), "200px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.discoverProviderNetwork()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.importNetwork()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getDiscoverCommand();

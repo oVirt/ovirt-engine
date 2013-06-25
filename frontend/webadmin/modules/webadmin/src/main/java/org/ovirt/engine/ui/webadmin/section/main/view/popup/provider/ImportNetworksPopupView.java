@@ -2,23 +2,26 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.provider;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.HorizontalSplitTable;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.ListModelListBoxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.providers.DiscoverNetworksModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.ImportNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.DiscoverNetworkPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CheckboxHeader;
 
 import com.google.gwt.cell.client.Cell.Context;
@@ -32,15 +35,20 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.inject.Inject;
 
-public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<DiscoverNetworksModel> implements DiscoverNetworkPopupPresenterWidget.ViewDef {
+public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportNetworksModel> implements ImportNetworksPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<DiscoverNetworksModel, DiscoverNetworkPopupView> { }
+    interface Driver extends SimpleBeanEditorDriver<ImportNetworksModel, ImportNetworksPopupView> { }
 
     private final Driver driver = GWT.create(Driver.class);
 
-    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, DiscoverNetworkPopupView> {
+    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ImportNetworksPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
+
+    @UiField(provided = true)
+    @Path(value = "providers.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<Object> providersEditor;
 
     @UiField(provided = true)
     HorizontalSplitTable splitTable;
@@ -54,15 +62,23 @@ public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<Discov
     private ListModelListBoxColumn<EntityModel, StoragePool> dcColumn;
 
     @Inject
-    public DiscoverNetworkPopupView(EventBus eventBus, ApplicationResources resources,
+    public ImportNetworksPopupView(EventBus eventBus, ApplicationResources resources,
             ApplicationConstants constants, ApplicationTemplates templates) {
         super(eventBus, resources);
         // Initialize Editors
+        providersEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+
+            @Override
+            protected String renderNullSafe(Object object) {
+                return ((Provider) object).getName();
+            }
+        });
         providerNetworks = new EntityModelCellTable<ListModel>(true, false, true);
         importedNetworks = new EntityModelCellTable<ListModel>(true, false, true);
         splitTable = new HorizontalSplitTable(providerNetworks, importedNetworks, constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTables(constants, templates);
+        providersEditor.setLabel(constants.networkProvider());
         driver.initialize(this);
     }
 
@@ -164,7 +180,7 @@ public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<Discov
     }
 
     @Override
-    public void edit(DiscoverNetworksModel model) {
+    public void edit(ImportNetworksModel model) {
         providerNetworks.edit(model.getProviderNetworks());
         importedNetworks.edit(model.getImportedNetworks());
         dcColumn.edit(model.getDataCenters());
@@ -172,7 +188,7 @@ public class DiscoverNetworkPopupView extends AbstractModelBoundPopupView<Discov
     }
 
     @Override
-    public DiscoverNetworksModel flush() {
+    public ImportNetworksModel flush() {
         return driver.flush();
     }
 

@@ -7,11 +7,13 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -1129,6 +1131,29 @@ public final class Linq
         public int compare(ExternalNetwork net1, ExternalNetwork net2) {
             return comparator.compare(net1.getNetwork(), net2.getNetwork());
         };
+    }
+
+    public final static class ProviderComparator implements Comparator<Provider>, Serializable {
+
+        @Override
+        public int compare(Provider p1, Provider p2) {
+            return LexoNumericComparator.comp(p1.getName(), p2.getName());
+        }
+    }
+
+    private final static Iterable<Provider> filterProvidersByProvidedType(Iterable<Provider> source,
+            final VdcObjectType type) {
+        return where(source, new IPredicate<Provider>() {
+
+            @Override
+            public boolean match(Provider provider) {
+                return provider.getType().getProvidedTypes().contains(type);
+            }
+        });
+    }
+
+    public final static Iterable<Provider> filterNetworkProviders(Iterable<Provider> source) {
+        return filterProvidersByProvidedType(source, VdcObjectType.Network);
     }
 
 }

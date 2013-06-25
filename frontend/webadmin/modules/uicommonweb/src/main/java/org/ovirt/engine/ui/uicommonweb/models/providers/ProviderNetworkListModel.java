@@ -64,7 +64,7 @@ public class ProviderNetworkListModel extends SearchableListModel {
         }
         DiscoverNetworksModel discoverModel = new DiscoverNetworksModel(this, getEntity());
         setWindow(discoverModel);
-        discoverModel.initBackendData();
+        discoverModel.discoverNetworks();
     }
 
     @Override

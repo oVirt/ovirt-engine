@@ -1919,11 +1919,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Change Provider URL")
     String providerUrlWarningTitle();
 
-    @DefaultStringValue("Discover Networks")
-    String discoverNetworksTitle();
+    @DefaultStringValue("Import Networks")
+    String importNetworksTitle();
 
     @DefaultStringValue("Import")
-    String importNetworksTitle();
+    String importNetworksButton();
 
     // Gluster Hook
     @DefaultStringValue("Please select a resolve action to continue")

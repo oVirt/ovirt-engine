@@ -41,6 +41,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupNetworksPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -55,6 +56,7 @@ public class NetworkModule extends AbstractGinModule {
     @Singleton
     public MainModelProvider<NetworkView, NetworkListModel> getNetworkListProvider(ClientGinjector ginjector,
             final Provider<NewNetworkPopupPresenterWidget> newNetworkPopupProvider,
+            final Provider<ImportNetworksPopupPresenterWidget> importNetworkPopupProvider,
             final Provider<EditNetworkPopupPresenterWidget> editNetworkPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new MainTabModelProvider<NetworkView, NetworkListModel>(ginjector, NetworkListModel.class) {
@@ -64,6 +66,8 @@ public class NetworkModule extends AbstractGinModule {
 
                 if (lastExecutedCommand == getModel().getNewCommand()) {
                     return newNetworkPopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getImportCommand()) {
+                    return importNetworkPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getEditCommand()) {
                     return editNetworkPopupProvider.get();
                 } else {

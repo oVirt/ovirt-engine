@@ -18,7 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.DiscoverNetworkPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
 
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
@@ -80,7 +80,7 @@ public class ProviderModule extends AbstractGinModule {
     @Provides
     @Singleton
     public SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> getProviderNetworkListProvider(ClientGinjector ginjector,
-            final Provider<DiscoverNetworkPopupPresenterWidget> discoverNetworkPopupProvider) {
+            final Provider<ImportNetworksPopupPresenterWidget> discoverNetworkPopupProvider) {
         return new SearchableDetailTabModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel>(ginjector,
                 ProviderListModel.class,
                 ProviderNetworkListModel.class) {

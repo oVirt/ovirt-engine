@@ -154,6 +154,12 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                 return getMainModel().getNewCommand();
             }
         });
+        getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.importNetwork()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getImportCommand();
+            }
+        });
         getTable().addActionButton(new WebAdminButtonDefinition<NetworkView>(constants.editNetwork()) {
             @Override
             protected UICommand resolveCommand() {

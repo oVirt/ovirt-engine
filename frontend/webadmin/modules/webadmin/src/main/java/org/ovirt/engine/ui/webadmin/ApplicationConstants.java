@@ -1722,6 +1722,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("New")
     String newNetwork();
 
+    @DefaultStringValue("Import")
+    String importNetwork();
+
     @DefaultStringValue("Edit")
     String editNetwork();
 
@@ -2841,9 +2844,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Data Center")
     String dataCenterProviderNetwork();
 
-    @DefaultStringValue("Discover")
-    String discoverProviderNetwork();
-
     @DefaultStringValue("Name")
     String nameNetworkHeader();
 
@@ -2855,4 +2855,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Public Network")
     String publicNetwork();
+
+    @DefaultStringValue("Network Provider")
+    String networkProvider();
 }

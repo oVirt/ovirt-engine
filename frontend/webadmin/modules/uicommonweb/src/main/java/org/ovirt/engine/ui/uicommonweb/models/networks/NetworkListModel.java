@@ -40,6 +40,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
             (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     private UICommand newCommand;
+    private UICommand importCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
 
@@ -55,6 +56,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         setAvailableInModes(ApplicationMode.VirtOnly);
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setImportCommand(new UICommand("Import", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
@@ -74,6 +76,14 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         setWindow(networkModel);
 
         initDcList(networkModel);
+    }
+
+    public void importNetworks() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        setWindow(new ImportNetworksModel(this));
     }
 
     public void edit() {
@@ -209,6 +219,10 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         {
             newNetwork();
         }
+        else if (command == getImportCommand())
+        {
+            importNetworks();
+        }
         else if (command == getEditCommand())
         {
             edit();
@@ -254,6 +268,14 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
     private void setNewCommand(UICommand value) {
         newCommand = value;
+    }
+
+    public UICommand getImportCommand() {
+        return importCommand;
+    }
+
+    private void setImportCommand(UICommand value) {
+        importCommand = value;
     }
 
     @Override
