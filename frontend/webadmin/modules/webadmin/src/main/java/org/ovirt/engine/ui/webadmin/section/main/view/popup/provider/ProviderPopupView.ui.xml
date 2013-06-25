@@ -2,14 +2,30 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
 
+	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ProviderPopupView.Style">
 		.contentStyle {
 		}
 
+       .generalTabTopDecorator {
+            background-color: #D3D3D3;
+            margin-bottom: 8px;
+            margin-top: 4px;
+            margin-right: 3px;
+            padding-top: 6px;
+            padding-bottom: 6px;
+        }
+
 		.sectionStyle {
 			margin-top: 20px;
+		}
+
+		.apiVersionStyle {
+			width: 50px !important;
+			float: right;
 		}
 
 		.authField {
@@ -34,39 +50,80 @@
 			vertical-align: middle;
 			margin-right: 10px;
 		}
+
+        .qpidInnerPanel {
+            padding-left: 20px;
+        }
+
+        .qpidHeader {
+			font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            paading-right: 6px;
+		}
+
+        .explanationLabel {
+            font-style: italic;
+            margin: 10px 5px;
+        }
 	</ui:style>
 
-	<d:SimpleDialogPanel width="450px" height="450px">
-		<d:content>
-			<g:DockLayoutPanel>
-				<g:center>
-					<g:FlowPanel>
-						<g:FlowPanel>
-							<e:EntityModelTextBoxEditor ui:field="nameEditor" />
-							<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
-							<e:ListModelListBoxEditor ui:field="typeEditor" />
-							<e:EntityModelTextBoxEditor ui:field="urlEditor" />
-						</g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.sectionStyle}">
-							<e:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" />
-							<e:EntityModelTextBoxEditor ui:field="usernameEditor" addStyleNames="{style.authField}" />
-							<e:EntityModelPasswordBoxEditor ui:field="passwordEditor" addStyleNames="{style.authField}" />
-							<e:EntityModelTextBoxEditor ui:field="tenantNameEditor" addStyleNames="{style.authField}" />
-						</g:FlowPanel>
-						<g:FlowPanel addStyleNames="{style.sectionStyle}">
-							<e:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" />
-						</g:FlowPanel>
-					</g:FlowPanel>
-				</g:center>
-				<g:south size="30">
-					<g:FlowPanel>
-						<g:Image ui:field="testResultImage" addStyleNames="{style.testResultImage}" />
-						<g:Label ui:field="testResultMessage" addStyleNames="{style.testResultMessage}" />
-						<w:UiCommandButton ui:field="testButton" addStyleNames="{style.testButton}" />
-					</g:FlowPanel>
-				</g:south>
-			</g:DockLayoutPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+	<d:SimpleDialogPanel width="600px" height="450px">
+        <d:content>
+            <t:DialogTabPanel ui:field="tabPanel" height="100%">
+                <t:tab>
+                    <t:DialogTab ui:field="generalTab">
+                        <t:content>
+                        	<g:FlowPanel>
+                        		<g:FlowPanel>
+										<g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
+											<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+											<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+											<e:ListModelListBoxEditor ui:field="typeEditor" />
+										</g:FlowPanel>
+										<g:FlowPanel>
+											<e:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" />
+											<e:EntityModelTextBoxEditor ui:field="urlEditor" />
+											<e:ListModelListBoxEditor ui:field="apiVersionEditor" />
+										</g:FlowPanel>
+										<g:FlowPanel addStyleNames="{style.sectionStyle}">
+											<e:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" />
+											<e:EntityModelTextBoxEditor ui:field="usernameEditor" addStyleNames="{style.authField}" />
+											<e:EntityModelPasswordBoxEditor ui:field="passwordEditor" addStyleNames="{style.authField}" />
+											<e:EntityModelTextBoxEditor ui:field="tenantNameEditor" addStyleNames="{style.authField}" />
+										</g:FlowPanel>
+									</g:FlowPanel>
+									<g:FlowPanel>
+										<g:Image ui:field="testResultImage" addStyleNames="{style.testResultImage}" />
+										<g:Label ui:field="testResultMessage" addStyleNames="{style.testResultMessage}" />
+										<w:UiCommandButton ui:field="testButton" addStyleNames="{style.testButton}" />
+									</g:FlowPanel>
+                        	</g:FlowPanel>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="agentConfigurationTab">
+                        <t:content>
+							<g:FlowPanel>
+								<g:FlowPanel>
+									<e:EntityModelTextBoxEditor ui:field="interfaceMappings"/>
+								</g:FlowPanel>
+								<g:FlowPanel addStyleNames="{style.sectionStyle}">
+									<g:Label text="{constants.qpid}" addStyleNames="{style.qpidHeader}"/>
+									<g:FlowPanel addStyleNames="{style.qpidInnerPanel}">
+										<e:EntityModelTextBoxEditor ui:field="host"/>
+										<e:EntityModelTextBoxEditor ui:field="qpidPort"/>
+										<e:EntityModelTextBoxEditor ui:field="userName"/>
+										<e:EntityModelPasswordBoxEditor ui:field="agentConfigPassword"/>
+									</g:FlowPanel>
+								</g:FlowPanel>
+                            </g:FlowPanel>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+            </t:DialogTabPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

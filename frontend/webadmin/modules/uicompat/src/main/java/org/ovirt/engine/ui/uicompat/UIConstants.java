@@ -3,6 +3,8 @@ package org.ovirt.engine.ui.uicompat;
 
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
+import com.google.gwt.i18n.client.Constants.DefaultStringValue;
+
 public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("OK")
@@ -1927,6 +1929,15 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Import")
     String importNetworksButton();
+
+    @DefaultStringValue("Interface Mappings")
+    String interfaceMappings();
+
+    @DefaultStringValue("Bridge Mappings")
+    String bridgeMappings();
+
+    @DefaultStringValue("The given mappings are of an invalid format.")
+    String interfaceMappingsInvalid();
 
     // Gluster Hook
     @DefaultStringValue("Please select a resolve action to continue")

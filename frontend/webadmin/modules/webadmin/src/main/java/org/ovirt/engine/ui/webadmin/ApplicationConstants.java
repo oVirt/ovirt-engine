@@ -169,6 +169,18 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Description")
     String descriptionLabel();
 
+    @DefaultStringValue("Host")
+    String hostQpid();
+
+    @DefaultStringValue("Port")
+    String portQpid();
+
+    @DefaultStringValue("Username")
+    String usernameQpid();
+
+    @DefaultStringValue("Password")
+    String passwordQpid();
+
     @DefaultStringValue("Comment")
     String commentLabel();
 
@@ -2789,6 +2801,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String unknown();
 
     // Provider
+    @DefaultStringValue("Agent Configuration")
+    String providerPopupAgentConfigurationTabLabel();
+
+    @DefaultStringValue("General")
+    String providerPopupGeneralTabLabel();
+
     @DefaultStringValue("Name")
     String nameProvider();
 

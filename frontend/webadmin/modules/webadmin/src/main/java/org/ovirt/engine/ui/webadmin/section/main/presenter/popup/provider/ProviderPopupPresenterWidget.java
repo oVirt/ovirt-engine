@@ -17,6 +17,7 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<ProviderModel> {
         HasUiCommandClickHandlers getTestButton();
         void setTestResultImage(String errorMessage);
+        void customizeAgentTab(boolean tabAvailable, String ifMappingsLabel);
     }
 
     @Inject
@@ -43,6 +44,25 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
                 getView().setTestResultImage((String) model.getTestResult().getEntity());
             }
         });
+        model.getAgentTabAvailable().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                customizeAgentTab(model);
+            }
+        });
+        model.getInterfaceMappingsLabel().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                customizeAgentTab(model);
+            }
+        });
+    }
+
+    private void customizeAgentTab(ProviderModel model) {
+        getView().customizeAgentTab((Boolean) model.getAgentTabAvailable().getEntity(),
+                (String) model.getInterfaceMappingsLabel().getEntity());
     }
 
 }

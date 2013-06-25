@@ -4,9 +4,23 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class HostAddressValidation extends BaseI18NValidation {
 
+    private final boolean acceptEmptyInput;
+
+    public HostAddressValidation(boolean acceptEmptyInput) {
+        this.acceptEmptyInput = acceptEmptyInput;
+    }
+
+    public HostAddressValidation() {
+        this(false);
+    }
+
     @Override
     protected String composeRegex() {
-        return start() + hostnameOrIp() + end();
+        return start() + (acceptEmptyInput ? hostnameOrIpOrEmpty() : hostnameOrIp()) + end();
+    }
+
+    protected String hostnameOrIpOrEmpty() {
+        return '(' + ip() + '|' + fqdn() + '|' + ')';
     }
 
     protected String hostnameOrIp() {

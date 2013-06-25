@@ -35,6 +35,15 @@ public class EditProviderModel extends ProviderModel {
         super(sourceListModel, VdcActionType.UpdateProvider, provider);
         setTitle(ConstantsManager.getInstance().getConstants().editProviderTitle());
         setHashName("edit_provider"); //$NON-NLS-1$
+
+        getName().setEntity(provider.getName());
+        getDescription().setEntity(provider.getDescription());
+        getType().setSelectedItem(provider.getType());
+        getUrl().setEntity(provider.getUrl());
+        getRequiresAuthentication().setEntity(provider.isRequiringAuthentication());
+        getUsername().setEntity(provider.getUsername());
+        getPassword().setEntity(provider.getPassword());
+
         oldUrl = provider.getUrl();
     }
 

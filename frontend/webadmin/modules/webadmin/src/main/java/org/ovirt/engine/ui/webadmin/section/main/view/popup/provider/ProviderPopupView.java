@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
+import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -65,6 +66,11 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     EntityModelTextBoxEditor urlEditor;
 
     @UiField
+    @Path(value = "apiVersion.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<Object> apiVersionEditor;
+
+    @UiField
     UiCommandButton testButton;
 
     @UiField
@@ -94,15 +100,48 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @WithElementId
     EntityModelTextBoxEditor tenantNameEditor;
 
-    @UiField(provided = true)
+    @UiField
     @Path(value = "pluginType.selectedItem")
     @WithElementId
     ListModelSuggestBoxEditor pluginTypeEditor;
 
     @UiField
+    @WithElementId
+    DialogTab generalTab;
+
+    @UiField
+    @Ignore
+    DialogTab agentConfigurationTab;
+
+    @UiField
+    @Path(value = "host.entity")
+    @WithElementId("host")
+    EntityModelTextBoxEditor host;
+
+    @UiField
+    @Path(value = "qpidPort.entity")
+    @WithElementId("qpidPort")
+    EntityModelTextBoxEditor qpidPort;
+
+    @UiField
+    @Path(value = "userName.entity")
+    @WithElementId("userName")
+    EntityModelTextBoxEditor userName;
+
+    @UiField
+    @Path(value = "agentConfigPassword.entity")
+    @WithElementId("agentConfigPassword")
+    EntityModelPasswordBoxEditor agentConfigPassword;
+
+    @UiField
+    @Path(value = "interfaceMappings.entity")
+    @WithElementId("interfaceMappings")
+    EntityModelTextBoxEditor interfaceMappings;
+
+    @UiField
     Style style;
 
-    private ApplicationResources resources;
+    private final ApplicationResources resources;
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Inject
@@ -110,7 +149,6 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         super(eventBus, resources);
 
         typeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
-        pluginTypeEditor = new ListModelSuggestBoxEditor();
         requiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         this.resources = resources;
@@ -120,9 +158,12 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         localize(constants);
         addContentStyleName(style.contentStyle());
         driver.initialize(this);
+        apiVersionEditor.asListBox().addStyleName(style.apiVersionStyle());
     }
 
     void localize(ApplicationConstants constants) {
+        // General tab
+        generalTab.setLabel(constants.providerPopupGeneralTabLabel());
         nameEditor.setLabel(constants.nameProvider());
         descriptionEditor.setLabel(constants.descriptionProvider());
         typeEditor.setLabel(constants.typeProvider());
@@ -133,11 +174,20 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         passwordEditor.setLabel(constants.passwordProvider());
         tenantNameEditor.setLabel(constants.tenantName());
         pluginTypeEditor.setLabel(constants.pluginType());
+
+        // Agent configuration tab
+        agentConfigurationTab.setLabel(constants.providerPopupAgentConfigurationTabLabel());
+        host.setLabel(constants.hostQpid());
+        qpidPort.setLabel(constants.portQpid());
+        userName.setLabel(constants.usernameQpid());
+        agentConfigPassword.setLabel(constants.passwordQpid());
     }
 
     @Override
-    public void edit(ProviderModel object) {
-        driver.edit(object);
+    public void edit(ProviderModel model) {
+        customizeAgentTab((Boolean) model.getAgentTabAvailable().getEntity(),
+                (String) model.getInterfaceMappingsLabel().getEntity());
+        driver.edit(model);
     }
 
     @Override
@@ -156,6 +206,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
     interface Style extends CssResource {
         String contentStyle();
+        String apiVersionStyle();
         String testResultImage();
     }
 
@@ -170,4 +221,11 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         testResultImage.setStylePrimaryName(style.testResultImage());
         testResultMessage.setText(errorMessage.isEmpty() ? constants.testSuccessMessage() : errorMessage);
     }
+
+    @Override
+    public void customizeAgentTab(boolean tabAvailable, String ifMappingsLabel) {
+        agentConfigurationTab.setVisible(tabAvailable);
+        interfaceMappings.setLabel(ifMappingsLabel);
+    }
+
 }

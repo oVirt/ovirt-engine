@@ -1329,6 +1329,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("▲")
     String horizontalSplitTableUp();
 
+    @DefaultStringValue("QPID")
+    String qpid();
+
     @DefaultStringValue("Copy VM permissions")
     String copyVmPermissions();
 
