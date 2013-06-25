@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -425,5 +426,11 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         for (TransportType transportType : transportTypes) {
             removeTransportType(volumeId, transportType);
         }
+    }
+
+    @Override
+    public MapSqlParameterMapper<GlusterVolumeEntity> getBatchMapper() {
+        // TODO: Implement this
+        throw new RuntimeException("Unsupported operation");
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -91,5 +92,11 @@ public class GlusterOptionDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     @Override
     protected RowMapper<GlusterVolumeOptionEntity> createEntityRowMapper() {
         return optionRowMapper;
+    }
+
+    @Override
+    public MapSqlParameterMapper<GlusterVolumeOptionEntity> getBatchMapper() {
+        // TODO: Implement this
+        throw new RuntimeException("Unsupported operation");
     }
 }

@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,7 +16,6 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -65,7 +62,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.MassOperationsDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.log.Log;
@@ -159,8 +155,8 @@ public class VdsUpdateRunTimeInfo {
             }
         }
 
-        updateAllInTransaction(_vmDynamicToSave.values(), getDbFacade().getVmDynamicDao());
-        updateAllInTransaction(_vmStatisticsToSave.values(), getDbFacade().getVmStatisticsDao());
+        getDbFacade().getVmDynamicDao().updateAllInBatch(_vmDynamicToSave.values());
+        getDbFacade().getVmStatisticsDao().updateAllInBatch(_vmStatisticsToSave.values());
 
         final List<VmNetworkStatistics> allVmInterfaceStatistics = new LinkedList<VmNetworkStatistics>();
         for (List<VmNetworkInterface> list : _vmInterfaceStatisticsToSave.values()) {
@@ -169,8 +165,9 @@ public class VdsUpdateRunTimeInfo {
             }
         }
 
-        updateAllInTransaction(allVmInterfaceStatistics, getDbFacade().getVmNetworkStatisticsDao());
-        updateAllInTransaction(_vmDiskImageDynamicToSave.values(), getDbFacade().getDiskImageDynamicDao());
+        getDbFacade().getVmNetworkStatisticsDao().updateAllInBatch(allVmInterfaceStatistics);
+
+        getDbFacade().getDiskImageDynamicDao().updateAllInBatch(_vmDiskImageDynamicToSave.values());
         saveVmDevicesToDb();
         saveVmGuestAgentNetworkDevices();
         ResourceManager.getInstance().getEventListener().addExternallyManagedVms(_externalVmsToAdd);
@@ -200,7 +197,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void saveVmDevicesToDb() {
-        updateAllInTransaction("UpdateVmDeviceRuntimeInfo", vmDeviceToSave.values(), getDbFacade().getVmDeviceDao());
+        getDbFacade().getVmDeviceDao().updateAllInBatch(vmDeviceToSave.values());
 
         if (!removedDeviceIds.isEmpty()) {
             TransactionSupport.executeInScope(TransactionScopeOption.Required,
@@ -220,53 +217,6 @@ public class VdsUpdateRunTimeInfo {
                         @Override
                         public Void runInTransaction() {
                             getDbFacade().getVmDeviceDao().saveAll(newVmDevices);
-                            return null;
-                        }
-                    });
-        }
-    }
-
-    /**
-     * Update all the given entities in a transaction, so that a new connection/transaction won't be opened for each
-     * entity update.
-     *
-     * @param <T>
-     *            The type of entity.
-     * @param entities
-     *            The entities to update.
-     * @param dao
-     *            The DAO used for updating.
-     */
-    private static <T extends BusinessEntity<ID> & Comparable<T>, ID extends Serializable & Comparable<? super ID>> void updateAllInTransaction(final Collection<T> entities,
-            final MassOperationsDao<T, ID> dao) {
-        updateAllInTransaction(null, entities, dao);
-    }
-
-    /**
-     * Update all the given entities in a transaction, so that a new connection/transaction won't be opened for each
-     * entity update.
-     *
-     * @param <T>
-     *            The type of entity.
-     * @param procedureName
-     *            The name of stored procedure to use for update
-     * @param entities
-     *            The entities to update.
-     * @param dao
-     *            The DAO used for updating.
-     */
-
-    private static <T extends BusinessEntity<ID> & Comparable<T>, ID extends Serializable & Comparable<? super ID>> void updateAllInTransaction
-            (final String procedureName, final Collection<T> entities, final MassOperationsDao<T, ID> dao) {
-        final List<T> sortedList = new ArrayList<T>(entities);
-        Collections.sort(sortedList);
-        if (!entities.isEmpty()) {
-            TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                    new TransactionMethod<Void>() {
-
-                        @Override
-                        public Void runInTransaction() {
-                            dao.updateAll(procedureName, sortedList);
                             return null;
                         }
                     });

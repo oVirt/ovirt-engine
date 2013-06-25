@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -80,6 +81,41 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                 executions);
     }
 
+    @Override
+    public void massUpdateInterfacesForVds(List<VdsNetworkInterface> dbIfacesToBatch) {
+        updateAllInBatch("Updatevds_interface", dbIfacesToBatch, new MapSqlParameterMapper<VdsNetworkInterface>() {
+            @Override
+            public MapSqlParameterSource map(VdsNetworkInterface entity) {
+                MapSqlParameterSource paramValue = new MapSqlParameterSource().addValue("addr", entity.getAddress())
+                        .addValue("bond_name", entity.getBondName())
+                        .addValue("bond_type", entity.getBondType())
+                        .addValue("gateway", entity.getGateway())
+                        .addValue("id", entity.getId())
+                        .addValue("is_bond", entity.getBonded())
+                        .addValue("bond_opts", entity.getBondOptions())
+                        .addValue("mac_addr", entity.getMacAddress())
+                        .addValue("name", entity.getName())
+                        .addValue("network_name", entity.getNetworkName())
+                        .addValue("speed", entity.getSpeed())
+                        .addValue("subnet", entity.getSubnet())
+                        .addValue("boot_protocol", entity.getBootProtocol())
+                        .addValue("type", entity.getType())
+                        .addValue("vds_id", entity.getVdsId())
+                        .addValue("vlan_id", entity.getVlanId())
+                        .addValue("mtu", entity.getMtu())
+                        .addValue("bridged", entity.isBridged());
+                return paramValue;
+            }
+        });
+    }
+
+    public void updateAllInBatch(String procedureName,
+            Collection<VdsNetworkInterface> paramValues,
+            MapSqlParameterMapper<VdsNetworkInterface> mapper) {
+        getCallsHandler().executeStoredProcAsBatch(procedureName,
+                paramValues, mapper);
+    }
+
     /**
      * Update the {@link VdsNetworkStatistics} in the DB using the given {@link SimpleJdbcCall}.
      *
@@ -140,7 +176,6 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                 vdsNetworkInterfaceRowMapper, parameterSource);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<VdsNetworkInterface> getAllInterfacesForVds(Guid id, Guid userID, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -259,4 +294,5 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                     return iface;
                 }
             };
+
 }
