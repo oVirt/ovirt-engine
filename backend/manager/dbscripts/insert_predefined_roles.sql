@@ -128,7 +128,7 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,70
 --CONFIGURE_STORAGE_POOL_NETWORK
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,703);
 delete from roles_groups where role_id = v_user_id_1001;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_user_id_1001,'ENGINEUser','oVirt user',true,2 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_user_id_1001 and name='ENGINEUser' and description='oVirt user' and is_readonly=true and role_type=2);
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_user_id_1001,'UserRole','Standard User Role',true,2 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_user_id_1001 and name='UserRole' and description='Standard User Role' and is_readonly=true and role_type=2);
 
 --VM_BASIC_OPERATIONS
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_user_id_1001,4);
@@ -142,7 +142,7 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_user_id_1001,303);
 --PoewerUser role
 ---------------
 delete from roles_groups where role_id = v_power_user_id_0002;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_power_user_id_0002,'ENGINEPowerUser','oVirt power user',true,2 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_power_user_id_0002 and name='ENGINEPowerUser' and description='oVirt power user' and is_readonly=true and role_type=2);
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_power_user_id_0002,'PowerUserRole','User Role, allowed to create/manage Vms and Templates',true,2 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_power_user_id_0002 and name='PowerUserRole' and description='User Role, allowed to create/manage Vms and Templates' and is_readonly=true and role_type=2);
 
 
 ---Vm Groups
@@ -194,7 +194,7 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_power_user_id_0002,30
 -------------
 --CLUSTER_ADMIN role
 ---------------
-delete from roles_groups where role_id = v_CLUSTER_ADMIN_ID;INSERT INTO roles(id,name,description,is_readonly,role_type) select v_CLUSTER_ADMIN_ID,'ClusterAdmin','Cluster administrator',true,1 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_CLUSTER_ADMIN_ID and name='ClusterAdmin' and description='Cluster administrator' and is_readonly=true and role_type=1);
+delete from roles_groups where role_id = v_CLUSTER_ADMIN_ID;INSERT INTO roles(id,name,description,is_readonly,role_type) select v_CLUSTER_ADMIN_ID,'ClusterAdmin','Administrator Role, permission for all the objects underneath a specific Cluster',true,1 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_CLUSTER_ADMIN_ID and name='ClusterAdmin' and description='Administrator Role, permission for all the objects underneath a specific Cluster' and is_readonly=true and role_type=1);
 
 
 ---Vm Groups
@@ -256,7 +256,7 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_CLUSTER_ADMIN_ID,403)
 --DATA_CENTER_ADMIN role
 ---------------
 delete from roles_groups where role_id = v_DATA_CENTER_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_DATA_CENTER_ADMIN_ID,'DataCenterAdmin','Data Center administrator',true,1 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_DATA_CENTER_ADMIN_ID and name='DataCenterAdmin' and description='Data Center administrator' and is_readonly=true and role_type=1);
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_DATA_CENTER_ADMIN_ID,'DataCenterAdmin','Administrator Role, permission for all the objects underneath a specific Data Center, except Storage',true,1 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_DATA_CENTER_ADMIN_ID and name='DataCenterAdmin' and description='Administrator Role, permission for all the objects underneath a specific Data Center, except Storage' and is_readonly=true and role_type=1);
 
 ---Vm Groups
 --CREATE_VM
@@ -337,8 +337,8 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,
 --STORAGE_ADMIN role
 ---------------
 delete from roles_groups where role_id = v_STORAGE_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_STORAGE_ADMIN_ID,'StorageAdmin','Storage administrator',true,1 where
-not exists (select id,name,description,is_readonly,role_type from roles where id=v_STORAGE_ADMIN_ID and name='StorageAdmin' and description='Storage administrator' and is_readonly=true and role_type=1);
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_STORAGE_ADMIN_ID,'StorageAdmin','Administrator Role, permission for all operations on a specific Storage Domain',true,1 where
+not exists (select id,name,description,is_readonly,role_type from roles where id=v_STORAGE_ADMIN_ID and name='StorageAdmin' and description='Administrator Role, permission for all operations on a specific Storage Domain' and is_readonly=true and role_type=1);
 
 -- storage domains actions groups
 --CREATE_STORAGE_DOMAIN
@@ -355,8 +355,8 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_STORAGE_ADMIN_ID,603)
 ---------------
 
 delete from roles_groups where role_id = v_HOST_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_HOST_ADMIN_ID,'HostAdmin','Host administrator',true,1 where
-not exists (select id,name,description,is_readonly,role_type from roles where id=v_HOST_ADMIN_ID and name='HostAdmin' and description='Host administrator' and is_readonly=true and role_type=1);
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_HOST_ADMIN_ID,'HostAdmin','Administrator Role, permission for all operations on a specific Host',true,1 where
+not exists (select id,name,description,is_readonly,role_type from roles where id=v_HOST_ADMIN_ID and name='HostAdmin' and description='Administrator Role, permission for all operations on a specific Host' and is_readonly=true and role_type=1);
 
 -- host (vds) actions groups
 --CREATE_HOST
@@ -385,8 +385,8 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,603);
 ---------------
 
 delete from roles_groups where role_id = v_NETWORK_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_NETWORK_ADMIN_ID,'NetworkAdmin','Network administrator',true,1 where
-not exists (select id,name,description,is_readonly,role_type from roles where id=v_NETWORK_ADMIN_ID and name='NetworkAdmin' and description='Network administrator' and is_readonly=true and role_type=1);
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_NETWORK_ADMIN_ID,'NetworkAdmin','Administrator Role, permission for all operations on a specific Logical Network',true,1 where
+not exists (select id,name,description,is_readonly,role_type from roles where id=v_NETWORK_ADMIN_ID and name='NetworkAdmin' and description='Administrator Role, permission for all operations on a specific Logical Network' and is_readonly=true and role_type=1);
 --CONFIGURE_HOST_NETWORK
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,104);
 --MANIPUTLATE_HOST
@@ -399,8 +399,8 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,403)
 ---------------
 
 delete from roles_groups where role_id = v_VM_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_VM_ADMIN_ID,'VmOperator','VM operator',true,2 where
-not exists (select id,name,description,is_readonly,role_type from roles where id=v_VM_ADMIN_ID and name='VmOperator' and description='VM operator' and is_readonly=true and role_type=2);
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_VM_ADMIN_ID,'UserVmManager','User Role, with permission for any operation on Vms',true,2 where
+not exists (select id,name,description,is_readonly,role_type from roles where id=v_VM_ADMIN_ID and name='UserVmManager' and description='User Role, with permission for any operation on Vms' and is_readonly=true and role_type=2);
 
 ---Vm Groups
 --CREATE_VM
@@ -432,8 +432,8 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,12);
 --VM_POOL_ADMIN role
 ---------------
 delete from roles_groups where role_id = v_VM_POOL_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_VM_POOL_ADMIN_ID,'VmPoolAdmin','Vm-Pool administrator',true,1 where
-not exists (select id,name,description,is_readonly,role_type from roles where id= v_VM_POOL_ADMIN_ID and name='VmPoolAdmin' and description='Vm-Pool administrator' and is_readonly=true and role_type=1);
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_VM_POOL_ADMIN_ID,'VmPoolAdmin','Administrator Role, permission for all operations on a specific VM Pool',true,1 where
+not exists (select id,name,description,is_readonly,role_type from roles where id= v_VM_POOL_ADMIN_ID and name='VmPoolAdmin' and description='Administrator Role, permission for all operations on a specific VM Pool' and is_readonly=true and role_type=1);
 
 -- vm pools actions groups
 --CREATE_VM_POOL
@@ -447,8 +447,8 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_POOL_ADMIN_ID,303)
 --TEMPLATE_ADMIN role
 ---------------
 delete from roles_groups where role_id = v_TEMPLATE_ADMIN_ID;
-INSERT INTO roles(id,name,description,is_readonly,role_type) select v_TEMPLATE_ADMIN_ID,'TemplateAdmin','Template administrator',true,1 where
-not exists (select id,name,description,is_readonly,role_type from roles where id= v_TEMPLATE_ADMIN_ID and name='TemplateAdmin' and description='Template administrator' and is_readonly=true and role_type=1);
+INSERT INTO roles(id,name,description,is_readonly,role_type) select v_TEMPLATE_ADMIN_ID,'TemplateAdmin','Administrator Role, permission for all operations on a specific Template',true,1 where
+not exists (select id,name,description,is_readonly,role_type from roles where id= v_TEMPLATE_ADMIN_ID and name='TemplateAdmin' and description='Administrator Role, permission for all operations on a specific Template' and is_readonly=true and role_type=1);
 -- templates actions groups
 --CREATE_TEMPLATE
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_ADMIN_ID,200);
