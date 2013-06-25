@@ -468,6 +468,23 @@ delete from roles_groups where role_id = v_TEMPLATE_USER_ID;
 INSERT INTO roles(id,name,description,is_readonly,role_type) select v_TEMPLATE_USER_ID,'TemplateUser','Template User',true,2 where
 not exists (select id,name,description,is_readonly,role_type from roles where id= v_TEMPLATE_USER_ID and name='TemplateUser' and description='Template User' and is_readonly=true and role_type=2);
 
+-- MAKE BLANK TEMPLATE PUBLIC
+insert into permissions (id,role_id,ad_element_id,object_id,object_type_id)
+ select uuid_generate_v1(),
+'DEF00009-0000-0000-0000-DEF000000009', -- TemplateUser
+ getGlobalIds('everyone'),
+ '00000000-0000-0000-0000-000000000000',    -- blank template id --
+ 4                                          -- template object type id --
+ where not exists (
+  select * from permissions where
+  role_id = 'DEF00009-0000-0000-0000-DEF000000009'
+  and
+  ad_element_id = getGlobalIds('everyone')
+  and
+  object_id = '00000000-0000-0000-0000-000000000000'
+  and
+  object_type_id = 4);
+
 ---Vm Groups
 --CREATE_VM
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_TEMPLATE_USER_ID,1);
