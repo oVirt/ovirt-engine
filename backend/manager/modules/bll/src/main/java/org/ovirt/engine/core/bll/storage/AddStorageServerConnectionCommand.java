@@ -116,11 +116,19 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        // lock the path to NFS to avoid at the same time if some other user tries to:
-        // add new storage domain to same path or edit another storage server connection to point to same path
-        return Collections.singletonMap(getParameters().getStorageServerConnection().getconnection(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        if (getConnection().getstorage_type().isFileDomain()) {
+            // lock the path to NFS to avoid at the same time if some other user tries to:
+            // add new storage domain to same path or edit another storage server connection to point to same path
+            return Collections.singletonMap(getParameters().getStorageServerConnection().getconnection(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
+                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        }
+        else { // lock target details
+            return Collections.singletonMap(getConnection().getconnection() + ";" + getConnection().getiqn() + ";"
+                    + getConnection().getport() + ";" + getConnection().getuser_name(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
+                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        }
     }
 
     @Override

@@ -10,7 +10,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -21,6 +23,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.CommandAssertUtils;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
+import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
@@ -28,12 +31,17 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.LunDAO;
+import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainDynamicDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
+import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -55,6 +63,15 @@ public class UpdateStorageServerConnectionCommandTest {
 
     @Mock
     private StoragePoolIsoMapDAO storagePoolIsoMapDAO;
+
+    @Mock
+    private LunDAO lunDAO;
+
+    @Mock
+    private VmDAO vmDAO;
+
+    @Mock
+    private StorageDomainDAO storageDomainDAO;
 
     private StorageServerConnectionParametersBase parameters;
 
@@ -80,22 +97,24 @@ public class UpdateStorageServerConnectionCommandTest {
     }
 
     private void prepareCommand() {
-       parameters = new StorageServerConnectionParametersBase();
-       parameters.setVdsId(Guid.newGuid());
-       parameters.setStoragePoolId(Guid.newGuid());
+        parameters = new StorageServerConnectionParametersBase();
+        parameters.setVdsId(Guid.newGuid());
+        parameters.setStoragePoolId(Guid.newGuid());
 
-       command = spy(new UpdateStorageServerConnectionCommand<StorageServerConnectionParametersBase>(parameters));
-       doReturn(storageConnDao).when(command).getStorageConnDao();
-       doReturn(storageDomainDynamicDao).when(command).getStorageDomainDynamicDao();
-       doReturn(storagePoolIsoMapDAO).when(command).getStoragePoolIsoMapDao();
-
+        command = spy(new UpdateStorageServerConnectionCommand<StorageServerConnectionParametersBase>(parameters));
+        doReturn(storageConnDao).when(command).getStorageConnDao();
+        doReturn(storageDomainDynamicDao).when(command).getStorageDomainDynamicDao();
+        doReturn(storagePoolIsoMapDAO).when(command).getStoragePoolIsoMapDao();
+        doReturn(lunDAO).when(command).getLunDao();
+        doReturn(vmDAO).when(command).getVmDAO();
+        doReturn(storageDomainDAO).when(command).getStorageDomainDao();
     }
 
     private StorageServerConnections createNFSConnection(String connection,
-                                                         StorageType type,
-                                                         NfsVersion version,
-                                                         int timeout,
-                                                         int retrans) {
+            StorageType type,
+            NfsVersion version,
+            int timeout,
+            int retrans) {
         Guid id = Guid.newGuid();
         StorageServerConnections connectionDetails = populateBasicConnectionDetails(id, connection, type);
         connectionDetails.setNfsVersion(version);
@@ -104,7 +123,10 @@ public class UpdateStorageServerConnectionCommandTest {
         return connectionDetails;
     }
 
-    private StorageServerConnections createPosixConnection(String connection, StorageType type, String vfsType, String mountOptions) {
+    private StorageServerConnections createPosixConnection(String connection,
+            StorageType type,
+            String vfsType,
+            String mountOptions) {
         Guid id = Guid.newGuid();
         StorageServerConnections connectionDetails = populateBasicConnectionDetails(id, connection, type);
         connectionDetails.setVfsType(vfsType);
@@ -112,7 +134,11 @@ public class UpdateStorageServerConnectionCommandTest {
         return connectionDetails;
     }
 
-    private StorageServerConnections createISCSIConnection(String connection, StorageType type, String iqn, String user, String password) {
+    private StorageServerConnections createISCSIConnection(String connection,
+            StorageType type,
+            String iqn,
+            String user,
+            String password) {
         Guid id = Guid.newGuid();
         StorageServerConnections connectionDetails = populateBasicConnectionDetails(id, connection, type);
         connectionDetails.setiqn(iqn);
@@ -130,14 +156,20 @@ public class UpdateStorageServerConnectionCommandTest {
         return connectionDetails;
     }
 
+    private StorageDomain createDomain(StorageDomainDynamic domainDynamic) {
+        StorageDomain domain = new StorageDomain();
+        domain.setStorageName("mydomain");
+        return domain;
+    }
+
     @Test
     public void checkNoHost() {
-        StorageServerConnections  newNFSConnection = createNFSConnection(
-                        "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
-                        StorageType.NFS,
-                        NfsVersion.V4,
-                        300,
-                        0);
+        StorageServerConnections newNFSConnection = createNFSConnection(
+                "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                StorageType.NFS,
+                NfsVersion.V4,
+                300,
+                0);
         parameters.setStorageServerConnection(newNFSConnection);
         parameters.setVdsId(null);
         parameters.setStorageServerConnection(newNFSConnection);
@@ -147,53 +179,45 @@ public class UpdateStorageServerConnectionCommandTest {
 
     @Test
     public void checkEmptyIdHost() {
-        StorageServerConnections  newNFSConnection = createNFSConnection(
-                        "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
-                        StorageType.NFS,
-                        NfsVersion.V4,
-                        300,
-                        0);
+        StorageServerConnections newNFSConnection = createNFSConnection(
+                "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                StorageType.NFS,
+                NfsVersion.V4,
+                300,
+                0);
         parameters.setStorageServerConnection(newNFSConnection);
         parameters.setVdsId(Guid.Empty);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.VDS_EMPTY_NAME_OR_ID);
     }
 
     @Test
-    public void updateIScsiConnection() {
-          StorageServerConnections  newNFSConnection = createNFSConnection(
-                  "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
-                  StorageType.ISCSI,
-                  NfsVersion.V4,
-                  300,
-                  0);
-        parameters.setStorageServerConnection(newNFSConnection);
+    public void updateFCPUnsupportedConnectionType() {
+        StorageServerConnections dummyFCPConn =
+                createISCSIConnection("10.35.16.25", StorageType.FCP, "", "user1", "mypassword123");
+        parameters.setStorageServerConnection(dummyFCPConn);
+
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE);
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE);
     }
 
     @Test
     public void updateChangeConnectionType() {
-        StorageServerConnections  newNFSConnection = createNFSConnection(
-                        "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
-                        StorageType.NFS,
-                        NfsVersion.V4,
-                        300,
-                        0);
-        parameters.setStorageServerConnection(newNFSConnection);
-        oldNFSConnection.setstorage_type(StorageType.ISCSI);
-        when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
+        StorageServerConnections iscsiConnection =
+                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "user1", "mypassword123");
+        parameters.setStorageServerConnection(iscsiConnection);
+        when(storageConnDao.get(iscsiConnection.getid())).thenReturn(oldNFSConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_CHANGE_STORAGE_TYPE);
     }
 
     @Test
     public void updateNonExistingConnection() {
-        StorageServerConnections  newNFSConnection = createNFSConnection(
-                       "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
-                        StorageType.NFS,
-                        NfsVersion.V4,
-                        300,
-                        0);
+        StorageServerConnections newNFSConnection = createNFSConnection(
+                "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                StorageType.NFS,
+                NfsVersion.V4,
+                300,
+                0);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(null);
         parameters.setStorageServerConnection(newNFSConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
@@ -202,21 +226,24 @@ public class UpdateStorageServerConnectionCommandTest {
 
     @Test
     public void updateBadFormatPath() {
-         StorageServerConnections  newNFSConnection = createNFSConnection(
-                        "host/mydir",
-                        StorageType.NFS,
-                        NfsVersion.V4,
-                        300,
-                        0);
+        StorageServerConnections newNFSConnection = createNFSConnection(
+                "host/mydir",
+                StorageType.NFS,
+                NfsVersion.V4,
+                300,
+                0);
         parameters.setStorageServerConnection(newNFSConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID);
     }
 
-
     @Test
     public void updatePosixEmptyVFSType() {
-        StorageServerConnections newPosixConnection = createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1", StorageType.POSIXFS, null , "timeo=30");
+        StorageServerConnections newPosixConnection =
+                createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1",
+                        StorageType.POSIXFS,
+                        null,
+                        "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
@@ -224,12 +251,12 @@ public class UpdateStorageServerConnectionCommandTest {
 
     @Test
     public void updateSeveralConnectionsWithSamePath() {
-        StorageServerConnections  newNFSConnection = createNFSConnection(
-                       "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
-                        StorageType.NFS,
-                        NfsVersion.V4,
-                        300,
-                        0);
+        StorageServerConnections newNFSConnection = createNFSConnection(
+                "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                StorageType.NFS,
+                NfsVersion.V4,
+                300,
+                0);
         parameters.setStorageServerConnection(newNFSConnection);
         List<StorageServerConnections> connections = new ArrayList<StorageServerConnections>();
         StorageServerConnections conn1 = new StorageServerConnections();
@@ -249,12 +276,12 @@ public class UpdateStorageServerConnectionCommandTest {
 
     @Test
     public void updateConnectionOfSeveralDomains() {
-        StorageServerConnections  newNFSConnection = createNFSConnection(
-                       "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
-                        StorageType.NFS,
-                        NfsVersion.V4,
-                        300,
-                        0);
+        StorageServerConnections newNFSConnection = createNFSConnection(
+                "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                StorageType.NFS,
+                NfsVersion.V4,
+                300,
+                0);
         parameters.setStorageServerConnection(newNFSConnection);
         List<StorageDomain> domains = new ArrayList<StorageDomain>();
         StorageDomain domain1 = new StorageDomain();
@@ -278,12 +305,12 @@ public class UpdateStorageServerConnectionCommandTest {
 
     @Test
     public void updateConnectionOfActiveDomain() {
-        StorageServerConnections  newNFSConnection = createNFSConnection(
-                        "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
-                        StorageType.NFS,
-                        NfsVersion.V4,
-                        300,
-                        0);
+        StorageServerConnections newNFSConnection = createNFSConnection(
+                "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                StorageType.NFS,
+                NfsVersion.V4,
+                300,
+                0);
         List<StorageDomain> domains = new ArrayList<StorageDomain>();
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(newNFSConnection.getconnection());
@@ -294,17 +321,150 @@ public class UpdateStorageServerConnectionCommandTest {
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
         doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE);
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_MAINTENANCE);
+    }
+
+    @Test
+    public void updateConnectionOfDomainsAndLunDisks() {
+        StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "user1", "mypassword123");
+        List<LUNs> luns = new ArrayList<>();
+        LUNs lun1 = new LUNs();
+        lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
+        lun1.setvolume_group_id("");
+        lun1.setDiskAlias("disk1");
+        Guid diskId1 = Guid.newGuid();
+        lun1.setDiskId(diskId1);
+        luns.add(lun1);
+        LUNs lun2 = new LUNs();
+        lun2.setLUN_id("3600144f09dbd05000000517e730b1212");
+        lun2.setvolume_group_id("");
+        lun2.setDiskAlias("disk2");
+        Guid diskId2 = Guid.newGuid();
+        lun2.setDiskId(diskId2);
+        luns.add(lun2);
+        LUNs lun3 = new LUNs();
+        lun3.setLUN_id("3600144f09dbd05000000517e730b1212");
+        lun3.setStorageDomainName("storagedomain4");
+        Guid storageDomainId = Guid.newGuid();
+        lun3.setStorageDomainId(storageDomainId);
+        lun3.setvolume_group_id(Guid.newGuid().toString());
+        luns.add(lun3);
+
+        Map<Boolean, List<VM>> vmsMap = new HashMap<>();
+        VM vm1 = new VM();
+        vm1.setName("vm1");
+        vm1.setStatus(VMStatus.Up);
+        VM vm2 = new VM();
+        vm2.setName("vm2");
+        vm2.setStatus(VMStatus.Down);
+        VM vm3 = new VM();
+        vm3.setName("vm3");
+        vm3.setStatus(VMStatus.Up);
+        List<VM> pluggedVms = new ArrayList<>();
+        pluggedVms.add(vm1);
+        pluggedVms.add(vm2);
+        List<VM> unPluggedVms = new ArrayList<>();
+        unPluggedVms.add(vm3);
+        vmsMap.put(Boolean.FALSE, unPluggedVms);
+        vmsMap.put(Boolean.TRUE, pluggedVms);
+        when(vmDAO.getForDisk(diskId1)).thenReturn(vmsMap);
+        parameters.setStorageServerConnection(iscsiConnection);
+        when(storageConnDao.get(iscsiConnection.getid())).thenReturn(iscsiConnection);
+        doReturn(luns).when(command).getLuns();
+        List<StorageDomain> domains = new ArrayList<>();
+        StorageDomain domain1 = new StorageDomain();
+        domain1.setStorage(iscsiConnection.getconnection());
+        domain1.setStatus(StorageDomainStatus.Active);
+        domain1.setId(storageDomainId);
+        domain1.setStorageName("storagedomain4");
+        domains.add(domain1);
+        when(storageDomainDAO.get(storageDomainId)).thenReturn(domain1);
+        List<String> messages = CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_MAINTENANCE);
+        assertTrue(messages.contains("$vmNames vm1"));
+        assertTrue(messages.contains("$domainNames storagedomain4"));
+    }
+
+    @Test
+    public void updateConnectionOfLunDisks() {
+        StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "user1", "mypassword123");
+        List<LUNs> luns = new ArrayList<>();
+        LUNs lun1 = new LUNs();
+        lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
+        lun1.setvolume_group_id("");
+        lun1.setDiskAlias("disk1");
+        Guid diskId1 = Guid.newGuid();
+        lun1.setDiskId(diskId1);
+        luns.add(lun1);
+        LUNs lun2 = new LUNs();
+        lun2.setLUN_id("3600144f09dbd05000000517e730b1212");
+        lun2.setvolume_group_id("");
+        lun2.setDiskAlias("disk2");
+        Guid diskId2 = Guid.newGuid();
+        lun2.setDiskId(diskId2);
+        luns.add(lun2);
+        Map<Boolean, List<VM>> vmsMap = new HashMap<>();
+        VM vm1 = new VM();
+        vm1.setName("vm1");
+        vm1.setStatus(VMStatus.Up);
+        VM vm2 = new VM();
+        vm2.setName("vm2");
+        vm2.setStatus(VMStatus.Paused);
+        VM vm3 = new VM();
+        vm3.setName("vm3");
+        vm3.setStatus(VMStatus.Up);
+        List<VM> pluggedVms = new ArrayList<>();
+        pluggedVms.add(vm1);
+        pluggedVms.add(vm2);
+        List<VM> unPluggedVms = new ArrayList<>();
+        unPluggedVms.add(vm3);
+        vmsMap.put(Boolean.FALSE, unPluggedVms);
+        vmsMap.put(Boolean.TRUE, pluggedVms);
+        when(vmDAO.getForDisk(diskId1)).thenReturn(vmsMap);
+        parameters.setStorageServerConnection(iscsiConnection);
+        when(storageConnDao.get(iscsiConnection.getid())).thenReturn(iscsiConnection);
+        doReturn(luns).when(command).getLuns();
+        List<String> messages = CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS);
+        assertTrue(messages.contains("$vmNames vm1,vm2"));
+    }
+
+    @Test
+    public void updateConnectionOfDomains() {
+        StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "user1", "mypassword123");
+        List<LUNs> luns = new ArrayList<>();
+        LUNs lun1 = new LUNs();
+        lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
+        lun1.setStorageDomainName("storagedomain4");
+        Guid storageDomainId = Guid.newGuid();
+        lun1.setStorageDomainId(storageDomainId);
+        lun1.setvolume_group_id(Guid.newGuid().toString());
+        luns.add(lun1);
+        parameters.setStorageServerConnection(iscsiConnection);
+        when(storageConnDao.get(iscsiConnection.getid())).thenReturn(iscsiConnection);
+        doReturn(luns).when(command).getLuns();
+        List<StorageDomain> domains = new ArrayList<>();
+        StorageDomain domain1 = new StorageDomain();
+        domain1.setStorage(iscsiConnection.getconnection());
+        domain1.setStatus(StorageDomainStatus.Active);
+        domain1.setId(storageDomainId);
+        domain1.setStorageName("storagedomain4");
+        domains.add(domain1);
+        when(storageDomainDAO.get(storageDomainId)).thenReturn(domain1);
+        List<String> messages =
+                CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                        VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_MAINTENANCE);
+        assertTrue(messages.contains("$domainNames storagedomain4"));
     }
 
     @Test
     public void updateConnectionNoDomain() {
-        StorageServerConnections  newNFSConnection = createNFSConnection(
-                       "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
-                        StorageType.NFS,
-                        NfsVersion.V4,
-                        300,
-                        0);
+        StorageServerConnections newNFSConnection = createNFSConnection(
+                "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                StorageType.NFS,
+                NfsVersion.V4,
+                300,
+                0);
         parameters.setStorageServerConnection(newNFSConnection);
         List<StorageDomain> domains = new ArrayList<StorageDomain>();
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
@@ -314,7 +474,7 @@ public class UpdateStorageServerConnectionCommandTest {
 
     @Test
     public void succeedCanDoActionNFS() {
-        StorageServerConnections  newNFSConnection = createNFSConnection(
+        StorageServerConnections newNFSConnection = createNFSConnection(
                 "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
                 StorageType.NFS,
                 NfsVersion.V4,
@@ -334,7 +494,11 @@ public class UpdateStorageServerConnectionCommandTest {
 
     @Test
     public void succeedCanDoActionPosix() {
-        StorageServerConnections newPosixConnection = createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1", StorageType.POSIXFS, "nfs", "timeo=30");
+        StorageServerConnections newPosixConnection =
+                createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1",
+                        StorageType.POSIXFS,
+                        "nfs",
+                        "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
         List<StorageDomain> domains = new ArrayList<StorageDomain>();
         StorageDomain domain1 = new StorageDomain();
@@ -356,43 +520,49 @@ public class UpdateStorageServerConnectionCommandTest {
                         NfsVersion.V4,
                         300,
                         0);
+        parameters.setStorageServerConnection(newNFSConnection);
         VDSReturnValue returnValueConnectSuccess = new VDSReturnValue();
         StoragePoolIsoMap map = new StoragePoolIsoMap();
-        doReturn(map).when(command).getStoragePoolIsoMap();
         returnValueConnectSuccess.setSucceeded(true);
-        StorageDomain domain = new StorageDomain();
         StorageDomainDynamic domainDynamic = new StorageDomainDynamic();
-        domain.setStorageDynamicData(domainDynamic);
+        StorageDomain domain = createDomain(domainDynamic);
+        doReturn(map).when(command).getStoragePoolIsoMap(domain);
         returnValueConnectSuccess.setReturnValue(domain);
-        doReturn(returnValueConnectSuccess).when(command).getStatsForDomain();
+        doReturn(returnValueConnectSuccess).when(command).getStatsForDomain(domain);
         doReturn(true).when(command).connectToStorage();
         doNothing().when(storageConnDao).update(newNFSConnection);
         doNothing().when(storageDomainDynamicDao).update(domainDynamic);
-        doNothing().when(command).changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Locked);
-        doNothing().when(command).changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Maintenance);
+        List<StorageDomain> domains = new ArrayList<>();
+        domains.add(domain);
+        doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
+        doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Locked);
+        doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Maintenance);
         doNothing().when(command).disconnectFromStorage();
+        doNothing().when(command).updateStorageDomain(domains);
         command.executeCommand();
         CommandAssertUtils.checkSucceeded(command, true);
     }
 
     @Test
     public void succeedUpdateNFSCommandNoDomain() {
-        StorageServerConnections  newNFSConnection = createNFSConnection(
-                       "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
-                        StorageType.NFS,
-                        NfsVersion.V4,
-                        300,
-                        0);
+        StorageServerConnections newNFSConnection = createNFSConnection(
+                "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                StorageType.NFS,
+                NfsVersion.V4,
+                300,
+                0);
+        parameters.setStorageServerConnection(newNFSConnection);
         VDSReturnValue returnValueConnectSuccess = new VDSReturnValue();
-        StoragePoolIsoMap map = new StoragePoolIsoMap();
-        doReturn(map).when(command).getStoragePoolIsoMap();
-        doReturn(false).when(command).doDomainsUseConnection();
+        doReturn(false).when(command).doDomainsUseConnection(newNFSConnection);
+        doReturn(false).when(command).doLunsUseConnection();
         returnValueConnectSuccess.setSucceeded(true);
-        doReturn(true).when(command).connectToStorage();
         doNothing().when(storageConnDao).update(newNFSConnection);
-        doNothing().when(command).disconnectFromStorage();
         command.executeCommand();
         CommandAssertUtils.checkSucceeded(command, true);
+        verify(command,never()).connectToStorage();
+        verify(command,never()).disconnectFromStorage();
+        verify(command,never()).changeStorageDomainStatusInTransaction(StorageDomainStatus.Locked);
+
     }
 
     @Test
@@ -403,44 +573,52 @@ public class UpdateStorageServerConnectionCommandTest {
                         NfsVersion.V4,
                         300,
                         0);
+        parameters.setStorageServerConnection(newNFSConnection);
         VDSReturnValue returnValueUpdate = new VDSReturnValue();
         returnValueUpdate.setSucceeded(false);
-        doReturn(true).when(command).doDomainsUseConnection();
-        StoragePoolIsoMap map = new StoragePoolIsoMap();
-        doReturn(map).when(command).getStoragePoolIsoMap();
-        doReturn(returnValueUpdate).when(command).getStatsForDomain();
-        doReturn(true).when(command).connectToStorage();
+        List<StorageDomain> domains = new ArrayList<>();
+        StorageDomain domain = createDomain(new StorageDomainDynamic());
+        domains.add(domain);
+        doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
         StorageDomainDynamic domainDynamic = new StorageDomainDynamic();
-        doNothing().when(command).changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Locked);
-        doNothing().when(command).changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Maintenance);
+        StoragePoolIsoMap map = new StoragePoolIsoMap();
+        doReturn(map).when(command).getStoragePoolIsoMap(domain);
+        doReturn(returnValueUpdate).when(command).getStatsForDomain(domain);
+        doReturn(true).when(command).connectToStorage();
+        doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Locked);
+        doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Maintenance);
         doNothing().when(command).disconnectFromStorage();
         command.executeCommand();
-        CommandAssertUtils.checkSucceeded(command, false);
+        CommandAssertUtils.checkSucceeded(command, true);
         verify(storageDomainDynamicDao, never()).update(domainDynamic);
-        verify(storageConnDao, never()).update(newNFSConnection);
     }
 
     @Test
     public void failUpdateConnectToStorage() {
         StorageServerConnections  newNFSConnection = createNFSConnection(
-                       "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
-                        StorageType.NFS,
-                        NfsVersion.V4,
-                        300,
-                        0);
+                "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                StorageType.NFS,
+                NfsVersion.V4,
+                300,
+                0);
+        parameters.setStorageServerConnection(newNFSConnection);
+        doReturn(false).when(command).connectToStorage();
         VDSReturnValue returnValueUpdate = new VDSReturnValue();
         returnValueUpdate.setSucceeded(true);
-        StoragePoolIsoMap map = new StoragePoolIsoMap();
-        doReturn(map).when(command).getStoragePoolIsoMap();
-        doReturn(returnValueUpdate).when(command).getStatsForDomain();
-        doReturn(false).when(command).connectToStorage();
-        doNothing().when(command).changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Locked);
-        doNothing().when(command).changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Maintenance);
-        command.executeCommand();
-        CommandAssertUtils.checkSucceeded(command, false);
+        List<StorageDomain> domains = new ArrayList<>();
         StorageDomainDynamic domainDynamic = new StorageDomainDynamic();
+        StorageDomain domain = createDomain(domainDynamic);
+        domains.add(domain);
+        doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
+        StoragePoolIsoMap map = new StoragePoolIsoMap();
+        doReturn(map).when(command).getStoragePoolIsoMap(domain);
+        doReturn(returnValueUpdate).when(command).getStatsForDomain(domain);
+        doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Locked);
+        doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Maintenance);
+        command.executeCommand();
+        CommandAssertUtils.checkSucceeded(command, true);
         verify(storageDomainDynamicDao, never()).update(domainDynamic);
-        verify(storageConnDao, never()).update(newNFSConnection);
+        verify(command,never()).disconnectFromStorage();
     }
 
     @Test
@@ -531,5 +709,4 @@ public class UpdateStorageServerConnectionCommandTest {
        boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection);
        assertFalse(isExists);
     }
-
 }

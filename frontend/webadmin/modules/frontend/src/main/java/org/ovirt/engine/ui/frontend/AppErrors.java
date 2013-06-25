@@ -991,8 +991,17 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection already exists.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters can be edited only for NFS, Posix or local data domains in maintenance.")
-    String  ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE();
+    @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters can be edited only for NFS, Posix, local or iSCSI data domains.")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The data domains ${domainNames} should be in maintenance,")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_MAINTENANCE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. VMs ${vmNames} should be down.")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The data domains ${domainNames} should be in maintenance, and VMs ${vmNames} should be down.")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_MAINTENANCE();
 
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters are used by the following storage domains : ${domainNames}.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS();

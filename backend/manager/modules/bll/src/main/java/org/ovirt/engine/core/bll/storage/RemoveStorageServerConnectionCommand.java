@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 
 
@@ -132,10 +131,6 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
         // Remove the last "," after the last domain
         domainNames.deleteCharAt(domainNames.length() - 1);
         return domainNames.toString();
-    }
-
-    protected LunDAO getLunDao() {
-        return getDbFacade().getLunDao();
     }
 
     @Override

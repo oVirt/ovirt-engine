@@ -12,6 +12,7 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
+import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -19,9 +20,9 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
@@ -38,7 +39,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 @LockIdNameAttribute
 public class UpdateStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends StorageServerConnectionCommandBase<T> {
-    private List<StorageDomain> domains = null;
+    private List<StorageDomain> domains = new ArrayList<>();
+    private List<LUNs> luns = new ArrayList<>();
 
     public UpdateStorageServerConnectionCommand(T parameters) {
         super(parameters);
@@ -46,11 +48,11 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     @Override
     protected boolean canDoAction() {
-        StorageServerConnections newConnectionDetails = getParameters().getStorageServerConnection();
-
-        if (!newConnectionDetails.getstorage_type().isFileDomain()
-                || newConnectionDetails.getstorage_type().equals(StorageType.GLUSTERFS)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE);
+        StorageServerConnections newConnectionDetails = getConnection();
+        StorageType storageType = newConnectionDetails.getstorage_type();
+        if ((!storageType.isFileDomain() && !storageType.equals(StorageType.ISCSI))
+                || storageType.equals(StorageType.GLUSTERFS)) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE);
         }
 
         // Check if the NFS path has a valid format
@@ -73,7 +75,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             return failCanDoAction(VdcBllMessages.VDS_EMPTY_NAME_OR_ID);
         }
 
-        // Check if connection exists by id - otherwise there's nothing to update
+        // Check if connection exists by id, otherwise there's nothing to update
         String connectionId = newConnectionDetails.getid();
 
         StorageServerConnections oldConnection = getStorageConnDao().get(connectionId);
@@ -90,21 +92,15 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
 
-        if (domains == null) {
-            domains = getStorageDomainsByConnId(newConnectionDetails.getid());
-        }
-        if (doDomainsUseConnection()) {
-            if (domains.size() == 1) {
-                setStorageDomain(domains.get(0));
-            }
-            else {
+        if (doDomainsUseConnection(newConnectionDetails) || doLunsUseConnection()) {
+            if (storageType.isFileDomain() && domains.size() > 1) {
                 String domainNames = createDomainNamesList(domains);
                 addCanDoActionMessage(String.format("$domainNames %1$s", domainNames));
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_STORAGE_DOMAINS);
             }
             // Check that the storage domain is in proper state to be edited
-            if (!isConnectionEditable(getStorageDomain())) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE);
+            if (!isConnectionEditable(newConnectionDetails)) {
+                return false;
             }
         }
         return super.canDoAction();
@@ -117,86 +113,169 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             domainNames.append(domain.getStorageName());
             domainNames.append(",");
         }
-        // Remove the last "," after the last domain
+        // Remove the last comma after the last domain
         domainNames.deleteCharAt(domainNames.length() - 1);
         return domainNames.toString();
     }
 
-    protected boolean isConnectionEditable(StorageDomain storageDomain) {
-        boolean isEditable =
-                (storageDomain.getStorageDomainType() == StorageDomainType.Data || storageDomain.getStorageDomainType() == StorageDomainType.Master)
-                        && storageDomain.getStatus() == StorageDomainStatus.Maintenance;
+    protected List<LUNs> getLuns() {
+        if (luns.isEmpty()) {
+            luns = getLunDao().getAllForStorageServerConnection(getConnection().getid());
+        }
+        return luns;
+    }
+
+    protected boolean isConnectionEditable(StorageServerConnections connection) {
+        if (connection.getstorage_type().isFileDomain()) {
+            boolean isConnectionEditable = isDomainInEditState(domains.get(0));
+            if (!isConnectionEditable) {
+                addCanDoActionMessage(String.format("$domainNames %1$s", domains.get(0).getStorageName()));
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_MAINTENANCE);
+            }
+            return isConnectionEditable;
+        }
+        if (!getLuns().isEmpty()) {
+            List<String> problematicVMNames = new ArrayList<>();
+            List<String> problematicDomainNames = new ArrayList<>();
+            for (LUNs lun : getLuns()) {
+                Guid diskId = lun.getDiskId();
+                if (diskId != null) {
+                    Map<Boolean, List<VM>> vmsMap = getVmDAO().getForDisk(diskId);
+                    List<VM> pluggedVms = vmsMap.get(Boolean.TRUE);
+                    if (pluggedVms != null && !pluggedVms.isEmpty()) {
+                        for (VM vm : pluggedVms) {
+                            if (!vm.getStatus().equals(VMStatus.Down)) {
+                                problematicVMNames.add(vm.getName());
+                            }
+                        }
+                    }
+                }
+                Guid storageDomainId = lun.getStorageDomainId();
+                if (storageDomainId != null) {
+                    StorageDomain domain = getStorageDomainDao().get(storageDomainId);
+                    if (!domain.getStatus().equals(StorageDomainStatus.Maintenance)) {
+                        String domainName = domain.getStorageName();
+                        problematicDomainNames.add(domainName);
+                    } else {
+                        domains.add(domain);
+                    }
+                }
+            }
+            if (!problematicVMNames.isEmpty()) {
+                if (problematicDomainNames.isEmpty()) {
+                    addCanDoActionMessage(String.format("$vmNames %1$s", prepareEntityNamesForMessage(problematicVMNames)));
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS);
+                } else {
+                    addCanDoActionMessage(String.format("$vmNames %1$s", prepareEntityNamesForMessage(problematicVMNames)));
+                    addCanDoActionMessage(String.format("$domainNames %1$s", prepareEntityNamesForMessage(problematicDomainNames)));
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_MAINTENANCE);
+                }
+                return false;
+            }
+
+            if (!problematicDomainNames.isEmpty()) {
+                addCanDoActionMessage(String.format("$domainNames %1$s", prepareEntityNamesForMessage(problematicDomainNames)));
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_MAINTENANCE);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String prepareEntityNamesForMessage(List<String> entityNames) {
+        return StringUtils.join(entityNames, ",");
+    }
+
+    protected boolean isDomainInEditState(StorageDomain storageDomain) {
+        boolean isEditable = (storageDomain.getStorageDomainType() == StorageDomainType.Data || storageDomain.getStorageDomainType() == StorageDomainType.Master)
+                && storageDomain.getStatus() == StorageDomainStatus.Maintenance;
         return isEditable;
     }
 
     @Override
     protected void executeCommand() {
-        boolean isDomainUpdateRequired = doDomainsUseConnection();
-        StoragePoolIsoMap map = getStoragePoolIsoMap();
+        boolean isDomainUpdateRequired = doDomainsUseConnection(getConnection());
+        StoragePoolIsoMap map = null;
+        List<StorageDomain> updatedDomains = new ArrayList<>();
+        boolean hasConnectStorageSucceeded = false;
         if (isDomainUpdateRequired) {
-            changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Locked);
-        }
-        // connect to the new path
-        boolean hasConnectStorageSucceeded = connectToStorage();
-        VDSReturnValue returnValueUpdatedStorageDomain = null;
-
-        if (!hasConnectStorageSucceeded) {
-            setSucceeded(false);
-            VdcFault f = new VdcFault();
-            f.setError(VdcBllErrors.StorageServerConnectionError);
-            getReturnValue().setFault(f);
-            return;
-        }
-
-        if (isDomainUpdateRequired) {
-            // update info such as free space - because we switched to a different server
-            returnValueUpdatedStorageDomain = getStatsForDomain();
-            if (returnValueUpdatedStorageDomain.getSucceeded()) {
-                final StorageDomain updatedStorageDomain =
-                        (StorageDomain) returnValueUpdatedStorageDomain.getReturnValue();
-                executeInNewTransaction(new TransactionMethod<Void>() {
-                    @Override
-                    public Void runInTransaction() {
-                        getStorageDomainDynamicDao().update(updatedStorageDomain.getStorageDynamicData());
-                        return null;
+            hasConnectStorageSucceeded = connectToStorage();
+            VDSReturnValue returnValueUpdatedStorageDomain = null;
+            if (hasConnectStorageSucceeded) {
+                changeStorageDomainStatusInTransaction(StorageDomainStatus.Locked);
+                for (StorageDomain domain : domains) {
+                    // update info such as free space - because we switched to a different server
+                    returnValueUpdatedStorageDomain = getStatsForDomain(domain);
+                    if (returnValueUpdatedStorageDomain.getSucceeded()) {
+                        StorageDomain updatedStorageDomain =
+                                (StorageDomain) returnValueUpdatedStorageDomain.getReturnValue();
+                        updatedDomains.add(updatedStorageDomain);
                     }
-                });
-
-            }
-            else {
-                restoreStateAfterUpdate(map, false);
-                return;
+                }
+                if (!updatedDomains.isEmpty()) {
+                   updateStorageDomain(updatedDomains);
+                }
             }
         }
         getStorageConnDao().update(getParameters().getStorageServerConnection());
-        restoreStateAfterUpdate(map, true);
+        if (isDomainUpdateRequired) {
+            for (StorageDomain domain : domains) {
+                map = getStoragePoolIsoMap(domain);
+                restoreStateAfterUpdate(map);
+            }
+            if (hasConnectStorageSucceeded) {
+                disconnectFromStorage();
+            }
+        }
+        setSucceeded(true);
     }
 
-    protected void restoreStateAfterUpdate(StoragePoolIsoMap map, boolean setSucceeded) {
+    protected void restoreStateAfterUpdate(StoragePoolIsoMap map) {
         updateStatus(map, StorageDomainStatus.Maintenance);
-        disconnectFromStorage();
-        setSucceeded(setSucceeded);
     }
 
-    protected boolean doDomainsUseConnection() {
+    protected boolean doDomainsUseConnection(StorageServerConnections connection) {
+        if (domains == null || domains.isEmpty()) {
+            domains = getStorageDomainsByConnId(connection.getid());
+        }
         return domains != null && !domains.isEmpty();
     }
 
-    protected StoragePoolIsoMap getStoragePoolIsoMap() {
-        StoragePoolIsoMapId mapId = new StoragePoolIsoMapId(getStorageDomain().getId(),
-                getParameters().getStoragePoolId());
+    protected boolean doLunsUseConnection() {
+        return !getLuns().isEmpty();
+    }
+
+    protected StoragePoolIsoMap getStoragePoolIsoMap(StorageDomain storageDomain) {
+        StoragePoolIsoMapId mapId = new StoragePoolIsoMapId(storageDomain.getId(), getParameters().getStoragePoolId());
         return getStoragePoolIsoMapDao().get(mapId);
     }
 
-    protected void changeStorageDomainStatusInTransaction(final StoragePoolIsoMap map,
-            final StorageDomainStatus status) {
-        executeInNewTransaction(new TransactionMethod<StoragePoolIsoMap>() {
+    protected void changeStorageDomainStatusInTransaction(final StorageDomainStatus status) {
+        executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
-            public StoragePoolIsoMap runInTransaction() {
-                CompensationContext context = getCompensationContext();
-                context.snapshotEntityStatus(map, map.getstatus());
-                updateStatus(map, status);
-                getCompensationContext().stateChanged();
+            public Void runInTransaction() {
+                for (StorageDomain domain : domains) {
+                    StoragePoolIsoMap map = getStoragePoolIsoMap(domain);
+                    CompensationContext context = getCompensationContext();
+                      context.snapshotEntityStatus(map, map.getstatus());
+                    updateStatus(map, status);
+                    getCompensationContext().stateChanged();
+                }
+                return null;
+            }
+        });
+    }
+
+    protected void updateStorageDomain(final List<StorageDomain> storageDomainsToUpdate) {
+        executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                for (StorageDomain domainToUpdate : storageDomainsToUpdate) {
+                        CompensationContext context = getCompensationContext();
+                        context.snapshotEntity(domainToUpdate.getStorageDynamicData());
+                        getStorageDomainDynamicDao().update(domainToUpdate.getStorageDynamicData());
+                        getCompensationContext().stateChanged();
+                }
                 return null;
             }
         });
@@ -224,28 +303,27 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         ConnectStorageServerVDSCommandParameters connectionParametersForVdsm =
                 createParametersForVdsm(getParameters().getVdsId(),
                         getParameters().getStoragePoolId(),
-                        getParameters().getStorageServerConnection().getstorage_type(),
-                        getParameters().getStorageServerConnection());
+                        getConnection().getstorage_type(),
+                        getConnection());
         boolean isDisconnectSucceeded =
                 runVdsCommand(VDSCommandType.DisconnectStorageServer, connectionParametersForVdsm).getSucceeded();
         if (!isDisconnectSucceeded) {
-            log.warn("Failed to disconnect storage connection " + getParameters().getStorageServerConnection());
+            log.warn("Failed to disconnect storage connection " + getConnection());
         }
     }
 
-    protected VDSReturnValue getStatsForDomain() {
+    protected VDSReturnValue getStatsForDomain(StorageDomain storageDomain) {
         return runVdsCommand(VDSCommandType.GetStorageDomainStats,
-                new GetStorageDomainStatsVDSCommandParameters(getVds().getId(), getStorageDomain().getId()));
+                new GetStorageDomainStatsVDSCommandParameters(getVds().getId(), storageDomain.getId()));
     }
 
     protected ConnectStorageServerVDSCommandParameters createParametersForVdsm(Guid vdsmId,
-            Guid storagePoolId,
-            StorageType storageType,
-            StorageServerConnections storageServerConnection) {
+                                                                               Guid storagePoolId,
+                                                                               StorageType storageType,
+                                                                               StorageServerConnections storageServerConnection) {
         ConnectStorageServerVDSCommandParameters newConnectionParametersForVdsm =
                 new ConnectStorageServerVDSCommandParameters(vdsmId, storagePoolId, storageType,
-                        new ArrayList<StorageServerConnections>(Arrays
-                                .asList(storageServerConnection)));
+                        new ArrayList<StorageServerConnections>(Arrays.asList(storageServerConnection)));
         return newConnectionParametersForVdsm;
     }
 
@@ -260,21 +338,49 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> locks = new HashMap<String, Pair<String, String>>();
-        domains = getStorageDomainsByConnId(getParameters().getStorageServerConnection().getid());
-        if (!domains.isEmpty() && domains.size() == 1) {
-            setStorageDomain(domains.get(0));
-            locks.put(getStorageDomain().getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
+        domains = getStorageDomainsByConnId(getConnection().getid());
+        if (!domains.isEmpty()) {
+            for (StorageDomain domain : domains) {
+                locks.put(domain.getId().toString(),
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
+                                VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+            }
+        }
+        if (getConnection().getstorage_type().isFileDomain()) {
+           // lock the path to avoid at the same time if some other user tries to
+           // add new storage connection to same path or edit another storage server connection to point to same path
+           locks.put(getConnection().getconnection(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                             VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
-        // lock the path to avoid at the same time if some other user tries to:
-        // add new storage connection to same path or edit another storage server connection to point to same path
-        locks.put(getParameters().getStorageServerConnection().getconnection(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
-                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        else {
+          // for block domains, locking the target details
+          locks.put(getConnection().getconnection() + ";" + getConnection().getiqn() + ";" + getConnection().getport() + ";" + getConnection().getuser_name(),
+          LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
+                    VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+
+          //lock lun disks and domains, not VMs , no need to load from db.
+          if(getLuns()!=null) {
+              for(LUNs lun : getLuns()) {
+                Guid diskId = lun.getDiskId();
+                Guid storageDomainId = lun.getStorageDomainId();
+                if(diskId != null) {
+                       locks.put(diskId.toString(),LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK,
+                       VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                }
+                if(storageDomainId != null) {
+                       locks.put(storageDomainId.toString(),LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE,
+                       VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                }
+
+              }
+          }
+
+        }
+
         // lock connection's id to avoid editing or removing this connection at the same time
         // by another user
-        locks.put(getParameters().getStorageServerConnection().getid(),
+        locks.put(getConnection().getid(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE_CONNECTION,
                         VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         return locks;
