@@ -8,6 +8,9 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -32,6 +35,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel;
+import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronPluginTranslator;
 import org.ovirt.engine.ui.uicommonweb.validation.BaseI18NValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -39,12 +44,12 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.KeyValuePairValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class HostModel extends Model
 {
@@ -652,6 +657,42 @@ public abstract class HostModel extends Model
         privateProviders = value;
     }
 
+    private ListModel externalProviders;
+
+    public void setExternalProviders(ListModel externalProviders) {
+        this.externalProviders = externalProviders;
+    }
+
+    public ListModel getExternalProviders() {
+        return externalProviders;
+    }
+
+    private ListModel providerType;
+
+    public ListModel getProviderType() {
+        return providerType;
+    }
+
+    protected void setProviderType(ListModel value) {
+        providerType = value;
+    }
+
+    private ListModel providerPluginType;
+
+    public ListModel getProviderPluginType() {
+        return providerPluginType;
+    }
+
+    protected void setProviderPluginType(ListModel value) {
+        providerPluginType = value;
+    }
+
+    private NeutronAgentModel neutronAgentModel;
+
+    public NeutronAgentModel getNeutronAgentModel() {
+        return neutronAgentModel;
+    }
+
     public HostModel()
     {
         setTestCommand(new UICommand("Test", new ICommandTarget() { //$NON-NLS-1$
@@ -795,6 +836,54 @@ public abstract class HostModel extends Model
         setSpmPriority(new ListModel());
 
         initSpmPriorities();
+
+        setExternalProviders(new ListModel());
+        getExternalProviders().getSelectedItemChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                onExternalProviderChanged();
+            }
+        });
+        setProviderType(new ListModel());
+        getProviderType().setIsChangable(false);
+        getProviderType().setIsAvailable(false);
+        setProviderPluginType(new ListModel());
+        getProviderPluginType().setIsChangable(false);
+        getProviderPluginType().setIsAvailable(false);
+        neutronAgentModel = new NeutronAgentModel(getProviderType(), getProviderPluginType());
+        neutronAgentModel.setIsAvailable(false);
+
+        onExternalProviderChanged();
+        initExternalProvidersList();
+    }
+
+    @SuppressWarnings("unchecked")
+    private void onExternalProviderChanged() {
+        Provider provider = (Provider) getExternalProviders().getSelectedItem();
+        getProviderType().setIsAvailable(provider != null);
+        getProviderType().setSelectedItem(provider == null ? null : provider.getType());
+        if (getProviderType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK) {
+            OpenstackNetworkProviderProperties properties = ((Provider<OpenstackNetworkProviderProperties>)
+                    getExternalProviders().getSelectedItem()).getAdditionalProperties();
+            String pluginName = (properties == null) ? new String() : properties.getPluginType();
+            getProviderPluginType().setSelectedItem(NeutronPluginTranslator.getDisplayStringForPluginName(pluginName));
+        }
+    }
+
+    private void initExternalProvidersList() {
+        AsyncQuery getProvidersQuery = new AsyncQuery();
+        getProvidersQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result)
+            {
+                ArrayList<Provider> providers = Linq.toList(Linq.filterNetworkProviders((ArrayList<Provider>) result));
+                providers.add(0, null);
+                getExternalProviders().setItems(providers);
+                getExternalProviders().setSelectedItem(null);
+            }
+        };
+        AsyncDataProvider.GetAllProviders(getProvidersQuery);
     }
 
     private void proxyUp() {
@@ -1353,8 +1442,11 @@ public abstract class HostModel extends Model
                 && getPmSecondaryType().getIsValid()
                 && getPmSecondaryPort().getIsValid()
                 && getPmSecondaryOptions().getIsValid());
-        return getIsGeneralTabValid()
-            && getIsPowerManagementTabValid() && getConsoleAddress().getIsValid();
+
+        neutronAgentModel.validate();
+
+        return getIsGeneralTabValid() && getIsPowerManagementTabValid() && getConsoleAddress().getIsValid()
+                && neutronAgentModel.getIsValid();
     }
 
     private boolean isEntityModelEmpty(EntityModel model) {
@@ -1471,4 +1563,6 @@ public abstract class HostModel extends Model
     protected abstract void updateHosts();
 
     protected abstract void setHostPort(VDS vds);
+
+    public abstract boolean showNetworkProviderTab();
 }

@@ -5,7 +5,8 @@
              xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
              xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
              xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+             xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+             xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.provider">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
     <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView.Style">
@@ -150,6 +151,10 @@
             display: none;
         }
 
+		.sectionStyle {
+			margin-top: 20px;
+		}
+
     </ui:style>
 
     <d:SimpleDialogPanel width="700px" height="500px">
@@ -263,6 +268,20 @@
 	                        <g:FlowPanel>
                                     <e:EntityModelTextBoxEditor ui:field="consoleAddress"/>
                                 </g:FlowPanel>
+                            </g:FlowPanel>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="networkProviderTab">
+                        <t:content>
+                            <g:FlowPanel>
+                            	<e:ListModelListBoxEditor ui:field="externalProviderEditor"/>
+                            	<e:ListModelListBoxEditor ui:field="providerTypeEditor" />
+                            	<e:ListModelSuggestBoxEditor ui:field = "providerPluginTypeEditor" />
+                            	<g:FlowPanel ui:field="neutronAgentPanel" addStyleNames="{style.sectionStyle}">
+	                            	<p:NeutronAgentWidget ui:field="neutronAgentWidget" />
+	                            </g:FlowPanel>
                             </g:FlowPanel>
                         </t:content>
                     </t:DialogTab>

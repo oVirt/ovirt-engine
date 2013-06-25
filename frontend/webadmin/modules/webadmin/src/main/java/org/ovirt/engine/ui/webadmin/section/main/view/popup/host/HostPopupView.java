@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -23,11 +23,15 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelSuggestBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.provider.NeutronAgentWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
+import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -278,9 +282,13 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
     @UiField
     @Ignore
+    DialogTab networkProviderTab;
+
+    @UiField
+    @Ignore
     VerticalPanel spmPanel;
 
-    @UiField(provided=true)
+    @UiField(provided = true)
     @Ignore
     InfoIcon consoleAddressInfoIcon;
 
@@ -307,16 +315,43 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField
     FlowPanel externalProviderPanel;
 
+    @UiField(provided = true)
+    @Path(value = "externalProviders.selectedItem")
+    @WithElementId("externalProviders")
+    public ListModelListBoxEditor<Object> externalProviderEditor;
+
+    @UiField(provided = true)
+    @Path(value = "providerType.selectedItem")
+    @WithElementId("providerType")
+    public ListModelListBoxEditor<Object> providerTypeEditor;
+
+    @UiField
+    @Path(value = "providerPluginType.selectedItem")
+    @WithElementId("providerPluginType")
+    public ListModelSuggestBoxEditor providerPluginTypeEditor;
+
+    @UiField
+    FlowPanel neutronAgentPanel;
+
+    @UiField(provided = true)
+    @Ignore
+    NeutronAgentWidget neutronAgentWidget;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private final CommonApplicationTemplates applicationTemplates;
 
     private final ApplicationResources resources;
+    private final ApplicationConstants constants;
 
     @Inject
-    public HostPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, CommonApplicationTemplates applicationTemplates) {
+    public HostPopupView(EventBus eventBus,
+            ApplicationResources resources,
+            ApplicationConstants constants,
+            CommonApplicationTemplates applicationTemplates) {
         super(eventBus, resources);
         this.resources = resources;
+        this.constants = constants;
         this.applicationTemplates = applicationTemplates;
         initEditors();
         initInfoIcon(constants);
@@ -331,7 +366,8 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
     private void initInfoIcon(ApplicationConstants constants) {
         consoleAddressInfoIcon =
-                new InfoIcon(applicationTemplates.italicText(constants.enableConsoleAddressOverrideHelpMessage()), resources); //$NON-NLS-1$
+                new InfoIcon(applicationTemplates.italicText(constants.enableConsoleAddressOverrideHelpMessage()),
+                        resources); //$NON-NLS-1$
         providerSearchInfoIcon =
                 new InfoIcon(applicationTemplates.italicText(constants.providerSearchInfo()), resources);
     }
@@ -400,6 +436,15 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         externalHostProviderEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
+        externalProviderEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return ((Provider) object).getName();
+            }
+        });
+        providerTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        neutronAgentWidget = new NeutronAgentWidget(constants);
     }
 
     void localize(ApplicationConstants constants) {
@@ -450,6 +495,12 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         // SPM tab
         spmTab.setLabel(constants.spmTestButtonLabel());
         consoleTab.setLabel(constants.consoleButtonLabel());
+
+        // Network Provider Tab
+        networkProviderTab.setLabel(constants.networkProviderButtonLabel());
+        externalProviderEditor.setLabel(constants.externalProviderLabel());
+        providerTypeEditor.setLabel(constants.typeProvider());
+        providerPluginTypeEditor.setLabel(constants.pluginType());
     }
 
     private void applyModeCustomizations() {
@@ -540,7 +591,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
-                if (e.PropertyName == "IsChangable") {  //$NON-NLS-1$
+                if (e.PropertyName == "IsChangable") { //$NON-NLS-1$
                     proxyListBox.setEnabled(object.getPmProxyPreferencesList().getIsChangable());
                 }
             }
@@ -553,8 +604,8 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
                 List items = (List) object.getPmProxyPreferencesList().getItems();
 
                 Object selectedItem = proxyListBox.getSelectedIndex() >= 0
-                    ? items.get(proxyListBox.getSelectedIndex())
-                    : null;
+                        ? items.get(proxyListBox.getSelectedIndex())
+                        : null;
 
                 object.getPmProxyPreferencesList().setSelectedItem(selectedItem);
             }
@@ -574,7 +625,6 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         createSpmControls(object);
 
-
         // Wire events on power management related controls.
         object.getPmVariants().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
@@ -591,6 +641,20 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         updatePmPanelsVisibility(true);
 
         externalProviderPanel.setVisible(object.showExternalProviderPanel());
+
+        networkProviderTab.setVisible(object.showNetworkProviderTab());
+        final NeutronAgentModel model = object.getNeutronAgentModel();
+        neutronAgentWidget.edit(model);
+        neutronAgentPanel.setVisible(model.getIsAvailable());
+        model.getPropertyChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                    neutronAgentPanel.setVisible(model.getIsAvailable());
+                }
+            }
+        });
     }
 
     private void updatePmPanelsVisibility(boolean primary) {

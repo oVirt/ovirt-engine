@@ -169,4 +169,9 @@ public class NewHostModel extends HostModel {
         getProviderSearchFilterLabel().setIsChangable(value);
         getUpdateHostsCommand().setIsExecutionAllowed(value);
     }
+
+    @Override
+    public boolean showNetworkProviderTab() {
+        return true;
+    }
 }

@@ -71,4 +71,9 @@ public class EditHostModel extends HostModel {
         }
     }
 
+    @Override
+    public boolean showNetworkProviderTab() {
+        return false;
+    }
+
 }
