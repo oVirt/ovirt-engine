@@ -55,7 +55,7 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
 
     @Override
     protected CellList<Bookmark> createDataDisplayWidget(BookmarkModelProvider modelProvider) {
-        ApplicationTemplates templates = ClientGinjectorProvider.instance().getApplicationTemplates();
+        ApplicationTemplates templates = ClientGinjectorProvider.getApplicationTemplates();
 
         final CellList<Bookmark> display = new CellList<Bookmark>(new BookmarkListItemCell(templates));
 
@@ -98,7 +98,7 @@ public class BookmarkList extends AbstractActionStackPanelItem<BookmarkModelProv
     @Override
     protected SimpleActionPanel<Bookmark> createActionPanel(BookmarkModelProvider modelProvider) {
         return new SimpleActionPanel<Bookmark>(modelProvider, modelProvider.getSelectionModel(),
-                ClientGinjectorProvider.instance().getEventBus());
+                ClientGinjectorProvider.getEventBus());
     }
 
     private void addActionButtons(final BookmarkModelProvider modelProvider) {

@@ -273,8 +273,9 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
             @Override
             protected Double[] getRawValue(VmNetworkInterface object) {
-                return new Double[] { object.getStatistics().getReceiveDropRate(),
-                        object.getStatistics().getTransmitDropRate() };
+                Double receiveDropRate = object != null ? object.getStatistics().getReceiveDropRate() : null;
+                Double transmitDropRate = object != null ? object.getStatistics().getTransmitDropRate() : null;
+                return new Double[] { receiveDropRate, transmitDropRate };
             }
         };
         nicsTable.addColumn(dropsColumn, templates.sub(constants.dropsInterface(), constants.pkts()), "80px"); //$NON-NLS-1$

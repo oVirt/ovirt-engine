@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.PopupViewImpl;
 
 /**
@@ -19,16 +20,19 @@ public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewI
 
     private final CommonApplicationResources resources;
 
-    private T widget;
-
     public AbstractPopupView(EventBus eventBus, CommonApplicationResources resources) {
         super(eventBus);
         this.resources = resources;
         resources.dialogBoxStyle().ensureInjected();
     }
 
+    @Override
+    protected void initWidget(Widget widget) {
+        throw new IllegalArgumentException("Use initWidget(PopupPanel) instead of initWidget(Widget)"); //$NON-NLS-1$
+    }
+
     protected void initWidget(T widget) {
-        this.widget = widget;
+        super.initWidget(widget);
 
         // All popups are modal by default
         widget.setModal(true);
@@ -40,9 +44,10 @@ public abstract class AbstractPopupView<T extends PopupPanel> extends PopupViewI
         widget.addStyleName(resources.dialogBoxStyle().getName());
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public T asWidget() {
-        return widget;
+        return (T) super.asWidget();
     }
 
 }

@@ -7,11 +7,14 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
 import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
-import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
+
+import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Provider;
 
 /**
  * A {@link DataBoundTabModelProvider} that creates the UiCommon model instance directly, instead of accessing this
@@ -36,8 +39,10 @@ public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableLi
     private List<T> selectedItems;
     private final CurrentUser user;
 
-    public UserPortalDataBoundModelProvider(BaseClientGinjector ginjector, CurrentUser user) {
-        super(ginjector);
+    public UserPortalDataBoundModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            CurrentUser user) {
+        super(eventBus, defaultConfirmPopupProvider);
         this.user = user;
         getEventBus().addHandler(UserPortalModelInitEvent.getType(), this);
         getEventBus().addHandler(UserLoginChangeEvent.getType(), this);

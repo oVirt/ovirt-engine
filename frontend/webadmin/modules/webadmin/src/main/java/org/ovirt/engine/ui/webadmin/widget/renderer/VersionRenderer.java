@@ -14,8 +14,7 @@ public class VersionRenderer extends AbstractRenderer<RpmVersion> {
         String formattedVersion;
         formattedVersion = version.getRpmName();
 
-        return new EmptyValueRenderer<String>(ClientGinjectorProvider.instance()
-                .getApplicationConstants()
+        return new EmptyValueRenderer<String>(ClientGinjectorProvider.getApplicationConstants()
                 .unAvailablePropertyLabel()).render(formattedVersion);
     }
 }

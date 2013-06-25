@@ -34,7 +34,7 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
     interface Driver extends SimpleBeanEditorDriver<NetworkGeneralModel, SubTabNetworkGeneralView> {
     }
 
-    private final ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+    private final ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
 
     TextBoxLabel name = new TextBoxLabel();
     GuidLabel id = new GuidLabel();

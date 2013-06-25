@@ -16,7 +16,9 @@ public abstract class RxTxRateColumn<T> extends RenderedTextColumn<T, Double[]> 
 
     @Override
     protected Double[] getRawValue(T object) {
-        return new Double[] { getRate(object), getSpeed(object) };
+        Double rate = object != null ? getRate(object) : null;
+        Double speed = object != null ? getSpeed(object) : null;
+        return new Double[] { rate, speed };
     }
 
     /**

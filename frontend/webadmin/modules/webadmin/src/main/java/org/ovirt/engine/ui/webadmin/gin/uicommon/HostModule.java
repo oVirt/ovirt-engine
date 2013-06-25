@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerServic
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
@@ -36,7 +37,6 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostSetupNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
@@ -56,6 +56,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetwo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmMigratePopupPresenterWidget;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -67,14 +68,15 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<VDS, HostListModel> getHostListProvider(ClientGinjector ginjector,
+    public MainModelProvider<VDS, HostListModel> getHostListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<HostPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<ManualFencePopupPresenterWidget> manualFenceConfirmPopupProvider,
             final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider,
             final Provider<ConfigureLocalStoragePopupPresenterWidget> configureLocalStoragePopupProvider) {
-        return new MainTabModelProvider<VDS, HostListModel>(ginjector, HostListModel.class) {
+        return new MainTabModelProvider<VDS, HostListModel>(eventBus, defaultConfirmPopupProvider, HostListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -118,9 +120,11 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailModelProvider<HostListModel, HostGeneralModel> getHostGeneralProvider(ClientGinjector ginjector,
+    public DetailModelProvider<HostListModel, HostGeneralModel> getHostGeneralProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<HostInstallPopupPresenterWidget> installPopupProvider) {
-        return new DetailTabModelProvider<HostListModel, HostGeneralModel>(ginjector,
+        return new DetailTabModelProvider<HostListModel, HostGeneralModel>(
+                eventBus, defaultConfirmPopupProvider,
                 HostListModel.class,
                 HostGeneralModel.class) {
             @Override
@@ -137,8 +141,10 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailModelProvider<HostListModel, HostHardwareGeneralModel> getHostHardwareProvider(ClientGinjector ginjector) {
-        return new DetailTabModelProvider<HostListModel, HostHardwareGeneralModel>(ginjector,
+    public DetailModelProvider<HostListModel, HostHardwareGeneralModel> getHostHardwareProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new DetailTabModelProvider<HostListModel, HostHardwareGeneralModel>(
+                eventBus, defaultConfirmPopupProvider,
                 HostListModel.class,
                 HostHardwareGeneralModel.class);
     }
@@ -147,15 +153,18 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Map<String, String>, HostListModel, HostHooksListModel> getHostHooksListProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<Map<String, String>, HostListModel, HostHooksListModel>(ginjector,
+    public SearchableDetailModelProvider<Map<String, String>, HostListModel, HostHooksListModel> getHostHooksListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<Map<String, String>, HostListModel, HostHooksListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 HostListModel.class,
                 HostHooksListModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> getHostInterfaceListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> getHostInterfaceListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<DetachConfirmationPopupPresenterWidget> detachConfirmPopupProvider,
             final Provider<HostManagementConfirmationPopupPresenterWidget> hostManagementConfirmationdetachConfirmPopupProvider,
             final Provider<HostInterfacePopupPresenterWidget> hostInterfacePopupProvider,
@@ -165,7 +174,8 @@ public class HostModule extends AbstractGinModule {
             final Provider<HostBondPopupPresenterWidget> hostBondPopupProvider,
             final Provider<SetupNetworksBondPopupPresenterWidget> setupNetworksBondPopupProvider,
             final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider) {
-        return new SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 HostListModel.class,
                 HostInterfaceListModel.class) {
            @Override
@@ -228,9 +238,11 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VM, HostListModel, HostVmListModel> getHostVmListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<VM, HostListModel, HostVmListModel> getHostVmListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmMigratePopupPresenterWidget> migratePopupProvider) {
-        return new SearchableDetailTabModelProvider<VM, HostListModel, HostVmListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<VM, HostListModel, HostVmListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 HostListModel.class,
                 HostVmListModel.class) {
 
@@ -247,18 +259,22 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel> getHostGlusterSwiftListProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel>(ginjector,
+    public SearchableDetailModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel> getHostGlusterSwiftListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 HostListModel.class,
                 HostGlusterSwiftListModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, HostListModel, PermissionListModel> getPermissionListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<permissions, HostListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, HostListModel, PermissionListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<permissions, HostListModel, PermissionListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 HostListModel.class,
                 PermissionListModel.class) {
 
@@ -286,9 +302,11 @@ public class HostModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AuditLog, HostListModel, HostEventListModel> getHostEventListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<AuditLog, HostListModel, HostEventListModel> getHostEventListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<EventPopupPresenterWidget> eventPopupProvider) {
-        return new SearchableDetailTabModelProvider<AuditLog, HostListModel, HostEventListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<AuditLog, HostListModel, HostEventListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 HostListModel.class,
                 HostEventListModel.class) {
             @Override

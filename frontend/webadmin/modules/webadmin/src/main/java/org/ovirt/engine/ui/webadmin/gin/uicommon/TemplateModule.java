@@ -1,12 +1,13 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
@@ -26,7 +27,6 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.Templa
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateNewPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -46,11 +47,12 @@ public class TemplateModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<VmTemplate, TemplateListModel> getTemplateListProvider(ClientGinjector ginjector,
+    public MainModelProvider<VmTemplate, TemplateListModel> getTemplateListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<TemplateNewPresenterWidget> popupProvider,
             final Provider<VmExportPopupPresenterWidget> exportPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new MainTabModelProvider<VmTemplate, TemplateListModel>(ginjector, TemplateListModel.class) {
+        return new MainTabModelProvider<VmTemplate, TemplateListModel>(eventBus, defaultConfirmPopupProvider, TemplateListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(TemplateListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -81,8 +83,10 @@ public class TemplateModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailModelProvider<TemplateListModel, TemplateGeneralModel> getTemplateGeneralProvider(ClientGinjector ginjector) {
-        return new DetailTabModelProvider<TemplateListModel, TemplateGeneralModel>(ginjector,
+    public DetailModelProvider<TemplateListModel, TemplateGeneralModel> getTemplateGeneralProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new DetailTabModelProvider<TemplateListModel, TemplateGeneralModel>(
+                eventBus, defaultConfirmPopupProvider,
                 TemplateListModel.class,
                 TemplateGeneralModel.class);
     }
@@ -91,10 +95,12 @@ public class TemplateModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, TemplateListModel, PermissionListModel> getPermissionListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<permissions, TemplateListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, TemplateListModel, PermissionListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<permissions, TemplateListModel, PermissionListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 TemplateListModel.class,
                 PermissionListModel.class) {
             @Override
@@ -121,10 +127,12 @@ public class TemplateModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel> getTemplateDiskListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel> getTemplateDiskListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<DisksAllocationPopupPresenterWidget> copyPopupProvider,
             final Provider<ChangeQuotaPopupPresenterWidget> changeQutoaPopupProvider) {
-        return new SearchableDetailTabModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<DiskModel, TemplateListModel, TemplateDiskListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 TemplateListModel.class,
                 TemplateDiskListModel.class) {
             @Override
@@ -144,10 +152,12 @@ public class TemplateModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VmNetworkInterface, TemplateListModel, TemplateInterfaceListModel> getTemplateInterfaceListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<VmNetworkInterface, TemplateListModel, TemplateInterfaceListModel> getTemplateInterfaceListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<TemplateInterfacePopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<VmNetworkInterface, TemplateListModel, TemplateInterfaceListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<VmNetworkInterface, TemplateListModel, TemplateInterfaceListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 TemplateListModel.class,
                 TemplateInterfaceListModel.class) {
             @Override
@@ -176,9 +186,11 @@ public class TemplateModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<StorageDomain, TemplateListModel, TemplateStorageListModel> getTemplateStorageListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<StorageDomain, TemplateListModel, TemplateStorageListModel> getTemplateStorageListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<StorageDomain, TemplateListModel, TemplateStorageListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<StorageDomain, TemplateListModel, TemplateStorageListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 TemplateListModel.class,
                 TemplateStorageListModel.class) {
             @Override
@@ -195,17 +207,21 @@ public class TemplateModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VM, TemplateListModel, TemplateVmListModel> getTemplateVmListProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<VM, TemplateListModel, TemplateVmListModel>(ginjector,
+    public SearchableDetailModelProvider<VM, TemplateListModel, TemplateVmListModel> getTemplateVmListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<VM, TemplateListModel, TemplateVmListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 TemplateListModel.class,
                 TemplateVmListModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AuditLog, TemplateListModel, TemplateEventListModel> getTemplateEventListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<AuditLog, TemplateListModel, TemplateEventListModel> getTemplateEventListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<EventPopupPresenterWidget> eventPopupProvider) {
-        return new SearchableDetailTabModelProvider<AuditLog, TemplateListModel, TemplateEventListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<AuditLog, TemplateListModel, TemplateEventListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 TemplateListModel.class,
                 TemplateEventListModel.class) {
             @Override

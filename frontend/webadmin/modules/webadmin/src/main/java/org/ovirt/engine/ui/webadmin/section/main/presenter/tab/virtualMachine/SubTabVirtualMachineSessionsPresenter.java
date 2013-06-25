@@ -1,12 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VirtualMachineSelectionChangeEvent;
 
@@ -19,15 +20,12 @@ import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabVirtualMachineSessionsPresenter
-    extends AbstractSubTabPresenter<VM, VmListModel, VmSessionsModel, SubTabVirtualMachineSessionsPresenter.ViewDef, SubTabVirtualMachineSessionsPresenter.ProxyDef>
-{
+    extends AbstractSubTabPresenter<VM, VmListModel, VmSessionsModel, SubTabVirtualMachineSessionsPresenter.ViewDef, SubTabVirtualMachineSessionsPresenter.ProxyDef> {
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VM> {
-
     }
 
     @ProxyCodeSplit
@@ -37,32 +35,27 @@ public class SubTabVirtualMachineSessionsPresenter
     }
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().virtualMachineSessionsSubTabLabel(),
-                7, ginjector.getSubTabVirtualMachineSessionsModelProvider());
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            DetailModelProvider<VmListModel, VmSessionsModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.virtualMachineSessionsSubTabLabel(), 7, modelProvider);
     }
 
     @Inject
-    public SubTabVirtualMachineSessionsPresenter(EventBus eventBus,
-            ViewDef view,
-            ProxyDef proxy,
+    public SubTabVirtualMachineSessionsPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
             DetailModelProvider<VmListModel, VmSessionsModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+        super(eventBus, view, proxy, placeManager, modelProvider,
+                VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.virtualMachineSessionsSubTabPlace);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent, this);
+        return PlaceRequestFactory.get(ApplicationPlaces.virtualMachineSessionsSubTabPlace);
     }
 
     @ProxyEvent
     public void onVirtualMachineSelectionChange(VirtualMachineSelectionChangeEvent event) {
         updateMainTabSelection(event.getSelectedItems());
     }
+
 }

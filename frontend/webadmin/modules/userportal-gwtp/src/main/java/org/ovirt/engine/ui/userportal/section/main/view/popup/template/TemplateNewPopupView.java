@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.main.view.popup.template;
 
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
+
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;

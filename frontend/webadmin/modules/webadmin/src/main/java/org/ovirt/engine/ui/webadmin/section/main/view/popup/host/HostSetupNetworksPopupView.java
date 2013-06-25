@@ -47,7 +47,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    private static ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+    private static ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
     private static final String EMPTY_STATUS = constants.dragToMakeChangesSetupNetwork();
 
     @UiField(provided = true)

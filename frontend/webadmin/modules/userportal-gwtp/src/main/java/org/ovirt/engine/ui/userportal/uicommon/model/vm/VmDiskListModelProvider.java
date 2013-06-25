@@ -3,17 +3,18 @@ package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -23,13 +24,15 @@ public class VmDiskListModelProvider extends UserPortalSearchableDetailModelProv
     private final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider;
 
     @Inject
-    public VmDiskListModelProvider(ClientGinjector ginjector,
+    public VmDiskListModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            CurrentUser user,
             UserPortalListProvider parentModelProvider,
             UserPortalModelResolver resolver,
             Provider<VmDiskPopupPresenterWidget> diskPopupProvider,
-            Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
-            CurrentUser user) {
-        super(ginjector, parentModelProvider, VmDiskListModel.class, resolver, user);
+            Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider) {
+        super(eventBus, defaultConfirmPopupProvider, user,
+                parentModelProvider, VmDiskListModel.class, resolver);
         this.diskPopupProvider = diskPopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
     }

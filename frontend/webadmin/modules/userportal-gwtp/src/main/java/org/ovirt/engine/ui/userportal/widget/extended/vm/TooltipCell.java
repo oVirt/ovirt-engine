@@ -44,10 +44,15 @@ public class TooltipCell<T> extends CompositeCell<T> {
 
     @Override
     public void render(Context context, T value, SafeHtmlBuilder sb) {
+        String tooltip = provider.getTooltip(value);
+        if (tooltip == null) {
+            tooltip = ""; //$NON-NLS-1$
+        }
+        // TODO(vszocs) consider using SafeHtmlTemplates instead of building HTML manually
         sb.appendHtmlConstant("<div id=\"" //$NON-NLS-1$
                 + ElementIdUtils.createTableCellElementId(elementIdPrefix, columnId, context)
                 + "\" title=\"" //$NON-NLS-1$
-                + SafeHtmlUtils.htmlEscape(provider.getTooltip(value))
+                + SafeHtmlUtils.htmlEscape(tooltip)
                 + "\">"); //$NON-NLS-1$
         super.render(context, value, sb, hasCell);
         sb.appendHtmlConstant("</div>"); //$NON-NLS-1$

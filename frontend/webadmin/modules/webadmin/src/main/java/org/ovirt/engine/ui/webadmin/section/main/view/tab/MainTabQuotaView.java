@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
-import com.google.gwt.i18n.client.NumberFormat;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
@@ -15,10 +14,11 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabQuotaPrese
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaDcStatusColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaPercentColumn;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.NumberFormat;
 import com.google.inject.Inject;
-import org.ovirt.engine.ui.webadmin.widget.table.column.QuotaPercentColumn;
 
 
 public class MainTabQuotaView extends AbstractMainTabWithDetailsTableView<Quota, QuotaListModel> implements MainTabQuotaPresenter.ViewDef {

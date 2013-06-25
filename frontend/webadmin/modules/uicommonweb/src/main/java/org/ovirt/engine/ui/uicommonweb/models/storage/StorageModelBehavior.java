@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;

@@ -32,7 +32,7 @@ public class BondPanel extends TogglePanel {
             }
 
             // Bond icon
-            add(new Image(ClientGinjectorProvider.instance().getApplicationResources().splitImage()));
+            add(new Image(ClientGinjectorProvider.getApplicationResources().splitImage()));
 
             // Bond name
             add(new Label(new HostInterfaceBondNameRenderer().render(lineModel)));

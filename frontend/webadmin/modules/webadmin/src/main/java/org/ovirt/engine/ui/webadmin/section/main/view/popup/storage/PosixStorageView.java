@@ -76,7 +76,7 @@ public class PosixStorageView extends AbstractStorageView<PosixStorageModel> {
     @Inject
     public PosixStorageView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(ClientGinjectorProvider.instance().getApplicationConstants());
+        localize(ClientGinjectorProvider.getApplicationConstants());
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
         driver.initialize(this);

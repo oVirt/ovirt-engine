@@ -75,7 +75,7 @@
     <otopi.version>1.1.0-beta</otopi.version>
     <ovirt-host-deploy.version>1.1.0-beta</ovirt-host-deploy.version>
     <slf4j-jdk14.version>1.5.6</slf4j-jdk14.version>
-    <gwt.version>2.3.0</gwt.version>
+    <gwt.version>2.5.1</gwt.version>
     <findbugs.version>2.5.2</findbugs.version>
     <mockito.version>1.9.0</mockito.version>
     <javassist.version>3.12.0.GA</javassist.version>
@@ -273,7 +273,7 @@
         <groupId>com.google.gwt</groupId>
         <artifactId>gwt-dev</artifactId>
         <version>${gwt.version}</version>
-        <scope>provided</scope>
+        <!-- gwt-dev needs to be on runtime classpath due to GWT direct-eval RPC (deRPC) usage -->
       </dependency>
       <dependency>
         <groupId>com.google.gwt</groupId>
@@ -522,7 +522,7 @@
         <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>gwt-maven-plugin</artifactId>
-          <version>2.3.0</version>
+          <version>${gwt.version}</version>
         </plugin>
 
         <plugin>

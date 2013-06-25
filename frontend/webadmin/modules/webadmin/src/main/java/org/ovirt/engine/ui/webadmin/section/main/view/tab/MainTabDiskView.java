@@ -20,10 +20,10 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDiskPresen
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
-import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;

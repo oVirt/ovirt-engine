@@ -19,9 +19,7 @@ public class UserPortalSimpleActionTable<T> extends SimpleActionTable<T> {
         // it has to be static - the parent constructor invokes
         // the getBarPanelStyleName and getTableContainerStyleName
         // which already needs the style prepared
-        style = ClientGinjectorProvider.instance()
-                .getApplicationResources()
-                .sideTabWithDetailsViewStyle();
+        style = ClientGinjectorProvider.getApplicationResources().sideTabWithDetailsViewStyle();
         style.ensureInjected();
     }
 

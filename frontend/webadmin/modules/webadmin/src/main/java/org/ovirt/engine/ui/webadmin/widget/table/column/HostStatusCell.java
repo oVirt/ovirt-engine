@@ -22,7 +22,7 @@ public class HostStatusCell extends AbstractCell<VDS> {
         }
 
         // Get a reference to the application resources:
-        ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
+        ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
 
         // Find the image corresponding to the status of the host:
         VDSStatus status = vds.getStatus();

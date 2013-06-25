@@ -3,17 +3,18 @@ package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmSnapshotListModel;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -24,14 +25,16 @@ public class VmSnapshotListModelProvider extends UserPortalSearchableDetailModel
     private final Provider<VmSnapshotPreviewPopupPresenterWidget> previewPopupProvider;
 
     @Inject
-    public VmSnapshotListModelProvider(ClientGinjector ginjector,
+    public VmSnapshotListModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            CurrentUser user,
             UserPortalListProvider parentModelProvider,
             UserPortalModelResolver resolver,
             Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider,
             Provider<VmSnapshotPreviewPopupPresenterWidget> previewPopupProvider,
-            Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider,
-            CurrentUser user) {
-        super(ginjector, parentModelProvider, UserPortalVmSnapshotListModel.class, resolver, user);
+            Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider) {
+        super(eventBus, defaultConfirmPopupProvider, user,
+                parentModelProvider, UserPortalVmSnapshotListModel.class, resolver);
         this.createPopupProvider = createPopupProvider;
         this.cloneVmPopupProvider = cloneVmPopupProvider;
         this.previewPopupProvider = previewPopupProvider;

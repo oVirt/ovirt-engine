@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.List;
+
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -11,8 +13,6 @@ import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvideCollectionChangedEvent;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
-
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class ListModel extends EntityModel

@@ -2,12 +2,13 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
@@ -20,7 +21,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabHostVmPresenter extends AbstractSubTabPresenter<VDS, HostListModel, HostVmListModel, SubTabHostVmPresenter.ViewDef, SubTabHostVmPresenter.ProxyDef> {
@@ -34,25 +34,21 @@ public class SubTabHostVmPresenter extends AbstractSubTabPresenter<VDS, HostList
     }
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().hostVmSubTabLabel(), 1,
-                ginjector.getSubTabHostVmModelProvider());
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            SearchableDetailModelProvider<VM, HostListModel, HostVmListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.hostVmSubTabLabel(), 1, modelProvider);
     }
 
     @Inject
     public SubTabHostVmPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, SearchableDetailModelProvider<VM, HostListModel, HostVmListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, HostSubTabPanelPresenter.TYPE_SetTabContent, this);
+        super(eventBus, view, proxy, placeManager, modelProvider,
+                HostSubTabPanelPresenter.TYPE_SetTabContent);
     }
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.hostMainTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.hostMainTabPlace);
     }
 
     @ProxyEvent

@@ -52,14 +52,14 @@
 		<t:DialogTabPanel ui:field="dialogTabPanel" height="340px" width="100%" addStyleNames="{style.tabPanel}">
 			<t:tab>
 				<t:DialogTab ui:field="targetsToLunTab">
-					<t:content height="100%">
+					<t:content>
 					    <w:ValidatedPanelWidget ui:field="targetsToLunsPanel" addStyleNames="{style.tabContentPanel}" />
 					</t:content>
 				</t:DialogTab>
 			</t:tab>
 			<t:tab>
 				<t:DialogTab ui:field="lunToTargetsTab">
-					<t:content height="100%">
+					<t:content>
 					    <w:ValidatedPanelWidget ui:field="lunsListPanel" addStyleNames="{style.tabContentPanel}" />
 					</t:content>
 				</t:DialogTab>

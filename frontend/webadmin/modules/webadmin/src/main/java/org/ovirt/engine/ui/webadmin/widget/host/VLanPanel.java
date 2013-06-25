@@ -77,7 +77,7 @@ class VLanElementPanel extends TogglePanel {
         if (isSelectionAvailable){
             chekboxPanel.add(getCheckBox());
         }
-        chekboxPanel.add(new Image(ClientGinjectorProvider.instance().getApplicationResources().splitRotateImage()));
+        chekboxPanel.add(new Image(ClientGinjectorProvider.getApplicationResources().splitRotateImage()));
         chekboxPanel.add(new Label(new HostVLanNameRenderer().render(hostVLan)));
 
         row.setWidget(0, 0, chekboxPanel);

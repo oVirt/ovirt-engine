@@ -60,11 +60,11 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private static final VmTableResources vmTableResources = GWT.create(VmTableResources.class);
+
     private final ApplicationResources applicationResources;
     private final ConsoleManager consoleManager;
     private final ErrorPopupManager errorPopupManager;
-
-    private static final VmTableResources vmTableResources = GWT.create(VmTableResources.class);
     private final MainTabBasicListItemMessagesTranslator statusTranslator;
     private final ApplicationConstants constants;
 
@@ -93,10 +93,10 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
     protected SimpleActionTable<UserPortalItemModel> createActionTable() {
         return new UserPortalSimpleActionTable<UserPortalItemModel>(modelProvider,
                 getTableResources(),
-                ClientGinjectorProvider.instance().getEventBus(),
+                ClientGinjectorProvider.getEventBus(),
                 new UserPortalRefreshManager(modelProvider,
-                        ClientGinjectorProvider.instance().getEventBus(),
-                        ClientGinjectorProvider.instance().getClientStorage()));
+                        ClientGinjectorProvider.getEventBus(),
+                        ClientGinjectorProvider.getClientStorage()));
     }
 
     @Override

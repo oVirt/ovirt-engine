@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
-import org.ovirt.engine.ui.uicompat.DispatcherOperationStatus;
 
 public class DispatcherOperation {
 

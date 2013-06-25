@@ -28,7 +28,6 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterServiceModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
@@ -41,6 +40,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.DetachG
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHostsPopupPresenterWidget;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -52,13 +52,14 @@ public class ClusterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<VDSGroup, ClusterListModel> getClusterListProvider(ClientGinjector ginjector,
+    public MainModelProvider<VDSGroup, ClusterListModel> getClusterListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ClusterPopupPresenterWidget> popupProvider,
             final Provider<GuidePopupPresenterWidget> guidePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider,
             final Provider<MultipleHostsPopupPresenterWidget> addMultipleHostsPopupProvider) {
-        return new MainTabModelProvider<VDSGroup, ClusterListModel>(ginjector, ClusterListModel.class) {
+        return new MainTabModelProvider<VDSGroup, ClusterListModel>(eventBus, defaultConfirmPopupProvider, ClusterListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -99,11 +100,13 @@ public class ClusterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailModelProvider<ClusterListModel, ClusterGeneralModel> getClusterGeneralProvider(ClientGinjector ginjector,
+    public DetailModelProvider<ClusterListModel, ClusterGeneralModel> getClusterGeneralProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<MultipleHostsPopupPresenterWidget> multipleHostsProvider,
             final Provider<DetachGlusterHostsPopupPresenterWidget> detachHostsProvider,
             final Provider<ManageGlusterSwiftPopupPresenterWidget> manageGlusterSwiftProvider) {
-        return new DetailTabModelProvider<ClusterListModel, ClusterGeneralModel>(ginjector,
+        return new DetailTabModelProvider<ClusterListModel, ClusterGeneralModel>(
+                eventBus, defaultConfirmPopupProvider,
                 ClusterListModel.class,
                 ClusterGeneralModel.class) {
             @Override
@@ -129,18 +132,22 @@ public class ClusterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VDS, ClusterListModel, ClusterHostListModel> getClusterHostListProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<VDS, ClusterListModel, ClusterHostListModel>(ginjector,
+    public SearchableDetailModelProvider<VDS, ClusterListModel, ClusterHostListModel> getClusterHostListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<VDS, ClusterListModel, ClusterHostListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 ClusterListModel.class,
                 ClusterHostListModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Network, ClusterListModel, ClusterNetworkListModel> getClusterNetworkListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<Network, ClusterListModel, ClusterNetworkListModel> getClusterNetworkListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<NewClusterNetworkPopupPresenterWidget> popupProvider,
             final Provider<ClusterManageNetworkPopupPresenterWidget> managePopupProvider) {
-        return new SearchableDetailTabModelProvider<Network, ClusterListModel, ClusterNetworkListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<Network, ClusterListModel, ClusterNetworkListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 ClusterListModel.class,
                 ClusterNetworkListModel.class) {
 
@@ -161,27 +168,33 @@ public class ClusterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VM, ClusterListModel, ClusterVmListModel> getClusterVmListProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<VM, ClusterListModel, ClusterVmListModel>(ginjector,
+    public SearchableDetailModelProvider<VM, ClusterListModel, ClusterVmListModel> getClusterVmListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<VM, ClusterListModel, ClusterVmListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 ClusterListModel.class,
                 ClusterVmListModel.class);
     }
 
     @Provides
     @Singleton
-    public DetailModelProvider<ClusterListModel, ClusterServiceModel> getClusterServiceProvider(ClientGinjector ginjector) {
-        return new DetailTabModelProvider<ClusterListModel, ClusterServiceModel>(ginjector,
+    public DetailModelProvider<ClusterListModel, ClusterServiceModel> getClusterServiceProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new DetailTabModelProvider<ClusterListModel, ClusterServiceModel>(
+                eventBus, defaultConfirmPopupProvider,
                 ClusterListModel.class,
                 ClusterServiceModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel> getClusterGlusterHookListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel> getClusterGlusterHookListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<DefaultConfirmationPopupPresenterWidget> confirmPopupProvider,
             final Provider<GlusterHookContentPopupPresenterWidget> contentPopupProvider,
             final Provider<GlusterHookResolveConflictsPopupPresenterWidget> resolveConflictsPopupProvider) {
-        return new SearchableDetailTabModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 ClusterListModel.class,
                 ClusterGlusterHookListModel.class) {
             @Override
@@ -213,10 +226,12 @@ public class ClusterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, ClusterListModel, PermissionListModel> getPermissionListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<permissions, ClusterListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, ClusterListModel, PermissionListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<permissions, ClusterListModel, PermissionListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 ClusterListModel.class,
                 PermissionListModel.class) {
             @Override

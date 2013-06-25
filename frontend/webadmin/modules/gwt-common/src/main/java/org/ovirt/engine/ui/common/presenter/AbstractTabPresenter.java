@@ -4,9 +4,11 @@ import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent.Type;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
+import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 /**
@@ -19,8 +21,9 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
  */
 public abstract class AbstractTabPresenter<V extends View, P extends TabContentProxyPlace<?>> extends Presenter<V, P> {
 
-    public AbstractTabPresenter(EventBus eventBus, V view, P proxy) {
-        super(eventBus, view, proxy);
+    public AbstractTabPresenter(EventBus eventBus, V view, P proxy,
+            Type<RevealContentHandler<?>> slot) {
+        super(eventBus, view, proxy, slot);
     }
 
     /**

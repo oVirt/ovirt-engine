@@ -1,10 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure;
 
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.Role;
+import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.widget.table.AbstractActionTable;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
 
@@ -34,8 +33,7 @@ public class RolePresenterWidget extends PresenterWidget<RolePresenterWidget.Vie
     private final RolePermissionModelProvider permissionModelProvider;
 
     @Inject
-    public RolePresenterWidget(EventBus eventBus,
-            ViewDef view, ClientGinjector ginjector,
+    public RolePresenterWidget(EventBus eventBus, ViewDef view,
             RoleModelProvider modelProvider,
             RolePermissionModelProvider permissionModelProvider) {
         super(eventBus, view);

@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.webadmin.section.main.view;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
 
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public class MainContentView extends AbstractView implements MainContentPresenter.ViewDef {
 
@@ -28,7 +28,7 @@ public class MainContentView extends AbstractView implements MainContentPresente
     }
 
     @Override
-    public void setInSlot(Object slot, Widget content) {
+    public void setInSlot(Object slot, IsWidget content) {
         if (slot == MainContentPresenter.TYPE_SetMainTabPanelContent) {
             setPanelContent(mainTabPanelContainer, content);
         } else if (slot == MainContentPresenter.TYPE_SetSubTabPanelContent) {

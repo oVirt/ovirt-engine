@@ -13,7 +13,7 @@ public abstract class UserPortalImageButtonDefinition<T> extends ImageUiCommandB
     }
 
     static EventBus getEventBus() {
-        return ClientGinjectorProvider.instance().getEventBus();
+        return ClientGinjectorProvider.getEventBus();
     }
 
 }

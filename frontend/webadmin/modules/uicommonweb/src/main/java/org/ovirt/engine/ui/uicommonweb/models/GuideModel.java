@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.List;
+
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class GuideModel extends EntityModel

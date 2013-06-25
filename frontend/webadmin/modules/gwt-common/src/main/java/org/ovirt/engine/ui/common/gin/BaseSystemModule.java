@@ -15,12 +15,12 @@ import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.utils.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.RootPresenter;
 import com.gwtplatform.mvp.client.proxy.ParameterTokenFormatter;
+import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 
 /**
@@ -28,10 +28,11 @@ import com.gwtplatform.mvp.client.proxy.TokenFormatter;
  */
 public abstract class BaseSystemModule extends AbstractGinModule {
 
-    protected void bindCommonInfrastructure() {
-        bind(EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
+    protected void bindCommonInfrastructure(Class<? extends PlaceManager> placeManager) {
+        bindEventBus();
         bind(TokenFormatter.class).to(ParameterTokenFormatter.class).in(Singleton.class);
         bind(RootPresenter.class).asEagerSingleton();
+        bind(PlaceManager.class).to(placeManager).in(Singleton.class);
         bind(CurrentUser.class).in(Singleton.class);
         bind(LoggedInGatekeeper.class).in(Singleton.class);
         bind(ErrorPopupManager.class).to(ErrorPopupManagerImpl.class).in(Singleton.class);
@@ -40,6 +41,13 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(ClientStorage.class).in(Singleton.class);
         bind(ApplicationFocusManager.class).asEagerSingleton();
         bind(LockInteractionManager.class).asEagerSingleton();
+    }
+
+    private void bindEventBus() {
+        // Bind actual (non-legacy) EventBus to its legacy interface
+        bind(com.google.web.bindery.event.shared.EventBus.class).to(com.google.gwt.event.shared.EventBus.class);
+        // Bind legacy EventBus interface to SimpleEventBus implementation
+        bind(com.google.gwt.event.shared.EventBus.class).to(SimpleEventBus.class).in(Singleton.class);
     }
 
     protected void bindResourceConfiguration(

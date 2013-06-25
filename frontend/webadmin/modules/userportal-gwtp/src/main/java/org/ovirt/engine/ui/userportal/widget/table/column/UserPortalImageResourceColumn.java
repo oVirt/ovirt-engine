@@ -8,11 +8,11 @@ import org.ovirt.engine.ui.userportal.gin.ClientGinjectorProvider;
 public abstract class UserPortalImageResourceColumn<T> extends ImageResourceColumn<T> {
 
     protected ApplicationResources getApplicationResources() {
-        return ClientGinjectorProvider.instance().getApplicationResources();
+        return ClientGinjectorProvider.getApplicationResources();
     }
 
     protected ApplicationResourcesWithLookup getApplicationResourcesWithLookup() {
-        return ClientGinjectorProvider.instance().getApplicationResourcesWithLookup();
+        return ClientGinjectorProvider.getApplicationResourcesWithLookup();
     }
 
 }

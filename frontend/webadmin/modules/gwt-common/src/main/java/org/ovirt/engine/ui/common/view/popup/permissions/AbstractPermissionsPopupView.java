@@ -160,7 +160,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     @Override
     public void edit(final T object) {
         searchItems.setRowData(new ArrayList<EntityModel>());
-        searchItems.edit(object);
+        searchItems.asEditor().edit(object);
     }
 
     @Override

@@ -1,11 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class HostInterfaceLineModel extends Model

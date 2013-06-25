@@ -12,7 +12,6 @@ import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
-import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
 
 public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef, MainSectionPresenter.ProxyDef> {
 
@@ -33,16 +32,12 @@ public class MainSectionPresenter extends Presenter<MainSectionPresenter.ViewDef
     private final PluginManager pluginManager;
 
     @Inject
-    public MainSectionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy, HeaderPresenterWidget header, PluginManager pluginManager) {
-        super(eventBus, view, proxy);
+    public MainSectionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+            HeaderPresenterWidget header, PluginManager pluginManager) {
+        super(eventBus, view, proxy, RevealType.RootLayout);
         this.header = header;
         this.pluginManager = pluginManager;
         getView().setUiHandlers(header);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealRootLayoutContentEvent.fire(this, this);
     }
 
     @Override

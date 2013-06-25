@@ -49,11 +49,9 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
     TextBoxLabel quotaName = new TextBoxLabel();
 
     @Ignore
-    // TODO: primitive field
     TextBoxLabel isStateless = new TextBoxLabel();
 
     @Ignore
-    // TODO: primitive field
     TextBoxLabel monitorCount = new TextBoxLabel();
 
     @UiField(provided = true)
@@ -116,7 +114,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
     public void setMainTabSelectedItem(VmPool selectedItem) {
         driver.edit(getDetailModel());
 
-        // TODO required because of GWT#5864
+        // Required because of type conversion
         monitorCount.setText(String.valueOf(getDetailModel().getMonitorCount()));
         isStateless.setText(Boolean.toString(getDetailModel().getIsStateless()));
         oS.setText(AsyncDataProvider.getOsName(getDetailModel().getOS()));

@@ -17,12 +17,14 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
+import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 /**
@@ -62,8 +64,9 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
     private List<T> mainTabSelectedItems;
 
     public AbstractSubTabPresenter(EventBus eventBus, V view, P proxy,
-            PlaceManager placeManager, DetailModelProvider<M, D> modelProvider) {
-        super(eventBus, view, proxy);
+            PlaceManager placeManager, DetailModelProvider<M, D> modelProvider,
+            Type<RevealContentHandler<?>> slot) {
+        super(eventBus, view, proxy, slot);
         this.placeManager = placeManager;
         this.modelProvider = modelProvider;
     }

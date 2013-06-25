@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.userportal.widget.refresh;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
-import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.refresh.SimpleRefreshManager;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
@@ -21,11 +20,8 @@ public class UserPortalRefreshManager extends SimpleRefreshManager {
     @Override
     protected int getDefaultRefreshRate() {
         // IE optimization: Use slower default refresh rate
-        return getClientAgentType().isIE8OrBelow() ? SLOWER_REFRESH_RATE : super.getDefaultRefreshRate();
-    }
-
-    ClientAgentType getClientAgentType() {
-        return ClientGinjectorProvider.instance().getClientAgentType();
+        return ClientGinjectorProvider.getClientAgentType().isIE8OrBelow()
+                ? SLOWER_REFRESH_RATE : super.getDefaultRefreshRate();
     }
 
 }

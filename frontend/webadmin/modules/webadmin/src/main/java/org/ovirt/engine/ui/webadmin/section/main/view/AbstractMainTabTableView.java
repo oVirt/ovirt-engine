@@ -33,12 +33,12 @@ public abstract class AbstractMainTabTableView<T, M extends SearchableListModel>
         this.table.showRefreshButton();
         this.table.showPagingButtons();
         this.table.showItemsCount();
-        this.table.showSelectionCountTooltip(ClientGinjectorProvider.instance().getApplicationConstants());
+        this.table.showSelectionCountTooltip(ClientGinjectorProvider.getApplicationConstants());
     }
 
     protected SimpleActionTable<T> createActionTable() {
         return new SimpleActionTable<T>(modelProvider, getTableHeaderlessResources(), getTableResources(),
-                ClientGinjectorProvider.instance().getEventBus(), ClientGinjectorProvider.instance().getClientStorage());
+                ClientGinjectorProvider.getEventBus(), ClientGinjectorProvider.getClientStorage());
     }
 
     protected Resources getTableHeaderlessResources() {

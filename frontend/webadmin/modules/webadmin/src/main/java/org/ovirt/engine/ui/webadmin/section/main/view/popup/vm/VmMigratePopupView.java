@@ -35,11 +35,11 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
     }
 
     @UiField(provided = true)
-    @Path(value = "SelectHostAutomatically_IsSelected.entity")
+    @Path(value = "selectHostAutomatically_IsSelected.entity")
     EntityModelRadioButtonEditor selectHostAutomaticallyEditor;
 
     @UiField(provided = true)
-    @Path(value = "SelectDestinationHost_IsSelected.entity")
+    @Path(value = "selectDestinationHost_IsSelected.entity")
     EntityModelRadioButtonEditor selectDestinationHostEditor;
 
     @UiField(provided = true)

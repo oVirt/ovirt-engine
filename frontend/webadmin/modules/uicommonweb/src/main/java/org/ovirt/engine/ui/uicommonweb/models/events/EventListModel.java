@@ -1,5 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.events;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -20,10 +24,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class EventListModel extends ListWithDetailsModel
 {

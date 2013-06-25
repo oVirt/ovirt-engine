@@ -82,15 +82,15 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     OsTypeImage osTypeImage;
 
     @UiField
-    @Path("IsVmUp")
+    @Path("isVmUp")
     VmUpMaskImage vmUpImage;
 
     @UiField
-    @Path("Status")
+    @Path("status")
     VmPausedImage vmPausedImage;
 
     @UiField(provided = true)
-    @Path("Status")
+    @Path("status")
     ValueLabel<VMStatus> vmStatus;
 
     @UiField

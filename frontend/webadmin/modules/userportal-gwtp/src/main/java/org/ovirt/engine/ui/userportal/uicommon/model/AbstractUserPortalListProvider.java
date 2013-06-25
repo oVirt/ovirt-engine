@@ -6,9 +6,12 @@ import java.util.Map;
 
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
-import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.IUserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+
+import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Provider;
 
 /**
  * Base class for {@link IUserPortalListModel} providers with {@linkplain #itemsChanged data update optimization}.
@@ -25,8 +28,10 @@ public abstract class AbstractUserPortalListProvider<M extends IUserPortalListMo
      */
     private boolean forceUpdate = false;
 
-    public AbstractUserPortalListProvider(BaseClientGinjector ginjector, CurrentUser user) {
-        super(ginjector, user);
+    public AbstractUserPortalListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            CurrentUser user) {
+        super(eventBus, defaultConfirmPopupProvider, user);
     }
 
     @Override

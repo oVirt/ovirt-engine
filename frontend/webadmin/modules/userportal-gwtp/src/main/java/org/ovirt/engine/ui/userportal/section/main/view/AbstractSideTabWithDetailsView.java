@@ -12,8 +12,8 @@ import org.ovirt.engine.ui.userportal.widget.extended.ExtendedViewSplitLayoutPan
 import org.ovirt.engine.ui.userportal.widget.table.column.UserPortalSimpleActionTable;
 
 import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 
 public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableListModel> extends AbstractView implements AbstractSideTabWithDetailsPresenter.ViewDef<T> {
 
@@ -47,8 +47,8 @@ public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableList
     protected SimpleActionTable<T> createActionTable() {
         return new UserPortalSimpleActionTable<T>(modelProvider,
                 getTableResources(),
-                ClientGinjectorProvider.instance().getEventBus(),
-                ClientGinjectorProvider.instance().getClientStorage());
+                ClientGinjectorProvider.getEventBus(),
+                ClientGinjectorProvider.getClientStorage());
     }
 
     protected Resources getTableResources() {
@@ -61,7 +61,7 @@ public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableList
     }
 
     @Override
-    public void setInSlot(Object slot, Widget content) {
+    public void setInSlot(Object slot, IsWidget content) {
         if (slot == getSubTabPanelContentSlot()) {
             setPanelContent(subTabPanelContainer, content);
         } else {

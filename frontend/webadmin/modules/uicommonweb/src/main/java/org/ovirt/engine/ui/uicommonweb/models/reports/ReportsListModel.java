@@ -3,11 +3,11 @@ package org.ovirt.engine.ui.uicommonweb.models.reports;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.uicommonweb.HtmlParameters;

@@ -1,16 +1,16 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.QuotaStorage;
-
-import com.google.gwt.resources.client.ImageResource;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
+import com.google.gwt.resources.client.ImageResource;
+
 public class QuotaUtilizationStatusColumn<IVdcQueryable> extends WebAdminImageResourceColumn<IVdcQueryable> {
 
-    private static final ApplicationConstants applicationConstants = ClientGinjectorProvider.instance().getApplicationConstants();
+    private static final ApplicationConstants applicationConstants = ClientGinjectorProvider.getApplicationConstants();
 
     @Override
     public ImageResource getValue(IVdcQueryable quota) {
@@ -47,6 +47,6 @@ public class QuotaUtilizationStatusColumn<IVdcQueryable> extends WebAdminImageRe
 
     private ApplicationResources getResources() {
         // Get a reference to the application resources:
-        return ClientGinjectorProvider.instance().getApplicationResources();
+        return ClientGinjectorProvider.getApplicationResources();
     }
 }

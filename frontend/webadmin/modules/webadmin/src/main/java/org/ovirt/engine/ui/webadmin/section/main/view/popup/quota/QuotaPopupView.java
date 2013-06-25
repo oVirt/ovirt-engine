@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.IVdcQueryableCellTable;
+import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.Slider;
 import org.ovirt.engine.ui.common.widget.form.Slider.SliderValueChange;
@@ -141,10 +141,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     ScrollPanel clusterQuotaTableContainer;
 
     @Ignore
-    private IVdcQueryableCellTable<QuotaVdsGroup, ListModel> quotaClusterTable;
+    private ListModelObjectCellTable<QuotaVdsGroup, ListModel> quotaClusterTable;
 
     @Ignore
-    private IVdcQueryableCellTable<QuotaStorage, ListModel> quotaStorageTable;
+    private ListModelObjectCellTable<QuotaStorage, ListModel> quotaStorageTable;
 
     @UiField
     @Ignore
@@ -209,7 +209,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     private void initQuotaStorageTable(final ApplicationConstants constants, final ApplicationMessages messages) {
-        quotaStorageTable = new IVdcQueryableCellTable<QuotaStorage, ListModel>();
+        quotaStorageTable = new ListModelObjectCellTable<QuotaStorage, ListModel>();
         storageQuotaTableContainer.add(quotaStorageTable);
 
         isStorageInQuotaColumn = new Column<QuotaStorage, Boolean>(
@@ -237,9 +237,9 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
                     object.setStorageSizeGB(null);
                 }
                 if ((Boolean) model.getGlobalStorageQuota().getEntity()) {
-                    quotaStorageTable.edit(model.getQuotaStorages());
+                    quotaStorageTable.asEditor().edit(model.getQuotaStorages());
                 } else {
-                    quotaStorageTable.edit(model.getAllDataCenterStorages());
+                    quotaStorageTable.asEditor().edit(model.getAllDataCenterStorages());
                 }
             }
         });
@@ -296,7 +296,7 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     private void initQuotaClusterTable(final ApplicationConstants constants, final ApplicationMessages messages) {
-        quotaClusterTable = new IVdcQueryableCellTable<QuotaVdsGroup, ListModel>();
+        quotaClusterTable = new ListModelObjectCellTable<QuotaVdsGroup, ListModel>();
         clusterQuotaTableContainer.add(quotaClusterTable);
 
         isClusterInQuotaColumn = new Column<QuotaVdsGroup, Boolean>(
@@ -327,9 +327,9 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
                     object.setMemSizeMB(null);
                 }
                 if ((Boolean) model.getGlobalClusterQuota().getEntity()) {
-                    quotaClusterTable.edit(model.getQuotaClusters());
+                    quotaClusterTable.asEditor().edit(model.getQuotaClusters());
                 } else {
-                    quotaClusterTable.edit(model.getAllDataCenterClusters());
+                    quotaClusterTable.asEditor().edit(model.getAllDataCenterClusters());
                 }
             }
         });
@@ -434,8 +434,8 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             updateSliders();
         }
 
-        quotaClusterTable.edit(object.getQuotaClusters());
-        quotaStorageTable.edit(object.getQuotaStorages());
+        quotaClusterTable.asEditor().edit(object.getQuotaClusters());
+        quotaStorageTable.asEditor().edit(object.getQuotaStorages());
         driver.edit(object);
     }
 
@@ -447,14 +447,14 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
                 String propName = ((PropertyChangedEventArgs) args).PropertyName;
                 if ("Window".equals(propName) && model.getWindow() == null) { //$NON-NLS-1$
                     if ((Boolean) model.getSpecificClusterQuota().getEntity()) {
-                        quotaClusterTable.edit(model.getAllDataCenterClusters());
+                        quotaClusterTable.asEditor().edit(model.getAllDataCenterClusters());
                     } else {
-                        quotaClusterTable.edit(model.getQuotaClusters());
+                        quotaClusterTable.asEditor().edit(model.getQuotaClusters());
                     }
                     if ((Boolean) model.getSpecificStorageQuota().getEntity()) {
-                        quotaStorageTable.edit(model.getAllDataCenterStorages());
+                        quotaStorageTable.asEditor().edit(model.getAllDataCenterStorages());
                     } else {
-                        quotaStorageTable.edit(model.getQuotaStorages());
+                        quotaStorageTable.asEditor().edit(model.getQuotaStorages());
                     }
                 }
             }
@@ -472,10 +472,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             if ((Boolean) model.getSpecificClusterQuota().getEntity()) {
                 quotaClusterTable.insertColumn(0, isClusterInQuotaColumn);
                 quotaClusterTable.setColumnWidth(isClusterInQuotaColumn, "30px"); //$NON-NLS-1$
-                quotaClusterTable.edit(model.getAllDataCenterClusters());
+                quotaClusterTable.asEditor().edit(model.getAllDataCenterClusters());
             } else {
                 quotaClusterTable.removeColumn(isClusterInQuotaColumn);
-                quotaClusterTable.edit(model.getQuotaClusters());
+                quotaClusterTable.asEditor().edit(model.getQuotaClusters());
             }
         }
     };
@@ -487,10 +487,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
             if ((Boolean) model.getSpecificStorageQuota().getEntity()) {
                 quotaStorageTable.insertColumn(0, isStorageInQuotaColumn);
                 quotaStorageTable.setColumnWidth(isStorageInQuotaColumn, "30px"); //$NON-NLS-1$
-                quotaStorageTable.edit(model.getAllDataCenterStorages());
+                quotaStorageTable.asEditor().edit(model.getAllDataCenterStorages());
             } else {
                 quotaStorageTable.removeColumn(isStorageInQuotaColumn);
-                quotaStorageTable.edit(model.getQuotaStorages());
+                quotaStorageTable.asEditor().edit(model.getQuotaStorages());
             }
         }
     };

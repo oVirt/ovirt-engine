@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common;
 
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
-import com.google.gwt.safehtml.client.SafeHtmlTemplates.Template;
 import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface CommonApplicationTemplates extends SafeHtmlTemplates {

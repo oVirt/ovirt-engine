@@ -14,23 +14,21 @@ import org.ovirt.engine.ui.webadmin.system.ApplicationInit;
 import org.ovirt.engine.ui.webadmin.system.InternalConfiguration;
 import org.ovirt.engine.ui.webadmin.system.PostMessageDispatcher;
 
-import com.google.inject.Singleton;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
-
 /**
  * GIN module containing WebAdmin infrastructure and configuration bindings.
  */
 public class SystemModule extends BaseSystemModule {
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void configure() {
+        requestStaticInjection(ClientGinjectorProvider.class);
         bindInfrastructure();
         bindConfiguration();
     }
 
     void bindInfrastructure() {
-        bindCommonInfrastructure();
-        bind(PlaceManager.class).to(WebAdminPlaceManager.class).in(Singleton.class);
+        bindCommonInfrastructure(WebAdminPlaceManager.class);
         bind(ApplicationInit.class).asEagerSingleton();
         bind(InternalConfiguration.class).asEagerSingleton();
         bind(PostMessageDispatcher.class).asEagerSingleton();

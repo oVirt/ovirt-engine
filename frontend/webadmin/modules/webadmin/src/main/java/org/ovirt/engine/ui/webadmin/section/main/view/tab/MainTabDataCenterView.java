@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;

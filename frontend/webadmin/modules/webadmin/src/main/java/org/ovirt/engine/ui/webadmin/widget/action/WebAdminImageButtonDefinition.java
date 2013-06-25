@@ -18,7 +18,7 @@ public abstract class WebAdminImageButtonDefinition<T> extends ImageUiCommandBut
     }
 
     static EventBus getEventBus() {
-        return ClientGinjectorProvider.instance().getEventBus();
+        return ClientGinjectorProvider.getEventBus();
     }
 
 }

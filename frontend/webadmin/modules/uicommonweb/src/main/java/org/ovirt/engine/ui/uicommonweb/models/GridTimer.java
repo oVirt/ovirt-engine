@@ -4,6 +4,7 @@ import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
@@ -12,7 +13,6 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.Timer;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 /**
  * The GridTimer holds information about the current refresh rate.

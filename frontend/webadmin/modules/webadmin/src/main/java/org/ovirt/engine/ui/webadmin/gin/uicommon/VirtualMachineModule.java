@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.ConsolePopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
@@ -30,7 +31,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
@@ -53,6 +53,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmSnapshotPr
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmRemovePopupPresenterWidget;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -64,7 +65,8 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<VM, VmListModel> getVmListProvider(ClientGinjector ginjector,
+    public MainModelProvider<VM, VmListModel> getVmListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider,
             final Provider<VmMakeTemplatePopupPresenterWidget> makeTemplatePopupProvider,
             final Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider,
@@ -79,7 +81,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<ReportPresenterWidget> reportWindowProvider,
             final Provider<ConsolePopupPresenterWidget> consolePopupProvider,
             final Provider<VncInfoPopupPresenterWidget> vncWindoProvider) {
-        return new MainTabModelProvider<VM, VmListModel>(ginjector, VmListModel.class) {
+        return new MainTabModelProvider<VM, VmListModel>(eventBus, defaultConfirmPopupProvider, VmListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -142,16 +144,20 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailModelProvider<VmListModel, VmGeneralModel> getVmGeneralProvider(ClientGinjector ginjector) {
-        return new DetailTabModelProvider<VmListModel, VmGeneralModel>(ginjector,
+    public DetailModelProvider<VmListModel, VmGeneralModel> getVmGeneralProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new DetailTabModelProvider<VmListModel, VmGeneralModel>(
+                eventBus, defaultConfirmPopupProvider,
                 VmListModel.class,
                 VmGeneralModel.class);
     }
 
     @Provides
     @Singleton
-    public DetailModelProvider<VmListModel, VmSessionsModel> getVmSessionsProvider(ClientGinjector ginjector) {
-        return new DetailTabModelProvider<VmListModel, VmSessionsModel>(ginjector,
+    public DetailModelProvider<VmListModel, VmSessionsModel> getVmSessionsProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new DetailTabModelProvider<VmListModel, VmSessionsModel>(
+                eventBus, defaultConfirmPopupProvider,
                 VmListModel.class,
                 VmSessionsModel.class);
     }
@@ -160,10 +166,12 @@ public class VirtualMachineModule extends AbstractGinModule {
     // Searchable Detail Models
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, VmListModel, PermissionListModel> getPermissionListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<permissions, VmListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, VmListModel, PermissionListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<permissions, VmListModel, PermissionListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 VmListModel.class,
                 PermissionListModel.class) {
             @Override
@@ -190,12 +198,14 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Disk, VmListModel, VmDiskListModel> getVmDiskListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<Disk, VmListModel, VmDiskListModel> getVmDiskListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmDiskPopupPresenterWidget> popupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<DisksAllocationPopupPresenterWidget> movePopupProvider,
             final Provider<ChangeQuotaPopupPresenterWidget> changeQutoaPopupProvider) {
-        return new SearchableDetailTabModelProvider<Disk, VmListModel, VmDiskListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<Disk, VmListModel, VmDiskListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 VmListModel.class,
                 VmDiskListModel.class) {
             @Override
@@ -230,10 +240,12 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VmNetworkInterface, VmListModel, VmInterfaceListModel> getVmInterfaceListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<VmNetworkInterface, VmListModel, VmInterfaceListModel> getVmInterfaceListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmInterfacePopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<VmNetworkInterface, VmListModel, VmInterfaceListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<VmNetworkInterface, VmListModel, VmInterfaceListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 VmListModel.class,
                 VmInterfaceListModel.class) {
             @Override
@@ -264,9 +276,11 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AuditLog, VmListModel, VmEventListModel> getVmEventListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<AuditLog, VmListModel, VmEventListModel> getVmEventListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<EventPopupPresenterWidget> eventPopupProvider) {
-        return new SearchableDetailTabModelProvider<AuditLog, VmListModel, VmEventListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<AuditLog, VmListModel, VmEventListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 VmListModel.class,
                 VmEventListModel.class) {
             @Override
@@ -284,20 +298,25 @@ public class VirtualMachineModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<String, VmListModel, VmAppListModel> getVmAppsProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<String, VmListModel, VmAppListModel>(ginjector,
+    public SearchableDetailModelProvider<String, VmListModel, VmAppListModel> getVmAppsProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<String, VmListModel, VmAppListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 VmListModel.class,
                 VmAppListModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Snapshot, VmListModel, VmSnapshotListModel> getVmSnapshotListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<Snapshot, VmListModel, VmSnapshotListModel> getVmSnapshotListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider,
             final Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider,
             final Provider<VmSnapshotPreviewPopupPresenterWidget> previewPopupProvider) {
-        return new SearchableDetailTabModelProvider<Snapshot, VmListModel, VmSnapshotListModel>(ginjector,
-                VmListModel.class, VmSnapshotListModel.class) {
+        return new SearchableDetailTabModelProvider<Snapshot, VmListModel, VmSnapshotListModel>(
+                eventBus, defaultConfirmPopupProvider,
+                VmListModel.class,
+                VmSnapshotListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmSnapshotListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {

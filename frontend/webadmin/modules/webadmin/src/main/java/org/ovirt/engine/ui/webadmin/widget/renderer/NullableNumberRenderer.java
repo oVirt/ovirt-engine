@@ -8,7 +8,7 @@ import com.google.gwt.text.client.NumberFormatRenderer;
 
 public class NullableNumberRenderer extends NumberFormatRenderer {
 
-    private String nullString = ClientGinjectorProvider.instance().getApplicationConstants().unAvailablePropertyLabel();
+    private String nullString = ClientGinjectorProvider.getApplicationConstants().unAvailablePropertyLabel();
 
     public NullableNumberRenderer() {
         super();

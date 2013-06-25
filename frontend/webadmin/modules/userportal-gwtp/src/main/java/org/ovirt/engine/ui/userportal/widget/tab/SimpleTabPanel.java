@@ -37,7 +37,7 @@ public class SimpleTabPanel extends AbstractTabPanel {
 
     @Override
     protected TabDefinition createNewTab(TabData tabData) {
-        return TabFactory.createTab(tabData, this, ClientGinjectorProvider.instance().getEventBus());
+        return TabFactory.createTab(tabData, this, ClientGinjectorProvider.getEventBus());
     }
 
 }

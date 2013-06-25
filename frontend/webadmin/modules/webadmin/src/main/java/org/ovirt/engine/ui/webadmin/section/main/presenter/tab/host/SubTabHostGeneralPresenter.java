@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
@@ -17,8 +18,8 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
@@ -38,7 +39,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, HostListModel, HostGeneralModel, SubTabHostGeneralPresenter.ViewDef, SubTabHostGeneralPresenter.ProxyDef> {
@@ -68,18 +68,19 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
     private final ApplicationMessages messages;
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().hostGeneralSubTabLabel(), 0,
-                ginjector.getSubTabHostGeneralModelProvider());
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            DetailModelProvider<HostListModel, HostGeneralModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.hostGeneralSubTabLabel(), 0, modelProvider);
     }
 
     @Inject
     public SubTabHostGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, DetailModelProvider<HostListModel, HostGeneralModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+        super(eventBus, view, proxy, placeManager, modelProvider,
+                HostSubTabPanelPresenter.TYPE_SetTabContent);
 
         // Inject a reference to the messages:
-        messages = ClientGinjectorProvider.instance().getApplicationMessages();
+        messages = ClientGinjectorProvider.getApplicationMessages();
     }
 
     @Override
@@ -215,13 +216,8 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
     }
 
     @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, HostSubTabPanelPresenter.TYPE_SetTabContent, this);
-    }
-
-    @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.hostMainTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.hostMainTabPlace);
     }
 
     @ProxyEvent

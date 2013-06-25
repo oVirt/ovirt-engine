@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class Event {
     private java.util.List<IEventListener> listeners;

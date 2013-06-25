@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.common.widget.tree.TreeModelWithElementId;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -11,15 +12,18 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.widget.tree.SystemTreeItemCell;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTreeItemModel, SystemTreeModel>
         implements SearchableTreeModelProvider<SystemTreeItemModel, SystemTreeModel>, TreeModelWithElementId {
@@ -31,9 +35,11 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
     private final SystemTreeItemCell cell;
 
     @Inject
-    public SystemTreeModelProvider(ClientGinjector ginjector) {
-        super(ginjector);
-        this.cell = new SystemTreeItemCell(ginjector.getApplicationResources(), ginjector.getApplicationTemplates());
+    public SystemTreeModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            ApplicationResources applicationResources, ApplicationTemplates applicationTemplates) {
+        super(eventBus, defaultConfirmPopupProvider);
+        this.cell = new SystemTreeItemCell(applicationResources, applicationTemplates);
 
         // Create selection model
         selectionModel = new SingleSelectionModel<SystemTreeItemModel>();

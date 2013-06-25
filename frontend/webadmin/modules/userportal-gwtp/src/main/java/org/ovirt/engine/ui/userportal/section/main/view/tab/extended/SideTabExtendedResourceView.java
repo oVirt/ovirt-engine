@@ -66,7 +66,7 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     Style style;
 
     @UiField(provided = true)
-    @Path("UsedCPUsPercentage.Entity")
+    @Path("usedCPUsPercentage.entity")
     @WithElementId("usedCpusPercentage")
     QuotaProgressBar cpusProgressBar;
 
@@ -75,7 +75,7 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     VerticalPanel cpusQuotasList;
 
     @UiField(provided = true)
-    @Path("UsedMemoryPercentage.Entity")
+    @Path("usedMemoryPercentage.entity")
     @WithElementId("memoryUsagePercentage")
     QuotaProgressBar memoryProgressBar;
 
@@ -84,7 +84,7 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     VerticalPanel memoryQuotasList;
 
     @UiField(provided = true)
-    @Path("UsedMemoryPercentage.Entity")
+    @Path("usedMemoryPercentage.entity")
     @WithElementId("storageUsagePercentage")
     QuotaProgressBar storageProgressBar;
 
@@ -93,17 +93,17 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     VerticalPanel storageQuotasList;
 
     @UiField
-    @Path("TotalDisksSize.Entity")
+    @Path("totalDisksSize.entity")
     @WithElementId
     ToStringEntityModelLabel totalSize;
 
     @UiField
-    @Path("NumOfSnapshots.Entity")
+    @Path("numOfSnapshots.entity")
     @WithElementId
     ToStringEntityModelLabel numOfSnapshots;
 
     @UiField
-    @Path("TotalSnapshotsSize.Entity")
+    @Path("totalSnapshotsSize.entity")
     @WithElementId
     ToStringEntityModelLabel totalSizeOfSnapshots;
 

@@ -45,7 +45,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
 
     private final Driver driver = GWT.create(Driver.class);
 
-    private static final ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+    private static final ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
 
     @Inject
     public SubTabDiskGeneralView(DetailModelProvider<DiskListModel, DiskGeneralModel> modelProvider) {

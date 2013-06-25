@@ -53,7 +53,7 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
     @Override
     protected SimpleActionPanel<TagListModel> createActionPanel(TagModelProvider modelProvider) {
         return new SimpleActionPanel(modelProvider, modelProvider.getSelectionModel(),
-                ClientGinjectorProvider.instance().getEventBus());
+                ClientGinjectorProvider.getEventBus());
     }
 
     private void addActionButtons(final TagModelProvider modelProvider, final ApplicationConstants constants) {

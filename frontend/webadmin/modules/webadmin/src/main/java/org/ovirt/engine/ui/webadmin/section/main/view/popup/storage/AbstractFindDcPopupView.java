@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
@@ -52,7 +52,7 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
 
     @Override
     public void edit(ListModel object) {
-        table.edit(object);
+        table.asEditor().edit(object);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
 
     @Override
     public ListModel flush() {
-        return table.flush();
+        return table.asEditor().flush();
     }
 
 }

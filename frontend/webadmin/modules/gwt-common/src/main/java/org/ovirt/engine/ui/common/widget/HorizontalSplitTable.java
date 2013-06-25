@@ -110,8 +110,8 @@ public class HorizontalSplitTable extends Composite {
                 EntityModelCellTable<ListModel> targetTable = getTable(!topTableIsSource);
 
                 Set<EntityModel> selectedItems = sourceSelectionModel.getSelectedSet();
-                ((Collection<EntityModel>) sourceTable.flush().getItems()).removeAll(selectedItems);
-                ListModel targetListModel = targetTable.flush();
+                ((Collection<EntityModel>) sourceTable.asEditor().flush().getItems()).removeAll(selectedItems);
+                ListModel targetListModel = targetTable.asEditor().flush();
                 Collection<EntityModel> targetItems = (Collection<EntityModel>) targetListModel.getItems();
                 if (targetItems == null) {
                     targetItems = new LinkedList<EntityModel>();
@@ -138,15 +138,15 @@ public class HorizontalSplitTable extends Composite {
     private void refresh() {
         topSelectionModel.clear();
         bottomSelectionModel.clear();
-        topTable.edit(topTable.flush());
-        bottomTable.edit(bottomTable.flush());
+        topTable.asEditor().edit(topTable.asEditor().flush());
+        bottomTable.asEditor().edit(bottomTable.asEditor().flush());
     }
 
     private void edit(ListModel model, final boolean topTableIsEdited) {
         EntityModelCellTable<ListModel> table = getTable(topTableIsEdited);
         IEventListener listener = topTableIsEdited ? topItemsChangedListener : bottomItemsChangedListener;
         if (listener != null) {
-            table.flush().getItemsChangedEvent().removeListener(listener);
+            table.asEditor().flush().getItemsChangedEvent().removeListener(listener);
         }
         listener = new IEventListener() {
 
@@ -156,7 +156,7 @@ public class HorizontalSplitTable extends Composite {
             }
         };
         model.getItemsChangedEvent().addListener(listener);
-        table.edit(model);
+        table.asEditor().edit(model);
     }
 
     public void edit(ListModel topListModel, ListModel bottomListModel) {

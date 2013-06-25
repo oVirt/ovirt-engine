@@ -3,12 +3,13 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
@@ -32,7 +33,6 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.TemplateBackupModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.VmBackupModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
@@ -48,6 +48,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -59,13 +60,14 @@ public class StorageModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<StorageDomain, StorageListModel> getStorageListProvider(ClientGinjector ginjector,
+    public MainModelProvider<StorageDomain, StorageListModel> getStorageListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<StoragePopupPresenterWidget> popupProvider,
             final Provider<StorageRemovePopupPresenterWidget> removePopupProvider,
             final Provider<StorageDestroyPopupPresenterWidget> destroyConfirmPopupProvider,
             final Provider<StorageForceCreatePopupPresenterWidget> forceCreateConfirmPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider) {
-        return new MainTabModelProvider<StorageDomain, StorageListModel>(ginjector, StorageListModel.class) {
+        return new MainTabModelProvider<StorageDomain, StorageListModel>(eventBus, defaultConfirmPopupProvider, StorageListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -108,8 +110,10 @@ public class StorageModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailModelProvider<StorageListModel, StorageGeneralModel> getStorageGeneralProvider(ClientGinjector ginjector) {
-        return new DetailTabModelProvider<StorageListModel, StorageGeneralModel>(ginjector,
+    public DetailModelProvider<StorageListModel, StorageGeneralModel> getStorageGeneralProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new DetailTabModelProvider<StorageListModel, StorageGeneralModel>(
+                eventBus, defaultConfirmPopupProvider,
                 StorageListModel.class,
                 StorageGeneralModel.class);
     }
@@ -117,10 +121,12 @@ public class StorageModule extends AbstractGinModule {
     // Searchable Detail Models
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, StorageListModel, PermissionListModel> getPermissionListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<permissions, StorageListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, StorageListModel, PermissionListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<permissions, StorageListModel, PermissionListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 StorageListModel.class,
                 PermissionListModel.class) {
             @Override
@@ -147,11 +153,13 @@ public class StorageModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel> getStorageDataCenterListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel> getStorageDataCenterListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<FindSingleDcPopupPresenterWidget> singlePopupProvider,
             final Provider<FindMultiDcPopupPresenterWidget> multiPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 StorageListModel.class,
                 StorageDataCenterListModel.class) {
             @Override
@@ -185,9 +193,11 @@ public class StorageModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> getStorageIsoListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> getStorageIsoListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ImportExportImagePopupPresenterWidget> importExportPopupProvider) {
-        return new SearchableDetailTabModelProvider<RepoImage, StorageListModel, StorageIsoListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<RepoImage, StorageListModel, StorageIsoListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 StorageListModel.class,
                 StorageIsoListModel.class) {
             @Override
@@ -204,9 +214,11 @@ public class StorageModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> getStorageDiskListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> getStorageDiskListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<Disk, StorageListModel, StorageDiskListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<Disk, StorageListModel, StorageDiskListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 StorageListModel.class,
                 StorageDiskListModel.class) {
             @Override
@@ -223,27 +235,33 @@ public class StorageModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel> getStorageTemplateListProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel>(ginjector,
+    public SearchableDetailModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel> getStorageTemplateListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 StorageListModel.class,
                 StorageTemplateListModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel> getStorageVmListProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<VM, StorageListModel, StorageVmListModel>(ginjector,
+    public SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel> getStorageVmListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<VM, StorageListModel, StorageVmListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 StorageListModel.class,
                 StorageVmListModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> getTemplateBackupProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> getTemplateBackupProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ImportTemplatePopupPresenterWidget> importTemplatePopupProvider,
             final Provider<ImportCloneDialogPresenterWidget> importClonePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<VmTemplate, StorageListModel, TemplateBackupModel>(ginjector,
+        return new SearchableDetailTabModelProvider<VmTemplate, StorageListModel, TemplateBackupModel>(
+                eventBus, defaultConfirmPopupProvider,
                 StorageListModel.class,
                 TemplateBackupModel.class) {
             @Override
@@ -272,11 +290,13 @@ public class StorageModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VM, StorageListModel, VmBackupModel> getVmBackupProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<VM, StorageListModel, VmBackupModel> getVmBackupProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ImportVmPopupPresenterWidget> importVmPopupProvider,
             final Provider<ImportCloneDialogPresenterWidget> importClonePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<VM, StorageListModel, VmBackupModel>(ginjector,
+        return new SearchableDetailTabModelProvider<VM, StorageListModel, VmBackupModel>(
+                eventBus, defaultConfirmPopupProvider,
                 StorageListModel.class,
                 VmBackupModel.class) {
             @Override
@@ -305,9 +325,11 @@ public class StorageModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AuditLog, StorageListModel, StorageEventListModel> getStorageEventListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<AuditLog, StorageListModel, StorageEventListModel> getStorageEventListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<EventPopupPresenterWidget> eventPopupProvider) {
-        return new SearchableDetailTabModelProvider<AuditLog, StorageListModel, StorageEventListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<AuditLog, StorageListModel, StorageEventListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 StorageListModel.class,
                 StorageEventListModel.class) {
             @Override

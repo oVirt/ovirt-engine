@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.common;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class SelectionTreeNodeModel extends EntityModel

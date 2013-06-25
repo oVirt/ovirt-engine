@@ -33,23 +33,18 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     }
 
     @Ignore
-    // TODO Primitive getters not supported in 2.2
     DiskSizeLabel<Integer> totalSize = new DiskSizeLabel<Integer>();
 
     @Ignore
-    // TODO Primitive getters not supported in 2.2
     DiskSizeLabel<Integer> availableSize = new DiskSizeLabel<Integer>();
 
     @Ignore
-    // TODO Primitive getters not supported in 2.2
     DiskSizeLabel<Integer> usedSize = new DiskSizeLabel<Integer>();
 
     @Ignore
-    // TODO Primitive getters not supported in 2.2
     DiskSizeLabel<Integer> allocatedSize = new DiskSizeLabel<Integer>();
 
     @Ignore
-    // TODO Primitive getters not supported in 2.2
     PercentLabel<Integer> overAllocationRatio = new PercentLabel<Integer>();
 
     @Path("path")
@@ -149,6 +144,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     public void setMainTabSelectedItem(StorageDomain selectedItem) {
         driver.edit(getDetailModel());
 
+        // Required because of StorageGeneralModel.getEntity() returning Object
         StorageDomain entity = (StorageDomain) getDetailModel().getEntity();
         if (entity != null) {
             totalSize.setValue(entity.getTotalDiskSize());

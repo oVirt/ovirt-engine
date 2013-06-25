@@ -1,13 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.event;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.inject.Inject;
-
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
@@ -18,6 +10,14 @@ import org.ovirt.engine.ui.uicommonweb.models.events.EventModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.inject.Inject;
 
 public class EventPopupView extends AbstractModelBoundPopupView<EventModel> implements EventPopupPresenterWidget.ViewDef {
 

@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.configure;
 
+import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
 import org.ovirt.engine.ui.common.MainTableResources;
 import org.ovirt.engine.ui.common.system.ClientStorage;

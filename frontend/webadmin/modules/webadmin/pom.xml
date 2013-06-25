@@ -128,9 +128,6 @@
         <targetPath>${project.build.directory}/generated-sources/gwt</targetPath>
         <directory>src/main/resources</directory>
         <filtering>true</filtering>
-        <includes>
-          <include>**/*.gwt.xml</include>
-        </includes>
       </resource>
       <resource>
         <directory>src/main/java</directory>

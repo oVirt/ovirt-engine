@@ -26,7 +26,6 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -35,8 +34,9 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 @SuppressWarnings("unused")
 public class HostGeneralModel extends EntityModel

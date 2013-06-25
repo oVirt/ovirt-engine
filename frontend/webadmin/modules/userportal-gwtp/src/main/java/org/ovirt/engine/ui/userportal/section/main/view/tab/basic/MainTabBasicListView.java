@@ -10,6 +10,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
@@ -35,7 +36,7 @@ public class MainTabBasicListView extends AbstractView implements MainTabBasicLi
     }
 
     @Override
-    public void addToSlot(Object slot, Widget content) {
+    public void addToSlot(Object slot, IsWidget content) {
         if (slot == MainTabBasicListPresenterWidget.TYPE_VmListContent) {
             vmPanel.add(content);
         } else {
@@ -44,7 +45,7 @@ public class MainTabBasicListView extends AbstractView implements MainTabBasicLi
     }
 
     @Override
-    public void setInSlot(Object slot, Widget content) {
+    public void setInSlot(Object slot, IsWidget content) {
         if (slot == MainTabBasicListPresenterWidget.TYPE_VmListContent) {
             vmPanel.clear();
             if (content != null) {

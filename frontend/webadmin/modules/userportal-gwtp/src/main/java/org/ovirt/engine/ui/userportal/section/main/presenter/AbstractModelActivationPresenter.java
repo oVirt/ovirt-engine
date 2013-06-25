@@ -4,10 +4,12 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent.Type;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.Proxy;
+import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 /**
  * Base class for presenters bound to UiCommon list models whose activation needs to be handled by the application.
@@ -29,8 +31,9 @@ public abstract class AbstractModelActivationPresenter<T, M extends SearchableLi
     protected final SearchableModelProvider<T, M> modelProvider;
 
     public AbstractModelActivationPresenter(EventBus eventBus, V view, P proxy,
-            final SearchableModelProvider<T, M> modelProvider) {
-        super(eventBus, view, proxy);
+            SearchableModelProvider<T, M> modelProvider,
+            Type<RevealContentHandler<?>> slot) {
+        super(eventBus, view, proxy, slot);
         this.modelProvider = modelProvider;
     }
 

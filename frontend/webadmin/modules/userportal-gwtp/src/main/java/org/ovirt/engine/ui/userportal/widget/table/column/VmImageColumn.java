@@ -1,9 +1,10 @@
 package org.ovirt.engine.ui.userportal.widget.table.column;
 
 
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.resources.client.ResourcePrototype;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 
 public class VmImageColumn<T> extends UserPortalImageResourceColumn<T> {
 

@@ -176,7 +176,7 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
 
     @Override
     public void setMainTabSelectedItem(VDSGroup selectedItem) {
-        servicesTable.edit(getDetailModel().getServiceList());
+        servicesTable.asEditor().edit(getDetailModel().getServiceList());
         driver.edit(getDetailModel());
     }
 

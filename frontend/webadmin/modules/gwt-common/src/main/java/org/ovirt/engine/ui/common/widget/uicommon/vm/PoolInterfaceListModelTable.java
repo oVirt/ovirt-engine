@@ -142,8 +142,9 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         TextColumnWithTooltip<VmNetworkInterface> dropsColumn = new SumUpColumn<VmNetworkInterface>() {
             @Override
             protected Double[] getRawValue(VmNetworkInterface object) {
-                return new Double[] { object.getStatistics().getReceiveDropRate(),
-                        object.getStatistics().getTransmitDropRate() };
+                Double receiveDropRate = object != null ? object.getStatistics().getReceiveDropRate() : null;
+                Double transmitDropRate = object != null ? object.getStatistics().getTransmitDropRate() : null;
+                return new Double[] { receiveDropRate, transmitDropRate };
             }
         };
         getTable().addColumnWithHtmlHeader(dropsColumn,

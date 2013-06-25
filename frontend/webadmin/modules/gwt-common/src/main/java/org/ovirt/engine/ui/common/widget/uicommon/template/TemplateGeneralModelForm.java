@@ -21,6 +21,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     TextBoxLabel description = new TextBoxLabel();
     TextBoxLabel hostCluster = new TextBoxLabel();
     TextBoxLabel definedMemory = new TextBoxLabel();
+    @Path("OS")
     TextBoxLabel oS = new TextBoxLabel();
     TextBoxLabel cpuInfo = new TextBoxLabel();
     TextBoxLabel defaultDisplayType = new TextBoxLabel();
@@ -97,7 +98,7 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     protected void doEdit(TemplateGeneralModel model) {
         driver.edit(model);
 
-        // TODO required because of GWT#5864
+        // Required because of type conversion
         monitorCount.setText(Integer.toString(getModel().getMonitorCount()));
         isStateless.setText(Boolean.toString(getModel().getIsStateless()));
     }

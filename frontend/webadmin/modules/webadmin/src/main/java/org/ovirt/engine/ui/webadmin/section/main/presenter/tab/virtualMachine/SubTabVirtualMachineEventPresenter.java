@@ -2,13 +2,14 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VirtualMachineSelectionChangeEvent;
 
@@ -21,7 +22,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabVirtualMachineEventPresenter extends AbstractSubTabPresenter<VM, VmListModel, VmEventListModel, SubTabVirtualMachineEventPresenter.ViewDef, SubTabVirtualMachineEventPresenter.ProxyDef> {
@@ -35,26 +35,22 @@ public class SubTabVirtualMachineEventPresenter extends AbstractSubTabPresenter<
     }
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().virtualMachineEventSubTabLabel(), 8,
-                ginjector.getSubTabVirtualMachineEventModelProvider(), Align.RIGHT);
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            SearchableDetailModelProvider<AuditLog, VmListModel, VmEventListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.virtualMachineEventSubTabLabel(), 8, modelProvider, Align.RIGHT);
     }
 
     @Inject
     public SubTabVirtualMachineEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
             SearchableDetailModelProvider<AuditLog, VmListModel, VmEventListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent, this);
+        super(eventBus, view, proxy, placeManager, modelProvider,
+                VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.virtualMachineMainTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.virtualMachineMainTabPlace);
     }
 
     @ProxyEvent

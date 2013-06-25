@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class TaskModelProvider extends SearchableTabModelProvider<Job, TaskListModel> {
 
@@ -24,8 +26,9 @@ public class TaskModelProvider extends SearchableTabModelProvider<Job, TaskListM
     private int lastRunningTasksCount = 0;
 
     @Inject
-    public TaskModelProvider(ClientGinjector ginjector) {
-        super(ginjector);
+    public TaskModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        super(eventBus, defaultConfirmPopupProvider);
     }
 
     public void setTaskCountChangeHandler(TaskCountChangeHandler taskCountChangeHandler) {

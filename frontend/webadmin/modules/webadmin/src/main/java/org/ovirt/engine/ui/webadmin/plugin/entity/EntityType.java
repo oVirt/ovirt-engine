@@ -19,6 +19,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.user.UserSubTabPa
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine.VirtualMachineSubTabPanelPresenter;
 
 import com.google.gwt.event.shared.GwtEvent.Type;
+import com.gwtplatform.mvp.client.ChangeTabHandler;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
@@ -31,6 +32,7 @@ public enum EntityType {
 
     DataCenter(ApplicationPlaces.dataCenterMainTabPlace,
             DataCenterSubTabPanelPresenter.TYPE_RequestTabs,
+            DataCenterSubTabPanelPresenter.TYPE_ChangeTab,
             DataCenterSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
@@ -39,10 +41,12 @@ public enum EntityType {
     },
     Cluster(ApplicationPlaces.clusterMainTabPlace,
             ClusterSubTabPanelPresenter.TYPE_RequestTabs,
+            ClusterSubTabPanelPresenter.TYPE_ChangeTab,
             ClusterSubTabPanelPresenter.TYPE_SetTabContent) {
     },
     Host(ApplicationPlaces.hostMainTabPlace,
             HostSubTabPanelPresenter.TYPE_RequestTabs,
+            HostSubTabPanelPresenter.TYPE_ChangeTab,
             HostSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
@@ -51,10 +55,12 @@ public enum EntityType {
     },
     Network(ApplicationPlaces.networkMainTabPlace,
             NetworkSubTabPanelPresenter.TYPE_RequestTabs,
+            NetworkSubTabPanelPresenter.TYPE_ChangeTab,
             NetworkSubTabPanelPresenter.TYPE_SetTabContent) {
     },
     Storage(ApplicationPlaces.storageMainTabPlace,
             StorageSubTabPanelPresenter.TYPE_RequestTabs,
+            StorageSubTabPanelPresenter.TYPE_ChangeTab,
             StorageSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
@@ -63,10 +69,12 @@ public enum EntityType {
     },
     Disk(ApplicationPlaces.diskMainTabPlace,
             DiskSubTabPanelPresenter.TYPE_RequestTabs,
+            DiskSubTabPanelPresenter.TYPE_ChangeTab,
             DiskSubTabPanelPresenter.TYPE_SetTabContent) {
     },
     VirtualMachine(ApplicationPlaces.virtualMachineMainTabPlace,
             VirtualMachineSubTabPanelPresenter.TYPE_RequestTabs,
+            VirtualMachineSubTabPanelPresenter.TYPE_ChangeTab,
             VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
@@ -75,10 +83,12 @@ public enum EntityType {
     },
     Pool(ApplicationPlaces.poolMainTabPlace,
             PoolSubTabPanelPresenter.TYPE_RequestTabs,
+            PoolSubTabPanelPresenter.TYPE_ChangeTab,
             PoolSubTabPanelPresenter.TYPE_SetTabContent) {
     },
     Template(ApplicationPlaces.templateMainTabPlace,
             TemplateSubTabPanelPresenter.TYPE_RequestTabs,
+            TemplateSubTabPanelPresenter.TYPE_ChangeTab,
             TemplateSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
@@ -87,6 +97,7 @@ public enum EntityType {
     },
     GlusterVolume(ApplicationPlaces.volumeMainTabPlace,
             VolumeSubTabPanelPresenter.TYPE_RequestTabs,
+            VolumeSubTabPanelPresenter.TYPE_ChangeTab,
             VolumeSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
@@ -95,10 +106,12 @@ public enum EntityType {
     },
     Provider(ApplicationPlaces.providerMainTabPlace,
             ProviderSubTabPanelPresenter.TYPE_RequestTabs,
+            ProviderSubTabPanelPresenter.TYPE_ChangeTab,
             ProviderSubTabPanelPresenter.TYPE_SetTabContent) {
     },
     User(ApplicationPlaces.userMainTabPlace,
             UserSubTabPanelPresenter.TYPE_RequestTabs,
+            UserSubTabPanelPresenter.TYPE_ChangeTab,
             UserSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
@@ -107,6 +120,7 @@ public enum EntityType {
     },
     Quota(ApplicationPlaces.quotaMainTabPlace,
             QuotaSubTabPanelPresenter.TYPE_RequestTabs,
+            QuotaSubTabPanelPresenter.TYPE_ChangeTab,
             QuotaSubTabPanelPresenter.TYPE_SetTabContent) {
         @Override
         protected void initSubTabHistoryTokens(Map<EntityType, String> map) {
@@ -132,20 +146,23 @@ public enum EntityType {
     private final String mainTabHistoryToken;
 
     private final Type<RequestTabsHandler> subTabPanelRequestTabs;
+    private final Type<ChangeTabHandler> subTabPanelChangeTab;
     private final Type<RevealContentHandler<?>> subTabPanelContentSlot;
 
     private Map<EntityType, String> subTabHistoryTokenMap;
 
     EntityType(String mainTabHistoryToken,
             Type<RequestTabsHandler> subTabPanelRequestTabs,
+            Type<ChangeTabHandler> subTabPanelChangeTab,
             Type<RevealContentHandler<?>> subTabPanelContentSlot) {
         this.mainTabHistoryToken = mainTabHistoryToken;
         this.subTabPanelRequestTabs = subTabPanelRequestTabs;
+        this.subTabPanelChangeTab = subTabPanelChangeTab;
         this.subTabPanelContentSlot = subTabPanelContentSlot;
     }
 
     EntityType(String mainTabHistoryToken) {
-        this(mainTabHistoryToken, null, null);
+        this(mainTabHistoryToken, null, null, null);
     }
 
     EntityType() {
@@ -160,14 +177,21 @@ public enum EntityType {
     }
 
     /**
-     * Returns GWTP RequestTabs event type for sub tab panel presenter.
+     * Returns GWTP {@code RequestTabs} event type for sub tab panel presenter.
      */
     public Type<RequestTabsHandler> getSubTabPanelRequestTabs() {
         return subTabPanelRequestTabs;
     }
 
     /**
-     * Returns GWTP ContentSlot event type for sub tab panel presenter.
+     * Returns GWTP {@code ChangeTab} event type for sub tab panel presenter.
+     */
+    public Type<ChangeTabHandler> getSubTabPanelChangeTab() {
+        return subTabPanelChangeTab;
+    }
+
+    /**
+     * Returns GWTP {@code ContentSlot} event type for sub tab panel presenter.
      */
     public Type<RevealContentHandler<?>> getSubTabPanelContentSlot() {
         return subTabPanelContentSlot;

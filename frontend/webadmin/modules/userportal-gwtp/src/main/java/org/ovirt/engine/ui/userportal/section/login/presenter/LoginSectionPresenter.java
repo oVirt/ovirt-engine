@@ -12,7 +12,6 @@ import com.gwtplatform.mvp.client.annotations.NoGatekeeper;
 import com.gwtplatform.mvp.client.annotations.ProxyStandard;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.ProxyPlace;
-import com.gwtplatform.mvp.client.proxy.RevealRootLayoutContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
 
 public class LoginSectionPresenter extends Presenter<LoginSectionPresenter.ViewDef, LoginSectionPresenter.ProxyDef> {
@@ -33,15 +32,10 @@ public class LoginSectionPresenter extends Presenter<LoginSectionPresenter.ViewD
     @Inject
     public LoginSectionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, CurrentUser user, LoginPopupPresenterWidget loginPopup) {
-        super(eventBus, view, proxy);
+        super(eventBus, view, proxy, RevealType.RootLayout);
         this.placeManager = placeManager;
         this.user = user;
         this.loginPopup = loginPopup;
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealRootLayoutContentEvent.fire(this, this);
     }
 
     @Override

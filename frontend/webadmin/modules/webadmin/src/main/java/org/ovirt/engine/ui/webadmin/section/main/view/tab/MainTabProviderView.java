@@ -20,7 +20,6 @@ import com.google.inject.Inject;
 public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Provider, ProviderListModel> implements MainTabProviderPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<MainTabProviderView> {
-
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
@@ -96,6 +95,6 @@ public class MainTabProviderView extends AbstractMainTabWithDetailsTableView<Pro
                 return getMainModel().getRemoveCommand();
             }
         });
-
     }
+
 }

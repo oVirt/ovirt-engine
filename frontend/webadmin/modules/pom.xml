@@ -29,9 +29,9 @@
     <generatedSourcesDirectory>generated-sources/annotations</generatedSourcesDirectory>
     <!-- Directory where GWT compiler generates normally-transient types for review (-gen compiler option) -->
     <gwtGenDirectory>gen</gwtGenDirectory>
-    <gwtp.version>0.6</gwtp.version>
+    <gwtp.version>1.0</gwtp.version>
     <guice.version>3.0</guice.version>
-    <gin.version>1.5.0</gin.version>
+    <gin.version>2.0.0</gin.version>
     <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
     <maven-clean-plugin.version>2.4.1</maven-clean-plugin.version>
     <build-helper-maven-plugin.version>1.5</build-helper-maven-plugin.version>
@@ -165,6 +165,7 @@
             <gen>${gwtGenDirectory}</gen>
             <extraJvmArgs>${aspectj.agent} ${gwt-plugin.extraJvmArgs} ${gwt.dontPrune}</extraJvmArgs>
             <copyWebapp>true</copyWebapp>
+            <strict>true</strict>
             <compileSourcesArtifacts>
               <compileSourcesArtifact>${engine.groupId}:gwt-extension</compileSourcesArtifact>
               <compileSourcesArtifact>${engine.groupId}:uicommonweb</compileSourcesArtifact>

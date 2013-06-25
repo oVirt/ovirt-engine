@@ -52,7 +52,7 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
     @Override
     protected SimpleActionPanel<SystemTreeModel> createActionPanel(SystemTreeModelProvider modelProvider) {
         return new SimpleActionPanel(modelProvider, modelProvider.getSelectionModel(),
-                ClientGinjectorProvider.instance().getEventBus());
+                ClientGinjectorProvider.getEventBus());
     }
 
     private void addActionButtons(final SystemTreeModelProvider modelProvider, final ApplicationConstants constants) {

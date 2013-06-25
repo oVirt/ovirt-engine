@@ -15,6 +15,7 @@ import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
@@ -45,7 +46,8 @@ public class MainTabBasicView extends AbstractView implements MainTabBasicPresen
             EventBus eventBus,
             ClientStorage clientStorage,
             ApplicationResources applicationResources) {
-        this.refreshManager = new UserPortalRefreshManager(modelProvider, eventBus, clientStorage);
+        this.refreshManager = new UserPortalRefreshManager(
+                modelProvider, eventBus, clientStorage);
         this.refreshPanel = refreshManager.getRefreshPanel();
 
         splitLayoutPanel = new BasicViewSplitLayoutPanel(
@@ -58,7 +60,7 @@ public class MainTabBasicView extends AbstractView implements MainTabBasicPresen
     }
 
     @Override
-    public void setInSlot(Object slot, Widget content) {
+    public void setInSlot(Object slot, IsWidget content) {
         if (slot == MainTabBasicPresenter.TYPE_VmListContent) {
             setPanelContent(vmListPanel, content);
         } else if (slot == MainTabBasicPresenter.TYPE_VmDetailsContent) {

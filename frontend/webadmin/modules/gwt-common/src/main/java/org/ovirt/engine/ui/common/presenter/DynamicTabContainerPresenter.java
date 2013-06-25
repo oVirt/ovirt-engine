@@ -4,6 +4,7 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
+import com.gwtplatform.mvp.client.ChangeTabHandler;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.RequestTabsEvent;
@@ -42,14 +43,17 @@ public abstract class DynamicTabContainerPresenter<V extends TabView & DynamicTa
 
     }
 
-    private final Type<RevealContentHandler<?>> revealContentEventType;
+    private final Object tabContentSlot;
     private final Type<RequestTabsHandler> requestTabsEventType;
 
     public DynamicTabContainerPresenter(EventBus eventBus, V view, P proxy,
-            Type<RevealContentHandler<?>> revealContentEventType,
-            Type<RequestTabsHandler> requestTabsEventType) {
-        super(eventBus, view, proxy, revealContentEventType, requestTabsEventType);
-        this.revealContentEventType = revealContentEventType;
+            Object tabContentSlot,
+            Type<RequestTabsHandler> requestTabsEventType,
+            Type<ChangeTabHandler> changeTabEventType,
+            Type<RevealContentHandler<?>> slot) {
+        super(eventBus, view, proxy, tabContentSlot,
+                requestTabsEventType, changeTabEventType, slot);
+        this.tabContentSlot = tabContentSlot;
         this.requestTabsEventType = requestTabsEventType;
     }
 
@@ -71,7 +75,7 @@ public abstract class DynamicTabContainerPresenter<V extends TabView & DynamicTa
     }
 
     Object getTabContentSlot() {
-        return revealContentEventType;
+        return tabContentSlot;
     }
 
     @ProxyEvent

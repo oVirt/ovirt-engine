@@ -19,9 +19,8 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 
 public class VmStatusCell extends AbstractCell<VM> {
 
-    ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
-
-    CommonApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+    ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
+    CommonApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
 
     @Override
     public void render(Context context, VM vm, SafeHtmlBuilder sb) {
@@ -101,7 +100,7 @@ public class VmStatusCell extends AbstractCell<VM> {
         // Find the image corresponding to the alert
         SafeHtml alertImageHtml = getResourceImage(vm);
 
-        ApplicationTemplates applicationTemplates = ClientGinjectorProvider.instance().getApplicationTemplates();
+        ApplicationTemplates applicationTemplates = ClientGinjectorProvider.getApplicationTemplates();
 
         if (alertImageHtml != null) {
             // this already has the tooltip set

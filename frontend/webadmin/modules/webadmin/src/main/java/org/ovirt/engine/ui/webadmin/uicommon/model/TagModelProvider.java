@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.common.widget.tree.TreeModelWithElementId;
@@ -16,10 +17,12 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.tags.TagItemCell;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.DefaultSelectionEventManager;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -41,11 +44,15 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
     private final TagItemCell cell;
 
     @Inject
-    public TagModelProvider(ClientGinjector ginjector) {
-        super(ginjector);
-        this.cell = new TagItemCell(ginjector.getApplicationResources(), ginjector.getApplicationTemplates());
-        this.popupProvider = ginjector.getTagPopupPresenterWidgetProvider();
-        this.removeConfirmPopupProvider = ginjector.getRemoveConfirmPopupProvider();
+    public TagModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            Provider<TagPopupPresenterWidget> tagPopupPresenterWidgetProvider,
+            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            ApplicationResources applicationResources, ApplicationTemplates applicationTemplates) {
+        super(eventBus, defaultConfirmPopupProvider);
+        this.cell = new TagItemCell(applicationResources, applicationTemplates);
+        this.popupProvider = tagPopupPresenterWidgetProvider;
+        this.removeConfirmPopupProvider = removeConfirmPopupProvider;
 
         // Create selection model
         selectionModel = new SingleSelectionModel<TagModel>();

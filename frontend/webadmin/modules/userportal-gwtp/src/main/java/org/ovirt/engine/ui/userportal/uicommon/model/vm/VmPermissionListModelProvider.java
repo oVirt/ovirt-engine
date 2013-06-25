@@ -3,17 +3,18 @@ package org.ovirt.engine.ui.userportal.uicommon.model.vm;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.permissions.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -24,13 +25,15 @@ public class VmPermissionListModelProvider
     private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
 
     @Inject
-    public VmPermissionListModelProvider(ClientGinjector ginjector,
+    public VmPermissionListModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            CurrentUser user,
             UserPortalListProvider parentProvider,
             UserPortalModelResolver resolver,
             Provider<PermissionsPopupPresenterWidget> permissionPopupProvider,
-            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            CurrentUser user) {
-        super(ginjector, parentProvider, UserPortalPermissionListModel.class, resolver, user);
+            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+        super(eventBus, defaultConfirmPopupProvider, user,
+                parentProvider, UserPortalPermissionListModel.class, resolver);
         this.permissionPopupProvider = permissionPopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
     }

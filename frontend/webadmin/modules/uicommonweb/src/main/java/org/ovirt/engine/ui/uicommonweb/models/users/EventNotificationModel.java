@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -8,8 +10,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.EmailValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class EventNotificationModel extends Model

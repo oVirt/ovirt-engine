@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 public abstract class WebAdminImageResourceColumn<T> extends ImageResourceColumn<T> {
 
     protected ApplicationResources getApplicationResources() {
-        return ClientGinjectorProvider.instance().getApplicationResources();
+        return ClientGinjectorProvider.getApplicationResources();
     }
 
 }

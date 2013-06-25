@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
-import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;

@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolInterfaceListModelProvider;
 
@@ -29,11 +29,9 @@ public class SubTabExtendedPoolNetworkInterfacePresenter
     }
 
     @TabInfo(container = ExtendedVmSubTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(
-                ginjector.getApplicationConstants().extendedVirtualMachineNetworkInterfaceSubTabLabel(),
-                3,
-                ginjector.getPoolInterfaceListModelProvider());
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            PoolInterfaceListModelProvider modelProvider) {
+        return new ModelBoundTabData(applicationConstants.extendedVirtualMachineNetworkInterfaceSubTabLabel(), 3, modelProvider);
     }
 
     @Inject

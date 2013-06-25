@@ -5,11 +5,10 @@ import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.Dynamic
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
+import com.gwtplatform.mvp.client.ChangeTabHandler;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
 import com.gwtplatform.mvp.client.TabView;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
-import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 /**
  * Base class for sub tab panel presenters.
@@ -22,14 +21,11 @@ import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 public abstract class AbstractSubTabPanelPresenter<V extends TabView & DynamicTabPanel, P extends Proxy<?>> extends DynamicTabContainerPresenter<V, P> {
 
     public AbstractSubTabPanelPresenter(EventBus eventBus, V view, P proxy,
-            Type<RevealContentHandler<?>> revealContentEventType,
-            Type<RequestTabsHandler> requestTabsEventType) {
-        super(eventBus, view, proxy, revealContentEventType, requestTabsEventType);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, MainContentPresenter.TYPE_SetSubTabPanelContent, this);
+            Object tabContentSlot,
+            Type<RequestTabsHandler> requestTabsEventType,
+            Type<ChangeTabHandler> changeTabEventType) {
+        super(eventBus, view, proxy, tabContentSlot, requestTabsEventType, changeTabEventType,
+                MainContentPresenter.TYPE_SetSubTabPanelContent);
     }
 
     @Override

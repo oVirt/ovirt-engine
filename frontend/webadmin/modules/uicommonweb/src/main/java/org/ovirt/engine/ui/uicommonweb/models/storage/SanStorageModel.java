@@ -5,10 +5,10 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.GetDeviceListQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -18,14 +18,14 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.UIMessages;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
+import org.ovirt.engine.ui.uicompat.UIMessages;
 
 @SuppressWarnings("unused")
 public abstract class SanStorageModel extends SanStorageModelBase

@@ -252,7 +252,7 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
     public void edit(GlusterHookResolveConflictsModel object) {
         driver.edit(object);
 
-        contentSourcesTable.edit(object.getHookSources());
+        contentSourcesTable.asEditor().edit(object.getHookSources());
 
         conflictReasonsContentDiffLabel.setVisible(object.getGlusterHookEntity().isContentConflict());
         conflictReasonsStatusDiffLabel.setVisible(object.getGlusterHookEntity().isStatusConflict());

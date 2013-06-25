@@ -49,9 +49,6 @@
       </resource>
       <resource>
         <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*.properties</include>
-        </includes>
       </resource>
     </resources>
     <plugins>

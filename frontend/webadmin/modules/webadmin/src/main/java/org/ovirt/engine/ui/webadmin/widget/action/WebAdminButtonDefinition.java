@@ -22,7 +22,7 @@ public abstract class WebAdminButtonDefinition<T> extends UiCommandButtonDefinit
     }
 
     static EventBus getEventBus() {
-        return ClientGinjectorProvider.instance().getEventBus();
+        return ClientGinjectorProvider.getEventBus();
     }
 
 }

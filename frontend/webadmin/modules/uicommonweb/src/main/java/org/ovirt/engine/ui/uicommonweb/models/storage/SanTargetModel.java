@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.List;
+
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -8,8 +10,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class SanTargetModel extends EntityModel

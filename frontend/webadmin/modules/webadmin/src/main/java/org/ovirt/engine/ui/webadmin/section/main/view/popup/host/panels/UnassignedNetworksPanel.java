@@ -8,8 +8,8 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.widget.editor.AnimatedVerticalPanel;
-import org.ovirt.engine.ui.webadmin.widget.form.DnDPanel;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.DragDropEventBase;
 import com.google.gwt.event.dom.client.DragEnterEvent;
 import com.google.gwt.event.dom.client.DragEnterHandler;
@@ -19,13 +19,14 @@ import com.google.gwt.event.dom.client.DragOverEvent;
 import com.google.gwt.event.dom.client.DragOverHandler;
 import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
-public class UnassignedNetworksPanel extends DnDPanel{
+public class UnassignedNetworksPanel extends FocusPanel {
 
-    private final ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+    private final ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
     private final AnimatedVerticalPanel animatedPanel = new AnimatedVerticalPanel();
 
     private final VerticalPanel requiredPanel = new VerticalPanel();
@@ -34,14 +35,14 @@ public class UnassignedNetworksPanel extends DnDPanel{
     private final Label requiredLabel = new Label(constants.requiredNetwork());
     private final Label nonRequiredLabel = new Label(constants.nonRequiredNetwork());
     private final SimplePanel requiredTitlePanel = new SimplePanel(requiredLabel);
-    private final SimplePanel nonRequiredTitlePanel= new SimplePanel(nonRequiredLabel);
+    private final SimplePanel nonRequiredTitlePanel = new SimplePanel(nonRequiredLabel);
 
     private NetworkPanelsStyle style;
     private HostSetupNetworksModel setupModel;
 
-
     public UnassignedNetworksPanel() {
-        super(false);
+        super();
+        getElement().setDraggable(Element.DRAGGABLE_FALSE);
 
         // drag enter
         addBitlessDomHandler(new DragEnterHandler() {
@@ -86,7 +87,7 @@ public class UnassignedNetworksPanel extends DnDPanel{
         setWidget(animatedPanel);
     }
 
-    public void setStyle(final NetworkPanelsStyle style){
+    public void setStyle(final NetworkPanelsStyle style) {
         this.style = style;
         animatedPanel.getElement().addClassName(style.unassignedNetworksPanel());
 
@@ -108,12 +109,15 @@ public class UnassignedNetworksPanel extends DnDPanel{
     public void addAll(List<NetworkPanel> list, boolean fadeIn) {
         requiredPanel.add(requiredTitlePanel);
         nonRequiredPanel.add(nonRequiredTitlePanel);
-        for (NetworkPanel networkPanel : list){
+        for (NetworkPanel networkPanel : list) {
             LogicalNetworkModel networkModel = (LogicalNetworkModel) networkPanel.getItem();
-            boolean isRequired = networkModel.getEntity().getCluster() == null ? false : networkModel.getEntity().getCluster().isRequired();
-            if (isRequired){
+            boolean isRequired =
+                    networkModel.getEntity().getCluster() == null ? false : networkModel.getEntity()
+                            .getCluster()
+                            .isRequired();
+            if (isRequired) {
                 requiredPanel.add(networkPanel);
-            }else{
+            } else {
                 nonRequiredPanel.add(networkPanel);
             }
         }

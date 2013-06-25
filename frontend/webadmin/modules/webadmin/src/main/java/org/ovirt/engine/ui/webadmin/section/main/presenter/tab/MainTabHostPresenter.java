@@ -3,10 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
@@ -25,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VDS, HostListModel, MainTabHostPresenter.ViewDef, MainTabHostPresenter.ProxyDef> {
 
     @GenEvent
-    public static class HostSelectionChange {
+    public class HostSelectionChange {
 
         List<VDS> selectedItems;
 
@@ -40,9 +41,9 @@ public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VD
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().hostMainTabLabel(), 2,
-                ginjector.getMainTabHostModelProvider());
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            MainModelProvider<VDS, HostListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.hostMainTabLabel(), 2, modelProvider);
     }
 
     @Inject
@@ -58,7 +59,7 @@ public class MainTabHostPresenter extends AbstractMainTabWithDetailsPresenter<VD
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.hostMainTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.hostMainTabPlace);
     }
 
 }

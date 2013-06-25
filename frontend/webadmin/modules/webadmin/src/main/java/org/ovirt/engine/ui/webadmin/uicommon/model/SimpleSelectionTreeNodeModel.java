@@ -47,7 +47,7 @@ public class SimpleSelectionTreeNodeModel implements TreeNodeModel<SelectionTree
     private final SelectionTreeNodeModel model;
 
     protected SimpleSelectionTreeNodeModel(SelectionTreeNodeModel model) {
-        this.eventBus = ClientGinjectorProvider.instance().getEventBus();
+        this.eventBus = ClientGinjectorProvider.getEventBus();
         this.model = model;
 
         // Build children list using depth-first recursion

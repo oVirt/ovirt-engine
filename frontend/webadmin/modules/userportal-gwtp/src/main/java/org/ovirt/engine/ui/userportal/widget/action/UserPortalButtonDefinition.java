@@ -12,7 +12,7 @@ public abstract class UserPortalButtonDefinition<T> extends UiCommandButtonDefin
     }
 
     static EventBus getEventBus() {
-        return ClientGinjectorProvider.instance().getEventBus();
+        return ClientGinjectorProvider.getEventBus();
     }
 
 }

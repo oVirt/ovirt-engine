@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;

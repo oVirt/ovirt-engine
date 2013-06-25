@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.view;
 import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.DynamicTabPanel;
 import org.ovirt.engine.ui.common.widget.tab.AbstractTabPanel;
 
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.gwtplatform.mvp.client.Tab;
 import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.TabView;
@@ -36,12 +36,17 @@ public abstract class AbstractTabPanelView extends AbstractSingleSlotView implem
     }
 
     @Override
+    public void changeTab(Tab tab, TabData tabData, String historyToken) {
+        getTabPanel().changeTab(tab, tabData, historyToken);
+    }
+
+    @Override
     public void setActiveTabHistoryToken(String historyToken) {
         getTabPanel().setActiveTabHistoryToken(historyToken);
     }
 
     @Override
-    protected void setContent(Widget content) {
+    protected void setContent(IsWidget content) {
         getTabPanel().setTabContent(content);
     }
 

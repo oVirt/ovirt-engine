@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter;
 
 import javax.inject.Inject;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterClusterListModel;

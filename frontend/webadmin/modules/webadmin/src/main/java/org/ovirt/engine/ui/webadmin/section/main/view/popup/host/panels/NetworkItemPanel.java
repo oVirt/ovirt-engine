@@ -15,8 +15,8 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFact
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.webadmin.widget.form.DnDPanel;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -30,17 +30,18 @@ import com.google.gwt.event.dom.client.MouseOutHandler;
 import com.google.gwt.event.dom.client.MouseOverEvent;
 import com.google.gwt.event.dom.client.MouseOverHandler;
 import com.google.gwt.user.client.Command;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.Widget;
 
-public abstract class NetworkItemPanel extends DnDPanel {
+public abstract class NetworkItemPanel extends FocusPanel {
 
     public static final String SETUP_NETWORKS_DATA = "SetupNetworksData"; //$NON-NLS-1$
     public static final String SETUP_NETWORKS_TYPE = "SetupNetworksType"; //$NON-NLS-1$
-    final ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
-    final ApplicationMessages messages = ClientGinjectorProvider.instance().getApplicationMessages();
+    final ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
+    final ApplicationMessages messages = ClientGinjectorProvider.getApplicationMessages();
     final Image dragImage = new Image(resources.itemDraggable());
     final PushButton actionButton;
     final NetworkItemModel<?> item;
@@ -57,7 +58,9 @@ public abstract class NetworkItemPanel extends DnDPanel {
     private static String lastDragData = ""; //$NON-NLS-1$
 
     public NetworkItemPanel(NetworkItemModel<?> item, NetworkPanelsStyle style, Boolean draggable) {
-        super(draggable);
+        super();
+        getElement().setDraggable(draggable ? Element.DRAGGABLE_TRUE : Element.DRAGGABLE_FALSE);
+
         dragImage.setVisible(false);
         Image editImage = new Image(resources.editHover());
         actionButton = new PushButton(editImage, new ClickHandler() {

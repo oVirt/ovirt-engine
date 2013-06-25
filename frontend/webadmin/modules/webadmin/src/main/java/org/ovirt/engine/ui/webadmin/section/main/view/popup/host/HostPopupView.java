@@ -45,11 +45,9 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.TextDecoration;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -172,7 +170,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     EntityModelTextAreaLabelEditor publicKeyEditor;
 
     @UiField
-    @Path(value = "OverrideIpTables.entity")
+    @Path(value = "overrideIpTables.entity")
     @WithElementId("overrideIpTables")
     EntityModelCheckBoxEditor overrideIpTablesEditor;
 
@@ -453,7 +451,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     private void initInfoIcon(ApplicationConstants constants) {
         consoleAddressInfoIcon =
                 new InfoIcon(applicationTemplates.italicText(constants.enableConsoleAddressOverrideHelpMessage()),
-                        resources); //$NON-NLS-1$
+                        resources);
         providerSearchInfoIcon =
                 new InfoIcon(applicationTemplates.italicText(constants.providerSearchInfo()), resources);
     }

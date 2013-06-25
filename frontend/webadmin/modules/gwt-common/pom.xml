@@ -82,7 +82,6 @@
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>gwt-maven-plugin</artifactId>
         <executions>
-          <!-- GWT version should be detected from dependencyManagement -->
           <execution>
             <goals>
               <goal>resources</goal>

@@ -160,7 +160,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
         // Update table
         table.setRowData(items);
-        table.edit(listModel);
+        table.asEditor().edit(listModel);
         table.setWidth("100%", true); //$NON-NLS-1$
 
         rootModel.getPropertyChangedEvent().removeListener(lunModelSelectedItemListener);
@@ -283,7 +283,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         }
 
         table.setRowData(items);
-        table.edit(leafModel);
+        table.asEditor().edit(leafModel);
         table.setWidth("100%", true); //$NON-NLS-1$
 
         ScrollPanel panel = new ScrollPanel();

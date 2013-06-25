@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmDiskListModelProvider;
 
@@ -29,11 +29,9 @@ public class SubTabExtendedVmVirtualDiskPresenter
     }
 
     @TabInfo(container = ExtendedVmSubTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(
-                ginjector.getApplicationConstants().extendedVirtualMachineVirtualDiskSubTabLabel(),
-                5,
-                ginjector.getVmDiskListModelProvider());
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            VmDiskListModelProvider modelProvider) {
+        return new ModelBoundTabData(applicationConstants.extendedVirtualMachineVirtualDiskSubTabLabel(), 5, modelProvider);
     }
 
     @Inject

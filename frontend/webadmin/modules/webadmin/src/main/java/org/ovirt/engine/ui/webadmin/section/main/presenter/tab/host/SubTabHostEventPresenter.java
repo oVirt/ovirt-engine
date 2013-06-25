@@ -2,13 +2,14 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
@@ -21,7 +22,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabHostEventPresenter extends AbstractSubTabPresenter<VDS, HostListModel, HostEventListModel, SubTabHostEventPresenter.ViewDef, SubTabHostEventPresenter.ProxyDef> {
@@ -35,26 +35,22 @@ public class SubTabHostEventPresenter extends AbstractSubTabPresenter<VDS, HostL
     }
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().hostEventSubTabLabel(), 7,
-                ginjector.getSubTabHostEventModelProvider(), Align.RIGHT);
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            SearchableDetailModelProvider<AuditLog, HostListModel, HostEventListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.hostEventSubTabLabel(), 7, modelProvider, Align.RIGHT);
     }
 
     @Inject
     public SubTabHostEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
             SearchableDetailModelProvider<AuditLog, HostListModel, HostEventListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, HostSubTabPanelPresenter.TYPE_SetTabContent, this);
+        super(eventBus, view, proxy, placeManager, modelProvider,
+                HostSubTabPanelPresenter.TYPE_SetTabContent);
     }
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.hostMainTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.hostMainTabPlace);
     }
 
     @ProxyEvent

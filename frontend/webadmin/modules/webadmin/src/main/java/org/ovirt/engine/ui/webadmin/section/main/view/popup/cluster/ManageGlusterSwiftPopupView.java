@@ -230,7 +230,7 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
     @Override
     public void edit(ManageGlusterSwiftModel object) {
         driver.edit(object);
-        hostServicesTable.edit(object.getHostServicesList());
+        hostServicesTable.asEditor().edit(object.getHostServicesList());
     }
 
     @Override

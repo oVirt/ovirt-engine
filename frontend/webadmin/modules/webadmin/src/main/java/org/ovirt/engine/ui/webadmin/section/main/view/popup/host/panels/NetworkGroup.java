@@ -9,8 +9,8 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.webadmin.widget.form.DnDPanel;
 
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.event.dom.client.DragDropEventBase;
 import com.google.gwt.event.dom.client.DragEnterEvent;
@@ -23,22 +23,26 @@ import com.google.gwt.event.dom.client.DropEvent;
 import com.google.gwt.event.dom.client.DropHandler;
 import com.google.gwt.user.client.ui.FlexTable;
 import com.google.gwt.user.client.ui.FlexTable.FlexCellFormatter;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 
-public class NetworkGroup extends DnDPanel {
+public class NetworkGroup extends FocusPanel {
 
     private final NetworkPanelsStyle style;
     private final NetworkInterfaceModel nicModel;
     private final FlexTable table;
-    private final ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+    private final ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
 
     public NetworkGroup(NetworkInterfaceModel nicModel, final NetworkPanelsStyle style) {
-        super(false);
+        super();
+        getElement().setDraggable(Element.DRAGGABLE_FALSE);
+
         this.style = style;
         this.nicModel = nicModel;
-        table = new FlexTable();
+        this.table = new FlexTable();
+
         List<LogicalNetworkModel> networks = nicModel.getItems();
         int networkSize = networks.size();
 

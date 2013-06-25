@@ -1,11 +1,14 @@
 package org.ovirt.engine.ui.userportal.uicommon.model;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
-import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+
+import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Provider;
 
 /**
  * A {@link SearchableDetailModelProvider} implementation that uses {@link UserPortalModelResolver} to retrieve UiCommon
@@ -25,10 +28,12 @@ public abstract class UserPortalSearchableDetailModelProvider<T, M extends ListW
     private final Class<D> detailModelClass;
     private final UserPortalModelResolver modelResolver;
 
-    public UserPortalSearchableDetailModelProvider(BaseClientGinjector ginjector,
+    public UserPortalSearchableDetailModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            CurrentUser user,
             ModelProvider<M> parentModelProvider, Class<D> detailModelClass,
-            UserPortalModelResolver modelResolver, CurrentUser user) {
-        super(ginjector, user);
+            UserPortalModelResolver modelResolver) {
+        super(eventBus, defaultConfirmPopupProvider, user);
         this.parentModelProvider = parentModelProvider;
         this.detailModelClass = detailModelClass;
         this.modelResolver = modelResolver;

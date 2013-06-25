@@ -28,7 +28,9 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
     @GenEvent
     public class ConsoleModelChanged {
+
         HasConsoleModel newModel;
+
     }
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<ConsolePopupModel> {
@@ -269,7 +271,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             // store to local storage
             consoleOptionsPersister.storeToLocalStorage(model.getModel());
 
-            ConsoleModelChangedEvent.fire(getEventBus(), model.getModel());
+            ConsoleModelChangedEvent.fire(this, model.getModel());
         }
     }
 

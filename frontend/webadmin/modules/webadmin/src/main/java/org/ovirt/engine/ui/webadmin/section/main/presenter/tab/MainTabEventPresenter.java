@@ -3,11 +3,12 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
@@ -26,7 +27,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<AuditLog, EventListModel, MainTabEventPresenter.ViewDef, MainTabEventPresenter.ProxyDef> {
 
     @GenEvent
-    public static class EventSelectionChange {
+    public class EventSelectionChange {
 
         List<AuditLog> selectedItems;
 
@@ -41,9 +42,9 @@ public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<A
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().eventMainTabLabel(), 13,
-                ginjector.getMainTabEventModelProvider(), Align.RIGHT);
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            MainModelProvider<AuditLog, EventListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.eventMainTabLabel(), 13, modelProvider, Align.RIGHT);
     }
 
     @Inject
@@ -61,7 +62,7 @@ public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<A
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.eventMainTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.eventMainTabPlace);
     }
 
     @Override

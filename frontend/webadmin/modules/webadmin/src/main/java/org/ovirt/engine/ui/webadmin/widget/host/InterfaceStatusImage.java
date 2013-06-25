@@ -9,7 +9,7 @@ import com.google.gwt.user.client.ui.Image;
 
 public class InterfaceStatusImage extends Image {
 
-    private static ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
+    private static ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
     public InterfaceStatusImage(InterfaceStatus status) {
         super();
         setResource(getResource(status));

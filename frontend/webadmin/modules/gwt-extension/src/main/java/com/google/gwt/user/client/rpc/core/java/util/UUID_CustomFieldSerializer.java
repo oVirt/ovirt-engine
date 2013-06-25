@@ -7,25 +7,22 @@ import com.google.gwt.user.client.rpc.SerializationStreamReader;
 import com.google.gwt.user.client.rpc.SerializationStreamWriter;
 
 public class UUID_CustomFieldSerializer {
-	public static void deserialize(SerializationStreamReader streamReader,
-			UUID instance) throws SerializationException {
-	}
 
-	public static UUID instantiate(SerializationStreamReader streamReader)
-			throws SerializationException {
-		// occur first
-		long l = streamReader.readLong();
-		long m = streamReader.readLong();
+    public static void deserialize(SerializationStreamReader streamReader,
+            UUID instance) throws SerializationException {
+    }
 
-		UUID instance = new UUID(m, l);
+    public static UUID instantiate(SerializationStreamReader streamReader)
+            throws SerializationException {
+        long l = streamReader.readLong();
+        long m = streamReader.readLong();
+        return new UUID(m, l);
+    }
 
-		return instance;
-	}
+    public static void serialize(SerializationStreamWriter streamWriter,
+            UUID instance) throws SerializationException {
+        streamWriter.writeLong(instance.getLeastSignificantBits());
+        streamWriter.writeLong(instance.getMostSignificantBits());
+    }
 
-	public static void serialize(SerializationStreamWriter streamWriter,
-			UUID instance) throws SerializationException {
-
-		streamWriter.writeLong(instance.getLeastSignificantBits());
-		streamWriter.writeLong(instance.getMostSignificantBits());
-	}
 }

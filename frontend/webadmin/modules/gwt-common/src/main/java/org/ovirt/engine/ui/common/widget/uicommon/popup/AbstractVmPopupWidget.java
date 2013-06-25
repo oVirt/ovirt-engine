@@ -155,7 +155,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     HTML cpuPinningLabel;
 
     @UiField(provided = true)
-    @Path(value = "oSType.selectedItem")
+    @Path(value = "OSType.selectedItem")
     @WithElementId("osType")
     public ListModelListBoxEditor<Object> oSTypeEditor;
 
@@ -967,7 +967,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         unitVmModel = model;
 
         priorityEditor.setRowData(new ArrayList<EntityModel>());
-        priorityEditor.edit(model.getPriority());
+        priorityEditor.asEditor().edit(model.getPriority());
         driver.edit(model);
         initTabAvailabilityListeners(model);
         initListeners(model);
@@ -1071,7 +1071,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
      * certain, configurable cluster version.
      */
     protected void updateUsbNativeMessageVisibility(final UnitVmModel object) {
-        VDSGroup vdsGroup = (VDSGroup) object.getSelectedCluster();
+        VDSGroup vdsGroup = object.getSelectedCluster();
         changeApplicationLevelVisibility(nativeUsbWarningMessage,
                 object.getUsbPolicy().getSelectedItem() == UsbPolicy.ENABLED_NATIVE
                         && vdsGroup != null

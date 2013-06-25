@@ -29,6 +29,7 @@ import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.gwtplatform.mvp.client.ChangeTabHandler;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.RevealRootPopupContentEvent;
@@ -63,6 +64,7 @@ public class PluginUiFunctions implements HasHandlers {
     public void addMainTab(String label, String historyToken,
             String contentUrl, TabOptions options) {
         addTab(MainTabPanelPresenter.TYPE_RequestTabs,
+                MainTabPanelPresenter.TYPE_ChangeTab,
                 MainTabPanelPresenter.TYPE_SetTabContent,
                 label, historyToken, true, contentUrl, options);
     }
@@ -73,21 +75,23 @@ public class PluginUiFunctions implements HasHandlers {
     public void addSubTab(EntityType entityType, String label,
             String historyToken, String contentUrl, TabOptions options) {
         Type<RequestTabsHandler> requestTabsEventType = entityType.getSubTabPanelRequestTabs();
-        Type<RevealContentHandler<?>> revealContentEventType = entityType.getSubTabPanelContentSlot();
+        Type<ChangeTabHandler> changeTabEventType = entityType.getSubTabPanelChangeTab();
+        Type<RevealContentHandler<?>> slot = entityType.getSubTabPanelContentSlot();
 
-        if (requestTabsEventType != null && revealContentEventType != null) {
-            addTab(requestTabsEventType, revealContentEventType,
+        if (requestTabsEventType != null && changeTabEventType != null && slot != null) {
+            addTab(requestTabsEventType, changeTabEventType, slot,
                     label, historyToken, false, contentUrl, options);
         }
     }
 
     void addTab(Type<RequestTabsHandler> requestTabsEventType,
-            Type<RevealContentHandler<?>> revealContentEventType,
+            Type<ChangeTabHandler> changeTabEventType,
+            Type<RevealContentHandler<?>> slot,
             String label, String historyToken, boolean isMainTab,
             String contentUrl, TabOptions options) {
         // Create and bind tab presenter proxy
         dynamicUrlContentTabProxyFactory.create(
-                requestTabsEventType, revealContentEventType,
+                requestTabsEventType, changeTabEventType, slot,
                 label, historyToken, isMainTab, contentUrl,
                 options.getAlignRight() ? Align.RIGHT : Align.LEFT);
 

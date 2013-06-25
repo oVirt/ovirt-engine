@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
+import java.util.List;
+
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -7,8 +9,6 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.List;
 
 @SuppressWarnings("unused")
 public class UserPermissionModel extends Model

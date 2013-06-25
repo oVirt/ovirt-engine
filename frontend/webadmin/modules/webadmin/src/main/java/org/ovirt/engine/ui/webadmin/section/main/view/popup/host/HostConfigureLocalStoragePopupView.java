@@ -107,7 +107,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
     EntityModelTextBoxEditor clusterDescriptionEditor;
 
     @UiField(provided = true)
-    @Path(value = "cluster.cPU.selectedItem")
+    @Path(value = "cluster.CPU.selectedItem")
     @WithElementId
     ListModelListBoxEditor<Object> clusterCpuNameEditor;
 

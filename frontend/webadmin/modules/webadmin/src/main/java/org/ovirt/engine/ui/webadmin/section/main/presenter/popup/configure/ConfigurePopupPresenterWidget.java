@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.presenter.AbstractPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyClusterModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
@@ -29,8 +28,7 @@ public class ConfigurePopupPresenterWidget extends AbstractPopupPresenterWidget<
     private ClusterPolicyClusterModelProvider clusterPolicyClusterModelProvider;
 
     @Inject
-    public ConfigurePopupPresenterWidget(EventBus eventBus,
-            ViewDef view, ClientGinjector ginjector,
+    public ConfigurePopupPresenterWidget(EventBus eventBus, ViewDef view,
             RoleModelProvider roleModelProvider,
             RolePermissionModelProvider permissionModelProvider,
             SystemPermissionModelProvider systemPermissionModelProvider,

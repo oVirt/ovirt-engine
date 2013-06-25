@@ -34,7 +34,7 @@ public class SubTabProviderGeneralView extends AbstractSubTabFormView<Provider, 
     interface Driver extends SimpleBeanEditorDriver<ProviderGeneralModel, SubTabProviderGeneralView> { }
 
     private final Driver driver = GWT.create(Driver.class);
-    private final ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+    private final ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
 
     TextBoxLabel name = new TextBoxLabel();
     ValueLabel<ProviderType> type = new ValueLabel<ProviderType>(new EnumRenderer<ProviderType>());

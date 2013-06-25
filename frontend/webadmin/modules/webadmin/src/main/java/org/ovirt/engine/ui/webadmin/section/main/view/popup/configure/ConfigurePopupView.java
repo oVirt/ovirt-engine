@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyView;
 
@@ -51,7 +50,7 @@ public class ConfigurePopupView extends AbstractPopupView<SimpleDialogPanel> imp
     SimplePanel systemPermissionTabPanel;
 
     @Inject
-    public ConfigurePopupView(ClientGinjector ginjector,
+    public ConfigurePopupView(
             EventBus eventBus,
             ApplicationResources resources,
             ApplicationConstants constants,

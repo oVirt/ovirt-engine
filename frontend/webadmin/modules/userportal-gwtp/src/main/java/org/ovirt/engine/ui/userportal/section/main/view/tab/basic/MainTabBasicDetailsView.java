@@ -50,35 +50,35 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     }
 
     @UiField
-    @Path("SelectedItem.OsId")
+    @Path("selectedItem.osId")
     OsTypeImage osImage;
 
     @UiField
-    @Path("SelectedItem")
+    @Path("selectedItem")
     VmTypeImage vmImage;
 
     @UiField
-    @Path("SelectedItem.Name")
+    @Path("selectedItem.name")
     @WithElementId("name")
     Label vmName;
 
     @UiField
-    @Path("SelectedItem.Description")
+    @Path("selectedItem.description")
     @WithElementId("description")
     Label vmDescription;
 
     @UiField(provided = true)
-    @Path("SelectedItem.OsId")
+    @Path("selectedItem.osId")
     @WithElementId("os")
     ValueLabel<Integer> operatingSystem;
 
     @UiField
-    @Path("SelectedItemDefinedMemory.Entity")
+    @Path("selectedItemDefinedMemory.entity")
     @WithElementId
     ToStringEntityModelLabel memory;
 
     @UiField
-    @Path("SelectedItemNumOfCpuCores.Entity")
+    @Path("selectedItemNumOfCpuCores.entity")
     @WithElementId
     ToStringEntityModelLabel numberOfCores;
 

@@ -7,13 +7,14 @@ import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetH
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Inject;
+import com.gwtplatform.mvp.client.ChangeTabHandler;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
 import com.gwtplatform.mvp.client.TabView;
+import com.gwtplatform.mvp.client.annotations.ChangeTab;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.RequestTabs;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 public class MainTabPanelPresenter extends DynamicTabContainerPresenter<MainTabPanelPresenter.ViewDef, MainTabPanelPresenter.ProxyDef> {
@@ -31,19 +32,18 @@ public class MainTabPanelPresenter extends DynamicTabContainerPresenter<MainTabP
     @RequestTabs
     public static final Type<RequestTabsHandler> TYPE_RequestTabs = new Type<RequestTabsHandler>();
 
+    @ChangeTab
+    public static final Type<ChangeTabHandler> TYPE_ChangeTab = new Type<ChangeTabHandler>();
+
     @ContentSlot
     public static final Type<RevealContentHandler<?>> TYPE_SetTabContent = new Type<RevealContentHandler<?>>();
 
     @Inject
     public MainTabPanelPresenter(EventBus eventBus, ViewDef view,
             ProxyDef proxy, HeaderPresenterWidget header) {
-        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs);
+        super(eventBus, view, proxy, TYPE_SetTabContent, TYPE_RequestTabs, TYPE_ChangeTab,
+                MainContentPresenter.TYPE_SetMainTabPanelContent);
         view.setTabWidgetHandler(header);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, MainContentPresenter.TYPE_SetMainTabPanelContent, this);
     }
 
 }

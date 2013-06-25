@@ -3,11 +3,13 @@ package org.ovirt.engine.ui.webadmin.uicommon.model;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.events.AlertListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class AlertModelProvider extends SearchableTabModelProvider<AuditLog, AlertListModel> {
 
@@ -20,8 +22,9 @@ public class AlertModelProvider extends SearchableTabModelProvider<AuditLog, Ale
     private AlertCountChangeHandler alertCountChangeHandler;
 
     @Inject
-    public AlertModelProvider(ClientGinjector ginjector) {
-        super(ginjector);
+    public AlertModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        super(eventBus, defaultConfirmPopupProvider);
     }
 
     public void setAlertCountChangeHandler(AlertCountChangeHandler alertCountChangeHandler) {

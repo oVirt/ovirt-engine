@@ -43,7 +43,7 @@ import com.google.inject.Inject;
 
 public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends AbstractModelBoundPopupView<T> implements AbstractNetworkPopupPresenterWidget.ViewDef<T> {
 
-    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AbstractNetworkPopupView> {
+    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, AbstractNetworkPopupView<?>> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -98,7 +98,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public final EntityModelCheckBoxEditor vlanTagging;
 
     @UiField
-    @Path(value = "vLanTag.entity")
+    @Path(value = "VLanTag.entity")
     public EntityModelTextBoxOnlyEditor vlanTag;
 
     @UiField(provided = true)
@@ -212,13 +212,13 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @SuppressWarnings("unchecked")
     Iterable<EntityModel> getClustersTableItems() {
-        ListModel tableModel = clustersTable.flush();
+        ListModel tableModel = clustersTable.asEditor().flush();
         return tableModel != null && tableModel.getItems() != null ? tableModel.getItems()
                 : new ArrayList<EntityModel>();
     }
 
     void refreshClustersTable() {
-        clustersTable.edit(clustersTable.flush());
+        clustersTable.asEditor().edit(clustersTable.asEditor().flush());
     }
 
     void initEntityModelCellTable(final ApplicationConstants constants, final ApplicationTemplates templates) {

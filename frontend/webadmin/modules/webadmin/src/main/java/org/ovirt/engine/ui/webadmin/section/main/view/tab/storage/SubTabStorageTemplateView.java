@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;

@@ -11,7 +11,6 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 /**
@@ -33,14 +32,9 @@ public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel,
 
     public AbstractMainTabPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, MainModelProvider<T, M> modelProvider) {
-        super(eventBus, view, proxy);
+        super(eventBus, view, proxy, MainTabPanelPresenter.TYPE_SetTabContent);
         this.placeManager = placeManager;
         this.modelProvider = modelProvider;
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, MainTabPanelPresenter.TYPE_SetTabContent, this);
     }
 
     /**
@@ -90,7 +84,7 @@ public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel,
     }
 
     void revealActiveMainModelPresenter() {
-        MainModelSelectionChangeEvent.fire(getEventBus(), CommonModelManager.instance().getSelectedItem());
+        MainModelSelectionChangeEvent.fire(this, CommonModelManager.instance().getSelectedItem());
     }
 
     /**

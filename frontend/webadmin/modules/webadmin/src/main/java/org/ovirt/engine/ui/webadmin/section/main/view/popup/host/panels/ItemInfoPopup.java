@@ -23,9 +23,9 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
 
     private final FlexTable contents = new FlexTable();
     private static final EnumRenderer<NetworkBootProtocol> RENDERER = new EnumRenderer<NetworkBootProtocol>();
-    private final ApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
-    private final ApplicationTemplates templates = ClientGinjectorProvider.instance().getApplicationTemplates();
-    final ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
+    private final ApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
+    private final ApplicationTemplates templates = ClientGinjectorProvider.getApplicationTemplates();
+    final ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
     SafeHtml mgmtNetworkImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork())
             .getHTML());
     SafeHtml vmImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkVm()).getHTML());

@@ -40,7 +40,7 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
 
     protected SimpleActionTable<T> createActionTable() {
         return new SimpleActionTable<T>(modelProvider, getTableHeaderlessResources(), getTableResources(),
-                ClientGinjectorProvider.instance().getEventBus(), ClientGinjectorProvider.instance().getClientStorage());
+                ClientGinjectorProvider.getEventBus(), ClientGinjectorProvider.getClientStorage());
     }
 
     protected Resources getTableHeaderlessResources() {

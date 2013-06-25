@@ -2,13 +2,14 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended;
 
 import java.util.List;
 
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractSideTabWithDetailsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
@@ -32,7 +33,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SideTabExtendedVirtualMachinePresenter extends AbstractSideTabWithDetailsPresenter<UserPortalItemModel, UserPortalListModel, SideTabExtendedVirtualMachinePresenter.ViewDef, SideTabExtendedVirtualMachinePresenter.ProxyDef> {
 
     @GenEvent
-    public static class ExtendedVirtualMachineSelectionChange {
+    public class ExtendedVirtualMachineSelectionChange {
 
         List<UserPortalItemModel> selectedItems;
 
@@ -47,8 +48,8 @@ public class SideTabExtendedVirtualMachinePresenter extends AbstractSideTabWithD
     }
 
     @TabInfo(container = MainTabExtendedPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new TabDataBasic(ginjector.getApplicationConstants().extendedVirtualMachineSideTabLabel(), 0);
+    static TabData getTabData(ApplicationConstants applicationConstants) {
+        return new TabDataBasic(applicationConstants.extendedVirtualMachineSideTabLabel(), 0);
     }
 
     @ContentSlot
@@ -67,7 +68,7 @@ public class SideTabExtendedVirtualMachinePresenter extends AbstractSideTabWithD
 
     @Override
     protected PlaceRequest getSideTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.extendedVirtualMachineSideTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.extendedVirtualMachineSideTabPlace);
     }
 
     /**

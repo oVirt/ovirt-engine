@@ -1,9 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -15,15 +18,12 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LinuxMountPointValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NonUtfValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 @SuppressWarnings("unused")
 public class NfsStorageModel extends Model implements IStorageModel {

@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDiskPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageDataCenterView.ViewIdHandler;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.core.client.GWT;

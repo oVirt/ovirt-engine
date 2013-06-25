@@ -121,7 +121,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     public NfsStorageView() {
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(ClientGinjectorProvider.instance().getApplicationConstants());
+        localize(ClientGinjectorProvider.getApplicationConstants());
         initExpander();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();

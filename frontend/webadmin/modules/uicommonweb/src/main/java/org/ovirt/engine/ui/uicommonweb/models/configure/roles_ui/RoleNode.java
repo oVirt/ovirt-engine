@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Translator;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class RoleNode

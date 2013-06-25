@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.presenter.DynamicTabContainerPresenter.Dynamic
 
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
 import com.gwtplatform.mvp.client.Tab;
@@ -87,6 +88,12 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel, Dy
     }
 
     @Override
+    public void changeTab(Tab tab, TabData tabData, String historyToken) {
+        tab.setText(tabData.getLabel());
+        tab.setTargetHistoryToken(historyToken);
+    }
+
+    @Override
     public void setActiveTabHistoryToken(String historyToken) {
         this.activeTabHistoryToken = historyToken;
     }
@@ -94,7 +101,7 @@ public abstract class AbstractTabPanel extends Composite implements TabPanel, Dy
     /**
      * Sets a content widget to be displayed for the active tab.
      */
-    public void setTabContent(Widget content) {
+    public void setTabContent(IsWidget content) {
         tabContentContainer.clear();
 
         if (content != null) {

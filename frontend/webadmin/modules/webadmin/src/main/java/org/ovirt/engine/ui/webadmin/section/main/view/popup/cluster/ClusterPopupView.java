@@ -90,7 +90,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     EntityModelTextBoxEditor commentEditor;
 
     @UiField(provided = true)
-    @Path(value = "cPU.selectedItem")
+    @Path(value = "CPU.selectedItem")
     @WithElementId
     ListModelListBoxEditor<Object> cPUEditor;
 

@@ -56,7 +56,7 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
     protected void doEdit(PoolGeneralModel model) {
         driver.edit(model);
 
-        // TODO required because of GWT#5864
+        // Required because of type conversion
         monitorCount.setText(Integer.toString(getModel().getMonitorCount()));
         oS.setText(AsyncDataProvider.getOsName(getModel().getOS()));
     }

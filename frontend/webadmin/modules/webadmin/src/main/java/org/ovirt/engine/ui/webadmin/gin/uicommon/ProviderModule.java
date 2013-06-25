@@ -16,10 +16,10 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -31,12 +31,12 @@ public class ProviderModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel> getProviderListProvider(ClientGinjector ginjector,
+    public MainModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel> getProviderListProvider(EventBus eventBus,
+            final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ProviderPopupPresenterWidget> providerPopupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        return new MainTabModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel>(ginjector,
-                ProviderListModel.class) {
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+        return new MainTabModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel>(
+                eventBus, defaultConfirmPopupProvider, ProviderListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ProviderListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -69,8 +69,10 @@ public class ProviderModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailModelProvider<ProviderListModel, ProviderGeneralModel> getProviderGeneralProvider(ClientGinjector ginjector) {
-        return new DetailTabModelProvider<ProviderListModel, ProviderGeneralModel>(ginjector,
+    public DetailModelProvider<ProviderListModel, ProviderGeneralModel> getProviderGeneralProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new DetailTabModelProvider<ProviderListModel, ProviderGeneralModel>(
+                eventBus, defaultConfirmPopupProvider,
                 ProviderListModel.class,
                 ProviderGeneralModel.class);
     }
@@ -79,9 +81,11 @@ public class ProviderModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> getProviderNetworkListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> getProviderNetworkListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ImportNetworksPopupPresenterWidget> discoverNetworkPopupProvider) {
-        return new SearchableDetailTabModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 ProviderListModel.class,
                 ProviderNetworkListModel.class) {
             @Override

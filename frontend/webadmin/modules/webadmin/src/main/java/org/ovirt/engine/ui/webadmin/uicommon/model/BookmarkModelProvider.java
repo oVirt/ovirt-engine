@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -16,9 +17,9 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
@@ -37,11 +38,14 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
     private final TagModelProvider tagModelProvider;
 
     @Inject
-    public BookmarkModelProvider(ClientGinjector ginjector,
+    public BookmarkModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            Provider<BookmarkPopupPresenterWidget> bookmarkPopupPresenterWidgetProvider,
+            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             SystemTreeModelProvider treeModelProvider, TagModelProvider tagModelProvider) {
-        super(ginjector);
-        this.popupProvider = ginjector.getBookmarkPopupPresenterWidgetProvider();
-        this.removeConfirmPopupProvider = ginjector.getRemoveConfirmPopupProvider();
+        super(eventBus, defaultConfirmPopupProvider);
+        this.popupProvider = bookmarkPopupPresenterWidgetProvider;
+        this.removeConfirmPopupProvider = removeConfirmPopupProvider;
         this.treeModelProvider = treeModelProvider;
         this.tagModelProvider = tagModelProvider;
 

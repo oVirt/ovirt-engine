@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.place;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.place.ApplicationPlaceManager;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.section.DefaultLoginSectionPlace;
 import org.ovirt.engine.ui.common.section.DefaultMainSectionPlace;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -20,8 +21,8 @@ public class WebAdminPlaceManager extends ApplicationPlaceManager {
     public WebAdminPlaceManager(EventBus eventBus, TokenFormatter tokenFormatter, CurrentUser user,
             @DefaultLoginSectionPlace String defaultLoginSectionPlace,
             @DefaultMainSectionPlace String defaultMainSectionPlace) {
-        super(eventBus, tokenFormatter, user, new PlaceRequest(defaultLoginSectionPlace));
-        this.defaultMainSectionRequest = new PlaceRequest(defaultMainSectionPlace);
+        super(eventBus, tokenFormatter, user, PlaceRequestFactory.get(defaultLoginSectionPlace));
+        this.defaultMainSectionRequest = PlaceRequestFactory.get(defaultMainSectionPlace);
     }
 
     @Override
@@ -32,7 +33,7 @@ public class WebAdminPlaceManager extends ApplicationPlaceManager {
     PlaceRequest resolveMainSectionPlace(ApplicationMode uiMode) {
         switch (uiMode) {
         case GlusterOnly:
-            return new PlaceRequest(ApplicationPlaces.volumeMainTabPlace);
+            return PlaceRequestFactory.get(ApplicationPlaces.volumeMainTabPlace);
         case VirtOnly:
         case AllModes:
         default:

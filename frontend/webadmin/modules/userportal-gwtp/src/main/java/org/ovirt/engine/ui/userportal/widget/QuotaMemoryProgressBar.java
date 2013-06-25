@@ -1,8 +1,9 @@
 package org.ovirt.engine.ui.userportal.widget;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
 import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 public class QuotaMemoryProgressBar extends QuotaProgressBar {
 

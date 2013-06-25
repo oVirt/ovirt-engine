@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.widget.editor.IVdcQueryableCellTable;
+import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
 
 import com.google.gwt.cell.client.FieldUpdater;
@@ -29,22 +28,21 @@ public class ImportTemplatePopupView extends ImportVmPopupView implements Import
     private ImportTemplateGeneralSubTabView generalView;
 
     @Inject
-    public ImportTemplatePopupView(ClientGinjector ginjector,
-            EventBus eventBus,
+    public ImportTemplatePopupView(EventBus eventBus,
             ApplicationResources resources,
             ApplicationConstants constants) {
-        super(ginjector, eventBus, resources, constants);
+        super(eventBus, resources, constants);
     }
 
     @Override
     protected void initMainTable() {
-        this.table = new IVdcQueryableCellTable<Object, ImportVmModel>();
+        this.table = new ListModelObjectCellTable<Object, ImportVmModel>();
 
         CheckboxColumn<Object> cloneTemplateColumn = new CheckboxColumn<Object>(new FieldUpdater<Object, Boolean>() {
             @Override
             public void update(int index, Object model, Boolean value) {
                 ((ImportTemplateData) model).getClone().setEntity(value);
-                table.edit(importModel);
+                table.asEditor().edit(importModel);
             }
         }) {
             @Override

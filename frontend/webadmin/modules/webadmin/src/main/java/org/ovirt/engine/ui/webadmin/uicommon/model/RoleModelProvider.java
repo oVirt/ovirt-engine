@@ -2,15 +2,16 @@ package org.ovirt.engine.ui.webadmin.uicommon.model;
 
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.RolePopupPresenterWidget;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -20,10 +21,11 @@ public class RoleModelProvider extends SearchableTabModelProvider<Role, RoleList
     private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
 
     @Inject
-    public RoleModelProvider(ClientGinjector ginjector,
+    public RoleModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<RolePopupPresenterWidget> rolePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        super(ginjector);
+        super(eventBus, defaultConfirmPopupProvider);
         this.rolePopupProvider = rolePopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
     }

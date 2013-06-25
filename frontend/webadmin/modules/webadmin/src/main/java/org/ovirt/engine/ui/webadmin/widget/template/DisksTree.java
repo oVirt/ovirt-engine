@@ -5,10 +5,10 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.EnumLabel;
@@ -36,8 +36,8 @@ public class DisksTree extends AbstractSubTabTree<TemplateDiskListModel, DiskIma
     public DisksTree(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
         super(resources, constants, templates);
 
-        this.resources = (ApplicationResources) resources;
-        this.constants = (ApplicationConstants) constants;
+        this.resources = resources;
+        this.constants = constants;
 
         setRootSelectionEnabled(true);
     }

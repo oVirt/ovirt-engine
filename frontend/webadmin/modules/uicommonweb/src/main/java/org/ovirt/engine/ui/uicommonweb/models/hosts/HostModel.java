@@ -45,13 +45,13 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.KeyValuePairValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class HostModel extends Model
 {

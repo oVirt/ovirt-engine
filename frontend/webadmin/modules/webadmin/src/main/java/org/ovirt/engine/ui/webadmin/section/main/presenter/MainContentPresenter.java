@@ -9,7 +9,6 @@ import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef, MainContentPresenter.ProxyDef> {
@@ -35,12 +34,7 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
 
     @Inject
     public MainContentPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy) {
-        super(eventBus, view, proxy);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, MainSectionPresenter.TYPE_SetMainContent, this);
+        super(eventBus, view, proxy, MainSectionPresenter.TYPE_SetMainContent);
     }
 
     @ProxyEvent

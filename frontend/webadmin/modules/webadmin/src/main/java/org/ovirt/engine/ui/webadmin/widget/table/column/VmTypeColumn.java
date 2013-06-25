@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
  */
 public class VmTypeColumn extends WebAdminImageResourceColumn<VM> {
 
-    private static final CommonApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+    private static final CommonApplicationConstants constants = ClientGinjectorProvider.getApplicationConstants();
 
     @Override
     public ImageResource getValue(VM vm) {

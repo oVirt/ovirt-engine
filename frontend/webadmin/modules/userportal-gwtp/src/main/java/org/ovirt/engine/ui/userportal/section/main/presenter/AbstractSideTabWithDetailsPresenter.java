@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.presenter;
 
 import java.util.List;
 
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
@@ -14,7 +15,6 @@ import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.Proxy;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 
 /**
  * Base class for side tab presenters that work with {@link ListWithDetailsModel}.
@@ -44,13 +44,8 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
 
     public AbstractSideTabWithDetailsPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, SearchableTableModelProvider<T, M> modelProvider) {
-        super(eventBus, view, proxy, modelProvider);
+        super(eventBus, view, proxy, modelProvider, MainTabExtendedPresenter.TYPE_SetTabContent);
         this.placeManager = placeManager;
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, MainTabExtendedPresenter.TYPE_SetTabContent, this);
     }
 
     @Override
@@ -109,7 +104,7 @@ public abstract class AbstractSideTabWithDetailsPresenter<T, M extends ListWithD
     protected abstract PlaceRequest getSideTabRequest();
 
     private PlaceRequest getSubTabRequest() {
-        return new PlaceRequest(createRequestToken());
+        return PlaceRequestFactory.get(createRequestToken());
     }
 
     protected String createRequestToken() {

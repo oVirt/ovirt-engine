@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.OriginType;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionCellTable;

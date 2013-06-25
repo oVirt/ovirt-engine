@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.List;
 
 @SuppressWarnings("unused")
 public abstract class ListWithDetailsModel extends SearchableListModel

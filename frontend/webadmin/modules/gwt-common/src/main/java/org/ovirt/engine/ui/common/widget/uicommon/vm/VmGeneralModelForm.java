@@ -23,6 +23,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     TextBoxLabel template = new TextBoxLabel();
     TextBoxLabel definedMemory = new TextBoxLabel();
     TextBoxLabel minAllocatedMemory = new TextBoxLabel();
+    @Path("OS")
     TextBoxLabel oS = new TextBoxLabel();
     TextBoxLabel cpuInfo = new TextBoxLabel();
     TextBoxLabel defaultDisplayType = new TextBoxLabel();
@@ -99,7 +100,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     protected void doEdit(VmGeneralModel model) {
         driver.edit(model);
 
-        // TODO required because of GWT#5864
+        // Required because of type conversion
         monitorCount.setText(Integer.toString(getModel().getMonitorCount()));
     }
 

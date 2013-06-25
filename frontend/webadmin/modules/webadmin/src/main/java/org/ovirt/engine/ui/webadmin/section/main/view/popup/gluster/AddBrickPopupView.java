@@ -239,7 +239,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
     @Override
     public void edit(VolumeBrickModel object) {
-        bricksTable.edit(object.getBricks());
+        bricksTable.asEditor().edit(object.getBricks());
         driver.edit(object);
 
         addBrickButton.setCommand(object.getAddBrickCommand());

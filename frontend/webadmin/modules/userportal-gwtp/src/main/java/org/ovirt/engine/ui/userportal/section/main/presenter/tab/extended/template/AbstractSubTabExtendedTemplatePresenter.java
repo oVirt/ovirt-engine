@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -12,7 +13,6 @@ import com.google.gwt.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public abstract class AbstractSubTabExtendedTemplatePresenter<D extends EntityModel, V extends AbstractSubTabPresenter.ViewDef<VmTemplate>, P extends TabContentProxyPlace<?>>
@@ -20,17 +20,13 @@ public abstract class AbstractSubTabExtendedTemplatePresenter<D extends EntityMo
 
     public AbstractSubTabExtendedTemplatePresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, DetailModelProvider<UserPortalTemplateListModel, D> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, ExtendedTemplateSubTabPanelPresenter.TYPE_SetTabContent, this);
+        super(eventBus, view, proxy, placeManager, modelProvider,
+                ExtendedTemplateSubTabPanelPresenter.TYPE_SetTabContent);
     }
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.extendedTemplateSideTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.extendedTemplateSideTabPlace);
     }
 
     @ProxyEvent

@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
@@ -32,7 +33,6 @@ import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.EditNetworkPopupPresenterWidget;
@@ -43,6 +43,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetwo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -54,12 +55,13 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<NetworkView, NetworkListModel> getNetworkListProvider(ClientGinjector ginjector,
+    public MainModelProvider<NetworkView, NetworkListModel> getNetworkListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<NewNetworkPopupPresenterWidget> newNetworkPopupProvider,
             final Provider<ImportNetworksPopupPresenterWidget> importNetworkPopupProvider,
             final Provider<EditNetworkPopupPresenterWidget> editNetworkPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new MainTabModelProvider<NetworkView, NetworkListModel>(ginjector, NetworkListModel.class) {
+        return new MainTabModelProvider<NetworkView, NetworkListModel>(eventBus, defaultConfirmPopupProvider, NetworkListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(NetworkListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -79,7 +81,7 @@ public class NetworkModule extends AbstractGinModule {
             public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(NetworkListModel source,
                     UICommand lastExecutedCommand) {
 
-                if (lastExecutedCommand == getModel().getRemoveCommand()) { //$NON-NLS-1$
+                if (lastExecutedCommand == getModel().getRemoveCommand()) {
                     return removeConfirmPopupProvider.get();
                 } else {
                     return super.getConfirmModelPopup(source, lastExecutedCommand);
@@ -93,8 +95,10 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailModelProvider<NetworkListModel, NetworkGeneralModel> getNetworkGeneralProvider(ClientGinjector ginjector) {
-        return new DetailTabModelProvider<NetworkListModel, NetworkGeneralModel>(ginjector,
+    public DetailModelProvider<NetworkListModel, NetworkGeneralModel> getNetworkGeneralProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new DetailTabModelProvider<NetworkListModel, NetworkGeneralModel>(
+                eventBus, defaultConfirmPopupProvider,
                 NetworkListModel.class,
                 NetworkGeneralModel.class);
     }
@@ -103,9 +107,11 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> getNetworkClusterListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> getNetworkClusterListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ClusterManageNetworkPopupPresenterWidget> managePopupProvider) {
-        return new SearchableDetailTabModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 NetworkListModel.class,
                 NetworkClusterListModel.class) {
             @Override
@@ -123,12 +129,14 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> getNetworkHostListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> getNetworkHostListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<SetupNetworksInterfacePopupPresenterWidget> setupNetworksInterfacePopupProvider,
             final Provider<SetupNetworksManagementPopupPresenterWidget> setupNetworksManagementPopupProvider,
             final Provider<HostBondPopupPresenterWidget> hostBondPopupProvider,
             final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider) {
-        return new SearchableDetailTabModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 NetworkListModel.class,
                 NetworkHostListModel.class) {
             @Override
@@ -160,9 +168,11 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel> getNetworkVmModelProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel> getNetworkVmModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 NetworkListModel.class,
                 NetworkVmListModel.class) {
             @Override
@@ -179,9 +189,11 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel> geNetworkTemplateModelProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel> geNetworkTemplateModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 NetworkListModel.class,
                 NetworkTemplateListModel.class){
             @Override
@@ -198,10 +210,12 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, NetworkListModel, PermissionListModel> getNetworkPermissionListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<permissions, NetworkListModel, PermissionListModel> getNetworkPermissionListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, NetworkListModel, PermissionListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<permissions, NetworkListModel, PermissionListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 NetworkListModel.class,
                 PermissionListModel.class) {
             @Override

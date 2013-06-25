@@ -19,6 +19,7 @@ import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
@@ -100,7 +101,7 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
     }
 
     @Override
-    protected void setContent(Widget content) {
+    protected void setContent(IsWidget content) {
         setPanelContent(searchPanelContainer, content);
     }
 

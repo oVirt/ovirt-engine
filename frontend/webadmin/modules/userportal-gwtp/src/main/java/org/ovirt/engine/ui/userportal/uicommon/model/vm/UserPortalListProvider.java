@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceToGuestWithNonRespAgentModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmMakeTemplatePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmPopupPresenterWidget;
@@ -19,6 +18,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmRunOnceP
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.AbstractUserPortalListProvider;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -34,7 +34,9 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
     private final Provider<DefaultConfirmationPopupPresenterWidget> spiceToGuestWithNonRespAgentPopupProvider;
 
     @Inject
-    public UserPortalListProvider(ClientGinjector ginjector,
+    public UserPortalListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            CurrentUser user,
             Provider<VmPopupPresenterWidget> newVmPopupProvider,
             Provider<VmRunOncePopupPresenterWidget> runOncePopupProvider,
             Provider<VmChangeCDPopupPresenterWidget> changeCDPopupProvider,
@@ -42,9 +44,8 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
             Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             Provider<VncInfoPopupPresenterWidget> vncInfoPopupProvider,
             Provider<DefaultConfirmationPopupPresenterWidget> spiceToGuestWithNonRespAgentPopupProvider,
-            CurrentUser user,
             Provider<ConsolePopupPresenterWidget> consolePopupProvider) {
-        super(ginjector, user);
+        super(eventBus, defaultConfirmPopupProvider, user);
         this.newVmPopupProvider = newVmPopupProvider;
         this.runOncePopupProvider = runOncePopupProvider;
         this.changeCDPopupProvider = changeCDPopupProvider;

@@ -2,12 +2,13 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.HostSelectionChangeEvent;
 
@@ -20,7 +21,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabHostPermissionPresenter extends AbstractSubTabPresenter<VDS, HostListModel, PermissionListModel, SubTabHostPermissionPresenter.ViewDef, SubTabHostPermissionPresenter.ProxyDef> {
@@ -34,26 +34,22 @@ public class SubTabHostPermissionPresenter extends AbstractSubTabPresenter<VDS, 
     }
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().hostPermissionSubTabLabel(), 5,
-                ginjector.getSubTabHostPermissionModelProvider());
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            SearchableDetailModelProvider<permissions, HostListModel, PermissionListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.hostPermissionSubTabLabel(), 5, modelProvider);
     }
 
     @Inject
     public SubTabHostPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
             SearchableDetailModelProvider<permissions, HostListModel, PermissionListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, HostSubTabPanelPresenter.TYPE_SetTabContent, this);
+        super(eventBus, view, proxy, placeManager, modelProvider,
+                HostSubTabPanelPresenter.TYPE_SetTabContent);
     }
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.dataCenterMainTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.dataCenterMainTabPlace);
     }
 
     @ProxyEvent

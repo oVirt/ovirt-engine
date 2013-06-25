@@ -29,7 +29,7 @@ public class WebAdminMenuBarButtonDefinition<T> extends UiMenuBarButtonDefinitio
     }
 
     static EventBus getEventBus() {
-        return ClientGinjectorProvider.instance().getEventBus();
+        return ClientGinjectorProvider.getEventBus();
     }
 
 }

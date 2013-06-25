@@ -1,11 +1,12 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
+import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
+import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
+
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.text.shared.Parser;
 import com.google.gwt.text.shared.Renderer;
 import com.google.gwt.user.client.ui.Widget;
-import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
-import org.ovirt.engine.ui.common.widget.VisibilityRenderer;
 
 /*
  * Represents a Model bound editor containing only a TextBox with no label.

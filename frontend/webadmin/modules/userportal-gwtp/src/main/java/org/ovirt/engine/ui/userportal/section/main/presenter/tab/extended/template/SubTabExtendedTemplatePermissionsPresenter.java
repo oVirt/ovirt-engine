@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.templ
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplatePermissionListModelProvider;
 
@@ -29,8 +29,8 @@ public class SubTabExtendedTemplatePermissionsPresenter
     }
 
     @TabInfo(container = ExtendedTemplateSubTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new TabDataBasic(ginjector.getApplicationConstants().extendedTemplatePermissionsSubTabLabel(), 4);
+    static TabData getTabData(ApplicationConstants applicationConstants) {
+        return new TabDataBasic(applicationConstants.extendedTemplatePermissionsSubTabLabel(), 4);
     }
 
     @Inject

@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models.templates;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;

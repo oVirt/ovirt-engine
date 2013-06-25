@@ -2,11 +2,12 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
@@ -23,7 +24,6 @@ import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskVmListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.ImportE
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -42,13 +43,14 @@ public class DiskModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<Disk, DiskListModel> getDiskListProvider(ClientGinjector ginjector,
+    public MainModelProvider<Disk, DiskListModel> getDiskListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmDiskPopupPresenterWidget> newPopupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<DisksAllocationPopupPresenterWidget> moveOrCopyPopupProvider,
             final Provider<ChangeQuotaPopupPresenterWidget> changeQutoaPopupProvider,
             final Provider<ImportExportImagePopupPresenterWidget> importExportImagePopupPresenterWidgetProvider) {
-        return new MainTabModelProvider<Disk, DiskListModel>(ginjector, DiskListModel.class) {
+        return new MainTabModelProvider<Disk, DiskListModel>(eventBus, defaultConfirmPopupProvider, DiskListModel.class) {
 
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DiskListModel source,
@@ -89,8 +91,10 @@ public class DiskModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailModelProvider<DiskListModel, DiskGeneralModel> getDiskGeneralProvider(ClientGinjector ginjector) {
-        return new DetailTabModelProvider<DiskListModel, DiskGeneralModel>(ginjector,
+    public DetailModelProvider<DiskListModel, DiskGeneralModel> getDiskGeneralProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new DetailTabModelProvider<DiskListModel, DiskGeneralModel>(
+                eventBus, defaultConfirmPopupProvider,
                 DiskListModel.class,
                 DiskGeneralModel.class);
     }
@@ -99,34 +103,42 @@ public class DiskModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VM, DiskListModel, DiskVmListModel> getDiskVmModelProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<VM, DiskListModel, DiskVmListModel>(ginjector,
+    public SearchableDetailModelProvider<VM, DiskListModel, DiskVmListModel> getDiskVmModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<VM, DiskListModel, DiskVmListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 DiskListModel.class,
                 DiskVmListModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel> getDiskTemplateModelProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel>(ginjector,
+    public SearchableDetailModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel> getDiskTemplateModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 DiskListModel.class,
                 DiskTemplateListModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<StorageDomain, DiskListModel, DiskStorageListModel> getDiskStorageModelProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<StorageDomain, DiskListModel, DiskStorageListModel>(ginjector,
+    public SearchableDetailModelProvider<StorageDomain, DiskListModel, DiskStorageListModel> getDiskStorageModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<StorageDomain, DiskListModel, DiskStorageListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 DiskListModel.class,
                 DiskStorageListModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, DiskListModel, PermissionListModel> getDiskPermissionListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<permissions, DiskListModel, PermissionListModel> getDiskPermissionListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, DiskListModel, PermissionListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<permissions, DiskListModel, PermissionListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 DiskListModel.class,
                 PermissionListModel.class) {
             @Override

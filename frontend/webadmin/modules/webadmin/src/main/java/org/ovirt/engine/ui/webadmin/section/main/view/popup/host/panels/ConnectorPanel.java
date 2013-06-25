@@ -11,14 +11,14 @@ import com.google.gwt.user.client.ui.HTML;
 
 public class ConnectorPanel extends FlexTable {
 
-    private final ApplicationTemplates templates = ClientGinjectorProvider.instance().getApplicationTemplates();
+    private final ApplicationTemplates templates = ClientGinjectorProvider.getApplicationTemplates();
     public ConnectorPanel(NetworkInterfaceModel nicModel, NetworkPanelsStyle style) {
         super();
         int networkSize = nicModel.getItems().size();
         if (networkSize == 0) {
             return;
         }
-        ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
+        ApplicationResources resources = ClientGinjectorProvider.getApplicationResources();
 
         setCellPadding(0);
         setCellSpacing(0);

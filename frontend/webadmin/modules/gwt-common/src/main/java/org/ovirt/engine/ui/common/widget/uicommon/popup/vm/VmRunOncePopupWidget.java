@@ -148,17 +148,17 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     EntityModelCheckBoxEditor runAndPauseEditor;
 
     @UiField
-    @Path(value = "Kernel_path.entity")
+    @Path(value = "kernel_path.entity")
     @WithElementId("kernelPath")
     EntityModelTextBoxEditor kernelPathEditor;
 
     @UiField
-    @Path(value = "Initrd_path.entity")
+    @Path(value = "initrd_path.entity")
     @WithElementId("initrdPath")
     EntityModelTextBoxEditor initrdPathEditor;
 
     @UiField
-    @Path(value = "Kernel_parameters.entity")
+    @Path(value = "kernel_parameters.entity")
     @WithElementId("kernelParameters")
     EntityModelTextBoxEditor kernelParamsEditor;
 
@@ -174,7 +174,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @WithElementId("sysPrepDomainNameListBox")
     ListModelListBoxEditor<Object> sysPrepDomainNameListBoxEditor;
 
-    @Path(value = "SysPrepSelectedDomainName.entity")
+    @Path(value = "sysPrepSelectedDomainName.entity")
     @WithElementId("sysPrepDomainNameTextBox")
     EntityModelTextBoxEditor sysPrepDomainNameTextBoxEditor;
 

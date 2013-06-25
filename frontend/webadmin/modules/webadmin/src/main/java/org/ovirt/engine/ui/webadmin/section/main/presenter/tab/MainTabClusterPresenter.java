@@ -3,10 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
@@ -25,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class MainTabClusterPresenter extends AbstractMainTabWithDetailsPresenter<VDSGroup, ClusterListModel, MainTabClusterPresenter.ViewDef, MainTabClusterPresenter.ProxyDef> {
 
     @GenEvent
-    public static class ClusterSelectionChange {
+    public class ClusterSelectionChange {
 
         List<VDSGroup> selectedItems;
 
@@ -40,9 +41,9 @@ public class MainTabClusterPresenter extends AbstractMainTabWithDetailsPresenter
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().clusterMainTabLabel(), 1,
-                ginjector.getMainTabClusterModelProvider());
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            MainModelProvider<VDSGroup, ClusterListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.clusterMainTabLabel(), 1, modelProvider);
     }
 
     @Inject
@@ -58,6 +59,6 @@ public class MainTabClusterPresenter extends AbstractMainTabWithDetailsPresenter
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.clusterMainTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.clusterMainTabPlace);
     }
 }

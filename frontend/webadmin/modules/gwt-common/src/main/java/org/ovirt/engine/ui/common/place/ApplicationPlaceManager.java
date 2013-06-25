@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.place;
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.common.auth.CurrentUser;
@@ -30,20 +29,6 @@ public abstract class ApplicationPlaceManager extends PlaceManagerImpl implement
         this.user = user;
         this.defaultLoginSectionRequest = defaultLoginSectionRequest;
         eventBus.addHandler(UserLoginChangeEvent.getType(), this);
-    }
-
-    // TODO remove this method after upgrading to GWTP 0.7
-    // getCurrentPlaceRequest() implementation in GWTP 0.6 can cause
-    // ArrayIndexOutOfBoundsException to escape from try/catch block
-    // in production mode (NOT in development mode)
-    @Override
-    public PlaceRequest getCurrentPlaceRequest() {
-        List<PlaceRequest> placeHierarchy = getCurrentPlaceHierarchy();
-        if (placeHierarchy.size() > 0) {
-            return placeHierarchy.get(placeHierarchy.size() - 1);
-        } else {
-            return new PlaceRequest();
-        }
     }
 
     @Override

@@ -6,15 +6,13 @@ import java.util.List;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupTableResources;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
+import org.ovirt.engine.ui.common.widget.IsEditorDriver;
 import org.ovirt.engine.ui.common.widget.table.ElementIdCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.EventHandlingCell;
 import org.ovirt.engine.ui.common.widget.table.column.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.CheckboxCell;
@@ -35,9 +33,12 @@ import com.google.gwt.view.client.SelectionModel;
 import com.google.gwt.view.client.SingleSelectionModel;
 
 /**
- * A CellTable of a {@link ListModel} of {@link EntityModel}s.
+ * A {@code CellTable} acting as Editor of {@link ListModel} objects containing {@link EntityModel} items.
+ *
+ * @param <M>
+ *            List model type.
  */
-public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTable<EntityModel> implements HasEditorDriver<M> {
+public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTable<EntityModel> implements IsEditorDriver<M> {
 
     public static enum SelectionMode {
         NONE,
@@ -45,12 +46,12 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         MULTIPLE
     }
 
-    private M listModel;
-
     private static final int DEFAULT_PAGESIZE = 1000;
     private static final int CHECK_COLUMN_WIDTH = 27;
 
     private static CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+
+    private final HasDataListModelEditorAdapter<M, EntityModel> editorAdapter;
 
     /**
      * Create a new {@link EntityModelCellTable} with single selection mode.
@@ -168,6 +169,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
             boolean hideCheckbox,
             boolean showSelectAllCheckbox) {
         super(DEFAULT_PAGESIZE, resources);
+        this.editorAdapter = new HasDataListModelEditorAdapter<M, EntityModel>(this);
 
         // Configure table selection model
         switch (selectionMode) {
@@ -188,16 +190,15 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         getSelectionModel().addSelectionChangeHandler(new Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
-                if ((EntityModelCellTable.this.listModel == null)
-                        || (EntityModelCellTable.this.listModel.getItems() == null)) {
+                if (getListModel() == null || getListModel().getItems() == null) {
                     return;
                 }
 
                 // Clear "IsSelected"
-                for (EntityModel entity : (List<EntityModel>) EntityModelCellTable.this.listModel.getItems()) {
+                for (EntityModel entity : (List<EntityModel>) getListModel().getItems()) {
                     entity.setIsSelected(false);
                 }
-                EntityModelCellTable.this.listModel.setSelectedItems(null);
+                getListModel().setSelectedItems(null);
 
                 // Set "IsSelected"
                 SelectionModel<? super EntityModel> selectionModel = EntityModelCellTable.this.getSelectionModel();
@@ -206,7 +207,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                             ((SingleSelectionModel<EntityModel>) selectionModel).getSelectedObject();
                     if (selectedObject != null) {
                         selectedObject.setIsSelected(true);
-                        EntityModelCellTable.this.listModel.setSelectedItem(selectedObject);
+                        getListModel().setSelectedItem(selectedObject);
                     }
                 } else if (selectionModel instanceof MultiSelectionModel) {
                     List<EntityModel> selectedItems = new ArrayList<EntityModel>();
@@ -214,7 +215,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                         entity.setIsSelected(true);
                         selectedItems.add(entity);
                     }
-                    EntityModelCellTable.this.listModel.setSelectedItems(selectedItems);
+                    getListModel().setSelectedItems(selectedItems);
                 }
             }
         });
@@ -243,18 +244,18 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                     SelectAllCheckBoxHeader<EntityModel> selectAllHeader = new SelectAllCheckBoxHeader<EntityModel>() {
                         @Override
                         protected void selectionChanged(Boolean value) {
-                            if (listModel == null || listModel.getItems() == null) {
+                            if (getListModel() == null || getListModel().getItems() == null) {
                                 return;
                             }
-                            handleSelection(value, listModel, getSelectionModel());
+                            handleSelection(value, getListModel(), getSelectionModel());
                         }
 
                         @Override
                         public Boolean getValue() {
-                            if (listModel == null || listModel.getItems() == null) {
+                            if (getListModel() == null || getListModel().getItems() == null) {
                                 return false;
                             }
-                            return getCheckValue(listModel.getItems(), getSelectionModel());
+                            return getCheckValue(getListModel().getItems(), getSelectionModel());
                         }
                     };
                     addColumn(checkColumn, selectAllHeader);
@@ -289,6 +290,15 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                 }
             });
         }
+    }
+
+    M getListModel() {
+        return asEditor().flush();
+    }
+
+    @Override
+    public HasEditorDriver<M> asEditor() {
+        return editorAdapter;
     }
 
     public void addEntityModelColumn(Column<EntityModel, ?> column, String headerString) {
@@ -343,52 +353,6 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
     public void setLoadingState(LoadingState state) {
         super.onLoadingStateChanged(state);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void edit(M object) {
-        this.listModel = object;
-
-        // Add ItemsChangedEvent Listener
-        object.getItemsChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                M list = (M) sender;
-                List<EntityModel> items = (List<EntityModel>) list.getItems();
-                setRowData(items == null ? new ArrayList<EntityModel>() : items);
-            }
-        });
-
-        object.getSelectedItemChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                M list = (M) sender;
-                getSelectionModel().setSelected((EntityModel) list.getSelectedItem(), true);
-            }
-        });
-
-        object.getSelectedItemsChangedEvent().addListener(new IEventListener() {
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                M list = (M) sender;
-                if (list.getSelectedItems() != null) {
-                    for (Object item : list.getSelectedItems()) {
-                        EntityModel entityModel = (EntityModel) item;
-                        getSelectionModel().setSelected(entityModel, true);
-                    }
-                }
-            }
-        });
-
-        // Get items from ListModel and update table data
-        List<EntityModel> items = (List<EntityModel>) listModel.getItems();
-        setRowData(items == null ? new ArrayList<EntityModel>() : items);
-    }
-
-    @Override
-    public M flush() {
-        return listModel;
     }
 
 }

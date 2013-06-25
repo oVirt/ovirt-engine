@@ -48,11 +48,13 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     private final ApplicationResources resources;
     private final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
 
+    @Path("OS")
     TextBoxLabel oS = new TextBoxLabel();
     TextBoxLabel kvmVersion = new TextBoxLabel();
     VersionLabel libvirtVersion = new VersionLabel();
     TextBoxLabel spiceVersion = new TextBoxLabel();
     TextBoxLabel kernelVersion = new TextBoxLabel();
+    @Path("IScsiInitiatorName")
     TextBoxLabel iScsiInitiatorName = new TextBoxLabel();
     TextBoxLabel cpuName = new TextBoxLabel();
     TextBoxLabel cpuType = new TextBoxLabel();

@@ -16,15 +16,13 @@ public class DynamicUrlContentTabPresenter extends WebAdminDynamicTabPresenter<D
 
     }
 
-    private final Type<RevealContentHandler<?>> revealContentEventType;
     private final boolean isMainTab;
 
     public DynamicUrlContentTabPresenter(EventBus eventBus, ViewDef view,
             DynamicUrlContentTabProxy proxy, PlaceManager placeManager,
-            Type<RevealContentHandler<?>> revealContentEventType,
+            Type<RevealContentHandler<?>> slot,
             boolean isMainTab, String contentUrl) {
-        super(eventBus, view, proxy, placeManager);
-        this.revealContentEventType = revealContentEventType;
+        super(eventBus, view, proxy, placeManager, slot);
         this.isMainTab = isMainTab;
         setContentUrl(contentUrl);
     }
@@ -40,11 +38,6 @@ public class DynamicUrlContentTabPresenter extends WebAdminDynamicTabPresenter<D
         if (getProxy().getTargetHistoryToken().equals(event.getHistoryToken())) {
             setContentUrl(event.getContentUrl());
         }
-    }
-
-    @Override
-    protected Type<RevealContentHandler<?>> getRevealContentEventType() {
-        return revealContentEventType;
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.virtualMachine;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
@@ -11,7 +12,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.VirtualMachineSelectionChangeEvent;
 
@@ -26,7 +27,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabVirtualMachineGeneralPresenter extends AbstractSubTabPresenter<VM, VmListModel, VmGeneralModel, SubTabVirtualMachineGeneralPresenter.ViewDef, SubTabVirtualMachineGeneralPresenter.ProxyDef> {
@@ -53,16 +53,17 @@ public class SubTabVirtualMachineGeneralPresenter extends AbstractSubTabPresente
     }
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().virtualMachineGeneralSubTabLabel(), 1,
-                ginjector.getSubTabVirtualMachineGeneralModelProvider());
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            DetailModelProvider<VmListModel, VmGeneralModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.virtualMachineGeneralSubTabLabel(), 1, modelProvider);
     }
 
     @Inject
     public SubTabVirtualMachineGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
             DetailModelProvider<VmListModel, VmGeneralModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
+        super(eventBus, view, proxy, placeManager, modelProvider,
+                VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }
 
     @Override
@@ -120,15 +121,9 @@ public class SubTabVirtualMachineGeneralPresenter extends AbstractSubTabPresente
         view.addAlert(label);
     }
 
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent, this);
-    }
-
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.virtualMachineMainTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.virtualMachineMainTabPlace);
     }
 
     @ProxyEvent

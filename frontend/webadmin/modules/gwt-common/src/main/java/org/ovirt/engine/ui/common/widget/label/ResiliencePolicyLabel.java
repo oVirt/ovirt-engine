@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.common.widget.label;
 
-import com.google.gwt.text.shared.AbstractRenderer;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 
+import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.user.client.ui.ValueLabel;
 
 public class ResiliencePolicyLabel extends ValueLabel<MigrateOnErrorOptions> {

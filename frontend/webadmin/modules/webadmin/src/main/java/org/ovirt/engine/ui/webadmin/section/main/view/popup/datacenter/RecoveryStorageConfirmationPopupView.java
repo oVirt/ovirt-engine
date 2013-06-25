@@ -93,7 +93,7 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
     @Override
     public void edit(final ConfirmationModel object) {
         storageDomainItems.setRowData(new ArrayList<EntityModel>());
-        storageDomainItems.edit(object);
+        storageDomainItems.asEditor().edit(object);
         driver.edit(object);
 
         // Bind "Latch.IsAvailable"

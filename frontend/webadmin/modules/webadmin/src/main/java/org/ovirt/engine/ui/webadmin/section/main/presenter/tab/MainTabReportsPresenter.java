@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -11,7 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
@@ -41,9 +42,9 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().reportsMainTabLabel(), 14,
-                ginjector.getMainTabReportsModelProvider(), Align.RIGHT);
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            MainModelProvider<Void, ReportsListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.reportsMainTabLabel(), 14, modelProvider, Align.RIGHT);
     }
 
     @Inject
@@ -74,7 +75,7 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.reportsMainTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.reportsMainTabPlace);
     }
 
 }

@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
@@ -32,7 +31,6 @@ import com.google.inject.Inject;
 public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<NetworkView, NetworkListModel> implements MainTabNetworkPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<MainTabNetworkView> {
-
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
@@ -40,7 +38,6 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
             (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     private final ApplicationConstants constants;
-    private final ApplicationTemplates templates;
 
     private final SafeHtml mgmtImage;
     private final SafeHtml vmImage;
@@ -49,11 +46,9 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
     @Inject
     public MainTabNetworkView(MainModelProvider<NetworkView, NetworkListModel> modelProvider,
             ApplicationConstants constants,
-            ApplicationTemplates templates,
             ApplicationResources resources) {
         super(modelProvider);
         this.constants = constants;
-        this.templates = templates;
         ViewIdHandler.idHandler.generateAndSetIds(this);
         mgmtImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.mgmtNetwork()).getHTML());
         vmImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkVm()).getHTML());
@@ -175,6 +170,6 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
                 return getMainModel().getRemoveCommand();
             }
         });
-
     }
+
 }

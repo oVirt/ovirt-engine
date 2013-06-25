@@ -9,7 +9,6 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 /**
@@ -29,8 +28,9 @@ public abstract class DynamicTabPresenter<V extends View, P extends DynamicTabPr
 
     private boolean tabAccessible = AbstractTab.DEFAULT_ACCESSIBLE;
 
-    public DynamicTabPresenter(EventBus eventBus, V view, P proxy, PlaceManager placeManager) {
-        super(eventBus, view, proxy);
+    public DynamicTabPresenter(EventBus eventBus, V view, P proxy,
+            PlaceManager placeManager, Type<RevealContentHandler<?>> slot) {
+        super(eventBus, view, proxy, slot);
         this.placeManager = placeManager;
     }
 
@@ -62,13 +62,6 @@ public abstract class DynamicTabPresenter<V extends View, P extends DynamicTabPr
     boolean isTabAccessible() {
         return tabAccessible;
     }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, getRevealContentEventType(), this);
-    }
-
-    protected abstract Type<RevealContentHandler<?>> getRevealContentEventType();
 
     /**
      * We use manual reveal since we want to control dynamic tab presenter accessibility.

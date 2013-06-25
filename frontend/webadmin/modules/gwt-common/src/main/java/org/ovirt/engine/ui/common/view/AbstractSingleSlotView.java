@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.common.view;
 
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.IsWidget;
 
 /**
  * Base class for views having a single content slot for displaying child contents.
@@ -8,7 +8,7 @@ import com.google.gwt.user.client.ui.Widget;
 public abstract class AbstractSingleSlotView extends AbstractView {
 
     @Override
-    public void setInSlot(Object slot, Widget content) {
+    public void setInSlot(Object slot, IsWidget content) {
         if (slot == getContentSlot()) {
             setContent(content);
         } else {
@@ -24,6 +24,6 @@ public abstract class AbstractSingleSlotView extends AbstractView {
     /**
      * Sets the child widget into the view content area.
      */
-    protected abstract void setContent(Widget content);
+    protected abstract void setContent(IsWidget content);
 
 }

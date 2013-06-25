@@ -2,13 +2,14 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.StorageSelectionChangeEvent;
 
@@ -21,7 +22,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabStorageEventPresenter extends AbstractSubTabPresenter<StorageDomain, StorageListModel, StorageEventListModel, SubTabStorageEventPresenter.ViewDef, SubTabStorageEventPresenter.ProxyDef> {
@@ -35,26 +35,22 @@ public class SubTabStorageEventPresenter extends AbstractSubTabPresenter<Storage
     }
 
     @TabInfo(container = StorageSubTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().storageEventSubTabLabel(), 9,
-                ginjector.getSubTabStorageEventModelProvider(), Align.RIGHT);
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            SearchableDetailModelProvider<AuditLog, StorageListModel, StorageEventListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.storageEventSubTabLabel(), 9, modelProvider, Align.RIGHT);
     }
 
     @Inject
     public SubTabStorageEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
             SearchableDetailModelProvider<AuditLog, StorageListModel, StorageEventListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, StorageSubTabPanelPresenter.TYPE_SetTabContent, this);
+        super(eventBus, view, proxy, placeManager, modelProvider,
+                StorageSubTabPanelPresenter.TYPE_SetTabContent);
     }
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.storageMainTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.storageMainTabPlace);
     }
 
     @ProxyEvent

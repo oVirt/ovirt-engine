@@ -3,10 +3,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter;
@@ -25,7 +26,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class MainTabTemplatePresenter extends AbstractMainTabWithDetailsPresenter<VmTemplate, TemplateListModel, MainTabTemplatePresenter.ViewDef, MainTabTemplatePresenter.ProxyDef> {
 
     @GenEvent
-    public static class TemplateSelectionChange {
+    public class TemplateSelectionChange {
 
         List<VmTemplate> selectedItems;
 
@@ -40,9 +41,9 @@ public class MainTabTemplatePresenter extends AbstractMainTabWithDetailsPresente
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().templateMainTabLabel(), 8,
-                ginjector.getMainTabTemplateModelProvider());
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            MainModelProvider<VmTemplate, TemplateListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.templateMainTabLabel(), 8, modelProvider);
     }
 
     @Inject
@@ -58,6 +59,6 @@ public class MainTabTemplatePresenter extends AbstractMainTabWithDetailsPresente
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.templateMainTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.templateMainTabPlace);
     }
 }

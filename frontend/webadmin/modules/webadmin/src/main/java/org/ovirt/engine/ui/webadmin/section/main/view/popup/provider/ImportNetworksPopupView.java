@@ -100,13 +100,13 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
 
     @SuppressWarnings("unchecked")
     Iterable<ExternalNetwork> getAllImportedNetworks() {
-        ListModel tableModel = importedNetworks.flush();
+        ListModel tableModel = importedNetworks.asEditor().flush();
         return tableModel != null && tableModel.getItems() != null ? tableModel.getItems()
                 : new ArrayList<ExternalNetwork>();
     }
 
     public void refreshImportedNetworks() {
-        importedNetworks.edit(importedNetworks.flush());
+        importedNetworks.asEditor().edit(importedNetworks.asEditor().flush());
     }
 
     void initEntityModelCellTables(final ApplicationConstants constants, final ApplicationTemplates templates, final ApplicationResources resources) {
@@ -140,7 +140,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
                 return ((ExternalNetwork) network).getDataCenters();
             }
         };
-        importedNetworks.addColumn(dcColumn, constants.dcNetworkHeader()); //$NON-NLS-1$
+        importedNetworks.addColumn(dcColumn, constants.dcNetworkHeader());
 
         CheckboxHeader publicAllHeader =
                 new CheckboxHeader(templates.textForCheckBoxHeader(constants.publicNetwork())) {

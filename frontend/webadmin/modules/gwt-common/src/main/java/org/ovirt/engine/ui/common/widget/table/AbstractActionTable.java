@@ -124,7 +124,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             }
 
             @Override
-            protected int getKeyboardSelectedRow() {
+            public int getKeyboardSelectedRow() {
                 if (selectionModel.getLastSelectedRow() == -1) {
                     return super.getKeyboardSelectedRow();
                 }

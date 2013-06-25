@@ -10,28 +10,30 @@ import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.ApplicationResourcesWithLookup;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.auth.CurrentUserRole;
+import org.ovirt.engine.ui.userportal.auth.LoggedInExtendedPlaceGatekeeper;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.place.UserPortalPlaceManager;
 import org.ovirt.engine.ui.userportal.section.DefaultMainSectionExtendedPlace;
 import org.ovirt.engine.ui.userportal.system.ApplicationInit;
 
 import com.google.inject.Singleton;
-import com.gwtplatform.mvp.client.proxy.PlaceManager;
 
 /**
  * GIN module containing UserPortal infrastructure and configuration bindings.
  */
 public class SystemModule extends BaseSystemModule {
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void configure() {
+        requestStaticInjection(ClientGinjectorProvider.class);
         bindInfrastructure();
         bindConfiguration();
     }
 
     void bindInfrastructure() {
-        bindCommonInfrastructure();
-        bind(PlaceManager.class).to(UserPortalPlaceManager.class).in(Singleton.class);
+        bindCommonInfrastructure(UserPortalPlaceManager.class);
+        bind(LoggedInExtendedPlaceGatekeeper.class).in(Singleton.class);
         bind(ApplicationInit.class).asEagerSingleton();
         bind(CurrentUserRole.class).in(Singleton.class);
     }

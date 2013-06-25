@@ -1,7 +1,8 @@
 package org.ovirt.engine.ui.userportal.widget;
 
-import com.google.gwt.safehtml.shared.SafeHtml;
 import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
+
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 public class QuotaCPUProgressBar extends QuotaProgressBar {
 

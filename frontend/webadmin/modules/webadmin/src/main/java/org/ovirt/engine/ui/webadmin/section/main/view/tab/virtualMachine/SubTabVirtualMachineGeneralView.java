@@ -52,7 +52,7 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
         this.form = new VmGeneralModelForm(modelProvider, constants);
 
         // Inject a reference to the resources:
-        resources = ClientGinjectorProvider.instance().getApplicationResources();
+        resources = ClientGinjectorProvider.getApplicationResources();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         clearAlerts();

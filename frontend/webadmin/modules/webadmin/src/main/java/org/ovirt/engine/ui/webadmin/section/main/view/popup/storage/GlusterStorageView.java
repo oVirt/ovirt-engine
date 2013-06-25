@@ -75,7 +75,7 @@ public class GlusterStorageView extends AbstractStorageView<GlusterStorageModel>
 
     public GlusterStorageView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(ClientGinjectorProvider.instance().getApplicationConstants());
+        localize(ClientGinjectorProvider.getApplicationConstants());
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
         Driver.driver.initialize(this);

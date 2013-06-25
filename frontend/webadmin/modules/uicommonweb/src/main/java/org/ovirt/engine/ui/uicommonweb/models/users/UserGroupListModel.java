@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class UserGroupListModel extends SearchableListModel

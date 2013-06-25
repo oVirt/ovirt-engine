@@ -101,7 +101,7 @@ public class ActionColumn<T> extends IdentityColumn<T> {
      */
     private static class FloatingActionCell<C> extends ActionCell<C> {
         private final ActionCellDelegate<C> delegate;
-        private final ApplicationTemplates templates = ClientGinjectorProvider.instance().getApplicationTemplates();
+        private final ApplicationTemplates templates = ClientGinjectorProvider.getApplicationTemplates();
 
         public FloatingActionCell(ActionCellDelegate<C> delegate) {
             super("", delegate); //$NON-NLS-1$

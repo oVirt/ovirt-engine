@@ -1,9 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class CustomPropertyValidation implements IValidation

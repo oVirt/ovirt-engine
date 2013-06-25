@@ -12,11 +12,11 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class SubTabClusterHostView extends AbstractSubTabTableView<VDSGroup, VDS, ClusterListModel, ClusterHostListModel>
         implements SubTabClusterHostPresenter.ViewDef {

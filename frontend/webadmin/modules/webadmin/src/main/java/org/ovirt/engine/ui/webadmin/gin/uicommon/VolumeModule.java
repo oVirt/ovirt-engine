@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
@@ -22,7 +23,6 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.Replace
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -42,10 +43,11 @@ public class VolumeModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<GlusterVolumeEntity, VolumeListModel> getVolumeListProvider(ClientGinjector ginjector,
+    public MainModelProvider<GlusterVolumeEntity, VolumeListModel> getVolumeListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VolumePopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new MainTabModelProvider<GlusterVolumeEntity, VolumeListModel>(ginjector, VolumeListModel.class) {
+        return new MainTabModelProvider<GlusterVolumeEntity, VolumeListModel>(eventBus, defaultConfirmPopupProvider, VolumeListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -71,20 +73,24 @@ public class VolumeModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailModelProvider<VolumeListModel, VolumeGeneralModel> getVolumeGeneralProvider(ClientGinjector ginjector) {
-        return new DetailTabModelProvider<VolumeListModel, VolumeGeneralModel>(ginjector,
+    public DetailModelProvider<VolumeListModel, VolumeGeneralModel> getVolumeGeneralProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new DetailTabModelProvider<VolumeListModel, VolumeGeneralModel>(
+                eventBus, defaultConfirmPopupProvider,
                 VolumeListModel.class,
                 VolumeGeneralModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> getVolumeBrickListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> getVolumeBrickListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<AddBrickPopupPresenterWidget> addBrickPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<ReplaceBrickPopupPresenterWidget> replaceBrickPopupProvider,
             final Provider<BrickAdvancedDetailsPopupPresenterWidget> brickDetailsPopupProvider) {
-        return new SearchableDetailTabModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 VolumeListModel.class,
                 VolumeBrickListModel.class) {
             @Override
@@ -117,10 +123,12 @@ public class VolumeModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> getVolumeParameterListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> getVolumeParameterListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VolumeParameterPopupPresenterWidget> addParameterPopupProvider,
             final Provider<VolumeParameterPopupPresenterWidget> editParameterPopupProvider) {
-        return new SearchableDetailTabModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 VolumeListModel.class,
                 VolumeParameterListModel.class) {
             @Override
@@ -140,10 +148,12 @@ public class VolumeModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, VolumeListModel, PermissionListModel> getVolumePermissionListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<permissions, VolumeListModel, PermissionListModel> getVolumePermissionListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, VolumeListModel, PermissionListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<permissions, VolumeListModel, PermissionListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 VolumeListModel.class,
                 PermissionListModel.class) {
             @Override
@@ -170,9 +180,11 @@ public class VolumeModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> getVolumeEventListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> getVolumeEventListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<EventPopupPresenterWidget> eventPopupProvider) {
-        return new SearchableDetailTabModelProvider<AuditLog, VolumeListModel, VolumeEventListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<AuditLog, VolumeListModel, VolumeEventListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 VolumeListModel.class,
                 VolumeEventListModel.class) {
             @Override

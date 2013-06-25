@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
@@ -24,12 +25,12 @@ import org.ovirt.engine.ui.uicommonweb.models.users.UserGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserPermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.UserQuotaListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
@@ -41,11 +42,12 @@ public class UserModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<DbUser, UserListModel> getUserListProvider(ClientGinjector ginjector,
+    public MainModelProvider<DbUser, UserListModel> getUserListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<AssignTagsPopupPresenterWidget> assignTagsPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new MainTabModelProvider<DbUser, UserListModel>(ginjector, UserListModel.class) {
+        return new MainTabModelProvider<DbUser, UserListModel>(eventBus, defaultConfirmPopupProvider, UserListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UserListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -76,8 +78,10 @@ public class UserModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public DetailModelProvider<UserListModel, UserGeneralModel> getUserGeneralProvider(ClientGinjector ginjector) {
-        return new DetailTabModelProvider<UserListModel, UserGeneralModel>(ginjector,
+    public DetailModelProvider<UserListModel, UserGeneralModel> getUserGeneralProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new DetailTabModelProvider<UserListModel, UserGeneralModel>(
+                eventBus, defaultConfirmPopupProvider,
                 UserListModel.class,
                 UserGeneralModel.class);
     }
@@ -86,9 +90,11 @@ public class UserModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> getUserEventNotifierListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> getUserEventNotifierListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ManageEventsPopupPresenterWidget> manageEventsPopupProvider) {
-        return new SearchableDetailTabModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 UserListModel.class,
                 UserEventNotifierListModel.class) {
             @Override
@@ -105,10 +111,12 @@ public class UserModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, UserListModel, UserPermissionListModel> getPermissionListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<permissions, UserListModel, UserPermissionListModel> getPermissionListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, UserListModel, UserPermissionListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<permissions, UserListModel, UserPermissionListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 UserListModel.class,
                 UserPermissionListModel.class) {
             @Override
@@ -125,17 +133,21 @@ public class UserModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Quota, UserListModel, UserQuotaListModel> getUserQuotaListProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<Quota, UserListModel, UserQuotaListModel>(ginjector,
+    public SearchableDetailModelProvider<Quota, UserListModel, UserQuotaListModel> getUserQuotaListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<Quota, UserListModel, UserQuotaListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 UserListModel.class,
                 UserQuotaListModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AuditLog, UserListModel, UserEventListModel> getUserEventListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<AuditLog, UserListModel, UserEventListModel> getUserEventListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<EventPopupPresenterWidget> eventPopupProvider) {
-        return new SearchableDetailTabModelProvider<AuditLog, UserListModel, UserEventListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<AuditLog, UserListModel, UserEventListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 UserListModel.class,
                 UserEventListModel.class) {
             @Override
@@ -153,8 +165,10 @@ public class UserModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<UserGroup, UserListModel, UserGroupListModel> getUserGroupListProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<UserGroup, UserListModel, UserGroupListModel>(ginjector,
+    public SearchableDetailModelProvider<UserGroup, UserListModel, UserGroupListModel> getUserGroupListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<UserGroup, UserListModel, UserGroupListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 UserListModel.class,
                 UserGroupListModel.class);
     }

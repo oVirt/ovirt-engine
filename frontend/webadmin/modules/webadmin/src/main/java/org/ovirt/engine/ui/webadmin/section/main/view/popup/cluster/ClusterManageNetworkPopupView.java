@@ -49,12 +49,12 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
     @SuppressWarnings("unchecked")
     Iterable<EntityModel> getNetworksTableItems() {
-        ListModel tableModel = networks.flush();
+        ListModel tableModel = networks.asEditor().flush();
         return tableModel != null ? tableModel.getItems() : new ArrayList<EntityModel>();
     }
 
     void refreshNetworksTable() {
-        networks.edit(networks.flush());
+        networks.asEditor().edit(networks.asEditor().flush());
     }
 
     void initEntityModelCellTable(final ApplicationConstants constants, final ApplicationTemplates templates) {
@@ -208,7 +208,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
             public void update(int index, EntityModel model, Boolean value) {
                 ClusterNetworkModel clusterNetworkManageModel = (ClusterNetworkModel) model;
 
-                networks.flush().setDisplayNetwork(clusterNetworkManageModel, value);
+                networks.asEditor().flush().setDisplayNetwork(clusterNetworkManageModel, value);
                 refreshNetworksTable();
             }
         }) {
@@ -229,7 +229,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
             public void update(int index, EntityModel model, Boolean value) {
                 ClusterNetworkModel clusterNetworkManageModel = (ClusterNetworkModel) model;
 
-                networks.flush().setMigrationNetwork(clusterNetworkManageModel, value);
+                networks.asEditor().flush().setMigrationNetwork(clusterNetworkManageModel, value);
                 refreshNetworksTable();
             }
         }) {
@@ -251,12 +251,12 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
     @Override
     public void edit(ClusterNetworkManageModel model) {
-        networks.edit(model);
+        networks.asEditor().edit(model);
     }
 
     @Override
     public ClusterNetworkManageModel flush() {
-        return networks.flush();
+        return networks.asEditor().flush();
     }
 
     private void changeIsAttached(ClusterNetworkModel clusterNetworkManageModel, Boolean value) {

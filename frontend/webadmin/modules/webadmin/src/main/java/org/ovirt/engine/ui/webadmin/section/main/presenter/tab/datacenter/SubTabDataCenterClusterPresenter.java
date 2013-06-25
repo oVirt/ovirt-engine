@@ -1,13 +1,14 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter;
 
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DataCenterSelectionChangeEvent;
 
@@ -20,7 +21,6 @@ import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.RevealContentEvent;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabDataCenterClusterPresenter extends AbstractSubTabPresenter<StoragePool, DataCenterListModel, DataCenterClusterListModel, SubTabDataCenterClusterPresenter.ViewDef, SubTabDataCenterClusterPresenter.ProxyDef> {
@@ -34,26 +34,22 @@ public class SubTabDataCenterClusterPresenter extends AbstractSubTabPresenter<St
     }
 
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().dataCenterClusterSubTabLabel(), 3,
-                ginjector.getSubTabDataCenterClusterModelProvider());
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            SearchableDetailModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.dataCenterClusterSubTabLabel(), 3, modelProvider);
     }
 
     @Inject
     public SubTabDataCenterClusterPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
             SearchableDetailModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel> modelProvider) {
-        super(eventBus, view, proxy, placeManager, modelProvider);
-    }
-
-    @Override
-    protected void revealInParent() {
-        RevealContentEvent.fire(this, DataCenterSubTabPanelPresenter.TYPE_SetTabContent, this);
+        super(eventBus, view, proxy, placeManager, modelProvider,
+                DataCenterSubTabPanelPresenter.TYPE_SetTabContent);
     }
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.dataCenterMainTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.dataCenterMainTabPlace);
     }
 
     @ProxyEvent

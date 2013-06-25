@@ -79,7 +79,7 @@ public class DetachGlusterHostsPopupView extends AbstractModelBoundPopupView<Det
 
     @Override
     public void edit(DetachGlusterHostsModel object) {
-        hostsTable.edit(object.getHosts());
+        hostsTable.asEditor().edit(object.getHosts());
         driver.edit(object);
     }
 

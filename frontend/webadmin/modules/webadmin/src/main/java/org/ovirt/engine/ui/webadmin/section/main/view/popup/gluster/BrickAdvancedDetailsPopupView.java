@@ -348,8 +348,8 @@ public class BrickAdvancedDetailsPopupView extends AbstractModelBoundPopupView<B
     @Override
     public void edit(BrickAdvancedDetailsModel object) {
         driver.edit(object);
-        clientsTable.edit(object.getClients());
-        memoryPoolsTable.edit(object.getMemoryPools());
+        clientsTable.asEditor().edit(object.getClients());
+        memoryPoolsTable.asEditor().edit(object.getMemoryPools());
     }
 
     @Override

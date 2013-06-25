@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common.presenter;
 
-import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.DynamicTabData;
 
@@ -10,10 +9,12 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.inject.Provider;
 import com.gwtplatform.common.client.StandardProvider;
+import com.gwtplatform.mvp.client.ChangeTabHandler;
 import com.gwtplatform.mvp.client.RequestTabsHandler;
+import com.gwtplatform.mvp.client.proxy.Gatekeeper;
+import com.gwtplatform.mvp.client.proxy.NonLeafTabContentProxyImpl;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceWithGatekeeper;
-import com.gwtplatform.mvp.client.proxy.TabContentProxyImpl;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlaceImpl;
 
 /**
@@ -27,29 +28,35 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlaceImpl;
  */
 public abstract class DynamicTabProxy<T extends DynamicTabPresenter<?, ?>> extends TabContentProxyPlaceImpl<T> implements Provider<T> {
 
-    public static class WrappedProxy<T extends DynamicTabPresenter<?, ?>> extends TabContentProxyImpl<T> {
+    public static class WrappedProxy<T extends DynamicTabPresenter<?, ?>> extends NonLeafTabContentProxyImpl<T> {
 
         public WrappedProxy(PlaceManager placeManager, EventBus eventBus,
-                Provider<T> presenterProvider, Type<RequestTabsHandler> requestTabsEventType,
+                Provider<T> presenterProvider,
+                Type<RequestTabsHandler> requestTabsEventType,
+                Type<ChangeTabHandler> changeTabEventType,
                 String label, float priority, String historyToken, Align align) {
             bind(placeManager, eventBus);
-            this.requestTabsEventType = requestTabsEventType;
             this.tabData = new DynamicTabData(label, priority, historyToken, align);
             this.targetHistoryToken = historyToken;
-            addRequestTabsHandler();
+            this.requestTabsEventType = requestTabsEventType;
+            this.changeTabEventType = changeTabEventType;
             this.presenter = new StandardProvider<T>(presenterProvider);
+            addRequestTabsHandler();
         }
 
     }
 
     private T presenter;
 
-    public DynamicTabProxy(BaseClientGinjector ginjector, Type<RequestTabsHandler> requestTabsEventType,
+    public DynamicTabProxy(PlaceManager placeManager, EventBus eventBus,
+            Gatekeeper gatekeeper,
+            Type<RequestTabsHandler> requestTabsEventType,
+            Type<ChangeTabHandler> changeTabEventType,
             String label, float priority, String historyToken, Align align) {
-        bind(ginjector.getPlaceManager(), ginjector.getEventBus());
-        this.proxy = new WrappedProxy<T>(ginjector.getPlaceManager(), ginjector.getEventBus(),
-                this, requestTabsEventType, label, priority, historyToken, align);
-        this.place = new PlaceWithGatekeeper(historyToken, ginjector.getDefaultGatekeeper());
+        bind(placeManager, eventBus);
+        setProxy(new WrappedProxy<T>(placeManager, eventBus, this,
+                requestTabsEventType, changeTabEventType, label, priority, historyToken, align));
+        setPlace(new PlaceWithGatekeeper(historyToken, gatekeeper));
 
         // Create and bind presenter eagerly (don't wait for reveal request)
         Scheduler.get().scheduleDeferred(new ScheduledCommand() {
@@ -63,7 +70,7 @@ public abstract class DynamicTabProxy<T extends DynamicTabPresenter<?, ?>> exten
     @Override
     public void manualRevealFailed() {
         super.manualRevealFailed();
-        placeManager.revealDefaultPlace();
+        getPlaceManager().revealDefaultPlace();
     }
 
     @Override

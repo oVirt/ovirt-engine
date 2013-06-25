@@ -60,11 +60,11 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     EntityModelLabelEditor hostVersionEditor;
 
     @UiField(provided = true)
-    @Path(value = "oVirtISO.selectedItem")
+    @Path(value = "OVirtISO.selectedItem")
     ListModelListBoxEditor<Object> isoEditor;
 
     @UiField
-    @Path(value = "OverrideIpTables.entity")
+    @Path(value = "overrideIpTables.entity")
     @WithElementId("overrideIpTables")
     EntityModelCheckBoxEditor overrideIpTablesEditor;
 

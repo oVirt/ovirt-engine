@@ -34,6 +34,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -185,7 +186,7 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
     }
 
     @Override
-    public void setInSlot(Object slot, Widget content) {
+    public void setInSlot(Object slot, IsWidget content) {
         if (slot == MainSectionPresenter.TYPE_SetHeader) {
             setPanelContent(headerPanel, content);
         } else if (slot == MainSectionPresenter.TYPE_SetMainContent) {

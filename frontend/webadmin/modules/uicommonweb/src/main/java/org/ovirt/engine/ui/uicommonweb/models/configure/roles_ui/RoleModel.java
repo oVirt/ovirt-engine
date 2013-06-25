@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -10,8 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
-import java.util.ArrayList;
 
 @SuppressWarnings("unused")
 public class RoleModel extends Model

@@ -5,15 +5,17 @@ import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.ui.common.gin.BaseClientGinjector;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.view.client.AsyncDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ProvidesKey;
+import com.google.inject.Provider;
 
 /**
  * A {@link SearchableModelProvider} implementation that provides data to {@link HasData} widgets.
@@ -27,12 +29,15 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
 
     private final AsyncDataProvider<T> dataProvider;
 
-    public DataBoundTabModelProvider(BaseClientGinjector ginjector) {
-        this(ginjector, null);
+    public DataBoundTabModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        this(eventBus, defaultConfirmPopupProvider, null);
     }
 
-    public DataBoundTabModelProvider(BaseClientGinjector ginjector, ProvidesKey<T> keyProvider) {
-        super(ginjector);
+    public DataBoundTabModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            ProvidesKey<T> keyProvider) {
+        super(eventBus, defaultConfirmPopupProvider);
 
         this.dataProvider = new AsyncDataProvider<T>(keyProvider) {
             @Override
@@ -72,6 +77,7 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
         getModel().setSelectedItems(items);
     }
 
+    @Override
     public void onManualRefresh() {
         //Do nothing by default.
     }

@@ -39,7 +39,7 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     WidgetStyle style;
 
     @UiField
-    @Path(value = "GetLUNsFailure")
+    @Path(value = "getLUNsFailure")
     Label message;
 
     @UiField

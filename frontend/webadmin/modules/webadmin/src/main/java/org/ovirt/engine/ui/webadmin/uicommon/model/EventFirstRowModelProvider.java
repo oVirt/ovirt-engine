@@ -4,15 +4,18 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class EventFirstRowModelProvider extends EventModelProvider {
 
     @Inject
-    public EventFirstRowModelProvider(ClientGinjector ginjector) {
-        super(ginjector);
+    public EventFirstRowModelProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        super(eventBus, defaultConfirmPopupProvider);
     }
 
     @Override

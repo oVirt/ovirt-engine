@@ -109,12 +109,12 @@ public class MoveHostPopupView extends AbstractModelBoundPopupView<MoveHost> imp
             table.setSelectionModel(new SingleSelectionModel<EntityModel>());
 
         driver.edit(object);
-        table.edit(object);
+        table.asEditor().edit(object);
     }
 
     @Override
     public MoveHost flush() {
-        return table.flush();
+        return table.asEditor().flush();
     }
 
 }

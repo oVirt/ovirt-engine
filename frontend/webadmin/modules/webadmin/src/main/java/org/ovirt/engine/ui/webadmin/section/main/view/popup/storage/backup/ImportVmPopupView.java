@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.IVdcQueryableCellTable;
+import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -40,7 +40,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CustomSelectionCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.IsProblematicImportVmColumn;
@@ -102,15 +101,15 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     Label message;
 
     @Ignore
-    protected IVdcQueryableCellTable<Object, ImportVmModel> table;
+    protected ListModelObjectCellTable<Object, ImportVmModel> table;
 
     @Ignore
-    private IVdcQueryableCellTable<DiskImage, SearchableListModel> diskTable;
+    private ListModelObjectCellTable<DiskImage, SearchableListModel> diskTable;
 
     @Ignore
-    private IVdcQueryableCellTable<VmNetworkInterface, SearchableListModel> nicTable;
+    private ListModelObjectCellTable<VmNetworkInterface, SearchableListModel> nicTable;
 
-    private IVdcQueryableCellTable<String, VmAppListModel> appTable;
+    private ListModelObjectCellTable<String, VmAppListModel> appTable;
 
     @Ignore
     protected TabLayoutPanel subTabLayoutPanel = null;
@@ -137,17 +136,12 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
     protected final ApplicationConstants constants;
 
-    private final ApplicationResources resources;
-
     @Inject
-    public ImportVmPopupView(ClientGinjector ginjector,
-            EventBus eventBus,
+    public ImportVmPopupView(EventBus eventBus,
             ApplicationResources resources,
             ApplicationConstants constants) {
         super(eventBus, resources);
-
         this.constants = constants;
-        this.resources = resources;
 
         initListBoxEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -213,7 +207,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     }
 
     protected void initAppTable() {
-        appTable = new IVdcQueryableCellTable<String, VmAppListModel>();
+        appTable = new ListModelObjectCellTable<String, VmAppListModel>();
 
         appTable.addColumn(new TextColumnWithTooltip<String>() {
             @Override
@@ -230,7 +224,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     }
 
     protected void initMainTable() {
-        this.table = new IVdcQueryableCellTable<Object, ImportVmModel>();
+        this.table = new ListModelObjectCellTable<Object, ImportVmModel>();
 
         CheckboxColumn<Object> collapseSnapshotsColumn =
                 new CheckboxColumn<Object>(new FieldUpdater<Object, Boolean>() {
@@ -239,7 +233,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                         ((ImportVmData) model).getCollapseSnapshots().setEntity(value);
                         customSelectionCellFormatType.setEnabledWithToolTip(value,
                                 constants.importAllocationModifiedCollapse());
-                        diskTable.edit(importModel.getImportDiskListModel());
+                        diskTable.asEditor().edit(importModel.getImportDiskListModel());
                     }
                 }) {
             @Override
@@ -262,7 +256,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             @Override
             public void update(int index, Object model, Boolean value) {
                 ((ImportVmData) model).getClone().setEntity(value);
-                table.edit(importModel);
+                table.asEditor().edit(importModel);
             }
         }) {
             @Override
@@ -357,7 +351,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     }
 
     private void initNicsTable() {
-        nicTable = new IVdcQueryableCellTable<VmNetworkInterface, SearchableListModel>();
+        nicTable = new ListModelObjectCellTable<VmNetworkInterface, SearchableListModel>();
         TextColumnWithTooltip<VmNetworkInterface> nameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
             @Override
             public String getValue(VmNetworkInterface object) {
@@ -394,7 +388,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     }
 
     private void initDiskTable() {
-        diskTable = new IVdcQueryableCellTable<DiskImage, SearchableListModel>();
+        diskTable = new ListModelObjectCellTable<DiskImage, SearchableListModel>();
         TextColumnWithTooltip<DiskImage> nameColumn = new TextColumnWithTooltip<DiskImage>() {
             @Override
             public String getValue(DiskImage object) {
@@ -515,7 +509,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             public void update(int index, DiskImage disk, String value) {
                 String storageDomainName = value.substring(0, value.lastIndexOf(" (")); //$NON-NLS-1$
                 importModel.getDiskImportData(disk.getId()).setSelectedStorageDomainString(storageDomainName);
-                diskTable.edit(importModel.getImportDiskListModel());
+                diskTable.asEditor().edit(importModel.getImportDiskListModel());
             }
         });
 
@@ -599,13 +593,13 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     @Override
     public void edit(final ImportVmModel object) {
         this.importModel = object;
-        table.edit(object);
+        table.asEditor().edit(object);
 
         if (object.getDisksToConvert() != null) {
             table.addColumnAt(new IsProblematicImportVmColumn(object.getDisksToConvert()), "", "30px", 0); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        table.edit(object);
+        table.asEditor().edit(object);
 
         addStorageDomainsColumn();
 
@@ -616,7 +610,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
                         && ((PropertyChangedEventArgs) args).PropertyName.equals(object.ON_DISK_LOAD)) {
                     addStorageQuotaColumn();
                     table.redraw();
-                    diskTable.edit(object.getImportDiskListModel());
+                    diskTable.asEditor().edit(object.getImportDiskListModel());
                 } else if (args instanceof PropertyChangedEventArgs
                         && ((PropertyChangedEventArgs) args).PropertyName.equals("Message")) { ////$NON-NLS-1$
                     message.setText(object.getMessage());
@@ -647,10 +641,10 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         });
 
         initSubTabLayoutPanel();
-        nicTable.edit((SearchableListModel) object.getDetailModels().get(1));
-        diskTable.edit((SearchableListModel) object.getDetailModels().get(2));
+        nicTable.asEditor().edit((SearchableListModel) object.getDetailModels().get(1));
+        diskTable.asEditor().edit((SearchableListModel) object.getDetailModels().get(2));
         if (object.getDetailModels().size() > 3) {
-            appTable.edit((VmAppListModel) object.getDetailModels().get(3));
+            appTable.asEditor().edit((VmAppListModel) object.getDetailModels().get(3));
         }
 
         driver.edit(object);

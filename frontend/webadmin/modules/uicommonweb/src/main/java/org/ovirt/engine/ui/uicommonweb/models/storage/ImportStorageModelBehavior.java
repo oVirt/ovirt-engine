@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;

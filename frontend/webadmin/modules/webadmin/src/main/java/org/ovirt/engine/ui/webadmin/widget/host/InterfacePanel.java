@@ -88,7 +88,7 @@ class InterfaceElementPanel extends TogglePanel {
                 if (hostInterface.getSpeed() != null) {
                     setText(String.valueOf(hostInterface.getSpeed()));
                 } else {
-                    setText(ClientGinjectorProvider.instance().getApplicationConstants().unAvailablePropertyLabel());
+                    setText(ClientGinjectorProvider.getApplicationConstants().unAvailablePropertyLabel());
                 }
             }
         });

@@ -9,10 +9,10 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceToGuestWithNonRespAgentModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VncInfoPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.uicommon.model.AbstractUserPortalListProvider;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
@@ -23,12 +23,13 @@ public class UserPortalBasicListProvider extends AbstractUserPortalListProvider<
     private final Provider<DefaultConfirmationPopupPresenterWidget> spiceToGuestWithNonRespAgentPopupProvider;
 
     @Inject
-    public UserPortalBasicListProvider(ClientGinjector ginjector,
+    public UserPortalBasicListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            CurrentUser user,
             Provider<VncInfoPopupPresenterWidget> vncInfoPopupProvider,
             Provider<ConsolePopupPresenterWidget> consolePopupProvider,
-            Provider<DefaultConfirmationPopupPresenterWidget> spiceToGuestWithNonRespAgentPopupProvider,
-            CurrentUser user) {
-        super(ginjector, user);
+            Provider<DefaultConfirmationPopupPresenterWidget> spiceToGuestWithNonRespAgentPopupProvider) {
+        super(eventBus, defaultConfirmPopupProvider, user);
         this.vncInfoPopupProvider = vncInfoPopupProvider;
         this.consolePopupProvider = consolePopupProvider;
         this.spiceToGuestWithNonRespAgentPopupProvider = spiceToGuestWithNonRespAgentPopupProvider;

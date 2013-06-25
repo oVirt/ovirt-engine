@@ -65,6 +65,6 @@ public class SubTabTemplateDiskView extends AbstractSubTabTreeView<DisksTree, Vm
 
     @Override
     protected SubTabTreeActionPanel createActionPanel(SearchableDetailModelProvider modelProvider) {
-        return new SubTabTreeActionPanel<DiskModel>(modelProvider, ClientGinjectorProvider.instance().getEventBus());
+        return new SubTabTreeActionPanel<DiskModel>(modelProvider, ClientGinjectorProvider.getEventBus());
     }
 }

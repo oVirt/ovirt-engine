@@ -2,14 +2,15 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Quota;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
@@ -27,7 +28,6 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkListM
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkQoSListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterQuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListModel;
-import org.ovirt.engine.ui.webadmin.gin.ClientGinjector;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.NetworkQoSPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
@@ -40,12 +40,13 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewD
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.RecoveryStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
 
+import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
 
 public class DataCenterModule extends AbstractGinModule {
 
@@ -53,14 +54,15 @@ public class DataCenterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<StoragePool, DataCenterListModel> getDataCenterListProvider(ClientGinjector ginjector,
+    public MainModelProvider<StoragePool, DataCenterListModel> getDataCenterListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<DataCenterPopupPresenterWidget> popupProvider,
             final Provider<GuidePopupPresenterWidget> guidePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<RecoveryStoragePopupPresenterWidget> recoveryStorageConfirmPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider,
             final Provider<DataCenterForceRemovePopupPresenterWidget> forceRemovePopupProvider) {
-        return new MainTabModelProvider<StoragePool, DataCenterListModel>(ginjector, DataCenterListModel.class) {
+        return new MainTabModelProvider<StoragePool, DataCenterListModel>(eventBus, defaultConfirmPopupProvider, DataCenterListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DataCenterListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -105,19 +107,23 @@ public class DataCenterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel> getDataCenterClusterListProvider(ClientGinjector ginjector) {
-        return new SearchableDetailTabModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel>(ginjector,
+    public SearchableDetailModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel> getDataCenterClusterListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<VDSGroup, DataCenterListModel, DataCenterClusterListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 DataCenterListModel.class,
                 DataCenterClusterListModel.class);
     }
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Network, DataCenterListModel, DataCenterNetworkListModel> getDataCenterNetworkListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<Network, DataCenterListModel, DataCenterNetworkListModel> getDataCenterNetworkListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<NewDataCenterNetworkPopupPresenterWidget> newNetworkPopupProvider,
             final Provider<EditDataCenterNetworkPopupPresenterWidget> editNetworkPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<Network, DataCenterListModel, DataCenterNetworkListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<Network, DataCenterListModel, DataCenterNetworkListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 DataCenterListModel.class,
                 DataCenterNetworkListModel.class) {
             @Override
@@ -147,11 +153,13 @@ public class DataCenterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<StorageDomain, DataCenterListModel, DataCenterStorageListModel> getDataCenterStorageListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<StorageDomain, DataCenterListModel, DataCenterStorageListModel> getDataCenterStorageListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<FindSingleStoragePopupPresenterWidget> singlePopupProvider,
             final Provider<FindMultiStoragePopupPresenterWidget> multiPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<StorageDomain, DataCenterListModel, DataCenterStorageListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<StorageDomain, DataCenterListModel, DataCenterStorageListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 DataCenterListModel.class,
                 DataCenterStorageListModel.class) {
             @Override
@@ -183,10 +191,12 @@ public class DataCenterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel> getDataCenterQuotaListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel> getDataCenterQuotaListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<QuotaPopupPresenterWidget> quotaPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 DataCenterListModel.class,
                 DataCenterQuotaListModel.class) {
             @Override
@@ -216,10 +226,12 @@ public class DataCenterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<NetworkQoS, DataCenterListModel, DataCenterNetworkQoSListModel> getDataCenterNetworkQoSListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<NetworkQoS, DataCenterListModel, DataCenterNetworkQoSListModel> getDataCenterNetworkQoSListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<NetworkQoSPopupPresenterWidget> networkQoSPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<NetworkQoS, DataCenterListModel, DataCenterNetworkQoSListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<NetworkQoS, DataCenterListModel, DataCenterNetworkQoSListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 DataCenterListModel.class,
                 DataCenterNetworkQoSListModel.class) {
             @Override
@@ -248,10 +260,12 @@ public class DataCenterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<permissions, DataCenterListModel, PermissionListModel> getPermissionListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<permissions, DataCenterListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<permissions, DataCenterListModel, PermissionListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<permissions, DataCenterListModel, PermissionListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 DataCenterListModel.class,
                 PermissionListModel.class) {
             @Override
@@ -278,9 +292,11 @@ public class DataCenterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<AuditLog, DataCenterListModel, DataCenterEventListModel> getDataCenterEventListProvider(ClientGinjector ginjector,
+    public SearchableDetailModelProvider<AuditLog, DataCenterListModel, DataCenterEventListModel> getDataCenterEventListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<EventPopupPresenterWidget> eventPopupProvider) {
-        return new SearchableDetailTabModelProvider<AuditLog, DataCenterListModel, DataCenterEventListModel>(ginjector,
+        return new SearchableDetailTabModelProvider<AuditLog, DataCenterListModel, DataCenterEventListModel>(
+                eventBus, defaultConfirmPopupProvider,
                 DataCenterListModel.class,
                 DataCenterEventListModel.class) {
             @Override

@@ -52,7 +52,7 @@ public class NewNetworkPopupView extends AbstractNetworkPopupView<NewNetworkMode
 
     @Override
     public void setNetworkClusterList(ListModel networkClusterList) {
-        clustersTable.edit(networkClusterList);
+        clustersTable.asEditor().edit(networkClusterList);
     }
 
 }

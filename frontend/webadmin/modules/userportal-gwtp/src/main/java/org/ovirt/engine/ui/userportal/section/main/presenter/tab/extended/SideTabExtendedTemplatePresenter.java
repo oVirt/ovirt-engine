@@ -3,8 +3,9 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractSideTabWithDetailsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
@@ -28,7 +29,7 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class SideTabExtendedTemplatePresenter extends AbstractSideTabWithDetailsPresenter<VmTemplate, UserPortalTemplateListModel, SideTabExtendedTemplatePresenter.ViewDef, SideTabExtendedTemplatePresenter.ProxyDef> {
 
     @GenEvent
-    public static class ExtendedTemplateSelectionChange {
+    public class ExtendedTemplateSelectionChange {
 
         List<VmTemplate> selectedItems;
 
@@ -43,8 +44,8 @@ public class SideTabExtendedTemplatePresenter extends AbstractSideTabWithDetails
     }
 
     @TabInfo(container = MainTabExtendedPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new TabDataBasic(ginjector.getApplicationConstants().extendedTemplateSideTabLabel(), 1);
+    static TabData getTabData(ApplicationConstants applicationConstants) {
+        return new TabDataBasic(applicationConstants.extendedTemplateSideTabLabel(), 1);
     }
 
     @ContentSlot
@@ -63,7 +64,7 @@ public class SideTabExtendedTemplatePresenter extends AbstractSideTabWithDetails
 
     @Override
     protected PlaceRequest getSideTabRequest() {
-        return new PlaceRequest(ApplicationPlaces.extendedTemplateSideTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.extendedTemplateSideTabPlace);
     }
 
 }

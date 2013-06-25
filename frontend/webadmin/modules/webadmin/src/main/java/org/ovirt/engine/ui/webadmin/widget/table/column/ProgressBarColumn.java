@@ -23,7 +23,7 @@ public abstract class ProgressBarColumn<T> extends SafeHtmlColumn<T> {
         // Choose color by progress
         String color = progress < 70 ? "#669966" : progress < 95 ? "#FF9900" : "#FF0000"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-        return ClientGinjectorProvider.instance().getApplicationTemplates().progressBar(progress, text, color);
+        return ClientGinjectorProvider.getApplicationTemplates().progressBar(progress, text, color);
     }
 
     /**

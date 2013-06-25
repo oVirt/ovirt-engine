@@ -160,7 +160,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
 
     @Override
     public void edit(MultipleHostsModel object) {
-        hostsTable.edit(object.getHosts());
+        hostsTable.asEditor().edit(object.getHosts());
         driver.edit(object);
         applyPasswordButton.setCommand(object.getApplyPasswordCommand());
     }

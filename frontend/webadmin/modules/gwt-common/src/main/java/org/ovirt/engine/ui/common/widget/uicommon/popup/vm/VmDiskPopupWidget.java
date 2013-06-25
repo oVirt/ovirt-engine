@@ -645,12 +645,12 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             if (isInternal) {
                 // Show and edit internal disk table
                 internalDiskTable.setVisible(true);
-                internalDiskTable.edit(disk.getInternalAttachableDisks());
+                internalDiskTable.asEditor().edit(disk.getInternalAttachableDisks());
             }
             else {
                 // Show and edit external disk table
                 externalDiskTable.setVisible(true);
-                externalDiskTable.edit(disk.getExternalAttachableDisks());
+                externalDiskTable.asEditor().edit(disk.getExternalAttachableDisks());
             }
         }
         else {

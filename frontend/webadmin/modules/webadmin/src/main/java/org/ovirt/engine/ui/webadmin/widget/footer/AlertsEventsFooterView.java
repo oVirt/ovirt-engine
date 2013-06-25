@@ -182,8 +182,8 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
 
     SimpleActionTable<AuditLog> createActionTable(SearchableTabModelProvider<AuditLog, ?> modelProvider) {
         return new SimpleActionTable<AuditLog>(modelProvider, getTableResources(),
-                ClientGinjectorProvider.instance().getEventBus(),
-                ClientGinjectorProvider.instance().getClientStorage());
+                ClientGinjectorProvider.getEventBus(),
+                ClientGinjectorProvider.getClientStorage());
     }
 
     AlertsEventsFooterResources getTableResources() {

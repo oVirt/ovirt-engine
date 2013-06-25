@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
-import org.ovirt.engine.ui.userportal.gin.ClientGinjector;
+import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmGeneralModelProvider;
 
@@ -32,11 +32,9 @@ public class SubTabExtendedVmGeneralPresenter
     }
 
     @TabInfo(container = ExtendedVmSubTabPanelPresenter.class)
-    static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(
-                ginjector.getApplicationConstants().extendedVirtualMachineGeneralSubTabLabel(),
-                1,
-                ginjector.getVmGeneralModelProvider());
+    static TabData getTabData(ApplicationConstants applicationConstants,
+            VmGeneralModelProvider modelProvider) {
+        return new ModelBoundTabData(applicationConstants.extendedVirtualMachineGeneralSubTabLabel(), 1, modelProvider);
     }
 
     @Inject

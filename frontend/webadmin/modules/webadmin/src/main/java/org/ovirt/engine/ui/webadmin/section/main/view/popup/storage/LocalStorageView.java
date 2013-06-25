@@ -46,7 +46,7 @@ public class LocalStorageView extends AbstractStorageView<LocalStorageModel> {
     @Inject
     public LocalStorageView() {
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        localize(ClientGinjectorProvider.instance().getApplicationConstants());
+        localize(ClientGinjectorProvider.getApplicationConstants());
         ViewIdHandler.idHandler.generateAndSetIds(this);
         addStyles();
         driver.initialize(this);
