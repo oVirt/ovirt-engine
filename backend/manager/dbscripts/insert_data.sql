@@ -17,6 +17,16 @@ BEGIN
 INSERT INTO schema_version(version,script,checksum,installed_by,ended_at,state,current)
   values ('03010000','upgrade/03_01_0000_set_version.sql','0','engine',now(),'INSTALLED',true);
 
+-- INSERT everyone TO ad_groups
+INSERT into ad_groups (id,name,status,domain,distinguishedname)
+ select getGlobalIds('everyone'),
+ 'Everyone',
+ 1,
+ '',
+ ''
+where not exists (
+ select id from ad_groups where id = getGlobalIds('everyone'));
+
 --INSERTING DATA INTO TABLE storage_pool
 
 INSERT INTO storage_pool (id,name,description,storage_pool_type,status,master_domain_version,compatibility_version) select v_storage_pool_id,'Default','The default Data Center',1,0,0,'3.2' where not exists (select * from storage_pool);
