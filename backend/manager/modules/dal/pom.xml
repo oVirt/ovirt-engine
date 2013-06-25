@@ -179,6 +179,7 @@
           <excludes>
             <exclude>**/*D??Test*.java</exclude>
             <exclude>**/DBConfigUtilsTest.java</exclude>
+            <exclude>**/BatchProcedureCallTest.java</exclude>
           </excludes>
         </configuration>
       </plugin>
