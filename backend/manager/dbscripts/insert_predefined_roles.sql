@@ -130,6 +130,8 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,70
 delete from roles_groups where role_id = v_user_id_1001;
 INSERT INTO roles(id,name,description,is_readonly,role_type) select v_user_id_1001,'UserRole','Standard User Role',true,2 where not exists (select id,name,description,is_readonly,role_type from roles where id=v_user_id_1001 and name='UserRole' and description='Standard User Role' and is_readonly=true and role_type=2);
 
+-- CONFIGURE_ENGINE
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_super_user_id_0001,800);
 --VM_BASIC_OPERATIONS
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_user_id_1001,4);
 --CHANGE_VM_CD
