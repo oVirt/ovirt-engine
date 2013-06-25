@@ -239,6 +239,18 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         privateConfigureLocalStorageCommand = value;
     }
 
+    private UICommand refreshCapabilitiesCommand;
+
+    public UICommand getRefreshCapabilitiesCommand()
+    {
+        return refreshCapabilitiesCommand;
+    }
+
+    private void setRefreshCapabilitiesCommand(UICommand value)
+    {
+        refreshCapabilitiesCommand = value;
+    }
+
     private HostEventListModel privateHostEventListModel;
 
     private HostEventListModel getHostEventListModel()
@@ -316,6 +328,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         setManualFenceCommand(new UICommand("ManualFence", this)); //$NON-NLS-1$
         setAssignTagsCommand(new UICommand("AssignTags", this)); //$NON-NLS-1$
         setConfigureLocalStorageCommand(new UICommand("ConfigureLocalStorage", this)); //$NON-NLS-1$
+        setRefreshCapabilitiesCommand(new UICommand("GetCapabilities", this)); //$NON-NLS-1$
 
         getConfigureLocalStorageCommand().setAvailableInModes(ApplicationMode.VirtOnly);
         updateActionAvailability();
@@ -1409,6 +1422,23 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         flow.run(new EnlistmentContext(this));
     }
 
+    private void refreshCapabilities() {
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        for (Object item : getSelectedItems())
+        {
+            VDS vds = (VDS) item;
+            list.add(new VdsActionParameters(vds.getId()));
+        }
+
+        Frontend.RunMultipleAction(VdcActionType.RefreshHostCapabilities, list,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendMultipleActionAsyncResult result) {
+
+                    }
+                }, null);
+    }
+
     @Override
     protected void initDetailModels()
     {
@@ -1574,6 +1604,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         getRemoveCommand().setIsAvailable(isAvailable);
 
         updateConfigureLocalStorageCommandAvailability();
+
+        getRefreshCapabilitiesCommand().setIsExecutionAllowed(items.size() > 0 && VdcActionUtils.CanExecute(items,
+                VDS.class,
+                VdcActionType.RefreshHostCapabilities));
     }
 
     private Boolean hasAdminSystemPermission = null;
@@ -1694,6 +1728,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         else if (command == getConfigureLocalStorageCommand())
         {
             configureLocalStorage();
+        }
+        else if (command == getRefreshCapabilitiesCommand())
+        {
+            refreshCapabilities();
         }
         else if (StringHelper.stringsEqual(command.getName(), "OnAssignTags")) //$NON-NLS-1$
         {

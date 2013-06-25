@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -13,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.NotImplementedException;
 
 public final class VdcActionUtils {
@@ -40,58 +40,62 @@ public final class VdcActionUtils {
         vdsMatrix.put(
                 VDSStatus.Error,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RemoveVds,
-                        VdcActionType.ClearNonResponsiveVdsVms, VdcActionType.ApproveVds)));
+                        VdcActionType.ClearNonResponsiveVdsVms, VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.Installing,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RemoveVds, VdcActionType.ActivateVds,
                         VdcActionType.ClearNonResponsiveVdsVms,
                         VdcActionType.ApproveVds, VdcActionType.MaintenanceVds, VdcActionType.StartVds,
-                        VdcActionType.StopVds)));
+                        VdcActionType.StopVds, VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.NonResponsive,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RemoveVds, VdcActionType.ActivateVds,
-                        VdcActionType.ApproveVds)));
+                        VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.PreparingForMaintenance,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RemoveVds, VdcActionType.MaintenanceVds,
                         VdcActionType.ClearNonResponsiveVdsVms,
 
-                        VdcActionType.ApproveVds)));
+                        VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.Reboot,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ActivateVds, VdcActionType.RemoveVds,
                         VdcActionType.ClearNonResponsiveVdsVms,
 
-                        VdcActionType.ApproveVds, VdcActionType.MaintenanceVds)));
+                        VdcActionType.ApproveVds, VdcActionType.MaintenanceVds, VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.Unassigned,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ActivateVds, VdcActionType
                         .RemoveVds, VdcActionType.MaintenanceVds,
-                        VdcActionType.ClearNonResponsiveVdsVms, VdcActionType.ApproveVds)));
+                        VdcActionType.ClearNonResponsiveVdsVms, VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.Initializing,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ActivateVds, VdcActionType.RemoveVds,
                         VdcActionType.ClearNonResponsiveVdsVms, VdcActionType.ApproveVds,
-                        VdcActionType.MaintenanceVds)));
+                        VdcActionType.MaintenanceVds, VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.NonOperational,
-                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RemoveVds, VdcActionType.ApproveVds)));
+                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RemoveVds,
+                        VdcActionType.ApproveVds,
+                        VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.PendingApproval,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.UpdateVds,
                         VdcActionType.ActivateVds, VdcActionType.MaintenanceVds,
-                        VdcActionType.AttachVdsToTag, VdcActionType.ClearNonResponsiveVdsVms)));
+                        VdcActionType.AttachVdsToTag,
+                        VdcActionType.ClearNonResponsiveVdsVms,
+                        VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.InstallFailed,
-                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ApproveVds)));
+                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.Connecting,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.MaintenanceVds, VdcActionType.RemoveVds,
-                        VdcActionType.ActivateVds, VdcActionType.ApproveVds)));
+                        VdcActionType.ActivateVds, VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.Down,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ActivateVds, VdcActionType
-                        .ApproveVds)));
+                        .ApproveVds, VdcActionType.RefreshHostCapabilities)));
         _matrix.put(VDS.class, vdsMatrix);
 
         HashMap<Enum<?>, HashSet<VdcActionType>> vmMatrix =
