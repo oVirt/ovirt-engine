@@ -13,6 +13,10 @@ BEGIN
    v_id_0009 := '00000000-0000-0000-0000-000000000009';
 
 
+-- INSERT DATA to schema_version
+INSERT INTO schema_version(version,script,checksum,installed_by,ended_at,state,current)
+  values ('03010000','upgrade/03_01_0000_set_version.sql','0','engine',now(),'INSTALLED',true);
+
 --INSERTING DATA INTO TABLE storage_pool
 
 INSERT INTO storage_pool (id,name,description,storage_pool_type,status,master_domain_version,compatibility_version) select v_storage_pool_id,'Default','The default Data Center',1,0,0,'3.2' where not exists (select * from storage_pool);

@@ -1143,6 +1143,23 @@ CREATE TABLE business_entity_snapshot
 )
 WITH OIDS;
 
+CREATE SEQUENCE schema_version_seq INCREMENT BY 1 START WITH 1;
+CREATE TABLE schema_version
+(
+    id INTEGER DEFAULT NEXTVAL('schema_version_seq') NOT NULL,
+    "version" varchar(10) NOT NULL,
+    script varchar(255) NOT NULL,
+    checksum varchar(128),
+    installed_by varchar(30) NOT NULL,
+    started_at timestamp  DEFAULT now(),
+    ended_at timestamp ,
+    state character varying(15) NOT NULL,
+    "current" boolean NOT NULL,
+    "comment" text NULL default '',
+    CONSTRAINT schema_version_primary_key PRIMARY KEY (id)
+) WITH OIDS;
+
+
 -- ----------------------------------------------------------------------
 -- Foreign key constraints
 -- ----------------------------------------------------------------------
