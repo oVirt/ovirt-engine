@@ -315,6 +315,7 @@ CREATE TABLE users
    status INTEGER NOT NULL,
    session_count INTEGER  NOT NULL default 0,
    last_admin_check_status BOOLEAN  NOT NULL default false,
+   group_ids, VARCHAR(2048),
    CONSTRAINT PK_users PRIMARY KEY(user_id)
 ) WITH OIDS;
 
