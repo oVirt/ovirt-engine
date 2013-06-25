@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
@@ -8,16 +11,24 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
+import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -30,6 +41,26 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class ClusterModel extends EntityModel
 {
+    private Map<Guid, PolicyUnit> policyUnitMap;
+    private ListModel clusterPolicy;
+
+    public ListModel getClusterPolicy() {
+        return clusterPolicy;
+    }
+
+    public void setClusterPolicy(ListModel clusterPolicy) {
+        this.clusterPolicy = clusterPolicy;
+    }
+
+    private KeyValueModel customPropertySheet;
+
+    public KeyValueModel getCustomPropertySheet() {
+        return customPropertySheet;
+    }
+
+    public void setCustomPropertySheet(KeyValueModel customPropertySheet) {
+        this.customPropertySheet = customPropertySheet;
+    }
 
     private int privateServerOverCommit;
 
@@ -815,6 +846,57 @@ public class ClusterModel extends EntityModel
 
         setIsGeneralTabValid(true);
         setIsResiliencePolicyTabAvailable(true);
+
+        setClusterPolicy(new ListModel());
+        setCustomPropertySheet(new KeyValueModel());
+        getClusterPolicy().getSelectedItemChangedEvent().addListener(this);
+        Frontend.RunQuery(VdcQueryType.GetAllPolicyUnits, new VdcQueryParametersBase(), new AsyncQuery(this,
+                new INewAsyncCallback() {
+
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        ClusterModel clusterModel = (ClusterModel) model;
+                        ArrayList<PolicyUnit> policyUnits =
+                                (ArrayList<PolicyUnit>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        policyUnitMap = new LinkedHashMap<Guid, PolicyUnit>();
+                        for (PolicyUnit policyUnit : policyUnits) {
+                            policyUnitMap.put(policyUnit.getId(), policyUnit);
+                        }
+                        Frontend.RunQuery(VdcQueryType.GetClusterPolicies,
+                                new VdcQueryParametersBase(),
+                                new AsyncQuery(model,
+                                        new INewAsyncCallback() {
+
+                                            @Override
+                                            public void onSuccess(Object model, Object returnValue) {
+                                                ClusterModel clusterModel = (ClusterModel) model;
+                                                ArrayList<ClusterPolicy> list =
+                                                        (ArrayList<ClusterPolicy>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                                clusterModel.getClusterPolicy().setItems(list);
+                                                ClusterPolicy defaultClusterPolicy = null;
+                                                ClusterPolicy selectedClusterPolicy = null;
+                                                for (ClusterPolicy clusterPolicy : list) {
+                                                    if (clusterModel.getIsEdit() && getEntity() != null
+                                                            && clusterPolicy.getId()
+                                                                    .equals(getEntity().getClusterPolicyId())) {
+                                                        selectedClusterPolicy = clusterPolicy;
+                                                    }
+                                                    if (clusterPolicy.isDefaultPolicy()) {
+                                                        defaultClusterPolicy = clusterPolicy;
+                                                    }
+                                                }
+                                                if (selectedClusterPolicy != null) {
+                                                    clusterModel.getClusterPolicy()
+                                                            .setSelectedItem(selectedClusterPolicy);
+                                                } else {
+                                                    clusterModel.getClusterPolicy()
+                                                            .setSelectedItem(defaultClusterPolicy);
+                                                }
+                                                clusterPolicyChanged();
+                                            }
+                                        }));
+                    }
+                }));
     }
 
     private void initImportCluster(boolean isEdit)
@@ -942,6 +1024,9 @@ public class ClusterModel extends EntityModel
             else if (sender == getVersion())
             {
                 version_SelectedItemChanged(args);
+            }
+            else if (sender == getClusterPolicy()) {
+                clusterPolicyChanged();
             }
         }
         else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
@@ -1097,6 +1182,40 @@ public class ClusterModel extends EntityModel
         AsyncDataProvider.getDataCenterVersions(_asyncQuery, selectedDataCenter.getId());
     }
 
+    private void clusterPolicyChanged() {
+        ClusterPolicy clusterPolicy = (ClusterPolicy) getClusterPolicy().getSelectedItem();
+        ArrayList<String> lines = new ArrayList<String>();
+        Map<Guid, PolicyUnit> allPolicyUnits = new HashMap<Guid, PolicyUnit>();
+        if (clusterPolicy.getFilters() != null) {
+            for (Guid policyUnitId : clusterPolicy.getFilters()) {
+                allPolicyUnits.put(policyUnitId, policyUnitMap.get(policyUnitId));
+            }
+        }
+        if (clusterPolicy.getFunctions() != null) {
+            for (Pair<Guid, Integer> pair : clusterPolicy.getFunctions()) {
+                allPolicyUnits.put(pair.getFirst(), policyUnitMap.get(pair.getFirst()));
+            }
+        }
+        if (clusterPolicy.getBalance() != null) {
+            allPolicyUnits.put(clusterPolicy.getBalance(), policyUnitMap.get(clusterPolicy.getBalance()));
+        }
+
+        for (PolicyUnit policyUnit : allPolicyUnits.values()) {
+            if (policyUnit.getParameterRegExMap() != null) {
+                for (Map.Entry<String, String> keyValue : policyUnit.getParameterRegExMap().entrySet()) {
+                    lines.add(keyValue.getKey() + '=' + keyValue.getValue());
+                }
+            }
+        }
+        getCustomPropertySheet().setKeyValueString(lines);
+        if (getIsEdit() &&
+                clusterPolicy.getId().equals(getEntity().getClusterPolicyId())) {
+            getCustomPropertySheet().setEntity(KeyValueModel.convertProperties(getEntity().getClusterPolicyProperties()));
+        } else {
+            getCustomPropertySheet().setEntity(KeyValueModel.convertProperties(clusterPolicy.getParameterMap()));
+        }
+    }
+
     public boolean validate(boolean validateCpu)
     {
         return validate(true, validateCpu);
@@ -1172,7 +1291,7 @@ public class ClusterModel extends EntityModel
                 && getGlusterHostPassword().getIsValid()
                 && ((Boolean) getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()
                         && getGlusterHostPassword().getIsValid()
-                        && isFingerprintVerified()) : true);
+                        && isFingerprintVerified()) : true) && getCustomPropertySheet().validate();
     }
 
 }

@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -40,6 +41,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterFeaturesUtil;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostDetailModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MultipleHostsModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -267,7 +269,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 && GlusterFeaturesUtil.isGlusterVolumeServicesSupported(vdsGroup.getcompatibility_version()));
         getClusterGlusterHookListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()
                 && GlusterFeaturesUtil.isGlusterHookSupported(vdsGroup.getcompatibility_version()));
-        getClusterPolicyModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService());
+        getClusterPolicyModel().setIsAvailable(false);
     }
 
     @Override
@@ -652,6 +654,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                     .toString()));
         }        cluster.setlow_utilization(model.getClusterPolicyModel().getOverCommitLowLevel());
         cluster.sethigh_utilization(model.getClusterPolicyModel().getOverCommitHighLevel());
+        cluster.setClusterPolicyId(((ClusterPolicy) model.getClusterPolicy().getSelectedItem()).getId());
+        cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet().getEntity()));
 
         model.startProgress(null);
 

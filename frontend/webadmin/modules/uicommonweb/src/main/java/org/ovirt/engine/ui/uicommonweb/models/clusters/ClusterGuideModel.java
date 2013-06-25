@@ -161,7 +161,8 @@ public class ClusterGuideModel extends GuideModel
         {
             if (!getEntity().getId().equals(vds.getVdsGroupId())
                     && (vds.getStatus() == VDSStatus.Maintenance || vds.getStatus() == VDSStatus.PendingApproval)
-                    && vds.getSupportedClusterVersionsSet().contains(getEntity().getcompatibility_version()))
+                    && vds.getSupportedClusterVersionsSet() != null &&
+                    vds.getSupportedClusterVersionsSet().contains(getEntity().getcompatibility_version()))
             {
                 availableHosts.add(vds);
             }

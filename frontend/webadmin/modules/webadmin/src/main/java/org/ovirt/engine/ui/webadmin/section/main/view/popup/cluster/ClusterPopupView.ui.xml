@@ -3,10 +3,11 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
-	xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form">
+	xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form"
+	xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value">
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
-
+	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPopupView.WidgetStyle">
 		.generalTabTopDecorator {
 			background-color: #D3D3D3;
@@ -129,9 +130,14 @@
 			height: 20px;
 			width: 8px;
 		}
+		.labelStyle {
+		font-weight: bold;
+		margin-top: 10px;
+		margin-bottom: 5px;
+		}
 	</ui:style>
 
-	<d:SimpleDialogPanel width="610px" height="560px">
+	<d:SimpleDialogPanel width="620px" height="560px">
 		<d:content>
 			<t:DialogTabPanel ui:field="tabsPanel" height="100%">
 				<t:tab>
@@ -199,40 +205,11 @@
 					<t:DialogTab ui:field="clusterPolicyTab">
 						<t:content>
 							<g:FlowPanel>
-								<g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
-									<g:Label ui:field="schedulePolicyPanelTitle" addStyleNames="{style.panelTitle}" />
-									<g:HorizontalPanel addStyleNames="{style.marginPanel}">
-										<g:RadioButton ui:field="policyRadioButton_none"/>
-										<g:RadioButton ui:field="policyRadioButton_evenDist"/>
-										<g:RadioButton ui:field="policyRadioButton_powerSave"/>
-									</g:HorizontalPanel>
-									<g:FlowPanel>
-										<g:HorizontalPanel  addStyleNames="{style.marginPanel}">
-											<g:SimplePanel ui:field="leftDummySlider"
-														   addStyleNames="{style.geryPanel}" />
-											<f:Slider ui:field="leftSlider" />
-											<g:SimplePanel addStyleNames="{style.gerySplitPanel}"/>
-											<f:Slider ui:field="rightSlider" />
-											<g:SimplePanel ui:field="rightDummySlider"
-														   addStyleNames="{style.geryPanel}" />
-										</g:HorizontalPanel>
-									</g:FlowPanel>
-									<g:HorizontalPanel ui:field="timeHorizontalPanel" width="70px" height="20px">
-										<g:Label ui:field="forTimeLabel" addStyleNames="{style.labelStyle}"/>
-										<e:EntityModelTextBoxEditor ui:field="overCommitTimeEditor" width="40px" height="20px" addStyleNames="{style.timeTextBoxEditorWidget}"/>
-										<g:Label ui:field="minTimeLabel" addStyleNames="{style.labelStyle}"/>
-									</g:HorizontalPanel>
-								</g:FlowPanel>
-								<g:FlowPanel>
-									<g:HorizontalPanel addStyleNames="{style.minMaxPanel}" >
-										<g:SimplePanel addStyleNames="{style.maxLabel}"/>
-										<g:Label ui:field="maxServiceLevelLabel"/>
-									</g:HorizontalPanel>
-									<g:HorizontalPanel>
-										<g:SimplePanel addStyleNames="{style.minLabel}"/>
-										<g:Label ui:field="minServiceLevelLabel"/>
-									</g:HorizontalPanel>
-								</g:FlowPanel>
+								<e:ListModelListBoxEditor ui:field="clusterPolicyEditor" />
+								<g:Label addStyleNames="{style.labelStyle}" text="{constants.clusterPolicyPropertiesLabel}" />
+								<g:ScrollPanel height="100px">
+									<k:KeyValueWidget ui:field="customPropertiesSheetEditor" />
+								</g:ScrollPanel>
 								<g:FlowPanel ui:field="additionPropsPanel" addStyleNames="{style.nestedSubsequentPanel}">
 									<g:Label ui:field="additionPropsPanelTitle" addStyleNames="{style.panelTitle}" />
 									<e:EntityModelCheckBoxEditor ui:field="enableTrustedServiceEditor" />
