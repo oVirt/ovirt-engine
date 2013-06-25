@@ -31,8 +31,8 @@ import org.apache.xmlrpc.client.util.ClientFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ssl.AuthSSLProtocolSocketFactory;
@@ -48,16 +48,10 @@ public class XmlRpcUtils {
         if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)) {
             URL keystoreUrl;
             try {
-                EngineLocalConfig config = EngineLocalConfig.getInstance();
-                keystoreUrl = new URL("file://" + config.getPKIEngineStore().getAbsolutePath());
-                String keystorePassword = config.getPKIEngineStorePassword();
-                URL truststoreUrl = new URL("file://" + config.getPKITrustStore().getAbsolutePath());
-                String truststorePassword = config.getPKITrustStorePassword();
-
                 // registering the https protocol with a socket factory that
                 // provides client authentication.
-                ProtocolSocketFactory factory = new AuthSSLProtocolSocketFactory(keystoreUrl, keystorePassword,
-                        truststoreUrl, truststorePassword);
+                ProtocolSocketFactory factory = new AuthSSLProtocolSocketFactory(EngineEncryptionUtils.getKeyManagers(),
+                    EngineEncryptionUtils.getTrustManagers());
                 Protocol clientAuthHTTPS = new Protocol("https", factory, 54321);
                 Protocol.registerProtocol("https", clientAuthHTTPS);
             } catch (Exception e) {

@@ -7,11 +7,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.KeyPair;
-import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.cert.Certificate;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
@@ -19,7 +16,6 @@ import java.util.concurrent.Callable;
 
 import javax.naming.TimeLimitExceededException;
 
-import org.apache.commons.collections.EnumerationUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -30,7 +26,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.archivers.tar.CachedTar;
-import org.ovirt.engine.core.utils.crypt.OpenSSHUtils;
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.hostinstall.OpenSslCAWrapper;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -179,69 +175,6 @@ public class VdsDeploy implements SSHDialog.Sink {
     }
 
     /**
-     * Return the engine ssh public key to install on host.
-     * @return ssh public key.
-     */
-    protected static String _getEngineSSHPublicKey() {
-        final EngineLocalConfig config = EngineLocalConfig.getInstance();
-        final String keystoreFile = config.getPKIEngineStore().getAbsolutePath();
-        final char[] password = config.getPKIEngineStorePassword().toCharArray();
-        final String alias = config.getPKIEngineStoreAlias();
-
-        InputStream in = null;
-        try {
-            in = new FileInputStream(keystoreFile);
-            KeyStore ks = KeyStore.getInstance("PKCS12");
-            ks.load(in, password);
-
-            final Certificate cert = ks.getCertificate(alias);
-            if (cert == null) {
-                log.info(
-                    String.format(
-                        "Alias with name '%1$s' not found in '%2$s', aliases: %3$s",
-                        alias,
-                        keystoreFile,
-                        StringUtils.join(EnumerationUtils.toList(ks.aliases()), ',')
-                    )
-                );
-                throw new KeyStoreException(
-                    String.format(
-                        "Failed to find certificate store '%1$s' using alias '%2$s'",
-                        keystoreFile,
-                        alias
-                    )
-                );
-            }
-
-            return OpenSSHUtils.getKeyString(
-                cert.getPublicKey(),
-                Config.<String>GetValue(ConfigValues.SSHKeyAlias)
-            );
-        }
-        catch (Exception e) {
-            throw new RuntimeException(
-                String.format(
-                    "Failed to decode own public key from store '%1$s' using alias '%2$s'",
-                    keystoreFile,
-                    alias
-                ),
-                e
-            );
-        }
-        finally {
-            Arrays.fill(password, '*');
-            if (in != null) {
-                try {
-                    in.close();
-                }
-                catch(IOException e) {
-                    log.error("Cannot close key store", e);
-                }
-            }
-        }
-    }
-
-    /**
      * Construct iptables to send.
      */
     private String _getIpTables() {
@@ -335,7 +268,7 @@ public class VdsDeploy implements SSHDialog.Sink {
         new Callable<Object>() { public Object call() throws Exception {
             _parser.cliEnvironmentSet(
                 NetEnv.SSH_KEY,
-                _getEngineSSHPublicKey().replace("\n", "")
+                EngineEncryptionUtils.getEngineSSHPublicKey().replace("\n", "")
             );
             return null;
         }},

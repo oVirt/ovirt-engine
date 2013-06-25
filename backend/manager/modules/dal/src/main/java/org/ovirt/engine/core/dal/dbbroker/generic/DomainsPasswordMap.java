@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 
 public class DomainsPasswordMap implements Map<String, String> {
 
@@ -21,7 +21,7 @@ public class DomainsPasswordMap implements Map<String, String> {
      * @param storePass
      * @param certAlias
      */
-    public DomainsPasswordMap(String csvOfDomainToPassword, String storeUrl, String storePass, String certAlias) {
+    public DomainsPasswordMap(String csvOfDomainToPassword) {
         if (!csvOfDomainToPassword.isEmpty()) {
             String[] domainPasswordPairs = csvOfDomainToPassword.split(",");
             map = new HashMap<String, String>(domainPasswordPairs.length);
@@ -30,7 +30,7 @@ public class DomainsPasswordMap implements Map<String, String> {
                 String domain = parts[0].trim().toLowerCase();
                 String password = parts[1].trim();
                 try {
-                    password = EncryptionUtils.decrypt(password, storeUrl, storePass, certAlias);
+                    password = EngineEncryptionUtils.decrypt(password);
                 } catch (Exception e) {
                     // failed decrypting the password - password may not be encrypted in first place or clear text
                     // already

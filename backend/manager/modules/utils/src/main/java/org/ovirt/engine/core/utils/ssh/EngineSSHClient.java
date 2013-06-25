@@ -1,13 +1,8 @@
 package org.ovirt.engine.core.utils.ssh;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.util.Arrays;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -15,7 +10,7 @@ import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 
-import org.ovirt.engine.core.utils.EngineLocalConfig;
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.crypt.OpenSSHUtils;
 
 /**
@@ -59,55 +54,8 @@ public class EngineSSHClient extends SSHClient {
     /**
      * Use default engine ssh key.
      */
-    public void useDefaultKeyPair() throws KeyStoreException {
-        EngineLocalConfig config = EngineLocalConfig.getInstance();
-        final File p12 = config.getPKIEngineStore();
-        final char[] password = config.getPKIEngineStorePassword().toCharArray();
-        final String alias = config.getPKIEngineStoreAlias();
-
-        KeyStore.PrivateKeyEntry entry;
-        InputStream in = null;
-        try {
-            in = new FileInputStream(p12);
-            KeyStore ks = KeyStore.getInstance("PKCS12");
-            ks.load(in, password);
-
-            entry = (KeyStore.PrivateKeyEntry)ks.getEntry(
-                alias,
-                new KeyStore.PasswordProtection(password)
-            );
-        }
-        catch (Exception e) {
-            throw new KeyStoreException(
-                String.format(
-                    "Failed to get certificate entry from key store: %1$s/%2$s",
-                    p12,
-                    alias
-                ),
-                e
-            );
-        }
-        finally {
-            Arrays.fill(password, '*');
-            if (in != null) {
-                try {
-                    in.close();
-                }
-                catch(IOException e) {
-                    log.error("Cannot close key store", e);
-                }
-            }
-        }
-
-        if (entry == null) {
-            throw new KeyStoreException(
-                String.format(
-                    "Bad key store: %1$s/%2$s",
-                    p12,
-                    alias
-                )
-            );
-        }
+    public void useDefaultKeyPair() {
+        KeyStore.PrivateKeyEntry entry = EngineEncryptionUtils.getPrivateKeyEntry();
 
         setKeyPair(
             new KeyPair(

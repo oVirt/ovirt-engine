@@ -53,7 +53,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
-import org.ovirt.engine.core.utils.EngineLocalConfig;
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.gluster.GlusterUtil;
 import org.ovirt.engine.core.utils.ssh.ConstraintByteArrayOutputStream;
 import org.ovirt.engine.core.utils.ssh.EngineSSHClient;
@@ -321,7 +321,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 returnValue = returnValue && validateSingleHostAttachedToLocalStorage();
 
                 if (Config.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers)
-                        && !EngineLocalConfig.getInstance().getPKIEngineStore().exists()) {
+                        && !EngineEncryptionUtils.haveKey()) {
                     returnValue = failCanDoAction(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND);
                 } else if (!getParameters().getAddPending()
                         && StringUtils.isEmpty(getParameters().getRootPassword())) {

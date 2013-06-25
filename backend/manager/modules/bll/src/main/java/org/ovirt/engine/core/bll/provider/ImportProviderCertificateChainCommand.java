@@ -1,16 +1,8 @@
 package org.ovirt.engine.core.bll.provider;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
 import java.security.cert.Certificate;
-import java.security.cert.CertificateException;
 import java.util.Collections;
 import java.util.List;
 
@@ -67,23 +59,13 @@ public class ImportProviderCertificateChainCommand<P extends ProviderParameters>
     private void saveChainToTrustStore(List<? extends Certificate> chain) {
         if (chain != null && chain.size() > 0) {
             KeyStore ks = null;
-            File trustStore = new File(ExternalTrustStoreInitializer.getTrustStorePath());
-            String trustStorePassword = ExternalTrustStoreInitializer.getTrustStorePassword();
-
-            try (InputStream in = new FileInputStream(trustStore)) {
-                ks = KeyStore.getInstance(KeyStore.getDefaultType());
-                ks.load(in, trustStorePassword.toCharArray());
-            } catch (IOException e) {
-                handleException(e);
-            } catch (KeyStoreException e) {
-                handleException(e);
-            } catch (NoSuchAlgorithmException e) {
-                handleException(e);
-            } catch (CertificateException e) {
+            try {
+                ks = ExternalTrustStoreInitializer.getTrustStore();
+            } catch (Throwable e) {
                 handleException(e);
             }
 
-            try (OutputStream out = new FileOutputStream(trustStore)) {
+            try {
                 // In case there is only one certificate, we insert it.
                 // Otherwise, we need to insert the entire chain except the end certificate (the end certificate here is the first one)
                 int firstCertificateIndex = chain.size() == 1 ? 0 : 1;
@@ -92,15 +74,12 @@ public class ImportProviderCertificateChainCommand<P extends ProviderParameters>
                     String alias = Guid.NewGuid().toString();
                     ks.setCertificateEntry(alias, certificate);
                 }
-                ks.store(out, trustStorePassword.toCharArray());
+
+                ExternalTrustStoreInitializer.setTrustStore(ks);
                 setSucceeded(true);
-            } catch (NoSuchAlgorithmException e) {
-                handleException(e);
-            } catch (CertificateException e) {
-                handleException(e);
-            } catch (IOException e) {
-                handleException(e);
             } catch (KeyStoreException e) {
+                handleException(e);
+            } catch (Throwable e) {
                 handleException(e);
             }
         }
@@ -117,7 +96,7 @@ public class ImportProviderCertificateChainCommand<P extends ProviderParameters>
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__PROVIDER_CERTIFICATE_CHAIN);
     }
 
-    private void handleException(Exception e) {
+    private void handleException(Throwable e) {
         throw new VdcBLLException(VdcBllErrors.PROVIDER_IMPORT_CERTIFICATE_CHAIN_ERROR, e.getMessage());
     }
 }

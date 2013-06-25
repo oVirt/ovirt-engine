@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.security.KeyStore;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.sql.Connection;
@@ -24,7 +23,6 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
-import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 import javax.sql.DataSource;
 
@@ -34,7 +32,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.tools.common.db.StandaloneDataSource;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.db.DbUtils;
 
 /**
@@ -50,7 +48,6 @@ public class EngineMonitorService implements Runnable {
     private static final String ENGINE_NOT_RESPONDING_ERROR = "Engine server is not responding.";
     private static final String ENGINE_RESPONDING_MESSAGE = "Engine server is up and running.";
     private static final String HEALTH_SERVLET_PATH = "/OvirtEngineWeb/HealthStatus";
-    private static final String CERTIFICATION_TYPE = "PKCS12";
     private DataSource ds;
     private NotificationProperties prop = null;
     private long serverMonitorTimeout;
@@ -152,17 +149,10 @@ public class EngineMonitorService implements Runnable {
      * @throws NotificationServiceException
      */
     private void createConcreteSSLSocketFactory() throws NotificationServiceException {
-        EngineLocalConfig config = EngineLocalConfig.getInstance();
-        String keystorePass = config.getPKIEngineStorePassword();
-        String keystoreUrl = config.getPKIEngineStore().getAbsolutePath();
-
         try {
             String sslProtocol = prop.getProperty(NotificationProperties.SSL_PROTOCOL);
-            KeyStore keyStore = EncryptionUtils.getKeyStore(keystoreUrl, keystorePass, CERTIFICATION_TYPE);
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-            tmf.init(keyStore);
             SSLContext ctx = SSLContext.getInstance(sslProtocol);
-            ctx.init(null, tmf.getTrustManagers(), null);
+            ctx.init(null, EngineEncryptionUtils.getTrustManagers(), null);
             sslFactory = ctx.getSocketFactory();
         } catch (Exception e) {
             throw new NotificationServiceException("Failed to create SSL factory when running with SSL mode.", e);

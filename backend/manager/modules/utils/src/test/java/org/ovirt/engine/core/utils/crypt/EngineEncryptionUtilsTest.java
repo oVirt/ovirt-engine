@@ -2,11 +2,11 @@ package org.ovirt.engine.core.utils.crypt;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.security.KeyStore;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -14,44 +14,20 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class EncryptionUtilsTest {
-
-    protected static String keyStoreURL;
-    protected final static String keyStorePass = "NoSoup4U";
-    protected final static String certAlias = "1";
+public class EngineEncryptionUtilsTest {
 
     @BeforeClass
     public static void before() throws UnsupportedEncodingException {
-        keyStoreURL = URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8");
-    }
-
-    @Test
-    public void testDefaultEndoceDecode() {
-        String secret = "i'm going to be encrypted";
-        String encode = EncryptionUtils.encode(secret, null, null);
-        assertNotNull(encode);
-        String decode = EncryptionUtils.decode(encode, null, null);
-        assertNotNull(encode);
-        assertTrue(secret.equals(decode));
-    }
-
-    @Test
-    public void testRC2EndoceDecode() {
-        String secret = "i'm going to be encrypted";
-        String rc2Material = "123456";
-        String rc2Algorithm = "RC2";
-        String encode = EncryptionUtils.encode(secret, rc2Material, rc2Algorithm);
-        assertNotNull(encode);
-        String decode = EncryptionUtils.decode(encode, rc2Material, rc2Algorithm);
-        assertNotNull(encode);
-        assertTrue(secret.equals(decode));
+        EngineEncryptionUtils.keystoreFile = new File(URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8"));
+        EngineEncryptionUtils.keystorePassword = new KeyStore.PasswordProtection("NoSoup4U".toCharArray());
+        EngineEncryptionUtils.keystoreAlias = "1";
     }
 
     @Test
     public void testEncrypt() throws Exception {
         String plain = "Test123!32@";
-        String encrypted = EncryptionUtils.encrypt(plain, keyStoreURL, keyStorePass, certAlias);
-        String plain2 = EncryptionUtils.decrypt(encrypted, keyStoreURL, keyStorePass, certAlias);
+        String encrypted = EngineEncryptionUtils.encrypt(plain);
+        String plain2 = EngineEncryptionUtils.decrypt(encrypted);
         assertEquals(plain, plain2);
     }
 
@@ -71,8 +47,8 @@ public class EncryptionUtilsTest {
                         @Override
                         public void run() {
                             try {
-                                String encrypted = EncryptionUtils.encrypt(plain, keyStoreURL, keyStorePass, certAlias);
-                                String actualDecrypted = EncryptionUtils.decrypt(encrypted, keyStoreURL, keyStorePass, certAlias);
+                                String encrypted = EngineEncryptionUtils.encrypt(plain);
+                                String actualDecrypted = EngineEncryptionUtils.decrypt(encrypted);
                                 if (!plain.equals(actualDecrypted)) {
                                     String failure = String.format("Failure in test %d, plain is %s%n",
                                                             threadCount,

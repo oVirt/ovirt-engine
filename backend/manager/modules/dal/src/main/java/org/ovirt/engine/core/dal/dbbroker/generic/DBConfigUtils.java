@@ -18,7 +18,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdcOptionDAO;
 import org.ovirt.engine.core.utils.ConfigUtilsBase;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
@@ -106,20 +106,14 @@ public class DBConfigUtils extends ConfigUtilsBase {
                     break;
                 case Password:
                     try {
-                        String keyFile = config.getPKIEngineStore().getAbsolutePath();
-                        String passwd = config.getPKIEngineStorePassword();
-                        String alias = config.getPKIEngineStoreAlias();
-                        result = EncryptionUtils.decrypt((String) result, keyFile, passwd, alias);
+                        result = EngineEncryptionUtils.decrypt((String) result);
                     } catch (Exception e) {
                         log.errorFormat("Failed to decrypt value for property {0} will be used encrypted value",
-                                option.getoption_name(), e.getMessage());
+                                option.getoption_name(), e);
                     }
                     break;
                 case DomainsPasswordMap:
-                    String keyFile = config.getPKIEngineStore().getAbsolutePath();
-                    String passwd = config.getPKIEngineStorePassword();
-                    String alias = config.getPKIEngineStoreAlias();
-                    result = new DomainsPasswordMap((String) result, keyFile, passwd, alias);
+                    result = new DomainsPasswordMap((String) result);
                     break;
                 case ValueDependent:
                     // get the config that this value depends on

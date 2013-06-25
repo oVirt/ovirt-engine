@@ -10,8 +10,7 @@ import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.EngineConfigLogic;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.tools.ToolConsole;
-import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.crypt.EncryptionUtils;
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 
 public class PasswordValueHelper implements ValueHelper {
     // The log:
@@ -20,32 +19,15 @@ public class PasswordValueHelper implements ValueHelper {
     // The console:
     private static final ToolConsole console = ToolConsole.getInstance();
 
-    private static String certAlias;
-    private static String keyStoreURL;
-    private static String keyStorePass;
     public static final String INTERACTIVE_MODE = "Interactive";
     private EngineConfigCLIParser parser;
 
-    static {
-        try {
-            EngineLocalConfig config = EngineLocalConfig.getInstance();
-            keyStoreURL = config.getPKIEngineStore().getAbsolutePath();
-            keyStorePass = config.getPKIEngineStorePassword();
-            certAlias = config.getPKIEngineStoreAlias();
-        }
-        catch (Exception exception) {
-            String msg = "Error loading private key.";
-            console.writeLine(msg);
-            log.error(exception);
-        }
-    }
-
     String encrypt(String value) throws Exception {
-        return EncryptionUtils.encrypt(value, keyStoreURL, keyStorePass, certAlias);
+        return EngineEncryptionUtils.encrypt(value);
     }
 
     String decrypt(String value) throws Exception {
-        return EncryptionUtils.decrypt(value, keyStoreURL, keyStorePass, certAlias);
+        return EngineEncryptionUtils.decrypt(value);
     }
 
     @Override

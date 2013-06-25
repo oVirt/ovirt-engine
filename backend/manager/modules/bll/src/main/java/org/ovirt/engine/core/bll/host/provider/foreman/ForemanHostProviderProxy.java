@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.host.provider.foreman;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -122,10 +121,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         try {
             URL hostUrl = getUrl();
             if (isSecured()) {
-                URL trustStorePath = ExternalTrustStoreInitializer.getTrustStoreUrl();
-                String trustStorePassword = ExternalTrustStoreInitializer.getTrustStorePassword();
                 int hostPort = hostUrl.getPort() == -1 ? HttpsURL.DEFAULT_PORT : hostUrl.getPort();
-                Protocol httpsProtocol = new Protocol(String.valueOf(HttpsURL.DEFAULT_SCHEME), (ProtocolSocketFactory) new AuthSSLProtocolSocketFactory(null, null, trustStorePath, trustStorePassword),  hostPort);
+                Protocol httpsProtocol = new Protocol(String.valueOf(HttpsURL.DEFAULT_SCHEME), (ProtocolSocketFactory) new AuthSSLProtocolSocketFactory(ExternalTrustStoreInitializer.getTrustStore()),  hostPort);
                 httpClient.getHostConfiguration().setHost(hostUrl.getHost(), hostPort, httpsProtocol);
             } else {
                 int hostPort = hostUrl.getPort() == -1 ? HttpURL.DEFAULT_PORT : hostUrl.getPort();
@@ -136,7 +133,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             httpClient.getState().setCredentials(AuthScope.ANY, hostProviderCredentials);
             // Required when working with foreman's /api rather than accessing directly to /hosts
             httpClient.getState().setAuthenticationPreemptive(true);
-        } catch (MalformedURLException e) {
+        } catch (RuntimeException e) {
             handleException(e);
         }
     }
