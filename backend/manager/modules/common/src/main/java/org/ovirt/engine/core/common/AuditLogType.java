@@ -90,6 +90,7 @@ public enum AuditLogType {
     USER_VDC_LOGOUT_FAILED(815), // User logged out failed
 
     USER_INITIATED_RUN_VM(150),
+    USER_INITIATED_RUN_VM_AND_PAUSE(156),
     USER_STARTED_VM(153),
     USER_INITIATED_RUN_VM_FAILED(151),
     USER_RUN_VM(32), // User issued runVm command

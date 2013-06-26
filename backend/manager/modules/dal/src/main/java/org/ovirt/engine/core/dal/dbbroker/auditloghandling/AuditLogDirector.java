@@ -525,6 +525,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_RESUME_VM, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_RESUME_VM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_INITIATED_RUN_VM, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_INITIATED_RUN_VM_AND_PAUSE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_STARTED_VM, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_INITIATED_RUN_VM_FAILED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.USER_EXPORT_VM, AuditLogSeverity.NORMAL);
