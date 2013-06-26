@@ -47,7 +47,6 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                             new TransactionMethod<Object>() {
                         @Override
                         public Object runInTransaction() {
-                            handleVdsInformation();
                             vm.setRunOnVds(getVdsId());
                             if (getParameters().isClearHibernationVolumes()) {
                                 vm.setHibernationVolHandle(StringUtils.EMPTY);
@@ -96,18 +95,6 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
     private boolean isSysprepUsed(final VM vm) {
         return vm.useSysPrep() && OsRepositoryImpl.INSTANCE.isWindows(vm.getVmOsId())
                 && StringUtils.isEmpty(vm.getFloppyPath());
-    }
-
-    private void handleVdsInformation() {
-        DbFacade.getInstance()
-                .getVdsDynamicDao()
-                .updatePartialVdsDynamicCalc(getVds().getId(),
-                        1,
-                        getParameters().getVm().getNumOfCpus(),
-                        getParameters().getVm().getMinAllocatedMem(),
-                        getParameters().getVm().getVmMemSizeMb(),
-                        getParameters().getVm().getNumOfCpus());
-
     }
 
     private boolean canExecute() {
