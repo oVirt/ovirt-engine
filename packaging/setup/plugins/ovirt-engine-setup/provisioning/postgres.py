@@ -157,7 +157,7 @@ class Plugin(plugin.PluginBase):
                 if matcher is not None:
                     line = line.replace(
                         matcher.group('param'),
-                        'peer',
+                        'ident',  # we cannot use peer <psql-9
                     )
                 content.append(line)
 
@@ -182,25 +182,27 @@ class Plugin(plugin.PluginBase):
                 # order is important, add after local
                 # so we be first
                 if line.lstrip().startswith('local'):
-                    content.append(
-                        (
-                            '{host:7} '
-                            '{user:15} '
-                            '{database:15} '
-                            '{address:23} '
-                            '{auth}'
-                        ).format(
-                            host='host',
-                            user=self.environment[
-                                osetupcons.DBEnv.USER
-                            ],
-                            database=self.environment[
-                                osetupcons.DBEnv.DATABASE
-                            ],
-                            address='all',
-                            auth='md5',
+                    # we cannot use all for address <psql-9
+                    for address in ('0.0.0.0/0', '::0/0'):
+                        content.append(
+                            (
+                                '{host:7} '
+                                '{user:15} '
+                                '{database:15} '
+                                '{address:23} '
+                                '{auth}'
+                            ).format(
+                                host='host',
+                                user=self.environment[
+                                    osetupcons.DBEnv.USER
+                                ],
+                                database=self.environment[
+                                    osetupcons.DBEnv.DATABASE
+                                ],
+                                address=address,
+                                auth='md5',
+                            )
                         )
-                    )
 
         transaction.append(
             filetransaction.FileTransaction(

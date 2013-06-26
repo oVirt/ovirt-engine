@@ -126,14 +126,24 @@ class Statement(base.Base):
                 connection = self.environment[osetupcons.DBEnv.CONNECTION]
             else:
                 self.logger.debug('Creating own connection')
-                _connection = connection = psycopg2.connect(
-                    host=host,
-                    port=port,
-                    user=user,
-                    password=password,
-                    database=database,
-                    sslmode=sslmode,
-                )
+
+                #
+                # old psycopg2 does not know how to ignore
+                # uselss parameters
+                #
+                if not host:
+                    _connection = connection = psycopg2.connect(
+                        database=database,
+                    )
+                else:
+                    _connection = connection = psycopg2.connect(
+                        host=host,
+                        port=port,
+                        user=user,
+                        password=password,
+                        database=database,
+                        sslmode=sslmode,
+                    )
 
             if not transaction:
                 old_autocommit = __backup_autocommit(connection)
