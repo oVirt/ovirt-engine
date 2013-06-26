@@ -45,16 +45,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     protected void executeCommand() {
 
         final VDS vds = getVds();
-        EngineLock monitoringLock =
-                new EngineLock(Collections.singletonMap(getParameters().getVdsId().toString(),
-                        new Pair<String, String>(LockingGroup.VDS_INIT.name(), "")), null);
-        log.infoFormat("Before acquiring lock in order to prevent monitoring for host {0} from data-center {1}",
-                vds.getName(),
-                vds.getStoragePoolName());
-        getLockManager().acquireLockWait(monitoringLock);
-        log.infoFormat("Lock acquired, from now a monitoring of host will be skipped for host {0} from data-center {1}",
-                vds.getName(),
-                vds.getStoragePoolName());
+        EngineLock monitoringLock = acquireMonitorLock();
         try {
             ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
             runVdsCommand(VDSCommandType.SetVdsStatus,
@@ -79,10 +70,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                 });
             }
         } finally {
-            getLockManager().releaseLock(monitoringLock);
-            log.infoFormat("Activate finished. Lock released. Monitoring can run now for host {0} from data-center {1}",
-                    vds.getName(),
-                    vds.getStoragePoolName());
+            releaseMonitorLock(monitoringLock, "Activate");
         }
     }
 

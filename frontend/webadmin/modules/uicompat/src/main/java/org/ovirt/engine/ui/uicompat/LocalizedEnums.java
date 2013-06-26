@@ -462,6 +462,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___RunVmOnce();
 
+	String VdcActionType___RefreshHostCapabilities();
+
 	String VdcActionType___StopVm();
 
 	String VdcActionType___TryBackToAllSnapshotsOfVm();

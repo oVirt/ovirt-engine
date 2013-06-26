@@ -387,11 +387,17 @@ public class VdsManager {
     public VDS activate() {
         VDS vds = null;
         try {
-            // refresh vds from db in case changed while was down
-            log.debugFormat(
-                        "Trying to activate host {0} , meanwhile setting status to Unassigned.",
-                        getVdsId());
-            vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
+            refreshHost(vds);
+        } catch (Exception e) {
+            log.infoFormat("Failed to activate VDS = {0} with error: {1}.",
+                    getVdsId(), e.getMessage());
+        }
+
+        return vds;
+    }
+
+    public void refreshHost(VDS vds) {
+        try {
             /**
              * refresh capabilities
              */
@@ -402,10 +408,6 @@ public class VdsManager {
                         getVdsId(),
                         newStatus);
             }
-        } catch (java.lang.Exception e) {
-            log.infoFormat("Failed to activate VDS = {0} with error: {1}.",
-                    getVdsId(), e.getMessage());
-
         } finally {
             if (vds != null) {
                 UpdateDynamicData(vds.getDynamicData());
@@ -417,8 +419,6 @@ public class VdsManager {
                 ResourceManager.getInstance().getEventListener().handleVdsVersion(vds.getId());
             }
         }
-
-        return vds;
     }
 
     public void setStatus(VDSStatus status, VDS vds) {

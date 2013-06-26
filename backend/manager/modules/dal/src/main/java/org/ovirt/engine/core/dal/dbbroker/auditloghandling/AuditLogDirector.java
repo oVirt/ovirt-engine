@@ -288,6 +288,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.SYSTEM_FAILED_VDS_RESTART, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_ACTIVATE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VDS_ACTIVATE_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.HOST_REFRESHED_CAPABILITIES, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.HOST_REFRESH_CAPABILITIES_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_UPDATE_VDS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_UPDATE_VDS, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_REMOVE_VDS, AuditLogSeverity.NORMAL);

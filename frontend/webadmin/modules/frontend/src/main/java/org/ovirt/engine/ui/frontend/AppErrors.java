@@ -634,6 +634,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Permission")
     String VAR__TYPE__PERMISSION();
 
+    @DefaultStringValue("$type Host capabilities")
+    String VAR__TYPE__HOST_CAPABILITIES();
+
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
 
@@ -786,6 +789,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$hostStatus Up, Maintenance or Non operational")
     String VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL();
+
+    @DefaultStringValue("$hostStatus 'Up' or 'Maintenance'")
+    String VAR__HOST_STATUS__UP_OR_MAINTENANCE();
 
     @DefaultStringValue("$type Gluster Volume")
     String VAR__TYPE__GLUSTER_VOLUME();

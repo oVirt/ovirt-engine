@@ -27,6 +27,7 @@ public enum VdcBllMessages {
     VAR__TYPE__BOOKMARK,
     VAR__TYPE__VM_TICKET,
     VAR__TYPE__PERMISSION,
+    VAR__TYPE__HOST_CAPABILITIES,
 
     // Gluster types
     VAR__TYPE__GLUSTER_VOLUME,
@@ -83,6 +84,7 @@ public enum VdcBllMessages {
     // Host statuses replacements
     VAR__HOST_STATUS__UP,
     VAR__HOST_STATUS__UP_MAINTENANCE_OR_NON_OPERATIONAL,
+    VAR__HOST_STATUS__UP_OR_MAINTENANCE,
 
     ACTION_LIST_CANNOT_BE_EMPTY(ErrorType.BAD_PARAMETERS),
     ACTION_TYPE_FAILED_NAME_ALREADY_USED(ErrorType.BAD_PARAMETERS),

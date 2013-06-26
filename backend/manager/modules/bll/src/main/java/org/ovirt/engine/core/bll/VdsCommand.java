@@ -8,13 +8,16 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.AddVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.RemoveVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
@@ -26,6 +29,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ThreadUtils;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class VdsCommand<T extends VdsActionParameters> extends CommandBase<T> {
@@ -213,5 +217,29 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
         getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
         getReturnValue().getExecuteFailedMessages().add(returnValue.getVdsError().getMessage());
+    }
+
+    protected EngineLock acquireMonitorLock() {
+        final VDS vds = getVds();
+        EngineLock monitoringLock =
+                new EngineLock(Collections.singletonMap(getParameters().getVdsId().toString(),
+                        new Pair<String, String>(LockingGroup.VDS_INIT.name(), "")), null);
+        log.infoFormat("Before acquiring lock in order to prevent monitoring for host {0} from data-center {1}",
+                vds.getName(),
+                vds.getStoragePoolName());
+        getLockManager().acquireLockWait(monitoringLock);
+        log.infoFormat("Lock acquired, from now a monitoring of host will be skipped for host {0} from data-center {1}",
+                vds.getName(),
+                vds.getStoragePoolName());
+
+        return monitoringLock;
+    }
+
+    protected void releaseMonitorLock(EngineLock monitoringLock, String commandName) {
+        getLockManager().releaseLock(monitoringLock);
+        final VDS vds = getVds();
+        log.infoFormat(commandName + " finished. Lock released. Monitoring can run now for host {0} from data-center {1}",
+                vds.getName(),
+                vds.getStoragePoolName());
     }
 }

@@ -75,6 +75,9 @@ public enum AuditLogType {
     // Proxy host selection
     PROXY_HOST_SELECTION(605),
 
+    HOST_REFRESHED_CAPABILITIES(606),
+    HOST_REFRESH_CAPABILITIES_FAILED(607),
+
     // -- IRS Log types --
     IRS_FAILURE(22, AuditLogTimeInterval.HOUR.getValue() * 12),
     IRS_DISK_SPACE_LOW(26, AuditLogTimeInterval.HOUR.getValue() * 12),
