@@ -68,6 +68,12 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         setSucceeded(removeVm());
     }
 
+    @Override
+    protected boolean shouldRemoveMemorySnapshotVolumes(String memoryVolume) {
+        return !memoryVolume.isEmpty() &&
+                getDbFacade().getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 0;
+    }
+
     private boolean removeVm() {
         final List<DiskImage> diskImages = ImagesHandler.filterImageDisks(getVm().getDiskList(),
                 true,
