@@ -45,8 +45,7 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     protected void executeCommand() {
 
         final VDS vds = getVds();
-        EngineLock monitoringLock = acquireMonitorLock();
-        try {
+        try (EngineLock monitoringLock = acquireMonitorLock()) {
             ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
             runVdsCommand(VDSCommandType.SetVdsStatus,
                     new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Unassigned));
@@ -69,9 +68,9 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
                     }
                 });
             }
-        } finally {
-            releaseMonitorLock(monitoringLock, "Activate");
         }
+
+        logMonitorLockReleased("Activate");
     }
 
     @Override

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 /**
  *The following class is represent a lock which is used in the system
  */
-public class EngineLock {
+public class EngineLock implements AutoCloseable {
 
     private Map<String, Pair<String, String>> exclusiveLocks;
     private Map<String, Pair<String, String>> sharedLocks;
@@ -53,6 +53,11 @@ public class EngineLock {
                 message.append("key: ").append(entry.getKey()).append(" value: ").append(entry.getValue().getFirst()).append('\n');
             }
         }
+    }
+
+    @Override
+    public void close() {
+        LockManagerFactory.getLockManager().releaseLock(this);
     }
 
 }

@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -235,10 +235,10 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         return monitoringLock;
     }
 
-    protected void releaseMonitorLock(EngineLock monitoringLock, String commandName) {
-        getLockManager().releaseLock(monitoringLock);
+    protected void logMonitorLockReleased(String commandName) {
         final VDS vds = getVds();
-        log.infoFormat(commandName + " finished. Lock released. Monitoring can run now for host {0} from data-center {1}",
+        log.infoFormat(commandName
+                + " finished. Lock released. Monitoring can run now for host {0} from data-center {1}",
                 vds.getName(),
                 vds.getStoragePoolName());
     }
