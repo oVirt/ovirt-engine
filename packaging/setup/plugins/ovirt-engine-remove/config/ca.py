@@ -76,16 +76,22 @@ class Plugin(plugin.PluginBase):
         os.fchmod(fd, 0o600)
         with os.fdopen(fd, 'wb') as fileobj:
             #fileobj is not closed, when TarFile is closed
-            with tarfile.open(
-                mode='w:gz',
-                fileobj=fileobj
-            ) as f:
+            # cannot use with tarfile.open() <python-2.7
+            tar = None
+            try:
+                tar = tarfile.open(
+                    mode='w:gz',
+                    fileobj=fileobj
+                )
                 for n in (
                     osetupcons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG_PKI,
                     osetupcons.FileLocations.OVIRT_ENGINE_PKIDIR,
                 ):
                     if os.path.exists(n):
-                        f.add(n)
+                        tar.add(n)
+            finally:
+                if tar is not None:
+                    tar.close()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
