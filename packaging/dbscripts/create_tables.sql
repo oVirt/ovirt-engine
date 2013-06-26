@@ -781,7 +781,7 @@ CREATE TABLE storage_domain_static
    storage_name VARCHAR(250) NOT NULL,
    storage_domain_type INTEGER NOT NULL,
    storage_type INTEGER NOT NULL,
-   storage_domain_format_type varchar(50) NOT NULL,
+   storage_domain_format_type varchar(50) NOT NULL default '0',
    _create_date TIMESTAMP WITH TIME ZONE default LOCALTIMESTAMP,
    _update_date TIMESTAMP WITH TIME ZONE default NULL,
    constraint pk_storage primary key(id)
