@@ -26,16 +26,19 @@ Create or replace FUNCTION InsertVdsGroups(
 	v_gluster_service BOOLEAN,
 	v_tunnel_migration BOOLEAN,
 	v_emulated_machine VARCHAR(40),
-	v_trusted_service BOOLEAN)
+	v_trusted_service BOOLEAN,
+        v_cluster_policy_id UUID,
+        v_cluster_policy_custom_properties text)
 RETURNS VOID
    AS $procedure$
 BEGIN
       INSERT INTO vds_groups(vds_group_id,description, name, cpu_name, selection_algorithm, high_utilization, low_utilization,
-	cpu_over_commit_duration_minutes, storage_pool_id,  max_vds_memory_over_commit, count_threads_as_cores, compatibility_version,
-    transparent_hugepages, migrate_on_error, virt_service, gluster_service, tunnel_migration, emulated_machine, trusted_service)
+        cpu_over_commit_duration_minutes, storage_pool_id,  max_vds_memory_over_commit, count_threads_as_cores, compatibility_version,
+        transparent_hugepages, migrate_on_error, virt_service, gluster_service, tunnel_migration, emulated_machine, trusted_service, cluster_policy_id,
+        cluster_policy_custom_properties)
 	VALUES(v_vds_group_id,v_description, v_name, v_cpu_name, v_selection_algorithm, v_high_utilization, v_low_utilization,
 	v_cpu_over_commit_duration_minutes, v_storage_pool_id,  v_max_vds_memory_over_commit, v_count_threads_as_cores, v_compatibility_version,
-    v_transparent_hugepages, v_migrate_on_error, v_virt_service, v_gluster_service, v_tunnel_migration, v_emulated_machine, v_trusted_service);
+    v_transparent_hugepages, v_migrate_on_error, v_virt_service, v_gluster_service, v_tunnel_migration, v_emulated_machine, v_trusted_service, v_cluster_policy_id, v_cluster_policy_custom_properties);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -61,7 +64,9 @@ Create or replace FUNCTION UpdateVdsGroup(v_description VARCHAR(4000) ,
 	v_gluster_service BOOLEAN,
 	v_tunnel_migration BOOLEAN,
 	v_emulated_machine VARCHAR(40),
-	v_trusted_service BOOLEAN)
+	v_trusted_service BOOLEAN,
+        v_cluster_policy_id UUID,
+        v_cluster_policy_custom_properties text)
 RETURNS VOID
 
 	--The [vds_groups] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -77,7 +82,8 @@ BEGIN
       compatibility_version = v_compatibility_version,transparent_hugepages = v_transparent_hugepages,
       migrate_on_error = v_migrate_on_error,
       virt_service = v_virt_service, gluster_service = v_gluster_service, tunnel_migration = v_tunnel_migration,
-      emulated_machine = v_emulated_machine, trusted_service = v_trusted_service
+      emulated_machine = v_emulated_machine, trusted_service = v_trusted_service, cluster_policy_id = v_cluster_policy_id,
+      cluster_policy_custom_properties = v_cluster_policy_custom_properties
       WHERE vds_group_id = v_vds_group_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -217,3 +223,15 @@ BEGIN
       WHERE trusted_service;
 END; $procedure$
 LANGUAGE plpgsql;
+
+-- returns all clusters attached to a specific cluster policy (given as a parameter to the SP)
+Create or replace FUNCTION GetVdsGroupsByClusterPolicyId(v_cluster_policy_id UUID) RETURNS SETOF vds_groups_view
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT vds_groups_view.*
+      FROM vds_groups_view
+      WHERE cluster_policy_id = v_cluster_policy_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+

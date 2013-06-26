@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -11,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -167,7 +169,10 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("gluster_service", group.supportsGlusterService())
                 .addValue("tunnel_migration", group.isTunnelMigration())
                 .addValue("emulated_machine", group.getEmulatedMachine())
-                .addValue("trusted_service", group.supportsTrustedService());
+                .addValue("trusted_service", group.supportsTrustedService())
+                .addValue("cluster_policy_id", group.getClusterPolicyId())
+                .addValue("cluster_policy_custom_properties",
+                                SerializationFactory.getSerializer().serialize(group.getClusterPolicyProperties()));
         return parameterSource;
     }
 
@@ -205,7 +210,18 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setTunnelMigration(rs.getBoolean("tunnel_migration"));
             entity.setEmulatedMachine(rs.getString("emulated_machine"));
             entity.setTrustedService(rs.getBoolean("trusted_service"));
+            entity.setClusterPolicyId(Guid.createGuidFromString(rs.getString("cluster_policy_id")));
+            entity.setClusterPolicyProperties(SerializationFactory.getDeserializer()
+                    .deserializeOrCreateNew(rs.getString("cluster_policy_custom_properties"), LinkedHashMap.class));
             return entity;
         }
+    }
+
+    @Override
+    public List<VDSGroup> getClustersByClusterPolicyId(Guid clusterPolicyId) {
+        return getCallsHandler().executeReadList("GetVdsGroupsByClusterPolicyId",
+                VdsGroupRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("cluster_policy_id", clusterPolicyId));
     }
 }

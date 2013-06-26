@@ -109,6 +109,8 @@ import org.ovirt.engine.core.dao.network.NetworkViewDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
+import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
+import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
@@ -902,5 +904,21 @@ public class DbFacade {
 
     public NetworkQoSDao getQosDao() {
         return getDao(NetworkQoSDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link PolicyUnitDao}.
+     * @return the dao
+     */
+    public PolicyUnitDao getPolicyUnitDao() {
+        return getDao(PolicyUnitDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link ClusterPolicyDao}.
+     * @return the dao
+     */
+    public ClusterPolicyDao getClusterPolicyDao() {
+        return getDao(ClusterPolicyDao.class);
     }
 }
