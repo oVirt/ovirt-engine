@@ -179,6 +179,7 @@ generated-files:	$(GENERATED)
 	chmod a+x packaging/services/ovirt-engine.sysv
 	chmod a+x packaging/services/ovirt-engine-notifier.sysv
 	chmod a+x packaging/services/ovirt-websocket-proxy.sysv
+	chmod a+x packaging/bin/ovirt-engine-log-setup-event.sh
 
 # support force run of maven
 maven:
