@@ -27,7 +27,6 @@ _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 from otopi import util
 from otopi import plugin
-from otopi import constants as otopicons
 
 
 from ovirt_engine_setup import constants as osetupcons
