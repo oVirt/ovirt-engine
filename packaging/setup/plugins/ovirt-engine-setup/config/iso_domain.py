@@ -236,6 +236,9 @@ class Plugin(plugin.PluginBase):
         after=[
             osetupcons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
         ],
+        before=[
+            osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
+        ],
         condition=lambda self: self.environment[
             osetupcons.SystemEnv.NFS_CONFIG_ENABLED
         ],
