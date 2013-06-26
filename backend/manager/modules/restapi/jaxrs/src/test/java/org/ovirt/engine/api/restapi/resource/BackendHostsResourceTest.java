@@ -87,13 +87,13 @@ public class BackendHostsResourceTest
     }
 
     @Test
-    public void testRemoveNonExistant() throws Exception{
+    public void testRemoveNonExistant() throws Exception {
         setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { NON_EXISTANT_GUID },
                 null);
-        control.replay();
+        setUriInfo(setUpGetMatrixConstraintsExpectations(BackendHostResource.FORCE_CONSTRAINT, false, null));
         try {
             collection.remove(NON_EXISTANT_GUID.toString());
             fail("expected WebApplicationException");
@@ -296,6 +296,7 @@ public class BackendHostsResourceTest
         }
     }
 
+    @Override
     protected VDS getEntity(int index) {
         return setUpEntityExpectations(control.createMock(VDS.class), control.createMock(VdsStatistics.class), index);
     }
@@ -331,6 +332,7 @@ public class BackendHostsResourceTest
         return entity;
     }
 
+    @Override
     protected List<Host> getCollection() {
         return collection.list().getHosts();
     }
@@ -343,6 +345,7 @@ public class BackendHostsResourceTest
         return model;
     }
 
+    @Override
     protected void verifyModel(Host model, int index) {
         verifyModelSpecific(model, index);
         verifyLinks(model);

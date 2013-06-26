@@ -42,6 +42,7 @@ public class BackendResource extends BaseBackendResource {
     protected static final int NO_LIMIT = -1;
     private static final String CORRELATION_ID = "Correlation-Id";
     private static final String ASYNC_CONSTRAINT = "async";
+    public static final String FORCE_CONSTRAINT = "force";
     protected static final String MAX = "max";
     private static final String EXPECT_HEADER = "Expect";
     private static final String NON_BLOCKING_EXPECTATION = "202-accepted";
@@ -168,8 +169,8 @@ public class BackendResource extends BaseBackendResource {
         }
     }
 
-    protected boolean isAsync() {
-        String value = QueryHelper.getMatrixConstraint(getUriInfo(), ASYNC_CONSTRAINT);
+    private boolean getBooleanMatrixConstraint(String marixConsraint) {
+        String value = QueryHelper.getMatrixConstraint(getUriInfo(), marixConsraint);
         if (value == null) {
             return false; // matrix param does not exist in URL, go with the default value, which is 'false'.
         } else {
@@ -178,13 +179,25 @@ public class BackendResource extends BaseBackendResource {
             } else if (value.equalsIgnoreCase(FALSE)) {
                 return false;
             } else {
-                // 'async' param exists but has illegal value (not 'false' or 'true') - throw exception.
+                // param exists but has illegal value (not 'false' or 'true') - throw exception.
                 throw new UrlParamException(this,
                         null,
                         "Illegal value '" + value
-                                + "' for matrix param: 'async'. Acceptable values are 'true' or 'false'");
+                                + "' for matrix param: '" + marixConsraint
+                                + "'. Acceptable values are 'true' or 'false'");
             }
         }
+    }
+
+    protected boolean isAsync() {
+        return getBooleanMatrixConstraint(ASYNC_CONSTRAINT);
+    }
+
+    /**
+     * Checks if ;force matrix parameter specified in the URI
+     */
+    protected boolean isForce() {
+        return getBooleanMatrixConstraint(FORCE_CONSTRAINT);
     }
 
     protected void badRequest(String message) {

@@ -55,6 +55,7 @@ public class FeaturesHelper {
             addFeatureVnicCustomProperties(features);
             addFeatureVirtioScsi(features);
             addFeatureComment(features);
+            addFeatureRefreshHostCapabilities(features);
         }
         return features;
     }
@@ -253,6 +254,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Custom comment in the resource");
         feature.setDescription("At this point added ability to add custom comment only to the datacenter, in future versions we may allow it in other resources as well.");
+        features.getFeature().add(feature);
+    }
+
+    private void addFeatureRefreshHostCapabilities(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Refresh Host Capabilities");
+        feature.setDescription("Getting host data synchronized with getVdsCaps (GET .../hosts/{host:id};force");
         features.getFeature().add(feature);
     }
 }

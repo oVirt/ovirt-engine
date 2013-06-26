@@ -56,6 +56,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         HostResource {
 
     private static final String DEFAULT_ISCSI_PORT = "3260";
+
     private BackendHostsResource parent;
 
     public BackendHostResource(String id, BackendHostsResource parent) {
@@ -65,6 +66,11 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     public Host get() {
+        if (isForce()) {
+            performAction(VdcActionType.RefreshHostCapabilities,
+                    new VdsActionParameters(guid));
+        }
+
         return performGet(VdcQueryType.GetVdsByVdsId, new IdQueryParameters(guid));
     }
 
@@ -176,6 +182,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         return doAction(VdcActionType.ConnectStorageToVds, connectionParms, action);
     }
 
+    @Override
     public Response iscsiDiscover(Action action) {
         validateParameters(action, "iscsi.address");
 
@@ -316,6 +323,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         return inject(new BackendActionResource(action, ids));
     }
 
+    @Override
     protected VDS getEntity() {
         return getEntity(VDS.class, VdcQueryType.GetVdsByVdsId, new IdQueryParameters(guid), id);
     }

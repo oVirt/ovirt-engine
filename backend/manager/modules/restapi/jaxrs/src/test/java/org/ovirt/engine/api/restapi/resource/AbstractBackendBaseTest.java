@@ -554,4 +554,45 @@ public abstract class AbstractBackendBaseTest extends Assert {
                             addSession(new Object[]{jobId})))).andReturn(monitorResult);
         }
     }
+
+    protected UriInfo setUpGetMatrixConstraintsExpectations(String matrixConstraint,
+            boolean matrixConstraintExist,
+            String matrixConstraintValue, UriInfo uriInfo, boolean replay) {
+        List<PathSegment> psl = new ArrayList<PathSegment>();
+
+        PathSegment ps = control.createMock(PathSegment.class);
+        MultivaluedMap<String, String> matrixParams = control.createMock(MultivaluedMap.class);
+
+        expect(matrixParams.isEmpty()).andReturn(!matrixConstraintExist);
+        expect(ps.getMatrixParameters()).andReturn(matrixParams).anyTimes();
+
+        if (matrixConstraintExist) {
+            expect(matrixParams.containsKey(matrixConstraint)).andReturn(matrixConstraintExist);
+            List<String> matrixParamsList = control.createMock(List.class);
+            expect(matrixParams.get(matrixConstraint)).andReturn(matrixParamsList).anyTimes();
+
+            expect(matrixParamsList.size()).andReturn(1);
+            expect(matrixParamsList.get(0)).andReturn(matrixConstraintValue);
+        }
+
+        psl.add(ps);
+
+        expect(uriInfo.getPathSegments()).andReturn(psl).anyTimes();
+
+        if (replay) {
+            control.replay();
+        }
+
+        return uriInfo;
+    }
+
+    protected UriInfo setUpGetMatrixConstraintsExpectations(String matrixConstraint,
+            boolean matrixConstraintExist,
+            String matrixConstraintValue) {
+        return setUpGetMatrixConstraintsExpectations(matrixConstraint,
+                matrixConstraintExist,
+                matrixConstraintValue,
+                control.createMock(UriInfo.class),
+                true);
+    }
 }

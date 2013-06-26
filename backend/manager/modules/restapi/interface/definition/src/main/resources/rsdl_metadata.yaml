@@ -1773,7 +1773,8 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams: {}
+    urlparams:
+      force: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/hosts/{host:id}|rel=delete

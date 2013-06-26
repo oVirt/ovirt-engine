@@ -114,6 +114,36 @@ public class BackendHostResourceTest
     }
 
     @Test
+    public void testGetForceTrue() throws Exception {
+        UriInfo uriInfo =
+                setUpActionExpectations(VdcActionType.RefreshHostCapabilities,
+                                        VdsActionParameters.class,
+                                        new String[] { "VdsId" },
+                                        new Object[] { GUIDS[0] },
+                                        true,
+                                        true,
+                                        null,
+                                        null,
+                                        false);
+        testGetWithForce(true, uriInfo, true);
+    }
+
+    @Test
+    public void testGetForceFalse() throws Exception {
+        testGetWithForce(false, setUpBasicUriExpectations(), true);
+    }
+
+    private void testGetWithForce(boolean forceValue, UriInfo uriInfo, boolean replay) throws Exception {
+        setUpGetEntityExpectations(1);
+        setUriInfo(setUpGetMatrixConstraintsExpectations(BackendHostResource.FORCE_CONSTRAINT,
+                true,
+                forceValue ? "true" : "false",
+                uriInfo,
+                replay));
+        verifyModel(resource.get(), 0);
+    }
+
+    @Test
     public void testGetIncludeStatistics() throws Exception {
         try {
             accepts.add("application/xml; detail=statistics");
@@ -612,6 +642,7 @@ public class BackendHostResourceTest
     private void setUpGetEntityWithNoCertificateInfoExpectations(int times) throws Exception {
         setUpGetEntityWithNoCertificateInfoExpectations(1, false, getEntity(0));
     }
+
     private void setUpGetEntityWithNoCertificateInfoExpectations(int times, boolean notFound, VDS entity) throws Exception {
         while (times-- > 0) {
             setUpGetEntityExpectations(VdcQueryType.GetVdsByVdsId,
