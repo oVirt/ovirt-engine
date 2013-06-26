@@ -604,11 +604,11 @@ def getConfiguredIps():
     interfaces = {}
     addresses = {}
     interfacere = re.compile(
-        '^\d+:\s+(?P<interface>\w+):\s+<(?P<options>[^>]+).*'
+        '^\d+:\s+(?P<interface>\w+(\.\w+(@\w+)?)?):\s+<(?P<options>[^>]+).*'
     )
     addressre = re.compile(
         '\s+inet (?P<address>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}).+'
-        '\s+(?P<interface>\w+)$'
+        '\s+(?P<interface>\w+(\.\w+(@\w+)?)?)$'
     )
     cmd = [
         basedefs.EXEC_IP, "addr",

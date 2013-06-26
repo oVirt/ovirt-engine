@@ -54,7 +54,7 @@ class Plugin(plugin.PluginBase):
             \d+
             :
             \s+
-            (?P<interface>\w+)
+            (?P<interface>\w+(\.\w+(@\w+)?)?)
             :
             \s+
             <(?P<options>[^>]+)
@@ -71,7 +71,7 @@ class Plugin(plugin.PluginBase):
             (?P<address>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})
             .+
             \s+
-            (?P<interface>\w+)
+            (?P<interface>\w+(\.\w+(@\w+)?)?)
             $
     """
     )
