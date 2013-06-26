@@ -46,6 +46,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
+        condition=lambda self: not self.environment[
+            osetupcons.CoreEnv.DEVELOPER_MODE
+        ],
     )
     def _setup(self):
         if self._distribution in ('redhat', 'fedora', 'centos'):
