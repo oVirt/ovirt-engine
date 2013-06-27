@@ -445,7 +445,7 @@ def stopNotifier():
 
     for s in (basedefs.NOTIFIER_SERVICE_NAME, basedefs.NOTIFIER_SERVICE_OLD_NAME):
         notifier = utils.Service(s)
-        if notifier.isServiceAvailable():
+        if notifier.available():
             notifier.stop(True)
 
 def runFunc(funcs, dispString):
