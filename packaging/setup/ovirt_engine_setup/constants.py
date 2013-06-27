@@ -80,10 +80,7 @@ class FileLocations(object):
         'bin',
     )
 
-    OVIRT_OVIRT_SETUP_CONFIG_FILE = os.path.join(
-        SYSCONFDIR,
-        'ovirt-engine-setup.conf',
-    )
+    OVIRT_OVIRT_SETUP_CONFIG_FILE = config.ENGINE_SETUP_CONFIG
 
     OVIRT_OVIRT_SETUP_LOG_PREFIX = 'ovirt-engine-setup'
     OVIRT_OVIRT_REMOVE_LOG_PREFIX = 'ovirt-engine-remove'

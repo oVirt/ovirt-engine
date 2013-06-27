@@ -122,6 +122,7 @@ BUILD_TARGET=install
 	sed \
 	-e "s|@ENGINE_DEFAULTS@|$(DATA_DIR)/conf/engine.conf.defaults|g" \
 	-e "s|@ENGINE_VARS@|$(PKG_SYSCONF_DIR)/engine.conf|g" \
+	-e "s|@ENGINE_SETUP_VARS@|$(SYSCONF_DIR)/ovirt-engine-setup.conf|g" \
 	-e "s|@ENGINE_NOTIFIER_DEFAULTS@|$(DATA_DIR)/conf/notifier.conf.defaults|g" \
 	-e "s|@ENGINE_NOTIFIER_VARS@|$(PKG_SYSCONF_DIR)/notifier/notifier.conf|g" \
 	-e "s|@ENGINE_WSPROXY_DEFAULT_FILE@|$(DATA_DIR)/conf/ovirt-websocket-proxy.conf.defaults|g" \
