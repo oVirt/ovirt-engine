@@ -231,6 +231,16 @@ Requires: %{name} = %{version}-%{release}
 %description restapi
 The RESTful API for %{product_name_short}
 
+%post restapi
+%if %{install_poms}
+%update_maven_depmap
+%endif
+
+%postun restapi
+%if %{install_poms}
+%update_maven_depmap
+%endif
+
 
 %package setup
 Summary: Setup and upgrade scripts for %{product_name_short}
@@ -305,10 +315,16 @@ Requires(postun): systemd
 %if %{install_systemd}
 %systemd_post ovirt-engine-notifier.service
 %endif
+%if %{install_poms}
+%update_maven_depmap
+%endif
 
 %postun tools
 %if %{install_systemd}
 %systemd_postun ovirt-engine-notifier.service
+%endif
+%if %{install_poms}
+%update_maven_depmap
 %endif
 
 %preun tools
@@ -499,6 +515,11 @@ fi
 %endif
 
 
+%post
+%if %{install_poms}
+%update_maven_depmap
+%endif
+
 %postun
 if [ "$1" -eq 0 ]
 then
@@ -510,6 +531,9 @@ then
         sed -i '/%{name}/d' %{_sysconfdir}/yum/pluginconf.d/versionlock.list
     fi
 fi
+%if %{install_poms}
+%update_maven_depmap
+%endif
 
 
 %postun backend
