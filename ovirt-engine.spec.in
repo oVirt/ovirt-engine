@@ -332,6 +332,11 @@ Requires(postun): systemd
 %systemd_preun ovirt-engine-notifier.service
 %endif
 
+%if %{install_systemv}
+if [ $1 -eq 0 ] ; then
+    service ovirt-engine-notifier stop > /dev/null 2>&1 || true
+fi
+%endif
 
 %package websocket-proxy
 Summary: %{product_name_short} Websocket Proxy
@@ -520,6 +525,11 @@ fi
 %systemd_preun ovirt-engine.service
 %endif
 
+%if %{install_systemv}
+if [ $1 -eq 0 ] ; then
+    service ovirt-engine stop > /dev/null 2>&1 || true
+fi
+%endif
 
 %post
 %if %{install_poms}
