@@ -236,12 +236,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (vmFromParams.isAutoStartup()
-                && vmFromParams.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_PINNED_TO_HOST);
-            return false;
-        }
-
         if (!VmHandler.isMemorySizeLegal(vmFromParams.getOs(),
                 vmFromParams.getMemSizeMb(), getReturnValue().getCanDoActionMessages(),
                 getVdsGroup().getcompatibility_version())) {

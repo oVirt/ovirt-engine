@@ -607,17 +607,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
         if (vmStaticData != null) {
 
-            returnValue = vmStaticData.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST
-                    || !vmStaticData.isAutoStartup();
-
-            if (!returnValue) {
-                reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_PINNED_TO_HOST
-                        .toString());
-            }
-
-            if (!returnValue) {
-                returnValue = returnValue && IsLegalClusterId(vmStaticData.getVdsGroupId(), reasons);
-            }
+            returnValue = IsLegalClusterId(vmStaticData.getVdsGroupId(), reasons);
 
             if (!validatePinningAndMigration(reasons, vmStaticData, getParameters().getVm().getCpuPinning())) {
                 returnValue = false;

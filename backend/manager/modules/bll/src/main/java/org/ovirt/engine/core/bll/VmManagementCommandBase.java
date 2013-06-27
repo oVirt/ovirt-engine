@@ -189,6 +189,11 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_AND_MIGRATABLE.toString());
             return false;
         }
+
+        if (vmStaticData.isAutoStartup() && vmStaticData.getMigrationSupport() != MigrationSupport.MIGRATABLE) {
+            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_PINNED_TO_HOST.toString());
+            return false;
+        }
         return true;
     }
 
