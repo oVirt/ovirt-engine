@@ -230,6 +230,7 @@ public class BackendVmsResource extends
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
         }
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
+        setupCloneTemplatePermissions(vm, params);
         return performCreate(VdcActionType.AddVmFromTemplate,
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
@@ -277,9 +278,16 @@ public class BackendVmsResource extends
         params.setStorageDomainId(storageDomainId);
         params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), templateId));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
+        setupCloneTemplatePermissions(vm, params);
         return performCreate(VdcActionType.AddVm,
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
+    }
+
+    void setupCloneTemplatePermissions(VM vm, VmManagementParametersBase params) {
+        if (vm.isSetPermissions() && vm.getPermissions().isSetClone()) {
+            params.setCopyTemplatePermissions(vm.getPermissions().isClone());
+        }
     }
 
     protected Response addVmFromScratch(VmStatic staticVm, VM vm, Guid storageDomainId) {

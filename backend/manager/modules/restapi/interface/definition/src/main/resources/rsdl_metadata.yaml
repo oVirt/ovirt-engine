@@ -125,6 +125,7 @@ actions:
           vm.domain.name: xs:string
           vm.description: xs:string
           vm.stateless: xs:boolean
+          vm.permissions.clone: xs:boolean
           vm.delete_protected: xs:boolean
           vm.cpu.mode: xs:string
           vm.cpu.topology.sockets: xs:int
@@ -2494,6 +2495,7 @@ actions:
           template.usb.type: xs:string
           template.tunnel_migration: xs:boolean
           template.vm.disks.disk--COLLECTION: {disk.id: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
+          template.permissions.clone: xs:boolean
           template.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
     urlparams: {}
     headers:

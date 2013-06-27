@@ -1591,12 +1591,14 @@
     <xs:complexContent>
       <xs:extension base="BaseResources">
         <xs:sequence>
-          <xs:annotation>
-            <xs:appinfo>
-                <jaxb:property name="Permissions"/>
-            </xs:appinfo>
-          </xs:annotation>
-          <xs:element ref="permission" minOccurs="0" maxOccurs="unbounded"/>
+            <xs:element ref="permission" minOccurs="0" maxOccurs="unbounded">
+              <xs:annotation>
+                <xs:appinfo>
+                    <jaxb:property name="Permissions"/>
+                </xs:appinfo>
+              </xs:annotation>
+            </xs:element>
+          <xs:element name="clone" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -2009,6 +2011,7 @@
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
           <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
           <!-- also rel="cdroms/disks/nics/watchdogs" links, see Devices below -->
         </xs:sequence>
       </xs:extension>
@@ -2213,6 +2216,7 @@
           <xs:element ref="quota" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
           <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
 
           <xs:element ref="vmpool" minOccurs="0" maxOccurs="1">
             <xs:annotation>

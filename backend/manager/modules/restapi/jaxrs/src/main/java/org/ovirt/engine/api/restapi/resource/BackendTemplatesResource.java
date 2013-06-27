@@ -83,10 +83,19 @@ public class BackendTemplatesResource
         params.setDiskInfoDestinationMap(getDiskToDestinationMap(template.getVm(),
                 params.getDestinationStorageDomainId(),
                 isDomainSet));
+
+        setupCloneVmPermissions(template, params);
+
         return performCreate(VdcActionType.AddVmTemplate,
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmTemplate,
                                                    GetVmTemplateParameters.class));
+    }
+
+    void setupCloneVmPermissions(Template template, AddVmTemplateParameters params) {
+        if (template.isSetPermissions() && template.getPermissions().isSetClone()) {
+            params.setCopyVmPermissions(template.getPermissions().isClone());
+        }
     }
 
     private VDSGroup lookupCluster(Guid id) {

@@ -19,6 +19,7 @@ import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.Permissions;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.StorageDomain;
@@ -735,6 +736,103 @@ public class BackendVmsResourceTest
         model.getTemplate().setId(GUIDS[1].toString());
         model.setCluster(new Cluster());
         model.getCluster().setName(NAMES[2]);
+
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VM);
+        verifyModel((VM) response.getEntity(), 2);
+    }
+
+    @Test
+    public void testAddWithClonePermissionsDontClone() throws Exception {
+        doTestAddWithClonePermissions(createModel(null), false);
+    }
+
+    @Test
+    public void testAddWithClonePermissionsClone() throws Exception {
+        VM model = createModel(null);
+        model.setPermissions(new Permissions());
+        model.getPermissions().setClone(true);
+
+        doTestAddWithClonePermissions(model, true);
+    }
+
+    private void doTestAddWithClonePermissions(VM model, boolean copy) throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 2);
+        setUpGetCertuficateExpectations(1, 2);
+        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+                                     GetVmTemplateParameters.class,
+                                     new String[] { "Id" },
+                                     new Object[] { GUIDS[1] },
+                                     getTemplateEntity(0));
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                                     IdQueryParameters.class,
+                                     new String[] { "Id" },
+                                     new Object[] { GUIDS[2] },
+                                     getVdsGroupEntity());
+        setUpCreationExpectations(VdcActionType.AddVm,
+                                  VmManagementParametersBase.class,
+                                  new String[] { "StorageDomainId", "CopyTemplatePermissions" },
+                                  new Object[] { GUIDS[0], copy },
+                                  true,
+                                  true,
+                                  GUIDS[2],
+                                  VdcQueryType.GetVmByVmId,
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
+                                  new Object[] { GUIDS[2] },
+                                  getEntity(2));
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VM);
+        verifyModel((VM) response.getEntity(), 2);
+    }
+
+    @Test
+    public void testCloneFromTemplateWithClonePermissionsDontClone() throws Exception {
+        doTestCloneFromTemplateWithClonePermissions(createModel(createDisksCollection()), false);
+    }
+
+    @Test
+    public void testCloneFromTemplateWithClonePermissionsClone() throws Exception {
+        VM model = createModel(createDisksCollection());
+        model.setPermissions(new Permissions());
+        model.getPermissions().setClone(true);
+        doTestCloneFromTemplateWithClonePermissions(model, true);
+    }
+
+    private void doTestCloneFromTemplateWithClonePermissions(VM model, boolean copy) throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpTemplateDisksExpectations(GUIDS[1]);
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 2);
+        setUpGetCertuficateExpectations(1, 2);
+        setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
+                                     GetVmTemplateParameters.class,
+                                     new String[]{"Id"},
+                                     new Object[]{GUIDS[1]},
+                                     getTemplateEntity(0));
+                                     setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                                     IdQueryParameters.class,
+                                     new String[]{"Id"},
+                                     new Object[]{GUIDS[2]},
+                                     getVdsGroupEntity());
+
+        setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
+                                  AddVmFromTemplateParameters.class,
+                                  new String[] { "StorageDomainId", "CopyTemplatePermissions" },
+                                  new Object[] { GUIDS[0], copy },
+                                  true,
+                                  true,
+                                  GUIDS[2],
+                                  VdcQueryType.GetVmByVmId,
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
+                                  new Object[] { GUIDS[2] },
+                                  getEntity(2));
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());

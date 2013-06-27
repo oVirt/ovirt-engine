@@ -12,6 +12,7 @@ import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CreationStatus;
+import org.ovirt.engine.api.model.Permissions;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -33,6 +34,59 @@ public class BackendTemplatesResourceTest
 
     public BackendTemplatesResourceTest() {
         super(new BackendTemplatesResource(), SearchType.VmTemplate, "Template : ");
+    }
+
+
+    @Test
+    public void testAddWithClonePermissionsDontClone() throws Exception {
+        doTestAddWithClonePermissions(getModel(0), false);
+    }
+
+    @Test
+    public void testAddWithClonePermissionsClone() throws Exception {
+        Template model = getModel(0);
+        model.setPermissions(new Permissions());
+        model.getPermissions().setClone(true);
+
+        doTestAddWithClonePermissions(model, true);
+    }
+
+    private void doTestAddWithClonePermissions(Template model, boolean copy) throws Exception{
+        setUriInfo(setUpBasicUriExpectations());
+        setUpHttpHeaderExpectations("Expect", "201-created");
+
+        setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[1] },
+                setUpVm(GUIDS[1]));
+        setUpGetEntityExpectations();
+        setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                getVdsGroupEntity());
+
+        setUpCreationExpectations(VdcActionType.AddVmTemplate,
+                AddVmTemplateParameters.class,
+                new String[] { "Name", "Description", "CopyVmPermissions" },
+                new Object[] { NAMES[0], DESCRIPTIONS[0], copy },
+                true,
+                true,
+                GUIDS[0],
+                asList(GUIDS[2]),
+                asList(new AsyncTaskStatus(AsyncTaskStatusEnum.finished)),
+                VdcQueryType.GetVmTemplate,
+                GetVmTemplateParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[0] },
+                getEntity(0));
+
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof Template);
+        verifyModel((Template)response.getEntity(), 0);
+        assertNull(((Template)response.getEntity()).getCreationStatus());
     }
 
     @Test
