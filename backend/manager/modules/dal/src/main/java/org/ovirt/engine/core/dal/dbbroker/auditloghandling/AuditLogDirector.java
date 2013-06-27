@@ -907,6 +907,8 @@ public final class AuditLogDirector {
             getDbFacadeInstance().getAuditLogDao().save(auditLog);
             if (!"".equals(loggerString)) {
                 log.infoFormat(loggerString, resolvedMessage);
+            } else {
+                log.info(auditLog.toStringForLogging());
             }
         }
     }

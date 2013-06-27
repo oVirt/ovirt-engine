@@ -477,4 +477,25 @@ public class AuditLog extends IVdcQueryable implements Serializable {
     public void setCallStack(String callStack) {
         this.callStack = callStack;
     }
+
+    public String toStringForLogging() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Correlation ID: ");
+        sb.append(correlationId);
+        sb.append(", ");
+        if(jobId != null){
+            sb.append("Job ID: ");
+            sb.append(jobId.toString());
+            sb.append(", ");
+        }
+        sb.append("Call Stack: ");
+        sb.append(callStack);
+        sb.append(", ");
+        sb.append("Custom Event ID: ");
+        sb.append(customEventId);
+        sb.append(", ");
+        sb.append("Message: ");
+        sb.append(message);
+        return sb.toString();
+    }
 }
