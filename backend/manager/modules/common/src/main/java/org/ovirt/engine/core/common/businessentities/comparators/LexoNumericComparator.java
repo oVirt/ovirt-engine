@@ -21,12 +21,26 @@ import java.util.Comparator;
  */
 public class LexoNumericComparator implements Comparator<String>, Serializable {
 
+    private boolean caseSensitive;
+
+    public LexoNumericComparator(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+
+    public LexoNumericComparator() {
+        this(false);
+    }
+
     @Override
     public int compare(String str1, String str2) {
-        return comp(str1, str2);
+        return comp(str1, str2, caseSensitive);
     }
 
     public static int comp(String str1, String str2) {
+        return comp(str1, str2, false);
+    }
+
+    public static int comp(String str1, String str2, boolean caseSensitive) {
         if (str1 == null) {
             return (str2 == null) ? 0 : -1;
         } else if (str2 == null) {
@@ -48,7 +62,7 @@ public class LexoNumericComparator implements Comparator<String>, Serializable {
             int endSeq2 = findEndOfSequence(str2, begSeq2, digitTurn);
             String seq1 = str1.substring(begSeq1, endSeq1);
             String seq2 = str2.substring(begSeq2, endSeq2);
-            int compRes = compareSequence(seq1, seq2, digitTurn);
+            int compRes = compareSequence(seq1, seq2, digitTurn, caseSensitive);
             if (compRes != 0) {
                 return compRes;
             }
@@ -66,17 +80,18 @@ public class LexoNumericComparator implements Comparator<String>, Serializable {
         return 0;
     }
 
-    private static int compareSequence(String seq1, String seq2, boolean digitSequence) {
-        return digitSequence ? compDigitSequence(seq1, seq2) : compNonDigitSequence(seq1, seq2);
+    private static int compareSequence(String seq1, String seq2, boolean digitSequence, boolean caseSensitive) {
+        return digitSequence ? compDigitSequence(seq1, seq2, caseSensitive)
+                : compNonDigitSequence(seq1, seq2, caseSensitive);
     }
 
-    private static int compDigitSequence(String seq1, String seq2) {
+    private static int compDigitSequence(String seq1, String seq2, boolean caseSensitive) {
         int compRes = ((Integer) Integer.parseInt(seq1)).compareTo(Integer.parseInt(seq2));
-        return compRes == 0 ? compNonDigitSequence(seq1, seq2) : compRes;
+        return compRes == 0 ? compNonDigitSequence(seq1, seq2, caseSensitive) : compRes;
     }
 
-    private static int compNonDigitSequence(String seq1, String seq2) {
-        return seq1.compareTo(seq2);
+    private static int compNonDigitSequence(String seq1, String seq2, boolean caseSensitive) {
+        return Integer.signum(caseSensitive ? seq1.compareTo(seq2) : seq1.compareToIgnoreCase(seq2));
     }
 
     private static int findEndOfSequence(String seq, int startIndex, boolean digitSequence) {
