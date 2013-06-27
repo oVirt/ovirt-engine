@@ -1908,4 +1908,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Time Zone is not changeable for Linux VMs")
     String timeZoneNotChangeableForLinuxVms();
 
+    @DefaultStringValue("Host cannot be set highly available when 'Do not allow migration' or 'Allow manual migration' is selected")
+    String hostNonMigratable();
+
+    @DefaultStringValue("Host must be migratable when highly available is selected")
+    String hostIsHa();
 }

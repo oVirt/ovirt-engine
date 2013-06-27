@@ -706,6 +706,26 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
+    public void updateHaAvailability() {
+        boolean automaticMigrationAllowed = getModel().getMigrationMode().getSelectedItem()
+                == MigrationSupport.MIGRATABLE;
+        if (!automaticMigrationAllowed) {
+            getModel().getIsHighlyAvailable().setChangeProhibitionReason(constants.hostNonMigratable());
+            getModel().getIsHighlyAvailable().setEntity(false);
+        }
+        getModel().getIsHighlyAvailable().setIsChangable(automaticMigrationAllowed);
+    }
+
+    public void updateMigrationAvailability() {
+        Boolean haHost = (Boolean) getModel().getIsHighlyAvailable().getEntity();
+        if (haHost) {
+            getModel().getMigrationMode().setChangeProhibitionReason(constants.hostIsHa());
+            getModel().getMigrationMode().setSelectedItem(MigrationSupport.MIGRATABLE);
+        }
+        getModel().getMigrationMode().setIsChangable(!haHost);
+
+    }
+
     private boolean isVmMigratable() {
         return getModel().getMigrationMode().getSelectedItem() != MigrationSupport.PINNED_TO_HOST;
     }

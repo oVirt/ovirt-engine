@@ -1086,6 +1086,7 @@ public class UnitVmModel extends Model {
         getCdAttached().setEntity(false);
 
         setIsHighlyAvailable(new NotChangableForVmInPoolEntityModel());
+        getIsHighlyAvailable().getEntityChangedEvent().addListener(this);
         setIsTemplatePublic(new NotChangableForVmInPoolEntityModel());
         setKernel_parameters(new NotChangableForVmInPoolEntityModel());
         setKernel_path(new NotChangableForVmInPoolEntityModel());
@@ -1304,6 +1305,7 @@ public class UnitVmModel extends Model {
             {
                 behavior.updateUseHostCpuAvailability();
                 behavior.updateCpuPinningVisibility();
+                behavior.updateHaAvailability();
             }
         }
         else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
@@ -1320,6 +1322,7 @@ public class UnitVmModel extends Model {
             {
                 behavior.updateUseHostCpuAvailability();
                 behavior.updateCpuPinningVisibility();
+                behavior.updateHaAvailability();
             }
             else if (sender == getProvisioning())
             {
@@ -1338,6 +1341,8 @@ public class UnitVmModel extends Model {
                 }
             } else if (sender == getWatchdogModel()) {
                 WatchdogModel_EntityChanged(sender, args);
+            } else if (sender == getIsHighlyAvailable()) {
+                behavior.updateMigrationAvailability();
             }
         }
     }
