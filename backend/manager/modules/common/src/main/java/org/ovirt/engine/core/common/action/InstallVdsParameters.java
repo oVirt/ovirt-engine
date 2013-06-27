@@ -6,8 +6,8 @@ public class InstallVdsParameters extends VdsOperationActionParameters {
 
     private static final long serialVersionUID = 5066290843683399113L;
 
-    private boolean privateIsReinstallOrUpgrade;
-    private String privateoVirtIsoFile;
+    private boolean reinstallOrUpgrade;
+    private String oVirtIsoFile;
 
 
     public InstallVdsParameters() {
@@ -15,24 +15,24 @@ public class InstallVdsParameters extends VdsOperationActionParameters {
 
     public InstallVdsParameters(Guid vdsId, String password) {
         super();
-        this.setVdsId(vdsId);
+        setVdsId(vdsId);
         setRootPassword(password);
     }
 
     public boolean getIsReinstallOrUpgrade() {
-        return privateIsReinstallOrUpgrade;
+        return reinstallOrUpgrade;
     }
 
     public String getoVirtIsoFile() {
-        return privateoVirtIsoFile;
+        return oVirtIsoFile;
     }
 
     public void setIsReinstallOrUpgrade(boolean value) {
-        privateIsReinstallOrUpgrade = value;
+        reinstallOrUpgrade = value;
     }
 
     public void setoVirtIsoFile(String value) {
-        privateoVirtIsoFile = value;
+        oVirtIsoFile = value;
     }
 
 
