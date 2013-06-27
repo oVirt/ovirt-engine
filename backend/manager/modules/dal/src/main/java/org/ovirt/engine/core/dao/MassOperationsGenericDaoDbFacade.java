@@ -1,13 +1,10 @@
 package org.ovirt.engine.core.dao;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.dal.dbbroker.EntityToMapSqlParameterMapper;
-import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 
 /**
  * Implementation for the {@link MassOperationsDao} which provides a default
@@ -28,7 +25,7 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
 
     @Override
     public void updateAll(Collection<T> entities) {
-        updateAll(getProcedureNameForUpdate(),entities);
+        updateAll(getProcedureNameForUpdate(), entities);
     }
 
     @Override
@@ -51,15 +48,9 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
      */
     public void updateAllInBatch(String procedureName,
             Collection<T> paramValues,
-            EntityToMapSqlParameterMapper<T> mapper) {
-        List<MapSqlParameterSource> sqlParams = new ArrayList<>();
-
-        for (T param : paramValues) {
-            sqlParams.add(mapper.map(param));
-        }
-
+            MapSqlParameterMapper<T> mapper) {
         getCallsHandler().executeStoredProcAsBatch(procedureName == null ? getProcedureNameForUpdate() : procedureName,
-                sqlParams);
+                paramValues, mapper);
     }
 
     @Override

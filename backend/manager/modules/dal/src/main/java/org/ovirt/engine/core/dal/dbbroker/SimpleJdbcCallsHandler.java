@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.dal.dbbroker;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -36,8 +38,11 @@ public class SimpleJdbcCallsHandler {
 
     /**
      * Runs a set of stored procedure calls in a batch. Only useful for update procedures that return no value
-     * @param procedureName the procedure name
-     * @param executions a list of parameter maps
+     *
+     * @param procedureName
+     *            the procedure name
+     * @param executions
+     *            a list of parameter maps
      * @return
      */
     public void executeStoredProcAsBatch(final String procName,
@@ -45,6 +50,24 @@ public class SimpleJdbcCallsHandler {
             throws DataAccessException {
 
         template.execute(new BatchProcedureExecutionConnectionCallback(this, procName, executions));
+    }
+
+    /**
+     * Runs a set of stored procedure calls in a batch. Only useful for update procedures that return no value
+     * @param procedureName the procedure name
+     * @param paramValues list of objects to be converted to {@link MapSqlParameterSource}
+     * @param mapper mapper to use to convert the param value objects to {@liunk MapSqlParameterSource}
+     */
+    public <T> void executeStoredProcAsBatch(final String procedureName,
+            Collection<T> paramValues,
+            MapSqlParameterMapper<T> mapper) {
+        List<MapSqlParameterSource> sqlParams = new ArrayList<>();
+
+        for (T param : paramValues) {
+            sqlParams.add(mapper.map(param));
+        }
+
+        executeStoredProcAsBatch(procedureName, sqlParams);
     }
 
     public Map<String, Object> executeModification(final String procedureName, final MapSqlParameterSource paramSource) {
@@ -95,18 +118,18 @@ public class SimpleJdbcCallsHandler {
             final RowMapper<?> mapper,
             final MapSqlParameterSource parameterSource) {
         return new CallCreator() {
-                @Override
-                public SimpleJdbcCall createCall() {
-                    SimpleJdbcCall call =
-                            (SimpleJdbcCall) dialect.createJdbcCallForQuery(template).withProcedureName(procedureName);
-                    call.returningResultSet(BaseDAODbFacade.RETURN_VALUE_PARAMETER, mapper);
-                    // Pass mapper information (only parameter names) in order to supply all the needed
-                    // metadata information for compilation.
-                    call.getInParameterNames().addAll(
-                            SqlParameterSourceUtils.extractCaseInsensitiveParameterNames(parameterSource).keySet());
-                    return call;
-                }
-            };
+            @Override
+            public SimpleJdbcCall createCall() {
+                SimpleJdbcCall call =
+                        (SimpleJdbcCall) dialect.createJdbcCallForQuery(template).withProcedureName(procedureName);
+                call.returningResultSet(BaseDAODbFacade.RETURN_VALUE_PARAMETER, mapper);
+                // Pass mapper information (only parameter names) in order to supply all the needed
+                // metadata information for compilation.
+                call.getInParameterNames().addAll(
+                        SqlParameterSourceUtils.extractCaseInsensitiveParameterNames(parameterSource).keySet());
+                return call;
+            }
+        };
     }
 
     CallCreator createCallForModification(final String procedureName) {
@@ -125,13 +148,14 @@ public class SimpleJdbcCallsHandler {
     }
 
     /**
-     * Creates a call object and compiles its metadata, if not found in the map.
-     * Bare in mind the existence check if not atomic, so at worst case few more redundant information schema calls
-     * * will be made.
-     * The compilation is done at the scope of the method in order to avoid concurrency issues upon first time usage of
-     * the stored procedure.
-     * @param procedureName stored proceudre name
-     * @param callCreator calls creator object
+     * Creates a call object and compiles its metadata, if not found in the map. Bare in mind the existence check if not
+     * atomic, so at worst case few more redundant information schema calls * will be made. The compilation is done at
+     * the scope of the method in order to avoid concurrency issues upon first time usage of the stored procedure.
+     *
+     * @param procedureName
+     *            stored proceudre name
+     * @param callCreator
+     *            calls creator object
      * @return simple JDBC call object
      */
     protected SimpleJdbcCall getCall(String procedureName, CallCreator callCreator) {
