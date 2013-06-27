@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -16,12 +15,15 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class VncConsoleModel extends ConsoleModel {
+
+    private ClientConsoleMode consoleMode;
+
+    public enum ClientConsoleMode { Native, NoVnc }
 
     private static final int TICKET_VALIDITY_SECONDS = 120;
 
@@ -29,7 +31,7 @@ public class VncConsoleModel extends ConsoleModel {
 
     private String otp64 = null;
 
-    private final IVnc vncImpl;
+    private IVnc vncImpl;
 
     private String getPort() {
         if (getEntity() == null && getEntity().getDisplay() == null) {
@@ -49,11 +51,17 @@ public class VncConsoleModel extends ConsoleModel {
 
     public VncConsoleModel() {
         setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
+        setVncImplementation(ClientConsoleMode.Native); //Native (MIME) way is the default
+    }
 
-        String noVncConfig = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.WebSocketProxy);
-        this.vncImpl = StringHelper.isNullOrEmpty(noVncConfig) || noVncConfig.equals("Off") ? // $NON-NLS-1$
-            (IVnc) TypeResolver.getInstance().resolve(IVncNative.class) :
-            (IVnc) TypeResolver.getInstance().resolve(INoVnc.class);
+    public void setVncImplementation(ClientConsoleMode consoleMode) {
+        Class implClass = consoleMode == ClientConsoleMode.NoVnc ? INoVnc.class : IVncNative.class;
+        this.consoleMode = consoleMode;
+        this.vncImpl = (IVnc) TypeResolver.getInstance().resolve(implClass);
+    }
+
+    public ClientConsoleMode getClientConsoleMode() {
+        return consoleMode;
     }
 
     @Override

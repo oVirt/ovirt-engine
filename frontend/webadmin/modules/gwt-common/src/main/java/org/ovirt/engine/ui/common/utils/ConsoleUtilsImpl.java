@@ -214,6 +214,11 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
     }
 
     @Override
+    public boolean isWebSocketProxyDefined() {
+        return configurator.isWebSocketProxyDefined();
+    }
+
+    @Override
     public boolean isBrowserPluginSupported(ConsoleProtocol protocol) {
         switch (protocol) {
         case SPICE:

@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 
 import com.google.inject.Inject;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 
 public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFrontendPersister {
 
@@ -26,6 +27,9 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
     private static final String WAN_OPTIONS = "_wanOptions"; //$NON-NLS-1$
     private static final String USB_AUTOSHARE = "_usbAutoshare"; //$NON-NLS-1$
     private static final String SPICE_PROXY_ENABLED = "_spiceProxyEnabled"; //$NON-NLS-1$
+
+    // vnc options
+    private static final String VNC_CLIENT_MODE = "_vncClientMode"; //$NON-NLS-1$
 
     // rdp options
     private static final String RDP_CLIENT_MODE = "_rdpClientMode"; //$NON-NLS-1$
@@ -56,6 +60,8 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
 
         if (selectedProtocol == ConsoleProtocol.SPICE) {
             storeSpiceData(model, keyMaker);
+        } else if (selectedProtocol == ConsoleProtocol.VNC) {
+            storeVncData(model, keyMaker);
         } else if (selectedProtocol == ConsoleProtocol.RDP) {
             storeRdpData(model, keyMaker);
         }
@@ -79,11 +85,24 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
 
         if (selectedProtocol == ConsoleProtocol.SPICE) {
             loadSpiceData(model, keyMaker);
+        } else if (selectedProtocol == ConsoleProtocol.VNC) {
+            loadVncData(model, keyMaker);
         } else if (selectedProtocol == ConsoleProtocol.RDP) {
             loadRdpData(model, keyMaker);
-        } else {
-            // VNC is available all the time
-            model.setSelectedProtocol(selectedProtocol);
+        }
+    }
+
+    private void loadVncData(HasConsoleModel model, KeyMaker keyMaker) {
+        if (!(model.getDefaultConsoleModel() instanceof VncConsoleModel)) {
+            return;
+        }
+
+        model.setSelectedProtocol(ConsoleProtocol.VNC);
+
+        try {
+            asVncConsoleModel(model).setVncImplementation(VncConsoleModel.ClientConsoleMode
+                    .valueOf(clientStorage.getLocalItem(keyMaker.make(VNC_CLIENT_MODE))));
+        } catch (Exception e) {
         }
     }
 
@@ -104,6 +123,13 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
         storeBool(keyMaker.make(WAN_OPTIONS), spice.isWanOptionsEnabled());
         storeBool(keyMaker.make(USB_AUTOSHARE), spice.getUsbAutoShare());
         storeBool(keyMaker.make(SPICE_PROXY_ENABLED), spice.isSpiceProxyEnabled());
+    }
+
+    private void storeVncData(HasConsoleModel model, KeyMaker keyMaker) {
+        VncConsoleModel consoleModel = asVncConsoleModel(model);
+        if (consoleModel != null) {
+            clientStorage.setLocalItem(keyMaker.make(VNC_CLIENT_MODE), consoleModel.getClientConsoleMode().toString());
+        }
     }
 
     protected void loadRdpData(HasConsoleModel model, KeyMaker keyMaker) {
@@ -165,6 +191,10 @@ public class ConsoleOptionsFrontendPersisterImpl implements ConsoleOptionsFronte
 
     protected SpiceConsoleModel asSpiceConsoleModel(HasConsoleModel model) {
         return ((SpiceConsoleModel) model.getDefaultConsoleModel());
+    }
+
+    private VncConsoleModel asVncConsoleModel(HasConsoleModel model) {
+        return (VncConsoleModel) model.getDefaultConsoleModel();
     }
 
     protected void storeRdpData(HasConsoleModel model, KeyMaker keyMaker) {

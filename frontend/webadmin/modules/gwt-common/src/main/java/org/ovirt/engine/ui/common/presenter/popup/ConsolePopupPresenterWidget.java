@@ -49,19 +49,26 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         HasValueChangeHandlers<Boolean> getSpiceNativeImplRadioButton();
         HasValueChangeHandlers<Boolean> getSpicePluginImplRadioButton();
 
+        HasValueChangeHandlers<Boolean> getNoVncImplRadioButton();
+        HasValueChangeHandlers<Boolean> getVncNativeImplRadioButton();
+
         HasValueChangeHandlers<Boolean> getRdpAutoImplRadioButton();
         HasValueChangeHandlers<Boolean> getRdpNativeImplRadioButton();
         HasValueChangeHandlers<Boolean> getRdpPluginImplRadioButton();
 
-        void rdpSelected(boolean selected);
+        void showRdpPanel(boolean visible);
 
-        void spiceSelected(boolean selected);
+        void showSpicePanel(boolean visible);
+
+        void showVncPanel(boolean visible);
 
         void selectSpice(boolean selected);
 
         void selectRdp(boolean selected);
 
         void selectVnc(boolean selected);
+
+        void setNoVncEnabled(boolean enabled, String reason);
 
         void setAdditionalConsoleAvailable(boolean hasAdditionalConsole);
 
@@ -82,6 +89,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         void setCtrlAltDelEnabled(boolean enabled, String reason);
 
         void setSpiceProxyEnabled(boolean enabled, String reason);
+
+        void selectVncImplementation(VncConsoleModel.ClientConsoleMode clientConsoleMode);
 
         void selectRdpImplementation(RdpConsoleModel.ClientConsoleMode consoleMode);
 
@@ -191,8 +200,9 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         getView().selectRdp(rdpPreselected);
         getView().selectVnc(vncPreselected);
 
-        getView().spiceSelected(spicePreselected);
-        getView().rdpSelected(rdpPreselected);
+        getView().showSpicePanel(spicePreselected);
+        getView().showRdpPanel(rdpPreselected);
+        getView().showVncPanel(vncPreselected);
 
         getView().setDisableSmartcardVisible(consoleUtils.isSmartcardGloballyEnabled(currentItem));
 
@@ -207,12 +217,17 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             getView().setSpicePluginImplEnabled(false, constants.spicePluginNotSupportedByBrowser());
         }
 
+        getView().setNoVncEnabled(consoleUtils.isWebSocketProxyDefined(), constants.webSocketProxyNotSet());
+
         if (!consoleUtils.isBrowserPluginSupported(ConsoleProtocol.RDP)) {
             getView().setRdpPluginImplEnabled(false, constants.rdpPluginNotSupportedByBrowser());
         }
 
         SpiceConsoleModel spiceModel = extractSpiceModel(model);
         getView().selectSpiceImplementation(spiceModel == null ? SpiceConsoleModel.ClientConsoleMode.Auto : spiceModel.getClientConsoleMode());
+
+        VncConsoleModel vncModel = extractVncModel(model);
+        getView().selectVncImplementation(vncModel == null ? VncConsoleModel.ClientConsoleMode.Native : vncModel.getClientConsoleMode());
 
         RdpConsoleModel rdpModel = extractRdpModel(model);
         getView().selectRdpImplementation(rdpModel == null ? RdpConsoleModel.ClientConsoleMode.Auto : rdpModel.getClientConsoleMode());
@@ -259,21 +274,9 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
     protected void listenOnRadioButtons(final ConsolePopupModel model) {
         registerHandler(getView().getRdpRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
-                getView().rdpSelected(event.getValue());
-                getView().spiceSelected(!event.getValue());
-                getView().setWanOptionsVisible(wanOptionsAvailable && !event.getValue());
-            }
-        }));
-
-        registerHandler(getView().getSpiceRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
-            @Override
-            public void onValueChange(ValueChangeEvent<Boolean> event) {
-                getView().spiceSelected(event.getValue());
-                getView().setWanOptionsVisible(wanOptionsAvailable && event.getValue());
-                getView().rdpSelected(!event.getValue());
+                getView().showRdpPanel(event.getValue());
             }
         }));
 
@@ -281,13 +284,14 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
             @Override
             public void onValueChange(ValueChangeEvent<Boolean> event) {
-                if (event.getValue()) {
-                    // hide all detail panels if this is selected.
-                    // Ignore if deselected
-                    getView().spiceSelected(false);
-                    getView().setWanOptionsVisible(false);
-                    getView().rdpSelected(false);
-                }
+                getView().showVncPanel(event.getValue());
+            }
+        }));
+
+        registerHandler(getView().getSpiceRadioButton().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                getView().showSpicePanel(event.getValue());
             }
         }));
 
@@ -313,6 +317,22 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
                         getView().selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Plugin);
                     }
                 }));
+
+         registerHandler(getView().getNoVncImplRadioButton()
+                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+                    @Override
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
+                        getView().selectVncImplementation(VncConsoleModel.ClientConsoleMode.NoVnc);
+                    }
+                }));
+
+         registerHandler(getView().getVncNativeImplRadioButton()
+                 .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+                     @Override
+                     public void onValueChange(ValueChangeEvent<Boolean> event) {
+                         getView().selectVncImplementation(VncConsoleModel.ClientConsoleMode.Native);
+                     }
+                 }));
 
         registerHandler(getView().getRdpAutoImplRadioButton()
                 .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
@@ -354,6 +374,16 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         if (consoleModel instanceof SpiceConsoleModel) {
             return (SpiceConsoleModel) consoleModel;
+        }
+
+        return null;
+    }
+
+    private VncConsoleModel extractVncModel(ConsolePopupModel model) {
+    ConsoleModel consoleModel = model.getModel().getDefaultConsoleModel();
+
+        if (consoleModel instanceof VncConsoleModel) {
+            return (VncConsoleModel) consoleModel;
         }
 
         return null;

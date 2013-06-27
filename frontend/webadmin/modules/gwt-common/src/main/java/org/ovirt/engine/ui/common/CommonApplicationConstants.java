@@ -1186,6 +1186,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Browser plugin")
     String browserPlugin();
 
+    @DefaultStringValue("noVNC")
+    String noVnc();
+
     @DefaultStringValue("Pass Ctrl-Alt-Del to virtual machine")
     String ctrlAltDel();
 
@@ -1227,6 +1230,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("VNC")
     String vnc();
+
+    @DefaultStringValue("Websockets Proxy must be configured in the engine.")
+    String webSocketProxyNotSet();
 
     @DefaultStringValue("SPICE Options")
     String spiceOptions();

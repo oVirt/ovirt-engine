@@ -38,4 +38,6 @@ public interface ConsoleUtils {
     public boolean isBrowserPluginSupported(ConsoleProtocol protocol);
 
     public boolean isSpiceProxyDefined();
+
+    public boolean isWebSocketProxyDefined();
 }

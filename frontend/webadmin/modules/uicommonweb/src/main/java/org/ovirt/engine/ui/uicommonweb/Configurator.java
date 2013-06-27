@@ -262,6 +262,12 @@ public abstract class Configurator {
         }
     }
 
+    public boolean isWebSocketProxyDefined() {
+        String wsConfig = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.WebSocketProxy);
+        return wsConfig != null && !"".equals(wsConfig) && !"Off".equalsIgnoreCase(wsConfig); //$NON-NLS-1$ $NON-NLS-2$
+    }
+
+
     public final class FileFetchEventArgs extends EventArgs {
         private String fileContent;
 
@@ -368,7 +374,6 @@ public abstract class Configurator {
     public boolean isSpiceProxyDefined() {
         String spiceProxy = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
         return spiceProxy != null && !"".equals(spiceProxy); //$NON-NLS-1$
-
     }
 
 }

@@ -27,6 +27,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VncConsoleModel;
 
 public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupModel> implements ConsolePopupPresenterWidget.ViewDef {
 
@@ -103,6 +104,14 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
     @UiField(provided = true)
     @WithElementId
+    EntityModelRadioButtonEditor vncNativeImplRadioButton;
+
+    @UiField(provided = true)
+    @WithElementId
+    EntityModelRadioButtonEditor noVncImplRadioButton;
+
+    @UiField(provided = true)
+    @WithElementId
     EntityModelRadioButtonEditor rdpAutoImplRadioButton;
 
     @UiField(provided = true)
@@ -115,6 +124,9 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
     @UiField
     FlowPanel spicePanel;
+
+    @UiField
+    FlowPanel vncPanel;
 
     @UiField
     FlowPanel rdpPanel;
@@ -151,11 +163,16 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         spicePluginImplRadioButton = new EntityModelRadioButtonEditor("2"); //$NON-NLS-1$
         spicePluginImplRadioButton.setLabel(constants.browserPlugin());
 
-        rdpAutoImplRadioButton = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
+        vncNativeImplRadioButton = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
+        vncNativeImplRadioButton.setLabel(constants.nativeClient());
+        noVncImplRadioButton = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
+        noVncImplRadioButton.setLabel(constants.noVnc());
+
+        rdpAutoImplRadioButton = new EntityModelRadioButtonEditor("4"); //$NON-NLS-1$
         rdpAutoImplRadioButton.setLabel(constants.auto());
-        rdpNativeImplRadioButton = new EntityModelRadioButtonEditor("3");// $NON-NLS-1$
+        rdpNativeImplRadioButton = new EntityModelRadioButtonEditor("4");// $NON-NLS-1$
         rdpNativeImplRadioButton.setLabel(constants.nativeClient());
-        rdpPluginImplRadioButton = new EntityModelRadioButtonEditor("3"); //$NON-NLS-1$
+        rdpPluginImplRadioButton = new EntityModelRadioButtonEditor("4"); //$NON-NLS-1$
         rdpPluginImplRadioButton.setLabel(constants.browserPlugin());
 
         disableSmartcard = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
@@ -281,6 +298,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
         spicePanel.setVisible(false);
+        vncPanel.setVisible(false);
         rdpPanel.setVisible(false);
 
         ctrlAltDel.getContentWidgetContainer().addStyleName(style.ctrlAltDelContentWidget());
@@ -324,6 +342,7 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
             setSelectedRdpImpl();
         } else if (vncRadioButton.asRadioButton().getValue()) {
             setSelectedProtocol(ConsoleProtocol.VNC);
+            setSelectedVncImpl();
         }
 
         flushCheckBoxes(
@@ -353,6 +372,18 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
             spiceModel.setSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Native);
         } else if (spicePluginImplRadioButton.asRadioButton().getValue()) {
             spiceModel.setSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Plugin);
+        }
+    }
+
+    private void setSelectedVncImpl() {
+        Object defConsoleModel = model.getModel().getDefaultConsoleModel();
+        VncConsoleModel vncConsoleModel = defConsoleModel instanceof VncConsoleModel ?
+                (VncConsoleModel) defConsoleModel : null;
+
+        if (noVncImplRadioButton.asRadioButton().getValue()) {
+            vncConsoleModel.setVncImplementation(VncConsoleModel.ClientConsoleMode.NoVnc);
+        } else {
+            vncConsoleModel.setVncImplementation(VncConsoleModel.ClientConsoleMode.Native);
         }
     }
 
@@ -423,13 +454,30 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     }
 
     @Override
-    public void rdpSelected(boolean selected) {
-        rdpPanel.setVisible(selected);
+    public void showRdpPanel(boolean visible) {
+        rdpPanel.setVisible(visible);
+        if (visible) {
+            spicePanel.setVisible(false);
+            vncPanel.setVisible(false);
+        }
     }
 
     @Override
-    public void spiceSelected(boolean selected) {
-        spicePanel.setVisible(selected);
+    public void showSpicePanel(boolean visible) {
+        spicePanel.setVisible(visible);
+        if (visible) {
+            vncPanel.setVisible(false);
+            rdpPanel.setVisible(false);
+        }
+    }
+
+    @Override
+    public void showVncPanel(boolean visible) {
+        vncPanel.setVisible(visible);
+        if (visible) {
+            spicePanel.setVisible(false);
+            rdpPanel.setVisible(false);
+        }
     }
 
     @Override
@@ -445,6 +493,12 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @Override
     public void selectVnc(boolean selected) {
         vncRadioButton.asRadioButton().setValue(selected);
+    }
+
+    @Override
+    public void setNoVncEnabled(boolean enabled, String reason) {
+        noVncImplRadioButton.setEnabled(enabled);
+        noVncImplRadioButton.setTitle(enabled ? "" : reason);
     }
 
     abstract class SpiceRenderer implements ValueCheckboxRenderer<ConsoleModel> {
@@ -558,6 +612,20 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     }
 
     @Override
+    public void selectVncImplementation(VncConsoleModel.ClientConsoleMode clientConsoleMode) {
+        switch (clientConsoleMode) {
+            case NoVnc:
+                noVncImplRadioButton.asRadioButton().setValue(true);
+                vncNativeImplRadioButton.asRadioButton().setValue(false);
+                break;
+            default:
+                noVncImplRadioButton.asRadioButton().setValue(false);
+                vncNativeImplRadioButton.asRadioButton().setValue(true);
+                break;
+        }
+    }
+
+    @Override
     public void selectRdpImplementation(RdpConsoleModel.ClientConsoleMode consoleMode) {
         switch (consoleMode) {
         case Native:
@@ -608,4 +676,11 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         return rdpPluginImplRadioButton.asRadioButton();
     }
 
+    public HasValueChangeHandlers<Boolean> getNoVncImplRadioButton() {
+        return noVncImplRadioButton.asRadioButton();
+    }
+
+    public HasValueChangeHandlers<Boolean> getVncNativeImplRadioButton() {
+        return vncNativeImplRadioButton.asRadioButton();
+    }
 }
