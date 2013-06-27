@@ -3,6 +3,7 @@ package org.ovirt.engine.core.utils;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
@@ -21,10 +22,36 @@ public class EngineLocalConfig extends LocalConfig {
     private static final String VARS_PATH = "/etc/ovirt-engine/engine.conf";
 
     // This is a singleton and this is the instance:
-    private static final EngineLocalConfig instance = new EngineLocalConfig();
+    private static volatile EngineLocalConfig instance;
 
     public static EngineLocalConfig getInstance() {
+        return getInstance(null);
+    }
+
+    public static EngineLocalConfig getInstance(Map<String, String> values) {
+        if (values != null) {
+            instance = new EngineLocalConfig(values);
+        }
+        else {
+            if (instance == null) {
+                synchronized(EngineLocalConfig.class) {
+                    if (instance == null) {
+                        instance = new EngineLocalConfig();
+                    }
+                }
+            }
+        }
         return instance;
+    }
+
+    public static void clearInstance() {
+        synchronized(EngineLocalConfig.class) {
+            instance = null;
+        }
+    }
+
+    private EngineLocalConfig(Map<String, String> values) {
+        setConfig(values);
     }
 
     private EngineLocalConfig() {

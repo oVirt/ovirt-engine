@@ -3,24 +3,35 @@ package org.ovirt.engine.core.utils.crypt;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.security.KeyStore;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
+
+import org.ovirt.engine.core.utils.MockEngineLocalConfigRule;
 
 public class EngineEncryptionUtilsTest {
 
-    @BeforeClass
-    public static void before() throws UnsupportedEncodingException {
-        EngineEncryptionUtils.keystoreFile = new File(URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8"));
-        EngineEncryptionUtils.keystorePassword = new KeyStore.PasswordProtection("NoSoup4U".toCharArray());
-        EngineEncryptionUtils.keystoreAlias = "1";
+    @ClassRule
+    public static MockEngineLocalConfigRule mockEngineLocalConfigRule;
+
+    static {
+        try {
+            mockEngineLocalConfigRule = new MockEngineLocalConfigRule(
+                new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_TRUST_STORE", URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8")),
+                new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_TRUST_STORE_PASSWORD", "NoSoup4U"),
+                new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_ENGINE_STORE", URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8")),
+                new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_ENGINE_STORE_PASSWORD", "NoSoup4U"),
+                new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_ENGINE_STORE_ALIAS", "1")
+            );
+        }
+        catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Test

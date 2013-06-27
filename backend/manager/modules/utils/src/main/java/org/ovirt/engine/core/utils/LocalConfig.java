@@ -28,6 +28,8 @@ public class LocalConfig {
     // The log:
     private static final Logger log = Logger.getLogger(LocalConfig.class);
 
+    private static final String SENSITIVE_KEYS = "SENSITIVE_KEYS";
+
     // Compile regular expressions:
     private static final Pattern EMPTY_LINE = Pattern.compile("^\\s*(#.*)?$");
     private static final Pattern KEY_VALUE_EXPRESSION = Pattern.compile("^\\s*(\\w+)=(.*)$");
@@ -35,10 +37,21 @@ public class LocalConfig {
     // The properties object storing the current values of the parameters:
     private Map<String, String> values = new HashMap<String, String>();
 
-    protected void loadConfig(String defaultsPath, String varsPath) {
-        // Set basic defaults
-        values.put("SENSITIVE_KEYS", "");
+    /**
+     * Use configuration from map.
+     * @param values map.
+     */
+    protected void setConfig(Map<String, String> values) {
+        this.values = values;
+        dumpConfig();
+    }
 
+    /**
+     * Use configuration from files.
+     * @param defaultsPath path to file containing the defaults.
+     * @param varsPath path to file and directory of file.d.
+     */
+    protected void loadConfig(String defaultsPath, String varsPath) {
         // This is the list of configuration files that will be loaded and
         // merged (the initial size is 2 because usually we will have only two
         // configuration files to merge, the defaults and the variables):
@@ -90,9 +103,15 @@ public class LocalConfig {
             }
         }
 
-        // Dump the properties to the log (this should probably be DEBUG, but as
-        // it will usually happen only once, during the startup, is not that a
-        // problem to use INFO):
+        dumpConfig();
+    }
+
+    /**
+     * Dump all configuration to the log.
+     * this should probably be DEBUG, but as it will usually happen only once,
+     * during the startup, is not that a roblem to use INFO.
+     */
+    private void dumpConfig() {
         if (log.isInfoEnabled()) {
             Set<String> keys = values.keySet();
             List<String> list = new ArrayList<String>(keys.size());
@@ -452,6 +471,12 @@ public class LocalConfig {
     }
 
     public String[] getSensitiveKeys() {
-        return getProperty("SENSITIVE_KEYS").split(",");
+        String sensitiveKeys = values.get(SENSITIVE_KEYS);
+        if (sensitiveKeys == null) {
+            return new String[] {};
+        }
+        else {
+            return sensitiveKeys.split(",");
+        }
     }
 }
