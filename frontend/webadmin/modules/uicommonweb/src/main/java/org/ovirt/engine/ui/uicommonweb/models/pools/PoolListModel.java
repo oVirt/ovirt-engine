@@ -277,6 +277,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
                                     model.getTemplate().setIsChangable(false);
                                     cdImage = vm.getIsoPath();
+                                    model.getVmType().setSelectedItem(vm.getVmType());
                                 }
                                 else
                                 {
@@ -293,8 +294,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                                 if (hasCd) {
                                     model.getCdImage().setSelectedItem(cdImage);
                                 }
-
-                                model.getVmType().setSelectedItem(vm.getVmType());
 
                                 model.getProvisioning().setIsChangable(false);
                                 model.getStorageDomain().setIsChangable(false);
