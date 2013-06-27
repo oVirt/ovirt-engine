@@ -148,7 +148,15 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 : Linq.firstOrDefault(images));
     }
 
-    protected void updateCdImage()
+    public void refreshCdImages() {
+        updateCdImage(true);
+    }
+
+    protected void updateCdImage() {
+        updateCdImage(false);
+    }
+
+    protected void updateCdImage(boolean forceRefresh)
     {
         StoragePool dataCenter = getModel().getSelectedDataCenter();
         if (dataCenter == null)
@@ -166,7 +174,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
                     }
                 }, getModel().getHash()),
-                dataCenter.getId());
+                dataCenter.getId(),
+                forceRefresh);
 
     }
 

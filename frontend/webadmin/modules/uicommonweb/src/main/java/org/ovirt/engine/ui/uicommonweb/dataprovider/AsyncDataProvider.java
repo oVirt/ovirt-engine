@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.dataprovider;
 
-import static org.ovirt.engine.core.common.queries.OsQueryParameters.OsRepositoryVerb;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,6 +47,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
@@ -59,8 +59,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
@@ -91,6 +89,7 @@ import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.OsQueryParameters;
+import org.ovirt.engine.core.common.queries.OsQueryParameters.OsRepositoryVerb;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ServerParameters;
@@ -257,6 +256,10 @@ public final class AsyncDataProvider {
     }
 
     public static void getIrsImageList(AsyncQuery aQuery, Guid storagePoolId) {
+        getIrsImageList(aQuery, storagePoolId, false);
+    }
+
+    public static void getIrsImageList(AsyncQuery aQuery, Guid storagePoolId, boolean forceRefresh) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
@@ -279,6 +282,7 @@ public final class AsyncDataProvider {
 
         GetImagesListByStoragePoolIdParameters parameters =
                 new GetImagesListByStoragePoolIdParameters(storagePoolId, ImageFileType.ISO);
+        parameters.setForceRefresh(forceRefresh);
         Frontend.RunQuery(VdcQueryType.GetImagesListByStoragePoolId, parameters, aQuery);
     }
 

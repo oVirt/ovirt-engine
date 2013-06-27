@@ -217,6 +217,12 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @WithElementId("defaultHost")
     public ListModelListBoxEditor<Object> defaultHostEditor;
 
+    @UiField
+    @Ignore
+    ButtonBase refreshButton;
+
+    private RunOnceModel runOnceModel;
+
     private BootSequenceModel bootSequenceModel;
 
     private final Driver driver = GWT.create(Driver.class);
@@ -333,6 +339,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @Override
     public void edit(final RunOnceModel object) {
         driver.edit(object);
+        runOnceModel = object;
 
         object.getCustomPropertySheet().getKeyValueLines().getItemsChangedEvent().addListener(new IEventListener() {
             @Override
@@ -402,6 +409,11 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         // Update BootSequence ListBox
         bootSequenceModel = object.getBootSequence();
         UpdateBootSequenceListBox();
+    }
+
+    @UiHandler("refreshButton")
+    void handleRefreshButtonClick(ClickEvent event) {
+        runOnceModel.updateIsoList(true);
     }
 
     @UiHandler("bootSequenceUpButton")

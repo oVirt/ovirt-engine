@@ -11,8 +11,10 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -99,6 +101,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         String labelDisabled();
 
         String generalTabExtendedRightWidgetWidth();
+
+        String cdImageEditor();
     }
 
     @UiField
@@ -533,6 +537,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Ignore
     Panel expanderContent;
 
+    @UiField
+    @Ignore
+    ButtonBase refreshButton;
+
+    private UnitVmModel unitVmModel;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private final CommonApplicationTemplates applicationTemplates;
@@ -934,11 +944,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         provisioningThinEditor.addContentWidgetStyleName(style.provisioningRadioContent());
         provisioningCloneEditor.addContentWidgetStyleName(style.provisioningRadioContent());
         cdAttachedEditor.addContentWidgetStyleName(style.cdAttachedLabelWidth());
+        cdImageEditor.addContentWidgetStyleName(style.cdImageEditor());
     }
 
     @Override
     public void edit(UnitVmModel model) {
         super.edit(model);
+        unitVmModel = model;
 
         priorityEditor.setRowData(new ArrayList<EntityModel>());
         priorityEditor.edit(model.getPriority());
@@ -947,6 +959,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initListeners(model);
         initCustomPropertySheet(model);
         hideAlwaysHiddenFields();
+    }
+
+    @UiHandler("refreshButton")
+    void handleRefreshButtonClick(ClickEvent event) {
+        unitVmModel.getBehavior().refreshCdImages();
     }
 
     private void initCustomPropertySheet(final UnitVmModel object) {

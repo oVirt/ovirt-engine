@@ -127,6 +127,18 @@
         .radioButtonSpecificHost {
             margin-left: 5px;
         }
+
+        .refreshButton {
+			float: right;
+			font-size: 12px;
+			height: 14px;
+			line-height: 14px;
+			width: 12px;
+			margin-top: 5px;
+			padding: 2px;
+			background: transparent;
+			border: 1px solid transparent;
+		}
 	</ui:style>
 
 	<g:FlowPanel>
@@ -141,6 +153,9 @@
 					<g:HorizontalPanel>
 						<e:EntityModelCheckBoxEditor ui:field="attachIsoEditor" addStyleNames="{style.attachImageCheckbox}" />
 						<e:ListModelListBoxEditor ui:field="isoImageEditor" addStyleNames="{style.attachImageSelectbox}" />
+						<g:PushButton ui:field="refreshButton" addStyleNames="{style.refreshButton}">
+							<g:upFace image='{resources.refreshButtonImage}' />
+						</g:PushButton>
 					</g:HorizontalPanel>
 				</g:VerticalPanel>
 

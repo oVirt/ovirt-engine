@@ -27,11 +27,11 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NoTrimmingWhitespacesValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 @SuppressWarnings("unused")
 public abstract class RunOnceModel extends Model
@@ -705,7 +705,11 @@ public abstract class RunOnceModel extends Model
         getDisplayConsole_Spice_IsSelected().setEntity(!isVncSelected);
     }
 
-    private void updateIsoList() {
+    public void updateIsoList() {
+        updateIsoList(false);
+    }
+
+    public void updateIsoList(boolean forceRefresh) {
         AsyncDataProvider.getIrsImageList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
@@ -720,7 +724,7 @@ public abstract class RunOnceModel extends Model
 
                     }
                 }),
-                vm.getStoragePoolId());
+                vm.getStoragePoolId(), forceRefresh);
     }
 
     private void updateDomainList() {
@@ -912,5 +916,6 @@ public abstract class RunOnceModel extends Model
             commandTarget.executeCommand(command);
         }
     }
+
     protected abstract void onRunOnce();
 }
