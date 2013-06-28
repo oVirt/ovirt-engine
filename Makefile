@@ -337,7 +337,7 @@ install-packaging-files: \
 	# we should avoid make these directories dirty
 	$(MAKE) copy-recursive SOURCEDIR=packaging/dbscripts TARGETDIR="$(DESTDIR)$(DATA_DIR)/dbscripts" \
 		EXCLUDE_GEN="$(GENERATED)" \
-		EXCLUDE="$$(find packaging/dbscripts \( -name '*.scripts.md5' -or -name '*.schema' -or -name '*.log' \))"
+		EXCLUDE="$$(echo $$(find packaging/dbscripts \( -name '*.scripts.md5' -or -name '*.schema' -or -name '*.log' \)))"
 
 install-layout: \
 		install-packaging-files \
