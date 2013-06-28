@@ -47,6 +47,7 @@ class Plugin(plugin.PluginBase):
             osetupcons.DBEnv.REMOVE_EMPTY_DATABASE,
             None
         )
+        self._bkpfile = None
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -85,7 +86,7 @@ class Plugin(plugin.PluginBase):
         try:
             dbovirtutils = database.OvirtUtils(plugin=self)
             dbovirtutils.tryDatabaseConnect()
-            dbovirtutils.backup()
+            self._bkpfile = dbovirtutils.backup()
             self.logger.info(
                 _("Clearing database '{database}'").format(
                     database=self.environment[
@@ -105,5 +106,23 @@ class Plugin(plugin.PluginBase):
                 )
             )
 
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CLOSEUP,
+        condition=lambda self: self._bkpfile is not None,
+        before=[
+            osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
+        ],
+        after=[
+            osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
+        ],
+    )
+    def _closeup(self):
+        self.dialog.note(
+            text=_(
+                'A backup of the database is available at {path}'
+            ).format(
+                path=self._bkpfile
+            ),
+        )
 
 # vim: expandtab tabstop=4 shiftwidth=4
