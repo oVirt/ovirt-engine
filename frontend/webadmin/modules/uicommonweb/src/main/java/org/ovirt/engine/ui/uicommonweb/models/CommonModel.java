@@ -583,7 +583,8 @@ public class CommonModel extends ListModel
         eventList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Cluster
                 || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Host
-                || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.System);
+                || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.System
+                || model.getType() == SystemTreeItemType.Volume);
 
         reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled()
                 && ReportInit.getInstance().getDashboard(model.getType().toString()) != null);
@@ -1121,7 +1122,11 @@ public class CommonModel extends ListModel
             case Hosts: {
                 if (hostList.isSearchStringMatch(source))
                 {
-                    prefix.argvalue = "Host: cluster = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster, model).getTitle(); //$NON-NLS-1$
+                    SystemTreeItemModel cluster = SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster, model);
+                    if(cluster == null) {
+                        cluster = SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster_Gluster, model);
+                    }
+                    prefix.argvalue = "Host: cluster = " + cluster.getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
@@ -1156,7 +1161,11 @@ public class CommonModel extends ListModel
             case Volumes: {
                 if (volumeList.isSearchStringMatch(source))
                 {
-                    prefix.argvalue = "Volume: cluster = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster, model).getTitle(); //$NON-NLS-1$
+                    SystemTreeItemModel cluster = SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster, model);
+                    if (cluster == null) {
+                        cluster = SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster_Gluster, model);
+                    }
+                    prefix.argvalue = "Volume: cluster = " + cluster.getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
@@ -1164,23 +1173,15 @@ public class CommonModel extends ListModel
             case Volume: {
                 if (volumeList.isSearchStringMatch(source))
                 {
-                    prefix.argvalue = "Volume: name = " + model.getTitle(); //$NON-NLS-1$
+                    prefix.argvalue = "Volume: name = " + model.getTitle() + " cluster = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster_Gluster, model).getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
                 else if (clusterList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Cluster: volume.name = " + model.getTitle(); //$NON-NLS-1$
                 }
-                else if (dataCenterList.isSearchStringMatch(source))
-                {
-                    prefix.argvalue = "DataCenter: volume.name = " + model.getTitle(); //$NON-NLS-1$
-                }
-                else if (templateList.isSearchStringMatch(source))
-                {
-                    prefix.argvalue = "Template: Volumes.name = " + model.getTitle(); //$NON-NLS-1$
-                }
                 else if (eventList.isSearchStringMatch(source))
                 {
-                    prefix.argvalue = "Events: volume.name = " + model.getTitle(); //$NON-NLS-1$
+                    prefix.argvalue = "Events: volume.name = " + model.getTitle() + " cluster = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster_Gluster, model).getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
                 break;
