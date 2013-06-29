@@ -31,4 +31,9 @@ public interface MonitoringStrategy {
      */
     public boolean isMonitoringNeeded(VDS vds);
 
+    /**
+     * Check if power supported for the VDS
+     */
+    public boolean isPowerManagementSupported();
+
 }

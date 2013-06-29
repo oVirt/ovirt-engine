@@ -79,6 +79,11 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
         return !StringUtils.equals(oldVds.getCpuFlags(), newVds.getCpuFlags());
     }
 
+    @Override
+    public boolean isPowerManagementSupported() {
+        return true;
+    }
+
     private boolean hostCompliesWithClusterEmulationMode(VDS vds, VDSGroup vdsGroup) {
 
         String clusterEmulatedMachine = vdsGroup.getEmulatedMachine();

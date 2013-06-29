@@ -30,4 +30,8 @@ public class GlusterMonitoringStrategy implements MonitoringStrategy {
         return false;
     }
 
+    @Override
+    public boolean isPowerManagementSupported() {
+        return false;
+    }
 }

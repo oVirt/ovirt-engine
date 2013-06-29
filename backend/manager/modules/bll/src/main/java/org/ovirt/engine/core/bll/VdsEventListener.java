@@ -53,6 +53,7 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.vdsbroker.MonitoringStrategyFactory;
 
 @Stateless(name = "VdsEventListener")
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
@@ -136,7 +137,8 @@ public class VdsEventListener implements IVdsEventListener {
                     shouldExecRealFencing = !retVal.getSucceeded();
                 }
 
-                if (shouldExecRealFencing) {
+                if (MonitoringStrategyFactory.getMonitoringStrategyForVds(vds).isPowerManagementSupported()
+                        && shouldExecRealFencing) {
                     Backend.getInstance().runInternalAction(VdcActionType.VdsNotRespondingTreatment,
                             new FenceVdsActionParameters(vds.getId(), FenceActionType.Restart),
                             ExecutionHandler.createInternalJobContext());

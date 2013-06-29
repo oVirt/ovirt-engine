@@ -63,4 +63,14 @@ public class MultipleServicesMonitoringStrategy implements MonitoringStrategy {
         return false;
     }
 
+    @Override
+    public boolean isPowerManagementSupported() {
+        for (MonitoringStrategy monitoringStrategy : strategies) {
+            if (monitoringStrategy.isPowerManagementSupported()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
