@@ -45,7 +45,7 @@ __EOF__
 script="$(readlink -f "$0")"
 scriptdir="$(dirname "${script}")"
 . "${scriptdir}/ovirt-engine-setup.env"
-baseenv="APPEND:BASE/pluginPath=str:${scriptdir}/../plugins APPEND:BASE/pluginGroups=str:ovirt-engine-common:ovirt-engine-setup"
+baseenv="\"APPEND:BASE/pluginPath=str:${scriptdir}/../plugins\" APPEND:BASE/pluginGroups=str:ovirt-engine-common:ovirt-engine-setup"
 otopienv=""
 environment=""
 
@@ -58,19 +58,19 @@ while [ -n "$1" ]; do
 			otopienv="${v}"
 		;;
 		--log=*)
-			environment="${environment} CORE/logFileName=str:${v}"
+			environment="${environment} \"CORE/logFileName=str:${v}\""
 		;;
 		--config=*)
-			environment="${environment} APPEND:CORE/configFileName=str:${v}"
+			environment="${environment} \"APPEND:CORE/configFileName=str:${v}\""
 		;;
 		--config-append=*)
-			environment="${environment} APPEND:CORE/configFileAppend=str:${v}"
+			environment="${environment} \"APPEND:CORE/configFileAppend=str:${v}\""
 		;;
 		--generate-answer=*)
-			environment="${environment} OVESETUP_CORE/answerFile=str:${v}"
+			environment="${environment} \"OVESETUP_CORE/answerFile=str:${v}\""
 		;;
 		--jboss-home=*)
-			environment="${environment} OVESETUP_CONFIG/jbossHome=str:${v}"
+			environment="${environment} \"OVESETUP_CONFIG/jbossHome=str:${v}\""
 		;;
 		--offline)
 			environment="${environment} OVESETUP_CORE/offlinePackager=bool:True PACKAGER/yumpackagerEnabled=bool:False"
