@@ -394,11 +394,11 @@ install_setup:
 
 	# Main programs and links:
 	install -m 755 packaging/fedora/setup/engine-setup.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	ln -sf $(DATA_DIR)/scripts/engine-setup.py "$(DESTDIR)$(BIN_DIR)/engine-setup"
+	ln -sf "$(DATA_DIR)/scripts/engine-setup.py" "$(DESTDIR)$(BIN_DIR)/engine-setup"
 	install -m 755 packaging/fedora/setup/engine-cleanup.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	ln -sf $(DATA_DIR)/scripts/engine-cleanup.py "$(DESTDIR)$(BIN_DIR)/engine-cleanup"
+	ln -sf "$(DATA_DIR)/scripts/engine-cleanup.py" "$(DESTDIR)$(BIN_DIR)/engine-cleanup"
 	install -m 755 packaging/fedora/setup/engine-upgrade.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	ln -sf $(DATA_DIR)/scripts/engine-upgrade.py "$(DESTDIR)$(BIN_DIR)/engine-upgrade"
+	ln -sf "$(DATA_DIR)/scripts/engine-upgrade.py" "$(DESTDIR)$(BIN_DIR)/engine-upgrade"
 	install -m 755 packaging/fedora/setup/engine-check-update "$(DESTDIR)$(BIN_DIR)"
 
 	# Task cleaner
