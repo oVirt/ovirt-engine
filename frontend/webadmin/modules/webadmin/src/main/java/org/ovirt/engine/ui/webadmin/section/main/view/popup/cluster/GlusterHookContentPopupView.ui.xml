@@ -10,8 +10,9 @@
 			width: 0px;
 		}
 
-		.content textarea{
+		.content textarea {
 			height: 100%;
+			resize: none;
 		}
 
 		.content {
