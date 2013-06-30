@@ -9,14 +9,14 @@ public class Guid implements Serializable, Comparable<Guid> {
      */
     private static final long serialVersionUID = 27305745737022810L;
 
-    public static final Guid SYSTEM = new Guid("AAA00000-0000-0000-0000-123456789AAA");
-    public static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");
-    public final static Guid Empty = new Guid("00000000-0000-0000-0000-000000000000");
-
     private static final byte[] CHANGE_BYTE_ORDER_INDICES = { 3, 2, 1, 0,
             5, 4, 7, 6, 8, 9, 10, 11, 12, 13, 14, 15 };
     private static final byte[] KEEP_BYTE_ORDER_INDICES = { 0, 1, 2, 3,
             4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+
+    public static final Guid SYSTEM = new Guid("AAA00000-0000-0000-0000-123456789AAA");
+    public static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");
+    public static final Guid Empty = new Guid("00000000-0000-0000-0000-000000000000");
 
     private UUID uuid;
 
