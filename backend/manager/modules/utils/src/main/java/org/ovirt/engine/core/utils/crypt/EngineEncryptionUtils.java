@@ -141,7 +141,7 @@ public class EngineEncryptionUtils {
      */
     public static String encrypt(String source) throws GeneralSecurityException {
         if (source == null || source.trim().length() == 0) {
-            return "";
+            return source;
         }
         else {
             Cipher rsa = Cipher.getInstance("RSA");
@@ -161,7 +161,7 @@ public class EngineEncryptionUtils {
      */
     public static String decrypt(String source) throws GeneralSecurityException {
         if (source == null || source.trim().length() == 0) {
-            return "";
+            return source;
         }
         else {
             Cipher rsa = Cipher.getInstance("RSA");
