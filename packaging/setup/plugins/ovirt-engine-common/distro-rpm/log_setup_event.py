@@ -63,9 +63,9 @@ class Plugin(plugin.PluginBase):
         self.execute(
             (
                 osetupcons.FileLocations.OVIRT_ENGINE_LOG_SETUP_EVENT,
-                '--notes=Start of otopi action %s' % self.environment[
-                    osetupcons.CoreEnv.ACTION
-                ],
+                '--notes=Start of %s' % (
+                    self.environment[osetupcons.CoreEnv.ACTION],
+                ),
             ),
         )
 
@@ -78,7 +78,7 @@ class Plugin(plugin.PluginBase):
         self.execute(
             (
                 osetupcons.FileLocations.OVIRT_ENGINE_LOG_SETUP_EVENT,
-                '--notes=End of otopi action %s' % self.environment[
+                '--notes=End of %s' % self.environment[
                     osetupcons.CoreEnv.ACTION
                 ],
             ),

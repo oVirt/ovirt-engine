@@ -19,6 +19,7 @@
 """Misc plugin."""
 
 
+import os
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -49,9 +50,25 @@ class Plugin(plugin.PluginBase):
             otopicons.CoreEnv.LOG_FILE_NAME_PREFIX,
             osetupcons.FileLocations.OVIRT_OVIRT_SETUP_LOG_PREFIX
         )
-        self.environment[
-            osetupcons.CoreEnv.ACTION
-        ] = osetupcons.Const.ACTION_SETUP
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+        priority=plugin.Stages.PRIORITY_LOW
+    )
+    def _init(self):
+        if (
+            self.environment[osetupcons.CoreEnv.UPGRADE_FROM_LEGACY] or
+            os.path.exists(
+                osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG
+            )
+        ):
+            self.environment[
+                osetupcons.CoreEnv.ACTION
+            ] = osetupcons.Const.ACTION_UPGRADE
+        else:
+            self.environment[
+                osetupcons.CoreEnv.ACTION
+            ] = osetupcons.Const.ACTION_SETUP
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
