@@ -17,6 +17,7 @@ Create or replace FUNCTION InsertVdsStatistics(v_cpu_idle DECIMAL(18,0) ,
  v_usage_network_percent INTEGER ,
  v_vds_id UUID,
  v_mem_available BIGINT ,
+ v_mem_free BIGINT,
  v_mem_shared BIGINT ,
     v_swap_free BIGINT ,
  v_swap_total BIGINT ,
@@ -28,8 +29,8 @@ RETURNS VOID
 BEGIN
 
    BEGIN
-INSERT INTO vds_statistics(cpu_idle, cpu_load, cpu_sys, cpu_user, usage_cpu_percent, usage_mem_percent, usage_network_percent, vds_id, mem_available, mem_shared,swap_free,swap_total,ksm_cpu_percent,ksm_pages,ksm_state)
-	VALUES(v_cpu_idle, v_cpu_load, v_cpu_sys, v_cpu_user, v_usage_cpu_percent, v_usage_mem_percent, v_usage_network_percent, v_vds_id, v_mem_available, v_mem_shared,v_swap_free,v_swap_total,v_ksm_cpu_percent,v_ksm_pages,v_ksm_state);
+INSERT INTO vds_statistics(cpu_idle, cpu_load, cpu_sys, cpu_user, usage_cpu_percent, usage_mem_percent, usage_network_percent, vds_id, mem_available, mem_free, mem_shared,swap_free,swap_total,ksm_cpu_percent,ksm_pages,ksm_state)
+	VALUES(v_cpu_idle, v_cpu_load, v_cpu_sys, v_cpu_user, v_usage_cpu_percent, v_usage_mem_percent, v_usage_network_percent, v_vds_id, v_mem_available, v_mem_free, v_mem_shared,v_swap_free,v_swap_total,v_ksm_cpu_percent,v_ksm_pages,v_ksm_state);
    END;
 
    RETURN;
@@ -49,6 +50,7 @@ Create or replace FUNCTION UpdateVdsStatistics(v_cpu_idle DECIMAL(18,0) ,
  v_usage_network_percent INTEGER ,
  v_vds_id UUID,
  v_mem_available BIGINT ,
+ v_mem_free BIGINT,
  v_mem_shared BIGINT ,
     v_swap_free BIGINT ,
  v_swap_total BIGINT ,
@@ -66,7 +68,7 @@ BEGIN
       SET cpu_idle = v_cpu_idle,cpu_load = v_cpu_load,cpu_sys = v_cpu_sys,
       cpu_user = v_cpu_user,usage_cpu_percent = v_usage_cpu_percent,usage_mem_percent = v_usage_mem_percent,
       usage_network_percent = v_usage_network_percent,
-      mem_available = v_mem_available,mem_shared = v_mem_shared,
+      mem_available = v_mem_available, mem_free = v_mem_free, mem_shared = v_mem_shared,
       swap_free = v_swap_free,swap_total = v_swap_total,ksm_cpu_percent = v_ksm_cpu_percent,
       ksm_pages = v_ksm_pages,ksm_state = v_ksm_state, _update_date = LOCALTIMESTAMP
       WHERE vds_id = v_vds_id;

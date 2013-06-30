@@ -696,6 +696,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.mVdsStatistics.setmem_available(value);
     }
 
+    public Long getMemFree() {
+        return this.mVdsStatistics.getMemFree();
+    }
+
+    public void setMemFree(Long value) {
+        this.mVdsStatistics.setMemFree(value);
+    }
+
     public Long getMemShared() {
         return this.mVdsStatistics.getmem_shared();
     }

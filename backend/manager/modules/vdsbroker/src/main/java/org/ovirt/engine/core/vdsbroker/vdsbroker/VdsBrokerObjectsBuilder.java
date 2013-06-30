@@ -586,6 +586,7 @@ public class VdsBrokerObjectsBuilder {
         vds.setCpuLoad(d.doubleValue() * 100.0);
         vds.setCpuIdle(AssignDoubleValue(xmlRpcStruct, VdsProperties.cpu_idle));
         vds.setMemAvailable(AssignLongValue(xmlRpcStruct, VdsProperties.mem_available));
+        vds.setMemFree(AssignLongValue(xmlRpcStruct, VdsProperties.memFree));
         vds.setMemShared(AssignLongValue(xmlRpcStruct, VdsProperties.mem_shared));
 
         vds.setSwapFree(AssignLongValue(xmlRpcStruct, VdsProperties.swap_free));

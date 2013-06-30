@@ -97,6 +97,7 @@ public class JsonObjectSerializationEntitiesTest {
                                 random.nextDouble(),
                                 random.nextLong(),
                                 random.nextLong(),
+                                random.nextLong(),
                                 random.nextInt(),
                                 random.nextInt(),
                                 random.nextInt(),

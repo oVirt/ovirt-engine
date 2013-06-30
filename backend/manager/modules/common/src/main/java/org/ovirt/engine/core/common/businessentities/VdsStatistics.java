@@ -17,6 +17,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     private Integer usage_cpu_percent;
     private Integer usage_network_percent;
     private Long mem_available = 0L;
+    private Long memFree = 0L;
     private Long mem_shared = 0L;
     private Long swap_free = 0L;
     private Long swap_total = 0L;
@@ -32,13 +33,14 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     }
 
     public VdsStatistics(Double cpu_idle, Double cpu_load, Double cpu_sys,
-            Double cpu_user, Long mem_available, Long mem_shared, Integer usage_cpu_percent,
+            Double cpu_user, Long mem_available, Long memFree, Long mem_shared, Integer usage_cpu_percent,
             Integer usage_mem_percent, Integer usage_network_percent, Guid vds_id) {
         this.cpu_idle = BigDecimal.valueOf(cpu_idle);
         this.cpu_load = BigDecimal.valueOf(cpu_load);
         this.cpu_sys = BigDecimal.valueOf(cpu_sys);
         this.cpu_user = BigDecimal.valueOf(cpu_user);
         this.mem_available = mem_available;
+        this.memFree = memFree;
         this.mem_shared = mem_shared;
         this.usage_cpu_percent = usage_cpu_percent;
         this.usage_mem_percent = usage_mem_percent;
@@ -56,6 +58,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         result = prime * result + ((cpu_sys == null) ? 0 : cpu_sys.hashCode());
         result = prime * result + ((cpu_user == null) ? 0 : cpu_user.hashCode());
         result = prime * result + ((mem_available == null) ? 0 : mem_available.hashCode());
+        result = prime * result + ((memFree == null) ? 0 : memFree.hashCode());
         result = prime * result + ((mem_shared == null) ? 0 : mem_shared.hashCode());
         result = prime * result + ((usage_cpu_percent == null) ? 0 : usage_cpu_percent.hashCode());
         result = prime * result + ((usage_network_percent == null) ? 0 : usage_network_percent.hashCode());
@@ -85,6 +88,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
                 && ObjectUtils.bigDecimalEqual(cpu_sys, other.cpu_sys)
                 && ObjectUtils.bigDecimalEqual(cpu_user, other.cpu_user)
                 && ObjectUtils.objectsEqual(mem_available, other.mem_available)
+                && ObjectUtils.objectsEqual(memFree, other.memFree)
                 && ObjectUtils.objectsEqual(mem_shared, other.mem_shared)
                 && ObjectUtils.objectsEqual(usage_cpu_percent, other.usage_cpu_percent)
                 && ObjectUtils.objectsEqual(usage_network_percent, other.usage_network_percent)
@@ -127,12 +131,33 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.cpu_user = BigDecimal.valueOf(cpuUser);
     }
 
+    /**
+     * Returns a rough estimate on how much free mem is available for new vm
+     * i.e. MemFree + Cached + Buffers + resident - memCommitted
+     *
+     * resident set size of qemu processes may grow - up to  memCommitted.
+     * Thus, we deduct the growth potential of qemu processes, which is (memCommitted - resident)
+     * @return - free mem available for new vm
+     */
     public Long getmem_available() {
         return this.mem_available;
     }
 
     public void setmem_available(Long value) {
         this.mem_available = value;
+    }
+
+    /**
+     * Returns the actual free memory on host (MB) as it appears in the host's memInfo.
+     * i.e. MemFree + Cached + Buffers
+     * @return - actual free memory on host
+     */
+    public Long getMemFree() {
+        return this.memFree;
+    }
+
+    public void setMemFree(Long value) {
+        this.memFree = value;
     }
 
     public Long getmem_shared() {

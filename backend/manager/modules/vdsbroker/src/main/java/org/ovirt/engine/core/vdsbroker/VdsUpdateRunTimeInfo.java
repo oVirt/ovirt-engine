@@ -57,6 +57,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -270,21 +271,21 @@ public class VdsUpdateRunTimeInfo {
         Integer minAvailableThreshold = Config.GetValue(ConfigValues.LogPhysicalMemoryThresholdInMB);
         Integer maxUsedPercentageThreshold = Config.GetValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage);
 
-        if (stat.getmem_available() == null || stat.getusage_mem_percent() == null) {
+        if (stat.getMemFree() == null || stat.getusage_mem_percent() == null) {
             return;
         }
 
-        AuditLogType valueToLog = stat.getmem_available() < minAvailableThreshold ?
+        AuditLogType valueToLog = stat.getMemFree() < minAvailableThreshold ?
                 AuditLogType.VDS_LOW_MEM :
                 AuditLogType.VDS_HIGH_MEM_USE;
 
-        if (stat.getmem_available() < minAvailableThreshold
+        if ((stat.getMemFree() < minAvailableThreshold && Version.v3_2.compareTo(_vds.getVersion()) <= 0)
                 || stat.getusage_mem_percent() > maxUsedPercentageThreshold) {
             AuditLogableBase logable = new AuditLogableBase(stat.getId());
             logable.addCustomValue("HostName", _vds.getName());
-            logable.addCustomValue("AvailableMemory", stat.getmem_available().toString());
+            logable.addCustomValue("AvailableMemory", stat.getMemFree().toString());
             logable.addCustomValue("UsedMemory", stat.getusage_mem_percent().toString());
-            logable.addCustomValue("Threshold", stat.getmem_available() < minAvailableThreshold ?
+            logable.addCustomValue("Threshold", stat.getMemFree() < minAvailableThreshold ?
                     minAvailableThreshold.toString() :
                     maxUsedPercentageThreshold.toString());
             auditLog(logable, valueToLog);

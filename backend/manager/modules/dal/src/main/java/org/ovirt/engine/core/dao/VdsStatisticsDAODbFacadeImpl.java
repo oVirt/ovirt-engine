@@ -37,6 +37,7 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
                     .getObject("usage_network_percent"));
             entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
             entity.setmem_available(rs.getLong("mem_available"));
+            entity.setMemFree(rs.getLong("mem_free"));
             entity.setmem_shared(rs.getLong("mem_shared"));
             entity.setswap_free(rs.getLong("swap_free"));
             entity.setswap_total(rs.getLong("swap_total"));
@@ -71,6 +72,7 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
                         stats.getusage_network_percent())
                 .addValue("vds_id", stats.getId())
                 .addValue("mem_available", stats.getmem_available())
+                .addValue("mem_free" , stats.getMemFree())
                 .addValue("mem_shared", stats.getmem_shared())
                 .addValue("swap_free", stats.getswap_free())
                 .addValue("swap_total", stats.getswap_total())
@@ -94,6 +96,7 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
                         stats.getusage_network_percent())
                 .addValue("vds_id", stats.getId())
                 .addValue("mem_available", stats.getmem_available())
+                .addValue("mem_free" , stats.getMemFree())
                 .addValue("mem_shared", stats.getmem_shared())
                 .addValue("swap_free", stats.getswap_free())
                 .addValue("swap_total", stats.getswap_total())
