@@ -64,6 +64,12 @@
         </executions>
       </plugin>
       <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <propertyExpansion>disallowFinals=true</propertyExpansion>
+        </configuration>
+      </plugin>
+      <plugin>
         <!--
 
            The enforcer plugin is used to ban us from using artifacts that will fail

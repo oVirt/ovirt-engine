@@ -32,6 +32,12 @@
           </execution>
         </executions>
       </plugin>
+      <plugin>
+        <artifactId>maven-checkstyle-plugin</artifactId>
+        <configuration>
+          <propertyExpansion>disallowFinals=true</propertyExpansion>
+        </configuration>
+      </plugin>
 
       <!-- Create the JBoss module: -->
       <plugin>

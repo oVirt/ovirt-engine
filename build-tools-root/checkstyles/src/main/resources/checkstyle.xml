@@ -22,5 +22,8 @@
     <module name="checks.NlsCheck">
       <property name="run" value="${runNlsCheck}" default="false"/>
     </module>
+    <module name="checks.NoFinalMemberCheck">
+      <property name="run" value="${disallowFinals}" default="false"/>
+    </module>
   </module>
 </module>
