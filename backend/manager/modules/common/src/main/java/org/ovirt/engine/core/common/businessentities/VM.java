@@ -217,14 +217,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         this.vmStatic.setInitialized(value);
     }
 
-    public boolean isAutoSuspend() {
-        return this.vmStatic.isAutoSuspend();
-    }
-
-    public void setAutoSuspend(boolean value) {
-        this.vmStatic.setAutoSuspend(value);
-    }
-
     public int getNumOfCpus() {
         return this.vmStatic.getNumOfCpus();
     }

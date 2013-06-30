@@ -48,7 +48,6 @@ public class VmTemplate extends VmBase {
     private double actualDiskSize = 0;
 
     public VmTemplate() {
-        setAutoSuspend(false);
         setNiceLevel(0);
         diskTemplateMap = new HashMap<Guid, DiskImage>();
     }
@@ -57,7 +56,7 @@ public class VmTemplate extends VmBase {
 
     public VmTemplate(int childCount, Date creationDate, String description, int memSizeMb, String name,
             int numOfSockets, int cpuPerSocket, int osId, Guid vdsGroupId, Guid vmtGuid, String domain,
-            int numOfMonitors, int status, int usbPolicy, String timeZone, boolean autoSuspend, int niceLevel,
+            int numOfMonitors, int status, int usbPolicy, String timeZone, int niceLevel,
             boolean failBack, BootSequence defaultBootSequence, VmType vmType,
             boolean smartcardEnabled, boolean deleteProtected, Boolean tunnelMigration, String vncKeyboardLayout,
             int minAllocatedMem, boolean stateless, boolean runAndPause) {
@@ -78,7 +77,6 @@ public class VmTemplate extends VmBase {
                 failBack,
                 defaultBootSequence,
                 niceLevel,
-                autoSuspend,
                 0,
                 false,
                 stateless,

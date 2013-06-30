@@ -141,7 +141,6 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                 .addValue("usb_policy", template.getUsbPolicy())
                 .addValue("time_zone", template.getTimeZone())
                 .addValue("fail_back", template.isFailBack())
-                .addValue("is_auto_suspend", template.isAutoSuspend())
                 .addValue("vm_type", template.getVmType())
                 .addValue("nice_level", template.getNiceLevel())
                 .addValue("default_boot_sequence",

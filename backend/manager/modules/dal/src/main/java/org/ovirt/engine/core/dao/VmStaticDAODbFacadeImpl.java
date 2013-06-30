@@ -52,7 +52,6 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("creation_date", vm.getCreationDate())
                 .addValue("num_of_monitors", vm.getNumOfMonitors())
                 .addValue("is_initialized", vm.isInitialized())
-                .addValue("is_auto_suspend", vm.isAutoSuspend())
                 .addValue("num_of_sockets", vm.getNumOfSockets())
                 .addValue("cpu_per_socket", vm.getCpuPerSocket())
                 .addValue("usb_policy", vm.getUsbPolicy())

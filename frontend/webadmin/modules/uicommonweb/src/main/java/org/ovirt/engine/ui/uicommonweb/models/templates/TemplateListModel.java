@@ -453,7 +453,6 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         template.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
                 / (Integer) model.getNumOfSockets().getSelectedItem());
         template.setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
-        template.setAutoSuspend(false);
         template.setStateless((Boolean) model.getIsStateless().getEntity());
         template.setRunAndPause((Boolean) model.getIsRunAndPause().getEntity());
         template.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());

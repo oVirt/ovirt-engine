@@ -559,7 +559,6 @@ public class VmSnapshotListModel extends SearchableListModel
         getcurrentVm().setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString()) /
                 (Integer) model.getNumOfSockets().getSelectedItem());
         getcurrentVm().setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
-        getcurrentVm().setAutoSuspend(false);
         getcurrentVm().setStateless((Boolean) model.getIsStateless().getEntity());
         getcurrentVm().setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
         getcurrentVm().setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());

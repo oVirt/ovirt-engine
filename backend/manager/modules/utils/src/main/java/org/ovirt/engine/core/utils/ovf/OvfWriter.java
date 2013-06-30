@@ -205,10 +205,6 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteRaw(OvfParser.LocalDateToUtcDateString(new Date()));
         _writer.WriteEndElement();
 
-        _writer.WriteStartElement("IsAutoSuspend");
-        _writer.WriteRaw(String.valueOf(vmBase.isAutoSuspend()));
-        _writer.WriteEndElement();
-
         _writer.WriteStartElement("DeleteProtected");
         _writer.WriteRaw(String.valueOf(vmBase.isDeleteProtected()));
         _writer.WriteEndElement();

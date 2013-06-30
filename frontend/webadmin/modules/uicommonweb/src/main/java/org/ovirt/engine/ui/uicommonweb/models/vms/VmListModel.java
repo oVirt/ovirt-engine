@@ -1364,7 +1364,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar.setNumOfSockets((Integer) model.getNumOfSockets().getSelectedItem());
         tempVar.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
                 / (Integer) model.getNumOfSockets().getSelectedItem());
-        tempVar.setAutoSuspend(false);
         tempVar.setStateless((Boolean) model.getIsStateless().getEntity());
         tempVar.setRunAndPause(((Boolean) model.getIsRunAndPause().getEntity()));
         tempVar.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
@@ -1956,7 +1955,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
                 / (Integer) model.getNumOfSockets().getSelectedItem());
         getcurrentVm().setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
-        getcurrentVm().setAutoSuspend(false);
         getcurrentVm().setStateless((Boolean) model.getIsStateless().getEntity());
         getcurrentVm().setRunAndPause((Boolean) model.getIsRunAndPause().getEntity());
         getcurrentVm().setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());

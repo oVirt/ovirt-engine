@@ -133,7 +133,6 @@ public final class Cloner
         vm.setInitrdUrl(instance.getInitrdUrl());
         // TODO: array - need to consider cloning of array, and of actual interfaces
         vm.setInterfaces(instance.getInterfaces());
-        vm.setAutoSuspend(instance.isAutoSuspend());
         vm.setInitialized(instance.isInitialized());
         vm.setStateless(instance.isStateless());
         vm.setRunAndPause(instance.isRunAndPause());
@@ -370,7 +369,6 @@ public final class Cloner
         obj.setDescription(instance.getDescription());
         obj.setDomain(instance.getDomain());
         obj.setFailBack(instance.isFailBack());
-        obj.setAutoSuspend(instance.isAutoSuspend());
         obj.setStateless(instance.isStateless());
         obj.setMemSizeMb(instance.getMemSizeMb());
         obj.setName(instance.getName());
@@ -408,7 +406,6 @@ public final class Cloner
         obj.setDedicatedVmForVds(instance.getDedicatedVmForVds());
         obj.setDescription(instance.getDescription());
         obj.setDomain(instance.getDomain());
-        obj.setAutoSuspend(instance.isAutoSuspend());
         obj.setInitialized(instance.isInitialized());
         obj.setStateless(instance.isStateless());
         obj.setRunAndPause(instance.isRunAndPause());

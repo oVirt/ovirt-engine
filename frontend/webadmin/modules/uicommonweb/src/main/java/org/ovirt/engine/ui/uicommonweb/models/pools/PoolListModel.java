@@ -488,7 +488,6 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         vm.setCpuPerSocket(Integer.parseInt(model.getTotalCPUCores().getEntity().toString())
                                 / (Integer) model.getNumOfSockets().getSelectedItem());
                         vm.setUsbPolicy((UsbPolicy) model.getUsbPolicy().getSelectedItem());
-                        vm.setAutoSuspend(false);
                         vm.setStateless(false);
                         vm.setDefaultBootSequence(model.getBootSequence());
                         vm.setIsoPath(model.getCdImage().getIsChangable() ? (String) model.getCdImage()

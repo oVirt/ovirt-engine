@@ -91,9 +91,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private int niceLevel;
 
     @EditableField
-    private boolean autoSuspend;
-
-    @EditableField
     private int priority;
 
     @EditableField
@@ -214,7 +211,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             boolean failBack,
             BootSequence defaultBootSequence,
             int niceLevel,
-            boolean autosuspend,
             int priority,
             boolean autoStartup,
             boolean stateless,
@@ -247,7 +243,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.failBack = failBack;
         this.defaultBootSequence = defaultBootSequence;
         this.niceLevel = niceLevel;
-        this.autoSuspend = autosuspend;
         this.priority = priority;
         this.autoStartup = autoStartup;
         this.stateless = stateless;
@@ -443,14 +438,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         niceLevel = value;
     }
 
-    public boolean isAutoSuspend() {
-        return autoSuspend;
-    }
-
-    public void setAutoSuspend(boolean value) {
-        autoSuspend = value;
-    }
-
     public int getPriority() {
         return priority;
     }
@@ -561,7 +548,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + (autoStartup ? 1231 : 1237);
-        result = prime * result + (autoSuspend ? 1231 : 1237);
         result = prime * result + cpuPerSocket;
         result = prime * result + ((creationDate == null) ? 0 : creationDate.hashCode());
         result = prime * result + ((defaultBootSequence == null) ? 0 : defaultBootSequence.hashCode());
@@ -608,7 +594,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         VmBase other = (VmBase) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
                 && autoStartup == other.autoStartup
-                && autoSuspend == other.autoSuspend
                 && cpuPerSocket == other.cpuPerSocket
                 && ObjectUtils.objectsEqual(creationDate, other.creationDate)
                 && defaultBootSequence == other.defaultBootSequence

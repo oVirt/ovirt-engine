@@ -205,7 +205,6 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                 .addValue("num_of_monitors", vm.getNumOfMonitors())
                 .addValue("allow_console_reconnect", vm.getAllowConsoleReconnect())
                 .addValue("is_initialized", vm.isInitialized())
-                .addValue("is_auto_suspend", vm.isAutoSuspend())
                 .addValue("num_of_sockets", vm.getNumOfSockets())
                 .addValue("cpu_per_socket", vm.getCpuPerSocket())
                 .addValue("usb_policy", vm.getUsbPolicy())
@@ -344,7 +343,6 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
             entity.setAllowConsoleReconnect(rs.getBoolean("allow_console_reconnect"));
             entity.setInitialized(rs.getBoolean("is_initialized"));
-            entity.setAutoSuspend(rs.getBoolean("is_auto_suspend"));
             entity.setNumOfSockets(rs.getInt("num_of_sockets"));
             entity.setCpuPerSocket(rs.getInt("cpu_per_socket"));
             entity.setUsbPolicy(UsbPolicy.forValue(rs.getInt("usb_policy")));

@@ -331,11 +331,6 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
-        node = content.SelectSingleNode("IsAutoSuspend");
-        if (node != null) {
-            vmBase.setAutoSuspend(Boolean.parseBoolean(node.InnerText));
-        }
-
         node = content.SelectSingleNode("TimeZone");
         if (node != null) {
             vmBase.setTimeZone(node.InnerText);

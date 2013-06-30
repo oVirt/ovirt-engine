@@ -387,7 +387,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         VmTemplateStatus.Locked.getValue(),
                         getParameters().getMasterVm().getUsbPolicy().getValue(),
                         getParameters().getMasterVm().getTimeZone(),
-                        getParameters().getMasterVm().isAutoSuspend(),
                         getParameters().getMasterVm().getNiceLevel(),
                         getParameters().getMasterVm().isFailBack(),
                         getParameters().getMasterVm().getDefaultBootSequence(),
