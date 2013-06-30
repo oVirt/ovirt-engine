@@ -1472,13 +1472,13 @@ UNION ALL
 SELECT     network.id, ad_element_id
 FROM       network
 INNER JOIN internal_permissions_view ON object_id = storage_pool_id
-WHERE      object_type_id = 14 AND role_type = 2
+WHERE      object_type_id = 14  AND allows_viewing_children AND role_type = 2
 -- Or the user has permissions on the Cluster the networks are assigned to
 UNION ALL
 SELECT     network_id, ad_element_id
 FROM       network_cluster
 INNER JOIN internal_permissions_view ON object_id = network_cluster.cluster_id
-WHERE      object_type_id = 9 AND role_type = 2
+WHERE      object_type_id = 9 AND allows_viewing_children AND role_type = 2
 -- Or the user has permissions on the VM with the network attached
 UNION ALL
 SELECT     network_id, ad_element_id
