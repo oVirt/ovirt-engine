@@ -39,9 +39,12 @@ while getopts hs:d:u:p:l:v option; do
     esac
 done
 
-pg_dump -f .${DATABASE}.schema -F p -n public -s -U ${USERNAME} ${DATABASE} -h ${SERVERNAME} -p ${PORT}  >& /dev/null
+CMD="select version from schema_version where current;"
+VERSION=$(execute_command "$CMD" ${DATABASE} ${SERVERNAME} ${PORT} | sed 's/^ *//g')
+FILE=".${DATABASE}.${VERSION}.schema"
+pg_dump -f "${FILE}" -F p -n public -s -U ${USERNAME} ${DATABASE} -h ${SERVERNAME} -p ${PORT}  >& /dev/null
 
 printf "Done.\n"
-printf "Exported file is .${DATABASE}.schema.\n"
+printf "Exported file is ${FILE}.\n"
 popd>/dev/null
 exit 0
