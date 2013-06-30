@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
  * {@link GlusterVolumeVDSParameters}. Used by the "set gluster volume option" command.
  */
 public class GlusterVolumeOptionVDSParameters extends GlusterVolumeVDSParameters {
-    private final GlusterVolumeOptionEntity volumeOption;
+    private GlusterVolumeOptionEntity volumeOption;
 
     public GlusterVolumeOptionVDSParameters(Guid serverId, String volumeName, GlusterVolumeOptionEntity volumeOption) {
         super(serverId, volumeName);

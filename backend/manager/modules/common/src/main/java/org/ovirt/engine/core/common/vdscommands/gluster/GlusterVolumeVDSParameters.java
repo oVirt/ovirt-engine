@@ -9,7 +9,7 @@ import org.ovirt.engine.core.compat.Guid;
  * and inherited by others (e.g. set volume option).
  */
 public class GlusterVolumeVDSParameters extends VdsIdVDSCommandParametersBase {
-    private final String volumeName;
+    private String volumeName;
 
     public GlusterVolumeVDSParameters(Guid serverId, String volumeName) {
         super(serverId);

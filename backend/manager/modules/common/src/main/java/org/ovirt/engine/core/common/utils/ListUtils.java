@@ -42,7 +42,7 @@ public class ListUtils {
             this.predicate = predicate;
         }
 
-        final Predicate<T> predicate;
+        Predicate<T> predicate;
 
         @Override
         public List<T> filter(final List<T> data) {

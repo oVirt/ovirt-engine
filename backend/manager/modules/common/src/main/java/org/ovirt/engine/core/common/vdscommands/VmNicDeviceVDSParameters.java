@@ -7,9 +7,9 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmNicDeviceVDSParameters extends VdsIdVDSCommandParametersBase {
 
-    private final VM vm;
-    private final VmNetworkInterface nic;
-    private final VmDevice vmDevice;
+    private VM vm;
+    private VmNetworkInterface nic;
+    private VmDevice vmDevice;
 
     public VmNicDeviceVDSParameters(Guid vdsId, VM vm, VmNetworkInterface nic, VmDevice vmDevice) {
         super(vdsId);

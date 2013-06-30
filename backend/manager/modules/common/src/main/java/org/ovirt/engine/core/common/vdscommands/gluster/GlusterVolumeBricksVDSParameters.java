@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GlusterVolumeBricksVDSParameters extends GlusterVolumeVDSParameters {
-    private final List<GlusterBrickEntity> bricks;
+    private List<GlusterBrickEntity> bricks;
 
     public GlusterVolumeBricksVDSParameters(Guid serverId,
             String volumeName,

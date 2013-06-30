@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
  * This will be used directly by Remove Gluster Server command.
  */
 public class RemoveGlusterServerVDSParameters extends VdsIdVDSCommandParametersBase {
-    private final String hostnameOrIp;
+    private String hostnameOrIp;
     private boolean forceAction;
 
     public RemoveGlusterServerVDSParameters(Guid serverId, String hostnameOrIp, boolean forceAction) {

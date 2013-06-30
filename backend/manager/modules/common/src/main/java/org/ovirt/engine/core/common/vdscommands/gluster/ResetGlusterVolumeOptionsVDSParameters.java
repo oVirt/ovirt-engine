@@ -10,8 +10,8 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class ResetGlusterVolumeOptionsVDSParameters extends GlusterVolumeVDSParameters {
 
-    private final GlusterVolumeOptionEntity volumeOption;
-    private final boolean forceAction;
+    private GlusterVolumeOptionEntity volumeOption;
+    private boolean forceAction;
 
     public ResetGlusterVolumeOptionsVDSParameters(Guid serverId, String volumeName, GlusterVolumeOptionEntity volumeOption, boolean forceAction) {
         super(serverId, volumeName);

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.Guid;
  * This will be used directly by Gluster Volume Profile Info Query.
  */
 public class GlusterVolumeProfileInfoVDSParameters extends GlusterVolumeVDSParameters {
-    private final Guid clusterId;
+    private Guid clusterId;
 
     public GlusterVolumeProfileInfoVDSParameters(Guid clusterId, Guid serverId, String volumeName) {
         super(serverId, volumeName);

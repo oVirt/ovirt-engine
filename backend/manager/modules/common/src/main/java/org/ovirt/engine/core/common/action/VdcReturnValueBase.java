@@ -17,9 +17,9 @@ public class VdcReturnValueBase implements Serializable {
     private Object _returnValue;
     private String _description = "";
     private ArrayList<Guid> _taskIdList = new ArrayList<Guid>();
-    private final ArrayList<Guid> _internalIdList = new ArrayList<Guid>();
+    private ArrayList<Guid> _internalIdList = new ArrayList<Guid>();
     private boolean _endActionTryAgain = true;
-    private final ArrayList<String> _executeFailedMessages = new ArrayList<String>();
+    private ArrayList<String> _executeFailedMessages = new ArrayList<String>();
     private VdcFault _fault;
     private String correlationId;
     private Guid jobId;

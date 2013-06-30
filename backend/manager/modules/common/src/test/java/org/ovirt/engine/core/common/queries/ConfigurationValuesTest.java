@@ -15,7 +15,7 @@ import org.junit.runners.Parameterized.Parameters;
 public class ConfigurationValuesTest {
 
     /** The tested value */
-    private final ConfigurationValues value;
+    private ConfigurationValues value;
 
     public ConfigurationValuesTest(ConfigurationValues value) {
         this.value = value;
