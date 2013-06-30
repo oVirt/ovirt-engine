@@ -79,7 +79,7 @@ public class Guid implements Serializable, Comparable<Guid> {
 
     @Override
     public boolean equals(Object other) {
-        if (other == null || !(other instanceof Guid)) {
+        if (!(other instanceof Guid)) {
             return false;
         }
         Guid otherGuid = (Guid) other;
