@@ -56,7 +56,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                                         model.setDataCentersAndClusters(model,
                                                 dataCenters,
                                                 (List<VDSGroup>) returnValue, null);
-                                        initTemplate();
                                         initCdImage();
                                     }
                                 }, getModel().getHash()),
@@ -182,7 +181,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
         }
         updateCpuPinningVisibility();
-
+        updateTemplate();
         initNetworkInterfaces(networkBehavior, null);
     }
 
@@ -240,7 +239,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                 .setEntity((int) ((Integer) getModel().getMemSize().getEntity() * overCommitFactor));
     }
 
-    private void initTemplate()
+    private void updateTemplate()
     {
         DataCenterWithCluster dataCenterWithCluster =
                 (DataCenterWithCluster) getModel().getDataCenterWithClustersList().getSelectedItem();
