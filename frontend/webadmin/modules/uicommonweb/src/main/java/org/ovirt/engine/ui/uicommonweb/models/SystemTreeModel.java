@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.common.queries.GetAllProvidersParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -346,11 +345,11 @@ public class SystemTreeModel extends SearchableListModel implements IFrontendMul
             @SuppressWarnings("unchecked")
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                setProviders((List<Provider>) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                setProviders((List<Provider>) returnValue);
                 AsyncDataProvider.getDataCenterList(dcQuery);
             }
         };
-        Frontend.RunQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(), providersQuery);
+        AsyncDataProvider.GetAllProviders(providersQuery);
     }
 
     @Override

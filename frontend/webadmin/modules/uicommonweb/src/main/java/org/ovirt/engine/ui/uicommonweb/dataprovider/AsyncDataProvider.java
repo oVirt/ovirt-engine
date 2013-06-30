@@ -2648,6 +2648,7 @@ public final class AsyncDataProvider {
                 {
                     return new ArrayList<Provider>();
                 }
+                Collections.sort((List<Provider>) source, new NameableComparator());
                 return source;
             }
         };
