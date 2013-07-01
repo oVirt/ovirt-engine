@@ -291,12 +291,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 new GetAllFromExportDomainQueryParameters
                 (getParameters().getStoragePoolId(), getParameters().getSourceDomainId());
         VdcQueryReturnValue qRetVal = getBackend().runInternalQuery(VdcQueryType.GetVmsFromExportDomain, p);
-
-        if (!qRetVal.getSucceeded()) {
-            return null;
-        }
-
-        return (List<VM>) qRetVal.getReturnValue();
+        return qRetVal.getSucceeded() ? (List<VM>) qRetVal.getReturnValue() : null;
     }
 
     private boolean validateImageConfig(List<String> canDoActionMessages,
@@ -354,7 +349,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
         // if collapse true we check that we have the template on source
         // (backup) domain
-        if (getParameters().getCopyCollapse() && !templateExistsOnExportDomain()) {
+        if (getParameters().getCopyCollapse() && !isTemplateExistsOnExportDomain()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMPORTED_TEMPLATE_IS_MISSING);
             addCanDoActionMessage(String.format("$DomainName %1$s",
                     getStorageDomainStaticDAO().get(getParameters().getSourceDomainId()).getStorageName()));
@@ -474,8 +469,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         for (DiskImage diskImage : images) {
             if (diskImage.getDiskInterface() == DiskInterface.VirtIO_SCSI &&
                     !FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
-                addCanDoActionMessage(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
-                return false;
+                return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
             }
         }
 
@@ -518,29 +512,26 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 getReturnValue().getCanDoActionMessages());
     }
 
-    private boolean templateExistsOnExportDomain() {
-        boolean retVal = false;
-        if (!VmTemplateHandler.BlankVmTemplateId.equals(getParameters().getVm().getVmtGuid())) {
-            GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getParameters()
-                    .getStoragePoolId(), getParameters().getSourceDomainId());
-            VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(
-                    VdcQueryType.GetTemplatesFromExportDomain, tempVar);
+    private boolean isTemplateExistsOnExportDomain() {
+        if (VmTemplateHandler.BlankVmTemplateId.equals(getParameters().getVm().getVmtGuid())) {
+            return true;
+        }
 
-            if (qretVal.getSucceeded()) {
-                Map templates = (Map) qretVal.getReturnValue();
+        VdcQueryReturnValue qRetVal = Backend.getInstance().runInternalQuery(
+                VdcQueryType.GetTemplatesFromExportDomain,
+                new GetAllFromExportDomainQueryParameters(getParameters().getStoragePoolId(),
+                        getParameters().getSourceDomainId()));
 
-                for (Object template : templates.keySet()) {
-                    if (getParameters().getVm().getVmtGuid().equals(((VmTemplate) template).getId())) {
-                        retVal = true;
-                        break;
-                    }
+        if (qRetVal.getSucceeded()) {
+            Map<VmTemplate, ?> templates = (Map<VmTemplate, ?>) qRetVal.getReturnValue();
+
+            for (VmTemplate template : templates.keySet()) {
+                if (getParameters().getVm().getVmtGuid().equals(template.getId())) {
+                    return true;
                 }
             }
-        } else {
-            retVal = true;
         }
-        return retVal;
-
+        return false;
     }
 
     protected boolean checkTemplateInStorageDomain() {
@@ -559,8 +550,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             });
 
             if (Collections.disjoint(domainsId, imageToDestinationDomainMap.values())) {
-                retValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }
         }
         return retValue;
@@ -568,8 +558,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     private boolean templateExists() {
         if (getVmTemplate() == null && !getParameters().getCopyCollapse()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
         return true;
     }
@@ -591,8 +580,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                                     imageGUID));
 
             if (Boolean.FALSE.equals(retValue.getReturnValue())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
-                return false;
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
             }
         }
         return true;
@@ -600,12 +588,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     protected boolean canAddVm() {
         // Checking if a desktop with same name already exists
-        boolean exists = VmHandler.isVmWithSameNameExistStatic(getVm().getName());
-
-        if (exists) {
-            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_NAME_EXISTS);
+        if (VmHandler.isVmWithSameNameExistStatic(getVm().getName())) {
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_IMPORT_VM_NAME_EXISTS);
         }
-        return !exists;
+        return true;
     }
 
     @Override
@@ -918,13 +904,15 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
      * images), it will be updated. If it doesn't exist, it will be saved.
      */
     private void updateSnapshotsFromExport() {
-        if (getVm().getSnapshots() != null) {
-            for (Snapshot snapshot : getVm().getSnapshots()) {
-                if (getSnapshotDao().exists(getVm().getId(), snapshot.getId())) {
-                    getSnapshotDao().update(snapshot);
-                } else {
-                    getSnapshotDao().save(snapshot);
-                }
+        if (getVm().getSnapshots() == null) {
+            return;
+        }
+
+        for (Snapshot snapshot : getVm().getSnapshots()) {
+            if (getSnapshotDao().exists(getVm().getId(), snapshot.getId())) {
+                getSnapshotDao().update(snapshot);
+            } else {
+                getSnapshotDao().save(snapshot);
             }
         }
     }
