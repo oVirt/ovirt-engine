@@ -133,16 +133,16 @@ public class Guid implements Serializable, Comparable<Guid> {
         strGUID.append(addLeadingZero(inguid[byteOrderIndices[1 % length]] & 0xFF));
         strGUID.append(addLeadingZero(inguid[byteOrderIndices[2 % length]] & 0xFF));
         strGUID.append(addLeadingZero(inguid[byteOrderIndices[3 % length]] & 0xFF));
-        strGUID.append("-");
+        strGUID.append('-');
         strGUID.append(addLeadingZero(inguid[byteOrderIndices[4 % length]] & 0xFF));
         strGUID.append(addLeadingZero(inguid[byteOrderIndices[5 % length]] & 0xFF));
-        strGUID.append("-");
+        strGUID.append('-');
         strGUID.append(addLeadingZero(inguid[byteOrderIndices[6 % length]] & 0xFF));
         strGUID.append(addLeadingZero(inguid[byteOrderIndices[7 % length]] & 0xFF));
-        strGUID.append("-");
+        strGUID.append('-');
         strGUID.append(addLeadingZero(inguid[byteOrderIndices[8 % length]] & 0xFF));
         strGUID.append(addLeadingZero(inguid[byteOrderIndices[9 % length]] & 0xFF));
-        strGUID.append("-");
+        strGUID.append('-');
         strGUID.append(addLeadingZero(inguid[byteOrderIndices[10 % length]] & 0xFF));
         strGUID.append(addLeadingZero(inguid[byteOrderIndices[11 % length]] & 0xFF));
         strGUID.append(addLeadingZero(inguid[byteOrderIndices[12 % length]] & 0xFF));
@@ -155,7 +155,7 @@ public class Guid implements Serializable, Comparable<Guid> {
     }
 
     private static String addLeadingZero(int k) {
-        return (k <= 0xF) ? "0" + Integer.toHexString(k) : Integer
+        return (k <= 0xF) ? '0' + Integer.toHexString(k) : Integer
                 .toHexString(k);
     }
 }
