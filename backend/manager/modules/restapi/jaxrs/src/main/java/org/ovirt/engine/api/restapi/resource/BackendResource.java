@@ -248,6 +248,7 @@ public class BackendResource extends BaseBackendResource {
     }
 
     protected void doNonBlockingAction(final VdcActionType task, final VdcActionParametersBase params) {
+        setCorrelationId(params);
         ThreadPoolUtil.execute(new Runnable() {
             SessionHelper sh = getSessionHelper();
             VdcActionParametersBase sp = sessionize(params);
@@ -255,7 +256,6 @@ public class BackendResource extends BaseBackendResource {
 
             @Override
             public void run() {
-                setCorrelationId(params);
                 try {
                     backend.RunAction(task, sp);
                 } finally {
