@@ -347,8 +347,16 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(VdcBllMessages.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
         }
 
-        if (getParameters().isConsoleEnabled() != null && !getVm().isDown() && consoleDeviceChanged()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+        if (getParameters().isConsoleEnabled() != null && !getVm().isDown()
+                && vmDeviceChanged(VmDeviceGeneralType.CONSOLE, getParameters().isConsoleEnabled())) {
+            addCanDoActionMessage("$device console");
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN);
+        }
+
+        if (getParameters().isSoundDeviceEnabled() != null && !getVm().isDown()
+                && vmDeviceChanged(VmDeviceGeneralType.SOUND, getParameters().isSoundDeviceEnabled())) {
+            addCanDoActionMessage("$device sound");
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN);
         }
 
         if (!isCpuSharesValid(vmFromParams)) {
@@ -358,11 +366,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return true;
     }
 
-    private boolean consoleDeviceChanged() {
-        List<VmDevice> consoleDevices = getVmDeviceDao().getVmDeviceByVmIdAndType(getParameters().getVmId(),
-                VmDeviceGeneralType.CONSOLE);
+    private boolean vmDeviceChanged(VmDeviceGeneralType deviceType, boolean deviceEnabled) {
+        List<VmDevice> vmDevices = getVmDeviceDao().getVmDeviceByVmIdAndType(getParameters().getVmId(),
+                deviceType);
 
-        return getParameters().isConsoleEnabled() == consoleDevices.isEmpty();
+        return deviceEnabled == vmDevices.isEmpty();
     }
 
     private boolean isVmExist() {
