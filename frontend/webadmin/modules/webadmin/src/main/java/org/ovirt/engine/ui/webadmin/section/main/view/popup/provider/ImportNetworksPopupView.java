@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
+import org.ovirt.engine.ui.common.widget.table.column.EditTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.ListModelListBoxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -109,15 +110,28 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
         importedNetworks.asEditor().edit(importedNetworks.asEditor().flush());
     }
 
-    void initEntityModelCellTables(final ApplicationConstants constants, final ApplicationTemplates templates, final ApplicationResources resources) {
-        Column<EntityModel, String> nameColumn = new TextColumnWithTooltip<EntityModel>() {
+    void initEntityModelCellTables(final ApplicationConstants constants,
+            final ApplicationTemplates templates,
+            final ApplicationResources resources) {
+
+        providerNetworks.addColumn(new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel model) {
-                return ((ExternalNetwork) model).getNetwork().getName();
+                return ((ExternalNetwork) model).getDisplayName();
             }
-        };
-        providerNetworks.addColumn(nameColumn, constants.nameNetworkHeader());
-        importedNetworks.addColumn(nameColumn, constants.nameNetworkHeader());
+        }, constants.nameNetworkHeader());
+
+        importedNetworks.addColumn(new EditTextColumnWithTooltip<EntityModel>(new FieldUpdater<EntityModel, String>() {
+            @Override
+            public void update(int index, EntityModel model, String value) {
+                ((ExternalNetwork) model).setDisplayName(value);
+            }
+        }) {
+            @Override
+            public String getValue(EntityModel model) {
+                return ((ExternalNetwork) model).getDisplayName();
+            }
+        }, constants.nameNetworkHeader());
 
         Column<EntityModel, String> idColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
@@ -205,7 +219,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
 
     @Override
     public void edit(ImportNetworksModel model) {
-        splitTable.edit(model.getProviderNetworks(), model.getImportedNetworks());
+        splitTable.edit(model.getProviderNetworks(), model.getImportedNetworks(), null, model.getCancelImportCommand());
         dcColumn.edit(model.getDataCenters());
         driver.edit(model);
     }

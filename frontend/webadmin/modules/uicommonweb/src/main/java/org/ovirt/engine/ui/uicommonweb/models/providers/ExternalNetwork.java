@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 public class ExternalNetwork extends EntityModel {
 
     private Network network;
+    private String displayName;
     private ListModel dcList;
     private boolean publicUse;
 
@@ -20,6 +21,14 @@ public class ExternalNetwork extends EntityModel {
 
     public void setNetwork(Network network) {
         this.network = network;
+    }
+
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String value) {
+        displayName = value;
     }
 
     public ListModel getDataCenters() {

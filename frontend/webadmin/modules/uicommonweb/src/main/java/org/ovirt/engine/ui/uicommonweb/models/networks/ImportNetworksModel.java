@@ -30,7 +30,6 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
-@SuppressWarnings("deprecation")
 public class ImportNetworksModel extends Model {
 
     private static final String CMD_IMPORT = "OnImport"; //$NON-NLS-1$
@@ -42,6 +41,8 @@ public class ImportNetworksModel extends Model {
     private final ListModel providers = new ListModel();
     private final ListModel providerNetworks = new ListModel();
     private final ListModel importedNetworks = new ListModel();
+
+    private UICommand cancelImportCommand = new UICommand(null, this);
 
     public ListModel getDataCenters() {
         return dataCenters;
@@ -57,6 +58,10 @@ public class ImportNetworksModel extends Model {
 
     public ListModel getProviders() {
         return providers;
+    }
+
+    public UICommand getCancelImportCommand() {
+        return cancelImportCommand;
     }
 
     public ImportNetworksModel(SearchableListModel sourceListModel) {
@@ -117,6 +122,7 @@ public class ImportNetworksModel extends Model {
                 for (Network network : networks) {
                     ExternalNetwork externalNetwork = new ExternalNetwork();
                     externalNetwork.setNetwork(network);
+                    externalNetwork.setDisplayName(network.getName());
                     Iterable<StoragePool> dcList = getDataCenters().getItems();
                     externalNetwork.getDataCenters().setItems(dcList);
                     externalNetwork.getDataCenters().setSelectedItem(Linq.firstOrDefault(dcList));
@@ -134,7 +140,6 @@ public class ImportNetworksModel extends Model {
         final AsyncQuery dcQuery = new AsyncQuery();
         dcQuery.asyncCallback = new INewAsyncCallback() {
 
-            @SuppressWarnings("unchecked")
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 List<StoragePool> dataCenters = (List<StoragePool>) returnValue;
@@ -154,16 +159,17 @@ public class ImportNetworksModel extends Model {
         sourceListModel.setWindow(null);
     }
 
-    @SuppressWarnings("unchecked")
     public void onImport() {
         List<VdcActionParametersBase> mulipleActionParameters =
                 new LinkedList<VdcActionParametersBase>();
 
         for (ExternalNetwork externalNetwork : (Iterable<ExternalNetwork>) importedNetworks.getItems()) {
+            final Network network = externalNetwork.getNetwork();
             Guid dcId = ((StoragePool) externalNetwork.getDataCenters().getSelectedItem()).getId();
-            externalNetwork.getNetwork().setDataCenterId(dcId);
+            network.setName(externalNetwork.getDisplayName());
+            network.setDataCenterId(dcId);
             AddNetworkStoragePoolParameters params =
-                    new AddNetworkStoragePoolParameters(dcId, externalNetwork.getNetwork());
+                    new AddNetworkStoragePoolParameters(dcId, network);
             mulipleActionParameters.add(params);
         }
 
@@ -174,7 +180,12 @@ public class ImportNetworksModel extends Model {
                 sourceListModel.getSearchCommand().execute();
             }
         });
-        cancel();
+    }
+
+    private void cancelImport() {
+        for (ExternalNetwork externalNetwork : (List<ExternalNetwork>) getImportedNetworks().getSelectedItems()) {
+            externalNetwork.setDisplayName(externalNetwork.getNetwork().getName());
+        }
     }
 
     @Override
@@ -185,6 +196,8 @@ public class ImportNetworksModel extends Model {
             onImport();
         } else if (StringHelper.stringsEqual(command.getName(), CMD_CANCEL)) {
             cancel();
+        } else if (getCancelImportCommand().equals(command)) {
+            cancelImport();
         }
     }
 
