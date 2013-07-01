@@ -185,24 +185,26 @@ DAO TESTS
 
 Create empty database for DAO tests refer to DATABASE CREATION.
 
-Provided user is 'engine', password is 'engine' and database is engine_dao.
+Provided user is 'engine', password is 'engine' and database
+is engine_dao_tests.
 
 Create empty schema (one time):
 
 $ PGPASSWORD=engine \
-    ./packaging/dbscripts/create_schema.sh -d engine_dao -u engine
+    ./packaging/dbscripts/create_schema.sh \
+        -d engine_dao_tests -u engine
 
 Upgrade schema (when needed):
 
 $ PGPASSWORD=engine \
-    ./packaging/dbscripts/upgrade.sh -u engine -d engine_dao
+    ./packaging/dbscripts/upgrade.sh -u engine -d engine_dao_tests
 
 Run build as:
 
 $ make maven BUILD_GWT=0 BUILD_UT=1 EXTRA_BUILD_FLAGS="-P enable-dao-tests \
     -D engine.db.username=engine \
     -D engine.db.password=engine \
-    -D engine.db.url=jdbc:postgresql://localhost/engine_dao"
+    -D engine.db.url=jdbc:postgresql://localhost/engine_dao_tests"
 
 RPM PACKAGING
 
