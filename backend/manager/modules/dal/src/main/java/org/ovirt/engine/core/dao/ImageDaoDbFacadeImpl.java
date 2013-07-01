@@ -71,18 +71,18 @@ public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid>
         @Override
         public Image mapRow(ResultSet rs, int rowNum) throws SQLException {
             Image entity = new Image();
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("image_guid")));
+            entity.setId(getGuidDefaultEmpty(rs, "image_guid"));
             entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("creation_date")));
-            entity.setTemplateImageId(Guid.createGuidFromStringDefaultEmpty(rs.getString("it_guid")));
+            entity.setTemplateImageId(getGuidDefaultEmpty(rs, "it_guid"));
             entity.setSize(rs.getLong("size"));
-            entity.setParentId(Guid.createGuidFromStringDefaultEmpty(rs.getString("ParentId")));
+            entity.setParentId(getGuidDefaultEmpty(rs, "ParentId"));
             entity.setStatus(ImageStatus.forValue(rs.getInt("imageStatus")));
             entity.setLastModified(DbFacadeUtils.fromDate(rs.getTimestamp("lastModified")));
-            entity.setSnapshotId(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_snapshot_id")));
+            entity.setSnapshotId(getGuidDefaultEmpty(rs, "vm_snapshot_id"));
             entity.setVolumeType(VolumeType.forValue(rs.getInt("volume_type")));
             entity.setVolumeFormat(VolumeFormat.forValue(rs.getInt("volume_format")));
-            entity.setDiskId(Guid.createGuidFromStringDefaultEmpty(rs.getString("image_group_id")));
-            entity.setQuotaId(Guid.createGuidFromStringDefaultEmpty(rs.getString("quota_id")));
+            entity.setDiskId(getGuidDefaultEmpty(rs, "image_group_id"));
+            entity.setQuotaId(getGuidDefaultEmpty(rs, "quota_id"));
             entity.setActive((Boolean) rs.getObject("active"));
             return entity;
         }

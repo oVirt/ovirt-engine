@@ -41,7 +41,7 @@ public class StoragePoolIsoMapDAOTest extends BaseDAOTestCase {
     public void testGetStoragePoolIsoMap() {
         StoragePoolIsoMap result =
                 dao.get(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getstorage_id(),
-                        new Guid(existingStoragePoolIsoMap.getstorage_pool_id().toString())));
+                        existingStoragePoolIsoMap.getstorage_pool_id()));
 
         assertNotNull(result);
         assertEquals(existingStoragePoolIsoMap, result);
@@ -53,7 +53,7 @@ public class StoragePoolIsoMapDAOTest extends BaseDAOTestCase {
 
         StoragePoolIsoMap result =
                 dao.get(new StoragePoolIsoMapId(newStoragePoolIsoMap.getstorage_id(),
-                        new Guid(newStoragePoolIsoMap.getstorage_pool_id().toString())));
+                        newStoragePoolIsoMap.getstorage_pool_id()));
 
         assertNotNull(result);
         assertEquals(newStoragePoolIsoMap, result);
@@ -67,7 +67,7 @@ public class StoragePoolIsoMapDAOTest extends BaseDAOTestCase {
 
         StoragePoolIsoMap result =
                 dao.get(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getstorage_id(),
-                        new Guid(existingStoragePoolIsoMap.getstorage_pool_id().toString())));
+                        existingStoragePoolIsoMap.getstorage_pool_id()));
 
         assertNotNull(result);
         assertEquals(existingStoragePoolIsoMap, result);
@@ -75,12 +75,12 @@ public class StoragePoolIsoMapDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testRemoveStoragePoolIsoMap() {
-        dao.remove(new StoragePoolIsoMapId(new Guid(existingStoragePoolIsoMap.getstorage_id().toString()),
+        dao.remove(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getstorage_id(),
                 existingStoragePoolIsoMap.getstorage_pool_id()));
 
         StoragePoolIsoMap result =
                 dao.get(new StoragePoolIsoMapId(existingStoragePoolIsoMap.getstorage_id(),
-                        new Guid(existingStoragePoolIsoMap.getstorage_pool_id().toString())));
+                        existingStoragePoolIsoMap.getstorage_pool_id()));
 
         assertNull(result);
     }

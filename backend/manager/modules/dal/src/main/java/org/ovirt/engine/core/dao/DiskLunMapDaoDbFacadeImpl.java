@@ -5,7 +5,6 @@ import java.sql.SQLException;
 
 import org.ovirt.engine.core.common.businessentities.DiskLunMap;
 import org.ovirt.engine.core.common.businessentities.DiskLunMapId;
-import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -19,7 +18,7 @@ public class DiskLunMapDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<DiskLun
         public DiskLunMap mapRow(ResultSet rs, int rowNum) throws SQLException {
             DiskLunMap diskLunMap = new DiskLunMap();
 
-            diskLunMap.setDiskId(Guid.createGuidFromStringDefaultEmpty(rs.getString("disk_id")));
+            diskLunMap.setDiskId(getGuidDefaultEmpty(rs, "disk_id"));
             diskLunMap.setLunId(rs.getString("lun_id"));
 
             return diskLunMap;

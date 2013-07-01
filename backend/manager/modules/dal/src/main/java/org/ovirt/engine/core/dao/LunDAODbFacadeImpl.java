@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LUNs;
-import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -30,9 +29,9 @@ public class LunDAODbFacadeImpl extends BaseDAODbFacade implements LunDAO {
             entity.setVendorId(rs.getString("vendor_id"));
             entity.setProductId(rs.getString("product_id"));
             entity.setDeviceSize(rs.getInt("device_size"));
-            entity.setDiskId(Guid.createGuidFromString(rs.getString("disk_id")));
+            entity.setDiskId(getGuid(rs, "disk_id"));
             entity.setDiskAlias(rs.getString("disk_alias"));
-            entity.setStorageDomainId(Guid.createGuidFromString(rs.getString("storage_id")));
+            entity.setStorageDomainId(getGuid(rs, "storage_id"));
             entity.setStorageDomainName(rs.getString("storage_name"));
             return entity;
         }

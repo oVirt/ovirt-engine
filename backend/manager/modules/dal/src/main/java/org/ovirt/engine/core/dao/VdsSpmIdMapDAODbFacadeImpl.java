@@ -83,8 +83,8 @@ public class VdsSpmIdMapDAODbFacadeImpl extends BaseDAODbFacade implements VdsSp
         @Override
         public vds_spm_id_map mapRow(ResultSet rs, int rowNum) throws SQLException {
             vds_spm_id_map entity = new vds_spm_id_map();
-            entity.setstorage_pool_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("storage_pool_id")));
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("vds_id")));
+            entity.setstorage_pool_id(getGuidDefaultEmpty(rs, "storage_pool_id"));
+            entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
             entity.setvds_spm_id(rs.getInt("vds_spm_id"));
             return entity;
         }

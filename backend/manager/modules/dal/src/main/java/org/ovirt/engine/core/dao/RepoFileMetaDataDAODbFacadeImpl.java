@@ -95,7 +95,7 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
         @Override
         public RepoImage mapRow(ResultSet rs, int rowNum) throws SQLException {
             RepoImage entity = new RepoImage();
-            entity.setRepoDomainId(Guid.createGuidFromStringDefaultEmpty(rs.getString("storage_domain_id")));
+            entity.setRepoDomainId(getGuidDefaultEmpty(rs, "storage_domain_id"));
             entity.setLastRefreshed(rs.getLong("last_refreshed"));
             entity.setFileType(ImageFileType.forValue(rs.getInt("file_type")));
             return entity;
@@ -108,7 +108,7 @@ public class RepoFileMetaDataDAODbFacadeImpl extends BaseDAODbFacade implements 
         @Override
         public RepoImage mapRow(ResultSet rs, int rowNum) throws SQLException {
             RepoImage entity = new RepoImage();
-            entity.setRepoDomainId(Guid.createGuidFromStringDefaultEmpty(rs.getString("repo_domain_id")));
+            entity.setRepoDomainId(getGuidDefaultEmpty(rs, "repo_domain_id"));
             entity.setRepoImageId(rs.getString("repo_image_id"));
             entity.setRepoImageName(rs.getString("repo_image_name"));
             entity.setSize(rs.getLong("size"));

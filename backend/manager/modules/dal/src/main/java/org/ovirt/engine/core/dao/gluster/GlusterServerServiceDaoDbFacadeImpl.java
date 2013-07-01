@@ -101,9 +101,9 @@ public class GlusterServerServiceDaoDbFacadeImpl extends MassOperationsGenericDa
         public GlusterServerService mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             GlusterServerService entity = new GlusterServerService();
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
-            entity.setServerId(Guid.createGuidFromStringDefaultEmpty(rs.getString("server_id")));
-            entity.setServiceId(Guid.createGuidFromStringDefaultEmpty(rs.getString("service_id")));
+            entity.setId(getGuidDefaultEmpty(rs, "id"));
+            entity.setServerId(getGuidDefaultEmpty(rs, "server_id"));
+            entity.setServiceId(getGuidDefaultEmpty(rs, "service_id"));
             entity.setServiceName(rs.getString("service_name"));
             entity.setServiceType(ServiceType.valueOf(rs.getString("service_type")));
             entity.setMessage(rs.getString("message"));

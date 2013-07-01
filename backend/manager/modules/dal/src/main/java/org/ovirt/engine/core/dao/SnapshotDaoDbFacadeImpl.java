@@ -160,8 +160,8 @@ public class SnapshotDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Snapshot,
         public Snapshot mapRow(ResultSet rs, int rowNum) throws SQLException {
             Snapshot snapshot = createInitialSnapshotEntity(rs);
 
-            snapshot.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("snapshot_id")));
-            snapshot.setVmId(new Guid(rs.getString("vm_id")));
+            snapshot.setId(getGuidDefaultEmpty(rs, "snapshot_id"));
+            snapshot.setVmId(getGuidDefaultEmpty(rs, "vm_id"));
             snapshot.setType(SnapshotType.valueOf(rs.getString("snapshot_type")));
             snapshot.setStatus(SnapshotStatus.valueOf(rs.getString("status")));
             snapshot.setDescription(rs.getString("description"));

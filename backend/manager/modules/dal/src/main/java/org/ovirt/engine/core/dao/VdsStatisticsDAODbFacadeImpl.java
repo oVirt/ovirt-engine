@@ -35,8 +35,7 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
                     .getObject("usage_mem_percent"));
             entity.setusage_network_percent((Integer) rs
                     .getObject("usage_network_percent"));
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("vds_id")));
+            entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
             entity.setmem_available(rs.getLong("mem_available"));
             entity.setmem_shared(rs.getLong("mem_shared"));
             entity.setswap_free(rs.getLong("swap_free"));

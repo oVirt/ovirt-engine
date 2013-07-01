@@ -113,11 +113,11 @@ public class JobDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Job, Guid> imp
         public Job mapRow(ResultSet rs, int rowNum) throws SQLException {
             Job job = new Job();
 
-            job.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("job_id")));
+            job.setId(getGuidDefaultEmpty(rs, "job_id"));
             job.setActionType(VdcActionType.valueOf(rs.getString("action_type")));
             job.setDescription(rs.getString("description"));
             job.setStatus(JobExecutionStatus.valueOf(rs.getString("status")));
-            job.setOwnerId(Guid.createGuidFromString(rs.getString("owner_id")));
+            job.setOwnerId(getGuid(rs, "owner_id"));
             job.setVisible(rs.getBoolean("visible"));
             job.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
             job.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));

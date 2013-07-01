@@ -62,8 +62,7 @@ public class VmStatisticsDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                         .getObject("usage_network_percent"));
                 entity.setDisksUsage((String) rs
                         .getObject("disks_usage"));
-                entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
-                        .getString("vm_guid")));
+                entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
                 return entity;
             }
         };

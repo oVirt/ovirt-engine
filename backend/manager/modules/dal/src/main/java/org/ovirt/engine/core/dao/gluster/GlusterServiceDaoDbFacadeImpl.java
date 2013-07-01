@@ -51,7 +51,7 @@ public class GlusterServiceDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Gluste
         @Override
         public GlusterService mapRow(ResultSet rs, int rowNum) throws SQLException {
             GlusterService entity = new GlusterService();
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
+            entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setServiceType(ServiceType.valueOf(rs.getString("service_type")));
             entity.setServiceName(rs.getString("service_name"));
             return entity;

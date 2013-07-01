@@ -141,11 +141,11 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
         public StorageDomain mapRow(final ResultSet rs, final int rowNum)
                 throws SQLException {
             final StorageDomain entity = new StorageDomain();
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
+            entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setStorage(rs.getString("storage"));
             entity.setStorageName(rs.getString("storage_name"));
             entity.setDescription(rs.getString("storage_description"));
-            entity.setStoragePoolId(Guid.createGuidFromString(rs.getString("storage_pool_id")));
+            entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
             entity.setStorageType(StorageType.forValue(rs.getInt("storage_type")));
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
             entity.setStorageDomainType(StorageDomainType.forValue(rs.getInt("storage_domain_type")));

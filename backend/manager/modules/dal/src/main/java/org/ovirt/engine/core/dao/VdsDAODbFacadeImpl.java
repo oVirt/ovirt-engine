@@ -216,10 +216,8 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
         @Override
         public VDS mapRow(final ResultSet rs, final int rowNum) throws SQLException {
             final VDS entity = new VDS();
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("vds_id")));
-            entity.setVdsGroupId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("vds_group_id")));
+            entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
+            entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
             entity.setVdsGroupName(rs.getString("vds_group_name"));
             entity.setVdsGroupDescription(rs
                     .getString("vds_group_description"));
@@ -268,8 +266,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setVdsType(VDSType.forValue(rs.getInt("vds_type")));
             entity.setCpuFlags(rs.getString("cpu_flags"));
             entity.setVdsGroupCpuName(rs.getString("vds_group_cpu_name"));
-            entity.setStoragePoolId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("storage_pool_id")));
+            entity.setStoragePoolId(getGuidDefaultEmpty(rs, "storage_pool_id"));
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
             entity.setSelectionAlgorithm(VdsSelectionAlgorithm.forValue(rs
                     .getInt("selection_algorithm")));

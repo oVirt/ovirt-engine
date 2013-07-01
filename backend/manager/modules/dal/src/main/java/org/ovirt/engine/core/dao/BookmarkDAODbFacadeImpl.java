@@ -23,8 +23,7 @@ public class BookmarkDAODbFacadeImpl extends BaseDAODbFacade implements Bookmark
         @Override
         public Bookmark mapRow(ResultSet rs, int rowNum) throws SQLException {
             Bookmark entity = new Bookmark();
-            entity.setbookmark_id(new Guid(rs
-                    .getString("bookmark_id")));
+            entity.setbookmark_id(getGuid(rs, "bookmark_id"));
             entity.setbookmark_name(rs.getString("bookmark_name"));
             entity.setbookmark_value(rs.getString("bookmark_value"));
             return entity;

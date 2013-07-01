@@ -61,7 +61,7 @@ public class VmGuestAgentInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implem
         public VmGuestAgentInterface mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             VmGuestAgentInterface vmGuestAgentInterface = new VmGuestAgentInterface();
-            vmGuestAgentInterface.setVmId(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_id")));
+            vmGuestAgentInterface.setVmId(getGuidDefaultEmpty(rs, "vm_id"));
             vmGuestAgentInterface.setInterfaceName(rs.getString("interface_name"));
             vmGuestAgentInterface.setMacAddress(rs.getString("mac_address"));
             vmGuestAgentInterface.setIpv4Addresses(getListOfIpAddresses(rs.getString("ipv4_addresses")));

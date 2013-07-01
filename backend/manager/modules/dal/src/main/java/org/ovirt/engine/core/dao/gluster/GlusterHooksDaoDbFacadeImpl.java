@@ -237,8 +237,8 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
         public GlusterHookEntity mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             GlusterHookEntity entity = new GlusterHookEntity();
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
-            entity.setClusterId(Guid.createGuidFromStringDefaultEmpty(rs.getString("cluster_id")));
+            entity.setId(getGuidDefaultEmpty(rs, "id"));
+            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
             entity.setGlusterCommand(rs.getString("gluster_command"));
             entity.setStage(rs.getString("stage"));
             entity.setName(rs.getString("name"));
@@ -256,8 +256,8 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
         public GlusterServerHook mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             GlusterServerHook entity = new GlusterServerHook();
-            entity.setHookId(Guid.createGuidFromStringDefaultEmpty(rs.getString("hook_id")));
-            entity.setServerId(Guid.createGuidFromStringDefaultEmpty(rs.getString("server_id")));
+            entity.setHookId(getGuidDefaultEmpty(rs, "hook_id"));
+            entity.setServerId(getGuidDefaultEmpty(rs, "server_id"));
             entity.setStatus(rs.getString("hook_status"));
             entity.setContentType(rs.getString("content_type"));
             entity.setChecksum(rs.getString("checksum"));

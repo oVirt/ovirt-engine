@@ -29,15 +29,14 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
             StoragePool entity = new StoragePool();
             entity.setdescription(rs.getString("description"));
             entity.setComment(rs.getString("free_text_comment"));
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
+            entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setName(rs.getString("name"));
             entity.setstorage_pool_type(StorageType.forValue(rs
                     .getInt("storage_pool_type")));
             entity.setstatus(StoragePoolStatus.forValue(rs.getInt("status")));
             entity.setmaster_domain_version(rs
                     .getInt("master_domain_version"));
-            entity.setspm_vds_id(Guid.createGuidFromString(rs
-                    .getString("spm_vds_id")));
+            entity.setspm_vds_id(getGuid(rs, "spm_vds_id"));
             entity.setcompatibility_version(new Version(rs
                     .getString("compatibility_version")));
             entity.setQuotaEnforcementType(QuotaEnforcementTypeEnum.forValue(rs.getInt("quota_enforcement_type")));

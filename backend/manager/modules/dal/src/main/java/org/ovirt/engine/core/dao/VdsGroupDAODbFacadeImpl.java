@@ -180,8 +180,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             VDSGroup entity = new VDSGroup();
             entity.setdescription(rs.getString("description"));
             entity.setName(rs.getString("name"));
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("vds_group_id")));
+            entity.setId(getGuidDefaultEmpty(rs, "vds_group_id"));
             entity.setcpu_name(rs.getString("cpu_name"));
             entity.setselection_algorithm(VdsSelectionAlgorithm.forValue(rs
                     .getInt("selection_algorithm")));
@@ -189,8 +188,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setlow_utilization(rs.getInt("low_utilization"));
             entity.setcpu_over_commit_duration_minutes(rs
                     .getInt("cpu_over_commit_duration_minutes"));
-            entity.setStoragePoolId(Guid.createGuidFromString(rs
-                    .getString("storage_pool_id")));
+            entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
             entity.setStoragePoolName(rs
                     .getString("storage_pool_name"));
             entity.setmax_vds_memory_over_commit(rs

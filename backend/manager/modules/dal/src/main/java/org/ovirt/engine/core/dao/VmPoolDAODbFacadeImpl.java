@@ -151,15 +151,13 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
             final VmPool entity = new VmPool();
             entity.setVmPoolDescription(rs
                     .getString("vm_pool_description"));
-            entity.setVmPoolId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("vm_pool_id")));
+            entity.setVmPoolId(getGuidDefaultEmpty(rs, "vm_pool_id"));
             entity.setName(rs.getString("vm_pool_name"));
             entity.setVmPoolType(VmPoolType.forValue(rs
                     .getInt("vm_pool_type")));
             entity.setParameters(rs.getString("parameters"));
             entity.setPrestartedVms(rs.getInt("prestarted_vms"));
-            entity.setVdsGroupId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("vds_group_id")));
+            entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
             entity.setVdsGroupName(rs.getString("vds_group_name"));
             entity.setAssignedVmsCount(rs.getInt("assigned_vm_count"));
             entity.setRunningVmsCount(rs.getInt("vm_running_count"));
@@ -176,15 +174,13 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
             final VmPool entity = new VmPool();
             entity.setVmPoolDescription(rs
                     .getString("vm_pool_description"));
-            entity.setVmPoolId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("vm_pool_id")));
+            entity.setVmPoolId(getGuidDefaultEmpty(rs, "vm_pool_id"));
             entity.setName(rs.getString("vm_pool_name"));
             entity.setVmPoolType(VmPoolType.forValue(rs
                     .getInt("vm_pool_type")));
             entity.setParameters(rs.getString("parameters"));
             entity.setPrestartedVms(rs.getInt("prestarted_vms"));
-            entity.setVdsGroupId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("vds_group_id")));
+            entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
             entity.setVdsGroupName(rs.getString("vds_group_name"));
             entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));
             return entity;
@@ -197,8 +193,8 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
         @Override
         public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
             VmPoolMap entity = new VmPoolMap();
-            entity.setvm_guid(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_guid")));
-            entity.setvm_pool_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_pool_id")));
+            entity.setvm_guid(getGuidDefaultEmpty(rs, "vm_guid"));
+            entity.setvm_pool_id(getGuidDefaultEmpty(rs, "vm_pool_id"));
             return entity;
         }
     }

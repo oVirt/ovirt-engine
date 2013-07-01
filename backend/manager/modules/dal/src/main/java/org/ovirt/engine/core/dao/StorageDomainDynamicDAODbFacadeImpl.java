@@ -20,7 +20,7 @@ public class StorageDomainDynamicDAODbFacadeImpl extends BaseDAODbFacade impleme
             StorageDomainDynamic entity = new StorageDomainDynamic();
             entity.setAvailableDiskSize((Integer) rs
                     .getObject("available_disk_size"));
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
+            entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setUsedDiskSize((Integer) rs
                     .getObject("used_disk_size"));
             return entity;

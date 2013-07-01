@@ -27,11 +27,9 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
         public tags mapRow(ResultSet rs, int rowNum) throws SQLException {
             tags entity = new tags();
             entity.setdescription(getValueOrNull(rs, "description", ""));
-            entity.settag_id(Guid.createGuidFromStringDefaultEmpty(getValueOrNull(rs,
-                    "tag_id", Guid.newGuid().getUuid().toString())));
+            entity.settag_id(getGuidDefaultNewGuid(rs, "tag_id"));
             entity.settag_name(getValueOrNull(rs, "tag_name", ""));
-            entity.setparent_id(Guid.createGuidFromString(getValueOrNull(rs,
-                    "parent_id", Guid.newGuid().getUuid().toString())));
+            entity.setparent_id(getGuidDefaultNewGuid(rs, "parent_id"));
             entity.setIsReadonly(rs.getBoolean("readonly"));
             entity.settype(TagsType.forValue(Integer.valueOf(getValueOrNull(rs,
                     "type", "0"))));
@@ -229,8 +227,8 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
             @Override
             public TagsUserGroupMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsUserGroupMap entity = new TagsUserGroupMap();
-                entity.setgroup_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("group_id")));
-                entity.settag_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("tag_id")));
+                entity.setgroup_id(getGuidDefaultEmpty(rs, "group_id"));
+                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
                 return entity;
             }
         };
@@ -266,8 +264,8 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
             @Override
             public TagsUserMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsUserMap entity = new TagsUserMap();
-                entity.settag_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("tag_id")));
-                entity.setuser_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("user_id")));
+                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
+                entity.setuser_id(getGuidDefaultEmpty(rs, "user_id"));
                 return entity;
             }
         };
@@ -303,8 +301,8 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
             @Override
             public TagsVdsMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsVdsMap entity = new TagsVdsMap();
-                entity.settag_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("tag_id")));
-                entity.setvds_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("vds_id")));
+                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
+                entity.setvds_id(getGuidDefaultEmpty(rs, "vds_id"));
                 return entity;
             }
         };
@@ -340,8 +338,8 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
             @Override
             public TagsVmMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsVmMap entity = new TagsVmMap();
-                entity.settag_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("tag_id")));
-                entity.setvm_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_id")));
+                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
+                entity.setvm_id(getGuidDefaultEmpty(rs, "vm_id"));
                 entity.setDefaultDisplayType((Integer) rs.getObject("DefaultDisplayType"));
                 return entity;
             }
@@ -389,8 +387,8 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
             @Override
             public TagsVmMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsVmMap entity = new TagsVmMap();
-                entity.settag_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("tag_id")));
-                entity.setvm_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_id")));
+                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
+                entity.setvm_id(getGuidDefaultEmpty(rs, "vm_id"));
                 entity.setDefaultDisplayType((Integer) rs.getObject("DefaultDisplayType"));
                 return entity;
             }
@@ -411,10 +409,9 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
             @Override
             public TagsVmMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsVmMap entity = new TagsVmMap();
-                entity.settag_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("tag_id")));
-                entity.setvm_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_id")));
+                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
+                entity.setvm_id(getGuidDefaultEmpty(rs, "vm_id"));
                 entity.setDefaultDisplayType((Integer) rs.getObject("DefaultDisplayType"));
-                entity.settag_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("tag_id")));
                 return entity;
             }
         };
@@ -434,8 +431,8 @@ public class TagDAODbFacadeImpl extends BaseDAODbFacade implements TagDAO {
             @Override
             public TagsVmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
                 TagsVmPoolMap entity = new TagsVmPoolMap();
-                entity.settag_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("tag_id")));
-                entity.setvm_pool_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_pool_id")));
+                entity.settag_id(getGuidDefaultEmpty(rs, "tag_id"));
+                entity.setvm_pool_id(getGuidDefaultEmpty(rs, "vm_pool_id"));
                 return entity;
             }
         };

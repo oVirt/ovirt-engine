@@ -83,9 +83,9 @@ public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> i
         @Override
         public Step mapRow(ResultSet rs, int rowNum) throws SQLException {
             Step step = new Step();
-            step.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("step_id")));
-            step.setParentStepId(Guid.createGuidFromString(rs.getString("parent_step_id")));
-            step.setJobId(Guid.createGuidFromStringDefaultEmpty(rs.getString("job_id")));
+            step.setId(getGuidDefaultEmpty(rs, "step_id"));
+            step.setParentStepId(getGuid(rs, "parent_step_id"));
+            step.setJobId(getGuidDefaultEmpty(rs, "job_id"));
             step.setStepType(StepEnum.valueOf(rs.getString("step_type")));
             step.setDescription(rs.getString("description"));
             step.setStepNumber(rs.getInt("step_number"));
@@ -93,7 +93,7 @@ public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> i
             step.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("start_time")));
             step.setEndTime(DbFacadeUtils.fromDate(rs.getTimestamp("end_time")));
             step.setCorrelationId(rs.getString("correlation_id"));
-            step.getExternalSystem().setId(Guid.createGuidFromString(rs.getString("external_id")));
+            step.getExternalSystem().setId(getGuid(rs, "external_id"));
             step.getExternalSystem().setType(ExternalSystemType.safeValueOf(rs.getString("external_system_type")));
             return step;
         }

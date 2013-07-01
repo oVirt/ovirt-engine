@@ -124,19 +124,16 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                         .getString("guest_cur_user_name"));
                 entity.setConsoleCurrentUserName(rs
                         .getString("console_cur_user_name"));
-                entity.setConsoleUserId(Guid.createGuidFromString(rs.getString("console_user_id")));
+                entity.setConsoleUserId(getGuid(rs, "console_user_id"));
                 entity.setGuestLastLoginTime(DbFacadeUtils.fromDate(rs
                         .getTimestamp("guest_last_login_time")));
                 entity.setGuestLastLogoutTime(DbFacadeUtils.fromDate(rs
                         .getTimestamp("guest_last_logout_time")));
                 entity.setGuestOs(rs.getString("guest_os"));
-                entity.setMigratingToVds(Guid.createGuidFromString(rs
-                        .getString("migrating_to_vds")));
-                entity.setRunOnVds(Guid.createGuidFromString(rs
-                        .getString("run_on_vds")));
+                entity.setMigratingToVds(getGuid(rs, "migrating_to_vds"));
+                entity.setRunOnVds(getGuid(rs, "run_on_vds"));
                 entity.setStatus(VMStatus.forValue(rs.getInt("status")));
-                entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
-                        .getString("vm_guid")));
+                entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
                 entity.setVmHost(rs.getString("vm_host"));
                 entity.setVmIp(rs.getString("vm_ip"));
                 entity.setLastStartTime(DbFacadeUtils.fromDate(rs
@@ -154,8 +151,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 entity.setDisplaySecurePort((Integer) rs
                         .getObject("display_secure_port"));
                 entity.setUtcDiff((Integer) rs.getObject("utc_diff"));
-                entity.setLastVdsRunOn(Guid.createGuidFromString(rs
-                        .getString("last_vds_run_on")));
+                entity.setLastVdsRunOn(getGuid(rs, "last_vds_run_on"));
                 entity.setClientIp(rs.getString("client_ip"));
                 entity.setGuestRequestedMemory((Integer) rs
                         .getObject("guest_requested_memory"));

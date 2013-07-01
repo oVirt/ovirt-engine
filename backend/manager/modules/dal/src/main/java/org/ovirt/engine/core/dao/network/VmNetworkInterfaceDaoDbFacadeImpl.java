@@ -25,7 +25,7 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
                 public VmNetworkInterface mapRow(ResultSet rs, int rowNum)
                         throws SQLException {
                     VmNetworkInterface entity = new VmNetworkInterface();
-                    entity.getStatistics().setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
+                    entity.getStatistics().setId(getGuidDefaultEmpty(rs, "id"));
                     entity.getStatistics().setReceiveRate(rs.getDouble("rx_rate"));
                     entity.getStatistics().setTransmitRate(rs.getDouble("tx_rate"));
                     entity.getStatistics().setReceiveDropRate(rs.getDouble("rx_drop"));
@@ -35,10 +35,10 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
                     entity.setMacAddress(rs.getString("mac_addr"));
                     entity.setNetworkName(rs.getString("network_name"));
                     entity.setName(rs.getString("name"));
-                    entity.setVmId(Guid.createGuidFromString(rs.getString("vm_guid")));
-                    entity.setVmTemplateId(Guid.createGuidFromString(rs.getString("vmt_guid")));
+                    entity.setVmId(getGuid(rs, "vm_guid"));
+                    entity.setVmTemplateId(getGuid(rs, "vmt_guid"));
                     entity.setVmName(rs.getString("vm_name"));
-                    entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
+                    entity.setId(getGuidDefaultEmpty(rs, "id"));
                     entity.setSpeed((Integer) rs.getObject("speed"));
                     entity.setPlugged(rs.getBoolean("is_plugged"));
                     entity.setCustomProperties(SerializationFactory.getDeserializer()

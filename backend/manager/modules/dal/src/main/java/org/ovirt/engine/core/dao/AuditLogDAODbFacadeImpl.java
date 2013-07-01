@@ -209,34 +209,27 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
             entity.setseverity(AuditLogSeverity.forValue(rs
                     .getInt("severity")));
             entity.setmessage(rs.getString("message"));
-            entity.setuser_id(Guid.createGuidFromString(rs
-                    .getString("user_id")));
+            entity.setuser_id(getGuid(rs, "user_id"));
             entity.setuser_name(rs.getString("user_name"));
-            entity.setvds_id(Guid.createGuidFromString(rs
-                    .getString("vds_id")));
+            entity.setvds_id(getGuid(rs, "vds_id"));
             entity.setvds_name(rs.getString("vds_name"));
-            entity.setvm_id(Guid.createGuidFromString(rs
-                    .getString("vm_id")));
+            entity.setvm_id(getGuid(rs, "vm_id"));
             entity.setvm_name(rs.getString("vm_name"));
-            entity.setvm_template_id(Guid.createGuidFromString(rs
-                    .getString("vm_template_id")));
+            entity.setvm_template_id(getGuid(rs, "vm_template_id"));
             entity.setvm_template_name(rs.getString("vm_template_name"));
-            entity.setstorage_pool_id(Guid.createGuidFromString(rs
-                    .getString("storage_pool_id")));
+            entity.setstorage_pool_id(getGuid(rs, "storage_pool_id"));
             entity.setstorage_pool_name(rs.getString("storage_pool_name"));
-            entity.setstorage_domain_id(Guid.createGuidFromString(rs
-                    .getString("storage_domain_id")));
+            entity.setstorage_domain_id(getGuid(rs, "storage_domain_id"));
             entity.setstorage_domain_name(rs
                     .getString("storage_domain_name"));
-            entity.setvds_group_id(Guid.createGuidFromString(rs
-                    .getString("vds_group_id")));
+            entity.setvds_group_id(getGuid(rs, "vds_group_id"));
             entity.setvds_group_name(rs
                     .getString("vds_group_name"));
             entity.setCorrelationId(rs.getString("correlation_id"));
-            entity.setJobId(Guid.createGuidFromString(rs.getString("job_id")));
-            entity.setQuotaId(Guid.createGuidFromString(rs.getString("quota_id")));
+            entity.setJobId(getGuid(rs, "job_id"));
+            entity.setQuotaId(getGuid(rs, "quota_id"));
             entity.setQuotaName(rs.getString("quota_name"));
-            entity.setGlusterVolumeId(Guid.createGuidFromString(rs.getString("gluster_volume_id")));
+            entity.setGlusterVolumeId(getGuid(rs, "gluster_volume_id"));
             entity.setGlusterVolumeName(rs.getString("gluster_volume_name"));
             entity.setOrigin(rs.getString("origin"));
             entity.setCustomEventId(rs.getInt("custom_event_id"));

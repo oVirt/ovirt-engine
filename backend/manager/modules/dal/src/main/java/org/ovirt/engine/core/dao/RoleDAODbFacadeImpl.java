@@ -26,7 +26,7 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
         public Role mapRow(ResultSet rs, int rowNum) throws SQLException {
             Role entity = new Role();
             entity.setdescription(rs.getString("description"));
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
+            entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setname(rs.getString("name"));
             entity.setis_readonly(rs.getBoolean("is_readonly"));
             entity.setType(RoleType.getById(rs.getInt("role_type")));

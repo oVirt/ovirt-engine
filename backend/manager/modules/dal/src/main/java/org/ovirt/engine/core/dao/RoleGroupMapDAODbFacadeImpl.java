@@ -21,7 +21,7 @@ public class RoleGroupMapDAODbFacadeImpl extends BaseDAODbFacade implements Role
         @Override
         public RoleGroupMap mapRow(ResultSet rs, int rowNum) throws SQLException {
             RoleGroupMap entity = new RoleGroupMap(ActionGroup.forValue(rs.getInt("action_group_id")),
-                    Guid.createGuidFromStringDefaultEmpty(rs.getString("role_id")));
+                    getGuidDefaultEmpty(rs, "role_id"));
             return entity;
         }
     }

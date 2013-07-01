@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.DiskAlignment;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.PropagateErrors;
 import org.ovirt.engine.core.common.businessentities.ScsiGenericIO;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -19,7 +18,7 @@ public abstract class AbstractBaseDiskRowMapper<T extends BaseDisk> implements R
     public T mapRow(ResultSet rs, int rowNum) throws SQLException {
         T disk = createDiskEntity();
 
-        disk.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("disk_id")));
+        disk.setId(BaseDAODbFacade.getGuidDefaultEmpty(rs, "disk_id"));
         disk.setDiskAlias(rs.getString("disk_alias"));
         disk.setDiskDescription(rs.getString("disk_description"));
         String diskInterface = rs.getString("disk_interface");

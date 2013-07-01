@@ -129,9 +129,8 @@ public class VmDeviceDAODbFacadeImpl extends
                 throws SQLException {
             VmDevice vmDevice = new VmDevice();
 
-            vmDevice.setId(new VmDeviceId(Guid.createGuidFromStringDefaultEmpty(rs.getString("device_id")),
-                    Guid.createGuidFromStringDefaultEmpty(rs
-                            .getString("vm_id"))));
+            vmDevice.setId(new VmDeviceId(getGuidDefaultEmpty(rs, "device_id"),
+                    getGuidDefaultEmpty(rs, "vm_id")));
             vmDevice.setDevice(rs.getString("device"));
             vmDevice.setType(VmDeviceGeneralType.forValue(rs.getString("type")));
             vmDevice.setAddress(rs.getString("address"));

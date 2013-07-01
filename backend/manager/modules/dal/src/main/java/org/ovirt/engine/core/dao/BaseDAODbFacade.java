@@ -154,4 +154,17 @@ public abstract class BaseDAODbFacade {
     protected static Guid getGuidDefaultEmpty(ResultSet resultSet, String columnName) throws SQLException {
         return getGuid(resultSet, columnName, Guid.Empty);
     }
+
+    /**
+     * Returns a {@link Guid} representing the column's value or a {@link Guid#newGuid()}
+     * if the column was <code>null</code>.
+     *
+     * @param resultSet  the ResultSet to extract the result from.
+     * @param columnName the name of the column.
+     * @return a {@link Guid} representing the UUID in the column, or the default value if it was <code>null</code>.
+     * @throws SQLException If resultSet does not contain columnName or its value cannot be cast to {@link UUID}.
+     */
+    protected static Guid getGuidDefaultNewGuid(ResultSet resultSet, String columnName) throws SQLException {
+        return getGuid(resultSet, columnName, Guid.newGuid());
+    }
 }

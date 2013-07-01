@@ -291,9 +291,8 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         public GlusterVolumeEntity mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             GlusterVolumeEntity entity = new GlusterVolumeEntity();
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
-            entity.setClusterId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("cluster_id")));
+            entity.setId(getGuidDefaultEmpty(rs, "id"));
+            entity.setClusterId(getGuidDefaultEmpty(rs, "cluster_id"));
             entity.setVdsGroupName(rs.getString("vds_group_name"));
             entity.setName(rs.getString("vol_name"));
             entity.setVolumeType(GlusterVolumeType.valueOf(rs.getString("vol_type")));

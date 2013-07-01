@@ -28,8 +28,7 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
             entity.setevent_up_name(rs.getString("event_up_name"));
             entity.setmethod_id(rs.getInt("method_id"));
             entity.setmethod_address(rs.getString("method_address"));
-            entity.setsubscriber_id(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("subscriber_id")));
+            entity.setsubscriber_id(getGuidDefaultEmpty(rs, "subscriber_id"));
             entity.settag_name(rs.getString("tag_name"));
             return entity;
         }

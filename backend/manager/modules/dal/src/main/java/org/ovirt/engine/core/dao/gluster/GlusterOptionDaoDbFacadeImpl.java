@@ -70,8 +70,8 @@ public class GlusterOptionDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         public GlusterVolumeOptionEntity mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             GlusterVolumeOptionEntity option = new GlusterVolumeOptionEntity();
-            option.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
-            option.setVolumeId(Guid.createGuidFromStringDefaultEmpty(rs.getString("volume_id")));
+            option.setId(getGuidDefaultEmpty(rs, "id"));
+            option.setVolumeId(getGuidDefaultEmpty(rs, "volume_id"));
             option.setKey(rs.getString("option_key"));
             option.setValue(rs.getString("option_val"));
             return option;

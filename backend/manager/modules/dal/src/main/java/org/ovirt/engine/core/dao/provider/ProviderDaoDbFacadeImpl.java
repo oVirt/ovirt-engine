@@ -89,7 +89,7 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
         @SuppressWarnings("unchecked")
         public Provider<?> mapRow(ResultSet rs, int index) throws SQLException {
             Provider<AdditionalProperties> entity = new Provider<AdditionalProperties>();
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs.getString("id")));
+            entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setName(rs.getString("name"));
             entity.setDescription(rs.getString("description"));
             entity.setUrl(rs.getString("url"));
