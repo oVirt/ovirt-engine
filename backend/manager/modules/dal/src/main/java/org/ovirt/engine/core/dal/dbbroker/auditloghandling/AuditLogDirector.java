@@ -475,10 +475,6 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_DETACH_VM_POOL_TO_AD_GROUP_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_REMOVE_AD_GROUP, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_REMOVE_AD_GROUP_FAILED, AuditLogSeverity.ERROR);
-        severities.put(AuditLogType.AUTO_SUSPEND_VM, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.AUTO_SUSPEND_VM_FINISH_SUCCESS, AuditLogSeverity.NORMAL);
-        severities.put(AuditLogType.AUTO_SUSPEND_VM_FINISH_FAILURE, AuditLogSeverity.ERROR);
-        severities.put(AuditLogType.AUTO_FAILED_SUSPEND_VM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VM_MIGRATION_START, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VM_CANCEL_MIGRATION, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VM_CANCEL_MIGRATION_FAILED, AuditLogSeverity.ERROR);

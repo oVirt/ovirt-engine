@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
-import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -32,6 +31,7 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -90,7 +90,7 @@ public class BackwardCompatibilityTaskCreationTest {
                 new CreateImageTemplateCommand(new CreateImageTemplateParameters()),
                 new CreateCloneOfTemplateCommand(new CreateCloneOfTemplateParameters()),
                 new RemoveVmCommand(new RemoveVmParameters()),
-                new HibernateVmCommand(new HibernateVmParameters()) {
+                new HibernateVmCommand(new VmOperationParameterBase()) {
                     @Override
                     public VM getVm() {
                         VM vm = new VM();

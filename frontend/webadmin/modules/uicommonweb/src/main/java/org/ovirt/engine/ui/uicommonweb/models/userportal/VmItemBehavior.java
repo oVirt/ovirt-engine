@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
-import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.action.StopVmTypeEnum;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
@@ -129,7 +129,7 @@ public class VmItemBehavior extends ItemBehavior
     private void pause()
     {
         VM entity = (VM) getItem().getEntity();
-        Frontend.RunAction(VdcActionType.HibernateVm, new HibernateVmParameters(entity.getId()));
+        Frontend.RunAction(VdcActionType.HibernateVm, new VmOperationParameterBase(entity.getId()));
     }
 
     private void run()

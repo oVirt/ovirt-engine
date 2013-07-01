@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
-import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SetVmTicketParameters;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
@@ -213,7 +212,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
                 } else if (StringHelper.stringsEqual(item.getCommandName(), CommandSuspend)) {
                     Frontend.RunMultipleAction(VdcActionType.HibernateVm,
-                            new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new HibernateVmParameters(getEntity().getId()) })));
+                            new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new VmOperationParameterBase(getEntity().getId()) })));
 
                 } else if (StringHelper.stringsEqual(item.getCommandName(), CommandStop)) {
                     Frontend.RunMultipleAction(VdcActionType.ShutdownVm,

@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
-import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -1717,7 +1716,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         for (Object item : getSelectedItems())
         {
             VM a = (VM) item;
-            list.add(new HibernateVmParameters(a.getId()));
+            list.add(new VmOperationParameterBase(a.getId()));
         }
 
         Frontend.RunMultipleAction(VdcActionType.HibernateVm, list,

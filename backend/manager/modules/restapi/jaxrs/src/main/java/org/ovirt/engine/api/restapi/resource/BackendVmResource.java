@@ -38,7 +38,6 @@ import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
-import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -257,7 +256,7 @@ public class BackendVmResource extends
     @Override
     public Response suspend(Action action) {
         return doAction(VdcActionType.HibernateVm,
-                        new HibernateVmParameters(guid),
+                        new VmOperationParameterBase(guid),
                         action);
     }
 

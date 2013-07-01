@@ -6,9 +6,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.HibernateVmParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -17,8 +16,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HibernateVDSCommandParameters;
@@ -35,7 +34,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @LockIdNameAttribute
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOperationCommandBase<T> {
+public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
     private static final String SAVE_IMAGE_TASK_KEY = "SAVE_IMAGE_TASK_KEY";
     private static final String SAVE_RAM_STATE_TASK_KEY = "SAVE_RAM_STATE_TASK_KEY";
     private boolean isHibernateVdsProblematic = false;
@@ -212,11 +211,6 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
         return AsyncTaskType.createVolume;
     }
 
-    protected HibernateVmParameters getHibernateVmParams() {
-        VdcActionParametersBase tempVar = getParameters();
-        return (HibernateVmParameters) ((tempVar instanceof HibernateVmParameters) ? tempVar : null);
-    }
-
     /**
      * Note: the treatment for {@link CommandActionState#END_SUCCESS} is the same as for {@link CommandActionState#END_FAILURE}
      * because if after calling {@link HibernateVmCommand#endSuccessfully()} the method {@link HibernateVmCommand#getSucceeded()}
@@ -228,15 +222,12 @@ public class HibernateVmCommand<T extends HibernateVmParameters> extends VmOpera
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            return getHibernateVmParams().getAutomaticSuspend() ?
-                    getSucceeded() ? AuditLogType.AUTO_SUSPEND_VM : AuditLogType.AUTO_FAILED_SUSPEND_VM
-                    : getSucceeded() ? AuditLogType.USER_SUSPEND_VM : AuditLogType.USER_FAILED_SUSPEND_VM;
-
+            return getSucceeded() ? AuditLogType.USER_SUSPEND_VM : AuditLogType.USER_FAILED_SUSPEND_VM;
         case END_SUCCESS:
         case END_FAILURE:
         default:
-            return getHibernateVmParams().getAutomaticSuspend() ? AuditLogType.AUTO_SUSPEND_VM_FINISH_FAILURE
-                    : isHibernateVdsProblematic ? AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE_WILL_TRY_AGAIN : AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE;
+            return isHibernateVdsProblematic ? AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE_WILL_TRY_AGAIN
+                    : AuditLogType.USER_SUSPEND_VM_FINISH_FAILURE;
         }
     }
 

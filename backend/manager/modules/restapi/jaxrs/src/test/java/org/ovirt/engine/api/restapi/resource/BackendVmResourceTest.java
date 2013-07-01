@@ -38,7 +38,6 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
-import org.ovirt.engine.core.common.action.HibernateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -467,7 +466,7 @@ public class BackendVmResourceTest
     @Test
     public void testSuspend() throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.HibernateVm,
-                                           HibernateVmParameters.class,
+                                           VmOperationParameterBase.class,
                                            new String[] { "VmId" },
                                            new Object[] { GUIDS[0] }));
 
@@ -491,7 +490,7 @@ public class BackendVmResourceTest
 
     private void doTestSuspendAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus actionStatus) throws Exception {
         setUriInfo(setUpActionExpectations(VdcActionType.HibernateVm,
-                                                HibernateVmParameters.class,
+                                                VmOperationParameterBase.class,
                                                 new String[] { "VmId" },
                                                 new Object[] { GUIDS[0] },
                                                 asList(GUIDS[1]),
