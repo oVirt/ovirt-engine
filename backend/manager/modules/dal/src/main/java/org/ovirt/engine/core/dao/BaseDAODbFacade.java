@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
@@ -107,4 +108,50 @@ public abstract class BaseDAODbFacade {
         }
     }
 
+    /**
+     * Returns a {@link Guid} representing the column's value or a default value if the column was <code>null</code>.
+     *
+     * <b>Note:</b> Postgres' driver returns a {@link UUID} when {@link ResultSet#getObject(String)} is called on a
+     * uuid column. This behavior is trusted to work with Postgres 8.x and above and is used to achieve the best
+     * performance. If it is ever broken on Postgres' side, this method should be rewritten.
+     *
+     * @param resultSet the ResultSet to extract the result from.
+     * @param columnName the name of the column.
+     * @param defaultValue The value to return if the column is <code>null</code>.
+     * @return a {@link Guid} representing the UUID in the column, or the default value if it was <code>null</code>.
+     * @throws SQLException If resultSet does not contain columnName or its value cannot be cast to {@link UUID}.
+     */
+    private static Guid getGuid(ResultSet resultSet, String columnName, Guid defaultValue) throws SQLException {
+        UUID uuid = (UUID) resultSet.getObject(columnName);
+        if (uuid == null || resultSet.wasNull()) {
+            return defaultValue;
+        }
+        return new Guid(uuid);
+    }
+
+    /**
+     * Returns a {@link Guid} representing the column's value or a <code>null</code>
+     * if the column was <code>null</code>.
+     *
+     * @param resultSet the ResultSet to extract the result from.
+     * @param columnName the name of the column.
+     * @return a {@link Guid} representing the UUID in the column, or the default value if it was <code>null</code>.
+     * @throws SQLException If resultSet does not contain columnName or its value cannot be cast to {@link UUID}.
+     */
+    protected static Guid getGuid(ResultSet resultSet, String columnName) throws SQLException {
+        return getGuid(resultSet, columnName, null);
+    }
+
+    /**
+     * Returns a {@link Guid} representing the column's value or a {@link Guid#Empty}
+     * if the column was <code>null</code>.
+     *
+     * @param resultSet the ResultSet to extract the result from.
+     * @param columnName the name of the column.
+     * @return a {@link Guid} representing the UUID in the column, or the default value if it was <code>null</code>.
+     * @throws SQLException If resultSet does not contain columnName or its value cannot be cast to {@link UUID}.
+     */
+    protected static Guid getGuidDefaultEmpty(ResultSet resultSet, String columnName) throws SQLException {
+        return getGuid(resultSet, columnName, Guid.Empty);
+    }
 }

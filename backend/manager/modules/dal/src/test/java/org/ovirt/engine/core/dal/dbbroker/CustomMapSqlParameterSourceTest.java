@@ -84,7 +84,7 @@ public class CustomMapSqlParameterSourceTest {
 
         paramSource.addValue(paramName, guid);
         assertEquals("wrong value returned from parameter source",
-                guid.toString(),
+                guid.getUuid(),
                 paramSource.getValue(paramName));
     }
 

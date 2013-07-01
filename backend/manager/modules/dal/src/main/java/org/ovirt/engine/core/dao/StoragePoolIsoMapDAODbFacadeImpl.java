@@ -19,8 +19,8 @@ public class StoragePoolIsoMapDAODbFacadeImpl extends BaseDAODbFacade implements
         @Override
         public StoragePoolIsoMap mapRow(ResultSet rs, int rowNum) throws SQLException {
             StoragePoolIsoMap entity = new StoragePoolIsoMap();
-            entity.setstorage_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("storage_id")));
-            entity.setstorage_pool_id(Guid.createGuidFromString(rs.getString("storage_pool_id")));
+            entity.setstorage_id(getGuidDefaultEmpty(rs, "storage_id"));
+            entity.setstorage_pool_id(getGuid(rs, "storage_pool_id"));
             entity.setstatus(StorageDomainStatus.forValue(rs.getInt("status")));
             return entity;
         }

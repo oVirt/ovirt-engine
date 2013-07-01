@@ -26,7 +26,9 @@ public class CustomMapSqlParameterSource extends MapSqlParameterSource {
             // lets check if we need to translate value
             if (tmpValue.getClass().isEnum()) {
                 tmpValue = extractEnumValue(tmpValue);
-            } else if (tmpValue instanceof Guid || tmpValue instanceof Version) {
+            } else if (tmpValue instanceof Guid) {
+                tmpValue = ((Guid) tmpValue).getUuid();
+            } else if (tmpValue instanceof Version) {
                 tmpValue = value.toString();
             }
         }
