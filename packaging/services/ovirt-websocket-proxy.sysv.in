@@ -25,6 +25,7 @@ PIDFILE="${PIDFILE:-/var/run/${NAME}.pid}"
 USER="@ENGINE_USER@"
 ENGINE_USR="@ENGINE_USR@"
 
+# See how we were called.
 case "$1" in
 	start)
 		if [ `id -u` -ne 0 ]; then
@@ -74,4 +75,4 @@ case "$1" in
 		;;
 esac
 
-e
+exit $RETVAL
