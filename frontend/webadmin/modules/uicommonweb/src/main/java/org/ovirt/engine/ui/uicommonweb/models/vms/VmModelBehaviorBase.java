@@ -917,6 +917,16 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         getModel().getCdAttached().setEntity(hasCd);
     }
 
+    protected void updateConsoleDevice(Guid vmId) {
+        Frontend.RunQuery(VdcQueryType.GetConsoleDevices, new IdQueryParameters(vmId), new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                List<String> consoleDevices = (List<String>) ((VdcQueryReturnValue)returnValue).getReturnValue();
+                getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
+            }
+        }));
+    }
+
     public void vmTypeChanged(VmType vmType) {
         getModel().getIsSoundcardEnabled().setEntity(vmType == VmType.Desktop);
     }

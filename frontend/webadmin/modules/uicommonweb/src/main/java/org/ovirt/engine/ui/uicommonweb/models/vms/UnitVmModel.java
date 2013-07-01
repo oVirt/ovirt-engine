@@ -612,6 +612,16 @@ public class UnitVmModel extends Model {
         privateisSmartcardEnabled = value;
     }
 
+    private NotChangableForVmInPoolEntityModel isConsoleDeviceEnabled;
+
+    public EntityModel getIsConsoleDeviceEnabled() {
+        return isConsoleDeviceEnabled;
+    }
+
+    private void setConsoleDeviceEnabled(NotChangableForVmInPoolEntityModel consoleDeviceEnabled) {
+        this.isConsoleDeviceEnabled = consoleDeviceEnabled;
+    }
+
     private NotChangableForVmInPoolEntityModel privateIsStateless;
 
     public EntityModel getIsStateless()
@@ -1065,6 +1075,7 @@ public class UnitVmModel extends Model {
         setIsRunAndPause(new NotChangableForVmInPoolEntityModel());
         setIsSmartcardEnabled(new NotChangableForVmInPoolEntityModel());
         setIsDeleteProtected(new NotChangableForVmInPoolEntityModel());
+        setConsoleDeviceEnabled(new NotChangableForVmInPoolEntityModel());
         setVncKeyboardLayout(new NotChangableForVmInPoolListModel());
         setVmType(new NotChangableForVmInPoolListModel());
         getVmType().setItems(Arrays.asList(VmType.Desktop, VmType.Server));
@@ -1221,6 +1232,7 @@ public class UnitVmModel extends Model {
         getIsStateless().setEntity(false);
         getIsRunAndPause().setEntity(false);
         getIsSmartcardEnabled().setEntity(false);
+        isConsoleDeviceEnabled.setEntity(false);
         getIsHighlyAvailable().setEntity(false);
         getIsAutoAssign().setEntity(true);
         getIsTemplatePublic().setEntity(true);

@@ -513,6 +513,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         param.setStorageDomainId(Guid.Empty);
                         param.setDiskInfoDestinationMap(model.getDisksAllocationModel()
                                 .getImageToDestinationDomainMap());
+                        param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
                         param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                         if (model.getQuota().getSelectedItem() != null) {

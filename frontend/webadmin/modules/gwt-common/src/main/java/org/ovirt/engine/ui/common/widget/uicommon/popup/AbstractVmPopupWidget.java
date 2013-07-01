@@ -359,6 +359,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("allowConsoleReconnect")
     public EntityModelCheckBoxEditor allowConsoleReconnectEditor;
 
+    @UiField(provided = true)
+    @Path(value = "isConsoleDeviceEnabled.entity")
+    @WithElementId("isConsoleDeviceEnabled")
+    public EntityModelCheckBoxEditor isConsoleDeviceEnabledEditor;
+
     // ==Host Tab==
     @UiField
     protected DialogTab hostTab;
@@ -557,6 +562,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isRunAndPauseEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isDeleteProtectedEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSmartcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        isConsoleDeviceEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         cdAttachedEditor = new EntityModelCheckBoxEditor(Align.LEFT, new ModeSwitchingVisibilityRenderer());
         allowConsoleReconnectEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSoundcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
@@ -859,6 +865,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isStatelessEditor.setLabel(constants.statelessVmPopup());
         isRunAndPauseEditor.setLabel(constants.runAndPauseVmPopup());
         isDeleteProtectedEditor.setLabel(constants.deleteProtectionPopup());
+        isConsoleDeviceEnabledEditor.setLabel(constants.consoleDeviceEnabled());
         isSmartcardEnabledEditor.setLabel(constants.smartcardVmPopup());
 
         // Pools Tab
@@ -1261,6 +1268,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         nextTabIndex = expander.setTabIndexes(nextTabIndex);
         allowConsoleReconnectEditor.setTabIndex(nextTabIndex++);
         isSoundcardEnabledEditor.setTabIndex(nextTabIndex++);
+        isConsoleDeviceEnabledEditor.setTabIndex(nextTabIndex++);
 
         // ==Host Tab==
         nextTabIndex = hostTab.setTabIndexes(nextTabIndex);
@@ -1311,7 +1319,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 putAll(consoleTabWidgets(), simpleField().visibleInAdvancedModeOnly()).
                 update(consoleTab, simpleField()).
                 update(numOfMonitorsEditor, simpleField()).
-                putOne(isSoundcardEnabledEditor, simpleField().visibleInAdvancedModeOnly());
+                putOne(isSoundcardEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
+                putOne(isConsoleDeviceEnabledEditor, simpleField().visibleInAdvancedModeOnly());
     }
 
     protected List<Widget> consoleTabWidgets() {

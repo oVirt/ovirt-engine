@@ -491,6 +491,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         model.startProgress(null);
 
         UpdateVmTemplateParameters parameters = new UpdateVmTemplateParameters(template);
+        parameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
         setVmWatchdogToParams(model, parameters);
         parameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
 

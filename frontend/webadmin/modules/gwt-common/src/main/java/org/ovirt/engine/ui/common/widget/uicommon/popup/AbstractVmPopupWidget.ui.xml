@@ -355,6 +355,7 @@
 							<e:EntityModelCheckBoxEditor ui:field="allowConsoleReconnectEditor" addStyleNames="{style.checkboxWithLongLabel}" />
 						</g:FlowPanel>
                         <e:EntityModelCheckBoxEditor ui:field="isSoundcardEnabledEditor" addStyleNames="{style.checkbox}" />
+						<e:EntityModelCheckBoxEditor ui:field="isConsoleDeviceEnabledEditor" addStyleNames="{style.checkbox}" />
 					</g:FlowPanel>
 				</t:content>
 			</t:DialogTab>

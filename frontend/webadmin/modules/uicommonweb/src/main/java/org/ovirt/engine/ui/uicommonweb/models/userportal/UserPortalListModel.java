@@ -643,6 +643,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         addVmTemplateParameters.setDiskInfoDestinationMap(model.getDisksAllocationModel()
                 .getImageToDestinationDomainMap());
         addVmTemplateParameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+        addVmTemplateParameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+
         Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -1070,8 +1072,8 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                 Guid.Empty);
                 parameters.setMakeCreatorExplicitOwner(true);
                 parameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+                parameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
                 Frontend.RunAction(VdcActionType.AddVmFromScratch, parameters, new NetworkCreateFrontendAsyncCallback(model, defaultNetworkCreatingManager), this);
-
             }
             else
             {
@@ -1092,7 +1094,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                                     unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
                                     Guid.Empty);
                             param.setMakeCreatorExplicitOwner(true);
+
                             param.setSoundDeviceEnabled((Boolean) unitVmModel.getIsSoundcardEnabled().getEntity());
+                            param.setConsoleEnabled((Boolean) unitVmModel.getIsConsoleDeviceEnabled().getEntity());
                             Frontend.RunAction(VdcActionType.AddVmFromTemplate, param, new NetworkCreateOrUpdateFrontendActionAsyncCallback(unitVmModel, defaultNetworkCreatingManager), this);
                         }
                     };
@@ -1103,7 +1107,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
                     param.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
                     param.setMakeCreatorExplicitOwner(true);
+
                     param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+                    param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
                     Frontend.RunAction(VdcActionType.AddVm, param, new NetworkCreateOrUpdateFrontendActionAsyncCallback(model, defaultNetworkCreatingManager), this);
                 }
             }
@@ -1120,6 +1126,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                             public void executed(FrontendActionAsyncResult result) {
                                 VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
                                 param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+                                param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
                                 Frontend.RunAction(VdcActionType.UpdateVm, param, new NetworkUpdateFrontendAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
                             }
@@ -1129,6 +1136,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
             {
                 VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
                 param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+                param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
                 Frontend.RunAction(VdcActionType.UpdateVm, param, new NetworkUpdateFrontendAsyncCallback(model, defaultNetworkCreatingManager, gettempVm().getId()), this);
             }
         }

@@ -1396,6 +1396,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 model.getDisksAllocationModel().getImageToDestinationDomainMap());
         addVmTemplateParameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
         model.startProgress(null);
+        addVmTemplateParameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
         Frontend.RunAction(VdcActionType.AddVmTemplate, addVmTemplateParameters,
                 new IFrontendActionAsyncCallback() {
@@ -2025,6 +2026,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         new ArrayList<DiskImage>(),
                         Guid.Empty);
                 parameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+                parameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
 
                 setVmWatchdogToParams(model, parameters);
 
@@ -2055,6 +2057,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
                                     Guid.Empty);
                             param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+                            param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+
                             Frontend.RunAction(VdcActionType.AddVmFromTemplate, param, new NetworkCreateOrUpdateFrontendActionAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
                         }
                     };
@@ -2071,6 +2075,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                     VmManagementParametersBase params = new VmManagementParametersBase(getcurrentVm());
                     params.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
+                    params.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+
+                    ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+                    parameters.add(params);
                     params.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                     setVmWatchdogToParams(model, params);
 
@@ -2131,8 +2139,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
                 model.startProgress(null);
                 VmManagementParametersBase updateVmParams = new VmManagementParametersBase(getcurrentVm());
+
                 setVmWatchdogToParams(model, updateVmParams);
                 updateVmParams.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+                updateVmParams.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
                 Frontend.RunAction(VdcActionType.UpdateVm, updateVmParams, new NetworkUpdateFrontendAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
             }
         }

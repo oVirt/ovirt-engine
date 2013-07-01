@@ -190,6 +190,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                     }
                 }));
 
+        updateConsoleDevice(getVm().getId());
+
         getModel().getVncKeyboardLayout().setSelectedItem(vm.getVncKeyboardLayout());
 
         if (vm.isInitialized())

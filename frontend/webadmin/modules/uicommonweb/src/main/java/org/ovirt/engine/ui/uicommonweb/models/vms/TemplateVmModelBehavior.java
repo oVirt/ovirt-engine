@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -184,6 +183,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                 break;
             }
         }
+
+        updateConsoleDevice(template.getId());
 
         initPriority(this.template.getPriority());
     }

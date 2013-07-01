@@ -346,11 +346,14 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Start in Pause Mode")
     String runAndPauseVmPopup();
 
-    @DefaultStringValue("Delete protection")
+    @DefaultStringValue("Delete Protection")
     String deleteProtectionPopup();
 
-    @DefaultStringValue("Smartcard enabled")
+    @DefaultStringValue("Smartcard Enabled")
     String smartcardVmPopup();
+
+    @DefaultStringValue("Virtio Console Device Enabled")
+    String consoleDeviceEnabled();
 
     @DefaultStringValue("Pool")
     String poolVmPopup();

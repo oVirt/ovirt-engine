@@ -207,8 +207,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getVncKeyboardLayout().setSelectedItem(this.vm.getVncKeyboardLayout());
 
         updateSelectedCdImage(this.vm.getStaticData());
-
         updateTimeZone(this.vm.getTimeZone());
+        updateConsoleDevice(this.vm.getId());
 
         // Update domain list
         updateDomain();
