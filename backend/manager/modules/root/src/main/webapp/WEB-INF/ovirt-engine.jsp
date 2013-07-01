@@ -1,53 +1,50 @@
 <%@ page pageEncoding="UTF-8" session="false" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
-<fmt:setBundle basename="org.ovirt.engine.core.languages" var="lang" />
-<fmt:setLocale value="${requestScope['locale']}" />
-<fmt:setBundle basename="org.ovirt.engine.core.messages"/>
+<fmt:setBundle basename="languages" var="lang" />
 <!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <title><fmt:message key="splash.title" /></title>
-    <link rel="stylesheet" href="ovirt-engine-style.css" type="text/css" media="screen, projection"/>
+    <title><fmt:message key="title" /></title>
+    <c:if test="${requestScope['brandingStyle'] != null}">
+        <c:forEach items="${requestScope['brandingStyle']}" var="theme">
+            <c:if test="${theme.getThemeStyleSheet(requestScope['applicationType']) != null}">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/theme${theme.path}/${theme.getThemeStyleSheet(requestScope['applicationType'])}">
+            </c:if>
+        </c:forEach>
+    </c:if>
     <script src="engineVersion.js" type="text/javascript"></script>
     <script src="splash.js" type="text/javascript"></script>
 </head>
 <body onload="pageLoaded()">
     <div>
         <div class="left">
+            <div class="header_nav">
+                <fmt:message key="header.main" />
+            </div>
+        </div>
+        <div class="right">
         </div>
         <div class="center">
         </div>
     </div>
     <div class="main">
-        <div class="welcome"><fmt:message key="splash.welcome.text" /></div>
+        <div class="welcome"><fmt:message key="welcome.text" /></div>
         <div class="welcome">
              <script type="text/JavaScript">
             <!--
-            document.write('<fmt:message key="splash.version" />' + myVersion)
+            document.write('<fmt:message key="version"><fmt:param value="${requestScope[\'version\']}" /> </fmt:message>')
             //-->
             </script>
         </div>
 
         <noscript id="warningMessage" class="warningMessage">
-            <b><fmt:message key="splash.browser.javascript1" /></b>
-            <fmt:message key="splash.browser.javascript2" />
+            <b><fmt:message key="browser.javascript1" /></b>
+            <fmt:message key="browser.javascript2" />
         </noscript>
-
         <div id='dynamicLinksSection' style="display: none;">
-            <div>
-            <h2>
-                <span class="fakeH2"><fmt:message key="splash.menu.main" /></span>
-            </h2>
-                <c:set var="localeParam" value="?locale=${requestScope['locale'].toString()}"/>
-                <c:if test="${requestScope['locale'].toString() == 'en_US'}">
-                    <c:set var="localeParam" value=""/>
-                </c:if>
-                <div><a href="/UserPortal/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html${localeParam}"><fmt:message key="splash.menu.userportal" /></a></div>
-                <div><a href="/webadmin/webadmin/WebAdmin.html${localeParam}"><fmt:message key="splash.menu.adminportal" /></a></div>
-                <div><a href="/OvirtEngineWeb/RedirectServlet?Page=Reports"><fmt:message key="splash.menu.reportsportal" /></a></div>
-            </div>
+            ${requestScope['sections'].toString()}
         </div>
         <div class="locale_select_panel">
             <select class="gwt-ListBox locale_list_box" onchange="localeSelected(this)">

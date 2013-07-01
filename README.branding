@@ -18,6 +18,7 @@ branding.properties
 
     user_portal_css - Css to inject into user portal (required, can be empty).
     web_admin_css - Css to inject into web admin (required, can be empty).
+    welcome_css - Css for the welcome page (required, can be empty).
     messages - Standard java message bundle (required).
     version - The version of the branding in the package. Only versions
       that match the one defined in the engine will be loaded (required,
@@ -31,10 +32,11 @@ CSS INJECTION
 CSS are injected in the same order of how the branding packages are declared,
 this way the last css's styles are defined in the correct order.
 
-The oVirt UI is broken up into three distinct modules at this point.
+The oVirt UI is broken up into four distinct modules at this point.
  * User Portal
  * Web Admin
  * Common widgets
+ * welcome page
 
 Each of those modules contain some widgets that we can style using CSS
 clases. Refer to EXAMPLE to see a listing of available classes categorized
@@ -51,7 +53,10 @@ You will notice the following files:
    the branding properties.
 2. user_portal.css, The user portal style sheet file.
 3. web_admin.css, The web admin style sheet file.
-4. messages.properties, A java message bundle in many different locales.
+4. welcome_style.css, The styles associated with the welcome page.
+5. welcome_page.template, An HTML formatted template that gets inserted
+   into the welcome page.
+5. messages.properties, A java message bundle in many different locales.
 
 Note that images are background images instead of image tags so we can use
 style sheets to replace them.
@@ -60,6 +65,35 @@ As you can see the example branding theme references images from the images
 directory. There is no rule that images have to exist in an images directory
 but we highly suggest you organize your images in some way to make it easier
 to maintain them.
+
+WELCOME PAGE TEMPLATE
+---------------------
+The welcome page template is in HTML format with some minor differences. As
+the template is inserted in the welcome page, there is no need for html, head,
+or body tags.
+
+Adding a # at the front of any line will mark it comment and it won't end up
+in the output inserted into the welcome page.
+
+The template can contain place holder elements which will be replaced by
+localized messages based on the place holder strings. Each place holder string
+is prefixed with obrand.welcome
+
+For instance in welcome_page.template:
+<a href="/someplace">{section_key}</a>
+And in messages.properties:
+obrand.welcome.section_key=Message
+
+The output will be:
+<a href="/someplace">Message</a>
+
+There is a special place holder called {userLocale} which will be replaced with
+the currently selected locale of the user. For instance if the current locale
+is fr_FR and you have the following in your template:
+<a href="/{userLocale}/documentation">Documentation</a>
+
+The output will be:
+<a href="/fr_FR/documenation">Documenation</a>
 
 INSTALLATION
 ------------

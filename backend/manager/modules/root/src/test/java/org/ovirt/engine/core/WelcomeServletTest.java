@@ -1,5 +1,8 @@
 package org.ovirt.engine.core;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,11 +21,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SplashServletTest {
-    SplashServlet testServlet;
+public class WelcomeServletTest {
+    WelcomeServlet testServlet;
 
     @Mock
     HttpServletRequest mockRequest;
@@ -33,11 +40,23 @@ public class SplashServletTest {
     @Mock
     RequestDispatcher mockDispatcher;
 
+    @Mock
+    BackendLocal mockBackend;
+
     final List<String> localeKeys = createLocaleKeys();
+
+    private void mockBackendQuery(VdcQueryType queryType, Object returnValue) {
+        VdcQueryReturnValue queryReturnValueMock = when(mock(VdcQueryReturnValue.class).getReturnValue())
+                .thenReturn(returnValue).getMock();
+        when(mockBackend.RunQuery(eq(queryType), any(VdcQueryParametersBase.class)))
+                .thenReturn(queryReturnValueMock);
+    }
 
     @Before
     public void setUp() throws Exception {
-        testServlet = new SplashServlet();
+        testServlet = new WelcomeServlet();
+        testServlet.setBackend(mockBackend);
+        mockBackendQuery(VdcQueryType.GetConfigurationValue, "oVirtVersion");
     }
 
     @Test

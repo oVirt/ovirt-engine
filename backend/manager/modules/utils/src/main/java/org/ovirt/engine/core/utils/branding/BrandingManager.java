@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -21,6 +22,10 @@ import org.ovirt.engine.core.utils.servlet.LocaleFilter;
  * This class manages the available branding themes and changeable localized messages.
  */
 public class BrandingManager {
+    /**
+     * The prefix of the keys in the properties.
+     */
+    public static final String WELCOME = "welcome";
 
     /**
      * The default branding path.
@@ -33,15 +38,24 @@ public class BrandingManager {
     private static final String BRAND_PREFIX = "obrand"; //$NON-NLS-1$
 
     /**
+     * The place holder for the userLocale in the welcome page templates.
+     */
+    private static final String USER_LOCALE_HOLDER = "\\{userLocale\\}"; //$NON-NLS-1$
+    /**
      * The prefix used for common messages.
      */
     private static final String COMMON_PREFIX = BRAND_PREFIX + ".common"; //$NON-NLS-1$
 
     /**
-     * The regex pattern to use to determine if a directory should be used
+     * The regular expression {@code Pattern} to use to determine if a directory should be used
      * as a branding directory. The pattern is '.+\.brand' So anything ending in '.brand' will do.
      */
     private static final Pattern DIRECTORY_PATTERN = Pattern.compile(".+\\.brand"); //$NON-NLS-1$
+
+    /**
+     * The regular expression {@code Pattern} to use to find the replacement keys.
+     */
+    private static final Pattern TEMPLATE_PATTERN = Pattern.compile("\\{(\\D[\\w|\\.]*)\\}"); //$NON-NLS-1$
 
     /**
      * Only load branding themes for the current branding version. This allows for multiple version of a particular
@@ -164,7 +178,7 @@ public class BrandingManager {
      * @param locale The locale to get the messages for.
      * @return A {@code Map} of keys and values.
      */
-    private Map<String, String> getMessageMap(final String prefix, final Locale locale) {
+    Map<String, String> getMessageMap(final String prefix, final Locale locale) {
         List<BrandingTheme> messageThemes = getBrandingThemes();
         // We need this map to remove potential duplicate strings from the resource bundles.
         Map<String, String> keyValues = new HashMap<String, String>();
@@ -220,4 +234,31 @@ public class BrandingManager {
         return brandingRootPath;
     }
 
+    /**
+     * Look up the welcome section of the top branding theme. The message keys are translated in the language of
+     * the passed in {@code Locale}
+     * @param locale The {@code Locale} to use to look up the appropriate messages.
+     * @return An HTML string to be placed in the welcome page.
+     */
+    public String getWelcomeSections(final Locale locale) {
+        Map<String, String> messageMap = getMessageMap(WELCOME, locale);
+        List<BrandingTheme> brandingThemes = getBrandingThemes();
+        StringBuilder templateBuilder = new StringBuilder();
+        for (BrandingTheme theme: brandingThemes) {
+            String template = theme.getWelcomePageSectionTemplate();
+            String replacedTemplate = template;
+            Matcher keyMatcher = TEMPLATE_PATTERN.matcher(template);
+            while (keyMatcher.find()) {
+                String key = keyMatcher.group(1);
+                // Don't replace {userLocale} here.
+                if (!USER_LOCALE_HOLDER.substring(2, USER_LOCALE_HOLDER.length() - 2).equals(key)) {
+                    replacedTemplate = replacedTemplate.replaceAll("\\{" + key + "\\}", //$NON-NLS-1 //$NON-NLS-2$
+                            messageMap.get(key));
+                }
+            }
+            replacedTemplate = replacedTemplate.replaceAll(USER_LOCALE_HOLDER, locale.toString());
+            templateBuilder.append(replacedTemplate);
+        }
+        return templateBuilder.toString();
+    }
 }

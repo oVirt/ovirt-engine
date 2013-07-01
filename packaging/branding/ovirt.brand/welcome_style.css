@@ -2,7 +2,7 @@
 {
 	margin: 0;
 	padding: 0;
-	background-image: url(images/bg_main.gif);
+	background-image: url(images/welcome/bg_main.gif);
 	color: #111111;
 }
 
@@ -22,7 +22,7 @@
 
 .left
 {
-	background-image: url(images/logo.png);
+	background-image: url(images/welcome/logo.png);
 	background-repeat: no-repeat;
 	float: left;
 	height: 73px;
@@ -32,19 +32,9 @@
 
 .center
 {
-	background-image: url(images/bg_head.gif);
+	background-image: url(images/welcome/bg_head.gif);
 	background-repeat: repeat-x;
 	height: 73px;
-}
-
-.right
-{
-	background-image: url(images/header_right.jpg);
-	background-repeat: no-repeat;
-	background-position: right; 
-	float: right;
-	height: 73px;
-	width: 10px;
 }
 
 .header_nav
@@ -94,7 +84,7 @@ a:hover
 
 /*The locale selection box.*/
 .locale_select_panel {
-    background: url("/triangle_down_gray.gif") no-repeat scroll right center;
+    background: url("images/triangle_down_gray.gif") no-repeat scroll right center;
     float: right;
     margin-left: 270px;
     margin-right: 25px;

@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.frontend.server.gwt;
+package org.ovirt.engine.core.utils.branding;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -21,7 +21,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.utils.branding.BrandingManager;
 
 @RunWith(MockitoJUnitRunner.class)
 public class BrandingServletTest {
@@ -53,7 +52,7 @@ public class BrandingServletTest {
         when(mockRequest.getPathInfo()).thenReturn("/test/something.txt"); //$NON-NLS-1$
         when(mockResponse.getOutputStream()).thenReturn(mockResponseOutputStream);
         testFile = new File(this.getClass().getClassLoader().
-                getResource("./org/ovirt/engine/ui/frontend/server/gwt/BrandingServletTest.class") //$NON-NLS-1$
+                getResource("./org/ovirt/engine/core/utils/branding/BrandingServletTest.class") //$NON-NLS-1$
                 .getFile());
     }
 
@@ -74,7 +73,7 @@ public class BrandingServletTest {
     @Test
     public void testDoGet_ExistingFile() throws IOException, ServletException {
         when(mockRequest.getPathInfo())
-            .thenReturn("/org/ovirt/engine/ui/frontend/server/gwt/BrandingServletTest.class"); //$NON-NLS-1$
+            .thenReturn("/org/ovirt/engine/core/utils/branding/BrandingServletTest.class"); //$NON-NLS-1$
         when(mockFile.getAbsolutePath()).thenReturn(this.getClass().getClassLoader().
                 getResource(".").getFile()); //$NON-NLS-1$
         testServlet.doGet(mockRequest, mockResponse);

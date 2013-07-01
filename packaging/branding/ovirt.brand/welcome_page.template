@@ -1,0 +1,14 @@
+<div>
+  <h2>
+    <span class="fakeH2">{portal_title}</span>
+  </h2>
+  <div>
+    <a href="UserPortal/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html?locale={userLocale}">{portal_user_portal}</a>
+  </div>
+  <div>
+    <a href="webadmin/webadmin/WebAdmin.html?locale={userLocale}">{portal_admin}</a>
+  </div>
+  <div>
+    <a href="OvirtEngineWeb/RedirectServlet?Page=Reports">{portal_reports}</a>
+  </div>
+</div>

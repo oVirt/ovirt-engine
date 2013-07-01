@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.frontend.server.gwt;
+package org.ovirt.engine.core.utils.branding;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
-import org.ovirt.engine.core.utils.branding.BrandingManager;
 import org.ovirt.engine.core.utils.servlet.ServletUtils;
 
 /**

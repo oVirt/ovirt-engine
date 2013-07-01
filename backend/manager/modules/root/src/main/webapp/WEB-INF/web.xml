@@ -235,6 +235,16 @@
     <url-pattern>/OvirtEngineWeb/ValidateSession</url-pattern>
   </servlet-mapping>
 
+  <!-- Branding Servlet -->
+  <servlet>
+    <servlet-name>BrandingServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.core.utils.branding.BrandingServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BrandingServlet</servlet-name>
+    <url-pattern>/theme/*</url-pattern>
+  </servlet-mapping>
+
   <!-- Filters -->
   <filter>
     <filter-name>LocaleFilter</filter-name>
@@ -252,7 +262,7 @@
     <location>/404.html</location>
   </error-page>
 
-  <!-- This is handled by the splash servlet -->
+  <!-- This is handled by the welcome servlet -->
   <welcome-file-list>
     <welcome-file>ovirt-engine</welcome-file>
   </welcome-file-list>

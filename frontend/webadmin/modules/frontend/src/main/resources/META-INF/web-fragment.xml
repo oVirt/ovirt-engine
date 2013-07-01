@@ -67,6 +67,6 @@
 
     <servlet>
         <servlet-name>BrandingServlet</servlet-name>
-        <servlet-class>org.ovirt.engine.ui.frontend.server.gwt.BrandingServlet</servlet-class>
+        <servlet-class>org.ovirt.engine.core.utils.branding.BrandingServlet</servlet-class>
     </servlet>
 </web-fragment>
