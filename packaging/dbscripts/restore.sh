@@ -40,11 +40,15 @@ restore_from_tar() {
     dir="/tmp/${name}_dir"
     mkdir "${dir}"
     chmod 777 "${dir}"
-    # Restoring SELinux default settings
-    chcon -Rt postgresql_db_t ${dir}
-    if [ $? -ne 0 ]; then
-        echo "Failed to restore SELinux default settings for ${dir}."
-        exit 5
+    # Check SELinux mode
+    selinux_mode=$(getenforce |tr '[A-Z]' '[a-z]')
+    if [ "${selinux_mode}" != "disabled" ]; then
+        # Restoring SELinux default settings
+        chcon -Rt postgresql_db_t ${dir}
+        if [ $? -ne 0 ]; then
+            echo "Failed to restore SELinux default settings for ${dir}."
+            exit 5
+        fi
     fi
     cp "${FILE}" "${dir}/${name}"
     pushd "${dir}"
