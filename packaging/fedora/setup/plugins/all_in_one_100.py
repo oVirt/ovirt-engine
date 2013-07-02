@@ -292,6 +292,7 @@ def createHost():
         controller.CONF["API_OBJECT"].hosts.add(params.Host(name=LOCAL_HOST,
                                                                address=controller.CONF["HOST_FQDN"],
                                                                reboot_after_installation=False,
+                                                               override_iptables=False,
                                                                cluster=controller.CONF["API_OBJECT"].clusters.get(LOCAL_CLUSTER),
                                                                root_password=controller.CONF["SUPERUSER_PASS"]))
     except:
