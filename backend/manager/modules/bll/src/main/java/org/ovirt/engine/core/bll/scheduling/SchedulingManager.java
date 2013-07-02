@@ -11,12 +11,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -27,8 +30,13 @@ import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
+import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 
 public class SchedulingManager {
+    private static Log log = LogFactory.getLog(SchedulingManager.class);
     /**
      * singleton
      */
@@ -39,6 +47,7 @@ public class SchedulingManager {
             synchronized (SchedulingManager.class) {
                 if (instance == null) {
                     instance = new SchedulingManager();
+                    EnableLoadBalancer();
                 }
             }
         }
@@ -57,6 +66,7 @@ public class SchedulingManager {
     private final ConcurrentHashMap<Guid, Object> clusterLockMap = new ConcurrentHashMap<Guid, Object>();
 
     private final VdsFreeMemoryChecker noWaitingMemoryChecker = new VdsFreeMemoryChecker(new NonWaitingDelayer());
+    private MigrationHandler migrationHandler;
 
     private SchedulingManager() {
         policyMap = new ConcurrentHashMap<Guid, ClusterPolicy>();
@@ -112,6 +122,13 @@ public class SchedulingManager {
         for (ClusterPolicy clusterPolicy : allClusterPolicies) {
             policyMap.put(clusterPolicy.getId(), clusterPolicy);
         }
+    }
+
+    public void setMigrationHandler(MigrationHandler migrationHandler) {
+        if (this.migrationHandler != null) {
+            throw new RuntimeException("Load balance migration handler should be set only once");
+        }
+        this.migrationHandler = migrationHandler;
     }
 
     protected void loadPolicyUnits() {
@@ -240,7 +257,9 @@ public class SchedulingManager {
 
     protected Map<String, Object> createClusterPolicyParameters(VDSGroup cluster, VM vm) {
         Map<String, Object> parameters = new HashMap<String, Object>();
-        parameters.put(PolicyUnitImpl.VM, vm);
+        if (vm != null) {
+            parameters.put(PolicyUnitImpl.VM, vm);
+        }
         if (cluster.getClusterPolicyProperties() != null) {
             parameters.putAll(cluster.getClusterPolicyProperties());
         }
@@ -381,4 +400,38 @@ public class SchedulingManager {
     protected ClusterPolicyDao getClusterPolicyDao() {
         return DbFacade.getInstance().getClusterPolicyDao();
     }
+
+    public static void EnableLoadBalancer() {
+        if (Config.<Boolean> GetValue(ConfigValues.EnableVdsLoadBalancing)) {
+            log.info("Start scheduling to enable vds load balancer");
+            SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(instance,
+                    "PerformLoadBalancing",
+                    new Class[] {},
+                    new Object[] {},
+                    Config.<Integer> GetValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes),
+                    Config.<Integer> GetValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes),
+                    TimeUnit.MINUTES);
+            log.info("Finished scheduling to enable vds load balancer");
+        }
+    }
+
+    @OnTimerMethodAnnotation("PerformLoadBalancing")
+    public void PerformLoadBalancing() {
+        log.debugFormat("Load Balancer timer entered.");
+        List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDao().getAll();
+        for (VDSGroup cluster : clusters) {
+            ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
+            PolicyUnitImpl policyUnit = policyUnits.get(policy.getBalance());
+            List<VDS> hosts = getVdsDAO()
+                    .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode });
+            Pair<List<Guid>, Guid> pair = policyUnit.balance(cluster,
+                    hosts,
+                    cluster.getClusterPolicyProperties(),
+                    new ArrayList<String>());
+            if (pair != null && pair.getSecond() != null) {
+                migrationHandler.migrateVM((ArrayList<Guid>) pair.getFirst(), pair.getSecond());
+            }
+        }
+    }
+
 }

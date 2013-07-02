@@ -54,7 +54,7 @@ public final class VdsLoadBalancer {
                         group.gethigh_utilization(), group.getlow_utilization(),
                         group.getcpu_over_commit_duration_minutes(),
                         Config.<Integer> GetValue(ConfigValues.UtilizationThresholdInPercent));
-                migrationHandler.migrateVMs(loadBalancingAlgorithm.LoadBalance());
+                // migrationHandler.migrateVMs(loadBalancingAlgorithm.LoadBalance());
             } else {
                 log.debugFormat("VdsLoadBalancer: Cluster {0} skipped because no selection algorithm selected.",
                         group.getName());

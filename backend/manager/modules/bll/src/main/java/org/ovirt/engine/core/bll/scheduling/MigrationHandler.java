@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll.scheduling;
 
-import java.util.List;
+import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 public interface MigrationHandler {
     /**
-     * this method holds a list of pairs VM id and Host id. each VM should be migrated to the specified Host
-     * @param list
+     * delegate for migrating a vm to a set of hosts provided by the scheduler
+     * @param initialHosts
+     * @param vmToMigrate
      */
-    void migrateVMs(List<Pair<Guid, Guid>> list);
+    void migrateVM(ArrayList<Guid> initialHosts, Guid vmToMigrate);
 }
