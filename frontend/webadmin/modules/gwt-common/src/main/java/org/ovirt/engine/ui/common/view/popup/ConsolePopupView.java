@@ -380,6 +380,10 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         VncConsoleModel vncConsoleModel = defConsoleModel instanceof VncConsoleModel ?
                 (VncConsoleModel) defConsoleModel : null;
 
+        if (vncConsoleModel == null) {
+            return;
+        }
+
         if (noVncImplRadioButton.asRadioButton().getValue()) {
             vncConsoleModel.setVncImplementation(VncConsoleModel.ClientConsoleMode.NoVnc);
         } else {
