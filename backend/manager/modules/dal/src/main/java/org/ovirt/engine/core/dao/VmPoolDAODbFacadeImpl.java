@@ -115,17 +115,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     public VmPoolMap getVmPoolMapByVmGuid(Guid vmId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_guid", vmId);
 
-        RowMapper<VmPoolMap> mapper = new RowMapper<VmPoolMap>() {
-            @Override
-            public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-                VmPoolMap entity = new VmPoolMap();
-                entity.setvm_guid(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_guid")));
-                entity.setvm_pool_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_pool_id")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeRead("GetVm_pool_mapByvm_guid", mapper, parameterSource);
+        return getCallsHandler().executeRead("GetVm_pool_mapByvm_guid", VmPoolMapRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -140,17 +130,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
     public List<VmPoolMap> getVmPoolsMapByVmPoolId(Guid vmPoolId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId);
 
-        RowMapper<VmPoolMap> mapper = new RowMapper<VmPoolMap>() {
-            @Override
-            public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-                VmPoolMap entity = new VmPoolMap();
-                entity.setvm_guid(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_guid")));
-                entity.setvm_pool_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_pool_id")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("GetVm_pool_mapByvm_pool_id", mapper, parameterSource);
+        return getCallsHandler().executeReadList("GetVm_pool_mapByvm_pool_id", VmPoolMapRowMapper.instance, parameterSource);
     }
 
     @Override
@@ -159,17 +139,7 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
                 getCustomMapSqlParameterSource().addValue("vm_pool_id", vmPoolId).addValue("status",
                         vmStatus.getValue());
 
-        RowMapper<VmPoolMap> mapper = new RowMapper<VmPoolMap>() {
-            @Override
-            public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
-                VmPoolMap entity = new VmPoolMap();
-                entity.setvm_guid(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_guid")));
-                entity.setvm_pool_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_pool_id")));
-                return entity;
-            }
-        };
-
-        return getCallsHandler().executeReadList("getVmMapsInVmPoolByVmPoolIdAndStatus", mapper,
+        return getCallsHandler().executeReadList("getVmMapsInVmPoolByVmPoolIdAndStatus", VmPoolMapRowMapper.instance,
                 parameterSource);
     }
 
@@ -217,6 +187,18 @@ public class VmPoolDAODbFacadeImpl extends BaseDAODbFacade implements VmPoolDAO 
                     .getString("vds_group_id")));
             entity.setVdsGroupName(rs.getString("vds_group_name"));
             entity.setMaxAssignedVmsPerUser(rs.getInt("max_assigned_vms_per_user"));
+            return entity;
+        }
+    }
+
+    private static final class VmPoolMapRowMapper implements RowMapper<VmPoolMap> {
+        public static final VmPoolMapRowMapper instance = new VmPoolMapRowMapper();
+
+        @Override
+        public VmPoolMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+            VmPoolMap entity = new VmPoolMap();
+            entity.setvm_guid(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_guid")));
+            entity.setvm_pool_id(Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_pool_id")));
             return entity;
         }
     }
