@@ -46,8 +46,16 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      */
     @Override
     protected void executeCommand() {
+        VdsValidator validator;
         setVds(null);
-        if (getVds() != null && shouldVdsBeFenced()) {
+        if (getVds() == null) {
+            setCommandShouldBeLogged(false);
+            log.infoFormat("Host {0}({1}) not fenced since it doesn't exist anymore.", getVdsName(), getVdsId());
+            return;
+        }
+
+        validator = new VdsValidator(getVds());
+        if (validator.shouldVdsBeFenced()) {
             super.executeCommand();
         } else {
             setCommandShouldBeLogged(false);
@@ -81,28 +89,6 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? _vmsMovedToUnknown ? AuditLogType.VDS_RECOVER_FAILED_VMS_UNKNOWN
                 : AuditLogType.VDS_RECOVER : AuditLogType.VDS_RECOVER_FAILED;
-    }
-
-    /**
-     * Determine if the status is legal for actually fence the VDS.
-     *
-     * @return <c>true</c> if the VDS should be fenced, otherwise <c>false</c>.
-     */
-    private boolean shouldVdsBeFenced() {
-        boolean result;
-        switch (getVds().getStatus()) {
-        case Down:
-        case InstallFailed:
-        case Maintenance:
-        case NonOperational:
-        case NonResponsive:
-            result = true;
-            break;
-        default:
-            result = false;
-            break;
-        }
-        return result;
     }
 
     private void MoveVMsToUnknown() {
