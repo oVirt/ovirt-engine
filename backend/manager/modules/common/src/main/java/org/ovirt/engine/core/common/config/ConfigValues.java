@@ -1402,6 +1402,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(java.util.List.class)
     @DefaultValueAttribute("rhel6.2.0,pc-1.0")
+    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     ClusterEmulatedMachines(516),
 
     Invalid(65535);

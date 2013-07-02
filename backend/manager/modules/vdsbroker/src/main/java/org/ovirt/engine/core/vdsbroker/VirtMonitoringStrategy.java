@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -55,7 +56,7 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
             Map<String, String> customLogValues = new HashMap<>();
             customLogValues.put("hostSupportedEmulatedMachines", vds.getSupportedEmulatedMachines());
             customLogValues.put("clusterEmulatedMachines", StringUtils.isEmpty(vdsGroup.getEmulatedMachine()) ?
-                    Config.<String>GetValue(ConfigValues.ClusterEmulatedMachines, vds.getVdsGroupCompatibilityVersion().getValue()) :
+                    Config.<List<String>>GetValue(ConfigValues.ClusterEmulatedMachines, vds.getVdsGroupCompatibilityVersion().getValue()).toString() :
                     vdsGroup.getEmulatedMachine());
 
             vdsNonOperational(vds, NonOperationalReason.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER, customLogValues);
@@ -97,8 +98,8 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
         // match this host against the config flags by order
         String matchedEmulatedMachine =
                 ListUtils.firstMatch(
-                        Arrays.asList(Config.<String> GetValue(ConfigValues.ClusterEmulatedMachines,
-                                vds.getVdsGroupCompatibilityVersion().getValue()).split(",")),
+                        Config.<List<String>> GetValue(ConfigValues.ClusterEmulatedMachines,
+                                vds.getVdsGroupCompatibilityVersion().getValue()),
                         hostSupportedEmulatedMachines);
 
         if (matchedEmulatedMachine != null && !matchedEmulatedMachine.isEmpty()) {
