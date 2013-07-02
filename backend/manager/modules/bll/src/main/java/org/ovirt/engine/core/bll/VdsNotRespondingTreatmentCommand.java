@@ -46,22 +46,24 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      */
     @Override
     protected void executeCommand() {
-        VdsValidator validator;
         setVds(null);
         if (getVds() == null) {
             setCommandShouldBeLogged(false);
             log.infoFormat("Host {0}({1}) not fenced since it doesn't exist anymore.", getVdsName(), getVdsId());
+            getReturnValue().setSucceeded(false);
             return;
         }
 
-        validator = new VdsValidator(getVds());
-        if (validator.shouldVdsBeFenced()) {
+        VdsValidator validator = new VdsValidator(getVds());
+        boolean shouldBeFenced = validator.shouldVdsBeFenced();
+        if (shouldBeFenced) {
             super.executeCommand();
         } else {
             setCommandShouldBeLogged(false);
             log.infoFormat("Host {0}({1}) not fenced since it's status is ok, or it doesn't exist anymore.",
                     getVdsName(), getVdsId());
         }
+        getReturnValue().setSucceeded(shouldBeFenced);
     }
 
     @Override
