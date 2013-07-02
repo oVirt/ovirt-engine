@@ -353,7 +353,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
-        if (getDisk() == null) {
+        if (getDisk() == null || getDisk().getVmEntityType() == null) {
             return null;
         }
 
