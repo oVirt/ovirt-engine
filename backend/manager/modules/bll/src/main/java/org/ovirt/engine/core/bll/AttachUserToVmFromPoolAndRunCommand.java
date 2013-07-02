@@ -86,11 +86,16 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             }
         }
         if (!returnValue) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ALLOCATE_AND_RUN);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_FROM_VM_POOL);
+            setActionMessageParameters();
         }
         return returnValue;
     }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ALLOCATE_AND_RUN);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_FROM_VM_POOL);
+    };
 
     private Guid getVmToAttach(Guid poolId) {
         if (vmToAttach == null) {
