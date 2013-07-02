@@ -190,12 +190,12 @@ Provided user is 'engine', password is 'engine' and database is engine_dao.
 Create empty schema (one time):
 
 $ PGPASSWORD=engine \
-    ./backend/manager/dbscripts/create_schema.sh -d engine_dao -u engine
+    ./packaging/dbscripts/create_schema.sh -d engine_dao -u engine
 
 Upgrade schema (when needed):
 
 $ PGPASSWORD=engine \
-    ./backend/manager/dbscripts/upgrade.sh -u engine -d engine_dao
+    ./packaging/dbscripts/upgrade.sh -u engine -d engine_dao
 
 Run build as:
 
