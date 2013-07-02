@@ -28,34 +28,32 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
      */
     @Override
     protected void executeCommand() {
-        boolean result = true;
-        VdsValidator validator;
-
         setVds(null);
         if (getVds() == null) {
             setCommandShouldBeLogged(false);
             log.infoFormat("SSH Soft Fencing will not be executed on host {0}({1}) since it doesn't exist anymore.",
                     getVdsName(),
                     getVdsId());
-            getReturnValue().setSucceeded(result);
+            getReturnValue().setSucceeded(false);
             return;
         }
 
-        validator = new VdsValidator(getVds());
+        VdsValidator validator = new VdsValidator(getVds());
         if (validator.shouldVdsBeFenced()) {
-            result = executeSshSoftFencingCommand(getVds().getHostName(),
+            boolean result = executeSshSoftFencingCommand(getVds().getHostName(),
                             getVds().getVdsGroupCompatibilityVersion().toString());
             if (result) {
                 // SSH Soft Fencing executed without errors, tell VdsManager about it
                 ResourceManager.getInstance().GetVdsManager(getVds().getId()).finishSshSoftFencingExecution(getVds());
             }
+            getReturnValue().setSucceeded(result);
         } else {
             setCommandShouldBeLogged(false);
             log.infoFormat("SSH Soft Fencing will not be executed on host {0}({1}) since it's status is ok.",
                     getVdsName(),
                     getVdsId());
+            getReturnValue().setSucceeded(false);
         }
-        getReturnValue().setSucceeded(result);
     }
 
     /**
@@ -68,6 +66,7 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
     private boolean executeSshSoftFencingCommand(String host, String version) {
         boolean result = true;
         EngineSSHClient sshClient = null;
+        ByteArrayOutputStream bos = null;
 
         try {
             sshClient = new EngineSSHClient();
@@ -76,15 +75,17 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
             sshClient.useDefaultKeyPair();
             sshClient.connect();
             sshClient.authenticate();
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            bos = new ByteArrayOutputStream();
             sshClient.executeCommand(Config.<String> GetValue(ConfigValues.SshSoftFencingCommand, version),
                     null,
                     bos,
                     null);
             log.info("SSH Soft Fencing command executed on host " + host);
-            log.debug("SSH Soft Fencing command output " + bos.toString());
         } catch (Exception ex) {
             log.error("SSH Soft Fencing command failed on host " + host, ex);
+            if (bos != null) {
+                log.error("SSH Soft Fencing command output " + bos.toString());
+            }
             result = false;
         } finally {
             closeSshConnection(sshClient);
