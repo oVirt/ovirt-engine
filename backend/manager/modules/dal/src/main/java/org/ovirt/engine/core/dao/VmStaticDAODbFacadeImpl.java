@@ -174,9 +174,6 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
         StringBuilder guidsSb = new StringBuilder();
         guidsSb.append("'").append(StringUtils.join(guids, "','")).append("'");
 
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_guids", guidsSb
-                .toString());
-
         return getCallsHandler().executeReadList("GetOrderedVmGuidsForRunMultipleActions", createGuidMapper()
                 , getCustomMapSqlParameterSource().addValue("vm_guids", guidsSb
                 .toString()));
