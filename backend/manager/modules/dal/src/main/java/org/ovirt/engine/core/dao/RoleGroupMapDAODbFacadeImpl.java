@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.RoleGroupMap;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.RoleGroupMapRowMapper;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
@@ -13,6 +15,16 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * functionality refactored from {@link org.ovirt.engine.core.dal.dbbroker.DbFacade}.
  */
 public class RoleGroupMapDAODbFacadeImpl extends BaseDAODbFacade implements RoleGroupMapDAO {
+    private static class RoleGroupMapRowMapper implements RowMapper<RoleGroupMap> {
+        public static final RoleGroupMapRowMapper instance = new RoleGroupMapRowMapper();
+
+        @Override
+        public RoleGroupMap mapRow(ResultSet rs, int rowNum) throws SQLException {
+            RoleGroupMap entity = new RoleGroupMap(ActionGroup.forValue(rs.getInt("action_group_id")),
+                    Guid.createGuidFromStringDefaultEmpty(rs.getString("role_id")));
+            return entity;
+        }
+    }
 
     @Override
     public RoleGroupMap getByActionGroupAndRole(ActionGroup group, Guid id) {
