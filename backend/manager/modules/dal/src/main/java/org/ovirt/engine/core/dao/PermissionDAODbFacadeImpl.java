@@ -2,9 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -13,9 +11,7 @@ import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 /**
  * <code>PermissionsDAODbFacadeImpl</code> provides a concrete implementation of {@link PermissionDAO} using code from
@@ -164,13 +160,9 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
                 .addValue("action_group_id", actionGroup.getId()).addValue("object_id", objectId).addValue(
                         "object_type_id", vdcObjectType.getValue());
 
-        String resultKey = "permission_id";
-        Map<String, Object> dbResults =
-                new SimpleJdbcCall(jdbcTemplate).withProcedureName("get_entity_permissions")
-                        .declareParameters(new SqlOutParameter(resultKey, Types.VARCHAR))
-                        .execute(parameterSource);
-
-        return dbResults.get(resultKey) != null ? new Guid(dbResults.get(resultKey).toString()) : null;
+        return getCallsHandler().executeRead("get_entity_permissions",
+                createGuidMapper(),
+                parameterSource);
     }
 
     @Override
@@ -185,17 +177,12 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
                         .addValue("group_ids", groupIds)
                         .addValue("action_group_id", actionGroup.getId())
                         .addValue("object_id", objectId)
-                        .addValue(
-                                "object_type_id", vdcObjectType.getValue())
+                        .addValue("object_type_id", vdcObjectType.getValue())
                         .addValue("ignore_everyone", ignoreEveryone);
 
-        String resultKey = "permission_id";
-        Map<String, Object> dbResults =
-                new SimpleJdbcCall(jdbcTemplate).withProcedureName("get_entity_permissions_for_user_and_groups")
-                        .declareParameters(new SqlOutParameter(resultKey, Types.VARCHAR))
-                        .execute(parameterSource);
-
-        return dbResults.get(resultKey) != null ? new Guid(dbResults.get(resultKey).toString()) : null;
+        return getCallsHandler().executeRead("get_entity_permissions_for_user_and_groups",
+                createGuidMapper(),
+                parameterSource);
     }
 
     @Override

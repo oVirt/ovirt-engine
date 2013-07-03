@@ -322,15 +322,16 @@ LANGUAGE plpgsql;
 
 
 -- gets entity permissions given the user id, action group id and the object type and id
-Create or replace FUNCTION get_entity_permissions(v_user_id UUID,v_action_group_id INTEGER,v_object_id UUID,v_object_type_id INTEGER,
-OUT v_permission_id UUID)
+Create or replace FUNCTION get_entity_permissions(v_user_id UUID,v_action_group_id INTEGER,v_object_id UUID,v_object_type_id INTEGER)
+RETURNS SETOF UUID
 	-- Add the parameters for the stored procedure here
    AS $procedure$
    DECLARE
    v_everyone_object_id  UUID;
 BEGIN
    v_everyone_object_id := getGlobalIds('everyone'); -- hardcoded also in MLA Handler
-   select   id INTO v_permission_id from permissions where
+   RETURN QUERY
+   select   id from permissions where
 		-- get all roles of action
    role_id in(select role_id from roles_groups where action_group_id = v_action_group_id)
 		-- get allparents of object
@@ -343,14 +344,16 @@ LANGUAGE plpgsql;
 
 -- gets entity permissions given the user id, groups, action group id and the object type and object id
 Create or replace FUNCTION get_entity_permissions_for_user_and_groups(v_user_id UUID,v_group_ids text,v_action_group_id INTEGER,v_object_id UUID,v_object_type_id INTEGER,
-v_ignore_everyone BOOLEAN, OUT v_permission_id UUID)
+v_ignore_everyone BOOLEAN)
+RETURNS SETOF UUID
 	-- Add the parameters for the stored procedure here
    AS $procedure$
    DECLARE
    v_everyone_object_id  UUID;
 BEGIN
    v_everyone_object_id := getGlobalIds('everyone'); -- hardcoded also in MLA Handler
-   select   id INTO v_permission_id from permissions where
+   RETURN QUERY
+   select   id from permissions where
 		-- get all roles of action
    role_id in(select role_id from roles_groups where action_group_id = v_action_group_id)
 		-- get allparents of object
