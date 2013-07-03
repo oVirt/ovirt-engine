@@ -282,7 +282,7 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
 
             if (isChangable)
             {
-                privateChangeProhibitionReason = null;
+                setChangeProhibitionReason(null);
             }
         }
         return this;
@@ -297,7 +297,10 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
 
     public void setChangeProhibitionReason(String value)
     {
-        privateChangeProhibitionReason = value;
+        if (privateChangeProhibitionReason != value) {
+            privateChangeProhibitionReason = value;
+            onPropertyChanged(new PropertyChangedEventArgs("ChangeProhibitionReason")); //$NON-NLS-1$
+        }
     }
 
     private boolean isSelected;

@@ -109,6 +109,11 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
                             onIsChangablePropertyChange(functionalEditor, ownerModel);
                         }
 
+                        // ChangeProhibitionReason
+                        else if ("ChangeProhibitionReason".equals(propName)) { //$NON-NLS-1$
+                            onChangeProhibitionReasonChange(functionalEditor, ownerModel);
+                        }
+
                         // IsAvailable
                         else if ("IsAvailable".equals(propName)) { //$NON-NLS-1$
                             onIsAvailablePropertyChange(functionalEditor, ownerModel);
@@ -120,6 +125,7 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
                 // events fired as part of the entity model constructor
                 onIsValidPropertyChange(functionalEditor, ownerModel);
                 onIsChangablePropertyChange(functionalEditor, ownerModel);
+                onChangeProhibitionReasonChange(functionalEditor, ownerModel);
                 onIsAvailablePropertyChange(functionalEditor, ownerModel);
             }
         }
@@ -205,6 +211,12 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
         if (model.getIsChangable()) {
             editor.setEnabled(true);
         } else {
+            editor.disable(model.getChangeProhibitionReason());
+        }
+    }
+
+    void onChangeProhibitionReasonChange(HasEnabledWithHints editor, EntityModel model) {
+        if (!editor.isEnabled()) {
             editor.disable(model.getChangeProhibitionReason());
         }
     }
