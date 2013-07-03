@@ -75,18 +75,11 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         // store other mapped image's parent Id
         Guid currentParent = image.getParentId();
         // Remove other mapped image from Irs and db
-        /**
-         * Vitaly //_imagesToDelete.Add(image.image_guid);
-         */
         removeSnapshot(image);
         while (!lastParent.equals(currentParent)) {
             image = getDiskImageDao().getSnapshotById(currentParent);
             // store current image's parent Id
             currentParent = image.getParentId();
-            /**
-             * Vitaly
-             * //_imagesToDelete.Insert(_imagesToDelete.Count,image.image_guid);
-             */
             removeSnapshot(image);
         }
     }
