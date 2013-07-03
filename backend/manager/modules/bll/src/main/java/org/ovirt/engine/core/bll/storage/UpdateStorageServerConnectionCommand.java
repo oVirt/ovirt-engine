@@ -26,7 +26,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
-import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -291,7 +291,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     }
 
     protected boolean connectToStorage() {
-        ConnectStorageServerVDSCommandParameters newConnectionParametersForVdsm =
+        StorageServerConnectionManagementVDSParameters newConnectionParametersForVdsm =
                 createParametersForVdsm(getParameters().getVdsId(),
                         getParameters().getStoragePoolId(),
                         getParameters().getStorageServerConnection().getstorage_type(),
@@ -300,7 +300,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     }
 
     protected void disconnectFromStorage() {
-        ConnectStorageServerVDSCommandParameters connectionParametersForVdsm =
+        StorageServerConnectionManagementVDSParameters connectionParametersForVdsm =
                 createParametersForVdsm(getParameters().getVdsId(),
                         getParameters().getStoragePoolId(),
                         getConnection().getstorage_type(),
@@ -317,12 +317,12 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                 new GetStorageDomainStatsVDSCommandParameters(getVds().getId(), storageDomain.getId()));
     }
 
-    protected ConnectStorageServerVDSCommandParameters createParametersForVdsm(Guid vdsmId,
+    protected StorageServerConnectionManagementVDSParameters createParametersForVdsm(Guid vdsmId,
                                                                                Guid storagePoolId,
                                                                                StorageType storageType,
                                                                                StorageServerConnections storageServerConnection) {
-        ConnectStorageServerVDSCommandParameters newConnectionParametersForVdsm =
-                new ConnectStorageServerVDSCommandParameters(vdsmId, storagePoolId, storageType,
+        StorageServerConnectionManagementVDSParameters newConnectionParametersForVdsm =
+                new StorageServerConnectionManagementVDSParameters(vdsmId, storagePoolId, storageType,
                         new ArrayList<StorageServerConnections>(Arrays.asList(storageServerConnection)));
         return newConnectionParametersForVdsm;
     }

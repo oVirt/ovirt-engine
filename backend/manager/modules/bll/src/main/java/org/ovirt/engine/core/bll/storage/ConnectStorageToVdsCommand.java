@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -62,7 +62,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.ConnectStorageServer,
-                        new ConnectStorageServerVDSCommandParameters(vdsId, getParameters().getStoragePoolId(),
+                        new StorageServerConnectionManagementVDSParameters(vdsId, getParameters().getStoragePoolId(),
                                 getParameters().getStorageServerConnection().getstorage_type(),
                                 new java.util.ArrayList<StorageServerConnections>(java.util.Arrays
                                         .asList(new StorageServerConnections[] { getConnection() }))))

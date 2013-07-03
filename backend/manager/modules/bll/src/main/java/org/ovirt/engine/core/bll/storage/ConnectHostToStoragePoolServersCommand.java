@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
@@ -62,7 +62,7 @@ public class ConnectHostToStoragePoolServersCommand extends
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.ConnectStorageServer,
-                            new ConnectStorageServerVDSCommandParameters(getVds().getId(),
+                            new StorageServerConnectionManagementVDSParameters(getVds().getId(),
                                     getStoragePool().getId(), type, connections)).getReturnValue();
             connectSucceeded =
                     StorageHelperDirector.getInstance().getItem(type).isConnectSucceeded(retValues, connections);

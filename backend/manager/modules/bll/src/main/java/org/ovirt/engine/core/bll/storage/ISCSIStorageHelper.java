@@ -12,7 +12,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -55,7 +55,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.forValue(type),
-                            new ConnectStorageServerVDSCommandParameters(vdsId,
+                            new StorageServerConnectionManagementVDSParameters(vdsId,
                                     poolId, StorageType.ISCSI, list));
             isSuccess = returnValue.getSucceeded();
             if (isSuccess && VDSCommandType.forValue(type) == VDSCommandType.ConnectStorageServer) {

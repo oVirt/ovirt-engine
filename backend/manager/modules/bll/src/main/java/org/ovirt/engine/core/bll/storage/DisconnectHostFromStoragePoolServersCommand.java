@@ -6,7 +6,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
-import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 
@@ -30,7 +30,7 @@ public class DisconnectHostFromStoragePoolServersCommand extends
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.DisconnectStorageServer,
-                        new ConnectStorageServerVDSCommandParameters(getVds().getId(), getStoragePool().getId(),
+                        new StorageServerConnectionManagementVDSParameters(getVds().getId(), getStoragePool().getId(),
                                 getStoragePool().getstorage_pool_type(), getConnections()));
         setSucceeded(vdsReturnValue.getSucceeded());
         if (!vdsReturnValue.getSucceeded()) {
@@ -43,7 +43,7 @@ public class DisconnectHostFromStoragePoolServersCommand extends
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.DisconnectStorageServer,
-                            new ConnectStorageServerVDSCommandParameters(getVds().getId(),
+                            new StorageServerConnectionManagementVDSParameters(getVds().getId(),
                                     getStoragePool().getId(), getIsoType(), getIsoConnections()));
             setSucceeded(vdsReturnValue.getSucceeded());
             if (!vdsReturnValue.getSucceeded()) {
@@ -59,7 +59,7 @@ public class DisconnectHostFromStoragePoolServersCommand extends
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.DisconnectStorageServer,
-                            new ConnectStorageServerVDSCommandParameters(getVds().getId(),
+                            new StorageServerConnectionManagementVDSParameters(getVds().getId(),
                                     getStoragePool().getId(), getExportType(), getExportConnections()));
             setSucceeded(vdsReturnValue.getSucceeded());
             if (!vdsReturnValue.getSucceeded()) {

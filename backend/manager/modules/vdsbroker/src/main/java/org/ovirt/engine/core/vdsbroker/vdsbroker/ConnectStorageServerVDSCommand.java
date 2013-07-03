@@ -12,14 +12,14 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.vdscommands.ConnectStorageServerVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.collections.DefaultValueMap;
 
-public class ConnectStorageServerVDSCommand<P extends ConnectStorageServerVDSCommandParameters>
+public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionManagementVDSParameters>
         extends VdsBrokerCommand<P> {
     protected ServerConnectionStatusReturnForXmlRpc _result;
 
