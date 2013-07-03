@@ -166,6 +166,7 @@ class Plugin(plugin.PluginBase):
                 '-p', str(self.environment[osetupcons.DBEnv.PORT]),
                 '-u', self.environment[osetupcons.DBEnv.USER],
                 '-d', self.environment[osetupcons.DBEnv.DATABASE],
+                '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
             ]
             if self.environment[
                 osetupcons.CoreEnv.DEVELOPER_MODE
