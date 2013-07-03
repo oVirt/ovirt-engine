@@ -19,7 +19,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements JobSubjectEntityDao {
 
     private static JobSubjectEntityRowMapper jobSubjectEntityRowMapper = new JobSubjectEntityRowMapper();
-    private static JobIdRowMapper jobIdRowMapper = new JobIdRowMapper();
 
     @Override
     public void save(Guid jobId, Guid entityId, VdcObjectType entityType) {
@@ -53,7 +52,7 @@ public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements Jo
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("entity_id", entityId);
 
-        return getCallsHandler().executeReadList("GetAllJobIdsByEntityId", jobIdRowMapper, parameterSource);
+        return getCallsHandler().executeReadList("GetAllJobIdsByEntityId", createGuidMapper(), parameterSource);
     }
 
     private static class JobSubjectEntity {
@@ -87,13 +86,4 @@ public class JobSubjectEntityDaoFacadeImpl extends BaseDAODbFacade implements Jo
             return entity;
         }
     }
-
-    private static class JobIdRowMapper implements RowMapper<Guid> {
-
-        @Override
-        public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return Guid.createGuidFromStringDefaultEmpty(rs.getString(1));
-        }
-    }
-
 }
