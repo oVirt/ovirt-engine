@@ -141,13 +141,12 @@ public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthent
             if (result.getAuditLogType() != null) {
                 LdapBrokerUtils.logEventForUser(userName, result.getAuditLogType());
             }
-            if (result == AuthenticationResult.OTHER) {
-                // An error our error parser does not recognize
-                log.error("Error from Kerberos: " + ex.getMessage());
-            } else {
-                StringBuilder error = new StringBuilder();
-                error.append(result.getDetailedMessage());
-                log.error(error.toString());
+            log.error("Kerberos error: " + ex.getMessage());
+            if (log.isDebugEnabled()) {
+                log.debug("Kerberos error stacktrace: ", ex);
+            }
+            if (result != AuthenticationResult.OTHER) {
+                log.error(result.getDetailedMessage());
             }
             throw new AuthenticationResultException(result);
         }

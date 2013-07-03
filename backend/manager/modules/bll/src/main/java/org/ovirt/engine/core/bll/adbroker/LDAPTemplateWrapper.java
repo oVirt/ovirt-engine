@@ -148,6 +148,9 @@ public abstract class LDAPTemplateWrapper {
                     baseDN,
                     displayFilter,
                     ex.getMessage());
+            if (log.isDebugEnabled()) {
+                log.debug("Exception stacktrace: ", ex);
+            }
             handleException(ex);
         } finally {
             singleContextSource.destroy();
