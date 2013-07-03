@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -139,6 +140,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                     getVm().getTunnelMigration() != null ? getVm().getTunnelMigration()
                             : getVdsGroup().isTunnelMigration();
         }
+
+        getParameters().setStartTime(new Date());
 
         // Starting migration at src VDS
         boolean connectToLunDiskSuccess = connectLunDisks(_vdsDestinationId);
@@ -329,5 +332,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         } else {
             return super.getCurrentVdsId();
         }
+    }
+
+    public String getDuration() {
+        // return time in seconds
+        return String.valueOf((new Date().getTime() - getParameters().getStartTime().getTime()) / 1000 % 60);
     }
 }
