@@ -181,6 +181,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // initialize configuration utils to use DB
         Config.setConfigUtils(new DBConfigUtils());
 
+        log.info("Running ovirt-engine " + Config.<String>GetValue(ConfigValues.ProductRPMVersion));
         _resourceManger = new VDSBrokerFrontendImpl();
 
         CpuFlagsManagerHandler.InitDictionaries();
