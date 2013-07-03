@@ -129,6 +129,14 @@ public class RemoveStorageServerConnectionCommandTest {
     }
 
     @Test
+    public void checkRemoveNotExistingConnection() {
+        parameters.setStorageServerConnection(NFSConnection);
+        when(storageServerConnectionDAO.get(NFSConnection.getid())).thenReturn(null);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
+    }
+
+    @Test
     public void checkRemoveNFSConnectionDomainsExist() {
         parameters.setStorageServerConnection(NFSConnection);
         when(storageServerConnectionDAO.get(NFSConnection.getid())).thenReturn(NFSConnection);

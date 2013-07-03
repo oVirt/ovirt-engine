@@ -12,6 +12,13 @@ import org.ovirt.engine.core.compat.Guid;
  *
  */
 public interface StorageServerConnectionDAO extends DAO {
+
+    /**
+     * Get all storage connections from db
+     * @return
+     */
+    List<StorageServerConnections> getAll();
+
     /**
      * Retrieves the connection with the specified id.
      *

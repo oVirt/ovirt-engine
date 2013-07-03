@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.queries;
 
+import org.ovirt.engine.core.compat.Guid;
+
 public class StorageServerConnectionQueryParametersBase extends VdcQueryParametersBase {
     private static final long serialVersionUID = 2686760857776133215L;
 
@@ -15,6 +17,16 @@ public class StorageServerConnectionQueryParametersBase extends VdcQueryParamete
 
     public StorageServerConnectionQueryParametersBase(String serverConnectionId) {
         setServerConnectionId(serverConnectionId);
+    }
+
+    /**
+     * Used by REST because AbstractBackendResource has id member
+     * that is always assumed to be Guid
+     *
+     * @param serverConnectionId
+     */
+    public StorageServerConnectionQueryParametersBase(Guid serverConnectionId) {
+        this(serverConnectionId.toString());
     }
 
     public StorageServerConnectionQueryParametersBase() {

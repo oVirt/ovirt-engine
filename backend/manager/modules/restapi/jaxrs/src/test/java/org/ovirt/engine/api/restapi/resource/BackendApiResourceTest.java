@@ -117,6 +117,7 @@ public class BackendApiResourceTest extends Assert {
         "disks",
         "disks/search",
         "jobs",
+        "storageconnections",
     };
 
     private static final String[] relationshipsGlusterOnly = {
@@ -167,7 +168,8 @@ public class BackendApiResourceTest extends Assert {
         BASE_PATH + "/vms?search={query}",
         BASE_PATH + "/disks",
         BASE_PATH + "/disks?search={query}",
-        BASE_PATH + "/jobs"
+        BASE_PATH + "/jobs",
+        BASE_PATH + "/storageconnections",
     };
 
     private static final String[] hrefsGlusterOnly = {

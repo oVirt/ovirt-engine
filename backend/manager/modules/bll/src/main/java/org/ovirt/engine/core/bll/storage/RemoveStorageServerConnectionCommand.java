@@ -36,6 +36,12 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY);
         }
         StorageServerConnections connection = getStorageServerConnectionDao().get(connectionId);
+        if(connection == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST);
+        }
+        // if user passed only the connection id for removal, vdsm still needs few more details in order to disconnect, so
+        // bringing them from db and repopulating them in the connection object received in input parameters
+        populateMissingFields(connection);
         StorageType storageType = connection.getstorage_type();
         if (storageType.isFileDomain()) {
             // go to storage domain static, get all storage domains where storage field  = storage connection id
@@ -103,6 +109,31 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
         // disconnect the connection from vdsm
         disconnectStorage();
         setSucceeded(true);
+    }
+
+    protected void populateMissingFields(StorageServerConnections connectionFromDb) {
+        StorageServerConnections connectionFromParams = getConnection();
+        if(connectionFromParams.getstorage_type() == null || connectionFromParams.getstorage_type().equals(StorageType.UNKNOWN)) {
+            connectionFromParams.setstorage_type(connectionFromDb.getstorage_type());
+        }
+        if(StringUtils.isEmpty(connectionFromParams.getconnection())) {
+            connectionFromParams.setconnection(connectionFromDb.getconnection());
+        }
+        if(connectionFromParams.getstorage_type().equals(StorageType.ISCSI)){
+            if(StringUtils.isEmpty(connectionFromParams.getiqn())) {
+                connectionFromParams.setiqn(connectionFromDb.getiqn());
+            }
+            if(StringUtils.isEmpty(connectionFromParams.getuser_name())) {
+                connectionFromParams.setuser_name(connectionFromDb.getuser_name());
+            }
+            if(StringUtils.isEmpty(connectionFromParams.getpassword())) {
+                connectionFromParams.setpassword(connectionFromDb.getpassword());
+            }
+            if(StringUtils.isEmpty(connectionFromParams.getport())) {
+                connectionFromParams.setport(connectionFromDb.getport());
+            }
+        }
+
     }
 
     protected boolean prepareFailureMessageForDomains(String domainNames) {

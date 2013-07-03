@@ -11,15 +11,18 @@ import javax.ws.rs.core.Response;
 import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.CreationStatus;
+import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.queries.GetTasksStatusesByTasksIDsParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -373,6 +376,15 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
 
     protected <T> T notFound(Class<T> clz) {
         throw new WebApplicationException(Response.Status.NOT_FOUND);
+    }
+
+    protected Guid getHostId(Host host) {
+        return host.isSetId()
+               ? new Guid(host.getId())
+               : getEntity(VDS.class,
+                           VdcQueryType.GetVdsByName,
+                           new NameQueryParameters(host.getName()),
+                           host.getName()).getId();
     }
 
     protected abstract class EntityIdResolver<T> implements IResolver<T, Q> {

@@ -2,12 +2,15 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.NfsVersion;
+import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.compat.Guid;
 
 
 public class StorageDomainMapperTest extends
@@ -93,4 +96,180 @@ public class StorageDomainMapperTest extends
         assertEquals(NfsVersion.AUTO.value(), StorageDomainMapper.map(org.ovirt.engine.core.common
                 .businessentities.NfsVersion.AUTO, null));
     }
+
+    @Test
+    public void checkISCSIStorageConnectionsMappings() {
+        StorageServerConnections connection = new StorageServerConnections();
+        Guid connId = Guid.newGuid();
+        connection.setid(connId.toString());
+        connection.setiqn("iqn.my.target1");
+        connection.setport("3260");
+        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI);
+        connection.setconnection("1.2.135.255");
+        connection.setuser_name("myuser1");
+        connection.setpassword("123");
+
+        Storage RESTConnection = new Storage();
+        RESTConnection.setId(connId.toString());
+        RESTConnection.setType(StorageType.ISCSI.toString().toLowerCase());
+        RESTConnection.setPort(3260);
+        RESTConnection.setTarget("iqn.my.target1");
+        RESTConnection.setAddress("1.2.135.255");
+        RESTConnection.setUsername("myuser1");
+
+        Storage mappedResult = StorageDomainMapper.map(connection,null);
+        assertEquals(RESTConnection.getId(),mappedResult.getId());
+        // Although password was set on StorageServerConnections object, it should not be returned via REST
+        // thus testing here that it remains empty.
+        assertEquals(RESTConnection.getPassword(),mappedResult.getPassword());
+        assertEquals(RESTConnection.getType(),mappedResult.getType());
+        assertEquals(RESTConnection.getAddress(),mappedResult.getAddress());
+        assertEquals(RESTConnection.getUsername(),mappedResult.getUsername());
+        assertEquals(RESTConnection.getTarget(),mappedResult.getTarget());
+    }
+
+    @Test
+    public void checkNFSStorageConnectionsMappings() {
+        StorageServerConnections connection = new StorageServerConnections();
+        Guid connId = Guid.newGuid();
+        connection.setid(connId.toString());
+        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.NFS);
+        connection.setconnection("1.2.135.255:/myshare/data");
+        connection.setNfsRetrans((short) 200);
+        connection.setNfsTimeo((short) 400);
+        connection.setNfsVersion(org.ovirt.engine.core.common.businessentities.NfsVersion.V3);
+
+        Storage RESTConnection = new Storage();
+        RESTConnection.setId(connId.toString());
+        RESTConnection.setType(StorageType.NFS.toString().toLowerCase());
+        RESTConnection.setAddress("1.2.135.255");
+        RESTConnection.setPath("/myshare/data");
+        RESTConnection.setNfsRetrans(200);
+        RESTConnection.setNfsTimeo(400);
+        RESTConnection.setNfsVersion(NfsVersion.V3.toString());
+
+        Storage mappedResult = StorageDomainMapper.map(connection,null);
+        assertEquals(RESTConnection.getId(),mappedResult.getId());
+        assertEquals(RESTConnection.getType(),mappedResult.getType());
+        assertEquals(RESTConnection.getAddress(),mappedResult.getAddress());
+        assertEquals(RESTConnection.getPath(),mappedResult.getPath());
+        assertEquals(RESTConnection.getNfsRetrans(),mappedResult.getNfsRetrans());
+        assertEquals(RESTConnection.getNfsTimeo(),mappedResult.getNfsTimeo());
+        assertEquals(RESTConnection.getNfsVersion(),mappedResult.getNfsVersion());
+    }
+
+    @Test
+    public void checkPosixStorageConnectionsMappings() {
+        StorageServerConnections connection = new StorageServerConnections();
+        Guid connId = Guid.newGuid();
+        connection.setid(connId.toString());
+        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.POSIXFS);
+        connection.setconnection("1.2.135.255:/myshare/data");
+        connection.setVfsType("nfs");
+        connection.setMountOptions("timeo=30");
+
+        Storage RESTConnection = new Storage();
+        RESTConnection.setId(connId.toString());
+        RESTConnection.setType(StorageType.POSIXFS.toString().toLowerCase());
+        RESTConnection.setAddress("1.2.135.255");
+        RESTConnection.setPath("/myshare/data");
+        RESTConnection.setVfsType("nfs");
+        RESTConnection.setMountOptions("timeo=30");
+
+        Storage mappedResult = StorageDomainMapper.map(connection,null);
+        assertEquals(RESTConnection.getId(),mappedResult.getId());
+        assertEquals(RESTConnection.getType(),mappedResult.getType());
+        assertEquals(RESTConnection.getAddress(),mappedResult.getAddress());
+        assertEquals(RESTConnection.getVfsType(),mappedResult.getVfsType());
+        assertEquals(RESTConnection.getPath(),mappedResult.getPath());
+        assertEquals(RESTConnection.getMountOptions(),mappedResult.getMountOptions());
+    }
+
+    @Test
+    public void checkPosixStorageConnectionsMappingsToBll() {
+        StorageServerConnections connection = new StorageServerConnections();
+        Guid connId = Guid.newGuid();
+        connection.setid(connId.toString());
+        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.POSIXFS);
+        connection.setconnection("1.2.135.255:/myshare/data");
+        connection.setVfsType("nfs");
+        connection.setMountOptions("timeo=30");
+
+        Storage RESTConnection = new Storage();
+        RESTConnection.setId(connId.toString());
+        RESTConnection.setType(StorageType.POSIXFS.toString().toLowerCase());
+        RESTConnection.setAddress("1.2.135.255");
+        RESTConnection.setPath("/myshare/data");
+        RESTConnection.setVfsType("nfs");
+        RESTConnection.setMountOptions("timeo=30");
+
+        StorageServerConnections mappedResult = StorageDomainMapper.map(RESTConnection,null);
+        assertEquals(connection.getid(),mappedResult.getid());
+        assertEquals(connection.getstorage_type(),mappedResult.getstorage_type());
+        assertEquals(connection.getconnection(),mappedResult.getconnection());
+        assertEquals(connection.getVfsType(),mappedResult.getVfsType());
+        assertEquals(connection.getMountOptions(),mappedResult.getMountOptions());
+    }
+
+    @Test
+    public void checkNFSStorageConnectionsMappingsToBll() {
+        StorageServerConnections connection = new StorageServerConnections();
+        Guid connId = Guid.newGuid();
+        connection.setid(connId.toString());
+        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.NFS);
+        connection.setconnection("1.2.135.255:/myshare/data");
+        connection.setNfsRetrans((short) 200);
+        connection.setNfsTimeo((short) 400);
+        connection.setNfsVersion(org.ovirt.engine.core.common.businessentities.NfsVersion.V3);
+
+        Storage RESTConnection = new Storage();
+        RESTConnection.setId(connId.toString());
+        RESTConnection.setType(StorageType.NFS.toString().toLowerCase());
+        RESTConnection.setAddress("1.2.135.255");
+        RESTConnection.setPath("/myshare/data");
+        RESTConnection.setNfsRetrans(200);
+        RESTConnection.setNfsTimeo(400);
+        RESTConnection.setNfsVersion(NfsVersion.V3.toString());
+
+        StorageServerConnections mappedResult = StorageDomainMapper.map(RESTConnection,null);
+        assertEquals(connection.getid(),mappedResult.getid());
+        assertEquals(connection.getstorage_type(),mappedResult.getstorage_type());
+        assertEquals(connection.getconnection(),mappedResult.getconnection());
+        assertEquals(connection.getNfsRetrans(),mappedResult.getNfsRetrans());
+        assertEquals(connection.getNfsTimeo(),mappedResult.getNfsTimeo());
+        assertEquals(connection.getNfsVersion(),mappedResult.getNfsVersion());
+    }
+
+    @Test
+    public void checkISCSISStorageConnectionsMappingsToBll() {
+        StorageServerConnections connection = new StorageServerConnections();
+        Guid connId = Guid.newGuid();
+        connection.setid(connId.toString());
+        connection.setiqn("iqn.my.target1");
+        connection.setport("3260");
+        connection.setstorage_type(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI);
+        connection.setconnection("1.2.135.255");
+        connection.setuser_name("myuser1");
+        connection.setpassword("123");
+
+        Storage RESTConnection = new Storage();
+        RESTConnection.setId(connId.toString());
+        RESTConnection.setType(StorageType.ISCSI.toString().toLowerCase());
+        RESTConnection.setPort(3260);
+        RESTConnection.setTarget("iqn.my.target1");
+        RESTConnection.setAddress("1.2.135.255");
+        RESTConnection.setUsername("myuser1");
+        RESTConnection.setPassword("123");
+
+        StorageServerConnections mappedResult = StorageDomainMapper.map(RESTConnection,null);
+        assertEquals(mappedResult.getid(),mappedResult.getid());
+        assertEquals(mappedResult.getstorage_type(),mappedResult.getstorage_type());
+        assertEquals(mappedResult.getconnection(),mappedResult.getconnection());
+        assertEquals(mappedResult.getiqn(),mappedResult.getiqn());
+        assertEquals(mappedResult.getuser_name(),mappedResult.getuser_name());
+        assertEquals(mappedResult.getpassword(),mappedResult.getpassword());
+        assertEquals(mappedResult.getport(),mappedResult.getport());
+
+    }
+
 }

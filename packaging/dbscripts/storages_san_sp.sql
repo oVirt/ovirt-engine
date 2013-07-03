@@ -485,6 +485,16 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetAllstorage_server_connections()
+RETURNS SETOF storage_server_connections
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM storage_server_connections;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 
 
 Create or replace FUNCTION Getstorage_server_connectionsByVolumeGroupId(v_volume_group_id VARCHAR(50)) RETURNS SETOF storage_server_connections

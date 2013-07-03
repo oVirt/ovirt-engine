@@ -118,6 +118,7 @@ public class BackendApiResource
         links.add(createLink("vms", LinkFlags.SEARCHABLE));
         links.add(createLink("disks", LinkFlags.SEARCHABLE));
         links.add(createLink("jobs"));
+        links.add(createLink("storageconnections"));
         return links;
     }
 

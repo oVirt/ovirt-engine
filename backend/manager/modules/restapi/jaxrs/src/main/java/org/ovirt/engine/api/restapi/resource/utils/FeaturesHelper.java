@@ -61,6 +61,7 @@ public class FeaturesHelper {
             addSshAuthenticationFeature(features);
             addForceSelectSpmFeature(features);
             addConsoleFeature(features);
+            addFeatureStorageServerConnections(features);
         }
         return features;
     }
@@ -304,4 +305,10 @@ public class FeaturesHelper {
         features.getFeature().add(feature);
     }
 
+    private void addFeatureStorageServerConnections(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Storage server connections");
+        feature.setDescription("Ability to manage storage server connections");
+        features.getFeature().add(feature);
+    }
 }

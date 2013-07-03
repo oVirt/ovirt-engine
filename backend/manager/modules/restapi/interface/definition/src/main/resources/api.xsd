@@ -1882,30 +1882,22 @@
 
   <xs:element name="storage_domains" type="StorageDomains"/>
 
+  <xs:element name="storage_connections" type="StorageConnections"/>
+
   <xs:group name="NfsStorage">
-    <xs:sequence>
-      <xs:element name="address" type="xs:string" minOccurs="0"/>
-      <xs:element name="path" type="xs:string" minOccurs="0"/>
-      <xs:element name="mount_options" type="xs:string" minOccurs="0"/>
-      <xs:element name="vfs_type" type="xs:string" minOccurs="0"/>
-      <xs:element name="nfs_version" type="xs:string" minOccurs="0"/>
-      <xs:element name="nfs_timeo" type="xs:unsignedShort" minOccurs="0"/>
-      <xs:element name="nfs_retrans" type="xs:unsignedShort" minOccurs="0"/>
-    </xs:sequence>
+       <xs:sequence>
+          <xs:group ref="FileStorageConnection" minOccurs="0"/>
+       </xs:sequence>
   </xs:group>
 
   <xs:group name="IscsiTarget">
     <xs:sequence>
+      <xs:group ref="IscsiStorageConnection"/>
       <xs:element name="address" type="xs:string" minOccurs="0"/>
-      <xs:element name="port" type="xs:unsignedShort" minOccurs="0"/>
-      <xs:element name="target" type="xs:string" minOccurs="0"/>
-      <xs:element name="username" type="xs:string" minOccurs="0"/>
-      <xs:element name="password" type="xs:string" minOccurs="0"/>
       <xs:element name="serial" type="xs:string" minOccurs="0"/>
       <xs:element name="vendor_id" type="xs:string" minOccurs="0"/>
       <xs:element name="product_id" type="xs:string" minOccurs="0"/>
       <xs:element name="lun_mapping" type="xs:int" minOccurs="0"/>
-      <xs:element name="portal" type="xs:string" minOccurs="0"/>
       <xs:element name="size" type="xs:long" minOccurs="0"/>
       <xs:element name="paths" type="xs:int" minOccurs="0"/>
       <xs:element name="status" type="xs:string" minOccurs="0"/>
@@ -1954,16 +1946,46 @@
     </xs:sequence>
   </xs:group>
 
+  <xs:group name="BaseStorageConnection">
+      <xs:sequence>
+           <xs:element name="address" type="xs:string" minOccurs="0" maxOccurs="1"/>
+           <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      </xs:sequence>
+  </xs:group>
+
+  <xs:group name="IscsiStorageConnection">
+            <xs:sequence>
+              <xs:element name="port" type="xs:unsignedShort" minOccurs="0"/>
+              <xs:element name="target" type="xs:string" minOccurs="0"/>
+              <xs:element name="username" type="xs:string" minOccurs="0"/>
+              <xs:element name="password" type="xs:string" minOccurs="0"/>
+              <xs:element name="portal" type="xs:string" minOccurs="0"/>
+            </xs:sequence>
+  </xs:group>
+
+  <xs:group name="FileStorageConnection">
+            <xs:sequence>
+              <xs:element name="path" type="xs:string" minOccurs="0"/>
+              <xs:element name="mount_options" type="xs:string" minOccurs="0"/>
+              <xs:element name="vfs_type" type="xs:string" minOccurs="0"/>
+              <xs:element name="nfs_version" type="xs:string" minOccurs="0"/>
+              <xs:element name="nfs_timeo" type="xs:unsignedShort" minOccurs="0"/>
+              <xs:element name="nfs_retrans" type="xs:unsignedShort" minOccurs="0"/>
+            </xs:sequence>
+  </xs:group>
+
+
   <xs:element name="storage" type="Storage"/>
 
   <xs:complexType name="Storage">
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
-          <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:group ref="BaseStorageConnection"/>
           <xs:choice>
             <xs:group ref="NfsStorage"/>
             <xs:group ref="IscsiStorage"/>
+            <xs:group ref="IscsiStorageConnection"/>
           </xs:choice>
           <xs:element ref="host" minOccurs="0"/>
         </xs:sequence>
@@ -2018,6 +2040,21 @@
             </xs:appinfo>
           </xs:annotation>
           <xs:element ref="storage_domain" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="StorageConnections">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="StorageConnections"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="storage" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

@@ -131,6 +131,8 @@ import org.ovirt.engine.api.resource.StorageDomainContentsResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
 import org.ovirt.engine.api.resource.StorageDomainsResource;
 import org.ovirt.engine.api.resource.StorageResource;
+import org.ovirt.engine.api.resource.StorageServerConnectionResource;
+import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
 import org.ovirt.engine.api.resource.TagResource;
 import org.ovirt.engine.api.resource.TagsResource;
 import org.ovirt.engine.api.resource.TemplateDiskResource;
@@ -267,7 +269,8 @@ public class LinkHelper {
         map = new ParentToCollectionMap(SnapshotResource.class, SnapshotsResource.class, VM.class);
         TYPES.put(Snapshot.class, map);
 
-        map = new ParentToCollectionMap(StorageResource.class, HostStorageResource.class, Host.class);
+        map = new ParentToCollectionMap(StorageServerConnectionResource.class, StorageServerConnectionsResource.class);
+        map.add(StorageResource.class, HostStorageResource.class, Host.class);
         TYPES.put(Storage.class, map);
 
         map = new ParentToCollectionMap(StorageDomainResource.class, StorageDomainsResource.class);

@@ -3370,6 +3370,69 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 
+- name: /api/storageconnections|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
 
+- name: /api/storageconnections/{storageconnection:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
 
+- name: /api/storageconnections/{storageconnection:id}|rel=delete
+  request:
+    body:
+      parameterType: Host
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:  {host.id|name: 'xs:string'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 
+- name: /api/storageconnections/{storageconnection:id}|rel=update
+  request:
+    body:
+      parameterType: Storage
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:  {storageconnection.port: 'xs:int', storageconnection.username: 'xs:string', storageconnection.password: 'xs:string',
+                             storageconnection.iqn: 'xs:string', storageconnection.address: 'xs:string' }
+      - mandatoryArguments: {}
+        optionalArguments:  {storageconnection.nfs_timeo: 'xs:string', storageconnection.nfs_version: 'xs:string', storageconnection.nfs_retrans: 'xs:string',
+                             storageconnection.address: 'xs:string', storageconnection.path: 'xs:string'}
+      - mandatoryArguments: {}
+        optionalArguments:  {storageconnection.mount_options: 'xs:string', storageconnection.vfs_type: 'xs:string',
+                             storageconnection.address: 'xs:string', storageconnection.path: 'xs:string'}
+      - mandatoryArguments: {}
+        optionalArguments:  {storageconnection.path: 'xs:string'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+
+- name: /api/storageconnections|rel=add
+  request:
+    body:
+      parameterType: Storage
+      signatures:
+      - mandatoryArguments: {storageconnection.address: 'xs:string', storageconnection.type: 'xs:string', storageconnection.iqn: 'xs:string', storageconnection.port: 'xs:int'}
+        optionalArguments:  {storageconnection.username: 'xs:string', storageconnection.password: 'xs:string'}
+      - mandatoryArguments: {storageconnection.address: 'xs:string', storageconnection.type: 'xs:string', storageconnection.path: 'xs:string'}
+        optionalArguments:  {storageconnection.nfs_timeo: 'xs:string', storageconnection.nfs_version: 'xs:string', storageconnection.nfs_retrans: 'xs:string'}
+      - mandatoryArguments: {storageconnection.type: 'xs:string', storageconnection.path: 'xs:string', storageconnection.vfs_type: 'xs:string'}
+        optionalArguments:  {storageconnection.address: 'xs:string', storageconnection.mount_options: 'xs:string'}
+      - mandatoryArguments: {storageconnection.type: 'xs:string', storageconnection.path: 'xs:string'}
+        optionalArguments:  {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
