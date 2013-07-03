@@ -36,7 +36,7 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
         if (getEnclosingCommand().getParameters().getTaskGroupSuccess()) {
             getReturnValue().setSucceeded(false);
             beforeTask();
-            Guid taskId = getEnclosingCommand().persistAsyncTaskPlaceHolder(getEnclosingCommand().getActionType());
+            Guid taskId = getEnclosingCommand().persistAsyncTaskPlaceHolder();
 
             addTask(taskId, Backend.getInstance().getResourceManager()
                     .RunVdsCommand(getVDSCommandType(), getVDSParameters()), false);

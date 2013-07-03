@@ -76,11 +76,6 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     }
 
     @Override
-    public Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand) {
-        return super.persistAsyncTaskPlaceHolder(parentCommand);
-    }
-
-    @Override
     public Guid createTask(Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand,
@@ -102,6 +97,14 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     @Override
     public ArrayList<Guid> getTaskIdList() {
         return super.getTaskIdList();
+    }
+
+    public Guid persistAsyncTaskPlaceHolder() {
+        return super.persistAsyncTaskPlaceHolder(getActionType());
+    }
+
+    public Guid persistAsyncTaskPlaceHolder(String taskKey) {
+        return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }
 
     @Override

@@ -46,8 +46,8 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public abstract class VmCommand<T extends VmOperationParameterBase> extends CommandBase<T> {
 
-    private static final String DELETE_PRIMARY_IMAGE_TASK_KEY = "DELETE_PRIMARY_IMAGE_TASK_KEY";
-    private static final String DELETE_SECONDARY_IMAGES_TASK_KEY = "DELETE_SECONDARY_IMAGES_TASK_KEY";
+    public static final String DELETE_PRIMARY_IMAGE_TASK_KEY = "DELETE_PRIMARY_IMAGE_TASK_KEY";
+    public static final String DELETE_SECONDARY_IMAGES_TASK_KEY = "DELETE_SECONDARY_IMAGES_TASK_KEY";
     private static final int Kb = 1024;
     protected final static int MAX_NETWORK_INTERFACES_SUPPORTED = 8;
     private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);

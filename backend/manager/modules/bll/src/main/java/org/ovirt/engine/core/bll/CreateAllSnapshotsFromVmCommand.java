@@ -572,4 +572,12 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     public ArrayList<Guid> getTaskIdList() {
         return super.getTaskIdList();
     }
+
+    public Guid persistAsyncTaskPlaceHolder() {
+        return super.persistAsyncTaskPlaceHolder(getActionType());
+    }
+
+    public Guid persistAsyncTaskPlaceHolder(String taskKey) {
+        return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
+    }
 }
