@@ -34,8 +34,31 @@ public class Guid implements Serializable, Comparable<Guid> {
     }
 
     public Guid(byte[] guid, boolean keepByteOrder) {
-        String guidAsStr = getStrRepresentationOfGuid(guid, keepByteOrder);
-        uuid = UUID.fromString(guidAsStr);
+        // Note that the indexes are computed modulo the length of the input
+        // array because this is how they used to be calculated in the past,
+        // and some components (the REST API, for example) build GUIDs from
+        // array of bytes created from arbitrary strings, for example, in the
+        // BackendCapabilitiesResource class a GUID is built from the version
+        // string with this code:
+        //
+        //    public String generateId(Version v) {
+        //      Guid guid = new Guid((v.getMajor()+"."+v.getMinor()).getBytes(),true);
+        //      return guid.toString();
+        //    }
+        //
+        // This may result in an array of bytes shorter than the 16 bytes
+        // needed to build a GUID, thus the modulo operation is required.
+        byte[] indexes = keepByteOrder? KEEP_BYTE_ORDER_INDICES: CHANGE_BYTE_ORDER_INDICES;
+        long msb = 0;
+        long lsb = 0;
+        int length = guid.length;
+        for (int i = 0; i <= 7; i++) {
+            msb = (msb << 8) | (guid[indexes[i] % length] & 0xff);
+        }
+        for (int i = 8; i <= 15; i++) {
+            lsb = (lsb << 8) | (guid[indexes[i] % length] & 0xff);
+        }
+        uuid = new UUID(msb, lsb);
     }
 
     public Guid(String candidate) {
@@ -99,63 +122,5 @@ public class Guid implements Serializable, Comparable<Guid> {
     @Override
     public String toString() {
         return uuid.toString();
-    }
-
-    /**
-     * Gets a string representation of GUID
-     *
-     * @param inguid
-     *            byte array containing the GUID data.
-     * @param keepByteOrder
-     *            determines if to keep the byte order in the string representation or not. For some systems as MSSQL
-     *            the bytes order should be swapped before converting to String, and for other systems (such as
-     *            ActiveDirectory) it should be kept.
-     * @return String representation of GUID
-     */
-    private static String getStrRepresentationOfGuid(byte[] inguid,
-            boolean keepByteOrder) {
-
-        StringBuilder strGUID = new StringBuilder();
-
-        byte[] byteOrderIndices = null;
-
-        if (keepByteOrder) {
-            byteOrderIndices = KEEP_BYTE_ORDER_INDICES;
-        } else {
-            byteOrderIndices = CHANGE_BYTE_ORDER_INDICES;
-        }
-
-        int length = inguid.length;
-        // A GUID format looks like xxxx-xx-xx-xx-xxxxxx where each "x"
-        // represents a byte in hexadecimal format
-
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[0 % length]] & 0xFF));
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[1 % length]] & 0xFF));
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[2 % length]] & 0xFF));
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[3 % length]] & 0xFF));
-        strGUID.append('-');
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[4 % length]] & 0xFF));
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[5 % length]] & 0xFF));
-        strGUID.append('-');
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[6 % length]] & 0xFF));
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[7 % length]] & 0xFF));
-        strGUID.append('-');
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[8 % length]] & 0xFF));
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[9 % length]] & 0xFF));
-        strGUID.append('-');
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[10 % length]] & 0xFF));
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[11 % length]] & 0xFF));
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[12 % length]] & 0xFF));
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[13 % length]] & 0xFF));
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[14 % length]] & 0xFF));
-        strGUID.append(addLeadingZero(inguid[byteOrderIndices[15 % length]] & 0xFF));
-
-        return strGUID.toString();
-
-    }
-
-    private static String addLeadingZero(int k) {
-        return (k <= 0xF) ? '0' + Integer.toHexString(k) : Integer
-                .toHexString(k);
     }
 }
