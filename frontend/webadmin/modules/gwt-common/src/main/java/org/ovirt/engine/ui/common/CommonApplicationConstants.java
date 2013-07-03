@@ -1332,4 +1332,60 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Copy VM permissions")
     String copyVmPermissions();
 
+    @DefaultStringValue("Server")
+    String server();
+
+    @DefaultStringValue("Desktop")
+    String desktop();
+
+    @DefaultStringValue("Stateless Server")
+    String statelessServer();
+
+    @DefaultStringValue("Stateless Desktop")
+    String statelessDesktop();
+
+    @DefaultStringValue("Desktop in Preview")
+    String desktopInPreview();
+
+    @DefaultStringValue("Server in Preview")
+    String serverInPreview();
+
+    @DefaultStringValue("Run Once")
+    String runOnce();
+
+    @DefaultStringValue("Up")
+    String up();
+
+    @DefaultStringValue("Rebooting")
+    String rebooting();
+
+    @DefaultStringValue("Image Locked")
+    String imageLocked();
+
+    @DefaultStringValue("Migrating")
+    String migrating();
+
+    @DefaultStringValue("Suspended")
+    String suspended();
+
+    @DefaultStringValue("Paused")
+    String paused();
+
+    @DefaultStringValue("Unknown")
+    String unknown();
+
+    @DefaultStringValue("Down")
+    String down();
+
+    @DefaultStringValue("Powering Up")
+    String poweringUp();
+
+    @DefaultStringValue("Restoring")
+    String restoring();
+
+    @DefaultStringValue("Powering Down")
+    String poweringDown();
+
+    @DefaultStringValue("Not Responding")
+    String notResponding();
 }

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.table.column;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Translator;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -20,6 +21,8 @@ public class VmStatusCell extends AbstractCell<VM> {
 
     ApplicationResources resources = ClientGinjectorProvider.instance().getApplicationResources();
 
+    CommonApplicationConstants constants = ClientGinjectorProvider.instance().getApplicationConstants();
+
     @Override
     public void render(Context context, VM vm, SafeHtmlBuilder sb) {
         // Nothing to render if no vm is provided:
@@ -29,29 +32,64 @@ public class VmStatusCell extends AbstractCell<VM> {
 
         // Find the image corresponding to the status of the vm:
         VMStatus status = vm.getStatus();
-        ImageResource statusImage = null;
+        ImageResource statusImage;
+        String tooltip;
+
         switch (status) {
         case Up:
-            statusImage = resources.upImage();
+            if (vm.isRunOnce()) {
+                tooltip = constants.runOnce();
+                statusImage = resources.runOnceUpImage();
+            } else {
+                tooltip = constants.up();
+                statusImage = resources.vmStatusRunning();
+            }
+            break;
+        case RestoringState:
+            tooltip = constants.restoring();
+            statusImage = resources.vmStatusStarting();
             break;
         case PoweringUp:
-        case RebootInProgress:
-            statusImage = resources.playImage();
+            tooltip = constants.poweringUp();
+            statusImage = resources.vmStatusStarting();
             break;
+        case PoweringDown:
+            tooltip = constants.poweringDown();
+            statusImage = resources.vmStatusPoweringDown();
+            break;
+        case RebootInProgress:
+            tooltip = constants.rebooting();
+            statusImage = resources.vmStatusStarting();
+            break;
+        case SavingState:
         case WaitForLaunch:
         case ImageLocked:
+            tooltip = constants.imageLocked();
+            statusImage = resources.vmStatusWait();
+            break;
         case MigratingFrom:
         case MigratingTo:
-            statusImage = resources.waitImage();
+            tooltip = constants.migrating();
+            statusImage = resources.migrationImage();
             break;
         case Suspended:
+            tooltip = constants.suspended();
+            statusImage = resources.suspendedImage();
+            break;
         case Paused:
-            statusImage = resources.pauseImage();
+            tooltip = constants.paused();
+            statusImage = resources.frozenImage();
             break;
         case Unknown:
+            tooltip = constants.unknown();
+            statusImage = resources.questionMarkImage();
+            break;
+        case NotResponding:
+            tooltip = constants.notResponding();
             statusImage = resources.questionMarkImage();
             break;
         default:
+            tooltip = constants.down();
             statusImage = resources.stopImage();
             break;
         }
@@ -66,9 +104,10 @@ public class VmStatusCell extends AbstractCell<VM> {
         ApplicationTemplates applicationTemplates = ClientGinjectorProvider.instance().getApplicationTemplates();
 
         if (alertImageHtml != null) {
+            // this already has the tooltip set
             sb.append(applicationTemplates.statusWithAlertTemplate(statusImageHtml, alertImageHtml));
         } else {
-            sb.append(applicationTemplates.statusTemplate(statusImageHtml));
+            sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip));
         }
 
     }

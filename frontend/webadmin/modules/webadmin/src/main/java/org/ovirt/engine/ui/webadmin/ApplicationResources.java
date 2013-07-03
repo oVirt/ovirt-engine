@@ -39,9 +39,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/datacenters.png")
     ImageResource dataCentersImage();
 
-    @Source("images/desktop.gif")
-    ImageResource desktopImage();
-
     @Override
     @Source("images/disk.png")
     ImageResource diskImage();
@@ -139,9 +136,6 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/icon_providers.png")
     ImageResource providersImage();
 
-    //    @Source("images/question_mark.png")
-    //    ImageResource questionMarkImage();
-
     @Source("images/log_warning.gif")
     ImageResource alertImage();
 
@@ -156,9 +150,6 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/search_button.png")
     ImageResource searchButtonImage();
-
-    @Source("images/server.png")
-    ImageResource serverImage();
 
     @Source("images/split.png")
     ImageResource splitImage();
@@ -333,4 +324,42 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/icn_tree_networks.png")
     ImageResource networksTreeImage();
+
+    // Vm Types
+    @Source("images/vmType/desktop.gif")
+    ImageResource desktopImage();
+
+    @Source("images/vmType/server.png")
+    ImageResource serverImage();
+
+    @Source("images/vmType/vm_desktop_stateless.png")
+    ImageResource desktopStateless();
+
+    @Source("images/vmType/vm_server_stateless.png")
+    ImageResource serverStateless();
+
+    // custom statuses
+    @Source("images/vmStatus/running.png")
+    ImageResource vmStatusRunning();
+
+    @Source("images/vmStatus/starting.png")
+    ImageResource vmStatusStarting();
+
+    @Source("images/vmStatus/wait.png")
+    ImageResource vmStatusWait();
+
+    @Source("images/vmStatus/stopping.png")
+    ImageResource vmStatusPoweringDown();
+
+    @Source("images/vmStatus/vm_migration.png")
+    ImageResource migrationImage();
+
+    @Source("images/vmStatus/vm_run_runonce.png")
+    ImageResource runOnceUpImage();
+
+    @Source("images/vmStatus/paused.png")
+    ImageResource suspendedImage();
+
+    @Source("images/vmStatus/vm_freeze.png")
+    ImageResource frozenImage();
 }

@@ -277,7 +277,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Paused")
     String Paused();
 
-    @DefaultStringValue("Paused")
+    @DefaultStringValue("Suspended")
     String Suspended();
 
     @DefaultStringValue("Powering Down")

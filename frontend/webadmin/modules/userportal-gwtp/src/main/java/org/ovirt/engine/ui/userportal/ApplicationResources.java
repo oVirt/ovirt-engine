@@ -81,6 +81,15 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/status/WAITING.png")
     ImageResource vmStatusWaiting();
 
+    @Source("images/status/vm_freeze.png")
+    ImageResource frozenImage();
+
+    @Source("images/status/vm_migration.png")
+    ImageResource migrationImage();
+
+    @Source("images/status/vm_run_runonce.png")
+    ImageResource runOnceUpImage();
+
     @Source("css/SideTabExtendedVmStyle.css")
     SideTabExtendedVmStyle sideTabExtendedVmStyle();
 
