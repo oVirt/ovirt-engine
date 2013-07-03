@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dal.dbbroker;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Types;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,11 +34,11 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ActionGroupDAO;
 import org.ovirt.engine.core.dao.AdGroupDAO;
@@ -328,31 +327,6 @@ public class DbFacade {
                         .returningResultSet("RETURN_VALUE", mapper).execute(parameterSource);
 
         return (Integer) DbFacadeUtils.asSingleResult((List<?>) (dbResults.get("RETURN_VALUE")));
-    }
-
-    @SuppressWarnings("unchecked")
-    public List<Guid> getOrderedVmGuidsForRunMultipleActions(List<Guid> guids) {
-        RowMapper<Guid> mapper = new RowMapper<Guid>() {
-            @Override
-            public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return Guid.createGuidFromStringDefaultEmpty(rs.getString("vm_guid"));
-            }
-        };
-
-        // Constructing an IN clause of SQL that contains a list of GUIDs
-        // The in clause looks like ('guid1','guid2','guid3')
-        StringBuilder guidsSb = new StringBuilder();
-        guidsSb.append("'").append(StringUtils.join(guids, "','")).append("'");
-
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_guids", guidsSb
-                .toString());
-
-        Map<String, Object> dbResults = dbEngineDialect.createJdbcCallForQuery(jdbcTemplate).withProcedureName(
-                "GetOrderedVmGuidsForRunMultipleActions").returningResultSet("RETURN_VALUE", mapper).execute(
-                parameterSource);
-
-        return (ArrayList<Guid>) dbResults.get("RETURN_VALUE");
-
     }
 
     /**

@@ -83,4 +83,6 @@ public interface VmStaticDAO extends GenericDao<VmStatic, Guid> {
      * @return
      */
     public void incrementDbGeneration(Guid id);
+
+    List<Guid> getOrderedVmGuidsForRunMultipleActions(List<Guid> guids);
 }

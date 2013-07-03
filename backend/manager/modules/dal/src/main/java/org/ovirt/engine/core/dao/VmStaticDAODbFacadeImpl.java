@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -166,6 +167,20 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
         return getCallsHandler().executeRead("GetDbGeneration", getLongMapper()
                 , getCustomMapSqlParameterSource()
                         .addValue("vm_guid", id));
+    }
+
+    public List<Guid> getOrderedVmGuidsForRunMultipleActions(List<Guid> guids) {
+        // Constructing an IN clause of SQL that contains a list of GUIDs
+        // The in clause looks like ('guid1','guid2','guid3')
+        StringBuilder guidsSb = new StringBuilder();
+        guidsSb.append("'").append(StringUtils.join(guids, "','")).append("'");
+
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("vm_guids", guidsSb
+                .toString());
+
+        return getCallsHandler().executeReadList("GetOrderedVmGuidsForRunMultipleActions", createGuidMapper()
+                , getCustomMapSqlParameterSource().addValue("vm_guids", guidsSb
+                .toString()));
     }
 
     /**

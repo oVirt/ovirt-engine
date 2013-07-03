@@ -9,10 +9,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -27,6 +29,9 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
     private static final Guid VDS_STATIC_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
     private static final Guid VDS_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+
+    private static final String STATIC_VM_NAME = "rhel5-pool-50";
+    private static final int NUM_OF_VM_STATIC_IN_FIXTURES = 3;
 
     private VmStaticDAO dao;
     private VmStatic existingVmStatic;
@@ -220,5 +225,176 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
 
         assertFalse(namesPinnedToHost.isEmpty());
         assertTrue(namesPinnedToHost.contains(existingVmStatic.getName()));
+    }
+
+    /**
+     * Checking if the function gets the VmStatics in correct order according to priority
+     */
+    @Test
+    public void testGetOrderedVmGuidsForRunMultipleActionsByPriority() {
+        List<VmStatic> vmStatics = dao.getAllByName(STATIC_VM_NAME);
+        VmStatic[] vmStaticArrayInDescOrder = initVmStaticsOrderedByPriority(vmStatics);
+
+        // execute
+        List<Guid> vmStaticGuidsInDb =
+                dao.getOrderedVmGuidsForRunMultipleActions(getListOfGuidFromListOfVmStatics(vmStatics));
+        assertNotNull(vmStaticGuidsInDb);
+        Guid[] guidsArrayToBeChecked = vmStaticGuidsInDb.toArray(new Guid[vmStaticGuidsInDb.size()]);
+
+        boolean result = compareGuidArrays(guidsArrayToBeChecked, vmStaticArrayInDescOrder);
+        assertTrue(result);
+    }
+
+    /**
+     * Checking if the function gets the VmStatics in correct order according to auto_startup
+     */
+    @Test
+    public void testGetOrderedVmGuidsForRunMultipleActionsByAutoStartup() {
+        List<VmStatic> vmStatics = dao.getAllByName(STATIC_VM_NAME);
+        VmStatic[] vmStaticArrayInDescOrder = initVmStaticsOrderedByAutoStartup(vmStatics);
+
+        // execute
+        List<Guid> vmStaticGuidsInDb =
+                dao.getOrderedVmGuidsForRunMultipleActions(getListOfGuidFromListOfVmStatics(vmStatics));
+        assertNotNull(vmStaticGuidsInDb);
+        Guid[] guidsArrayToBeChecked = vmStaticGuidsInDb.toArray(new Guid[vmStaticGuidsInDb.size()]);
+
+        boolean result = compareGuidArrays(guidsArrayToBeChecked, vmStaticArrayInDescOrder);
+        assertTrue(result);
+    }
+
+    /**
+     * Checking if the function gets the VmStatics in correct order according to MigrationSupport
+     */
+    @Test
+    public void testGetOrderedVmGuidsForRunMultipleActionsByMigrationSupport() {
+        List<VmStatic> vmStatics = dao.getAllByName(STATIC_VM_NAME);
+        VmStatic[] vmStaticArrayInDescOrder = initVmStaticsOrderedByMigrationSupport(vmStatics);
+
+        // execute
+        List<Guid> vmStaticGuidsInDb =
+                dao.getOrderedVmGuidsForRunMultipleActions(getListOfGuidFromListOfVmStatics(vmStatics));
+        assertNotNull(vmStaticGuidsInDb);
+        Guid[] guidsArrayToBeChecked = vmStaticGuidsInDb.toArray(new Guid[vmStaticGuidsInDb.size()]);
+
+        boolean result = compareGuidArrays(guidsArrayToBeChecked, vmStaticArrayInDescOrder);
+        assertTrue(result);
+    }
+
+    /**
+     * {@code initVmStaticsOrderedByAutoStartup(List)} is the first method in VMs order selection tests. The other init
+     * methods: <br>
+     * {@code initVmStaticsOrderedByPriority} and {@code initVmStaticsOrderedByAutoStartup} are relying on each other
+     * for creating an array of VM Static objects.<br>
+     * Each of the methods modifies the VM static array according to the column which is being tested, started from the
+     * least important column to the most.<br>
+     * That way prioritizing a preceded column should be reflected in the selection and therefore to validate the order
+     * is maintained.
+     *
+     * @return an array of VmStatics, in descending order according to: auto_startup, priority, MigrationSupport.<br>
+     *         The MigrationSupport is the one being checked.<br>
+     */
+    private VmStatic[] initVmStaticsOrderedByMigrationSupport(List<VmStatic> vmStatics) {
+        VmStatic[] vmStaticArray = new VmStatic[NUM_OF_VM_STATIC_IN_FIXTURES];
+
+        vmStaticArray = vmStatics.toArray(vmStaticArray);
+
+        // initialize the VMs with equal settings: non HA, priority 1 and MIGRATABLE
+        for (VmStatic element : vmStaticArray) {
+            element.setAutoStartup(false);
+            element.setPriority(1);
+            element.setMigrationSupport(MigrationSupport.MIGRATABLE);
+        }
+
+        // set higher migration support value for the first VM
+        vmStaticArray[0].setMigrationSupport(MigrationSupport.PINNED_TO_HOST);
+        vmStaticArray[1].setMigrationSupport(MigrationSupport.IMPLICITLY_NON_MIGRATABLE);
+        updateArrayOfVmStaticsInDb(vmStaticArray);
+        return vmStaticArray;
+    }
+
+    /**
+     * Creates an array of VM static which was initiated for MigrationSupport order, and modified the priority to
+     * reflect the precedence of the priority column on top the MigrationSupport.
+     *
+     * @return an array of VmStatics, in descending order according to: auto_startup, priority, MigrationSupport. The
+     *         priority is the one being checked.
+     */
+    private VmStatic[] initVmStaticsOrderedByPriority(List<VmStatic> vmStatics) {
+        VmStatic[] vmStaticArray = initVmStaticsOrderedByMigrationSupport(vmStatics);
+
+        // Swapping the first two VmStatics
+        VmStatic tempVmStatic = vmStaticArray[0];
+        vmStaticArray[0] = vmStaticArray[1];
+        vmStaticArray[1] = tempVmStatic;
+
+        int arrayLength = vmStaticArray.length;
+
+        // Setting the array in descending order due to their priorities to maintain its correctness
+        for (int i = 0; i < arrayLength; i++) {
+            vmStaticArray[i].setPriority(arrayLength - i + 1);
+        }
+
+        updateArrayOfVmStaticsInDb(vmStaticArray);
+        return vmStaticArray;
+    }
+
+    /**
+     * Creates an array of VM static which was initiated for Priority and MigrationSupport order, and modified the
+     * auto-startup to reflect the precedence of the auto-startup column on top the Priority.
+     *
+     * @return an array of VmStatics, in descending order according to: auto_startup, priority, MigrationSupport. The
+     *         auto_startup is the one being checked
+     */
+    private VmStatic[] initVmStaticsOrderedByAutoStartup(List<VmStatic> vmStatics) {
+        VmStatic[] vmStaticArray = initVmStaticsOrderedByPriority(vmStatics);
+
+        // Swapping the first two VmStatics
+        VmStatic tempVmStatic = vmStaticArray[0];
+        vmStaticArray[0] = vmStaticArray[1];
+        vmStaticArray[1] = tempVmStatic;
+
+        // Maintaining the order correctness of the elements by incrementing the auto_startup of the first element
+        vmStaticArray[0].setAutoStartup(true);
+
+        updateArrayOfVmStaticsInDb(vmStaticArray);
+        return vmStaticArray;
+    }
+
+    /**
+     * Updates the given array of vmStatics in the Database
+     */
+    private void updateArrayOfVmStaticsInDb(VmStatic[] vmStaticArray) {
+        for (VmStatic element : vmStaticArray) {
+            dao.update(element);
+        }
+    }
+
+    /**
+     * Converts a list of vmStatics to a list if Guids
+     */
+    private static List<Guid> getListOfGuidFromListOfVmStatics(List<VmStatic> vmStatics) {
+        List<Guid> listOfGuidToReturn = new ArrayList<Guid>();
+        for (VmStatic vmStatic : vmStatics) {
+            listOfGuidToReturn.add(vmStatic.getId());
+        }
+        return listOfGuidToReturn;
+    }
+
+    /**
+     * Compares between the two given guid arrays, returns true if they are equal and false otherwise
+     */
+    private static boolean compareGuidArrays(Guid[] guidsArrayToBeChecked, VmStatic[] vmStaticArrayInDescOrder) {
+        boolean returnValue = true;
+        if (guidsArrayToBeChecked.length == vmStaticArrayInDescOrder.length) {
+            for (int i = 0; i < guidsArrayToBeChecked.length; i++) {
+                if (!guidsArrayToBeChecked[i].equals(vmStaticArrayInDescOrder[i].getId())) {
+                    returnValue = false;
+                    break;
+                }
+            }
+        }
+
+        return returnValue;
     }
 }

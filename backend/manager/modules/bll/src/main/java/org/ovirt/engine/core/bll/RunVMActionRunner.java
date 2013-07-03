@@ -27,7 +27,7 @@ public class RunVMActionRunner extends SortedMultipleActionsRunnerBase {
 
         List<Guid> guids = new ArrayList<Guid>();
         guids.addAll(runVmCommandsMap.keySet());
-        List<Guid> orderedGuids = DbFacade.getInstance().getOrderedVmGuidsForRunMultipleActions(guids);
+        List<Guid> orderedGuids = DbFacade.getInstance().getVmStaticDao().getOrderedVmGuidsForRunMultipleActions(guids);
 
         commandsList.clear();
 
