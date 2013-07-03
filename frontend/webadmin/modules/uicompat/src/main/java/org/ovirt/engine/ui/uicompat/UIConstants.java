@@ -1754,8 +1754,14 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Error in fetching fingerprint")
     String errorLoadingFingerprint();
 
+    @DefaultStringValue("Fetched fingerprint successfully")
+    String successLoadingFingerprint();
+
     @DefaultStringValue("Fingerprint needs to be verified before importing the gluster configuration")
     String fingerprintNotVerified();
+
+    @DefaultStringValue("Address Error: ")
+    String fingerprintAddressError();
 
     // Gluster Swift
     @DefaultStringValue("Manage Gluster Swift")
@@ -1943,4 +1949,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Cann't switch host cluster between trust cluster and non-trust cluster due to host existed in the cluster")
     String trustedServiceDisabled();
+
+    @DefaultStringValue("22")
+    String defaultHostSSHPort();
+
+    @DefaultStringValue("root")
+    String defaultUserName();
 }

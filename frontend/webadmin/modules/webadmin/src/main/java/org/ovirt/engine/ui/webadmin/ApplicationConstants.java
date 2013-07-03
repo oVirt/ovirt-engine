@@ -403,14 +403,29 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String hostPopupNameLabel();
 
+    @DefaultStringValue("SSH Port")
+    String hostPopupPortLabel();
+
     @DefaultStringValue("Address")
     String hostPopupHostAddressLabel();
 
-    @DefaultStringValue("Fingerprint")
+    @DefaultStringValue("SSH Fingerprint")
     String hostPopupHostFingerprintLabel();
 
-    @DefaultStringValue("Root Password")
-    String hostPopupRootPasswordLabel();
+    @DefaultStringValue("User Name")
+    String hostPopupUsernameLabel();
+
+    @DefaultStringValue("root")
+    String hostPopupDefaultUsername();
+
+    @DefaultStringValue("SSH Public Key")
+    String hostPopupPublicKeyLable();
+
+    @DefaultStringValue("Password")
+    String hostPopupPasswordLabel();
+
+    @DefaultStringValue("Authentication")
+    String hostPopupAuthLabel();
 
     @DefaultStringValue("Automatically configure host firewall")
     String hostPopupOverrideIpTablesLabel();
@@ -445,7 +460,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Type")
     String hostPopupPmTypeLabel();
 
-    @DefaultStringValue("Port")
+    @DefaultStringValue("SSH Port")
     String hostPopupPmPortLabel();
 
     @DefaultStringValue("Slot")
@@ -468,6 +483,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Down")
     String hostPopupDownButtonLabel();
+
+    @DefaultStringValue("Fetch")
+    String hostPopupFetchButtonLabel();
 
     @DefaultStringValue("Source")
     String hostPopupSourceText();
@@ -2208,7 +2226,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Apply")
     String hostsPopupApply();
 
-    @DefaultStringValue("Fingerprint")
+    @DefaultStringValue("SSH Fingerprint")
     String hostsPopupFingerprint();
 
     // Tag
@@ -2855,4 +2873,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Public Network")
     String publicNetwork();
+
+    @DefaultStringValue("Enter host fingerprint or <a>fetch</a> manually from host")
+    String fetchingHostFingerprint();
 }

@@ -827,6 +827,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             host.setHostName(hostDetailModel.getAddress());
             host.setSshKeyFingerprint(hostDetailModel.getFingerprint());
             host.setPort(54321);
+            host.setSshPort(22);  // TODO: get from UI, till than using defaults.
+            host.setSshUsername("root"); //$NON-NLS-1$
 
             host.setVdsGroupId((Guid) hostsModel.getClusterModel().getClusterId());
             host.setpm_enabled(false);

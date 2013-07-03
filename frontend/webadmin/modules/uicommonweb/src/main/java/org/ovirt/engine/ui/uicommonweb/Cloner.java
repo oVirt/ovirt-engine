@@ -210,7 +210,8 @@ public final class Cloner
 
         obj.setHostName(instance.getHostName());
         obj.setSshKeyFingerprint(instance.getSshKeyFingerprint());
-
+        obj.setSshPort(instance.getSshPort());
+        obj.setSshUsername(instance.getSshUsername());
         obj.setManagementIp(instance.getManagementIp());
         obj.setPmUser(instance.getPmUser());
         obj.setPmPassword(instance.getPmPassword());

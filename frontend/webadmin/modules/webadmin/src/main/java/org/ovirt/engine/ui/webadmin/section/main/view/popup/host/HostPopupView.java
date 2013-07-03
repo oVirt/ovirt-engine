@@ -2,10 +2,11 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -14,16 +15,19 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
+import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -37,7 +41,11 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.dom.client.Style.TextDecoration;
+import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -49,11 +57,13 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
 
@@ -102,6 +112,21 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     EntityModelTextBoxEditor nameEditor;
 
     @UiField
+    @Path(value = "userName.entity")
+    @WithElementId("userName")
+    EntityModelTextBoxEditor userNameEditor;
+
+    @UiField
+    @Path(value = "fetchSshFingerprint.entity")
+    @WithElementId("fetchSshFingerprint")
+    EntityModelTextBoxEditor fetchSshFingerprint;
+
+    @UiField
+    @Ignore
+    @WithElementId("fetchResult")
+    Label fetchResult;
+
+    @UiField
     @Path(value = "providerSearchFilter.entity")
     @WithElementId("providerSearchFilter")
     EntityModelTextBoxEditor providerSearchFilterEditor;
@@ -122,9 +147,19 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     EntityModelTextBoxEditor hostAddressEditor;
 
     @UiField
-    @Path(value = "rootPassword.entity")
-    @WithElementId("rootPassword")
-    EntityModelPasswordBoxEditor rootPasswordEditor;
+    @Path(value = "hostPort.entity")
+    @WithElementId("hostPort")
+    EntityModelTextBoxEditor hostPortEditor;
+
+    @UiField
+    @Path(value = "userPassword.entity")
+    @WithElementId("userPassword")
+    EntityModelPasswordBoxEditor passwordEditor;
+
+    @UiField(provided = true)
+    @Path(value = "publicKey.entity")
+    @WithElementId("publicKey")
+    EntityModelTextAreaLabelEditor publicKeyEditor;
 
     @UiField
     @Path(value = "OverrideIpTables.entity")
@@ -255,6 +290,10 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     UiCommandButton downButton;
 
     @UiField
+    @Ignore
+    SimplePanel fetchPanel;
+
+    @UiField
     Image updateHostsButton;
 
     @UiField
@@ -279,6 +318,24 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField
     @Ignore
     VerticalPanel spmPanel;
+
+    @UiField(provided = true)
+    @Ignore
+    @WithElementId("rbPublicKey")
+    public RadioButton rbPublicKey;
+
+    @UiField(provided = true)
+    @Ignore
+    @WithElementId("rbPassword")
+    public RadioButton rbPassword;
+
+    @UiField
+    @Ignore
+    Label authLabel;
+
+    @UiField
+    @Ignore
+    Label fingerprintLabel;
 
     @UiField(provided=true)
     @Ignore
@@ -307,24 +364,37 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField
     FlowPanel externalProviderPanel;
 
+    @UiField
+    @Ignore
+    AdvancedParametersExpander expander;
+
+    @UiField
+    @Ignore
+    FlowPanel expanderContent;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private final CommonApplicationTemplates applicationTemplates;
 
     private final ApplicationResources resources;
 
+    private final ApplicationConstants appConstants;
+
     @Inject
     public HostPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, CommonApplicationTemplates applicationTemplates) {
         super(eventBus, resources);
+
+        // Inject a reference to the messages:
+        appConstants = constants;
         this.resources = resources;
         this.applicationTemplates = applicationTemplates;
         initEditors();
         initInfoIcon(constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+        initExpander();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
         addStyles();
-
         driver.initialize(this);
         applyModeCustomizations();
     }
@@ -344,6 +414,9 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         providerSearchFilterEditor.setLabelStyleName(style.emptyEditor());
         providerSearchFilterLabel.addContentWidgetStyleName(style.emptyEditor());
         providerSearchFilterLabel.setStyleName(style.searchFilterLabel());
+        fetchSshFingerprint.addContentWidgetStyleName(style.fingerprintEditor());
+        publicKeyEditor.addContentWidgetStyleName(style.pkEditor());
+        expanderContent.setStyleName(style.expanderContent());
     }
 
     private void initEditors() {
@@ -397,9 +470,13 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
             }
         });
 
+        publicKeyEditor = new EntityModelTextAreaLabelEditor(true, true);
+
         // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         externalHostProviderEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        rbPassword = new RadioButton("1"); //$NON-NLS-1$
+        rbPublicKey = new RadioButton("1"); //$NON-NLS-1$
     }
 
     void localize(ApplicationConstants constants) {
@@ -408,12 +485,17 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         dataCenterEditor.setLabel(constants.hostPopupDataCenterLabel());
         clusterEditor.setLabel(constants.hostPopupClusterLabel());
         nameEditor.setLabel(constants.hostPopupNameLabel());
+        userNameEditor.setLabel(constants.hostPopupUsernameLabel());
         hostAddressEditor.setLabel(constants.hostPopupHostAddressLabel());
-        rootPasswordEditor.setLabel(constants.hostPopupRootPasswordLabel());
+        hostPortEditor.setLabel(constants.hostPopupPortLabel());
+        authLabel.setText(constants.hostPopupAuthLabel());
+
+        fingerprintLabel.setText(constants.hostPopupHostFingerprintLabel());
         overrideIpTablesEditor.setLabel(constants.hostPopupOverrideIpTablesLabel());
         externalHostProviderEnabledEditor.setLabel(constants.hostPopupEnableExternalHostProvider());
         externalHostNameEditor.setLabel(constants.hostPopupExternalHostName());
         providerSearchFilterLabel.setLabel(constants.hostPopupProviderSearchFilter());
+
         // Power Management tab
         powerManagementTab.setLabel(constants.hostPopupPowerManagementTabLabel());
         pmEnabledEditor.setLabel(constants.hostPopupPmEnabledLabel());
@@ -469,6 +551,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @Override
     public void edit(final HostModel object) {
         driver.edit(object);
+        setTabIndexes(0);
 
         // TODO should be handled in a more generic way
         object.getPropertyChangedEvent().addListener(new IEventListener() {
@@ -489,6 +572,34 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
                         powerManagementTab.markAsInvalid(null);
                     }
                 }
+            }
+        });
+
+        object.getFetchResult().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                fetchResult.setText((String) object.getFetchResult().getEntity());
+            }
+        });
+
+        rbPassword.setValue(true);
+        displayPassPkWindow(true);
+        fetchSshFingerprint.hideLabel();
+        object.setAuthenticationMethod(AuthenticationMethod.Password);
+
+        rbPassword.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                object.setAuthenticationMethod(AuthenticationMethod.Password);
+                displayPassPkWindow(true);
+            }
+        });
+
+        rbPublicKey.addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                object.setAuthenticationMethod(AuthenticationMethod.PublicKey);
+                displayPassPkWindow(false);
             }
         });
 
@@ -589,8 +700,25 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         });
 
         updatePmPanelsVisibility(true);
-
+        // TODO: until we allow different username for authentication
+        userNameEditor.setEnabled(false);
         externalProviderPanel.setVisible(object.showExternalProviderPanel());
+        addTextAndLinkAlert(fetchPanel, appConstants.fetchingHostFingerprint(), object.getSSHFingerPrint());
+        nameEditor.setFocus(true);
+    }
+
+    private void displayPassPkWindow(boolean isPasswordVisible) {
+        if (isPasswordVisible) {
+            passwordEditor.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+            publicKeyEditor.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+        } else {
+            passwordEditor.getElement().getStyle().setVisibility(Visibility.HIDDEN);
+            publicKeyEditor.getElement().getStyle().setVisibility(Visibility.VISIBLE);
+        }
+    }
+
+    private void initExpander() {
+        expander.initWithContent(expanderContent.getElement());
     }
 
     private void updatePmPanelsVisibility(boolean primary) {
@@ -654,6 +782,63 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         tabPanel.switchTab(powerManagementTab);
     }
 
+    /**
+     * Create a widget containing text and a link that triggers the execution of a command.
+     *
+     * @param view
+     *            the view where the alert should be added
+     * @param text
+     *            the text content of the alert
+     * @param command
+     *            the command that should be executed when the link is clicked
+     */
+    private void addTextAndLinkAlert(SimplePanel view, final String text, final UICommand command) {
+        // Find the open and close positions of the link within the message:
+        final int openIndex = text.indexOf("<a>"); //$NON-NLS-1$
+        final int closeIndex = text.indexOf("</a>"); //$NON-NLS-1$
+        if (openIndex == -1 || closeIndex == -1 || closeIndex < openIndex) {
+            return;
+        }
+
+        // Extract the text before, inside and after the tags:
+        final String beforeText = text.substring(0, openIndex);
+        final String betweenText = text.substring(openIndex + 3, closeIndex);
+        final String afterText = text.substring(closeIndex + 4);
+
+        // Create a flow panel containing the text and the link:
+        final FlowPanel alertPanel = new FlowPanel();
+
+        // Create the label for the text before the tag:
+        final Label beforeLabel = new Label(beforeText);
+        beforeLabel.getElement().getStyle().setProperty("display", "inline"); //$NON-NLS-1$ //$NON-NLS-2$
+        alertPanel.add(beforeLabel);
+
+        // Create the anchor:
+        final Anchor betweenAnchor = new Anchor(betweenText);
+        betweenAnchor.getElement().getStyle().setProperty("display", "inline"); //$NON-NLS-1$ //$NON-NLS-2$
+        betweenAnchor.getElement().getStyle().setTextDecoration(TextDecoration.UNDERLINE);
+        alertPanel.add(betweenAnchor);
+
+        // Add a listener to the anchor so that the command is executed when
+        // it is clicked:
+        betweenAnchor.addClickHandler(
+                new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        command.execute();
+                    }
+                }
+                );
+
+        // Create the label for the text after the tag:
+        final Label afterLabel = new Label(afterText);
+        afterLabel.getElement().getStyle().setProperty("display", "inline"); //$NON-NLS-1$ //$NON-NLS-2$
+        alertPanel.add(afterLabel);
+
+        // Add the alert to the view:
+        view.add(alertPanel);
+    }
+
     interface Style extends CssResource {
 
         String radioButton();
@@ -667,6 +852,28 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         String searchFilterLabel();
 
         String emptyEditor();
+
+        String fingerprintEditor();
+
+        String expanderContent();
+
+        String pkEditor();
     }
 
+    public int setTabIndexes(int nextTabIndex) {
+        // ==General Tab==
+        dataCenterEditor.setTabIndex(nextTabIndex++);
+        clusterEditor.setTabIndex(nextTabIndex++);
+        externalHostProviderEnabledEditor.setTabIndex(nextTabIndex++);
+        providersEditor.setTabIndex(nextTabIndex++);
+        providerSearchFilterLabel.setTabIndex(nextTabIndex++);
+        nameEditor.setTabIndex(nextTabIndex++);
+        hostAddressEditor.setTabIndex(nextTabIndex++);
+        hostPortEditor.setTabIndex(nextTabIndex++);
+        userNameEditor.setTabIndex(nextTabIndex++);
+        rbPassword.setTabIndex(nextTabIndex++);
+        passwordEditor.setTabIndex(nextTabIndex++);
+        fetchSshFingerprint.setTabIndex(nextTabIndex++);
+        return nextTabIndex;
+    }
 }
