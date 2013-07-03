@@ -246,6 +246,26 @@ public class OpenstackImageProviderProxy implements ProviderProxy {
         return diskImage;
     }
 
+    public String createImageFromDiskImage(DiskImage diskImage) {
+        Image glanceImage = new Image();
+
+        glanceImage.setName(diskImage.getDiskAlias());
+
+        if (diskImage.getVolumeFormat() == VolumeFormat.RAW) {
+            glanceImage.setDiskFormat(GlanceImageFormat.RAW.getValue());
+        } else if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
+            glanceImage.setDiskFormat(GlanceImageFormat.COW.getValue());
+        } else {
+            throw new RuntimeException("Unknown disk format: " + diskImage.getVolumeFormat());
+        }
+
+        glanceImage.setContainerFormat(GlanceImageContainer.BARE.getValue());
+
+        Image retGlanceImage = getClient().images().create(glanceImage).execute();
+
+        return retGlanceImage.getId();
+    }
+
     private long getCowVirtualSize(String id) throws IOException {
         // For the qcow2 format we need to download the image header and read the virtual size from there
         byte[] imgContent = new byte[72];
@@ -300,6 +320,12 @@ public class OpenstackImageProviderProxy implements ProviderProxy {
             httpHeaders.put("X-Auth-Token", getTokenProvider().getToken());
         }
 
+        return httpHeaders;
+    }
+
+    public Map<String, String> getUploadHeaders() {
+        Map<String, String> httpHeaders = getDownloadHeaders();
+        httpHeaders.put("Content-Type", "application/octet-stream");
         return httpHeaders;
     }
 

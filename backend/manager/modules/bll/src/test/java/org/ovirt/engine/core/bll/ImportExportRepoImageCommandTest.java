@@ -93,6 +93,22 @@ public class ImportExportRepoImageCommandTest {
         return storagePool;
     }
 
+    public Guid getDiskImageId() {
+        return diskImageId;
+    }
+
+    public Guid getDiskImageGroupId() {
+        return diskImageGroupId;
+    }
+
+    public DiskImageDAO getDiskImageDao() {
+        return diskImageDao;
+    }
+
+    public DiskImage getDiskImage() {
+        return diskImage;
+    }
+
     @Before
     public void setUp() {
         providerId = Guid.newGuid();

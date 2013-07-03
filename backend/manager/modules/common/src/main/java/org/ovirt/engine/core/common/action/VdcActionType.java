@@ -219,6 +219,7 @@ public enum VdcActionType {
     MoveDisks(1012, false, QuotaDependency.NONE),
     ExtendImageSize(1013, false, QuotaDependency.STORAGE),
     ImportRepoImage(1014, ActionGroup.CREATE_DISK, QuotaDependency.STORAGE),
+    ExportRepoImage(1015, QuotaDependency.NONE),
 
     // Event Notification
     AddEventSubscription(1100, false, QuotaDependency.NONE),
