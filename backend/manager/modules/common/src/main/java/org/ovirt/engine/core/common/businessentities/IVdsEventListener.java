@@ -23,11 +23,6 @@ public interface IVdsEventListener {
 
     EventResult masterDomainNotOperational(Guid storageDomainId, Guid storagePoolId, boolean isReconstructToInactiveDomains); // BLL
 
-    /**
-     * Temoporary patch. Vitaly todo: fix it
-     *
-     * @param vmId
-     */
     void processOnVmStop(Guid vmId);
 
     boolean vdsUpEvent(VDS vds);
