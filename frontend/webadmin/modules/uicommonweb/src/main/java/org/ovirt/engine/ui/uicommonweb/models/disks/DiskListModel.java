@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.ChangeQuotaModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.ExportRepoImageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.CopyDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
@@ -109,6 +110,16 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         privateScanAlignmentCommand = value;
     }
 
+    private UICommand exportCommand;
+
+    public UICommand getExportCommand() {
+        return exportCommand;
+    }
+
+    public void setExportCommand(UICommand exportCommand) {
+        this.exportCommand = exportCommand;
+    }
+
     private UICommand privateChangeQuotaCommand;
 
     public UICommand getChangeQuotaCommand()
@@ -178,6 +189,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         setChangeQuotaCommand(new UICommand("changeQuota", this)); //$NON-NLS-1$
         setCopyCommand(new UICommand("Copy", this)); //$NON-NLS-1$
         setScanAlignmentCommand(new UICommand("Check Alignment", this)); //$NON-NLS-1$
+        setExportCommand(new UICommand("Export", this)); //$NON-NLS-1$
 
         updateActionAvailability();
 
@@ -318,6 +330,32 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
                     }
                 },
                 this);
+    }
+
+    private void export()
+    {
+        @SuppressWarnings("unchecked")
+        ArrayList<DiskImage> disks = (ArrayList<DiskImage>) getSelectedItems();
+
+        if (disks == null || getWindow() != null)
+        {
+            return;
+        }
+
+        ExportRepoImageModel model = new ExportRepoImageModel();
+        setWindow(model);
+
+        model.setTitle(ConstantsManager.getInstance().getConstants().exportImagesTitle());
+        model.setHashName("export_disks"); //$NON-NLS-1$
+        model.setEntity(this);
+        model.init(disks);
+
+        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+
+        model.setCancelCommand(cancelCommand);
+        model.getCommands().add(cancelCommand);
     }
 
     private void changeQuota()
@@ -474,6 +512,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         getRemoveCommand().setIsExecutionAllowed(disks != null && disks.size() > 0 && isRemoveCommandAvailable());
         getScanAlignmentCommand().setIsExecutionAllowed(
                 disks != null && disks.size() > 0 && isScanAlignmentCommandAvailable());
+        getExportCommand().setIsExecutionAllowed(isExportCommandAvailable());
         updateCopyAndMoveCommandAvailability(disks);
 
         ChangeQuotaModel.updateChangeQuotaActionAvailability(getItems() != null ? (List<Disk>) getItems() : null,
@@ -556,6 +595,29 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         return true;
     }
 
+    private boolean isExportCommandAvailable() {
+        ArrayList<Disk> disks = (ArrayList<Disk>) getSelectedItems();
+
+        if (disks == null || disks.isEmpty()) {
+            return false;
+        }
+
+        for (Disk disk : disks)
+        {
+            if (disk.getDiskStorageType() != DiskStorageType.IMAGE) {
+                return false;
+            }
+
+            DiskImage diskImage = (DiskImage) disk;
+
+            if (diskImage.getImageStatus() != ImageStatus.OK || !diskImage.getParentId().equals(Guid.Empty)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     private void cancelConfirm()
     {
         AbstractDiskModel model = (AbstractDiskModel) getWindow();
@@ -592,6 +654,10 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         else if (command == getScanAlignmentCommand())
         {
             scanAlignment();
+        }
+        else if (command == getExportCommand())
+        {
+            export();
         }
         else if (StringHelper.stringsEqual(command.getName(), "Cancel")) //$NON-NLS-1$
         {

@@ -540,6 +540,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Import Image(s)")
     String importImagesTitle();
 
+    @DefaultStringValue("Export Image(s)")
+    String exportImagesTitle();
+
     @DefaultStringValue("Snapshots")
     String snapshotsTitle();
 

@@ -679,6 +679,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Scan Alignment")
     String getDiskAlignment();
 
+    @DefaultStringValue("Export")
+    String exportDisk();
+
     @DefaultStringValue("Data Center")
     String dataCenter();
 

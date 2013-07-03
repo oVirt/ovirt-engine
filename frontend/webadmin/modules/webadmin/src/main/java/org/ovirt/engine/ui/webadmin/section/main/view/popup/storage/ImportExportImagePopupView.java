@@ -9,6 +9,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -107,6 +109,8 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
             public String getText(Object image) {
                 if (image instanceof RepoImage) {
                     return ((RepoImage) image).getRepoImageTitle();
+                } else if (image instanceof DiskImage) {
+                    return ((DiskImage) image).getDiskAlias();
                 }
                 return constants.unknown();
             }
@@ -116,6 +120,8 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
             public String getText(Object image) {
                 if (image instanceof RepoImage) {
                     return ((RepoImage) image).getFileType().toString();
+                } else if (image instanceof DiskImage) {
+                    return ImageFileType.Disk.toString();
                 }
                 return constants.unknown();
             }
@@ -125,6 +131,8 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
             protected Long getRawValue(EntityModel object) {
                 if (object.getEntity() instanceof RepoImage) {
                     return ((RepoImage) (object.getEntity())).getSize();
+                } else if (object.getEntity() instanceof DiskImage) {
+                    return ((DiskImage) (object.getEntity())).getSizeInGigabytes();
                 }
                 return null;
             }
