@@ -2,14 +2,12 @@ package org.ovirt.engine.core.dal.dbbroker;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -114,7 +112,6 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.jdbc.core.SqlOutParameter;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
@@ -220,46 +217,6 @@ public class DbFacade {
 
     private CustomMapSqlParameterSource getCustomMapSqlParameterSource() {
         return new CustomMapSqlParameterSource(dbEngineDialect);
-    }
-
-    // tags_vm_map
-    public Guid getEntityPermissions(Guid adElementId, ActionGroup actionGroup, Guid objectId,
-            VdcObjectType vdcObjectType) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("user_id", adElementId)
-                .addValue("action_group_id", actionGroup.getId()).addValue("object_id", objectId).addValue(
-                        "object_type_id", vdcObjectType.getValue());
-
-        String resultKey = "permission_id";
-        Map<String, Object> dbResults =
-                new SimpleJdbcCall(jdbcTemplate).withProcedureName("get_entity_permissions")
-                        .declareParameters(new SqlOutParameter(resultKey, Types.VARCHAR))
-                        .execute(parameterSource);
-
-        return dbResults.get(resultKey) != null ? new Guid(dbResults.get(resultKey).toString()) : null;
-    }
-
-    public Guid getEntityPermissionsForUserAndGroups(Guid userId,
-            String groupIds,
-            ActionGroup actionGroup,
-            Guid objectId,
-            VdcObjectType vdcObjectType,
-            boolean ignoreEveryone) {
-        MapSqlParameterSource parameterSource =
-                getCustomMapSqlParameterSource().addValue("user_id", userId)
-                        .addValue("group_ids", groupIds)
-                        .addValue("action_group_id", actionGroup.getId())
-                        .addValue("object_id", objectId)
-                        .addValue(
-                                "object_type_id", vdcObjectType.getValue())
-                        .addValue("ignore_everyone", ignoreEveryone);
-
-        String resultKey = "permission_id";
-        Map<String, Object> dbResults =
-                new SimpleJdbcCall(jdbcTemplate).withProcedureName("get_entity_permissions_for_user_and_groups")
-                        .declareParameters(new SqlOutParameter(resultKey, Types.VARCHAR))
-                        .execute(parameterSource);
-
-        return dbResults.get(resultKey) != null ? new Guid(dbResults.get(resultKey).toString()) : null;
     }
 
     public String getEntityNameByIdAndType(Guid objectId, VdcObjectType vdcObjectType) {

@@ -15,7 +15,7 @@ public class HasAdElementReconnectPermissionQuery<P extends HasAdElementReconnec
 
     @Override
     protected void executeQueryCommand() {
-        Guid perm = getDbFacade().getEntityPermissions(getParameters().getAdElementId(),
+        Guid perm = getDbFacade().getPermissionDao().getEntityPermissions(getParameters().getAdElementId(),
                 ActionGroup.RECONNECT_TO_VM,
                 getParameters().getObjectId(),
                 VdcObjectType.VM);

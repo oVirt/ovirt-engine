@@ -13,6 +13,7 @@ import java.util.Set;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -32,6 +33,9 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     private static final Guid USER_ENTITY_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
     private static final Guid ROLE_ENTITY_ID = new Guid("119caae6-5c1b-4a82-9858-dd9e5d2e1400");
     private static final Guid VDS_GROUP_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+
+    private static final Guid DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS =
+            new Guid("88D4301A-17AF-496C-A793-584640853D4B");
 
     private PermissionDAO dao;
     private permissions new_permissions;
@@ -508,6 +512,40 @@ public class PermissionDAOTest extends BaseDAOTestCase {
     private static void assertInvalidGetPermissionList(List<permissions> result) {
         assertNotNull(result);
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetEntityPermissions() {
+        // Should not return null since the user has the relevant permission
+        assertNotNull(dao.getEntityPermissions(DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS,
+                ActionGroup.VM_BASIC_OPERATIONS,
+                VM_TEMPLATE_ENTITY_ID,
+                VdcObjectType.VM));
+
+        // Should return null since the user does not has the relevant permission
+        assertNull(dao.getEntityPermissions(DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS,
+                ActionGroup.CREATE_TEMPLATE,
+                VM_TEMPLATE_ENTITY_ID,
+                VdcObjectType.VM));
+    }
+
+    @Test
+    public void testGetEntityPermissionsByUserAndGroups() {
+        // Should not return null since the user has the relevant permission
+        assertNotNull(dao.getEntityPermissionsForUserAndGroups(Guid.newGuid(),
+                DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS.toString(),
+                ActionGroup.VM_BASIC_OPERATIONS,
+                VM_TEMPLATE_ENTITY_ID,
+                VdcObjectType.VM,
+                false));
+
+        // Should return null since the user does not has the relevant permission
+        assertNull(dao.getEntityPermissionsForUserAndGroups(Guid.newGuid(),
+                DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS.toString(),
+                ActionGroup.CREATE_TEMPLATE,
+                VM_TEMPLATE_ENTITY_ID,
+                VdcObjectType.VM,
+                false));
     }
 
     /**

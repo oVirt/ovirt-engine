@@ -2,7 +2,6 @@ package org.ovirt.engine.core.dao;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -14,7 +13,6 @@ import javax.sql.DataSource;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.Bookmark;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -313,39 +311,4 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         String name = network.getName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(NETWORK_ID, VdcObjectType.Network)));
     }
-
-    @Test
-    public void testGetEntityPermissions() {
-        // Should not return null since the user has the relevant permission
-        assertNotNull(dbFacade.getEntityPermissions(DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS,
-                ActionGroup.VM_BASIC_OPERATIONS,
-                VMT_ID,
-                VdcObjectType.VM));
-
-        // Should return null since the user does not has the relevant permission
-        assertNull(dbFacade.getEntityPermissions(DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS,
-                ActionGroup.CREATE_TEMPLATE,
-                VMT_ID,
-                VdcObjectType.VM));
-    }
-
-    @Test
-    public void testGetEntityPermissionsByUserAndGroups() {
-        // Should not return null since the user has the relevant permission
-        assertNotNull(dbFacade.getEntityPermissionsForUserAndGroups(Guid.newGuid(),
-                DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS.toString(),
-                ActionGroup.VM_BASIC_OPERATIONS,
-                VMT_ID,
-                VdcObjectType.VM,
-                false));
-
-        // Should return null since the user does not has the relevant permission
-        assertNull(dbFacade.getEntityPermissionsForUserAndGroups(Guid.newGuid(),
-                DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS.toString(),
-                ActionGroup.CREATE_TEMPLATE,
-                VMT_ID,
-                VdcObjectType.VM,
-                false));
-    }
-
 }

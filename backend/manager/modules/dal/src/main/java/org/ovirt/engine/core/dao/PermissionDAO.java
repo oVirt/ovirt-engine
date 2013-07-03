@@ -3,6 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -137,6 +138,15 @@ public interface PermissionDAO extends GenericDao<permissions, Guid> {
     List<permissions> getTreeForEntity(Guid id, VdcObjectType type);
 
     List<permissions> getTreeForEntity(Guid id, VdcObjectType type, Guid userID, boolean isFiltered);
+
+    Guid getEntityPermissions(Guid adElementId, ActionGroup actionGroup, Guid objectId, VdcObjectType vdcObjectType);
+
+    Guid getEntityPermissionsForUserAndGroups(Guid userId,
+                                              String groupIds,
+                                              ActionGroup actionGroup,
+                                              Guid objectId,
+                                              VdcObjectType vdcObjectType,
+                                              boolean ignoreEveryone);
 
     /**
      * Removes all permissions for the given entity.
