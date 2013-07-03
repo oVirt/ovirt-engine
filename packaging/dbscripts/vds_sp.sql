@@ -554,7 +554,6 @@ LANGUAGE plpgsql;
 
 
 
---end Vitaly add
 
 
 
