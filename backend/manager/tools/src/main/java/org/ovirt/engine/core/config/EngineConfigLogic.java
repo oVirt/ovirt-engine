@@ -195,7 +195,7 @@ public class EngineConfigLogic {
      * @return The user's password
      */
     public static String startPasswordDialog(String user) throws IOException {
-        return startPasswordDialog(user, "Please enter a password: ");
+        return startPasswordDialog(user, "Please enter a password");
     }
 
     public static String startPasswordDialog(String user, String msg) throws IOException {
