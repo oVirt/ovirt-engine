@@ -154,7 +154,6 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
 
                 switch (getVds().getVdsType()) {
                 case VDS:
-                    installer.setPassword(parameters.getPassword());
                     installer.setFirewall(parameters.getOverrideFirewall());
                     break;
                 case oVirtNode:
@@ -165,7 +164,6 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                             getVds().getVdsType().name()
                         );
                     }
-                    installer.useDefaultKeyPair();
                     break;
                 default:
                     throw new IllegalArgumentException(
@@ -175,6 +173,18 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                         )
                     );
                 }
+
+                switch (getParameters().getAuthMethod()) {
+                    case Password:
+                        installer.setPassword(parameters.getPassword());
+                        break;
+                    case PublicKey:
+                        installer.useDefaultKeyPair();
+                        break;
+                    default:
+                        throw new Exception("Invalid authentication method value was sent to InstallVdsCommand");
+                }
+
                 setVdsStatus(VDSStatus.Installing);
                 installer.execute();
 

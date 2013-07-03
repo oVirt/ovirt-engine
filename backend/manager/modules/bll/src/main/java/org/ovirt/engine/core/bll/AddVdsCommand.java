@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -149,6 +150,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         // clients). they are installed as part of the approve process
         if (Config.<Boolean> GetValue(ConfigValues.InstallVds) && !getParameters().getAddPending()) {
             final InstallVdsParameters installVdsParameters = new InstallVdsParameters(getVdsId(), getParameters().getPassword());
+            installVdsParameters.setAuthMethod(getParameters().getAuthMethod());
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
             installVdsParameters.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
             Map<String, String> values = new HashMap<String, String>();
@@ -326,6 +328,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         && !EngineEncryptionUtils.haveKey()) {
                     returnValue = failCanDoAction(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND);
                 } else if (!getParameters().getAddPending()
+                        && (getParameters().getAuthMethod() == AuthenticationMethod.Password)
                         && StringUtils.isEmpty(getParameters().getPassword())) {
                     // We block vds installations if it's not a RHEV-H and password is empty
                     // Note that this may override local host SSH policy. See BZ#688718.
@@ -362,16 +365,26 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return ClusterUtils.getInstance();
     }
 
-    public EngineSSHClient getSSHClient() {
+    public EngineSSHClient getSSHClient() throws Exception {
         Long timeout =
                 TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(ConfigValues.ConnectToServerTimeoutInSeconds));
 
         EngineSSHClient sshclient = new EngineSSHClient();
+        sshclient.setVds(getParameters().getvds());
         sshclient.setHardTimeout(timeout);
         sshclient.setSoftTimeout(timeout);
-        sshclient.setHost(getVds().getStaticData().getHostName(), getVds().getStaticData().getSshPort());
-        sshclient.setUser(getVds().getStaticData().getSshUsername());
         sshclient.setPassword(getParameters().getPassword());
+        switch (getParameters().getAuthMethod()) {
+            case PublicKey:
+                sshclient.useDefaultKeyPair();
+                break;
+            case Password:
+                sshclient.setPassword(getParameters().getPassword());
+                break;
+            default:
+                throw new Exception("Invalid authentication method value was sent to AddVdsCommand");
+        }
+
         return sshclient;
     }
 
