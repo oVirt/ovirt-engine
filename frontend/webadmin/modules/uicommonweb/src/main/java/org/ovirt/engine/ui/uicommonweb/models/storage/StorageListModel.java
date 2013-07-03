@@ -2037,7 +2037,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     public void importFileStorageAddDomain(ArrayList<StorageDomain> domains)
     {
         StorageDomain sdToAdd = Linq.firstOrDefault(domains);
-        StorageDomainStatic sdsToAdd = sdToAdd == null ? null : sdToAdd.getStorageStaticData();
+        StorageDomainStatic sdsToAdd = sdToAdd.getStorageStaticData();
 
         StorageDomainManagementParameter params = new StorageDomainManagementParameter(sdsToAdd);
         params.setVdsId(hostId);
