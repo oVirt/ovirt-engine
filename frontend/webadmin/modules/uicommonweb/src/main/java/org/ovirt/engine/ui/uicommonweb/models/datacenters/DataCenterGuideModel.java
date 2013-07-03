@@ -1601,6 +1601,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         host.setVdsName((String) model.getName().getEntity());
         host.setHostName((String) model.getHost().getEntity());
         host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
+        host.setSshPort(Integer.parseInt(model.getHostPort().getEntity().toString()));
+        host.setSshUsername(model.getUserName().getEntity().toString());
+        host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity().toString());
         host.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
 
@@ -1626,7 +1629,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AddVdsActionParameters addVdsParams = new AddVdsActionParameters();
         addVdsParams.setVdsId(host.getId());
         addVdsParams.setvds(host);
-        addVdsParams.setPassword((String) model.getRootPassword().getEntity());
+        if (model.getUserPassword().getEntity() != null) {
+            addVdsParams.setPassword((String) model.getUserPassword().getEntity());
+        }
         addVdsParams.setRebootAfterInstallation(((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService());
         model.startProgress(null);
 

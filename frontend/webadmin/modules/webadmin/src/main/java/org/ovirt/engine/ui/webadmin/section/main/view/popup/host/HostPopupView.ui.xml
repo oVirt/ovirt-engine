@@ -43,6 +43,21 @@
             margin-bottom: 10px;
         }
 
+        .headerAuthLabel {
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .headerFp {
+            margin: 5px;
+            margin-bottom: 5px;
+        }
+        .fetchResultLabel {
+            font-color: red;
+            color: red;
+            margin-left: 4px;
+        }
+
         .sourceLabel {
             font-size: 13px;
             font-family: Verdana,sans-serif;
@@ -74,13 +89,21 @@
             margin-left: 10px;
         }
 
+        .buttonStyle {
+            margin-top: 10px;
+            margin-left: 10px;
+            height: 20px;
+            width: 100%;
+        }
+
         .testMessage {
             margin-top: 10px;
         }
 
         .radioButton {
-            margin-right: 15px;
+            margin-right: 2px;
         }
+
         .overrideIpStyle {
             width: 200px;
         }
@@ -151,13 +174,52 @@
             display: none;
         }
 
-		.sectionStyle {
-			margin-top: 20px;
-		}
+        .sectionStyle {
+            margin-top: 20px;
+        }
+
+        .fetchSshFingerprintField {
+            width: 300px;
+            enabled: false;
+        }
+
+        .textBoxStyle {
+            height: 17px;
+            float: none;
+            display: inline;
+        }
+
+        .fingerprintEditor {
+            width: 495px;
+        }
+
+        .content {
+            width:100%;
+        }
+
+        .expanderContent {
+            margin-left: 15px;
+            display: none;
+        }
+
+        .pkEditor {
+            border-width: 1px;
+            border-color: black;
+        }
+
+        .fetchLink {
+            margin: 3px;
+            font-size: 10pt;
+            width: 450px;
+        }
+
+        .pkStyle {
+            resize: none;
+        }
 
     </ui:style>
 
-    <d:SimpleDialogPanel width="700px" height="500px">
+    <d:SimpleDialogPanel width="700px" height="685px">
         <d:content>
             <t:DialogTabPanel ui:field="tabPanel" height="100%">
                 <t:tab>
@@ -187,10 +249,33 @@
                                     </g:FlowPanel>
                                     <e:ListModelListBoxEditor ui:field="externalHostNameEditor"/>
                                 </g:FlowPanel>
-                                <e:EntityModelTextBoxEditor ui:field="nameEditor"/>
-                                <e:EntityModelTextBoxEditor ui:field="hostAddressEditor"/>
-                                <e:EntityModelPasswordBoxEditor ui:field="rootPasswordEditor"/>
-                                <e:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor"/>
+                                <g:FlowPanel>
+                                    <e:EntityModelTextBoxEditor ui:field="nameEditor"/>
+                                    <e:EntityModelTextBoxEditor ui:field="hostAddressEditor" />
+                                    <e:EntityModelTextBoxEditor ui:field="hostPortEditor"/>
+                                    <g:VerticalPanel addStyleNames="{style.content}">
+                                        <g:Label ui:field="authLabel" addStyleNames="{style.headerAuthLabel}"/>
+                                        <e:EntityModelTextBoxEditor ui:field="userNameEditor"/>
+                                        <g:HorizontalPanel ui:field="passwordSection" width="100%" verticalAlignment="middle">
+                                            <g:RadioButton ui:field="rbPassword" />
+                                            <g:Label text="{constants.hostPasswordLabel}" />
+                                            <e:EntityModelPasswordBoxEditor ui:field="passwordEditor"/>
+                                        </g:HorizontalPanel>
+                                        <g:HorizontalPanel ui:field="pkSection" width="100%" verticalAlignment="middle">
+                                            <g:RadioButton ui:field="rbPublicKey" addStyleNames="{style.radioButton}" />
+                                            <g:Label text="{constants.hostPublicKeyLable}" />
+                                            <e:EntityModelTextAreaLabelEditor ui:field="publicKeyEditor" addStyleNames="{style.pkStyle}" />
+                                        </g:HorizontalPanel>
+                                        <d:AdvancedParametersExpander ui:field="expander"/>
+                                        <g:FlowPanel ui:field="expanderContent">
+                                            <e:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor"/>
+                                            <g:Label ui:field="fingerprintLabel" addStyleNames="{style.headerFp}" />
+                                            <e:EntityModelTextBoxEditor ui:field="fetchSshFingerprint"/>
+                                            <g:SimplePanel ui:field="fetchPanel" addStyleNames="{style.fetchLink}, generalDialogComment" />
+                                            <g:Label ui:field="fetchResult" addStyleNames="{style.fetchResultLabel}"/>
+                                        </g:FlowPanel>
+                                    </g:VerticalPanel>
+                                </g:FlowPanel>
                             </g:FlowPanel>
                         </t:content>
                     </t:DialogTab>

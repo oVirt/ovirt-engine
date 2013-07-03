@@ -468,6 +468,9 @@ public class ClusterGuideModel extends GuideModel
         host.setVdsName((String) model.getName().getEntity());
         host.setHostName((String) model.getHost().getEntity());
         host.setPort((Integer) model.getPort().getEntity());
+        host.setSshPort((Integer) model.getHostPort().getEntity());
+        host.setSshUsername(model.getUserName().getEntity().toString());
+        host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity().toString());
         host.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
 
@@ -493,7 +496,9 @@ public class ClusterGuideModel extends GuideModel
         AddVdsActionParameters vdsActionParams = new AddVdsActionParameters();
         vdsActionParams.setvds(host);
         vdsActionParams.setVdsId(host.getId());
-        vdsActionParams.setPassword((String) model.getRootPassword().getEntity());
+        if (model.getUserPassword().getEntity() != null) {
+            vdsActionParams.setPassword((String) model.getUserPassword().getEntity());
+        }
         vdsActionParams.setRebootAfterInstallation(((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService());
 
         model.startProgress(null);

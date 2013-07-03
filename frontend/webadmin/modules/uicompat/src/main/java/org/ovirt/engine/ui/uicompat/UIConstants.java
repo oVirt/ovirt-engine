@@ -1765,8 +1765,14 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Error in fetching fingerprint")
     String errorLoadingFingerprint();
 
+    @DefaultStringValue("Fetched fingerprint successfully")
+    String successLoadingFingerprint();
+
     @DefaultStringValue("Fingerprint needs to be verified before importing the gluster configuration")
     String fingerprintNotVerified();
+
+    @DefaultStringValue("Address Error: ")
+    String fingerprintAddressError();
 
     // Gluster Swift
     @DefaultStringValue("Manage Gluster Swift")

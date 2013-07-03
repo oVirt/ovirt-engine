@@ -1410,4 +1410,10 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Unlimited")
     String UnlimitedNetworkQoS();
+
+    @DefaultStringValue("Password")
+    String hostPasswordLabel();
+
+    @DefaultStringValue("SSH PublicKey")
+    String hostPublicKeyLable();
 }

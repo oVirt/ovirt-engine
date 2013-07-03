@@ -838,7 +838,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         host.setVdsName((String) model.getName().getEntity());
         host.setHostName((String) model.getHost().getEntity());
         host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
-        host.setSshKeyFingerprint(host.getSshKeyFingerprint());
+        host.setSshPort(Integer.parseInt(model.getHostPort().getEntity().toString()));
+        host.setSshUsername(model.getUserName().getEntity().toString());
+        boolean sshFpSet = (Boolean) (model.getFetchSshFingerprint().getEntity() != null);
+        host.setSshKeyFingerprint(!sshFpSet ? null : (String) model.getFetchSshFingerprint().getEntity());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
         boolean consoleAddressSet = (Boolean) model.getConsoleAddressEnabled().getEntity();
         host.setConsoleAddress(!consoleAddressSet ? null : (String) model.getConsoleAddress().getEntity());
@@ -877,9 +880,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             AddVdsActionParameters parameters = new AddVdsActionParameters();
             parameters.setVdsId(host.getId());
             parameters.setvds(host);
-            parameters.setPassword((String) model.getRootPassword().getEntity());
+            if (model.getUserPassword().getEntity() != null) {
+                parameters.setPassword((String) model.getUserPassword().getEntity());
+            }
             parameters.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
             parameters.setRebootAfterInstallation(isVirt) ;
+            parameters.setAuthMethod(model.getAuthenticationMethod());
 
             Frontend.RunAction(VdcActionType.AddVds, parameters,
                     new IFrontendActionAsyncCallback() {
@@ -902,6 +908,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             parameters.setPassword(""); //$NON-NLS-1$
             parameters.setInstallVds(false);
             parameters.setRebootAfterInstallation(isVirt) ;
+            parameters.setAuthMethod(model.getAuthenticationMethod());
 
             if (!oldClusterId.equals(newClusterId))
             {
@@ -970,10 +977,16 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
     private void onApproveInternal()
     {
+        HostModel model = (HostModel) getWindow();
         VDS vds = (VDS) getSelectedItem();
+        ApproveVdsParameters params = new ApproveVdsParameters(vds.getId());
+        if (model.getUserPassword().getEntity() != null) {
+            params.setPassword(model.getUserPassword().getEntity().toString());
+        }
+        params.setAuthMethod(model.getAuthenticationMethod());
 
         Frontend.RunMultipleAction(VdcActionType.ApproveVds,
-                new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { new ApproveVdsParameters(vds.getId()) })),
+                new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { params })),
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {

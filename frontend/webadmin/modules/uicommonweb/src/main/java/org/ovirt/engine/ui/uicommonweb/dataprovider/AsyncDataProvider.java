@@ -1181,6 +1181,17 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetServerSSHKeyFingerprint, new ServerParameters(hostAddress), aQuery);
     }
 
+    public static void getHostPublicKey(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (String) source : ""; //$NON-NLS-1$
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetServerSSHPublicKey, new VdcQueryParametersBase(), aQuery);
+    }
+
     public static void getGlusterHosts(AsyncQuery aQuery, String hostAddress, String rootPassword, String fingerprint) {
         GlusterServersQueryParameters parameters = new GlusterServersQueryParameters(hostAddress, rootPassword);
         parameters.setFingerprint(fingerprint);

@@ -36,8 +36,10 @@ public class EditHostModel extends HostModel {
     protected void setAllowChangeHost(VDS vds) {
         if (vds.getStatus() != VDSStatus.InstallFailed) {
             getHost().setIsChangable(false);
+            getPort().setIsChangable(false);
         } else {
             getHost().setIsChangable(true);
+            getPort().setIsChangable(true);
         }
     }
 

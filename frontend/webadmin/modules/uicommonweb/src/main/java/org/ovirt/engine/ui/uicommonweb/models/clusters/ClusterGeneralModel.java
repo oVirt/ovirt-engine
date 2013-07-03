@@ -491,6 +491,8 @@ public class ClusterGeneralModel extends EntityModel {
             host.setHostName(hostDetailModel.getAddress());
             host.setSshKeyFingerprint(hostDetailModel.getFingerprint());
             host.setPort(54321);
+            host.setSshPort(22); // TODO: get from UI, till than using defaults.
+            host.setSshUsername("root"); //$NON-NLS-1$
 
             host.setVdsGroupId(getEntity().getId());
             host.setpm_enabled(false);

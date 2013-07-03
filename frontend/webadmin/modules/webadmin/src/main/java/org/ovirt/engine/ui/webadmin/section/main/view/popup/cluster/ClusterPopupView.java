@@ -292,7 +292,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         importGlusterExplanationLabel.setText(constants.clusterImportGlusterConfigurationExplanationLabel());
         glusterHostAddressEditor.setLabel(constants.hostPopupHostAddressLabel());
         glusterHostFingerprintEditor.setLabel(constants.hostPopupHostFingerprintLabel());
-        glusterHostPasswordEditor.setLabel(constants.hostPopupRootPasswordLabel());
+        glusterHostPasswordEditor.setLabel(constants.hostPopupPasswordLabel());
 
         optimizationTab.setLabel(constants.clusterPopupOptimizationTabLabel());
 
