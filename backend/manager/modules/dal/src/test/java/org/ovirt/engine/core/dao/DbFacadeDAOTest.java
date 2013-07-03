@@ -1,19 +1,17 @@
 package org.ovirt.engine.core.dao;
 
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 import javax.sql.DataSource;
 
@@ -29,7 +27,9 @@ import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -38,11 +38,9 @@ import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -82,8 +80,8 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     private static final Guid STORAGE_POOL_WITH_MASTER_UP = new Guid("386BFFD1-E7ED-4B08-BCE9-D7DF10F8C9A0");
     private static final Guid STORAGE_POOL_WITH_MASTER_DOWN = new Guid("72B9E200-F48B-4687-83F2-62828F249A47");
     private static final Guid VM_STATIC_GUID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
-    private static final boolean INITIALIZED = true;
-    private static final Guid DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS = new Guid("88D4301A-17AF-496C-A793-584640853D4B");
+    private static final Guid DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS =
+            new Guid("88D4301A-17AF-496C-A793-584640853D4B");
     private static final Guid VMT_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
 
     @Before
@@ -132,7 +130,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         InputStream is = null;
         try {
             is = super.getClass().getResourceAsStream(
-            "/test-database.properties");
+                    "/test-database.properties");
             properties.load(is);
             ClassLoader.getSystemClassLoader().loadClass(
                     properties.getProperty("database.driver"));
@@ -157,8 +155,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
             // If this exception is thrown we fail the test
         } catch (Exception undesiredException) {
             fail();
-        }
-        finally {
+        } finally {
             if (is != null) {
                 try {
                     is.close();
@@ -257,12 +254,14 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     /**
      * {@code initVmStaticsOrderedByAutoStartup(List)} is the first method in VMs order selection tests. The other init
-     * methods: <br>{@code initVmStaticsOrderedByPriority} and {@code initVmStaticsOrderedByAutoStartup} are relying on each
-     * other for creating an array of VM Static objects.<br>
+     * methods: <br>
+     * {@code initVmStaticsOrderedByPriority} and {@code initVmStaticsOrderedByAutoStartup} are relying on each other
+     * for creating an array of VM Static objects.<br>
      * Each of the methods modifies the VM static array according to the column which is being tested, started from the
      * least important column to the most.<br>
      * That way prioritizing a preceded column should be reflected in the selection and therefore to validate the order
      * is maintained.
+     *
      * @return an array of VmStatics, in descending order according to: auto_startup, priority, MigrationSupport.<br>
      *         The MigrationSupport is the one being checked.<br>
      */
@@ -288,6 +287,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     /**
      * Creates an array of VM static which was initiated for MigrationSupport order, and modified the priority to
      * reflect the precedence of the priority column on top the MigrationSupport.
+     *
      * @return an array of VmStatics, in descending order according to: auto_startup, priority, MigrationSupport. The
      *         priority is the one being checked.
      */
@@ -313,6 +313,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     /**
      * Creates an array of VM static which was initiated for Priority and MigrationSupport order, and modified the
      * auto-startup to reflect the precedence of the auto-startup column on top the Priority.
+     *
      * @return an array of VmStatics, in descending order according to: auto_startup, priority, MigrationSupport. The
      *         auto_startup is the one being checked
      */
@@ -370,7 +371,8 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetSystemStatisticsValueWithSpecifiedStatus() {
-        int numOfVmWithStatusMigratingFrom = dbFacade.getSystemStatisticsValue("VM", Integer.toString(VMStatus.MigratingFrom.getValue()));
+        int numOfVmWithStatusMigratingFrom =
+                dbFacade.getSystemStatisticsValue("VM", Integer.toString(VMStatus.MigratingFrom.getValue()));
         assertTrue(numOfVmWithStatusMigratingFrom == NUM_OF_VM_IN_FIXTURES_WITH_STATUS_MIGRATING_FROM);
     }
 
@@ -516,25 +518,37 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     }
 
     @Test
-    public void testGetEntityPermissions(){
-            // Should not return null since the user has the relevant permission
-            assertNotNull(dbFacade.getEntityPermissions(DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS, ActionGroup.VM_BASIC_OPERATIONS,
-                    VMT_ID, VdcObjectType.VM));
+    public void testGetEntityPermissions() {
+        // Should not return null since the user has the relevant permission
+        assertNotNull(dbFacade.getEntityPermissions(DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS,
+                ActionGroup.VM_BASIC_OPERATIONS,
+                VMT_ID,
+                VdcObjectType.VM));
 
-            // Should return null since the user does not has the relevant permission
-            assertNull(dbFacade.getEntityPermissions(DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS, ActionGroup.CREATE_TEMPLATE,
-                    VMT_ID, VdcObjectType.VM));
+        // Should return null since the user does not has the relevant permission
+        assertNull(dbFacade.getEntityPermissions(DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS,
+                ActionGroup.CREATE_TEMPLATE,
+                VMT_ID,
+                VdcObjectType.VM));
     }
 
     @Test
-    public void testGetEntityPermissionsByUserAndGroups(){
-            // Should not return null since the user has the relevant permission
-            assertNotNull(dbFacade.getEntityPermissionsForUserAndGroups(Guid.newGuid(), DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS.toString(), ActionGroup.VM_BASIC_OPERATIONS,
-                    VMT_ID, VdcObjectType.VM, false));
+    public void testGetEntityPermissionsByUserAndGroups() {
+        // Should not return null since the user has the relevant permission
+        assertNotNull(dbFacade.getEntityPermissionsForUserAndGroups(Guid.newGuid(),
+                DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS.toString(),
+                ActionGroup.VM_BASIC_OPERATIONS,
+                VMT_ID,
+                VdcObjectType.VM,
+                false));
 
-            // Should return null since the user does not has the relevant permission
-            assertNull(dbFacade.getEntityPermissionsForUserAndGroups(Guid.newGuid(), DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS.toString(), ActionGroup.CREATE_TEMPLATE,
-                    VMT_ID, VdcObjectType.VM, false));
+        // Should return null since the user does not has the relevant permission
+        assertNull(dbFacade.getEntityPermissionsForUserAndGroups(Guid.newGuid(),
+                DIRECTORY_ELEMENT_ID_WITH_BASIC_PERMISSIONS.toString(),
+                ActionGroup.CREATE_TEMPLATE,
+                VMT_ID,
+                VdcObjectType.VM,
+                false));
     }
 
 }
