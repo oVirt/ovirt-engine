@@ -164,7 +164,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
             Map<String, String> runtimeProperties = new HashMap<>();
             runtimeProperties.put("vnic_id", createdPort.getId());
             runtimeProperties.put("provider_type", provider.getType().name());
-            runtimeProperties.put("plugin_type", provider.getAdditionalProperties().getPluginType().name());
+            runtimeProperties.put("plugin_type", provider.getAdditionalProperties().getPluginType());
 
             return runtimeProperties;
         } catch (RuntimeException e) {

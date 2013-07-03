@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.OpenstackNetworkPluginType;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
@@ -36,7 +35,7 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
                 OpenstackNetworkProviderProperties properties =
                         (OpenstackNetworkProviderProperties) entity.getAdditionalProperties();
                 tenantName = properties.getTenantName();
-                pluginType = properties.getPluginType().name();
+                pluginType = properties.getPluginType();
                 break;
             default:
                 break;
@@ -110,7 +109,7 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
             case OPENSTACK_NETWORK:
                 OpenstackNetworkProviderProperties properties = new OpenstackNetworkProviderProperties();
                 properties.setTenantName(rs.getString("tenant_name"));
-                properties.setPluginType(OpenstackNetworkPluginType.valueOf(rs.getString("plugin_type")));
+                properties.setPluginType(rs.getString("plugin_type"));
                 return properties;
             default:
                 return null;

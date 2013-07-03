@@ -4,13 +4,13 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
 
     private static final long serialVersionUID = -7470940167999871534L;
 
-    private OpenstackNetworkPluginType pluginType;
+    private String pluginType;
 
-    public OpenstackNetworkPluginType getPluginType() {
+    public String getPluginType() {
         return pluginType;
     }
 
-    public void setPluginType(OpenstackNetworkPluginType pluginType) {
+    public void setPluginType(String pluginType) {
         this.pluginType = pluginType;
     }
 

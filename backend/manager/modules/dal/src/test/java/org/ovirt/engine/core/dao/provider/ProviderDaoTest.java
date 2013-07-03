@@ -25,7 +25,7 @@ public class ProviderDaoTest extends BaseGenericDaoTestCase<Guid, Provider<?>, P
         provider.setType(ProviderType.OPENSTACK_NETWORK);
         OpenstackNetworkProviderProperties additionalProperties = new OpenstackNetworkProviderProperties();
         additionalProperties.setTenantName("10ant");
-        additionalProperties.setPluginType(OpenstackNetworkPluginType.LINUX_BRIDGE);
+        additionalProperties.setPluginType(OpenstackNetworkPluginType.LINUX_BRIDGE.name());
         provider.setAdditionalProperties(additionalProperties);
         return provider;
     }
