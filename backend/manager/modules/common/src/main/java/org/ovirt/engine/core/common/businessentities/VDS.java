@@ -41,8 +41,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         final int prime = 31;
         int result = 1;
         result = prime * result + ((mVdsStatic == null) ? 0 : mVdsStatic.hashCode());
-        result = prime * result + ((mVdsDynamic == null) ? 0 : mVdsDynamic.hashCode());
-        result = prime * result + ((mVdsStatistics == null) ? 0 : mVdsStatistics.hashCode());
         result = prime * result + ((cpuName == null) ? 0 : cpuName.hashCode());
         result = prime * result + ((_spm_status == null) ? 0 : _spm_status.hashCode());
         result = prime * result + cpuOverCommitDurationMinutes;
