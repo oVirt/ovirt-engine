@@ -3672,3 +3672,61 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+
+- name: /api/clusters/{cluster:id}/glusterhooks|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}|rel=delete
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}/enable|rel=enable
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}/disable|rel=disable
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/clusters/{cluster:id}/glusterhooks/{glusterhook:id}/resolve|rel=resolve
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {action.resolution_type: 'xs:string'}
+        optionalArguments: {action.host.id|name: 'xs:string'}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+

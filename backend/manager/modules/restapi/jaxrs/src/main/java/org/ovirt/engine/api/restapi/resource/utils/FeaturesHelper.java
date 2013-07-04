@@ -66,6 +66,7 @@ public class FeaturesHelper {
             addFeatureAddVmFromOvf(features);
             addVnicProfilesFeature(features);
             addStorageDomainImageFeature(features);
+            addGlusterHooksFeature(features);
         }
         return features;
     }
@@ -340,6 +341,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Image Storage Domains (Tech Preview)");
         feature.setDescription("Importing and exporting images from and to image storage domain (as for example OpenStack glance)");
+        features.getFeature().add(feature);
+    }
+
+    private void addGlusterHooksFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Gluster Hooks management");
+        feature.setDescription("Ability to manage gluster hooks in cluster");
         features.getFeature().add(feature);
     }
 }

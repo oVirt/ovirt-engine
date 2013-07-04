@@ -40,6 +40,7 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Event;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.GlusterBrick;
+import org.ovirt.engine.api.model.GlusterHook;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Hook;
@@ -163,6 +164,8 @@ import org.ovirt.engine.api.resource.VnicProfilesResource;
 import org.ovirt.engine.api.resource.WatchdogResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBrickResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBricksResource;
+import org.ovirt.engine.api.resource.gluster.GlusterHookResource;
+import org.ovirt.engine.api.resource.gluster.GlusterHooksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumeResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
 
@@ -335,6 +338,9 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(GlusterBrickResource.class, GlusterBricksResource.class, GlusterVolume.class);
         TYPES.put(GlusterBrick.class, map);
+
+        map = new ParentToCollectionMap(GlusterHookResource.class, GlusterHooksResource.class, Cluster.class);
+        TYPES.put(GlusterHook.class, map);
 
         map = new ParentToCollectionMap(CapabiliyResource.class, CapabilitiesResource.class);
         TYPES.put(VersionCaps.class, map);

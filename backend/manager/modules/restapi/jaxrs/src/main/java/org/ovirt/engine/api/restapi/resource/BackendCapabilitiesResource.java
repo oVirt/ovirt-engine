@@ -14,6 +14,7 @@ import org.ovirt.engine.api.model.CPUs;
 import org.ovirt.engine.api.model.Capabilities;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.ConfigurationTypes;
+import org.ovirt.engine.api.model.ContentTypes;
 import org.ovirt.engine.api.model.CpuMode;
 import org.ovirt.engine.api.model.CpuModes;
 import org.ovirt.engine.api.model.CreationStates;
@@ -36,6 +37,10 @@ import org.ovirt.engine.api.model.GlusterState;
 import org.ovirt.engine.api.model.GlusterStates;
 import org.ovirt.engine.api.model.GlusterVolumeType;
 import org.ovirt.engine.api.model.GlusterVolumeTypes;
+import org.ovirt.engine.api.model.HookContentType;
+import org.ovirt.engine.api.model.HookStage;
+import org.ovirt.engine.api.model.HookStates;
+import org.ovirt.engine.api.model.HookStatus;
 import org.ovirt.engine.api.model.HostNICStates;
 import org.ovirt.engine.api.model.HostNonOperationalDetails;
 import org.ovirt.engine.api.model.HostStates;
@@ -67,6 +72,7 @@ import org.ovirt.engine.api.model.SchedulingPolicies;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.ScsiGenericIO;
 import org.ovirt.engine.api.model.ScsiGenericIoOptions;
+import org.ovirt.engine.api.model.Stages;
 import org.ovirt.engine.api.model.StepEnum;
 import org.ovirt.engine.api.model.StepTypes;
 import org.ovirt.engine.api.model.StorageDomainStates;
@@ -100,10 +106,10 @@ import org.ovirt.engine.api.model.WatchdogModel;
 import org.ovirt.engine.api.model.WatchdogModels;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
 import org.ovirt.engine.api.resource.CapabiliyResource;
+import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.resource.utils.FeaturesHelper;
 import org.ovirt.engine.api.restapi.types.IpVersion;
-import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.NetworkUsage;
 import org.ovirt.engine.api.restapi.util.FenceOptionsParser;
@@ -346,6 +352,11 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             addGlusterVolumeStates(version, GlusterState.values());
             addGlusterBrickStates(version, GlusterState.values());
         }
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
+            addGlusterHookContentTypes(version, HookContentType.values());
+            addStages(version,HookStage.values());
+            addGlusterHookStates(version,HookStatus.values());
+         }
     }
 
     private Version getCurrentVersion() {
@@ -680,6 +691,27 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         version.setBrickStates(new GlusterStates());
         for(GlusterState type : states) {
             version.getBrickStates().getGlusterStates().add(type.value());
+        }
+    }
+
+    private void addGlusterHookContentTypes(VersionCaps version, HookContentType[] values) {
+        version.setContentTypes(new ContentTypes());
+        for (HookContentType type: values) {
+            version.getContentTypes().getContentTypes().add(type.value());
+        }
+    }
+
+    private void addGlusterHookStates(VersionCaps version, HookStatus[] values) {
+        version.setHookStates(new HookStates());
+        for (HookStatus status: values) {
+            version.getHookStates().getHookStates().add(status.value());
+        }
+    }
+
+    private void addStages(VersionCaps version, HookStage[] values) {
+        version.setStages(new Stages());
+        for (HookStage stage: values) {
+            version.getStages().getStages().add(stage.value());
         }
     }
 
