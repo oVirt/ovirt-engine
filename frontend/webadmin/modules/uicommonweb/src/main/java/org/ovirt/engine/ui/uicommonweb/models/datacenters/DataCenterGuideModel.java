@@ -1626,7 +1626,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         AddVdsActionParameters addVdsParams = new AddVdsActionParameters();
         addVdsParams.setVdsId(host.getId());
         addVdsParams.setvds(host);
-        addVdsParams.setRootPassword((String) model.getRootPassword().getEntity());
+        addVdsParams.setPassword((String) model.getRootPassword().getEntity());
         addVdsParams.setRebootAfterInstallation(((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService());
         model.startProgress(null);
 

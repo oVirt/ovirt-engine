@@ -102,7 +102,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         if (action.isSetSsh()) {
             if (action.getSsh().isSetUser()) {
                 if (action.getSsh().getUser().isSetPassword()) {
-                    params.setRootPassword(action.getSsh().getUser().getPassword());
+                    params.setPassword(action.getSsh().getUser().getPassword());
                 }
                 // TODO: adding username support.
                 //if (action.getSsh().getUser().isSetUserName()) {

@@ -9,9 +9,9 @@ public class VdsOperationActionParameters extends VdsActionParameters {
     private static final long serialVersionUID = 4156122527623908516L;
 
     @Valid
-    private VdsStatic _vdsStatic;
+    private VdsStatic vdsStatic;
 
-    private String _rootPassword;
+    private String password;
 
     private boolean overrideFirewall;
 
@@ -20,13 +20,13 @@ public class VdsOperationActionParameters extends VdsActionParameters {
      */
     private boolean rebootAfterInstallation = true;
 
-    public VdsOperationActionParameters(VdsStatic vdsStatic, String rootPassword) {
-        super(vdsStatic.getId());
-        if ("".equals(vdsStatic.getManagementIp())) {
-            vdsStatic.setManagementIp(null);
+    public VdsOperationActionParameters(VdsStatic vdsStaticVal, String passwordVal) {
+        super(vdsStaticVal.getId());
+        if ("".equals(vdsStaticVal.getManagementIp())) {
+            vdsStaticVal.setManagementIp(null);
         }
-        _vdsStatic = vdsStatic;
-        _rootPassword = rootPassword;
+        vdsStatic = vdsStaticVal;
+        password = passwordVal;
     }
 
     public VdsOperationActionParameters(VdsStatic vdsStatic) {
@@ -34,15 +34,15 @@ public class VdsOperationActionParameters extends VdsActionParameters {
     }
 
     public VdsStatic getVdsStaticData() {
-        return _vdsStatic;
+        return vdsStatic;
     }
 
-    public String getRootPassword() {
-        return _rootPassword;
+    public String getPassword() {
+        return password;
     }
 
-    public void setRootPassword(String value) {
-        _rootPassword = value;
+    public void setPassword(String value) {
+        password = value;
     }
 
     public VdsOperationActionParameters() {
@@ -50,12 +50,12 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     public VDS getvds() {
         VDS vds = new VDS();
-        vds.setStaticData(_vdsStatic);
+        vds.setStaticData(vdsStatic);
         return vds;
     }
 
     public void setvds(VDS value) {
-        _vdsStatic = value.getStaticData();
+        vdsStatic = value.getStaticData();
     }
 
     public void setOverrideFirewall(boolean overrideFirewall) {

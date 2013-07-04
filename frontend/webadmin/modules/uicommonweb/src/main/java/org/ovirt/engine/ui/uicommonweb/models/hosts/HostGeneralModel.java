@@ -906,7 +906,7 @@ public class HostGeneralModel extends EntityModel
         UpdateVdsActionParameters param = new UpdateVdsActionParameters();
         param.setvds(getEntity());
         param.setVdsId(getEntity().getId());
-        param.setRootPassword((String) model.getRootPassword().getEntity());
+        param.setPassword((String) model.getRootPassword().getEntity());
         param.setIsReinstallOrUpgrade(true);
         param.setInstallVds(true);
         param.setoVirtIsoFile(isOVirt ? ((RpmVersion) model.getOVirtISO().getSelectedItem()).getRpmName() : null);

@@ -6,8 +6,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class AddVdsActionParameters extends VdsOperationActionParameters {
     private static final long serialVersionUID = 8452910234577071082L;
 
-    public AddVdsActionParameters(VdsStatic vdsStatic, String rootPassword) {
-        super(vdsStatic, rootPassword);
+    public AddVdsActionParameters(VdsStatic vdsStatic, String password) {
+        super(vdsStatic, password);
     }
 
     private Guid vdsId;

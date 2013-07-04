@@ -99,7 +99,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         if (host.isSetSsh()) {
             if (host.getSsh().isSetUser()) {
                 if (host.getSsh().getUser().isSetPassword()) {
-                    addParams.setRootPassword(host.getSsh().getUser().getPassword());
+                    addParams.setPassword(host.getSsh().getUser().getPassword());
                 }
                 // TODO: adding username support.
                 //if (action.getSsh().getUser().isSetUserName()) {

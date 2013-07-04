@@ -87,7 +87,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                         && _oldVds.getStatus() != VDSStatus.InstallFailed) {
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
                 } else if (getParameters().getInstallVds()
-                        && StringUtils.isEmpty(getParameters().getRootPassword())
+                        && StringUtils.isEmpty(getParameters().getPassword())
                         && getParameters().getVdsStaticData().getVdsType() == VDSType.VDS) {
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
                 } else if (!getParameters().getInstallVds()
@@ -129,7 +129,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         }
 
         if (getParameters().getInstallVds()) {
-            InstallVdsParameters tempVar = new InstallVdsParameters(getVdsId(), getParameters().getRootPassword());
+            InstallVdsParameters tempVar = new InstallVdsParameters(getVdsId(), getParameters().getPassword());
             tempVar.setIsReinstallOrUpgrade(getParameters().getIsReinstallOrUpgrade());
             tempVar.setoVirtIsoFile(getParameters().getoVirtIsoFile());
             tempVar.setOverrideFirewall(getParameters().getOverrideFirewall());

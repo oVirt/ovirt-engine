@@ -13,10 +13,15 @@ public class InstallVdsParameters extends VdsOperationActionParameters {
     public InstallVdsParameters() {
     }
 
+    public InstallVdsParameters(Guid vdsId) {
+        super();
+        this.setVdsId(vdsId);
+    }
+
     public InstallVdsParameters(Guid vdsId, String password) {
         super();
         this.setVdsId(vdsId);
-        setRootPassword(password);
+        setPassword(password);
     }
 
     public boolean getIsReinstallOrUpgrade() {

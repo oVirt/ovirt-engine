@@ -154,8 +154,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
 
                 switch (getVds().getVdsType()) {
                 case VDS:
-                    installer.setUser("root");
-                    installer.setPassword(parameters.getRootPassword());
+                    installer.setPassword(parameters.getPassword());
                     installer.setFirewall(parameters.getOverrideFirewall());
                     break;
                 case oVirtNode:
@@ -166,7 +165,6 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                             getVds().getVdsType().name()
                         );
                     }
-                    installer.setUser("root");
                     installer.useDefaultKeyPair();
                     break;
                 default:

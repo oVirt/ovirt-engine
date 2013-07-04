@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -64,8 +65,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<T> {
-
-    private static final String USER_NAME = "root";
 
     private VDS upServer;
 
@@ -150,8 +149,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         // do not install vds's which added in pending mode (currently power
         // clients). they are installed as part of the approve process
         if (Config.<Boolean> GetValue(ConfigValues.InstallVds) && !getParameters().getAddPending()) {
-            final InstallVdsParameters installVdsParameters = new InstallVdsParameters(getVdsId(),
-                    getParameters().getRootPassword());
+            final InstallVdsParameters installVdsParameters = new InstallVdsParameters(getVdsId(), getParameters().getPassword());
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
             installVdsParameters.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
             Map<String, String> values = new HashMap<String, String>();
@@ -317,6 +315,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             } else if (getVdsDAO().getAllForHostname(hostName).size() != 0) {
                 returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST);
+            } else if (!ValidationUtils.validatePort(vds.getSshPort())) {
+                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_PORT);
+            } else if ((StringUtils.isEmpty(vds.getSshUsername())) ||
+                       (vds.getSshUsername().length() > BusinessEntitiesDefinitions.USER_USER_NAME_SIZE)) {
+                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_USERNAME);
             } else {
                 returnValue = returnValue && validateSingleHostAttachedToLocalStorage();
 
@@ -324,7 +327,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         && !EngineEncryptionUtils.haveKey()) {
                     returnValue = failCanDoAction(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND);
                 } else if (!getParameters().getAddPending()
-                        && StringUtils.isEmpty(getParameters().getRootPassword())) {
+                        && StringUtils.isEmpty(getParameters().getPassword())) {
                     // We block vds installations if it's not a RHEV-H and password is empty
                     // Note that this may override local host SSH policy. See BZ#688718.
                     returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
@@ -360,16 +363,16 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return ClusterUtils.getInstance();
     }
 
-    public SSHClient getSSHClient(String hostname) {
+    public SSHClient getSSHClient() {
         Long timeout =
                 TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(ConfigValues.ConnectToServerTimeoutInSeconds));
 
         SSHClient sshclient = new EngineSSHClient();
         sshclient.setHardTimeout(timeout);
         sshclient.setSoftTimeout(timeout);
-        sshclient.setHost(hostname);
-        sshclient.setUser(USER_NAME);
-        sshclient.setPassword(getParameters().getRootPassword());
+        sshclient.setHost(getVds().getStaticData().getHostName(), getVds().getStaticData().getSshPort());
+        sshclient.setUser(getVds().getStaticData().getSshUsername());
+        sshclient.setPassword(getParameters().getPassword());
         return sshclient;
     }
 
@@ -401,7 +404,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         if (vds.getVdsType() == VDSType.VDS && Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
             SSHClient sshclient = null;
             try {
-                sshclient = getSSHClient(vds.getHostName());
+                sshclient = getSSHClient();
                 sshclient.connect();
                 sshclient.authenticate();
 

@@ -57,7 +57,7 @@ public class InstallVdsCommandTest {
     }
 
     private static InstallVdsParameters createParameters() {
-        InstallVdsParameters param = new InstallVdsParameters(Guid.newGuid(), null);
+        InstallVdsParameters param = new InstallVdsParameters(Guid.newGuid());
         param.setIsReinstallOrUpgrade(true);
         return param;
     }
