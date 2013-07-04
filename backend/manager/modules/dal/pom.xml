@@ -12,11 +12,6 @@
   <properties>
     <engine.dao>jdbc</engine.dao>
     <engine.db>pgsql</engine.db>
-    <engine.db.username>postgres</engine.db.username>
-    <engine.db.schema>engine</engine.db.schema>
-    <version.info.dir>/etc/engine</version.info.dir>
-    <skip.db.checksum.check>true</skip.db.checksum.check>
-    <skip.db.checksum.store>true</skip.db.checksum.store>
   </properties>
   <dependencies>
     <dependency>
@@ -135,42 +130,6 @@
               </resources>
             </configuration>
           </execution>
-        </executions>
-      </plugin>
-      <plugin>
-        <artifactId>exec-maven-plugin</artifactId>
-          <groupId>org.codehaus.mojo</groupId>
-          <executions>
-            <execution>
-              <id>check_db_schema</id>
-              <phase>test</phase>
-              <goals>
-                <goal>exec</goal>
-              </goals>
-              <configuration>
-                <skip>${skip.db.checksum.check}</skip>
-                <executable>${basedir}/../../../packaging/dbscripts/db_schema_version_check/check_db_schema_checksum.sh</executable>
-                <arguments>
-                  <argument>-u</argument>
-                  <argument>${engine.db.username}</argument>
-                  <argument>-d</argument>
-                  <argument>${engine.db.schema}</argument>
-                  <argument>-f</argument>
-                  <argument>${version.info.dir}</argument>
-               </arguments>
-              </configuration>
-           </execution>
-           <execution>
-              <id>store_db_schema_checksum</id>
-              <phase>test</phase>
-              <goals>
-                <goal>exec</goal>
-              </goals>
-              <configuration>
-                <skip>${skip.db.checksum.store}</skip>
-                <executable>${basedir}/../../../packaging/dbscripts/db_schema_version_check/store_db_schema_checksum.sh</executable>
-              </configuration>
-           </execution>
         </executions>
       </plugin>
       <plugin>

@@ -7,7 +7,7 @@ die () {
 }
 
 RETVAL=-1
-DBSCRIPTS_DIR=`dirname $(readlink -f "$0")`/..
+DBSCRIPTS_DIR=`dirname $(readlink -f "$0")`/../../packaging/dbscripts
 service postgresql status>/dev/null 2>&1  || die "postgresql is not running"
 
 source $DBSCRIPTS_DIR/dbfunctions.sh  || die "dbfunctions.sh script does not exist"

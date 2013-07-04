@@ -173,6 +173,7 @@ GENERATED = \
 
 all: \
 	generated-files \
+	dbscripts-validations \
 	$(BUILD_FILE) \
 	$(NULL)
 
@@ -290,6 +291,9 @@ copy-recursive:
 		[ -x "$(SOURCEDIR)/$${f}" ] && MASK=0755 || MASK=0644; \
 		install -m "$${MASK}" "$(SOURCEDIR)/$${f}" "$$(dirname "$(TARGETDIR)/$${f}")"; \
 	done
+
+dbscripts-validations:
+	test/dbscripts/check_for_duplicate_upgrade_scripts.sh
 
 install_artifacts:
 	# we must exclude tmp.repos directory so we

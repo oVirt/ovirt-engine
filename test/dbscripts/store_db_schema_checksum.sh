@@ -12,8 +12,8 @@ die () {
 }
 
 CURRENT_DIR=`dirname $(readlink -f "$0")`
-STORE_FILE="$CURRENT_DIR"/../../../../ear/target/version.info
-UPGRADE_SCRIPTS_DIR="$CURRENT_DIR"/../upgrade
+STORE_FILE="$CURRENT_DIR"/../../ear/target/version.info
+UPGRADE_SCRIPTS_DIR="$CURRENT_DIR"/../../packaging/dbscripts/upgrade
 echo "Storing schema checksum"
 touch $STORE_FILE
 sed -i "/DB_SCHEMA_CHECKSUM/d" "$STORE_FILE" || die "error in manipulating version.info file"

@@ -10,7 +10,7 @@ die () {
 
 CURRENT_DIR=`dirname $(readlink -f "$0")`
 VERSION_INFO_DIR=/etc/engine
-DBSCRIPTS_DIR="$CURRENT_DIR"/..
+DBSCRIPTS_DIR="$CURRENT_DIR"/../../packaging/dbscripts
 DBNAME=engine
 USERNAME=postgres
 while getopts d:u:f: option; do
