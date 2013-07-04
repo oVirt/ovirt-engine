@@ -534,13 +534,11 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     protected void executeCommand() {
         try {
             addVmToDb();
-            VM vm = getVm();
-            // if there aren't any images- we can just perform the end
+            processImages();
+            // if there aren't tasks - we can just perform the end
             // vm related ops
-            if (vm.getImages().isEmpty()) {
+            if (getReturnValue().getVdsmTaskIdList().isEmpty()) {
                 endVmRelatedOps();
-            } else {
-                processImages();
             }
         } catch (RuntimeException e) {
             MacPoolManager.getInstance().freeMacs(macsAdded);
