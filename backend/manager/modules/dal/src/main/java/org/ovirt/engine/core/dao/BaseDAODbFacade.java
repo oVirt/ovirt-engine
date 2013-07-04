@@ -58,7 +58,7 @@ public abstract class BaseDAODbFacade {
 
             @Override
             public Guid mapRow(ResultSet rs, int rowNum) throws SQLException {
-                return new Guid(rs.getString(1));
+                return new Guid((UUID) rs.getObject(1));
             }
         };
     }
