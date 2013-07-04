@@ -43,7 +43,7 @@ public class GuidUtils {
         guidPart.getChars(0, guidPart.length(), dst, 0);
         for (int counter = 0; counter < (guidPart.length()) / 2; counter++) {
             // Build a string from two characters
-            StringBuilder numberStrSB = new StringBuilder();
+            StringBuilder numberStrSB = new StringBuilder(2);
             numberStrSB.append(dst[counter * 2]);
             numberStrSB.append(dst[(counter * 2) + 1]);
             // Convert the string to byte and add write it to the stream
