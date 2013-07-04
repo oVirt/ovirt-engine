@@ -15,6 +15,8 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
     private boolean privateAddPending;
 
     private boolean glusterPeerProbeNeeded = true;
+    private Guid providerId;
+    private String networkMappings;
 
     public boolean getAddPending() {
         return privateAddPending;
@@ -41,5 +43,21 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
 
     public boolean isGlusterPeerProbeNeeded() {
         return this.glusterPeerProbeNeeded;
+    }
+
+    public Guid getProviderId() {
+        return providerId;
+    }
+
+    public void setProvider(Guid provider) {
+        this.providerId = provider;
+    }
+
+    public String getNetworkMappings() {
+        return networkMappings;
+    }
+
+    public void setNetworkMappings(String networkMappings) {
+        this.networkMappings = networkMappings;
     }
 }

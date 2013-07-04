@@ -9,6 +9,9 @@ import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
@@ -115,6 +118,18 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             installer.setReboot(parameters.isRebootAfterInstallation() && configureNetworkUsingHostDeploy);
             if (configureNetworkUsingHostDeploy) {
                 installer.setManagementNetwork(NetworkUtils.getEngineNetwork());
+            }
+
+            if (parameters.getProviderId() != null) {
+                Provider<?> provider = getDbFacade().getProviderDao().get(parameters.getProviderId());
+                if (provider.getType() == ProviderType.OPENSTACK_NETWORK) {
+                    OpenstackNetworkProviderProperties agentProperties =
+                            (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
+                    if (parameters.getNetworkMappings() != null) {
+                        agentProperties.getAgentConfiguration().setNetworkMappings(parameters.getNetworkMappings());
+                    }
+                    installer.setOpenStackAgentProperties(agentProperties);
+                }
             }
 
             switch (getVds().getVdsType()) {

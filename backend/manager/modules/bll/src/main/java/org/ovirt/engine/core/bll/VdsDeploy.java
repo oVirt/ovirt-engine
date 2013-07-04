@@ -26,6 +26,7 @@ import javax.naming.TimeLimitExceededException;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.EngineSSHDialog;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -54,6 +55,7 @@ import org.ovirt.otopi.dialog.Event;
 import org.ovirt.otopi.dialog.MachineDialogParser;
 import org.ovirt.otopi.dialog.SoftError;
 import org.ovirt.ovirt_host_deploy.constants.GlusterEnv;
+import org.ovirt.ovirt_host_deploy.constants.OpenStackEnv;
 import org.ovirt.ovirt_host_deploy.constants.VdsmEnv;
 
 /**
@@ -101,6 +103,8 @@ public class VdsDeploy implements SSHDialog.Sink {
 
     private String _certificate;
     private String _iptables = "";
+
+    private OpenstackNetworkProviderProperties _openStackAgentProperties = null;
 
     /**
      * set vds object with unique id.
@@ -216,7 +220,10 @@ public class VdsDeploy implements SSHDialog.Sink {
      * Values to determine when customization should be performed.
      */
     private static enum CustomizationCondition {
-        IPTABLES_OVERRIDE
+        IPTABLES_OVERRIDE,
+        NEUTRON_SETUP,
+        NEUTRON_LINUX_BRIDGE_SETUP,
+        NEUTRON_OPEN_VSWITCH_SETUP
     };
     /**
      * Special annotation to specify when the customization is necessary.
@@ -439,11 +446,106 @@ public class VdsDeploy implements SSHDialog.Sink {
             );
             return null;
         }},
+        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
+        public Void call() throws Exception {
+            _parser.cliEnvironmentSet(
+                OpenStackEnv.NEUTRON_ENABLE,
+                true
+            );
+            return null;
+        }},
+        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
+        public Void call() throws Exception {
+            _setCliEnvironmentIfNecessary(
+                OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_hostname",
+                _openStackAgentProperties.getAgentConfiguration().getQpidConfiguration().getAddress()
+            );
+            return null;
+        }},
+        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
+        public Void call() throws Exception {
+            _setCliEnvironmentIfNecessary(
+                OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_port",
+                _openStackAgentProperties.getAgentConfiguration().getQpidConfiguration().getPort()
+            );
+            return null;
+        }},
+        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
+        public Void call() throws Exception {
+            _setCliEnvironmentIfNecessary(
+                OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_username",
+                _openStackAgentProperties.getAgentConfiguration().getQpidConfiguration().getUsername()
+            );
+            return null;
+        }},
+        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
+        public Void call() throws Exception {
+            _setCliEnvironmentIfNecessary(
+                OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/qpid_password",
+                _openStackAgentProperties.getAgentConfiguration().getQpidConfiguration().getPassword()
+            );
+            return null;
+        }},
+        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_SETUP)
+        public Void call() throws Exception {
+            _parser.cliEnvironmentSet(
+                OpenStackEnv.NEUTRON_CONFIG_PREFIX + "DEFAULT/rpc_backend",
+                "quantum.openstack.common.rpc.impl_qpid"
+            );
+            return null;
+        }},
+        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_LINUX_BRIDGE_SETUP)
+        public Void call() throws Exception {
+            _parser.cliEnvironmentSet(
+                OpenStackEnv.NEUTRON_LINUXBRIDGE_ENABLE,
+                true
+            );
+            return null;
+        }},
+        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_LINUX_BRIDGE_SETUP)
+        public Void call() throws Exception {
+            _setCliEnvironmentIfNecessary(
+                OpenStackEnv.NEUTRON_LINUXBRIDGE_CONFIG_PREFIX + "LINUX_BRIDGE/physical_interface_mappings",
+                _openStackAgentProperties.getAgentConfiguration().getNetworkMappings()
+            );
+            return null;
+        }},
+        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_OPEN_VSWITCH_SETUP)
+        public Void call() throws Exception {
+            _parser.cliEnvironmentSet(
+                OpenStackEnv.NEUTRON_OPENVSWITCH_ENABLE,
+                true
+            );
+            return null;
+        }},
+        new Callable<Void>() {@CallWhen(CustomizationCondition.NEUTRON_OPEN_VSWITCH_SETUP)
+        public Void call() throws Exception {
+            _setCliEnvironmentIfNecessary(
+                OpenStackEnv.NEUTRON_OPENVSWITCH_CONFIG_PREFIX + "OVS/bridge_mappings",
+                _openStackAgentProperties.getAgentConfiguration().getNetworkMappings()
+            );
+            return null;
+        }},
         new Callable<Object>() { public Object call() throws Exception {
             _parser.cliInstall();
             return null;
         }},
     };
+    /**
+     * Set the CLI environment variable if it's not <code>null</code>, otherwise perform a no-op so the dialog can
+     * advance.
+     * @param name The name of the variable to set.
+     * @param value The value to set (can be <code>null</code>).
+     * @throws IOException In case of error while communicating with the parser
+     */
+    private void _setCliEnvironmentIfNecessary(String name, Object value) throws IOException {
+        if (value == null) {
+            _parser.cliNoop();
+        }
+        else {
+            _parser.cliEnvironmentSet(name, value);
+        }
+    }
     /**
      * Execute the next customization vector entry.
      */
@@ -1026,6 +1128,19 @@ public class VdsDeploy implements SSHDialog.Sink {
                 }
             }
             _thread = null;
+        }
+    }
+
+    public void setOpenStackAgentProperties(OpenstackNetworkProviderProperties properties) {
+        _openStackAgentProperties = properties;
+        if (_openStackAgentProperties != null) {
+            _customizationConditions.add(CustomizationCondition.NEUTRON_SETUP);
+            if (_openStackAgentProperties.isLinuxBridge()) {
+                _customizationConditions.add(CustomizationCondition.NEUTRON_LINUX_BRIDGE_SETUP);
+            }
+            else if (_openStackAgentProperties.isOpenVSwitch()) {
+                _customizationConditions.add(CustomizationCondition.NEUTRON_OPEN_VSWITCH_SETUP);
+            }
         }
     }
 }
