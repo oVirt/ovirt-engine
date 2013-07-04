@@ -45,7 +45,7 @@ class Plugin(plugin.PluginBase):
         self.environment[osetupcons.DBEnv.PGPASS_FILE] = None
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
+        stage=plugin.Stages.STAGE_VALIDATION,
         name=osetupcons.Stages.DB_CREDENTIALS_AVAILABLE,
     )
     def _misc(self):
