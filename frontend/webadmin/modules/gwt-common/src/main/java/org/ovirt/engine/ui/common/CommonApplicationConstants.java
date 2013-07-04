@@ -1391,4 +1391,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Not Responding")
     String notResponding();
+
+    @DefaultStringValue("Unlimited")
+    String UnlimitedNetworkQoS();
 }

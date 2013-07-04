@@ -157,6 +157,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Quota")
     String dataCenterQuotaSubTabLabel();
 
+    @DefaultStringValue("Network QoS")
+    String dataCenterNetworkQoSSubTabLabel();
+
     @DefaultStringValue("Permissions")
     String dataCenterPermissionSubTabLabel();
 
@@ -2882,4 +2885,61 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Networks to Import")
     String importedNetworks();
+
+    @DefaultStringValue("Enter host fingerprint or <a>fetch</a> manually from host")
+    String fetchingHostFingerprint();
+
+    @DefaultStringValue("Name")
+    String networkQoSName();
+
+    @DefaultStringValue("In Average")
+    String networkQoSInboundAverage();
+
+    @DefaultStringValue("In Peak")
+    String networkQoSInboundPeak();
+
+    @DefaultStringValue("In Burst")
+    String networkQoSInboundBurst();
+
+    @DefaultStringValue("Out Average")
+    String networkQoSOutboundAverage();
+
+    @DefaultStringValue("Out Peak")
+    String networkQoSOutboundPeak();
+
+    @DefaultStringValue("Out Burst")
+    String networkQoSOutboundBurst();
+
+    @DefaultStringValue("New")
+    String newNetworkQoS();
+
+    @DefaultStringValue("Edit")
+    String editNetworkQoS();
+
+    @DefaultStringValue("Remove")
+    String removeNetworkQoS();
+
+    @DefaultStringValue("Data Center")
+    String dataCenterNetworkQoSPopup();
+
+    @DefaultStringValue("Average")
+    String averageNetworkQoSPopup();
+
+    @DefaultStringValue("Peak")
+    String peakNetworkQoSPopup();
+
+    @DefaultStringValue("Burst")
+    String burstNetworkQoSPopup();
+
+    @DefaultStringValue("Inbound")
+    String inboundLabelQoSPopup();
+
+    @DefaultStringValue("Outbound")
+    String outboundLabelQoSPopup();
+
+    @DefaultStringValue("Mbps")
+    String mbpsLabelQoSPopup();
+
+    @DefaultStringValue("Mb")
+    String mbLabelQoSPopup();
 }

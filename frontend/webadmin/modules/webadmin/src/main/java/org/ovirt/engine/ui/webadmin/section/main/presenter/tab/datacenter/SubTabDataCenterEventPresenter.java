@@ -36,7 +36,7 @@ public class SubTabDataCenterEventPresenter extends AbstractSubTabPresenter<Stor
 
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().dataCenterEventSubTabLabel(), 5,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().dataCenterEventSubTabLabel(), 6,
                 ginjector.getSubTabDataCenterEventModelProvider(), Align.RIGHT);
     }
 

@@ -640,6 +640,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Host capabilities")
     String VAR__TYPE__HOST_CAPABILITIES();
 
+    @DefaultStringValue("$type Network QoS")
+    String VAR__TYPE__NETWORK_QOS();
+
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
 
@@ -2431,4 +2434,34 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("One or more servers in the cluster is down.")
     String CLUSTER_ALL_SERVERS_NOT_UP();
+
+    @DefaultStringValue("Cannot ${action} ${type}. All three values are needed in order to define QoS on each network directions.")
+    String ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Negative values are not allowed.")
+    String ACTION_TYPE_FAILED_NETWORK_QOS_NEGATIVE_VALUES();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Values are out of range.")
+    String ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Duplicate QoS name in Data Center.")
+    String ACTION_TYPE_FAILED_NETWORK_QOS_NAME_EXIST();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Invalid QoS.")
+    String ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_DATA();
+
+    @DefaultStringValue("Cannot ${action} ${type}. QoS entity not found.")
+    String ACTION_TYPE_FAILED_NETWORK_QOS_NOT_FOUND();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Data Center does not contain the specific QoS entity.")
+    String ACTION_TYPE_FAILED_NETWORK_QOS_INVALID_DC_ID();
+
+    @DefaultStringValue("QoS name cannot be empty.")
+    String QOS_NAME_NOT_NULL();
+
+    @DefaultStringValue("Invalid QoS name (name must be formed of \"a-z0-9A-Z\" or \"-_ \")")
+    String QOS_NAME_INVALID();
+
+    @DefaultStringValue("QoS name length must be under 255 characters.")
+    String QOS_NAME_TOO_LONG();
 }

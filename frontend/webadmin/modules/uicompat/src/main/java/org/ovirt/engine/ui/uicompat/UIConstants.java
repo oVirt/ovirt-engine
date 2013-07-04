@@ -225,6 +225,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Quota")
     String quotaTitle();
 
+    @DefaultStringValue("Network QoS")
+    String networkQoSTitle();
+
     @DefaultStringValue("Volumes")
     String volumesTitle();
 
@@ -1957,4 +1960,22 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Cann't switch host cluster between trust cluster and non-trust cluster due to host existed in the cluster")
     String trustedServiceDisabled();
+
+    @DefaultStringValue("22")
+    String defaultHostSSHPort();
+
+    @DefaultStringValue("root")
+    String defaultUserName();
+
+    @DefaultStringValue("Remove Network QoS")
+    String removeNetworkQoSTitle();
+
+    @DefaultStringValue("Edit Network QoS")
+    String editNetworkQoSTitle();
+
+    @DefaultStringValue("New Network QoS")
+    String newNetworkQoSTitle();
+
+    @DefaultStringValue("Are you sure you want to remove this Network QoS")
+    String removeNetworkQoSMessage();
 }

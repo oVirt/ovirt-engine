@@ -162,6 +162,9 @@
 		<include name="common/businessentities/QuotaVdsGroupProperties.java"/>
 		<include name="common/businessentities/QuotaUsagePerUser.java"/>
 
+		<!--QoS-->
+		<include name="common/businessentities/network/NetworkQoS.java"/>
+
 		<!-- Misc -->
 		<include name="common/AuditLogType.java" />
 		<include name="common/AuditLogTimeInterval.java" />
