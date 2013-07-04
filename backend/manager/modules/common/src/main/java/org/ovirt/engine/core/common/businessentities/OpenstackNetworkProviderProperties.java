@@ -34,7 +34,7 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
             return false;
         }
         OpenstackNetworkProviderProperties other = (OpenstackNetworkProviderProperties) obj;
-        if (getPluginType() != other.getPluginType()) {
+        if (!getPluginType().equals(other.getPluginType())) {
             return false;
         }
         return true;
