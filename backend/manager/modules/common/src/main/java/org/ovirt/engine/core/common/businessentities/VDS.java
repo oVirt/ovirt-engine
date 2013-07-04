@@ -191,10 +191,10 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     public VDS clone() {
         VDS vds =
-                new VDS(Guid.createGuidFromStringDefaultEmpty(getVdsGroupId().toString()),
+                new VDS(getVdsGroupId(),
                         getVdsGroupName(),
                         getVdsGroupDescription(),
-                        Guid.createGuidFromStringDefaultEmpty(getId().toString()),
+                        getId(),
                         getName(),
                         getManagementIp(),
                         getHostName(),
