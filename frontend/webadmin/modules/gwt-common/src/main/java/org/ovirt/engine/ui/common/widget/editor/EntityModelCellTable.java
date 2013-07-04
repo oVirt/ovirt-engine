@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.PopupTableResources;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.table.ElementIdCellTable;
+import org.ovirt.engine.ui.common.widget.table.column.EventHandlingCell;
 import org.ovirt.engine.ui.common.widget.table.column.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -15,6 +16,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Unit;
@@ -171,7 +173,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
         switch (selectionMode) {
         case MULTIPLE:
             setSelectionModel(new MultiSelectionModel<EntityModel>(),
-                    DefaultSelectionEventManager.<EntityModel> createCheckboxManager());
+                    DefaultSelectionEventManager.<EntityModel> createCheckboxManager(0));
             break;
         case NONE:
             setSelectionModel(new NoSelectionModel<EntityModel>());
@@ -268,6 +270,13 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
             addCellPreviewHandler(new CellPreviewEvent.Handler<EntityModel>() {
                 @Override
                 public void onCellPreview(CellPreviewEvent<EntityModel> event) {
+                    int columnIndex = event.getColumn();
+                    Cell<?> cell = getColumn(columnIndex).getCell();
+                    if (cell instanceof EventHandlingCell
+                            && ((EventHandlingCell) cell).handlesEvent(event)) {
+                        return;
+                    }
+
                     if ("click".equals(event.getNativeEvent().getType()) //$NON-NLS-1$
                             && !(getSelectionModel() instanceof NoSelectionModel)) {
                         // Let the selection column deal with this

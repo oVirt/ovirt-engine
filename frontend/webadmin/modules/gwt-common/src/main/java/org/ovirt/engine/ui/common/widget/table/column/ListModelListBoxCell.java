@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -17,6 +18,7 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.text.shared.Renderer;
+import com.google.gwt.view.client.CellPreviewEvent;
 
 /**
  * This class may be used to display a ListBox, backed by a ListModel, in cell widgets. It mimics the behaviour of a
@@ -27,7 +29,7 @@ import com.google.gwt.text.shared.Renderer;
  * @param <T>
  *            the ListModel item type.
  */
-public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String> {
+public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String> implements EventHandlingCell {
 
     private static final String PATTERN_SELECT = "<select"; //$NON-NLS-1$
     private static final String REPLACEMENT_SELECT = "<select disabled"; //$NON-NLS-1$
@@ -111,6 +113,17 @@ public class ListModelListBoxCell<T> extends AbstractInputCell<ListModel, String
                         }
                     }
                 });
+    }
+
+    @Override
+    public boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
+        NativeEvent nativeEvent = event.getNativeEvent();
+        if (!"click".equals(nativeEvent.getType().toLowerCase())) { //$NON-NLS-1$
+            return false;
+        }
+        Element target = nativeEvent.getEventTarget().cast();
+        String tagName = target.getTagName().toLowerCase();
+        return "select".equals(tagName) || "option".equals(tagName); //$NON-NLS-1$ $NON-NLS-2$
     }
 
 }

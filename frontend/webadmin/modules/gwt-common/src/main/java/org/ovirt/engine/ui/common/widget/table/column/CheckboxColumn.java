@@ -1,19 +1,24 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.view.client.CellPreviewEvent;
 
 public abstract class CheckboxColumn<T> extends Column<T, Boolean> {
 
     private boolean isCentralized = false;
 
-    static class EnabledDisabledCheckboxCell extends CheckboxCell {
+    static class EnabledDisabledCheckboxCell extends CheckboxCell implements EventHandlingCell {
 
         public EnabledDisabledCheckboxCell() {
             super(true, false);
@@ -38,6 +43,16 @@ public abstract class CheckboxColumn<T> extends Column<T, Boolean> {
             } else {
                 super.render(context, value, sb);
             }
+        }
+
+        @Override
+        public boolean handlesEvent(CellPreviewEvent<EntityModel> event) {
+            NativeEvent nativeEvent = event.getNativeEvent();
+            if (!"click".equals(nativeEvent.getType().toLowerCase())) { //$NON-NLS-1$
+                return false;
+            }
+            Element target = nativeEvent.getEventTarget().cast();
+            return "input".equals(target.getTagName().toLowerCase()); //$NON-NLS-1$
         }
 
     }
