@@ -81,16 +81,13 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             getModel().getNumOfMonitors().setSelectedItem(template.getNumOfMonitors());
             getModel().getDomain().setSelectedItem(template.getDomain());
             getModel().getMemSize().setEntity(template.getMemSizeMb());
-            getModel().getUsbPolicy().setSelectedItem(template.getUsbPolicy());
             getModel().setBootSequence(template.getDefaultBootSequence());
             getModel().getIsHighlyAvailable().setEntity(template.isAutoStartup());
 
             updateHostPinning(template.getMigrationSupport());
             doChangeDefautlHost(template.getDedicatedVmForVds());
 
-            getModel().getIsSmartcardEnabled().setEntity(template.isSmartcardEnabled());
             getModel().getIsDeleteProtected().setEntity(template.isDeleteProtected());
-            getModel().getVncKeyboardLayout().setSelectedItem(template.getVncKeyboardLayout());
 
             getModel().getIsStateless().setEntity(template.isStateless());
             getModel().getAllowConsoleReconnect().setEntity(template.isAllowConsoleReconnect());
@@ -128,6 +125,9 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                 }
             }
             getModel().getDisplayProtocol().setSelectedItem(displayProtocol);
+            getModel().getUsbPolicy().setSelectedItem(template.getUsbPolicy());
+            getModel().getVncKeyboardLayout().setSelectedItem(template.getVncKeyboardLayout());
+            getModel().getIsSmartcardEnabled().setEntity(template.isSmartcardEnabled());
 
             // By default, take kernel params from template.
             getModel().getKernel_path().setEntity(template.getKernelUrl());

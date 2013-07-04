@@ -194,7 +194,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getMinAllocatedMemory().setEntity(this.vm.getMinAllocatedMem());
         getModel().getOSType().setSelectedItem(this.vm.getVmOsId());
         getModel().getDomain().setSelectedItem(this.vm.getVmDomain());
-        getModel().getUsbPolicy().setSelectedItem(this.vm.getUsbPolicy());
         getModel().getNumOfMonitors().setSelectedItem(this.vm.getNumOfMonitors());
         getModel().getAllowConsoleReconnect().setEntity(this.vm.getAllowConsoleReconnect());
         getModel().setBootSequence(this.vm.getDefaultBootSequence());
@@ -203,8 +202,6 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         getModel().getIsStateless().setEntity(this.vm.isStateless());
         getModel().getIsRunAndPause().setEntity(this.vm.isRunAndPause());
         getModel().getIsDeleteProtected().setEntity(this.vm.isDeleteProtected());
-        getModel().getIsSmartcardEnabled().setEntity(this.vm.isSmartcardEnabled());
-        getModel().getVncKeyboardLayout().setSelectedItem(this.vm.getVncKeyboardLayout());
 
         updateSelectedCdImage(this.vm.getStaticData());
         updateTimeZone(this.vm.getTimeZone());
@@ -228,6 +225,10 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                 break;
             }
         }
+
+        getModel().getUsbPolicy().setSelectedItem(this.vm.getUsbPolicy());
+        getModel().getIsSmartcardEnabled().setEntity(this.vm.isSmartcardEnabled());
+        getModel().getVncKeyboardLayout().setSelectedItem(this.vm.getVncKeyboardLayout());
 
         initPriority(this.vm.getPriority());
     }

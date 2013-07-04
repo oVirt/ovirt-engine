@@ -90,12 +90,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             getModel().getNumOfMonitors().setSelectedItem(vmBase.getNumOfMonitors());
             getModel().getDomain().setSelectedItem(vmBase.getDomain());
             getModel().getMemSize().setEntity(vmBase.getMemSizeMb());
-            getModel().getUsbPolicy().setSelectedItem(vmBase.getUsbPolicy());
             getModel().setBootSequence(vmBase.getDefaultBootSequence());
             getModel().getIsHighlyAvailable().setEntity(vmBase.isAutoStartup());
             getModel().getIsDeleteProtected().setEntity(vmBase.isDeleteProtected());
-            getModel().getIsSmartcardEnabled().setEntity(vmBase.isSmartcardEnabled());
-            getModel().getVncKeyboardLayout().setSelectedItem(vmBase.getVncKeyboardLayout());
             getModel().getIsRunAndPause().setEntity(false);
 
             boolean hasCd = !StringHelper.isNullOrEmpty(vmBase.getIsoPath());
@@ -140,6 +137,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 }
             }
             getModel().getDisplayProtocol().setSelectedItem(displayProtocol);
+            getModel().getUsbPolicy().setSelectedItem(vmBase.getUsbPolicy());
+            getModel().getVncKeyboardLayout().setSelectedItem(vmBase.getVncKeyboardLayout());
+            getModel().getIsSmartcardEnabled().setEntity(vmBase.isSmartcardEnabled());
 
             // By default, take kernel params from template.
             getModel().getKernel_path().setEntity(vmBase.getKernelUrl());
