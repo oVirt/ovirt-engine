@@ -70,6 +70,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     /** flag that indicates whether memory snapshot is about to be created */
     private boolean prepareForMemorySnapshot;
     private String cachedSnapshotIsBeingTakenMessage;
+    private Guid newActiveSnapshotId = Guid.newGuid();
 
     protected CreateAllSnapshotsFromVmCommand(Guid commandId) {
         super(commandId);
@@ -110,17 +111,15 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void buildChildCommandInfos() {
-        Guid vmSnapshotId = Guid.newGuid();
         for (DiskImage image : getDisksList()) {
             addChildCommandInfo(image.getImageId(),
                     VdcActionType.CreateSnapshot,
-                    buildCreateSnapshotParameters(image, vmSnapshotId));
+                    buildCreateSnapshotParameters(image));
         }
     }
 
     @Override
     protected void executeVmCommand() {
-        Guid newActiveSnapshotId = Guid.newGuid();
         Guid createdSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
         getParameters().setSnapshotType(determineSnapshotType());
         getParameters().setInitialVmStatus(getVm().getStatus());
@@ -131,7 +130,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
         MemoryImageBuilder memoryImageBuilder = createMemoryImageBuilder();
         addSnapshotToDB(createdSnapshotId, memoryImageBuilder);
-        createSnapshotsForDisks(newActiveSnapshotId);
+        createSnapshotsForDisks();
         memoryImageBuilder.build();
 
         if (getTaskIdList().isEmpty()) {
@@ -186,9 +185,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 getCompensationContext());
     }
 
-    private void createSnapshotsForDisks(Guid vmSnapshotId) {
+    private void createSnapshotsForDisks() {
         for (DiskImage image : getDisksList()) {
-
             VdcReturnValueBase vdcReturnValue = executeChildCommand(image.getImageId());
 
             if (vdcReturnValue.getSucceeded()) {
@@ -200,7 +198,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         }
     }
 
-    private ImagesActionsParametersBase buildCreateSnapshotParameters(DiskImage image, Guid snapshotId) {
+    private ImagesActionsParametersBase buildCreateSnapshotParameters(DiskImage image) {
         VdcActionType parentCommand = getParameters().getParentCommand() != VdcActionType.Unknown ?
                 getParameters().getParentCommand() : VdcActionType.CreateAllSnapshotsFromVm;
 
@@ -208,7 +206,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         result.setDescription(getParameters().getDescription());
         result.setSessionId(getParameters().getSessionId());
         result.setQuotaId(image.getQuotaId());
-        result.setVmSnapshotId(snapshotId);
+        result.setVmSnapshotId(newActiveSnapshotId);
         result.setEntityInfo(getParameters().getEntityInfo());
         result.setParentCommand(parentCommand);
         result.setParentParameters(getParametersForTask(parentCommand, getParameters()));
