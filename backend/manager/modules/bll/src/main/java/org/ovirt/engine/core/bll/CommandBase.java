@@ -109,7 +109,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     /* Multiplier used to convert GB to bytes or vice versa. */
     protected static final long BYTES_IN_GB = 1024 * 1024 * 1024;
     private static final String DEFAULT_TASK_KEY = "DEFAULT_TASK_KEY";
-    private static final Guid[] EMPTY_GUID_ARRAY = new Guid[0];
     private static final String BACKEND_COMMAND_OBJECTS_HANDLER_JNDI_NAME =
             "java:global/engine/bll/Backend!org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler";
     private T _parameters;
@@ -1368,7 +1367,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         try {
             AsyncTasks task = createAsyncTask(new AsyncTaskCreationInfo(), parentCommand);
             taskId = task.getTaskId();
-            AsyncTaskUtils.addOrUpdateTaskInDB(task, null, EMPTY_GUID_ARRAY);
+            getAsyncTaskDao().save(task);
             taskKeyToTaskIdMap.put(taskKey, taskId);
             addToReturnValueTaskPlaceHolderIdList(taskId);
         } catch (RuntimeException ex) {

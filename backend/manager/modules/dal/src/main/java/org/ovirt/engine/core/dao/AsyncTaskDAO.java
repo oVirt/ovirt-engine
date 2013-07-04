@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.dao;
 
+import java.util.Collection;
 import java.util.List;
 
-import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskEntity;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -50,22 +51,11 @@ public interface AsyncTaskDAO extends DAO {
     List<AsyncTasks> getAll();
 
     /**
-     * Saves the specified task.
+     * Saves or updates the specified task
      *
      * @param task the task
-     * @param enitytType type of entities to be associated with the task
-     * @param entityIds IDs of entities to be associated with the task
      */
-    void save(AsyncTasks task, VdcObjectType enitytType, Guid... entityIds);
-
-    /**
-     * Saves or updates the specified task and its associated entities
-     *
-     * @param task the task
-     * @param enitytType type of entities to be associated with the task
-     * @param entityIds IDs of entities to be associated with the task
-     */
-    void saveOrUpdate(AsyncTasks task, VdcObjectType entityType, Guid... entityIds);
+    void saveOrUpdate(AsyncTasks task);
 
     /**
      * Updates the specified task.
@@ -103,5 +93,7 @@ public interface AsyncTaskDAO extends DAO {
      */
     List<AsyncTasks> getTasksByEntity(Guid entityId);
 
-    void insertAsyncTaskEntity(Guid taskId, Guid entityId, VdcObjectType value);
+    void insertAsyncTaskEntities(Collection<AsyncTaskEntity> asyncTaskEntities);
+
+    List<AsyncTaskEntity> getAllAsyncTaskEntitiesByTaskId(Guid taskId);
 }

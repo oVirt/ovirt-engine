@@ -3,13 +3,14 @@ package org.ovirt.engine.core.dao;
 import java.io.Serializable;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskEntity;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.ovirt.engine.core.dal.dbbroker.DbEngineDialect;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
+import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.ovirt.engine.core.utils.log.Log;
@@ -29,7 +31,6 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * {@code DbFacade}.
  */
 public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTaskDAO {
-    private static final Guid[] EMPTY_GUIDS_ARRAY = new Guid[0];
     private static final Log log = LogFactory.getLog(AsyncTaskDAODbFacadeImpl.class);
 
     private static class IdRowMapper implements RowMapper<Guid> {
@@ -40,6 +41,20 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             return getGuidDefaultEmpty(rs, "id");
         }
 
+    }
+
+    private static class AsyncTaskEntityRowMapper implements RowMapper<AsyncTaskEntity> {
+
+        public static final RowMapper<AsyncTaskEntity> instance = new AsyncTaskEntityRowMapper();
+
+        @Override
+        public AsyncTaskEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
+            AsyncTaskEntity entity = new AsyncTaskEntity();
+            entity.setEntityId(getGuid(rs, "entity_id"));
+            entity.setTaskId(getGuid(rs, "async_task_id"));
+            entity.setEntityType(VdcObjectType.valueOf(rs.getString("entity_type")));
+            return entity;
+        }
     }
 
     private static class AsyncTaskRowMapper implements RowMapper<AsyncTasks> {
@@ -98,6 +113,19 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
         }
     }
 
+    private MapSqlParameterMapper<AsyncTaskEntity> mapper = new MapSqlParameterMapper<AsyncTaskEntity>() {
+
+        @Override
+        public MapSqlParameterSource map(AsyncTaskEntity entity) {
+            CustomMapSqlParameterSource paramSource = getCustomMapSqlParameterSource();
+            paramSource.addValue("task_id", entity.getTaskId()).
+                    addValue("entity_id", entity.getEntityId()).
+                    addValue("entity_type", entity.getEntityType().toString());
+            return paramSource;
+
+        }
+    };
+
     @Override
     public AsyncTasks get(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -121,36 +149,26 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     }
 
     private AsyncTaskParameterSource getTaskParameterSource(AsyncTasks task) {
-        return new AsyncTaskParameterSource(dialect,task);
+        return new AsyncTaskParameterSource(dialect, task);
     }
 
     @Override
-    public void save(AsyncTasks task, VdcObjectType entityType, Guid... entityIds) {
+    public void saveOrUpdate(AsyncTasks task) {
         AsyncTaskParameterSource parameterSource = getTaskParameterSource(task);
-        parameterSource.addValue("entity_type", (entityType != null) ? entityType.toString() : null);
         parameterSource.addValue("started_at", task.getStartTime());
-        parameterSource.addValue("storage_pool_id",task.getStoragePoolId());
+        parameterSource.addValue("storage_pool_id", task.getStoragePoolId());
         parameterSource.addValue("async_task_type", task.getTaskType());
-        parameterSource.addValue("entity_ids", StringUtils.join(entityIds, ","));
-        getCallsHandler().executeModification("Insertasync_tasks", parameterSource);
-    }
-
-    @Override
-    public void saveOrUpdate(AsyncTasks task, VdcObjectType entityType, Guid... entityIds) {
-        AsyncTaskParameterSource parameterSource = getTaskParameterSource(task);
-        parameterSource.addValue("entity_type", (entityType != null) ? entityType.toString() : null);
-        parameterSource.addValue("started_at", task.getStartTime());
-        parameterSource.addValue("storage_pool_id",task.getStoragePoolId());
-        parameterSource.addValue("async_task_type", task.getTaskType());
-        parameterSource.addValue("entity_ids", StringUtils.join(entityIds, ","));
         getCallsHandler().executeModification("InsertOrUpdateAsyncTasks", parameterSource);
     }
 
     @Override
     public void save(AsyncTasks task) {
-        save(task, null, EMPTY_GUIDS_ARRAY);
+        AsyncTaskParameterSource parameterSource = getTaskParameterSource(task);
+        parameterSource.addValue("started_at", task.getStartTime());
+        parameterSource.addValue("storage_pool_id", task.getStoragePoolId());
+        parameterSource.addValue("async_task_type", task.getTaskType());
+        getCallsHandler().executeModification("Insertasync_tasks", parameterSource);
     }
-
 
     @Override
     public void update(AsyncTasks task) {
@@ -212,12 +230,16 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
     }
 
     @Override
-    public void insertAsyncTaskEntity(Guid taskId, Guid entityId, VdcObjectType entityType) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
-        parameterSource.addValue("task_id", taskId).
-                addValue("entity_id", entityId).
-                addValue("entity_type", entityType);
-        getCallsHandler().executeModification("InsertAsyncTaskEntities", parameterSource);
+    public void insertAsyncTaskEntities(Collection<AsyncTaskEntity> asyncTaskEntities) {
+        getCallsHandler().executeStoredProcAsBatch("InsertAsyncTaskEntities", asyncTaskEntities, mapper);
+    }
 
+    @Override
+    public List<AsyncTaskEntity> getAllAsyncTaskEntitiesByTaskId(Guid taskId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("task_id", taskId);
+        return getCallsHandler().executeReadList("GetAsyncTaskEntitiesByTaskId",
+                AsyncTaskEntityRowMapper.instance,
+                parameterSource);
     }
 }

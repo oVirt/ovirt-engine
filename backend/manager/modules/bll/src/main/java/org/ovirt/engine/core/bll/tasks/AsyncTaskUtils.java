@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.ovirt.engine.core.bll.SPMAsyncTask;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskEntity;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -21,9 +24,10 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class AsyncTaskUtils {
 
     /**
-     * Adds a task to DB or updates it if already
-     * exists in DB
-     * @param asyncTask task to be added or updated
+     * Adds a task to DB or updates it if already exists in DB
+     *
+     * @param asyncTask
+     *            task to be added or updated
      */
     public static void addOrUpdateTaskInDB(final SPMAsyncTask asyncTask) {
         try {
@@ -34,12 +38,13 @@ public class AsyncTaskUtils {
                     public Void runInTransaction() {
                         addOrUpdateTaskInDB(asyncTask.getParameters().getDbAsyncTask());
                         Map<Guid, VdcObjectType> entitiesMap = asyncTask.getEntitiesMap();
-                        for (Entry<Guid, VdcObjectType> entry : entitiesMap.entrySet()) {
-                            getAsyncTaskDao().insertAsyncTaskEntity(asyncTask.getParameters()
-                                    .getDbAsyncTask().getTaskId(), entry.getKey(), entry.getValue());
-                        }
+                        List<AsyncTaskEntity> asyncTaskEntities =
+                                buildAsyncTaskEntities(asyncTask.getParameters().getDbAsyncTask().getTaskId(),
+                                        entitiesMap);
+                        getAsyncTaskDao().insertAsyncTaskEntities(asyncTaskEntities);
                         return null;
                     }
+
                 });
             }
         } catch (RuntimeException e) {
@@ -49,26 +54,20 @@ public class AsyncTaskUtils {
         }
     }
 
-    private static void addOrUpdateTaskInDB(AsyncTasks asyncTask) {
-        getAsyncTaskDao().saveOrUpdate(asyncTask, null, (Guid[]) null);
+    private static List<AsyncTaskEntity> buildAsyncTaskEntities(Guid taskId, Map<Guid, VdcObjectType> entitiesMap) {
+        if (entitiesMap == null) {
+            entitiesMap = Collections.emptyMap();
+        }
+        List<AsyncTaskEntity> results = new ArrayList<>(entitiesMap.size());
+        for (Map.Entry<Guid, VdcObjectType> entry : entitiesMap.entrySet()) {
+            results.add(new AsyncTaskEntity(taskId, entry.getValue(), entry.getKey()));
+
+        }
+        return results;
     }
 
-    public static void addOrUpdateTaskInDB(
-            AsyncTasks task,
-            VdcObjectType entityType,
-            Guid... entityIds) {
-        try {
-            if (task != null) {
-                getAsyncTaskDao()
-                        .saveOrUpdate(task,
-                                entityType,
-                                entityIds);
-            }
-        } catch (RuntimeException e) {
-            log.error(String.format(
-                    "Adding/Updating task %1$s to DataBase threw an exception.",
-                    task.getTaskId()), e);
-        }
+    private static void addOrUpdateTaskInDB(AsyncTasks asyncTask) {
+        getAsyncTaskDao().saveOrUpdate(asyncTask);
     }
 
     private static AsyncTaskDAO getAsyncTaskDao() {

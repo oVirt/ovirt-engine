@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +18,7 @@ import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskEntity;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
@@ -153,19 +156,6 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
     }
 
     /**
-     * Ensures that saving a ad_group works as expected.
-     */
-    @Test
-    public void testSaveWithEntities() {
-        Guid storageId = Guid.newGuid();
-        dao.save(newAsyncTask, VdcObjectType.Storage, storageId);
-        List<Guid> asyncTasks = dao.getAsyncTaskIdsByEntity(storageId);
-        assertNotNull(asyncTasks);
-        assertEquals(asyncTasks.size(), 1);
-        assertEquals(asyncTasks.get(0), newAsyncTask.getTaskId());
-    }
-
-    /**
      * Ensures that updating a ad_group works as expected.
      */
     @Test
@@ -249,13 +239,13 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         List<AsyncTasks> tasks = dao.getAll();
         assertNotNull(tasks);
         int tasksNumber = tasks.size();
-        dao.saveOrUpdate(existingAsyncTask, VdcObjectType.Disk);
+        dao.saveOrUpdate(existingAsyncTask);
         tasks = dao.getAll();
         assertEquals(tasksNumber, tasks.size());
         AsyncTasks taskFromDb = dao.get(existingAsyncTask.getTaskId());
         assertNotNull(taskFromDb);
         assertEquals(taskFromDb, existingAsyncTask);
-        dao.saveOrUpdate(newAsyncTask, VdcObjectType.Disk, Guid.newGuid());
+        dao.saveOrUpdate(newAsyncTask);
         tasks = dao.getAll();
         assertNotNull(tasks);
         assertEquals(tasksNumber + 1, tasks.size());
@@ -265,15 +255,18 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
     }
 
     @Test
-    public void testInsertAsyncTaskEntities() {
+    public void testInsertAsyncTaskEntitities() {
         dao.save(newAsyncTask);
-        Guid newEntityId = Guid.newGuid();
-        dao.insertAsyncTaskEntity(newAsyncTask.getTaskId(), newEntityId, VdcObjectType.VM);
-        List<Guid> taskIds = dao.getAsyncTaskIdsByEntity(newEntityId);
-        assertNotNull(taskIds);
-        assertEquals(1, taskIds.size());
-        Guid taskIdFromDb = taskIds.get(0);
-        assertEquals(newAsyncTask.getTaskId(), taskIdFromDb);
+        Set<AsyncTaskEntity> asyncTaskEntities = new HashSet<>();
+        asyncTaskEntities.add(new AsyncTaskEntity(newAsyncTask.getTaskId(), VdcObjectType.Storage, Guid.newGuid()));
+        asyncTaskEntities.add(new AsyncTaskEntity(newAsyncTask.getTaskId(), VdcObjectType.Disk, Guid.newGuid()));
+        dao.insertAsyncTaskEntities(asyncTaskEntities);
+        List<AsyncTaskEntity> entities = dao.getAllAsyncTaskEntitiesByTaskId(newAsyncTask.getTaskId());
+        assertNotNull(entities);
+        assertEquals(2, entities.size());
+        for (AsyncTaskEntity entity : entities) {
+            assertTrue(entities.contains(entity));
+        }
 
     }
 }
