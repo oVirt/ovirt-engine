@@ -89,6 +89,6 @@ if [ $? -eq 0 ];then
     popd>/dev/null
     exit 0
 else
-    usage
+    echo "Backup of database $DATABASE failed."
     exit 1
 fi
