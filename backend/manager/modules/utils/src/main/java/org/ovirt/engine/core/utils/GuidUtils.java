@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.utils;
 
-import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -12,44 +11,18 @@ import org.ovirt.engine.core.compat.Guid;
 public class GuidUtils {
 
     public static byte[] toByteArray(UUID uuid) {
-        String guidStr = uuid.toString();
-
-        // Going to split the GUID to hexadecimal sequences.
-        // Each sequence like that contains hexadecimal numbers that should be
-        // converted to bytes.
-        // As GUID may vary in size , the bytes are written to a byte array
-        // output stream
-        // which is kept in
-        String[] guidParts = guidStr.split("-");
-        if (guidParts == null || guidParts.length == 0) {
-            return null;
+        byte[] data = new byte[16];
+        long msb = uuid.getMostSignificantBits();
+        for (int i = 7; i >= 0; i--) {
+            data[i] = (byte) (msb & 0xff);
+            msb >>= 8;
         }
-
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        for (String guidPart : guidParts) {
-            writeGUIDPartToStream(guidPart, baos);
-
+        long lsb = uuid.getLeastSignificantBits();
+        for (int i = 15; i >= 8; i--) {
+            data[i] = (byte) (lsb & 0xff);
+            lsb >>= 8;
         }
-
-        return baos.toByteArray();
-    }
-
-    private static void writeGUIDPartToStream(String guidPart, ByteArrayOutputStream baos) {
-        // GuidPart is composed from an even number of characters.
-        // Each two characters are a hexadecimal number
-
-        char[] dst = new char[guidPart.length()];
-        guidPart.getChars(0, guidPart.length(), dst, 0);
-        for (int counter = 0; counter < (guidPart.length()) / 2; counter++) {
-            // Build a string from two characters
-            StringBuilder numberStrSB = new StringBuilder(2);
-            numberStrSB.append(dst[counter * 2]);
-            numberStrSB.append(dst[(counter * 2) + 1]);
-            // Convert the string to byte and add write it to the stream
-            int number = Integer.parseInt(numberStrSB.toString(), 16);
-            baos.write(number);
-        }
+        return data;
     }
 
     private static final String SEPARATOR = ",";
