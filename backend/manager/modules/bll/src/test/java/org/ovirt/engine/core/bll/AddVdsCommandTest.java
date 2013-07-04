@@ -78,7 +78,7 @@ public class AddVdsCommandTest {
     @Before
     public void createParameters() {
         parameters = new AddVdsActionParameters();
-        parameters.setRootPassword("secret");
+        parameters.setPassword("secret");
         VDS newVds = makeTestVds(vdsId);
         parameters.setvds(newVds);
     }
@@ -98,7 +98,7 @@ public class AddVdsCommandTest {
         when(commandMock.validateSingleHostAttachedToLocalStorage()).thenReturn(true);
         when(commandMock.isPowerManagementLegal()).thenReturn(true);
 
-        when(commandMock.getSSHClient(any(String.class))).thenReturn(sshClient);
+        when(commandMock.getSSHClient()).thenReturn(sshClient);
         doNothing().when(sshClient).connect();
         doNothing().when(sshClient).authenticate();
     }

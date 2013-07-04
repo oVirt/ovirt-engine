@@ -296,6 +296,13 @@ public class VdsDeploy implements SSHDialog.Sink {
         }},
         new Callable<Object>() { public Object call() throws Exception {
             _parser.cliEnvironmentSet(
+                NetEnv.SSH_USER,
+                _vds.getSshUsername()
+            );
+            return null;
+        }},
+        new Callable<Object>() { public Object call() throws Exception {
+            _parser.cliEnvironmentSet(
                 NetEnv.SSH_KEY,
                 EngineEncryptionUtils.getEngineSSHPublicKey().replace("\n", "")
             );
@@ -875,7 +882,8 @@ public class VdsDeploy implements SSHDialog.Sink {
     public void execute() throws Exception {
         InputStream in = null;
         try {
-            _dialog.setHost(_vds.getHostName());
+            _dialog.setHost(_vds.getHostName(), _vds.getSshPort());
+            setUser(_vds.getSshUsername());
             _dialog.connect();
             _messages.post(
                 InstallerMessages.Severity.INFO,

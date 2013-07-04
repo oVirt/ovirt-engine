@@ -877,7 +877,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             AddVdsActionParameters parameters = new AddVdsActionParameters();
             parameters.setVdsId(host.getId());
             parameters.setvds(host);
-            parameters.setRootPassword((String) model.getRootPassword().getEntity());
+            parameters.setPassword((String) model.getRootPassword().getEntity());
             parameters.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
             parameters.setRebootAfterInstallation(isVirt) ;
 
@@ -899,7 +899,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             UpdateVdsActionParameters parameters = new UpdateVdsActionParameters();
             parameters.setvds(host);
             parameters.setVdsId(host.getId());
-            parameters.setRootPassword(""); //$NON-NLS-1$
+            parameters.setPassword(""); //$NON-NLS-1$
             parameters.setInstallVds(false);
             parameters.setRebootAfterInstallation(isVirt) ;
 

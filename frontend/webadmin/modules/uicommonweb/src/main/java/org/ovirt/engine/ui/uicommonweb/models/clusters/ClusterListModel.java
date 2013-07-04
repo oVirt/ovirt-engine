@@ -838,7 +838,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             AddVdsActionParameters parameters = new AddVdsActionParameters();
             parameters.setVdsId(host.getId());
             parameters.setvds(host);
-            parameters.setRootPassword(hostDetailModel.getPassword());
+            parameters.setPassword(hostDetailModel.getPassword());
             parameters.setOverrideFirewall(false);
             parameters.setRebootAfterInstallation(hostsModel.getClusterModel().getEnableOvirtService().getIsSelected());
 

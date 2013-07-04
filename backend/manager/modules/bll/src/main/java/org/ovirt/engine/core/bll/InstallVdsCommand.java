@@ -118,30 +118,29 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             }
 
             switch (getVds().getVdsType()) {
-            case VDS:
-                installer.setUser("root");
-                installer.setPassword(parameters.getRootPassword());
-                installer.setFirewall(parameters.getOverrideFirewall());
-                break;
-            case oVirtNode:
-                if (parameters.getOverrideFirewall()) {
-                    log.warnFormat(
+                case VDS:
+                    installer.setPassword(parameters.getPassword());
+                    installer.setFirewall(parameters.getOverrideFirewall());
+                    break;
+                case oVirtNode:
+                    if (parameters.getOverrideFirewall()) {
+                        log.warnFormat(
                             "Installation of Host {0} will ignore Firewall Override option, since it is not supported for Host type {1}",
                             getVds().getName(),
                             getVds().getVdsType().name()
-                            );
-                }
-                installer.setUser("root");
-                installer.useDefaultKeyPair();
-                break;
-            default:
-                throw new IllegalArgumentException(
-                        String.format(
-                                "Not handled VDS type: %1$s",
-                                getVds().getVdsType()
-                                )
                         );
-            }
+                    }
+                    installer.useDefaultKeyPair();
+                    break;
+                default:
+                    throw new IllegalArgumentException(
+                        String.format(
+                            "Not handled VDS type: %1$s",
+                            getVds().getVdsType()
+                        )
+                    );
+                }
+
             setVdsStatus(VDSStatus.Installing);
             installer.execute();
 

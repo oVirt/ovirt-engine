@@ -498,7 +498,7 @@ public class ClusterGeneralModel extends EntityModel {
             AddVdsActionParameters parameters = new AddVdsActionParameters();
             parameters.setVdsId(host.getId());
             parameters.setvds(host);
-            parameters.setRootPassword(hostDetailModel.getPassword());
+            parameters.setPassword(hostDetailModel.getPassword());
             parameters.setOverrideFirewall(false);
             parameters.setRebootAfterInstallation(getEntity().supportsVirtService());
             parametersList.add(parameters);

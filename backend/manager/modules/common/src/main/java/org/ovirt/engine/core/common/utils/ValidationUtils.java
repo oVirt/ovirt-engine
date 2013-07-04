@@ -13,6 +13,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
 public class ValidationUtils {
@@ -89,4 +90,7 @@ public class ValidationUtils {
         return messages;
     }
 
+    public static boolean validatePort(int port) {
+        return ((port >= BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT) && (port <= BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT));
+    }
 }

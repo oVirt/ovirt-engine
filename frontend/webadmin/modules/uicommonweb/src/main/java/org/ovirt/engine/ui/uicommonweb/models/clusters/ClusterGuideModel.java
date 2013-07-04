@@ -493,7 +493,7 @@ public class ClusterGuideModel extends GuideModel
         AddVdsActionParameters vdsActionParams = new AddVdsActionParameters();
         vdsActionParams.setvds(host);
         vdsActionParams.setVdsId(host.getId());
-        vdsActionParams.setRootPassword((String) model.getRootPassword().getEntity());
+        vdsActionParams.setPassword((String) model.getRootPassword().getEntity());
         vdsActionParams.setRebootAfterInstallation(((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService());
 
         model.startProgress(null);
