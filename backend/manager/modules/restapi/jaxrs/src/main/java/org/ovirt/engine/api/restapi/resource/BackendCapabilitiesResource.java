@@ -12,6 +12,8 @@ import org.ovirt.engine.api.model.BootProtocols;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.CPUs;
 import org.ovirt.engine.api.model.Capabilities;
+import org.ovirt.engine.api.model.ConfigurationType;
+import org.ovirt.engine.api.model.ConfigurationTypes;
 import org.ovirt.engine.api.model.CpuMode;
 import org.ovirt.engine.api.model.CpuModes;
 import org.ovirt.engine.api.model.CreationStates;
@@ -224,6 +226,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addScsiGenericIoOptions(version, ScsiGenericIO.values());
         addWatchdogActions(version, WatchdogAction.values());
         addWatchdogModels(version, WatchdogModel.values());
+        addConfigurationTypes(version, ConfigurationType.values());
 
         // External tasks types
         addStepEnumTypes(version, StepEnum.values());
@@ -402,6 +405,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         version.setStorageTypes(new StorageTypes());
         for (StorageType type : types) {
             version.getStorageTypes().getStorageTypes().add(type.value());
+        }
+    }
+
+    private void addConfigurationTypes(VersionCaps version, ConfigurationType[] types) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
+            version.setConfigurationTypes(new ConfigurationTypes());
+            for (ConfigurationType type : types) {
+                version.getConfigurationTypes().getConfigurationTypes().add(type.value());
+            }
         }
     }
 

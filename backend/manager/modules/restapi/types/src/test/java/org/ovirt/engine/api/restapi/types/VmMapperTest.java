@@ -5,6 +5,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
+import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Payload;
@@ -210,6 +211,15 @@ public class VmMapperTest extends
         OsTypeMockUtils.mockOsTypes();
         VM model = VmMapper.map(entity, null);
         assertEquals(guid.toString(), model.getHost().getId());
+    }
+
+    @Test
+    public void testMapConfigurationType() {
+        org.ovirt.engine.core.common.businessentities.ConfigurationType configurationTypeBll = VmMapper.map(ConfigurationType.OVF, null);
+        assertEquals(configurationTypeBll, org.ovirt.engine.core.common.businessentities.ConfigurationType.OVF);
+
+        ConfigurationType configurationTypeApi = VmMapper.map(org.ovirt.engine.core.common.businessentities.ConfigurationType.OVF, null);
+        assertEquals(configurationTypeApi, ConfigurationType.OVF);
     }
 
     @Test

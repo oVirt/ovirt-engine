@@ -72,7 +72,7 @@ public class ImportVmCommandTest {
     private ImportVmCommand setupDiskSpaceTest(final int diskSpaceRequired) {
         mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, diskSpaceRequired);
 
-        ImportVmCommand cmd = spy(new ImportVmCommand(createParameters()));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand(createParameters()));
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
         doReturn(true).when(cmd).validateUsbPolicy();
@@ -161,7 +161,7 @@ public class ImportVmCommandTest {
         ImportVmParameters parameters = createParameters();
         parameters.getVm().setName(name);
         parameters.setImportAsNewEntity(isImportAsNewEntity);
-        ImportVmCommand command = new ImportVmCommand(parameters);
+        ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<>(parameters);
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -180,14 +180,14 @@ public class ImportVmCommandTest {
                 RandomUtils.instance().nextPropertyString(BusinessEntitiesDefinitions.GENERAL_MAX_SIZE + 1);
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(true);
-        ImportVmCommand command = new ImportVmCommand(parameters);
+        ImportVmCommand<ImportVmParameters> command = new ImportVmCommand<>(parameters);
         Set<ConstraintViolation<ImportVmParameters>> validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
         assertTrue(validate.isEmpty());
         parameters.getVm().setUserDefinedProperties(tooLongString);
         parameters.setImportAsNewEntity(false);
-        command = new ImportVmCommand(parameters);
+        command = new ImportVmCommand<>(parameters);
         validate =
                 ValidationUtils.getValidator().validate(parameters,
                         command.getValidationGroups().toArray(new Class<?>[0]));
@@ -262,7 +262,7 @@ public class ImportVmCommandTest {
 
     @Test
     public void testValidateClusterSupportForVirtioScsi() {
-        ImportVmCommand cmd = setupDiskSpaceTest(0);
+        ImportVmCommand<ImportVmParameters> cmd = setupDiskSpaceTest(0);
         cmd.getParameters().getVm().getDiskMap().values().iterator().next().setDiskInterface(DiskInterface.VirtIO_SCSI);
         cmd.getVdsGroup().setcompatibility_version(Version.v3_2);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -15,6 +14,8 @@ import org.ovirt.engine.api.common.util.DetailHelper.Detail;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Console;
+import org.ovirt.engine.api.model.Configuration;
+import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Display;
@@ -34,6 +35,7 @@ import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
+import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -44,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -79,42 +82,50 @@ public class BackendVmsResource extends
 
     @Override
     public Response add(VM vm) {
-        validateParameters(vm, "name", "cluster.id|name");
+        validateParameters(vm, "cluster.id|name");
         validateEnums(VM.class, vm);
         Response response = null;
-        if (isCreateFromSnapshot(vm)) {
-            response = createVmFromSnapshot(vm);
+        if (vm.isSetInitialization() && vm.getInitialization().isSetConfiguration()) {
+            validateParameters(vm, "initialization.configuration.type", "initialization.configuration.data");
+            response = importVmFromConfiguration(vm);
         } else {
-            validateParameters(vm, "template.id|name");
-            Guid templateId = getTemplateId(vm);
-            VmStatic staticVm = getMapper(VM.class, VmStatic.class).map(vm,
-                    getMapper(VmTemplate.class, VmStatic.class).map(lookupTemplate(templateId), null));
-            if (namedCluster(vm)) {
-                staticVm.setVdsGroupId(getClusterId(vm));
-            }
-
-            staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(vm.getUsb(), lookupCluster(staticVm.getVdsGroupId())));
-
-            if (!isFiltered()) {
-                // if the user set the host-name within placement-policy, rather than the host-id (legal) -
-                // resolve the host's ID, because it will be needed down the line
-                if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()
-                        && vm.getPlacementPolicy().getHost().isSetName()
-                        && !vm.getPlacementPolicy().getHost().isSetId()) {
-                    staticVm.setDedicatedVmForVds(asGuid(getHostId(vm.getPlacementPolicy().getHost().getName())));
+            validateParameters(vm, "name");
+            if (isCreateFromSnapshot(vm)) {
+                response = createVmFromSnapshot(vm);
+            } else {
+                validateParameters(vm, "template.id|name");
+                Guid templateId = getTemplateId(vm);
+                VmStatic staticVm = getMapper(VM.class, VmStatic.class).map(vm,
+                        getMapper(VmTemplate.class, VmStatic.class).map(lookupTemplate(templateId), null));
+                if (namedCluster(vm)) {
+                    staticVm.setVdsGroupId(getClusterId(vm));
                 }
-            } else {
-                vm.setPlacementPolicy(null);
-            }
-            Guid storageDomainId =
-                    (vm.isSetStorageDomain() && vm.getStorageDomain().isSetId()) ? asGuid(vm.getStorageDomain().getId())
-                            : Guid.Empty;
-            if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()) {
-                response = cloneVmFromTemplate(staticVm, vm, templateId);
-            } else if (Guid.Empty.equals(templateId)) {
-                response = addVmFromScratch(staticVm, vm, storageDomainId);
-            } else {
-                response = addVm(staticVm, vm, storageDomainId, templateId);
+
+                staticVm.setUsbPolicy(VmMapper.getUsbPolicyOnCreate(vm.getUsb(),
+                        lookupCluster(staticVm.getVdsGroupId())));
+
+                if (!isFiltered()) {
+                    // if the user set the host-name within placement-policy, rather than the host-id (legal) -
+                    // resolve the host's ID, because it will be needed down the line
+                    if (vm.isSetPlacementPolicy() && vm.getPlacementPolicy().isSetHost()
+                            && vm.getPlacementPolicy().getHost().isSetName()
+                            && !vm.getPlacementPolicy().getHost().isSetId()) {
+                        staticVm.setDedicatedVmForVds(asGuid(getHostId(vm.getPlacementPolicy().getHost().getName())));
+                    }
+                } else {
+                    vm.setPlacementPolicy(null);
+                }
+                Guid storageDomainId =
+                        (vm.isSetStorageDomain() && vm.getStorageDomain().isSetId()) ? asGuid(vm.getStorageDomain()
+                                .getId())
+                                : Guid.Empty;
+                if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()) {
+                    response = cloneVmFromTemplate(staticVm, vm, templateId);
+                } else if (Guid.Empty.equals(templateId)) {
+                    response = addVmFromScratch(staticVm, vm, storageDomainId);
+                } else {
+                    response = addVm(staticVm, vm, storageDomainId, templateId);
+                }
             }
         }
         return removeRestrictedInfoFromResponse(response);
@@ -172,6 +183,25 @@ public class BackendVmsResource extends
             payload = getMapper(Payload.class, VmPayload.class).map(vm.getPayloads().getPayload().get(0), new VmPayload());
         }
         return payload;
+    }
+
+    public Response importVmFromConfiguration(VM vm) {
+        Configuration config = vm.getInitialization().getConfiguration();
+        org.ovirt.engine.core.common.businessentities.VM vmConfiguration =
+                getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
+                        VdcQueryType.GetVmFromConfiguration,
+                        new GetVmFromConfigurationQueryParameters(VmMapper.map(ConfigurationType.fromValue(config.getType()), null), config.getData().trim()),
+                        "");
+
+        VmMapper.map(vm, vmConfiguration.getStaticData());
+
+        Guid clusterId = namedCluster(vm) ? getClusterId(vm) : asGuid(vm.getCluster().getId());
+        ImportVmParameters parameters = new ImportVmParameters();
+        parameters.setVm(vmConfiguration);
+        parameters.setVdsGroupId(clusterId);
+        return performCreate(VdcActionType.ImportVmFromConfiguration,
+                parameters,
+                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM getVmConfiguration(String snapshotId) {

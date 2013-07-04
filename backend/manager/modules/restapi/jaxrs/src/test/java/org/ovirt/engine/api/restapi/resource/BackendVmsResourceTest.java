@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -15,10 +14,12 @@ import org.apache.commons.codec.binary.Base64;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.Permissions;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Snapshots;
@@ -31,11 +32,13 @@ import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
+import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
+import org.ovirt.engine.core.common.businessentities.ConfigurationType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -46,6 +49,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetVmFromConfigurationQueryParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -616,6 +620,135 @@ public class BackendVmsResourceTest
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof VM);
         verifyModel((VM) response.getEntity(), 2);
+    }
+
+    @Test
+    public void testAddFromConfiguration() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 2);
+        setUpGetCertuficateExpectations(1, 2);
+        setUpGetConsoleExpectations(new int[]{2});
+        VM model = createModel(null);
+        org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
+        model.setInitialization(new Initialization());
+        model.getInitialization().setConfiguration(new Configuration());
+        model.getInitialization().getConfiguration().setData("asdasdasd");
+        model.getInitialization().getConfiguration().setType("ovf");
+        setUpGetEntityExpectations(VdcQueryType.GetVmFromConfiguration,
+                GetVmFromConfigurationQueryParameters.class,
+                new String[] { "VmConfiguration", "ConfigurationType" },
+                new Object[] { model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF},
+                returnedVM);
+        setUpCreationExpectations(VdcActionType.ImportVmFromConfiguration,
+                ImportVmParameters.class,
+                new String[] { "Vm", "VdsGroupId" },
+                new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId()) },
+                true,
+                true,
+                GUIDS[2],
+                VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                returnedVM);
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VM);
+        verifyModel((VM) response.getEntity(), 2);
+    }
+
+    @Test
+    public void testAddFromConfigurationNamedCluster() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetPayloadExpectations(1, 2);
+        setUpGetBallooningExpectations(1, 2);
+        setUpGetCertuficateExpectations(1, 2);
+        setUpGetConsoleExpectations(new int[]{2});
+        VM model = createModel(null);
+        org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
+        model.setInitialization(new Initialization());
+        model.getInitialization().setConfiguration(new Configuration());
+        model.getInitialization().getConfiguration().setData("asdasdasd");
+        model.getInitialization().getConfiguration().setType("ovf");
+        model.setCluster(new Cluster());
+        model.getCluster().setName(NAMES[1]);
+        setUpGetEntityExpectations("Cluster: name=" + NAMES[1],
+                SearchType.Cluster,
+                setUpVDSGroup(GUIDS[1]));
+        setUpGetEntityExpectations(VdcQueryType.GetVmFromConfiguration,
+                GetVmFromConfigurationQueryParameters.class,
+                new String[] { "VmConfiguration", "ConfigurationType" },
+                new Object[] { model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF},
+                returnedVM);
+        setUpCreationExpectations(VdcActionType.ImportVmFromConfiguration,
+                ImportVmParameters.class,
+                new String[] { "Vm", "VdsGroupId" },
+                new Object[] { returnedVM, GUIDS[1] },
+                true,
+                true,
+                GUIDS[2],
+                VdcQueryType.GetVmByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[2] },
+                returnedVM);
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof VM);
+        verifyModel((VM) response.getEntity(), 2);
+    }
+
+    @Test
+    public void testAddFromConfigurationCantDo() throws Exception {
+        testBadAddFromConfiguration(false, true, CANT_DO);
+    }
+
+    @Test
+    public void testAddFromConfigurationFailure() throws Exception {
+        testBadAddFromConfiguration(true, false, FAILURE);
+    }
+
+    private void testBadAddFromConfiguration(boolean canDo, boolean success, String detail)
+            throws Exception {
+        VM model = createModel(null);
+        org.ovirt.engine.core.common.businessentities.VM returnedVM = getEntity(2);
+        model.setInitialization(new Initialization());
+        model.getInitialization().setConfiguration(new Configuration());
+        model.getInitialization().getConfiguration().setData("asdasdasd");
+        model.getInitialization().getConfiguration().setType("ovf");
+        setUpGetEntityExpectations(VdcQueryType.GetVmFromConfiguration,
+                GetVmFromConfigurationQueryParameters.class,
+                new String[] { "VmConfiguration", "ConfigurationType" },
+                new Object[] { model.getInitialization().getConfiguration().getData(), ConfigurationType.OVF},
+                returnedVM);
+        setUriInfo(setUpActionExpectations(VdcActionType.ImportVmFromConfiguration,
+                ImportVmParameters.class,
+                new String[] { "Vm", "VdsGroupId" },
+                new Object[] { returnedVM, Guid.createGuidFromString(model.getCluster().getId())},
+                canDo,
+                success));
+        try {
+            collection.add(model);
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyFault(wae, detail);
+        }
+    }
+
+    @Test
+    public void doTestBadAddFromConfigurationMissingParameters() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        VM model = createModel(null);
+        model.setInitialization(new Initialization());
+        model.getInitialization().setConfiguration(new Configuration());
+        control.replay();
+        try {
+            collection.add(model);
+            fail("expected WebApplicationException on incomplete parameters");
+        } catch (WebApplicationException wae) {
+            verifyIncompleteException(wae, "VM", "add", "initialization.configuration.type", "initialization.configuration.data");
+        }
     }
 
     @Test

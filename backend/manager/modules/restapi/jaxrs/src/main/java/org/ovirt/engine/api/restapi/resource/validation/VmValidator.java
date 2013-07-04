@@ -14,6 +14,7 @@ public class VmValidator implements Validator<VM> {
     private DisplayValidator displayValidator = new DisplayValidator();
     private PlacementPolicyValidator placementPolicyValidator = new PlacementPolicyValidator();
     private PayloadValidator payloadValidator = new PayloadValidator();
+    private ConfigurationValidator configurationValidator = new ConfigurationValidator();
 
     @Override
     public void validateEnums(VM vm) {
@@ -36,6 +37,10 @@ public class VmValidator implements Validator<VM> {
             for (Payload payload : vm.getPayloads().getPayload()) {
                 payloadValidator.validateEnums(payload);
             }
+        }
+
+        if (vm.isSetInitialization() && vm.getInitialization().isSetConfiguration()) {
+            configurationValidator.validateEnums(vm.getInitialization().getConfiguration());
         }
     }
 }

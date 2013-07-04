@@ -93,8 +93,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
-public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameters>
-        implements QuotaStorageDependent, TaskHandlerCommand<ImportVmParameters> {
+public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTemplateCommand<T>
+        implements QuotaStorageDependent, TaskHandlerCommand<T> {
+
     private static final Log log = LogFactory.getLog(ImportVmCommand.class);
 
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
@@ -108,8 +109,13 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     private final List<String> macsAdded = new ArrayList<String>();
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
 
-    public ImportVmCommand(ImportVmParameters parameters) {
+    public ImportVmCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected void init(T parameters) {
+        super.init(parameters);
         setVmId(parameters.getContainerId());
         setVm(parameters.getVm());
         setVdsGroupId(parameters.getVdsGroupId());
@@ -121,7 +127,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 }
             }
         }
-        ensureDomainMap(imageList, getParameters().getDestDomainId());
+        ensureDomainMap(imageList, parameters.getDestDomainId());
     }
 
     @Override
@@ -1230,7 +1236,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     // TaskHandlerCommand Implementation //
     ///////////////////////////////////////
 
-    public ImportVmParameters getParameters() {
+    public T getParameters() {
         return super.getParameters();
     }
 

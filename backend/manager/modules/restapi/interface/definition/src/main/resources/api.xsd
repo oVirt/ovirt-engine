@@ -557,6 +557,7 @@
           <xs:element ref="power_managers" minOccurs="0"/>
           <xs:element ref="fence_types" minOccurs="0"/>
           <xs:element ref="storage_types" minOccurs="0"/>
+          <xs:element ref="configuration_types" minOccurs="0"/>
           <xs:element ref="storage_domain_types" minOccurs="0"/>
           <xs:element ref="vm_types" minOccurs="0"/>
           <xs:element ref="boot_devices" minOccurs="0"/>
@@ -690,6 +691,20 @@
       </xs:element>
     </xs:sequence>
   </xs:complexType>
+
+    <xs:element name="configuration_types" type="ConfigurationTypes"/>
+
+    <xs:complexType name="ConfigurationTypes">
+        <xs:sequence>
+            <xs:element name="configuration_type" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:appinfo>
+                        <jaxb:property name="ConfigurationTypes"/>
+                    </xs:appinfo>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 
   <xs:element name="storage_domain_types" type="StorageDomainTypes"/>
 
@@ -2257,6 +2272,21 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="configuration" type="Configuration"/>
+  <xs:complexType name="Configuration">
+        <xs:choice>
+            <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="data" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:choice>
+  </xs:complexType>
+
+  <xs:element name="initialization" type="Initialization"/>
+  <xs:complexType name="Initialization">
+      <xs:sequence>
+        <xs:element name="configuration" type="Configuration" minOccurs="0" maxOccurs="1"/>
+      </xs:sequence>
+   </xs:complexType>
+
   <xs:complexType name="VmPlacementPolicy">
     <xs:sequence>
       <xs:element name="host" type="Host" minOccurs="0" maxOccurs="1"/>
@@ -2306,6 +2336,7 @@
           <xs:element name="payloads" type="Payloads" minOccurs="0"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
           <xs:element name="disks" type="Disks" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="initialization" minOccurs="0" maxOccurs="1"/>
           <xs:element name="nics" type="Nics" minOccurs="0" maxOccurs="1"/>
           <xs:element name="tags" type="Tags" minOccurs="0" maxOccurs="1"/>
           <xs:element name="snapshots" type="Snapshots" minOccurs="0" maxOccurs="1"/>

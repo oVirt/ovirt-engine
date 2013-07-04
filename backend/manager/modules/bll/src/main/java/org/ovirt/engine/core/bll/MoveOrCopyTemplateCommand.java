@@ -67,6 +67,11 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     public MoveOrCopyTemplateCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected void init(T parameters) {
+        super.init(parameters);
         setVmTemplateId(parameters.getContainerId());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
         imageToDestinationDomainMap = getParameters().getImageToDestinationDomainMap();

@@ -63,6 +63,7 @@ public class FeaturesHelper {
             addConsoleFeature(features);
             addFeatureStorageServerConnections(features);
             addSingleQxlPciFeature(features);
+            addFeatureAddVmFromOvf(features);
         }
         return features;
     }
@@ -317,6 +318,12 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Storage server connections");
         feature.setDescription("Ability to manage storage server connections");
+    }
+
+    private void addFeatureAddVmFromOvf(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Add VM from OVF configuration");
+        feature.setDescription("Ability to add VM from provided OVF configuration.");
         features.getFeature().add(feature);
     }
 }

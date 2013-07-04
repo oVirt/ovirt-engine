@@ -14,6 +14,7 @@ import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.CpuMode;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.CpuTune;
@@ -620,6 +621,22 @@ public class VmMapper {
     @Mapping(from = OriginType.class, to = String.class)
     public static String map(OriginType type, String incoming) {
         return type.name().toLowerCase();
+    }
+
+    @Mapping(from = ConfigurationType.class, to = org.ovirt.engine.core.common.businessentities.ConfigurationType.class)
+    public static org.ovirt.engine.core.common.businessentities.ConfigurationType map(org.ovirt.engine.api.model.ConfigurationType configurationType, org.ovirt.engine.core.common.businessentities.ConfigurationType template) {
+        switch (configurationType) {
+            case OVF:            return org.ovirt.engine.core.common.businessentities.ConfigurationType.OVF;
+            default:                return null;
+        }
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.ConfigurationType.class, to = ConfigurationType.class)
+    public static ConfigurationType map(org.ovirt.engine.core.common.businessentities.ConfigurationType configurationType, org.ovirt.engine.api.model.ConfigurationType template) {
+        switch (configurationType) {
+            case OVF:            return ConfigurationType.OVF;
+            default:                return null;
+        }
     }
 
     @Mapping(from = org.ovirt.engine.api.model.VmDeviceType.class, to = VmDeviceType.class)
