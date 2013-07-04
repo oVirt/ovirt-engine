@@ -57,8 +57,8 @@ public class GuidUtils {
     private static final String SEPARATOR = ",";
 
     /**
-     * Gets a string containing multiple <code>Guid</code> values separated by a comma and returns an ArrayList of <code>Guid</code>.
-     * If the String is null/empty returns an empty array.
+     * Gets a string containing multiple <code>Guid</code> values separated by a comma and returns an ArrayList of
+     * <code>Guid</code>. If the String is null/empty returns an empty array.
      *
      * @param str
      *            - String which contains list of <code>Guid</code>.
@@ -72,8 +72,8 @@ public class GuidUtils {
     }
 
     /**
-     * Gets a List of strings containing multiple <code>Guid</code> values and returns an ArrayList of <code>Guid</code>.
-     * If the list is null/empty returns an empty ArrayList.
+     * Gets a List of strings containing multiple <code>Guid</code> values and returns an ArrayList of <code>Guid</code>
+     * . If the list is null/empty returns an empty ArrayList.
      *
      * @param strings
      *            - Array of Strings which contains <code>Guid</code> values.
