@@ -50,8 +50,6 @@ public class GuidUtils {
             int number = Integer.parseInt(numberStrSB.toString(), 16);
             baos.write(number);
         }
-        // TODO Auto-generated method stub
-
     }
 
     private static final String SEPARATOR = ",";
