@@ -37,6 +37,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
+import org.ovirt.engine.core.common.job.Job;
+import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.ActionGroupDAO;
 import org.ovirt.engine.core.dao.AdGroupDAO;
@@ -149,6 +151,8 @@ public class DbFacade {
             put(image_storage_domain_map.class, ImageStorageDomainMapDao.class);
             put(permissions.class, PermissionDAO.class);
             put(Image.class, ImageDao.class);
+            put(Job.class, JobDao.class);
+            put(Step.class, StepDao.class);
         }
     };
 
