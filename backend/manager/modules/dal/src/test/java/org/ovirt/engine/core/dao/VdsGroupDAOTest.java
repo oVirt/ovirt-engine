@@ -7,6 +7,8 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.junit.Test;
@@ -50,6 +52,8 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         newGroup.setcompatibility_version(new Version("3.0"));
         newGroup.setVirtService(true);
         newGroup.setGlusterService(false);
+        newGroup.setClusterPolicyId(existingVdsGroup.getClusterPolicyId());
+        newGroup.setClusterPolicyProperties(new LinkedHashMap<String, String>());
     }
 
     /**
@@ -364,6 +368,32 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         assertTrue(trustedClusters.contains(dao.get(FixturesTool.VDS_GROUP_RHEL6_NFS_2)));
         assertTrue(trustedClusters.contains(dao.get(FixturesTool.VDS_GROUP_RHEL6_LOCALFS)));
         assertTrue(trustedClusters.contains(dao.get(FixturesTool.VDS_GROUP_RHEL6_NFS_NO_SPECIFIC_QUOTAS)));
+    }
+
+    /**
+     * Test that the correct vds_group is fetched when querying by cluster policy id
+     */
+    @Test
+    public void testGetClusterByClusterPolicyId() {
+        List<VDSGroup> result = dao.getClustersByClusterPolicyId(FixturesTool.CLUSTER_POLICY_EVEN_DISTRIBUTION);
+        List<Guid> vdsGroupIdList = new ArrayList<Guid>();
+        for (VDSGroup group : result) {
+            vdsGroupIdList.add(group.getId());
+        }
+
+        assertTrue(vdsGroupIdList.contains(FixturesTool.VDS_GROUP_RHEL6_ISCSI));
+        assertTrue(vdsGroupIdList.contains(FixturesTool.VDS_GROUP_NO_RUNNING_VMS));
+        assertTrue(vdsGroupIdList.contains(FixturesTool.VDS_GROUP_RHEL6_NFS));
+    }
+
+    /**
+     * Test that no vds_group is fetched when querying by wrong cluster policy id
+     */
+    @Test
+    public void testGetClusterByClusterPolicyIdNegative() {
+        List<VDSGroup> result = dao.getClustersByClusterPolicyId(Guid.newGuid());
+
+        assertTrue(result == null || result.size() == 0);
     }
 
     /**

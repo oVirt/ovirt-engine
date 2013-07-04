@@ -393,4 +393,9 @@ public class FixturesTool {
     public static final Guid PROVIDER_ID = new Guid("1115c1c6-cb15-4832-b2a4-023770607111");
 
     public static final ProviderType PROVIDER_TYPE = ProviderType.OPENSTACK_NETWORK;
+    /**
+     * Cluster Policy
+     */
+    public static final Guid CLUSTER_POLICY_EVEN_DISTRIBUTION = new Guid("20d25257-b4bd-4589-92a6-c4c5c5d3fd1a");
+    public static final Guid POLICY_UNIT_MIGRATION = new Guid("84e6ddee-ab0d-42dd-82f0-c297779db5e5");
 }

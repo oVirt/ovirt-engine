@@ -500,6 +500,87 @@
         </row>
     </table>
 
+    <table name="cluster_policies">
+        <column>id</column>
+        <column>name</column>
+        <column>description</column>
+        <column>is_locked</column>
+        <column>is_default</column>
+        <column>custom_properties</column>
+        <row>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1a</value>
+            <value>even_distribution</value>
+            <value>desc</value>
+            <value>false</value>
+            <value>true</value>
+            <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80"}</value>
+        </row>
+        <row>
+            <value>5a2b0939-7d46-4b73-a469-e9c2c7fc6a53</value>
+            <value>power_saving</value>
+            <value>desc</value>
+            <value>false</value>
+            <value>true</value>
+            <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
+        </row>
+    </table>
+
+    <table name="policy_units">
+        <column>id</column>
+        <column>name</column>
+        <column>is_internal</column>
+        <column>has_filter</column>
+        <column>has_function</column>
+        <column>has_balance</column>
+        <column>custom_properties_regex</column>
+        <row>
+            <value>84e6ddee-ab0d-42dd-82f0-c297779db5e5</value>
+            <value>Migration</value>
+            <value>true</value>
+            <value>true</value>
+            <value>false</value>
+            <value>false</value>
+            <null/>
+        </row>
+        <row>
+            <value>a267eddb-768d-45fd-9dbb-6ebcee343508</value>
+            <value>MigrationDomain</value>
+            <value>true</value>
+            <value>true</value>
+            <value>false</value>
+            <value>false</value>
+            <null/>
+        </row>
+    </table>
+
+    <table name="cluster_policy_units">
+        <column>cluster_policy_id</column>
+        <column>policy_unit_id</column>
+        <column>is_filter_selected</column>
+        <column>filter_sequence</column>
+        <column>is_function_selected</column>
+        <column>factor</column>
+        <column>is_balance_selected</column>
+        <row>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1a</value>
+            <value>84e6ddee-ab0d-42dd-82f0-c297779db5e5</value>
+            <value>true</value>
+            <value>1</value>
+            <value>false</value>
+            <value>0</value>
+            <value>false</value>
+        </row>
+        <row>
+            <value>5a2b0939-7d46-4b73-a469-e9c2c7fc6a53</value>
+            <value>a267eddb-768d-45fd-9dbb-6ebcee343508</value>
+            <value>true</value>
+            <value>1</value>
+            <value>false</value>
+            <value>0</value>
+            <value>false</value>
+        </row>
+    </table>
+
     <table name="vds_groups">
         <column>vds_group_id</column>
         <column>name</column>
@@ -521,6 +602,8 @@
         <column>tunnel_migration</column>
         <column>emulated_machine</column>
         <column>trusted_service</column>
+        <column>cluster_policy_id</column>
+        <column>cluster_policy_custom_properties</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>rhel6.iscsi</value>
@@ -542,6 +625,8 @@
             <value>false</value>
             <null/>
             <value>false</value>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1a</value>
+            <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80"}</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
@@ -564,6 +649,8 @@
             <value>false</value>
             <value>pc-1.0</value>
             <value>false</value>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1a</value>
+            <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80"}</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
@@ -586,6 +673,8 @@
             <value>false</value>
             <value>pc-1.0</value>
             <value>false</value>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1a</value>
+            <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80"}</value>
         </row>
         <row>
             <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
@@ -608,6 +697,8 @@
             <value>false</value>
             <value>pc-1.0</value>
             <value>true</value>
+            <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1a</value>
+            <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80"}</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -630,6 +721,8 @@
             <value>false</value>
             <value>pc-1.0</value>
             <value>true</value>
+            <value>5a2b0939-7d46-4b73-a469-e9c2c7fc6a53</value>
+            <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7d</value>
@@ -652,6 +745,8 @@
             <value>false</value>
             <value>pc-1.0</value>
             <value>false</value>
+            <value>5a2b0939-7d46-4b73-a469-e9c2c7fc6a53</value>
+            <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7e</value>
@@ -674,6 +769,8 @@
             <value>false</value>
             <value>pc-1.0</value>
             <value>true</value>
+            <value>5a2b0939-7d46-4b73-a469-e9c2c7fc6a53</value>
+            <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7f</value>
@@ -696,6 +793,8 @@
             <value>false</value>
             <value>pc-1.0</value>
             <value>true</value>
+            <value>5a2b0939-7d46-4b73-a469-e9c2c7fc6a53</value>
+            <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
         </row>
         <row>
             <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
@@ -718,6 +817,8 @@
             <value>false</value>
             <value>pc-1.0</value>
             <value>false</value>
+            <value>5a2b0939-7d46-4b73-a469-e9c2c7fc6a53</value>
+            <value>{"CpuOverCommitDurationMinutes" : "2", "HighUtilization" : "80", "LowUtilization" : "20"}</value>
         </row>
     </table>
 
