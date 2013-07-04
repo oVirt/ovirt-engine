@@ -833,6 +833,7 @@
         <column>auth_password</column>
         <column>tenant_name</column>
         <column>plugin_type</column>
+        <column>agent_configuration</column>
         <row>
             <value>1115c1c6-cb15-4832-b2a4-023770607111</value>
             <value>provider</value>
@@ -844,6 +845,7 @@
             <null/>
             <value>bubu</value>
             <value>LINUX_BRIDGE</value>
+            <value>{"qpidConfiguration" : {"address" : "test", "port" : 5672, "username" : null, "password" : null}, "networkMappings" : ""}</value>
         </row>
     </table>
 

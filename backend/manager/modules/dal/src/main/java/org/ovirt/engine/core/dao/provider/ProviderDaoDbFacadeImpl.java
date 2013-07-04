@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -28,6 +29,7 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
         MapSqlParameterSource mapper = createBaseProviderParametersMapper(entity);
         String tenantName = null;
         String pluginType = null;
+        AgentConfiguration agentConfiguration = null;
 
         if (entity.getAdditionalProperties() != null) {
             switch (entity.getType()) {
@@ -36,6 +38,7 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
                         (OpenstackNetworkProviderProperties) entity.getAdditionalProperties();
                 tenantName = properties.getTenantName();
                 pluginType = properties.getPluginType();
+                agentConfiguration = properties.getAgentConfiguration();
                 break;
             default:
                 break;
@@ -45,6 +48,7 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
         // We always add the values since JdbcTeplate expects them to be set, otherwise it throws an exception.
         mapper.addValue("tenant_name", tenantName);
         mapper.addValue("plugin_type", pluginType);
+        mapper.addValue("agent_configuration", SerializationFactory.getSerializer().serialize(agentConfiguration));
         return mapper;
     }
 
@@ -110,6 +114,8 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
                 OpenstackNetworkProviderProperties properties = new OpenstackNetworkProviderProperties();
                 properties.setTenantName(rs.getString("tenant_name"));
                 properties.setPluginType(rs.getString("plugin_type"));
+                properties.setAgentConfiguration(SerializationFactory.getDeserializer()
+                        .deserialize(rs.getString("agent_configuration"), AgentConfiguration.class));
                 return properties;
             default:
                 return null;
