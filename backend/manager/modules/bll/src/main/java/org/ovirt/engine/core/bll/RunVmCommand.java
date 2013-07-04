@@ -355,7 +355,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (isStatelessSnapshotExistsForVm()) {
             log.errorFormat(
-                    "RunVmAsStateless - {0} - found existing vm images in stateless_vm_image_map table - skipped creating snapshots.",
+                    "RunVmAsStateless - {0} - found stateless snapshots for this vm  - skipped creating snapshots.",
                     getVm().getName());
             removeVmStatlessImages();
         } else {
