@@ -80,6 +80,8 @@ public class BackendVmPoolsResourceTest extends
                 new Object[] { GUIDS[1] },
                 getTemplateEntity());
 
+        setUpGetConsoleExpectations(new int[]{1});
+
         setUpCreationExpectations(VdcActionType.AddVmPoolWithVms,
              VmPoolParametersBase.class,
              new String[] { "StorageDomainId" },

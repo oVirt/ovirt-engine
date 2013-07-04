@@ -66,8 +66,11 @@ public class BackendVmPoolsResource
 
         int size = pool.isSetSize() ? pool.getSize() : 1;
 
+        AddVmPoolWithVmsParameters params = new AddVmPoolWithVmsParameters(entity, vm, size, -1);
+        params.setConsoleEnabled(!getConsoleDevicesForEntity(template.getId()).isEmpty());
+
         return performCreate(VdcActionType.AddVmPoolWithVms,
-                               new AddVmPoolWithVmsParameters(entity, vm, size, -1),
+                               params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmPoolById,
                                                    IdQueryParameters.class));
     }
@@ -151,4 +154,12 @@ public class BackendVmPoolsResource
                              "Template: name=" + pool.getTemplate().getName());
         }
     }
+
+    private List<String> getConsoleDevicesForEntity(Guid id) {
+        return getEntity(List.class,
+                VdcQueryType.GetConsoleDevices,
+                new IdQueryParameters(id),
+                "GetConsoleDevices", true);
+    }
+
 }

@@ -1,11 +1,13 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendTemplatesResourceTest.verifyModelSpecific;
 
 import java.util.ArrayList;
 
+import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -70,6 +72,36 @@ public class BackendTemplateResourceTest
     }
 
     @Test
+    public void testGetWithConsoleSet() throws Exception {
+        testGetConsoleAware(true);
+    }
+
+    @Test
+    public void testGetWithConsoleNotSet() throws Exception {
+        testGetConsoleAware(false);
+    }
+
+    public void testGetConsoleAware(boolean allContent) throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(1);
+
+        if (allContent) {
+            List<String> populates = new ArrayList<String>();
+            populates.add("true");
+            expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
+            setUpGetConsoleExpectations(new int[]{0});
+        }
+        control.replay();
+
+        Template response = resource.get();
+        verifyModel(response, 0);
+
+        List<String> populateHeader = httpHeaders.getRequestHeader(BackendResource.POPULATE);
+        boolean populated = populateHeader != null ? populateHeader.contains("true") : false;
+        assertTrue(populated ? response.isSetConsole() : !response.isSetConsole());
+    }
+
+    @Test
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
@@ -90,6 +122,7 @@ public class BackendTemplateResourceTest
                 new String[] { "Id" },
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
+        setUpGetConsoleExpectations(new int[]{0});
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
                                            UpdateVmTemplateParameters.class,

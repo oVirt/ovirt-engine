@@ -223,6 +223,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 0);
         setUpGetBallooningExpectations(1, 0);
+        setUpGetConsoleExpectations(new int[]{0});
         setUpGetCertuficateExpectations(1, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
@@ -269,6 +270,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpGetPayloadExpectations(2, 0);
+        setUpGetConsoleExpectations(new int[]{0, 0});
         setUpGetBallooningExpectations(2, 0);
         setUpGetCertuficateExpectations(2, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
@@ -323,6 +325,7 @@ public class BackendVmsResourceTest
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpGetPayloadExpectations(2, 0);
         setUpGetBallooningExpectations(2, 0);
+        setUpGetConsoleExpectations(new int[]{0, 0});
         setUpGetCertuficateExpectations(2, 0);
         setUpEntityQueryExpectations(VdcQueryType.GetVmByVmId,
                                      IdQueryParameters.class,
@@ -372,6 +375,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(2, 0);
         setUpGetBallooningExpectations(2, 0);
+        setUpGetConsoleExpectations(new int[]{0, 0});
         setUpGetCertuficateExpectations(2, 0);
         setUpHttpHeaderExpectations("Expect", "201-created");
         setUpGetEntityExpectations("Cluster: name=" + NAMES[1],
@@ -468,6 +472,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetConsoleExpectations(new int[]{1, 2});
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -514,6 +519,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
+        setUpGetConsoleExpectations(new int[]{0, 2});
         setUpEntityQueryExpectations(VdcQueryType.GetVmConfigurationBySnapshot,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -546,6 +552,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetConsoleExpectations(new int[]{1, 2});
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -582,6 +589,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
+        setUpGetConsoleExpectations(new int[]{1,2});
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -616,6 +624,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetConsoleExpectations(new int[]{1, 2});
         setUpGetCertuficateExpectations(1, 2);
         setUpGetEntityExpectations("Hosts: name=" + NAMES[1],
                 SearchType.VDS,
@@ -665,6 +674,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetConsoleExpectations(new int[]{1, 2});
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -703,6 +713,7 @@ public class BackendVmsResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
+        setUpGetConsoleExpectations(new int[]{1, 2});
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -762,6 +773,7 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
+        setUpGetConsoleExpectations(new int[]{1, 2});
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[] { "Id" },
@@ -810,6 +822,8 @@ public class BackendVmsResourceTest
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
+
+        setUpGetConsoleExpectations(new int[]{1, 2});
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
                                      new String[]{"Id"},
@@ -861,6 +875,33 @@ public class BackendVmsResourceTest
     }
 
     @Test
+    public void testListAllContentIsConsolePopulated() throws Exception {
+        testListAllConsoleAware(true);
+    }
+
+    @Test
+    public void testListAllContentIsNotConsolePopulated() throws Exception {
+        testListAllConsoleAware(false);
+    }
+
+    private void testListAllConsoleAware(boolean allContent) throws Exception {
+        UriInfo uriInfo = setUpUriExpectations(null);
+        if (allContent) {
+            List<String> populates = new ArrayList<String>();
+            populates.add("true");
+            expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
+            setUpGetPayloadExpectations(3);
+            setUpGetBallooningExpectations(3);
+            setUpGetConsoleExpectations(new int[]{0, 1, 2});
+            setUpGetCertuficateExpectations(3);
+        }
+
+        setUpQueryExpectations("");
+        collection.setUriInfo(uriInfo);
+        verifyCollection(getCollection());
+    }
+
+    @Test
     public void testListAllContent() throws Exception {
         UriInfo uriInfo = setUpUriExpectations(null);
         List<String> populates = new ArrayList<String>();
@@ -868,6 +909,7 @@ public class BackendVmsResourceTest
         expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
         setUpGetPayloadExpectations(3);
         setUpGetBallooningExpectations(3);
+        setUpGetConsoleExpectations(new int[]{0, 1, 2});
         setUpGetCertuficateExpectations(3);
         setUpQueryExpectations("");
         collection.setUriInfo(uriInfo);
@@ -918,6 +960,7 @@ public class BackendVmsResourceTest
                                      new String[] { "Id" },
                                      new Object[] { GUIDS[1] },
                                      getTemplateEntity(0));
+        setUpGetConsoleExpectations(new int[]{1});
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -937,6 +980,11 @@ public class BackendVmsResourceTest
             verifyFault(wae, detail);
         }
     }
+
+//    @Test
+//    public void testIsConsoleAddedInList() {
+//
+//    }
 
     @Test
     public void testAddIncompleteParameters() throws Exception {
@@ -1037,6 +1085,18 @@ public class BackendVmsResourceTest
     @Override
     protected List<VM> getCollection() {
         return collection.list().getVMs();
+    }
+
+    @Override
+    protected void verifyCollection(List<VM> collection) throws Exception {
+        super.verifyCollection(collection);
+
+        List<String> populateHeader = httpHeaders.getRequestHeader(BackendResource.POPULATE);
+        boolean populated = populateHeader != null ? populateHeader.contains("true") : false;
+
+        for (VM vm : collection) {
+            assertTrue(populated ? vm.isSetConsole() : !vm.isSetConsole());
+        }
     }
 
     @Override

@@ -18,6 +18,7 @@ import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
+import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -323,6 +324,15 @@ public class TemplateMapper {
         model.setTimezone(entity.getTimeZone());
         model.setTunnelMigration(entity.getTunnelMigration());
         return model;
+    }
+
+    @Mapping(from = Template.class, to = UpdateVmTemplateParameters.class)
+    public static UpdateVmTemplateParameters map(Template template, UpdateVmTemplateParameters paramsTemplate) {
+        UpdateVmTemplateParameters params = paramsTemplate != null ? paramsTemplate : new UpdateVmTemplateParameters();
+        if (template.isSetConsole() && template.getConsole().isSetEnabled()) {
+            params.setConsoleEnabled(template.getConsole().isEnabled());
+        }
+        return params;
     }
 
     @Mapping(from = VmTemplateStatus.class, to = TemplateStatus.class)

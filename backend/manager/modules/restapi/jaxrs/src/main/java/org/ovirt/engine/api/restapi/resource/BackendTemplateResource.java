@@ -1,11 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
 
+import java.util.List;
 import javax.ws.rs.core.Response;
-
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CdRom;
 import org.ovirt.engine.api.model.CdRoms;
+import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Template;
@@ -115,7 +116,7 @@ public class BackendTemplateResource
             updated.setUsbPolicy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy(),
                     lookupCluster(updated.getVdsGroupId())));
 
-            return new UpdateVmTemplateParameters(updated);
+            return getMapper(modelType, UpdateVmTemplateParameters.class).map(incoming, new UpdateVmTemplateParameters(updated));
         }
     }
 
@@ -125,6 +126,10 @@ public class BackendTemplateResource
 
     @Override
     protected Template doPopulate(Template model, VmTemplate entity) {
+        if (!model.isSetConsole()) {
+            model.setConsole(new Console());
+        }
+        model.getConsole().setEnabled(!getConsoleDevicesForEntity(entity.getId()).isEmpty());
         return model;
     }
 
@@ -134,6 +139,13 @@ public class BackendTemplateResource
         return inject(new BackendWatchdogsResource(guid,
                 VdcQueryType.GetWatchdog,
                 new IdQueryParameters(guid)));
+    }
+
+    private List<String> getConsoleDevicesForEntity(Guid id) {
+        return getEntity(List.class,
+                VdcQueryType.GetConsoleDevices,
+                new IdQueryParameters(id),
+                "GetConsoleDevices", true);
     }
 
 }

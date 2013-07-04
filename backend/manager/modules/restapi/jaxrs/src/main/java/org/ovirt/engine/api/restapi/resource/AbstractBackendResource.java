@@ -418,4 +418,5 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
             return doGetEntity(entityType, query, getQueryParams(queryParamsClass, id), id.toString());
         }
     }
+
 }

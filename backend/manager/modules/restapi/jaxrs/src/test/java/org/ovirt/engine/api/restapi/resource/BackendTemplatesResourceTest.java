@@ -8,6 +8,7 @@ import java.util.List;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import javax.ws.rs.core.UriInfo;
 import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
@@ -61,6 +62,7 @@ public class BackendTemplatesResourceTest
                 new Object[] { GUIDS[1] },
                 setUpVm(GUIDS[1]));
         setUpGetEntityExpectations();
+        setUpGetConsoleExpectations(new int[]{0, 0, 0});
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -179,6 +181,7 @@ public class BackendTemplatesResourceTest
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
 
+        setUpGetConsoleExpectations(new int[]{0,0});
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
@@ -214,6 +217,7 @@ public class BackendTemplatesResourceTest
         setUriInfo(setUpBasicUriExpectations());
         setUpHttpHeaderExpectations("Expect", "201-created");
 
+        setUpGetConsoleExpectations(new int[]{0, 0, 0});
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
@@ -263,6 +267,7 @@ public class BackendTemplatesResourceTest
                                    SearchType.VM,
                                    setUpVm(GUIDS[1]));
         setUpGetEntityExpectations();
+        setUpGetConsoleExpectations(new int[] {0, 0, 0});
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
@@ -309,6 +314,7 @@ public class BackendTemplatesResourceTest
                                    setUpVm(GUIDS[1]));
 
         setUpGetEntityExpectations();
+        setUpGetConsoleExpectations(new int[] {0,0,0});
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
@@ -353,6 +359,8 @@ public class BackendTemplatesResourceTest
                                    setUpVm(GUIDS[1]));
         setUpGetEntityExpectations();
 
+        setUpGetConsoleExpectations(new int[] {0, 0, 0});
+
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
                                   new String[] { "Name", "Description" },
@@ -395,6 +403,8 @@ public class BackendTemplatesResourceTest
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
         setUpGetEntityExpectations();
+
+        setUpGetConsoleExpectations(new int[] {0, 0, 0});
 
         setUpGetEntityExpectations("Cluster: name=" + NAMES[2],
                                    SearchType.Cluster,
@@ -456,13 +466,14 @@ public class BackendTemplatesResourceTest
                                    new Object[] { GUIDS[1] },
                                    setUpVm(GUIDS[1]));
 
+        setUpGetConsoleExpectations(new int[] {0});
+
         setUriInfo(setUpActionExpectations(VdcActionType.AddVmTemplate,
                                            AddVmTemplateParameters.class,
                                            new String[] { "Name", "Description" },
                                            new Object[] { NAMES[0], DESCRIPTIONS[0] },
                                            canDo,
                                            success));
-
         try {
             collection.add(getModel(0));
             fail("expected WebApplicationException");
@@ -521,6 +532,43 @@ public class BackendTemplatesResourceTest
     @Override
     protected List<Template> getCollection() {
         return collection.list().getTemplates();
+    }
+
+
+    @Test
+    public void testListAllContentIsConsolePopulated() throws Exception {
+        testListAllConsoleAware(true);
+    }
+
+    @Test
+    public void testListAllContentIsNotConsolePopulated() throws Exception {
+        testListAllConsoleAware(false);
+    }
+
+    private void testListAllConsoleAware(boolean allContent) throws Exception {
+        UriInfo uriInfo = setUpUriExpectations(null);
+        if (allContent) {
+            List<String> populates = new ArrayList<String>();
+            populates.add("true");
+            expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
+            setUpGetConsoleExpectations(new int[]{0, 1, 2});
+        }
+
+        setUpQueryExpectations("");
+        collection.setUriInfo(uriInfo);
+        verifyCollection(getCollection());
+    }
+
+    @Override
+    protected void verifyCollection(List<Template> collection) throws Exception {
+        super.verifyCollection(collection);
+
+        List<String> populateHeader = httpHeaders.getRequestHeader(BackendResource.POPULATE);
+        boolean populated = populateHeader != null ? populateHeader.contains("true") : false;
+
+        for (Template template : collection) {
+            assertTrue(populated ? template.isSetConsole() : !template.isSetConsole());
+        }
     }
 
     @Override

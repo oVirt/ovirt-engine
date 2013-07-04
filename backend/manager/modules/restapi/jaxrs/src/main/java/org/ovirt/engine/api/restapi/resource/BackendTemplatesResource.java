@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
@@ -75,6 +76,9 @@ public class BackendTemplatesResource
         AddVmTemplateParameters params = new AddVmTemplateParameters(staticVm,
                                        template.getName(),
                                        template.getDescription());
+        params.setConsoleEnabled(template.getConsole() != null && template.getConsole().isSetEnabled() ?
+                        template.getConsole().isEnabled() :
+                        !getConsoleDevicesForEntity(staticVm.getId()).isEmpty());
         boolean isDomainSet = false;
         if (template.isSetStorageDomain() && template.getStorageDomain().isSetId()) {
             params.setDestinationStorageDomainId(asGuid(template.getStorageDomain().getId()));
@@ -170,6 +174,18 @@ public class BackendTemplatesResource
 
     @Override
     protected Template doPopulate(Template model, VmTemplate entity) {
+        if (!model.isSetConsole()) {
+            model.setConsole(new Console());
+        }
+        model.getConsole().setEnabled(!getConsoleDevicesForEntity(entity.getId()).isEmpty());
         return model;
     }
+
+    private List<String> getConsoleDevicesForEntity(Guid id) {
+        return getEntity(List.class,
+                VdcQueryType.GetConsoleDevices,
+                new IdQueryParameters(id),
+                "GetConsoleDevices", true);
+    }
+
 }

@@ -14,6 +14,7 @@ import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.DetailHelper.Detail;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Certificate;
+import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Display;
@@ -144,6 +145,7 @@ public class BackendVmsResource extends
             prepareImagesForCloneFromSnapshotParams(vm.getDisks(), diskImagesByImageId);
         }
         return cloneVmFromSnapshot(vmConfiguration.getStaticData(),
+                        vm,
                         snapshotId,
                         diskImagesByImageId);
     }
@@ -211,6 +213,7 @@ public class BackendVmsResource extends
     }
 
     private Response cloneVmFromSnapshot(VmStatic staticVm,
+            VM vm,
             String snapshotId,
             HashMap<Guid, DiskImage> images) {
         Guid sourceSnapshotId = asGuid(snapshotId);
@@ -218,6 +221,11 @@ public class BackendVmsResource extends
                 new AddVmFromSnapshotParameters(staticVm, sourceSnapshotId);
         params.setDiskInfoDestinationMap(images);
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
+
+        params.setConsoleEnabled(vm.isSetConsole() && vm.getConsole().isSetEnabled()
+                ? vm.getConsole().isEnabled()
+                : !getConsoleDevicesForEntity(staticVm.getId()).isEmpty());
+
         return performCreate(VdcActionType.AddVmFromSnapshot,
                                 params,
                                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
@@ -229,6 +237,11 @@ public class BackendVmsResource extends
         if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
         }
+
+        params.setConsoleEnabled(vm.isSetConsole() && vm.getConsole().isSetEnabled()
+                ? vm.getConsole().isEnabled()
+                : !getConsoleDevicesForEntity(templateId).isEmpty());
+
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         setupCloneTemplatePermissions(vm, params);
         return performCreate(VdcActionType.AddVmFromTemplate,
@@ -279,6 +292,11 @@ public class BackendVmsResource extends
         params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), templateId));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         setupCloneTemplatePermissions(vm, params);
+
+        params.setConsoleEnabled(vm.isSetConsole() && vm.getConsole().isSetEnabled()
+                ? vm.getConsole().isEnabled()
+                : !getConsoleDevicesForEntity(templateId).isEmpty());
+
         return performCreate(VdcActionType.AddVm,
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
@@ -298,6 +316,11 @@ public class BackendVmsResource extends
         }
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         params.setStorageDomainId(storageDomainId);
+
+        if (vm.isSetConsole() && vm.getConsole().isSetEnabled()) {
+            params.setConsoleEnabled(vm.getConsole().isEnabled());
+        }
+
         return performCreate(VdcActionType.AddVmFromScratch,
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
@@ -465,6 +488,13 @@ public class BackendVmsResource extends
         vm.getMemoryPolicy().setBallooning(balloonEnabled);
     }
 
+    protected void setConsoleDevice(VM model) {
+        if (!model.isSetConsole()) {
+            model.setConsole(new Console());
+        }
+        model.getConsole().setEnabled(!getConsoleDevicesForEntity(new Guid(model.getId())).isEmpty());
+    }
+
     public void setCertificateInfo(VM model) {
         VdcQueryReturnValue result =
                 runQuery(VdcQueryType.GetVdsCertificateSubjectByVmId,
@@ -493,7 +523,16 @@ public class BackendVmsResource extends
     protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
         setPayload(model);
         setBallooning(model);
+        setConsoleDevice(model);
         setCertificateInfo(model);
         return model;
     }
+
+    private List<String> getConsoleDevicesForEntity(Guid id) {
+        return getEntity(List.class,
+                VdcQueryType.GetConsoleDevices,
+                new IdQueryParameters(id),
+                "GetConsoleDevices", true);
+    }
+
 }

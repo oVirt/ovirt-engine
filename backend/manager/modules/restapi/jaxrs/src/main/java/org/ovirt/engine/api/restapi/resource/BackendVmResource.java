@@ -1,15 +1,10 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendVmsResource.SUB_COLLECTIONS;
-import static org.ovirt.engine.core.utils.Ticketing.GenerateOTP;
-
 import java.util.List;
 import java.util.Set;
-
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
-
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.common.util.DetailHelper.Detail;
 import org.ovirt.engine.api.common.util.LinkHelper;
@@ -64,6 +59,10 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
+
+
+import static org.ovirt.engine.api.restapi.resource.BackendVmsResource.SUB_COLLECTIONS;
+import static org.ovirt.engine.core.utils.Ticketing.GenerateOTP;
 
 public class BackendVmResource extends
         AbstractBackendActionableResource<VM, org.ovirt.engine.core.common.businessentities.VM> implements
@@ -353,6 +352,7 @@ public class BackendVmResource extends
 
     @Override
     protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
+        parent.setConsoleDevice(model);
         return model;
     }
 
@@ -402,6 +402,9 @@ public class BackendVmResource extends
             }
             if (incoming.isSetMemoryPolicy() && incoming.getMemoryPolicy().isSetBallooning()) {
                params.setBalloonEnabled(incoming.getMemoryPolicy().isBallooning());
+            }
+            if (incoming.isSetConsole() && incoming.getConsole().isSetEnabled()) {
+                params.setConsoleEnabled(incoming.getConsole().isEnabled());
             }
             return params;
         }

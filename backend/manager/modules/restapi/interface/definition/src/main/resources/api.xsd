@@ -1131,6 +1131,12 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="console" type="Console"/>
+
+  <xs:complexType name="Console">
+    <xs:attribute name="enabled" type="xs:boolean"/>
+  </xs:complexType>
+
   <xs:complexType name="SchedulingPolicyThresholds">
     <xs:attribute name="low" type="xs:int">
         <xs:annotation>
@@ -2040,6 +2046,7 @@
           <xs:element name="display" type="Display" minOccurs="0" maxOccurs="1"/>
           <xs:element name="stateless" type="xs:boolean" minOccurs="0"/>
           <xs:element name="delete_protected" type="xs:boolean" minOccurs="0"/>
+          <xs:element ref="console" minOccurs="0" maxOccurs="1"/>
           <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
@@ -2235,6 +2242,7 @@
           <xs:element name="origin" type="xs:string" minOccurs="0"/>
           <xs:element name="stateless" type="xs:boolean" minOccurs="0"/>
           <xs:element name="delete_protected" type="xs:boolean" minOccurs="0"/>
+          <xs:element ref="console" minOccurs="0" maxOccurs="1"/>
           <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
           <xs:element name="custom_properties" type="CustomProperties" minOccurs="0"/>

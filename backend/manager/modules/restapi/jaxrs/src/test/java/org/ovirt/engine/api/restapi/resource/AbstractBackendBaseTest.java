@@ -232,6 +232,17 @@ public abstract class AbstractBackendBaseTest extends Assert {
         }
     }
 
+    protected void setUpGetConsoleExpectations(int ... idxs) throws Exception {
+        for (int i = 0; i < idxs.length; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetConsoleDevices,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[idxs[i]] },
+                    new ArrayList<>()); // we expect no consoles by default
+                                        // for tests that expect a console, add more generic version of this method
+        }
+    }
+
     protected UriInfo setUpActionExpectations(VdcActionType task,
             Class<? extends VdcActionParametersBase> clz, String[] names, Object[] values,
             boolean canDo, boolean success) {

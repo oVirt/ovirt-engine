@@ -60,6 +60,7 @@ public class FeaturesHelper {
             addWatchdogFeature(features);
             addSshAuthenticationFeature(features);
             addForceSelectSpmFeature(features);
+            addConsoleFeature(features);
         }
         return features;
     }
@@ -295,4 +296,12 @@ public class FeaturesHelper {
         feature.setDescription("Ability to save memory state as part of snapshot.");
         features.getFeature().add(feature);
     }
+
+    private void addConsoleFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Console Device");
+        feature.setDescription("Ability to control attaching of console devices in VM's");
+        features.getFeature().add(feature);
+    }
+
 }

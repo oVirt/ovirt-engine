@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.easymock.EasyMock.expect;
 import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.setUpEntityExpectations;
 import static org.ovirt.engine.api.restapi.resource.BackendVmsResourceTest.setUpStatisticalEntityExpectations;
@@ -146,6 +147,38 @@ public class BackendVmResourceTest
     }
 
     @Test
+    public void testGetWithConsoleSet() throws Exception {
+        testGetConsoleAware(true);
+    }
+
+    @Test
+    public void testGetWithConsoleNotSet() throws Exception {
+        testGetConsoleAware(false);
+    }
+
+    public void testGetConsoleAware(boolean allContent) throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        if (allContent) {
+            List<String> populates = new ArrayList<String>();
+            populates.add("true");
+            expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
+            setUpGetConsoleExpectations(new int[]{0});
+        }
+        setUpGetEntityExpectations(1);
+        setUpGetPayloadExpectations(0, 1);
+        setUpGetBallooningExpectations();
+        setUpGetCertuficateExpectations();
+        control.replay();
+        VM response = resource.get();
+        verifyModel(response, 0);
+        verifyCertificate(response);
+
+        List<String> populateHeader = httpHeaders.getRequestHeader(BackendResource.POPULATE);
+        boolean populated = populateHeader != null ? populateHeader.contains("true") : false;
+        assertTrue(populated ? response.isSetConsole() : !response.isSetConsole());
+    }
+
+    @Test
     public void testUpdateNotFound() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1, true);
@@ -170,6 +203,7 @@ public class BackendVmResourceTest
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
+        setUpGetConsoleExpectations(new int[] {0});
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
                                            new String[] {},
@@ -194,6 +228,7 @@ public class BackendVmResourceTest
 
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
+        setUpGetConsoleExpectations(new int[] {0});
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
@@ -233,6 +268,7 @@ public class BackendVmResourceTest
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
+        setUpGetConsoleExpectations(new int[]{0});
         setUpGetEntityExpectations("Hosts: name=" + NAMES[1],
                 SearchType.VDS,
                 getHost());
@@ -268,6 +304,7 @@ public class BackendVmResourceTest
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
+        setUpGetConsoleExpectations(new int[] {0});
         setUriInfo(setUpActionExpectations(VdcActionType.ChangeVMCluster,
                                            ChangeVMClusterParameters.class,
                                            new String[] {"ClusterId", "VmId"},
