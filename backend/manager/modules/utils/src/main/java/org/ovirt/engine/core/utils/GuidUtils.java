@@ -11,7 +11,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class GuidUtils {
 
-    public static byte[] ToByteArray(UUID uuid) {
+    public static byte[] toByteArray(UUID uuid) {
         String guidStr = uuid.toString();
 
         // Going to split the GUID to hexadecimal sequences.
