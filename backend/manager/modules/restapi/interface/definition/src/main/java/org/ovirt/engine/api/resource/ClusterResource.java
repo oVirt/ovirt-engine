@@ -20,6 +20,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.resource.gluster.GlusterHooksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
 
 
@@ -34,4 +35,7 @@ public interface ClusterResource extends UpdatableResource<Cluster> {
 
     @Path("glustervolumes")
     public GlusterVolumesResource getGlusterVolumesResource();
+
+    @Path("glusterhooks")
+    public GlusterHooksResource getGlusterHooksResource();
 }

@@ -62,6 +62,7 @@ public class FeaturesHelper {
             addForceSelectSpmFeature(features);
             addConsoleFeature(features);
             addFeatureStorageServerConnections(features);
+            addGlusterHooksFeature(features);
         }
         return features;
     }
@@ -309,6 +310,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Storage server connections");
         feature.setDescription("Ability to manage storage server connections");
+        features.getFeature().add(feature);
+    }
+
+    private void addGlusterHooksFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Gluster Hooks management");
+        feature.setDescription("Ability to manage gluster hooks in cluster");
         features.getFeature().add(feature);
     }
 }

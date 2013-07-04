@@ -25,8 +25,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendClustersResource extends AbstractBackendCollectionResource<Cluster, VDSGroup>
         implements ClustersResource {
 
-    static final String[] SUB_COLLECTIONS = { "networks", "permissions", "glustervolumes" };
-    static final String VIRT_ONLY_MODE_COLLECTIONS_TO_HIDE = "glustervolumes";
+    static final String[] SUB_COLLECTIONS = { "networks", "permissions", "glustervolumes", "glusterhooks" };
+    static final String[] VIRT_ONLY_MODE_COLLECTIONS_TO_HIDE = {"glustervolumes","glusterhooks" };
     public BackendClustersResource() {
         super(Cluster.class, VDSGroup.class, SUB_COLLECTIONS);
     }

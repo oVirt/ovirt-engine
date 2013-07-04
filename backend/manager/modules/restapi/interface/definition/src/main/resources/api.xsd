@@ -137,6 +137,7 @@
     <xs:sequence>
       <xs:element name="grace_period" type="GracePeriod" minOccurs="0"/>
       <!-- for StorageDomain VM migrate action -->
+      <!-- also used for Gluster hook update to choose server to update from -->
       <xs:element name="host" type="Host" minOccurs="0"/>
       <!-- for host NIC attach action -->
       <xs:element name="network" type="Network" minOccurs="0"/>
@@ -185,6 +186,8 @@
       <xs:element name="restore_memory" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <!-- Used for external job -->
       <xs:element name="succeeded" type="xs:boolean" minOccurs="0"/>
+      <!-- resolve GlusterHook using one of the resolution -->
+      <xs:element name="resolution_type" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <!-- ... etc., explicitly enumerate all the parameter types -->
     </xs:sequence>
   </xs:group>
@@ -602,6 +605,9 @@
           <xs:element ref="brick_states" minOccurs="0"/>
           <xs:element ref="reported_device_types" minOccurs="0"/>
           <xs:element ref="ip_versions" minOccurs="0"/>
+          <xs:element ref="content_types" minOccurs="0" />
+          <xs:element ref="hook_states" minOccurs="0" />
+          <xs:element ref="stages" minOccurs="0" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -3282,6 +3288,122 @@
               </xs:appinfo>
             </xs:annotation>
           </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="stages" type="Stages"/>
+  <xs:complexType name="Stages">
+    <xs:sequence>
+      <xs:element name="stage" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="Stages"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="hook_states" type="HookStates"/>
+
+  <xs:complexType name="HookStates">
+    <xs:sequence>
+      <xs:element name="hook_state" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="HookStates"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+ <xs:element name="content_types" type="ContentTypes"/>
+  <xs:complexType name="ContentTypes">
+    <xs:sequence>
+      <xs:element name="content_type" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="ContentTypes"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="server_hooks" type="GlusterServerHooks" />
+  <xs:complexType name="GlusterServerHooks">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="GlusterServerHooks"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="server_hook" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="server_hook" type="GlusterServerHook"/>
+  <xs:complexType name="GlusterServerHook">
+    <xs:annotation>
+      <xs:appinfo>
+         <jaxb:class name="GlusterServerHook"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="content_type" type="xs:string" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="checksum" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="gluster_hook" type="GlusterHook"/>
+  <xs:complexType name="GlusterHook">
+    <xs:annotation>
+      <xs:appinfo>
+         <jaxb:class name="GlusterHook"/>
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="cluster" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="gluster_command" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="stage" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="content_type" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="checksum" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="content" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="conflict_status" type="xs:unsignedShort" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="conflicts" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="server_hooks" minOccurs="0" maxOccurs="1"/>
+         </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="glusterhooks" type="GlusterHooks" />
+  <xs:complexType name="GlusterHooks">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="GlusterHooks"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="gluster_hook" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

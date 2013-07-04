@@ -7,7 +7,9 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.resource.AssignedNetworksResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.ClusterResource;
+import org.ovirt.engine.api.resource.gluster.GlusterHooksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
+import org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterHooksResource;
 import org.ovirt.engine.api.restapi.resource.gluster.BackendGlusterVolumesResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -69,6 +71,11 @@ public class BackendClusterResource extends AbstractBackendSubResource<Cluster, 
     @Override
     protected Cluster doPopulate(Cluster model, VDSGroup entity) {
         return model;
+    }
+
+    @Override
+    public GlusterHooksResource getGlusterHooksResource() {
+        return inject(new BackendGlusterHooksResource(this));
     }
 
 }
