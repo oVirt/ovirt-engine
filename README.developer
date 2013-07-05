@@ -100,6 +100,10 @@ BUILD_GWT_WEBADMIN [1]
 BUILD_LOCALES [0]
     Build additional locales.
 
+BUILD_DEV [0]
+    Add extra development flags. Usually this should not be used
+    directly, as the all-dev sets this.
+
 BUILD_UT [0]
     Perform unit tests during build.
 
