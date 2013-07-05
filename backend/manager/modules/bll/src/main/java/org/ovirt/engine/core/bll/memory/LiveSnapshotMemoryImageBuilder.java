@@ -91,7 +91,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                                 storageDomainId,
                                 memoryDumpImageGroupId,
                                 vm.getTotalMemorySizeInBytes(),
-                                VolumeType.Preallocated,
+                                HibernateVmCommand.getMemoryVolumeTypeForPool(storagePool.getstorage_pool_type()),
                                 VolumeFormat.RAW,
                                 memoryDumpVolumeId,
                                 "",

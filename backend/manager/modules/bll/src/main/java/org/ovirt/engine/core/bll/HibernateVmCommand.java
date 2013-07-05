@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
@@ -131,7 +132,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                                             getStorageDomainId(),
                                             image1GroupId,
                                             getVm().getTotalMemorySizeInBytes(),
-                                            getVolumeType(),
+                                            getMemoryVolumeType(),
                                             VolumeFormat.RAW,
                                             hiberVol1,
                                             "",
@@ -367,15 +368,18 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         }
     }
 
+    private VolumeType getMemoryVolumeType() {
+        return getMemoryVolumeTypeForPool(getStoragePool().getstorage_pool_type());
+    }
+
     /**
      * Returns whether to use Sparse or Preallocation. If the storage type is file system devices ,it would be more
      * efficient to use Sparse allocation. Otherwise for block devices we should use Preallocated for faster allocation.
      *
      * @return - VolumeType of allocation type to use.
      */
-    private VolumeType getVolumeType() {
-        return (getStoragePool().getstorage_pool_type().isFileDomain()) ? VolumeType.Sparse
-                : VolumeType.Preallocated;
+    public static VolumeType getMemoryVolumeTypeForPool(StorageType storageType) {
+        return storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
     }
 
     private static Log log = LogFactory.getLog(HibernateVmCommand.class);
