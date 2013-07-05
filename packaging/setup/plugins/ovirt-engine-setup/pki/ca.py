@@ -168,7 +168,7 @@ class Plugin(plugin.PluginBase):
                 )
 
         self.execute(
-            (
+            args=(
                 osetupcons.FileLocations.OVIRT_ENGINE_PKI_CA_CREATE,
                 '--subject=/C=%s/O=%s/CN=%s.%s' % (
                     self.environment[osetupcons.PKIEnv.COUNTRY],
@@ -182,6 +182,11 @@ class Plugin(plugin.PluginBase):
                     self.environment[osetupcons.PKIEnv.STORE_PASS],
                 ),
             ),
+            envAppend={
+                'JAVA_HOME': self.environment[
+                    osetupcons.ConfigEnv.JAVA_HOME
+                ],
+            },
         )
 
         for name in ('engine', 'apache', 'jboss'):

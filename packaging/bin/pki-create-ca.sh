@@ -1,5 +1,7 @@
 #!/bin/sh
 
+KEYTOOL="${JAVA_HOME:-/usr}/bin/keytool"
+
 enroll() {
 	local subject="$1"
 
@@ -60,14 +62,14 @@ enroll() {
 keystore() {
 	local password="$1"
 
-	keytool \
+	"${KEYTOOL}" \
 		-delete \
 		-noprompt \
 		-alias cacert \
 		-keystore "${PKIDIR}/.truststore" \
 		-storepass "${password}" \
 		> /dev/null 2>&1
-	keytool \
+	"${KEYTOOL}" \
 		-import \
 		-noprompt \
 		-trustcacerts \

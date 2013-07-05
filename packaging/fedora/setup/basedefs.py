@@ -211,7 +211,6 @@ EXEC_SYSTEMCTL="/bin/systemctl"
 EXEC_GETENFORCE="/usr/sbin/getenforce"
 EXEC_SETSEBOOL="/usr/sbin/setsebool"
 EXEC_SEMANAGE="/usr/sbin/semanage"
-EXEC_KEYTOOL="/usr/bin/keytool"
 EXEC_FIREWALL_CMD = '/usr/bin/firewall-cmd'
 
 # DBUtils

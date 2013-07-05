@@ -792,7 +792,11 @@ def _createCA():
                 "--keystore-password=%s" % basedefs.CONST_CA_PASS,
             ]
 
-            out, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=output_messages.ERR_RC_CODE, maskList=[basedefs.CONST_CA_PASS])
+            env = {
+                'JAVA_HOME': controller.CONF["JAVA_HOME"],
+            }
+
+            out, rc = utils.execCmd(cmdList=cmd, envDict=env, failOnError=True, msg=output_messages.ERR_RC_CODE, maskList=[basedefs.CONST_CA_PASS])
 
             # Enroll certificates
             for name in ('engine', 'apache', 'jboss'):

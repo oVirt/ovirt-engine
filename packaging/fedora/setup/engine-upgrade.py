@@ -479,6 +479,10 @@ class CA():
 
     def prepare(self):
         mask = [basedefs.CONST_KEY_PASS]
+        javaHome = utils.findJavaHome()
+        if not javaHome:
+            raise RuntimeError("Cannot locate java")
+        keytool = os.path.join(javaHome, 'bin', 'keytool')
 
         if os.path.exists(self.JKSKEYSTORE):
             logging.debug("PKI: convert JKS to PKCS#12")
@@ -490,7 +494,7 @@ class CA():
                 os.unlink(tmpPKCS12)    # java does not like empty files as keystore
 
                 cmd = [
-                    basedefs.EXEC_KEYTOOL,
+                    keytool,
                     "-importkeystore",
                     "-noprompt",
                     "-srckeystore", self.JKSKEYSTORE,
@@ -574,7 +578,7 @@ class CA():
         if os.path.exists(self.TMPTRUSTSTORE):
             os.unlink(self.TMPTRUSTSTORE)
         cmd = [
-            basedefs.EXEC_KEYTOOL,
+            keytool,
             "-import",
             "-noprompt",
             "-keystore", self.TMPTRUSTSTORE,
