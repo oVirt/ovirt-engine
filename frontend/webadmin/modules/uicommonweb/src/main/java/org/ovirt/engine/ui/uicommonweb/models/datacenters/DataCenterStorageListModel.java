@@ -336,7 +336,7 @@ public class DataCenterStorageListModel extends SearchableListModel
                                 && a.getStorageDomainType() == dcStorageModel.getStorageDomainType())
                         {
                             if (dcStorageModel.getStorageDomainType() == StorageDomainType.Data
-                                    && a.getStorageType() == dcStorageModel.getEntity().getstorage_pool_type()
+                                    && a.getStorageType() == dcStorageModel.getEntity().getStorageType()
                                     && a.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
                             {
                                 if (dcStorageModel.getEntity().getStoragePoolFormatType() == null)
@@ -692,7 +692,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 
         if (getEntity() != null)
         {
-            getAttachStorageCommand().setIsExecutionAllowed(getEntity().getstorage_pool_type() != StorageType.LOCALFS);
+            getAttachStorageCommand().setIsExecutionAllowed(getEntity().getStorageType() != StorageType.LOCALFS);
         }
 
         boolean isMasterPresents = false;

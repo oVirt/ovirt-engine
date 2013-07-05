@@ -51,14 +51,14 @@ public class StoragePoolValidatorTest {
     @Test
     public void testPosixDcAndMatchingCompatiblityVersion() {
         storagePool.setcompatibility_version(Version.v3_1);
-        storagePool.setstorage_pool_type(StorageType.POSIXFS);
+        storagePool.setStorageType(StorageType.POSIXFS);
         assertTrue(validator.isPosixDcAndMatchingCompatiblityVersion().isValid());
     }
 
     @Test
     public void testPosixDcAndNotMatchingCompatiblityVersion() {
         storagePool.setcompatibility_version(Version.v3_0);
-        storagePool.setstorage_pool_type(StorageType.POSIXFS);
+        storagePool.setStorageType(StorageType.POSIXFS);
         ValidationResult result = validator.isPosixDcAndMatchingCompatiblityVersion();
         assertFalse(result.isValid());
         assertMessage(result, VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
@@ -67,14 +67,14 @@ public class StoragePoolValidatorTest {
     @Test
     public void testGlusterDcAndMatchingCompatiblityVersion() {
         storagePool.setcompatibility_version(Version.v3_3);
-        storagePool.setstorage_pool_type(StorageType.GLUSTERFS);
+        storagePool.setStorageType(StorageType.GLUSTERFS);
         assertTrue(validator.isGlusterDcAndMatchingCompatiblityVersion().isValid());
     }
 
     @Test
     public void testGlusterDcAndNotMatchingCompatiblityVersion() {
         storagePool.setcompatibility_version(Version.v3_1);
-        storagePool.setstorage_pool_type(StorageType.GLUSTERFS);
+        storagePool.setStorageType(StorageType.GLUSTERFS);
         ValidationResult result = validator.isGlusterDcAndMatchingCompatiblityVersion();
         assertFalse(result.isValid());
         assertMessage(result, VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
@@ -83,20 +83,20 @@ public class StoragePoolValidatorTest {
     @Test
     public void testLocalDcAndMatchingCompatiblityVersion() {
         storagePool.setcompatibility_version(Version.v3_0);
-        storagePool.setstorage_pool_type(StorageType.LOCALFS);
+        storagePool.setStorageType(StorageType.LOCALFS);
         assertTrue(validator.isPosixDcAndMatchingCompatiblityVersion().isValid());
     }
 
     @Test
     public void testIsNotLocalFsWithDefaultCluster() {
-        storagePool.setstorage_pool_type(StorageType.LOCALFS);
+        storagePool.setStorageType(StorageType.LOCALFS);
         doReturn(false).when(validator).containsDefaultCluster();
         assertTrue(validator.isNotLocalfsWithDefaultCluster().isValid());
     }
 
     @Test
     public void testIsNotLocalFsWithDefaultClusterWhenClusterIsDefault() {
-        storagePool.setstorage_pool_type(StorageType.LOCALFS);
+        storagePool.setStorageType(StorageType.LOCALFS);
         doReturn(true).when(validator).containsDefaultCluster();
         ValidationResult result = validator.isNotLocalfsWithDefaultCluster();
         assertFalse(result.isValid());

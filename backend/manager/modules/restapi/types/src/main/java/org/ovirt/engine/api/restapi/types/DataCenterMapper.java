@@ -31,7 +31,7 @@ public class DataCenterMapper {
         if (model.isSetStorageType()) {
             StorageType storageType = StorageType.fromValue(model.getStorageType());
             if (storageType != null) {
-                entity.setstorage_pool_type(StorageDomainMapper.map(storageType, null));
+                entity.setStorageType(StorageDomainMapper.map(storageType, null));
             }
         }
         if (model.isSetStorageFormat()) {
@@ -58,7 +58,7 @@ public class DataCenterMapper {
         if (!StringUtils.isEmpty(entity.getComment())) {
             model.setComment(entity.getComment());
         }
-        model.setStorageType(StorageDomainMapper.map(entity.getstorage_pool_type(), null));
+        model.setStorageType(StorageDomainMapper.map(entity.getStorageType(), null));
         if (entity.getstatus()!=null) {
             model.setStatus(StatusUtils.create(map(entity.getstatus(), null)));
         }

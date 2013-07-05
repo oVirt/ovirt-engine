@@ -45,7 +45,7 @@ public class AbstractFindDcPopupView extends AbstractModelBoundPopupView<ListMod
         table.addEntityModelColumn(new EntityModelEnumColumn<StoragePool, StorageType>() {
             @Override
             protected StorageType getEnum(StoragePool storage) {
-                return storage.getstorage_pool_type();
+                return storage.getStorageType();
             }
         }, constants.storgeTypeDc());
     }

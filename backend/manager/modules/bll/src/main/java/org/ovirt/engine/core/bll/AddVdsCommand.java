@@ -491,7 +491,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         StoragePool storagePool = DbFacade.getInstance().getStoragePoolDao().getForVdsGroup(
                 getParameters().getVdsStaticData().getVdsGroupId());
 
-        if (storagePool != null && storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
+        if (storagePool != null && storagePool.getStorageType() == StorageType.LOCALFS) {
             if (!DbFacade.getInstance()
                     .getVdsStaticDao()
                     .getAllForVdsGroup(getParameters().getVdsStaticData().getVdsGroupId())

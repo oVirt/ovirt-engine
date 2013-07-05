@@ -222,7 +222,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (StoragePool pool : result) {
-            assertEquals(StorageType.ISCSI, pool.getstorage_pool_type());
+            assertEquals(StorageType.ISCSI, pool.getStorageType());
         }
     }
 

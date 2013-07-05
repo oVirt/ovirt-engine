@@ -380,7 +380,7 @@ public class UpdateVdsGroupCommandTest {
 
     private static StoragePool createStoragePoolLocalFS() {
         StoragePool pool = new StoragePool();
-        pool.setstorage_pool_type(StorageType.LOCALFS);
+        pool.setStorageType(StorageType.LOCALFS);
         return pool;
     }
 

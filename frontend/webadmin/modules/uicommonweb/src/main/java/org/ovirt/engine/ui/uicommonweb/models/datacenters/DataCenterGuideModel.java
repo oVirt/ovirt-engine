@@ -328,7 +328,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         {
             addToList = false;
             if (item.getStorageDomainType() == StorageDomainType.Data
-                    && item.getStorageType() == getEntity().getstorage_pool_type()
+                    && item.getStorageType() == getEntity().getStorageType()
                     && item.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
             {
                 if (getEntity().getStoragePoolFormatType() == null)
@@ -538,7 +538,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         {
             startProgress(null);
 
-            if (getEntity().getstorage_pool_type() != StorageType.LOCALFS)
+            if (getEntity().getStorageType() != StorageType.LOCALFS)
             {
                 updateOptionsNonLocalFSData();
             }
@@ -1297,7 +1297,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                             addToList = false;
                             if (item.getStorageDomainType() == StorageDomainType.Data
                                     && item.getStorageType() == dataCenterGuideModel.getEntity()
-                                            .getstorage_pool_type()
+                                            .getStorageType()
                                     && item.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
                             {
                                 if (getEntity().getStoragePoolFormatType() == null)
@@ -1423,7 +1423,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         // In case of local storage, do not show the cluster selection in host select menu as there can be only one cluster in that case
         //also only one host is allowed in the cluster so we should disable multi selection
-        boolean isMultiHostDC = getEntity().getstorage_pool_type() == StorageType.LOCALFS;
+        boolean isMultiHostDC = getEntity().getStorageType() == StorageType.LOCALFS;
         if (isMultiHostDC) {
             model.getCluster().setIsAvailable(false);
             model.setMultiSelection(false);

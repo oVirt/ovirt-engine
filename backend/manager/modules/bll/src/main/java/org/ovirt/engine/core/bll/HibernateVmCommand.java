@@ -369,7 +369,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     }
 
     private VolumeType getMemoryVolumeType() {
-        return getMemoryVolumeTypeForPool(getStoragePool().getstorage_pool_type());
+        return getMemoryVolumeTypeForPool(getStoragePool().getStorageType());
     }
 
     /**

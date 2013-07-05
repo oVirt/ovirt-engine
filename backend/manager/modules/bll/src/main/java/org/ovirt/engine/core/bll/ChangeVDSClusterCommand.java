@@ -69,7 +69,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         }
 
         targetStoragePool = DbFacade.getInstance().getStoragePoolDao().getForVdsGroup(getTargetCluster().getId());
-        if (targetStoragePool != null && targetStoragePool.getstorage_pool_type() == StorageType.LOCALFS) {
+        if (targetStoragePool != null && targetStoragePool.getStorageType() == StorageType.LOCALFS) {
             if (!DbFacade.getInstance().getVdsStaticDao().getAllForVdsGroup(getParameters().getClusterId()).isEmpty()) {
                 addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_ADD_MORE_THEN_ONE_HOST_TO_LOCAL_STORAGE);
                 return false;

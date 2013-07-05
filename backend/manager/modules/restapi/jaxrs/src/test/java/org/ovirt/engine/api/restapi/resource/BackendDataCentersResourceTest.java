@@ -228,7 +228,7 @@ public class BackendDataCentersResourceTest
         expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getdescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getstorage_pool_type()).andReturn(
+        expect(entity.getStorageType()).andReturn(
                 org.ovirt.engine.core.common.businessentities.StorageType.NFS).anyTimes();
         return entity;
     }

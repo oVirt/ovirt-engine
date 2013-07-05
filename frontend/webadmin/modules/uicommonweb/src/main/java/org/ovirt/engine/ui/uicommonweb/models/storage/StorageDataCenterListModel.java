@@ -255,7 +255,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                                         (dataCenter.getstatus() == StoragePoolStatus.Uninitialized || dataCenter.getstatus() == StoragePoolStatus.Up)
                                                 && (dataCenter.getStoragePoolFormatType() == null || dataCenter.getStoragePoolFormatType() == getEntity().getStorageStaticData()
                                                         .getStorageFormat())
-                                                && dataCenter.getstorage_pool_type() == getEntity().getStorageType();
+                                                && dataCenter.getStorageType() == getEntity().getStorageType();
                                 addToAttachCandidateDatacenters(dataCenter, addDatacenter);
                                 break;
                             case ISO:

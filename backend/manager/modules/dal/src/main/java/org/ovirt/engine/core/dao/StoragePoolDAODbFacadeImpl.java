@@ -31,7 +31,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
             entity.setComment(rs.getString("free_text_comment"));
             entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setName(rs.getString("name"));
-            entity.setstorage_pool_type(StorageType.forValue(rs
+            entity.setStorageType(StorageType.forValue(rs
                     .getInt("storage_pool_type")));
             entity.setstatus(StoragePoolStatus.forValue(rs.getInt("status")));
             entity.setmaster_domain_version(rs
@@ -132,7 +132,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("free_text_comment", pool.getComment())
                 .addValue("id", pool.getId())
                 .addValue("name", pool.getName())
-                .addValue("storage_pool_type", pool.getstorage_pool_type())
+                .addValue("storage_pool_type", pool.getStorageType())
                 .addValue("status", pool.getstatus())
                 .addValue("master_domain_version",
                         pool.getmaster_domain_version())
@@ -152,7 +152,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("free_text_comment", pool.getComment())
                 .addValue("id", pool.getId())
                 .addValue("name", pool.getName())
-                .addValue("storage_pool_type", pool.getstorage_pool_type())
+                .addValue("storage_pool_type", pool.getStorageType())
                 .addValue("status", pool.getstatus())
                 .addValue("storage_pool_format_type", pool.getStoragePoolFormatType())
                 .addValue("master_domain_version",
@@ -173,7 +173,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("free_text_comment", pool.getComment())
                 .addValue("id", pool.getId())
                 .addValue("name", pool.getName())
-                .addValue("storage_pool_type", pool.getstorage_pool_type())
+                .addValue("storage_pool_type", pool.getStorageType())
                 .addValue("storage_pool_format_type", pool.getStoragePoolFormatType())
                 .addValue("compatibility_version",
                         pool.getcompatibility_version())

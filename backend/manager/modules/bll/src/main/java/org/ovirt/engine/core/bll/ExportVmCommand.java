@@ -81,8 +81,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     @Override
     protected boolean canDoAction() {
         if (getVm() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
         setDescription(getVmName());
         setStoragePoolId(getVm().getStoragePoolId());

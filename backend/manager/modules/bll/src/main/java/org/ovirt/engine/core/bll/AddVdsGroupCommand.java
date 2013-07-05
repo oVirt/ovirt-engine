@@ -140,7 +140,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                         VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST
                                 .toString());
                 result = false;
-            } else if (storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
+            } else if (storagePool.getStorageType() == StorageType.LOCALFS) {
                 // we allow only one cluster in localfs data center
                 if (!DbFacade.getInstance()
                         .getVdsGroupDao().getAllForStoragePool(getVdsGroup().getStoragePoolId())

@@ -34,7 +34,7 @@ public class ConnectHostToStoragePoolServersCommand extends
     @Override
     protected void executeCommand() {
         InitConnectionList();
-        setSucceeded(connectStorageServer(getStoragePool().getstorage_pool_type(), getConnections()));
+        setSucceeded(connectStorageServer(getStoragePool().getStorageType(), getConnections()));
 
         if (getNeedToConnectIso()) {
             if (!connectStorageServer(getIsoType(), getIsoConnections())) {

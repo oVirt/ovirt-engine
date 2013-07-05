@@ -238,7 +238,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         }
         if (result && getVdsGroup().getStoragePoolId() != null) {
             StoragePool storagePool = getStoragePoolDAO().get(getVdsGroup().getStoragePoolId());
-            if (oldGroup.getStoragePoolId() == null && storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
+            if (oldGroup.getStoragePoolId() == null && storagePool.getStorageType() == StorageType.LOCALFS) {
                 // we allow only one cluster in localfs data center
                 if (!getVdsGroupDAO().getAllForStoragePool(getVdsGroup().getStoragePoolId()).isEmpty()) {
                     getReturnValue()

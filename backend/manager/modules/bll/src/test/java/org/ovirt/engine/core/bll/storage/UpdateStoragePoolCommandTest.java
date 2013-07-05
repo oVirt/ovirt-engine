@@ -181,21 +181,21 @@ public class UpdateStoragePoolCommandTest {
 
     private static StoragePool createNewStoragePool() {
         StoragePool pool = createBasicPool();
-        pool.setstorage_pool_type(StorageType.NFS);
+        pool.setStorageType(StorageType.NFS);
         pool.setcompatibility_version(VERSION_1_1);
         return pool;
     }
 
     private static StoragePool createDefaultStoragePool() {
         StoragePool pool = createBasicPool();
-        pool.setstorage_pool_type(StorageType.LOCALFS);
+        pool.setStorageType(StorageType.LOCALFS);
         pool.setcompatibility_version(VERSION_1_1);
         return pool;
     }
 
     private static StoragePool createLowerVersionStoragePool() {
         StoragePool pool = createBasicPool();
-        pool.setstorage_pool_type(StorageType.LOCALFS);
+        pool.setStorageType(StorageType.LOCALFS);
         pool.setcompatibility_version(VERSION_1_0);
         return pool;
     }
@@ -209,14 +209,14 @@ public class UpdateStoragePoolCommandTest {
 
     private static StoragePool createHigherVersionStoragePool() {
         StoragePool pool = createBasicPool();
-        pool.setstorage_pool_type(StorageType.LOCALFS);
+        pool.setStorageType(StorageType.LOCALFS);
         pool.setcompatibility_version(VERSION_1_2);
         return pool;
     }
 
     private static StoragePool createInvalidVersionStoragePool() {
         StoragePool pool = createBasicPool();
-        pool.setstorage_pool_type(StorageType.LOCALFS);
+        pool.setStorageType(StorageType.LOCALFS);
         pool.setcompatibility_version(VERSION_2_0);
         return pool;
     }

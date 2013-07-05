@@ -59,7 +59,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         TextColumnWithTooltip<StoragePool> storageTypeColumn = new EnumColumn<StoragePool, StorageType>() {
             @Override
             public StorageType getRawValue(StoragePool object) {
-                return object.getstorage_pool_type();
+                return object.getStorageType();
             }
         };
         getTable().addColumn(storageTypeColumn, constants.storgeTypeDc(), "150px"); //$NON-NLS-1$

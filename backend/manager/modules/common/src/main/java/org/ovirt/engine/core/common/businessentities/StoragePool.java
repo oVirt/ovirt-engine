@@ -27,7 +27,8 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, 
 
     private String comment;
 
-    private int storagePoolType = StorageType.UNKNOWN.getValue();
+    /** Pool's storage type */
+    private StorageType storageType = StorageType.UNKNOWN;
 
     private StorageFormatType storagePoolFormatType = null;
 
@@ -60,7 +61,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, 
         this.comment = comment;
         this.id = id;
         this.name = name;
-        setstorage_pool_type(StorageType.forValue(storage_pool_type));
+        setStorageType(StorageType.forValue(storage_pool_type));
         this.status = StoragePoolStatus.forValue(status);
     }
 
@@ -105,13 +106,13 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, 
         this.name = value;
     }
 
-    public StorageType getstorage_pool_type() {
-        return StorageType.forValue(storagePoolType);
+    public StorageType getStorageType() {
+        return storageType;
 
     }
 
-    public void setstorage_pool_type(StorageType value) {
-        storagePoolType = value.getValue();
+    public void setStorageType(StorageType value) {
+        storageType = value;
     }
 
     public StorageFormatType getStoragePoolFormatType() {
@@ -193,7 +194,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, 
         result = prime * result + ((recovery_mode == null) ? 0 : recovery_mode.hashCode());
         result = prime * result + ((spmVdsId == null) ? 0 : spmVdsId.hashCode());
         result = prime * result + ((status == null) ? 0 : status.hashCode());
-        result = prime * result + storagePoolType;
+        result = prime * result + ((storageType == null) ? 0 : storageType.hashCode());
         result = prime * result + ((storagePoolFormatType == null) ? 0 : storagePoolFormatType.hashCode());
         result = prime * result + ((quotaEnforcementType == null) ? 0 : quotaEnforcementType.hashCode());
         return result;
@@ -221,7 +222,7 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, 
                 && recovery_mode == other.recovery_mode
                 && ObjectUtils.objectsEqual(spmVdsId, other.spmVdsId)
                 && status == other.status
-                && storagePoolType == other.storagePoolType
+                && ObjectUtils.objectsEqual(storageType, other.storageType)
                 && ObjectUtils.objectsEqual(storagePoolFormatType, other.storagePoolFormatType)
                 && quotaEnforcementType == other.quotaEnforcementType);
     }

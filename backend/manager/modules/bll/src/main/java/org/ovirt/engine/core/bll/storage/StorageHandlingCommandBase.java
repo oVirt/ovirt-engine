@@ -145,7 +145,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     protected boolean isStorageDomainTypeCorrect(StorageDomain storageDomain) {
         if (storageDomain.getStorageDomainType() != StorageDomainType.ISO
                 && storageDomain.getStorageDomainType() != StorageDomainType.ImportExport
-                && getStoragePool().getstorage_pool_type() != storageDomain.getStorageType()) {
+                && getStoragePool().getStorageType() != storageDomain.getStorageType()) {
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ATTACH_STORAGE_DOMAIN_STORAGE_TYPE_NOT_MATCH);
             return false;
         }

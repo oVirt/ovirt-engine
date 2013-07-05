@@ -67,7 +67,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         // check problematic vds status
         if (IsLegalStatus(_problematicVds.getStatus())) {
             if (_problematicVds.getSpmStatus() == VdsSpmStatus.SPM) {
-                if(getStoragePool().getstorage_pool_type() != StorageType.LOCALFS) {
+                if(getStoragePool().getStorageType() != StorageType.LOCALFS) {
                     returnValue = returnValue && initializeVds();
                 }
                 if (returnValue && getStoragePool().getstatus() != StoragePoolStatus.NotOperational
@@ -172,7 +172,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                 && masterDomain.getStatus() != null
                 && (masterDomain.getStatus() == StorageDomainStatus.Active
                         || masterDomain.getStatus() == StorageDomainStatus.Unknown || masterDomain.getStatus() == StorageDomainStatus.InActive)) {
-            if (getStoragePool().getstorage_pool_type() != StorageType.LOCALFS) {
+            if (getStoragePool().getStorageType() != StorageType.LOCALFS) {
                 for (VDS vds : getAllRunningVdssInPool()) {
                     try {
                         SpmStatusResult statusResult = (SpmStatusResult) Backend

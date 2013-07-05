@@ -69,7 +69,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
                 if (domain.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
                     returnValue = false;
-                } else if (domain.getStorageType() != getStoragePool().getstorage_pool_type()) {
+                } else if (domain.getStorageType() != getStoragePool().getStorageType()) {
                     addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_RECOVERY_STORAGE_POOL_STORAGE_TYPE_MISSMATCH);
                     returnValue = false;
                 }

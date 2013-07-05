@@ -43,7 +43,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     private void setDataCenterDetails() {
         StoragePool dc = getParameters().getStoragePool();
         setCompatibilityVersion(dc.getcompatibility_version().toString());
-        setStoragePoolType(dc.getstorage_pool_type().name());
+        setStoragePoolType(dc.getStorageType().name());
         setQuotaEnforcementType(dc.getQuotaEnforcementType().name());
     }
 

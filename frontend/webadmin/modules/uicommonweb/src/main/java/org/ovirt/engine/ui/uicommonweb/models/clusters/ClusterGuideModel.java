@@ -229,7 +229,7 @@ public class ClusterGuideModel extends GuideModel
                             model.dataCenter = (StoragePool) returnValue;
 
                             if (model.dataCenter == null
-                                    || model.dataCenter.getstorage_pool_type() != StorageType.LOCALFS)
+                                    || model.dataCenter.getStorageType() != StorageType.LOCALFS)
                             {
                                 model.updateOptionsNonLocalFSData();
                             }
@@ -280,7 +280,7 @@ public class ClusterGuideModel extends GuideModel
                     public void onSuccess(Object target, Object returnValue) {
                         dataCenter = (StoragePool) returnValue;
 
-                        boolean isMultiHostDC = dataCenter.getstorage_pool_type() == StorageType.LOCALFS;
+                        boolean isMultiHostDC = dataCenter.getStorageType() == StorageType.LOCALFS;
                         if (isMultiHostDC)
                             model.setMultiSelection(false);
 

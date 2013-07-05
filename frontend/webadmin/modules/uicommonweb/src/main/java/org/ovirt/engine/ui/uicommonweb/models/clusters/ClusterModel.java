@@ -1058,7 +1058,7 @@ public class ClusterModel extends EntityModel
         {
             return;
         }
-        if (selectedDataCenter.getstorage_pool_type() == StorageType.LOCALFS)
+        if (selectedDataCenter.getStorageType() == StorageType.LOCALFS)
         {
             setIsResiliencePolicyTabAvailable(false);
         }

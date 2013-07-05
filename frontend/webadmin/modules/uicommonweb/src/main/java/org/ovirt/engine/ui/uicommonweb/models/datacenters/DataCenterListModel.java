@@ -326,7 +326,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                     }
                 }), dataCenter.getId());
 
-        model.getStorageTypeList().setSelectedItem(dataCenter.getstorage_pool_type());
+        model.getStorageTypeList().setSelectedItem(dataCenter.getStorageType());
 
         model.getQuotaEnforceTypeListModel().setSelectedItem(dataCenter.getQuotaEnforcementType());
 
@@ -416,7 +416,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 List<EntityModel> models = new ArrayList<EntityModel>();
                 for (StorageDomain a : storageDomainList) {
                     if (a.getStorageDomainType() == StorageDomainType.Data
-                            && a.getStorageType() == ((StoragePool) getSelectedItem()).getstorage_pool_type()
+                            && a.getStorageType() == ((StoragePool) getSelectedItem()).getStorageType()
                             && (a.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)) {
                         EntityModel tempVar = new EntityModel();
                         tempVar.setEntity(a);
@@ -694,7 +694,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         dataCenter.setName((String) model.getName().getEntity());
         dataCenter.setdescription((String) model.getDescription().getEntity());
         dataCenter.setComment((String) model.getComment().getEntity());
-        dataCenter.setstorage_pool_type((StorageType) model.getStorageTypeList().getSelectedItem());
+        dataCenter.setStorageType((StorageType) model.getStorageTypeList().getSelectedItem());
         dataCenter.setcompatibility_version((Version) model.getVersion().getSelectedItem());
         dataCenter.setQuotaEnforcementType((QuotaEnforcementTypeEnum) model.getQuotaEnforceTypeListModel()
                 .getSelectedItem());
@@ -841,7 +841,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
 
         getRecoveryStorageCommand().setIsExecutionAllowed(items != null && items.size() == 1
-                && !items.iterator().next().getstorage_pool_type().equals(StorageType.LOCALFS));
+                && !items.iterator().next().getStorageType().equals(StorageType.LOCALFS));
 
         // System tree dependent actions.
         boolean isAvailable =

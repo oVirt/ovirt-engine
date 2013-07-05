@@ -75,7 +75,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
         boolean returnValue = canRemoveVds(getVdsId(), getReturnValue().getCanDoActionMessages());
         StoragePool storagePool = getStoragePoolDAO().getForVds(getParameters().getVdsId());
 
-        if (returnValue && storagePool != null && storagePool.getstorage_pool_type() == StorageType.LOCALFS) {
+        if (returnValue && storagePool != null && storagePool.getStorageType() == StorageType.LOCALFS) {
             if (!getStorageDomainDAO().getAllForStoragePool(storagePool.getId()).isEmpty()) {
                 returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_REMOVE_HOST_WITH_LOCAL_STORAGE);
             }

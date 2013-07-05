@@ -107,7 +107,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             targetFormat = StorageFormatType.V1;
         }
 
-        StorageType spType = storagePool.getstorage_pool_type();
+        StorageType spType = storagePool.getStorageType();
         if (targetFormat == StorageFormatType.V2 && !spType.isBlockDomain()) {
             // There is no format V2 for domains that aren't ISCSI/FCP
             return;
@@ -176,8 +176,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         }
         if (returnValue
-                && _oldStoragePool.getstorage_pool_type() != getStoragePool()
-                        .getstorage_pool_type()
+                && _oldStoragePool.getStorageType() != getStoragePool()
+                        .getStorageType()
                 && getStorageDomainStaticDAO().getAllForStoragePool(getStoragePool().getId()).size() > 0) {
             returnValue = false;
             getReturnValue()

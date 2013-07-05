@@ -566,7 +566,7 @@ public abstract class AbstractDiskModel extends DiskModel
         }
 
         VolumeType volumeType = (VolumeType) getVolumeType().getSelectedItem();
-        StorageType storageType = ((StoragePool) getDataCenter().getSelectedItem()).getstorage_pool_type();
+        StorageType storageType = ((StoragePool) getDataCenter().getSelectedItem()).getStorageType();
 
         updateVolumeFormat(volumeType, storageType);
         updateShareable(volumeType, storageType);
@@ -627,7 +627,7 @@ public abstract class AbstractDiskModel extends DiskModel
             return;
         }
 
-        updateVolumeType(datacenter.getstorage_pool_type());
+        updateVolumeType(datacenter.getStorageType());
         updateShareableDiskEnabled(datacenter);
         updateDirectLunDiskEnabled(datacenter);
         updateInterface(isInVm ? getVm().getVdsGroupCompatibilityVersion() : null);

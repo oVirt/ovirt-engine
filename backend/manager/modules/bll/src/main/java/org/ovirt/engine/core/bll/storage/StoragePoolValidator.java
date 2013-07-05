@@ -30,7 +30,7 @@ public class StoragePoolValidator {
      * @return The result of the validation
      */
     public ValidationResult isPosixDcAndMatchingCompatiblityVersion() {
-        if (storagePool.getstorage_pool_type() == StorageType.POSIXFS
+        if (storagePool.getStorageType() == StorageType.POSIXFS
                 && !Config.<Boolean> GetValue
                         (ConfigValues.PosixStorageEnabled, storagePool.getcompatibility_version().toString())) {
             return new ValidationResult(VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
@@ -46,7 +46,7 @@ public class StoragePoolValidator {
      * @return true if the version matches
      */
     public ValidationResult isGlusterDcAndMatchingCompatiblityVersion() {
-        if (storagePool.getstorage_pool_type() == StorageType.GLUSTERFS
+        if (storagePool.getStorageType() == StorageType.GLUSTERFS
                 && !Config.<Boolean> GetValue
                         (ConfigValues.GlusterFsStorageEnabled, storagePool.getcompatibility_version().toString())) {
             return new ValidationResult(VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
@@ -59,7 +59,7 @@ public class StoragePoolValidator {
     }
 
     public ValidationResult isNotLocalfsWithDefaultCluster() {
-        if (storagePool.getstorage_pool_type() == StorageType.LOCALFS && containsDefaultCluster()) {
+        if (storagePool.getStorageType() == StorageType.LOCALFS && containsDefaultCluster()) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
         }
         return ValidationResult.VALID;

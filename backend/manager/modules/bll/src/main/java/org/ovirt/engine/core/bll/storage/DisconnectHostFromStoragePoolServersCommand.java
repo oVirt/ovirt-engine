@@ -31,10 +31,10 @@ public class DisconnectHostFromStoragePoolServersCommand extends
                 .RunVdsCommand(
                         VDSCommandType.DisconnectStorageServer,
                         new StorageServerConnectionManagementVDSParameters(getVds().getId(), getStoragePool().getId(),
-                                getStoragePool().getstorage_pool_type(), getConnections()));
+                                getStoragePool().getStorageType(), getConnections()));
         setSucceeded(vdsReturnValue.getSucceeded());
         if (!vdsReturnValue.getSucceeded()) {
-            StorageHelperDirector.getInstance().getItem(getStoragePool().getstorage_pool_type())
+            StorageHelperDirector.getInstance().getItem(getStoragePool().getStorageType())
                     .isConnectSucceeded((HashMap<String, String>) vdsReturnValue.getReturnValue(), getConnections());
         }
         if (getIsoConnections() != null && getIsoConnections().size() != 0) {

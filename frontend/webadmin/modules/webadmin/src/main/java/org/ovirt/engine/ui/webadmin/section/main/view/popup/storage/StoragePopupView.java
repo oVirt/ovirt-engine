@@ -119,8 +119,8 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
                     StoragePool storage = (StoragePool) object;
 
                     // Get formatted storage type and format using Enum renders
-                    String storageType = storage.getstorage_pool_type() == StorageType.UNKNOWN ? "" : //$NON-NLS-1$
-                            (new EnumRenderer<StorageType>()).render(storage.getstorage_pool_type());
+                    String storageType = storage.getStorageType() == StorageType.UNKNOWN ? "" : //$NON-NLS-1$
+                            (new EnumRenderer<StorageType>()).render(storage.getStorageType());
                     String storageFormatType = storage.getStoragePoolFormatType() == null ? "" : //$NON-NLS-1$
                             (new EnumRenderer<StorageFormatType>()).render(storage.getStoragePoolFormatType());
 
