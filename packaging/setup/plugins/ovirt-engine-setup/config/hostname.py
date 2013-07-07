@@ -343,14 +343,14 @@ class Plugin(plugin.PluginBase):
                 )
                 validFQDN = True
             except RuntimeError as e:
-                if interactive:
-                    self.logger.error(
-                        _('FQDN is not valid: {error}').format(
-                            error=e
-                        )
-                    )
-                else:
-                    raise
+                self.logger.error(
+                    _('Host name is not valid: {error}').format(
+                        error=e,
+                    ),
+                )
+                self.logger.debug('exception', exc_info=True)
+                if not interactive:
+                    break
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
