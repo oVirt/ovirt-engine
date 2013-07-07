@@ -19,7 +19,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
  */
 public final class VdsLoadBalancer {
     private static Log log = LogFactory.getLog(VdsLoadBalancer.class);
-    private static VdsLoadBalancer instance = null;
+    private static volatile VdsLoadBalancer instance = null;
     private MigrationHandler migrationHandler = null;
 
     public static VdsLoadBalancer getInstance() {
