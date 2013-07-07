@@ -675,6 +675,9 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
 
         final VM vm = getEntity();
+        if (vm == null) {
+            return; // leave the command disabled
+        }
 
         AsyncDataProvider.getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
