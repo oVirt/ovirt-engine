@@ -36,6 +36,7 @@ import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -98,7 +99,10 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
     public Response install(Action action) {
         // REVISIT fencing options
         VDS vds = getEntity();
+        validateEnums(Action.class, action);
         UpdateVdsActionParameters params = new UpdateVdsActionParameters(vds.getStaticData(), action.getRootPassword(), true);
+        params = (UpdateVdsActionParameters) getMapper
+                (Action.class, VdsOperationActionParameters.class).map(action, (VdsOperationActionParameters) params);
         if (vds.getVdsType()==VDSType.oVirtNode) {
             params.setIsReinstallOrUpgrade(true);
             if (action.isSetImage()) {
@@ -125,9 +129,12 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         if (action.isSetCluster() && (action.getCluster().isSetId() || action.getCluster().isSetName())) {
             update(setCluster(get(), action.getCluster()));
         }
-
+        validateEnums(Action.class, action);
+        ApproveVdsParameters params = new ApproveVdsParameters(guid);
+        params = (ApproveVdsParameters) getMapper
+                (Action.class, VdsOperationActionParameters.class).map(action, (VdsOperationActionParameters) params);
         return doAction(VdcActionType.ApproveVds,
-                        new ApproveVdsParameters(guid),
+                        params,
                         action);
     }
 

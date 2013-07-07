@@ -8,12 +8,14 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.Display;
+import org.ovirt.engine.api.model.HardwareInformation;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Hooks;
 import org.ovirt.engine.api.model.Host;
@@ -26,13 +28,16 @@ import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.model.Options;
 import org.ovirt.engine.api.model.PmProxies;
 import org.ovirt.engine.api.model.PmProxy;
-import org.ovirt.engine.api.model.HardwareInformation;
 import org.ovirt.engine.api.model.PowerManagement;
+import org.ovirt.engine.api.model.SSH;
 import org.ovirt.engine.api.model.StorageManager;
 import org.ovirt.engine.api.model.TransparentHugePages;
+import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.model.VmSummary;
+import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -73,6 +78,9 @@ public class HostMapper {
         } else {
             entity.setPort(DEFAULT_VDSM_PORT);
         }
+        if (model.isSetSsh()) {
+            map(model.getSsh(), entity);
+        }
         if (model.isSetPowerManagement()) {
             entity = map(model.getPowerManagement(), entity);
         }
@@ -85,6 +93,23 @@ public class HostMapper {
             entity.setConsoleAddress("".equals(model.getDisplay().getAddress()) ? null : model.getDisplay().getAddress());
         }
 
+        return entity;
+    }
+
+    @Mapping(from = SSH.class, to = VdsStatic.class)
+    public static VdsStatic map(SSH model, VdsStatic template) {
+        VdsStatic entity = template != null ? template : new VdsStatic();
+        /* TODO: add when configured ssh username is enabled
+        if (model.isSetUser() && model.getUser().isSetUserName()) {
+            entity.setSshUsername(model.getUser().getUserName());
+        }
+        */
+        if (model.isSetPort() && model.getPort() > 0) {
+            entity.setSshPort(model.getPort());
+        }
+        if (model.isSetFingerprint()) {
+            entity.setSshKeyFingerprint(model.getFingerprint());
+        }
         return entity;
     }
 
@@ -261,6 +286,7 @@ public class HostMapper {
         }
         model.setPowerManagement(map(entity, (PowerManagement)null));
         model.setHardwareInformation(map(entity, (HardwareInformation)null));
+        model.setSsh(map(entity.getStaticData(),(SSH) null));
         CPU cpu = new CPU();
         CpuTopology cpuTopology = new CpuTopology();
         if (entity.getCpuSockets() != null) {
@@ -359,6 +385,16 @@ public class HostMapper {
         model.setSerialNumber(entity.getHardwareSerialNumber());
         model.setUuid(entity.getHardwareUUID());
         model.setVersion(entity.getHardwareVersion());
+        return model;
+    }
+
+    @Mapping(from = VdsStatic.class, to = SSH.class)
+    public static SSH map(VdsStatic entity, SSH template) {
+        SSH model = template != null ? template : new SSH();
+        model.setPort(entity.getSshPort());
+        model.setUser(new User());
+        model.getUser().setUserName(entity.getSshUsername());
+        model.setFingerprint(entity.getSshKeyFingerprint());
         return model;
     }
 
@@ -492,6 +528,46 @@ public class HostMapper {
             }
         }
         return hooks;
+    }
+
+    @Mapping(from = AuthenticationMethod.class, to = org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod.class)
+    public static org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod map(AuthenticationMethod template,
+            org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod authType) {
+        switch (template) {
+        case PASSWORD:
+            return org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod.Password;
+
+        case PUBLICKEY:
+            return org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod.PublicKey;
+
+        default:
+            return org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod.Password;
+        }
+    }
+
+    @Mapping(from = Action.class, to = VdsOperationActionParameters.class)
+    public static VdsOperationActionParameters map(Action action, VdsOperationActionParameters params) {
+        params.setPassword(action.getRootPassword());
+        if (action.isSetSsh()) {
+            if (action.getSsh().isSetUser()) {
+                if (action.getSsh().getUser().isSetPassword()) {
+                    params.setRootPassword(action.getSsh().getUser().getPassword());
+                }
+                if (action.getSsh().getUser().isSetUserName()) {
+                      params.getvds().setSshUsername(action.getSsh().getUser().getUserName());
+                }
+            }
+            if (action.getSsh().isSetPort()) {
+                params.getvds().setSshPort(action.getSsh().getPort());
+            }
+            if (action.getSsh().isSetFingerprint()) {
+                params.getvds().setSshKeyFingerprint(action.getSsh().getFingerprint());
+            }
+            if (action.getSsh().isSetAuthenticationMethod()) {
+                params.setAuthMethod(map(AuthenticationMethod.fromValue(action.getSsh().getAuthenticationMethod()), null));
+            }
+        }
+        return params;
     }
 
     private static Hook createHook(Map.Entry<String, HashMap<String, HashMap<String, String>>> keyValuePair,

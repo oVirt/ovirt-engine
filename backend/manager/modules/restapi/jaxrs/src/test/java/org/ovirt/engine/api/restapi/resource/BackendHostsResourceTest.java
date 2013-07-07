@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -298,7 +299,9 @@ public class BackendHostsResourceTest
 
     @Override
     protected VDS getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(VDS.class), control.createMock(VdsStatistics.class), index);
+        return setUpEntityExpectations(control.createMock(VDS.class),
+                                       control.createMock(VdsStatistics.class),
+                                       index);
     }
 
     static VDS setUpEntityExpectations(VDS entity, int index) {
@@ -310,6 +313,10 @@ public class BackendHostsResourceTest
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getHostName()).andReturn(ADDRESSES[index]).anyTimes();
         expect(entity.getStatus()).andReturn(VDS_STATUS[index]).anyTimes();
+        expect(entity.getStoragePoolId()).andReturn(GUIDS[1]).anyTimes();
+        VdsStatic vdsStatic = new VdsStatic();
+        vdsStatic.setId(GUIDS[2]);
+        expect(entity.getStaticData()).andReturn(vdsStatic).anyTimes();
         if (statistics != null) {
             setUpStatisticalEntityExpectations(entity, statistics);
         }

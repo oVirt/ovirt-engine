@@ -58,8 +58,16 @@ public class FeaturesHelper {
             addFeatureRefreshHostCapabilities(features);
             addFeatureMemorySnapshot(features);
             addWatchdogFeature(features);
+            addSshAuthenticationFeature(features);
         }
         return features;
+    }
+
+    private void addSshAuthenticationFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("SSH Authentication Method");
+        feature.setDescription("Ability to authenticate by SSH to host using privileged user password or SSH public key");
+        features.getFeature().add(feature);
     }
 
     private void addWatchdogFeature(Features features) {

@@ -16,6 +16,7 @@ import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostsResource;
+import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -95,6 +96,31 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         }
         if (host.isSetRebootAfterInstallation()) {
             addParams.setRebootAfterInstallation(host.isRebootAfterInstallation());
+        }
+        if (host.isSetSsh()) {
+            if (host.getSsh().isSetUser()) {
+                if (host.getSsh().getUser().isSetPassword()) {
+                    addParams.setRootPassword(host.getSsh().getUser().getPassword());
+                }
+                // TODO: adding username support.
+                //if (action.getSsh().getUser().isSetUserName()) {
+                //      addParams.getvds().setSshUsername(action.getSsh().getUser().getUserName());
+                //}
+            }
+            if (host.getSsh().isSetPort()) {
+                addParams.getvds().setSshPort(host.getSsh().getPort().intValue());
+            }
+            if (host.getSsh().isSetFingerprint()) {
+                addParams.getvds().setSshKeyFingerprint(host.getSsh().getFingerprint());
+            }
+            if (host.getSsh().isSetAuthenticationMethod()) {
+                AuthenticationMethod m = AuthenticationMethod.fromValue(host.getSsh().getAuthenticationMethod());
+                if (m != null) {
+                    addParams.setAuthMethod(
+                            getMapper(AuthenticationMethod.class,
+                                  org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod.class).map(m, null));
+                }
+            }
         }
         return performCreate(VdcActionType.AddVds,
                                addParams,
@@ -186,5 +212,4 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
                               ? host.getCluster().getName()
                               : "Default")).getId();
     }
-
 }

@@ -8,6 +8,7 @@ import org.ovirt.engine.api.model.PmProxyType;
 
 @ValidatedClass(clazz = Host.class)
 public class HostValidator implements Validator<Host> {
+    private SSHValidator sshValidator = new SSHValidator();
 
     @Override
     public void validateEnums(Host host) {
@@ -17,6 +18,9 @@ public class HostValidator implements Validator<Host> {
                     validateEnum(PmProxyType.class, proxy.getType(), true);
                 }
             }
+        }
+        if (host.isSetSsh()) {
+            sshValidator.validateEnums(host.getSsh());
         }
     }
 }

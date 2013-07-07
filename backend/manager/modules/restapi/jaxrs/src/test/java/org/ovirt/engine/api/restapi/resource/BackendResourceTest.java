@@ -18,7 +18,6 @@ import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
@@ -153,10 +152,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
 
 
     protected VDS getEntity(int index) {
-        VDS vds = setUpEntityExpectations(control.createMock(VDS.class), index);
-        VdsStatic vdsStatic = control.createMock(VdsStatic.class);
-        expect(vdsStatic.getId()).andReturn(GUIDS[2]).anyTimes();
-        expect(vds.getStaticData()).andReturn(vdsStatic).anyTimes();
+        VDS vds = setUpEntityExpectations(control.createMock(VDS.class), null, index);
         return vds;
     }
 }

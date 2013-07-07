@@ -6,6 +6,8 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.SSH;
+import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
@@ -35,6 +37,9 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         inverse.setHostName(to.getHostName());
         inverse.setVdsGroupId(to.getVdsGroupId());
         inverse.setPort(to.getPort());
+        inverse.setSshKeyFingerprint(to.getSshKeyFingerprint());
+        inverse.setSshPort(to.getSshPort());
+        inverse.setSshUsername(to.getSshUsername());
         inverse.setVdsSpmPriority(to.getVdsSpmPriority());
         inverse.setConsoleAddress(to.getConsoleAddress());
         return inverse;
@@ -208,6 +213,25 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         assertEquals(mappedVdsStatic.getPmPassword(), "passwd");
         assertEquals(mappedVdsStatic.getPmType(), "apc");
         assertEquals(mappedVdsStatic.getPmUser(), "user");
+    }
+
+    @Test
+    public void testUpdateSshHost() {
+        SSH sshConf = new SSH();
+        sshConf.setPort(22);
+        sshConf.setUser(new User());
+        sshConf.getUser().setUserName("root");
+        sshConf.setFingerprint("1234");
+
+        VdsStatic vdsStatic = new VdsStatic();
+        vdsStatic.setSshUsername("root");
+        vdsStatic.setSshPort(22);
+        vdsStatic.setSshKeyFingerprint("1234");
+
+        VdsStatic mappedVdsStatic = HostMapper.map(sshConf, vdsStatic);
+        assertEquals(mappedVdsStatic.getSshPort(), 22);
+        assertEquals(mappedVdsStatic.getSshKeyFingerprint(), "1234");
+        assertEquals(mappedVdsStatic.getSshUsername(), "root");
     }
 
     @Test

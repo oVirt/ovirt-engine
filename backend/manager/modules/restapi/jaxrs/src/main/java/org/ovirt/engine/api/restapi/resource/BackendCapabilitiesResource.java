@@ -96,6 +96,7 @@ import org.ovirt.engine.api.resource.CapabiliyResource;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.resource.utils.FeaturesHelper;
 import org.ovirt.engine.api.restapi.types.IpVersion;
+import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.types.NetworkUsage;
 import org.ovirt.engine.api.restapi.types.WatchdogAction;
@@ -179,6 +180,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         }
 
         addVmTypes(version, VmType.values());
+        addAuthenticationMethods(version, AuthenticationMethod.values());
         addStorageTypes(version, getStorageTypes(v));
         addStorageDomainTypes(version, StorageDomainType.values());
         addFenceTypes(version, FenceType.values());
@@ -665,6 +667,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         version.setStepTypes(new StepTypes());
         for(StepEnum type : states) {
             version.getStepTypes().getStepType().add(type.value());
+        }
+    }
+
+    private void addAuthenticationMethods(VersionCaps version, AuthenticationMethod[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
+            version.setAuthenticationMethods(new org.ovirt.engine.api.model.AuthenticationMethod());
+            for (AuthenticationMethod authType : values) {
+                version.getAuthenticationMethods().getAuthenticationMethod().add(authType.value());
+            }
         }
     }
 

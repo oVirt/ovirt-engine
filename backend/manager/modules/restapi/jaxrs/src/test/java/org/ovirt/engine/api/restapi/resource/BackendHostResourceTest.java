@@ -45,7 +45,6 @@ import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DiscoverSendTargetsQueryParameters;
@@ -667,11 +666,7 @@ public class BackendHostResourceTest
 
     @Override
     protected VDS getEntity(int index) {
-        VDS entity = setUpEntityExpectations(control.createMock(VDS.class), index);
-        VdsStatic vdsStatic = control.createMock(VdsStatic.class);
-        expect(vdsStatic.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getStaticData()).andReturn(vdsStatic).anyTimes();
-        expect(entity.getStoragePoolId()).andReturn(GUIDS[1]).anyTimes();
+        VDS entity = setUpEntityExpectations(control.createMock(VDS.class), null, index);
         return entity;
     }
 
