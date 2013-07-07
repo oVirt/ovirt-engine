@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendSnapshotsResource.SUB_COLLECTIONS;
+
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -14,8 +16,6 @@ import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
-
-import static org.ovirt.engine.api.restapi.resource.BackendSnapshotsResource.SUB_COLLECTIONS;
 
 public class BackendSnapshotResource extends AbstractBackendActionableResource<Snapshot, org.ovirt.engine.core.common.businessentities.Snapshot> implements SnapshotResource {
 
@@ -32,7 +32,7 @@ public class BackendSnapshotResource extends AbstractBackendActionableResource<S
     @Override
     public Snapshot get() {
         org.ovirt.engine.core.common.businessentities.Snapshot entity = getSnapshot();
-        Snapshot snapshot = map(entity, null);
+        Snapshot snapshot = populate(map(entity, null), entity);
         snapshot = addLinks(snapshot);
         snapshot = collection.addVmConfiguration(entity, snapshot);
         return snapshot;
@@ -139,6 +139,6 @@ public class BackendSnapshotResource extends AbstractBackendActionableResource<S
 
     @Override
     protected Snapshot doPopulate(Snapshot model, org.ovirt.engine.core.common.businessentities.Snapshot entity) {
-        return model;
+        return collection.doPopulate(model, entity);
     }
 }

@@ -671,14 +671,16 @@ actions:
       signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
-    headers: {}
+    headers:
+      All-Content: {value: true|false, required: false}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}|rel=get
   request:
     body:
       parameterType: null
       signatures: []
     urlparams: {}
-    headers: {}
+    headers:
+      All-Content: {value: true|false, required: false}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}|rel=delete
   request:
     body:

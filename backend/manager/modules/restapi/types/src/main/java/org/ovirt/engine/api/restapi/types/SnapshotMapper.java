@@ -1,5 +1,8 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.ovirt.engine.api.model.Configuration;
+import org.ovirt.engine.api.model.ConfigurationType;
+import org.ovirt.engine.api.model.Initialization;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.SnapshotStatus;
 import org.ovirt.engine.api.model.SnapshotType;
@@ -61,5 +64,13 @@ public class SnapshotMapper {
     public static Snapshot map(org.ovirt.engine.core.common.businessentities.VM entity, Snapshot template) {
         VmMapper.map(entity, template);
         return template;
+    }
+
+    public static Snapshot mapSnapshotConfiguration(String configuration, ConfigurationType type, Snapshot snapshot) {
+        snapshot.setInitialization(new Initialization());
+        snapshot.getInitialization().setConfiguration(new Configuration());
+        snapshot.getInitialization().getConfiguration().setData(configuration);
+        snapshot.getInitialization().getConfiguration().setType(type.value());
+        return snapshot;
     }
 }

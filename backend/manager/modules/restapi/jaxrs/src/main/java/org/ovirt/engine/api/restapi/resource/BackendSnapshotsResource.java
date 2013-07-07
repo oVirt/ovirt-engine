@@ -4,15 +4,18 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Snapshots;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.SnapshotResource;
 import org.ovirt.engine.api.resource.SnapshotsResource;
+import org.ovirt.engine.api.restapi.types.SnapshotMapper;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -68,6 +71,7 @@ public class BackendSnapshotsResource
         Snapshots snapshots = new Snapshots();
         for (org.ovirt.engine.core.common.businessentities.Snapshot entity : entities) {
             Snapshot snapshot = map(entity, null);
+            snapshot = populate(snapshot, entity);
             snapshot = addLinks(snapshot);
             snapshot = addVmConfiguration(entity, snapshot);
             snapshots.getSnapshots().add(snapshot);
@@ -124,6 +128,20 @@ public class BackendSnapshotsResource
 
     @Override
     protected Snapshot doPopulate(Snapshot model, org.ovirt.engine.core.common.businessentities.Snapshot entity) {
+        return populateSnapshotConfiguration(model);
+    }
+
+    private Snapshot populateSnapshotConfiguration (Snapshot model) {
+        VdcQueryReturnValue queryReturnValue =
+                runQuery(VdcQueryType.GetVmOvfConfigurationBySnapshot,
+                        new IdQueryParameters(Guid.createGuidFromString(model.getId())));
+
+        if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {
+            return SnapshotMapper.mapSnapshotConfiguration((String) queryReturnValue.getReturnValue(),
+                    ConfigurationType.OVF,
+                    model);
+        }
+
         return model;
     }
 }

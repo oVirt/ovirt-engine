@@ -12,6 +12,7 @@ import javax.ws.rs.core.UriInfo;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
+import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
@@ -53,6 +54,28 @@ public class BackendSnapshotResourceTest extends AbstractBackendSubResourceTest<
         setUpGetEntityExpectations(asList(getEntity(1)));
         control.replay();
         verifyModel(resource.get(), 1);
+    }
+
+    @Test
+    public void testGetWithPopulate() throws Exception {
+        List<String> populates = new ArrayList<String>();
+        populates.add("true");
+        String ovfData = "data";
+        expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(asList(getEntity(1)));
+        setUpEntityQueryExpectations(VdcQueryType.GetVmOvfConfigurationBySnapshot,
+                IdQueryParameters.class,
+                new String[]{"Id"},
+                new Object[]{SNAPSHOT_ID},
+                ovfData);
+        control.replay();
+        Snapshot snapshot = resource.get();
+        verifyModel(snapshot, 1);
+        assertNotNull(snapshot.getInitialization());
+        assertNotNull(snapshot.getInitialization().getConfiguration());
+        assertEquals(ovfData, snapshot.getInitialization().getConfiguration().getData());
+        assertEquals(ConfigurationType.OVF.value(), snapshot.getInitialization().getConfiguration().getType());
     }
 
     @Test
