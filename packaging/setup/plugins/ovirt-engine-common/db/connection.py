@@ -77,7 +77,6 @@ class Plugin(plugin.PluginBase):
         self.environment[osetupcons.DBEnv.CONNECTION] = None
         self.environment[osetupcons.DBEnv.STATEMENT] = None
         self.environment[osetupcons.DBEnv.NEW_DATABASE] = True
-        self.environment[osetupcons.DBEnv.PGPASS_FILE] = None
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
