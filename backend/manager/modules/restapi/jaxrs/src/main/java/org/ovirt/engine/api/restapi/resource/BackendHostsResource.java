@@ -96,6 +96,23 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
         if (host.isSetRebootAfterInstallation()) {
             addParams.setRebootAfterInstallation(host.isRebootAfterInstallation());
         }
+        if (host.isSetSsh()) {
+            if (host.getSsh().isSetUser()) {
+                if (host.getSsh().getUser().isSetPassword()) {
+                    addParams.setRootPassword(host.getSsh().getUser().getPassword());
+                }
+                // TODO: adding username support.
+                //if (action.getSsh().getUser().isSetUserName()) {
+                //      addParams.getvds().setSshUsername(action.getSsh().getUser().getUserName());
+                //}
+            }
+            if (host.getSsh().isSetPort()) {
+                addParams.getvds().setSshPort(host.getSsh().getPort().intValue());
+            }
+            if (host.getSsh().isSetFingerprint()) {
+                addParams.getvds().setSshKeyFingerprint(host.getSsh().getFingerprint());
+            }
+        }
         return performCreate(VdcActionType.AddVds,
                                addParams,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, IdQueryParameters.class));
