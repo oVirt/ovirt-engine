@@ -575,6 +575,12 @@ fi
 
 
 %post backend
+
+# ovirt-engine<=3.2 created files at /usr among
+# others are the jboss index files.
+# we must remove these or application will not start.
+find "%{engine_data}" -name '*.index' -exec rm "{}" \; || true
+
 %if %{install_systemd}
 %systemd_post ovirt-engine.service
 
