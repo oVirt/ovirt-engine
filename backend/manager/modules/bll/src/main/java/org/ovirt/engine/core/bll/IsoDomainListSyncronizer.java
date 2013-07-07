@@ -62,7 +62,7 @@ public class IsoDomainListSyncronizer {
     private static final Log log = LogFactory.getLog(IsoDomainListSyncronizer.class);
     private List<RepoImage> problematicRepoFileList = new ArrayList<RepoImage>();
     private static final int MIN_TO_MILLISECONDS = 60 * 1000;
-    private static IsoDomainListSyncronizer isoDomainListSyncronizer;
+    private static volatile IsoDomainListSyncronizer isoDomainListSyncronizer;
     private static final ConcurrentMap<Object, Lock> syncDomainForFileTypeMap = new ConcurrentHashMap<Object, Lock>();
     private int isoDomainRefreshRate;
     RepoFileMetaDataDAO repoStorageDom;

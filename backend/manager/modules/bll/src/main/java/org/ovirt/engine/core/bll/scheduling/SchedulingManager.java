@@ -46,7 +46,7 @@ public class SchedulingManager {
     /**
      * singleton
      */
-    private static SchedulingManager instance = null;
+    private static volatile SchedulingManager instance = null;
 
     public static SchedulingManager getInstance() {
         if (instance == null) {
