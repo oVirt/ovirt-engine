@@ -19,7 +19,6 @@
 """Connection plugin."""
 
 
-import os
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -80,69 +79,47 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
-        name=osetupcons.Stages.DB_CONNECTION_SETUP,
     )
-    def _setup(self):
-
+    def _commands(self):
         dbovirtutils = database.OvirtUtils(plugin=self)
         dbovirtutils.detectCommands()
 
-        dbenv = None
+    @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+        name=osetupcons.Stages.DB_CONNECTION_SETUP,
+        condition=lambda self: self.environment[
+            osetupcons.CoreEnv.ACTION
+        ] == osetupcons.Const.ACTION_UPGRADE,
+    )
+    def _setup(self):
         config = osetuputil.ConfigFile([
             osetupcons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG
         ])
         if config.get('ENGINE_DB_PASSWORD') is not None:
-            dbenv = {}
-            for e, k in (
-                (osetupcons.DBEnv.HOST, 'ENGINE_DB_HOST'),
-                (osetupcons.DBEnv.PORT, 'ENGINE_DB_PORT'),
-                (osetupcons.DBEnv.USER, 'ENGINE_DB_USER'),
-                (osetupcons.DBEnv.PASSWORD, 'ENGINE_DB_PASSWORD'),
-                (osetupcons.DBEnv.DATABASE, 'ENGINE_DB_DATABASE'),
-            ):
-                dbenv[e] = config.get(k)
-            for e, k in (
-                (osetupcons.DBEnv.SECURED, 'ENGINE_DB_SECURED'),
-                (
-                    osetupcons.DBEnv.SECURED_HOST_VALIDATION,
-                    'ENGINE_DB_SECURED_VALIDATION'
-                )
-            ):
-                dbenv[e] = config.getboolean(k)
-
-        elif os.path.exists(
-            osetupcons.FileLocations.LEGACY_PSQL_PASS_FILE
-        ):
-            self.logger.info('Existing database pgpass found')
-            with open(
-                osetupcons.FileLocations.LEGACY_PSQL_PASS_FILE,
-                'r',
-            ) as f:
-                for l in f:
-                    l = l.rstrip('\n')
-                    if ':%s:' % 'postgres' not in l:
-                        d = l.split(':')
-                        if len(d) == 5:
-                            dbenv = {
-                                osetupcons.DBEnv.HOST: d[0],
-                                osetupcons.DBEnv.PORT: int(d[1]),
-                                osetupcons.DBEnv.SECURED: None,
-                                osetupcons.DBEnv.SECURED_HOST_VALIDATION: None,
-                                osetupcons.DBEnv.DATABASE: (
-                                    d[2] if d[2] != '*'
-                                    else
-                                    osetupcons.Defaults.DEFAULT_DB_DATABASE
-                                ),
-                                osetupcons.DBEnv.USER: d[3],
-                                osetupcons.DBEnv.PASSWORD: d[4],
-                            }
-                            break
-
-        if dbenv is not None:
             try:
+                dbenv = {}
+                for e, k in (
+                    (osetupcons.DBEnv.HOST, 'ENGINE_DB_HOST'),
+                    (osetupcons.DBEnv.PORT, 'ENGINE_DB_PORT'),
+                    (osetupcons.DBEnv.USER, 'ENGINE_DB_USER'),
+                    (osetupcons.DBEnv.PASSWORD, 'ENGINE_DB_PASSWORD'),
+                    (osetupcons.DBEnv.DATABASE, 'ENGINE_DB_DATABASE'),
+                ):
+                    dbenv[e] = config.get(k)
+                for e, k in (
+                    (osetupcons.DBEnv.SECURED, 'ENGINE_DB_SECURED'),
+                    (
+                        osetupcons.DBEnv.SECURED_HOST_VALIDATION,
+                        'ENGINE_DB_SECURED_VALIDATION'
+                    )
+                ):
+                    dbenv[e] = config.getboolean(k)
+
                 self.environment[otopicons.CoreEnv.LOG_FILTER].append(
                     dbenv[osetupcons.DBEnv.PASSWORD]
                 )
+
+                dbovirtutils = database.OvirtUtils(plugin=self)
                 dbovirtutils.tryDatabaseConnect(dbenv)
                 self.environment.update(dbenv)
                 self.environment[
@@ -150,17 +127,19 @@ class Plugin(plugin.PluginBase):
                 ] = dbovirtutils.isNewDatabase()
             except RuntimeError as e:
                 self.logger.debug(
+                    'Existing credential use failed',
+                    exc_info=True,
+                )
+                self.logger.warning(
                     _(
                         'Cannot connect to database using existing '
-                        'credentials: {user}@{host}:{port}, error: {error}'
+                        'credentials: {user}@{host}:{port}'
                     ).format(
                         host=dbenv[osetupcons.DBEnv.HOST],
                         port=dbenv[osetupcons.DBEnv.PORT],
                         database=dbenv[osetupcons.DBEnv.DATABASE],
                         user=dbenv[osetupcons.DBEnv.USER],
-                        error=e,
                     ),
-                    exc_info=True,
                 )
 
 
