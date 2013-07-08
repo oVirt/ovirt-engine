@@ -57,9 +57,19 @@ public class GlusterServiceSyncJob extends GlusterJob {
             if (supportsGlusterServicesFeature(cluster)) {
                 try {
                     List<VDS> serversList = getClusterUtils().getAllServers(cluster.getId());
-                    List<Callable<Map<String, GlusterServiceStatus>>> taskList = createTaskList(serversList);
-                    if (taskList != null && taskList.size() > 0) {
-                        refreshClusterServices(cluster, ThreadPoolUtil.invokeAll(taskList));
+
+                    // If there are no servers in the cluster, set the status as unknown
+                    if (serversList.isEmpty()) {
+                        Map<ServiceType, GlusterServiceStatus> statusMap = new HashMap<>();
+                        for (ServiceType type : getClusterServiceMap(cluster).keySet()) {
+                            statusMap.put(type, GlusterServiceStatus.UNKNOWN);
+                        }
+                        addOrUpdateClusterServices(cluster, statusMap);
+                    } else {
+                        List<Callable<Map<String, GlusterServiceStatus>>> taskList = createTaskList(serversList);
+                        if (taskList != null && taskList.size() > 0) {
+                            refreshClusterServices(cluster, ThreadPoolUtil.invokeAll(taskList));
+                        }
                     }
                 } catch (Exception e) {
                     log.errorFormat("Error while refreshing service statuses of cluster {0}!",
