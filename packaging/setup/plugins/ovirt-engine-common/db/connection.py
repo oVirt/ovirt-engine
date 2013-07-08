@@ -89,7 +89,7 @@ class Plugin(plugin.PluginBase):
         name=osetupcons.Stages.DB_CONNECTION_SETUP,
         condition=lambda self: self.environment[
             osetupcons.CoreEnv.ACTION
-        ] == osetupcons.Const.ACTION_UPGRADE,
+        ] != osetupcons.Const.ACTION_SETUP,
     )
     def _setup(self):
         config = osetuputil.ConfigFile([
