@@ -87,4 +87,19 @@ public class MultiValueMapUtils {
             return new HashSet<V>();
         }
     }
+
+
+    public static <K, V, C extends Collection<V>> boolean removeFromMap(Map<K, C> map, K key, V value) {
+        C collection = map.get(key);
+        if (collection == null) {
+            return false;
+        }
+        boolean success = collection.remove(value);
+        if (success && collection.size() == 0) {
+            return map.remove(key) != null;
+        }
+        return success;
+
+    }
+
 }

@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.utils.collections;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -72,4 +75,38 @@ public class MultiValueMapUtilsTest {
             assertEquals("Wrong value in the list", value, map.get(key).get(i));
         }
     }
+
+    @Test
+    public void testRemoveMapSingleEntry() {
+        MultiValueMapUtils.addToMap(key, value, map);
+        assertTrue(MultiValueMapUtils.removeFromMap(map, key, value));
+        assertEquals(0, map.size());
+    }
+
+    @Test
+    public void testRemoveMapSeveralEntriesSameKey() {
+        MultiValueMapUtils.addToMap(key, value, map);
+        Integer newVal = RandomUtils.instance().nextInt();
+        MultiValueMapUtils.addToMap(key, newVal, map);
+        assertTrue(MultiValueMapUtils.removeFromMap(map, key, value));
+        assertEquals(1, map.size());
+        List<Integer> list = map.get(key);
+        assertNotNull(list);
+        assertEquals(1, list.size());
+        Integer val = list.get(0);
+        assertEquals(newVal, val);
+    }
+
+    @Test
+    public void testRemoveMapKeyNotFound() {
+        MultiValueMapUtils.addToMap(key, value, map);
+        assertFalse(MultiValueMapUtils.removeFromMap(map, RandomUtils.instance().nextInt(), value));
+        assertEquals(1, map.size());
+        List<Integer> list = map.get(key);
+        assertNotNull(list);
+        Integer val = list.get(0);
+        assertEquals(value, val);
+    }
+
+
 }
