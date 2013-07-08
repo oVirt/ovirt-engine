@@ -74,6 +74,18 @@ class Plugin(plugin.PluginBase):
         self.environment[osetupcons.ConfigEnv.FQDN] = config.get('ENGINE_FQDN')
         if not config.getboolean('ENGINE_PROXY_ENABLED'):
             self.environment[osetupcons.ApacheEnv.CONFIGURE_SSL] = True
+        self.environment[osetupcons.DBEnv.SECURED] = config.get(
+            name='ENGINE_DB_SECURED',
+            default=(
+                'ssl=true' in config.get('ENGINE_DB_URL')
+            ),
+        )
+        self.environment[
+            osetupcons.DBEnv.SECURED_HOST_VALIDATION
+        ] = config.get(
+            name='ENGINE_DB_SECURED_VALIDATION',
+            default=False,
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
