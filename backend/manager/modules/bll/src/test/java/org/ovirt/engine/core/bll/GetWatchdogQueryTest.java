@@ -6,8 +6,10 @@ import java.util.HashMap;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -17,6 +19,7 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 
+@RunWith(MockitoJUnitRunner.class)
 public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, GetWatchdogQuery<IdQueryParameters>> {
 
     @Mock
@@ -24,17 +27,10 @@ public class GetWatchdogQueryTest extends AbstractQueryTest<IdQueryParameters, G
 
     @Test
     public void executeQueryCommandWithNull() {
-        @SuppressWarnings("unchecked")
-        GetWatchdogQuery<IdQueryParameters> query =
-                Mockito.mock(GetWatchdogQuery.class);
-        VmDeviceDAO vmDeviceDaoMock = Mockito.mock(VmDeviceDAO.class);
-        Mockito.when(query.getVmDeviceDAO()).thenReturn(vmDeviceDaoMock);
-        IdQueryParameters params = new IdQueryParameters(new Guid("ee655a4d-effc-4aab-be2b-2f80ff40cd1c"));
-        Mockito.when(query.getParameters())
-                .thenReturn(params);
-        Mockito.doCallRealMethod().when(query).executeQueryCommand();
-        query.executeQueryCommand();
-        Assert.assertNull(query.getReturnValue());
+        Mockito.when(getDbFacadeMockInstance().getVmDeviceDao()).thenReturn(vmDeviceDAO);
+        Mockito.when(getQueryParameters().getId()).thenReturn(new Guid("ee655a4d-effc-4aab-be2b-2f80ff40cd1c"));
+        getQuery().executeQueryCommand();
+        Assert.assertNull(getQuery().getReturnValue());
     }
 
     @Test
