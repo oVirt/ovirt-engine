@@ -15,7 +15,7 @@ import org.apache.log4j.Logger;
  */
 public class EngineLocalConfig extends LocalConfig {
     // The log:
-    private static final Logger log = Logger.getLogger(LocalConfig.class);
+    private static final Logger log = Logger.getLogger(EngineLocalConfig.class);
 
     // Default files for defaults and overridden values:
     private static final String DEFAULTS_PATH = "/usr/share/ovirt-engine/conf/engine.conf.defaults";
