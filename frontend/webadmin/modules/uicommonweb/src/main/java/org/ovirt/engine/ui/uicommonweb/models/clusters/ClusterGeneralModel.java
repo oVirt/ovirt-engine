@@ -489,7 +489,7 @@ public class ClusterGeneralModel extends EntityModel {
             VDS host = new VDS();
             host.setVdsName(hostDetailModel.getName());
             host.setHostName(hostDetailModel.getAddress());
-            host.setSSHKeyFingerprint(hostDetailModel.getFingerprint());
+            host.setSshKeyFingerprint(hostDetailModel.getFingerprint());
             host.setPort(54321);
 
             host.setVdsGroupId(getEntity().getId());

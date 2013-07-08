@@ -32,8 +32,10 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
         existingVds = dao.get(FixturesTool.VDS_GLUSTER_SERVER2);
         newStaticVds = new VdsStatic();
         newStaticVds.setHostName("farkle.redhat.com");
+        newStaticVds.setSshPort(22);
+        newStaticVds.setSshUsername("root");
         newStaticVds.setVdsGroupId(existingVds.getVdsGroupId());
-        newStaticVds.setSSHKeyFingerprint("b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31");
+        newStaticVds.setSshKeyFingerprint("b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31");
         newStaticVds.setPmSecondaryOptionsMap(new ValueObjectMap());
     }
 

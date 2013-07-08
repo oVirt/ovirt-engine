@@ -103,7 +103,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
     }
 
     public VDS(Guid vds_group_id, String vds_group_name, String vds_group_description, Guid vds_id, String vds_name,
-            String ip, String host_name, int port, int status, Integer cpu_cores, Integer cpuThreads, String cpu_model,
+            String ip, String host_name, int port, int ssh_port, String ssh_username, int status, Integer cpu_cores, Integer cpuThreads, String cpu_model,
             String hwManufacturer, String hwProductName,
             String hwVersion, String hwSerialNumber, String hwUUID, String hwFamily,
             Double cpu_speed_mh, String if_total_speed, Boolean kvm_enabled, Integer physical_mem_mb,
@@ -130,6 +130,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.setManagementIp(ip);
         this.setHostName(host_name);
         this.setPort(port);
+        this.setSshPort(ssh_port);
+        this.setSshUsername(ssh_username);
         this.setStatus(VDSStatus.forValue(status));
         this.setHardwareManufacturer(hwManufacturer);
         this.setHardwareProductName(hwProductName);
@@ -199,6 +201,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                         getManagementIp(),
                         getHostName(),
                         getPort(),
+                        getSshPort(),
+                        getSshUsername(),
                         getStatus().getValue(),
                         getCpuCores(),
                         getCpuThreads(),
@@ -405,6 +409,22 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     public void setPort(int value) {
         this.mVdsStatic.setPort(value);
+    }
+
+    public int getSshPort() {
+        return this.mVdsStatic.getSshPort();
+    }
+
+    public void setSshPort(int value) {
+        this.mVdsStatic.setSshPort(value);
+    }
+
+    public String getSshUsername() {
+        return this.mVdsStatic.getSshUsername();
+    }
+
+    public void setSshUsername(String value) {
+        this.mVdsStatic.setSshUsername(value);
     }
 
     public boolean isServerSslEnabled() {
@@ -1291,12 +1311,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         mVdsStatic.setAutoRecoverable(autoRecoverable);
     }
 
-    public String getSSHKeyFingerprint() {
-        return mVdsStatic.getSSHKeyFingerprint();
+    public String getSshKeyFingerprint() {
+        return mVdsStatic.getSshKeyFingerprint();
     }
 
-    public void setSSHKeyFingerprint(String sshKeyFingerprint) {
-        mVdsStatic.setSSHKeyFingerprint(sshKeyFingerprint);
+    public void setSshKeyFingerprint(String sshKeyFingerprint) {
+        mVdsStatic.setSshKeyFingerprint(sshKeyFingerprint);
     }
 
     private float maxSchedulingMemory;

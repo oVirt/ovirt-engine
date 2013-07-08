@@ -821,7 +821,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         host.setVdsName((String) model.getName().getEntity());
         host.setHostName((String) model.getHost().getEntity());
         host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
-        host.setSSHKeyFingerprint(host.getSSHKeyFingerprint());
+        host.setSshKeyFingerprint(host.getSshKeyFingerprint());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
         boolean consoleAddressSet = (Boolean) model.getConsoleAddressEnabled().getEntity();
         host.setConsoleAddress(!consoleAddressSet ? null : (String) model.getConsoleAddress().getEntity());

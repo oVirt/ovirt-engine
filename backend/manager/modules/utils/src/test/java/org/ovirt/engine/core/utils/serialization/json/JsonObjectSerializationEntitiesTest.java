@@ -52,8 +52,10 @@ public class JsonObjectSerializationEntitiesTest {
                                     random.nextString(10),
                                     random.nextString(10),
                                     random.nextInt(),
-                Guid.newGuid(),
-                Guid.newGuid(),
+                                    random.nextInt(),
+                                    random.nextString(10),
+                                    Guid.newGuid(),
+                                    Guid.newGuid(),
                                     random.nextString(10),
                                     random.nextBoolean(),
                                     random.nextEnum(VDSType.class));
