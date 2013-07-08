@@ -57,7 +57,11 @@ public class ConfigKeyFactory {
             type = "String";
         }
         String[] validValues = configurationAt.getStringArray("validValues");
-        String description = configurationAt.getString("description");
+
+        // Description containing the list delimiter *will* be broken into an array, so rejoin it using that delimiter.
+        // We pad the separator because the strings in the array are trimmed automatically.
+        String description = StringUtils.join(configurationAt.getStringArray("description"),
+                configurationAt.getListDelimiter() + " ");
         String alternateKey = keysConfig.getString("/" + key + "/" + "alternateKey");
 
         // If the isReloadable attribute isn't specified - assume it is false
