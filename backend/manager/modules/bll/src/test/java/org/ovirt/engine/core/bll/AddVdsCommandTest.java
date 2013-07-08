@@ -65,6 +65,9 @@ public class AddVdsCommandTest {
     private VDS makeTestVds(Guid vdsId) {
         VDS newVdsData = new VDS();
         newVdsData.setHostName("BUZZ");
+        newVdsData.setSshPort(22);
+        newVdsData.setSshUsername("root");
+        newVdsData.setSshKeyFingerprint("1234");
         newVdsData.setVdsName("BAR");
         newVdsData.setVdsGroupCompatibilityVersion(new Version("1.2.3"));
         newVdsData.setVdsGroupId(Guid.newGuid());
