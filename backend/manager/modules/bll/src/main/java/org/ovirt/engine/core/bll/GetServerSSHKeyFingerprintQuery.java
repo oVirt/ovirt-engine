@@ -2,16 +2,16 @@ package org.ovirt.engine.core.bll;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 
+import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.common.queries.ServerParameters;
-import org.ovirt.engine.core.utils.ssh.EngineSSHDialog;
 
 /**
  * Query to fetch fingerprint of the given server name
  */
 public class GetServerSSHKeyFingerprintQuery<P extends ServerParameters> extends QueriesCommandBase<P> {
 
-    protected EngineSSHDialog getEngineSSHDialog() {
-        return new EngineSSHDialog();
+    protected EngineSSHClient getEngineSSHClient() {
+        return new EngineSSHClient();
     }
 
     public GetServerSSHKeyFingerprintQuery(P parameters) {
@@ -20,7 +20,7 @@ public class GetServerSSHKeyFingerprintQuery<P extends ServerParameters> extends
 
     public String getServerFingerprint(String serverName) {
         String fingerPrint = null;
-        EngineSSHDialog dialog = getEngineSSHDialog();
+        EngineSSHClient dialog = getEngineSSHClient();
         try {
             dialog.setHost(serverName);
             dialog.connect();

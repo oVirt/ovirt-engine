@@ -17,6 +17,8 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.EngineSSHClient;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -55,9 +57,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
-import org.ovirt.engine.core.utils.gluster.GlusterUtil;
 import org.ovirt.engine.core.utils.ssh.ConstraintByteArrayOutputStream;
-import org.ovirt.engine.core.utils.ssh.EngineSSHClient;
 import org.ovirt.engine.core.utils.ssh.SSHClient;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -363,11 +363,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return ClusterUtils.getInstance();
     }
 
-    public SSHClient getSSHClient() {
+    public EngineSSHClient getSSHClient() {
         Long timeout =
                 TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(ConfigValues.ConnectToServerTimeoutInSeconds));
 
-        SSHClient sshclient = new EngineSSHClient();
+        EngineSSHClient sshclient = new EngineSSHClient();
         sshclient.setHardTimeout(timeout);
         sshclient.setSoftTimeout(timeout);
         sshclient.setHost(getVds().getStaticData().getHostName(), getVds().getStaticData().getSshPort());
@@ -402,7 +402,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     protected boolean canConnect(VDS vds) {
         // execute the connectivity and id uniqueness validation for VDS type hosts
         if (vds.getVdsType() == VDSType.VDS && Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
-            SSHClient sshclient = null;
+            EngineSSHClient sshclient = null;
             try {
                 sshclient = getSSHClient();
                 sshclient.connect();
@@ -421,6 +421,16 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         e
                         );
 
+                return failCanDoAction(VdcBllMessages.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
+            } catch (SecurityException e) {
+                log.errorFormat(
+                        "Failed to connect to host {0}, fingerprint: {1}",
+                        vds.getName(),
+                        vds.getSshKeyFingerprint(),
+                        e
+                        );
+                addCanDoActionMessage(VdcBllMessages.VDS_SECURITY_CONNECTION_ERROR);
+                addCanDoActionMessage(String.format("$ErrorMessage %1$s", e.getMessage()));
                 return failCanDoAction(VdcBllMessages.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
             } catch (Exception e) {
                 log.errorFormat(

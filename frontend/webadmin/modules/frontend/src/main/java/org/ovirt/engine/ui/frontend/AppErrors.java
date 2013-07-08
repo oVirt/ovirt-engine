@@ -2026,6 +2026,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. SSH authentication failed, verify authentication parameters are correct (Username/Password, public-key etc.) You may refer to the engine.log file for further details.")
     String VDS_CANNOT_AUTHENTICATE_TO_SERVER();
 
+    @DefaultStringValue("Cannot ${action} ${type}. SSH connection failed, ${ErrorMsg}.")
+    String VDS_SECURITY_CONNECTION_ERROR();
+
     @DefaultStringValue("Cannot migrate - check relevant configuration options.")
     String AUTO_MIGRATE_DISABLED();
 

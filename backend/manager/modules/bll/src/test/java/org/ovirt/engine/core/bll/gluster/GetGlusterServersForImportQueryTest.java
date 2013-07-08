@@ -16,12 +16,12 @@ import javax.naming.AuthenticationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
-import org.ovirt.engine.core.utils.gluster.GlusterUtil;
 
 public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<GlusterServersQueryParameters, GetGlusterServersForImportQuery<GlusterServersQueryParameters>> {
     private static final String SERVER_NAME1 = "testserver1";
@@ -29,6 +29,7 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
     private static final String NEW_SERVER = "testserver3";
     private static final String EXISTING_SERVER = "testserver4";
     private static final String PASSWORD = "password";
+    private static final String USER = "root";
     private static final String WRONG_PASSWORD = "wrong_password";
     private static final Map<String, String> EXPECTED_MAP = new HashMap<String, String>();
     private static final String FINGER_PRINT1 = "31:e2:1b:7e:89:86:99:c3:f7:1e:57:35:fe:9b:5c:31";
@@ -55,8 +56,8 @@ public class GetGlusterServersForImportQueryTest extends AbstractQueryTest<Glust
 
         EXPECTED_MAP.put(SERVER_NAME1, FINGER_PRINT1);
         EXPECTED_MAP.put(SERVER_NAME2, FINGER_PRINT2);
-        doReturn(EXPECTED_MAP).when(glusterUtil).getPeers(NEW_SERVER, PASSWORD, FINGER_PRINT1);
-        doThrow(AuthenticationException.class).when(glusterUtil).getPeers(NEW_SERVER, WRONG_PASSWORD, FINGER_PRINT1);
+        doReturn(EXPECTED_MAP).when(glusterUtil).getPeers(NEW_SERVER, USER, PASSWORD, FINGER_PRINT1);
+        doThrow(AuthenticationException.class).when(glusterUtil).getPeers(NEW_SERVER, USER, WRONG_PASSWORD, FINGER_PRINT1);
     }
 
     private VdsStatic getVdsStatic() {

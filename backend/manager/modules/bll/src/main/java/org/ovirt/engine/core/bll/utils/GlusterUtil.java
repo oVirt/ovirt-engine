@@ -1,8 +1,7 @@
-package org.ovirt.engine.core.utils.gluster;
+package org.ovirt.engine.core.bll.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.security.AccessControlException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -11,13 +10,17 @@ import java.util.Set;
 import javax.naming.AuthenticationException;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.queries.ServerParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.XmlUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ssh.ConstraintByteArrayOutputStream;
-import org.ovirt.engine.core.utils.ssh.EngineSSHClient;
 import org.ovirt.engine.core.utils.ssh.SSHClient;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -27,7 +30,6 @@ public class GlusterUtil {
     private static GlusterUtil instance = new GlusterUtil();
     private Log log = LogFactory.getLog(getClass());
     private static final int SSH_PORT = 22;
-    private static final String USER = "root";
     private static final String PEER = "peer";
     private static final String HOST_NAME = "hostname";
     private static final String STATE = "state";
@@ -52,12 +54,12 @@ public class GlusterUtil {
      * @throws AuthenticationException
      *             If SSH authentication with given root password fails
      */
-    public Set<String> getPeers(String server, String password) throws AuthenticationException {
-        EngineSSHClient client = null;
+    public Set<String> getPeers(String server, String username, String password) throws AuthenticationException {
+        SSHClient client = null;
 
         try {
             client = connect(server);
-            authenticate(client, USER, password);
+            authenticate(client, username, password);
             String serversXml = executePeerStatusCommand(client);
             return extractServers(serversXml);
         } finally {
@@ -86,8 +88,10 @@ public class GlusterUtil {
      *
      * @param server
      *            Server whose peers are to be fetched
-     * @param rootPassword
-     *            Root password of the server
+     * @param username
+     *            Privilege username to authenticate with server
+     * @param password
+     *            password of the server
      * @param fingerprint
      *            pre-approved fingerprint of the server. This is validated against the server before attempting
      *            authentication using the root password.
@@ -95,21 +99,13 @@ public class GlusterUtil {
      * @throws AuthenticationException
      *             If SSH authentication with given root password fails
      */
-    public Map<String, String> getPeers(String server, String rootPassword, String fingerprint)
+    public Map<String, String> getPeers(String server, String username, String password, String fingerprint)
             throws AuthenticationException, IOException {
-        EngineSSHClient client = null;
+        SSHClient client = null;
 
         try {
             client = connect(server);
-            if (!fingerprint.equals(client.getHostFingerprint())) {
-                throw new AccessControlException(
-                        String.format(
-                                "SSH Fingerprint of server '%1$s' did not match expected fingerprint '%2$s'",
-                                client.getDisplayHost(),
-                                fingerprint
-                                ));
-            }
-            authenticate(client, USER, rootPassword);
+            authenticate(client, username, password);
             String serversXml = executePeerStatusCommand(client);
             return getFingerprints(extractServers(serversXml));
         } finally {
@@ -119,8 +115,8 @@ public class GlusterUtil {
         }
     }
 
-    protected EngineSSHClient connect(String serverName) {
-        EngineSSHClient client = new EngineSSHClient();
+    protected SSHClient connect(String serverName) {
+        SSHClient client = new EngineSSHClient();
         Integer timeout = Config.<Integer> GetValue(ConfigValues.ConnectToServerTimeoutInSeconds) * 1000;
         client.setHardTimeout(timeout);
         client.setSoftTimeout(timeout);
@@ -159,21 +155,6 @@ public class GlusterUtil {
         }
     }
 
-    public String getFingerprint(String hostName) {
-        EngineSSHClient client = null;
-        try {
-            client = connect(hostName);
-            return client.getHostFingerprint();
-        } catch (IOException e) {
-            log.error("Could not get server key");
-            return null;
-        } finally {
-            if (client != null) {
-                client.disconnect();
-            }
-        }
-    }
-
     private Set<String> getServers(NodeList listOfPeers) {
         Set<String> servers = new HashSet<String>();
         for (int i = 0; i < listOfPeers.getLength(); i++) {
@@ -191,10 +172,18 @@ public class GlusterUtil {
         return servers;
     }
 
-    private Map<String, String> getFingerprints(Set<String> servers) {
+    protected Map<String, String> getFingerprints(Set<String> servers) {
+        VdcQueryReturnValue returnValue;
         Map<String, String> fingerprints = new HashMap<String, String>();
         for (String server : servers) {
-            fingerprints.put(server, getFingerprint(server));
+            returnValue = getBackendInstance().
+                    runInternalQuery(VdcQueryType.GetServerSSHKeyFingerprint,
+                                     new ServerParameters(server));
+            if (returnValue != null && returnValue.getSucceeded()) {
+                fingerprints.put(server, returnValue.getReturnValue().toString());
+            } else {
+                fingerprints.put(server, null);
+            }
         }
         return fingerprints;
     }
@@ -210,5 +199,9 @@ public class GlusterUtil {
             log.errorFormat("Error while parsing peer list xml [{0}]!", serversXml, e);
             throw new RuntimeException(e);
         }
+    }
+
+    public BackendInternal getBackendInstance() {
+        return Backend.getInstance();
     }
 }

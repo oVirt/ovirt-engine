@@ -35,6 +35,7 @@ public enum VdcQueryType implements Serializable {
     GetProviderCertificateChain(),
     GetHostsForStorageOperation,
     GetServerSSHPublicKey,
+    GetServerSSHKeyFingerprint,
 
     // Vds Networks
     GetVdsInterfacesByVdsId(VdcQueryAuthType.User),
@@ -237,7 +238,6 @@ public enum VdcQueryType implements Serializable {
     GetGlusterVolumeOptionsInfo,
     GetGlusterVolumeBricks,
     GetGlusterBrickById,
-    GetServerSSHKeyFingerprint,
     GetGlusterServersForImport,
     GetAddedGlusterServers,
     GetGlusterVolumeAdvancedDetails,

@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -18,6 +17,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -31,16 +31,15 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
-import org.ovirt.engine.core.utils.ssh.EngineSSHDialog;
 
 public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlusterServersParameters, GetAddedGlusterServersQuery<AddedGlusterServersParameters>> {
     private List<VDS> serversList;
     private List<GlusterServerInfo> expectedServers;
     private AddedGlusterServersParameters params;
     private VDSBrokerFrontend vdsBrokerFrontend;
+    private BackendInternal backendInternal;
     private VdsDAO vdsDaoMock;
     private GlusterDBUtils dbUtils;
-    private EngineSSHDialog mockEngineSSHDialog;
     private ClusterUtils clusterUtils;
 
     private static final String CLUSTER_NAME = "default";
@@ -51,7 +50,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     private static final Guid server_id1 = new Guid("85c42b0d-c2b7-424a-ae72-5174c25da40b");
     private static final Guid server_id2 = new Guid("6a697a38-cc82-4399-a6fb-0ec79c0ff1d5");
     private static final Guid server_id3 = new Guid("7a797a38-cb32-4399-b6fb-21c79c03a1d6");
-    private static final String serverKeyFingerprint = "b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31";
+    private static final String serverKeyFingerprint = "";
 
     private VDS getVds(VDSStatus status) {
         VDS vds = new VDS();
@@ -105,7 +104,7 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         vdsDaoMock = mock(VdsDAO.class);
         dbUtils = mock(GlusterDBUtils.class);
 
-        doReturn(vdsBrokerFrontend).when(getQuery()).getBackendInstance();
+        doReturn(vdsBrokerFrontend).when(getQuery()).getResourceManager();
         doReturn(clusterUtils).when(getQuery()).getClusterUtils();
         doReturn(dbUtils).when(getQuery()).getDbUtils();
         doReturn(getVds(VDSStatus.Up)).when(clusterUtils).getUpServer(CLUSTER_ID);
@@ -120,11 +119,6 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
         doReturn(serversList).when(vdsDaoMock).getAllForVdsGroup(CLUSTER_ID);
         doReturn(true).when(dbUtils).serverExists(any(Guid.class), eq(TEST_SERVER1));
         doReturn(false).when(dbUtils).serverExists(any(Guid.class), eq(TEST_SERVER3));
-
-        mockEngineSSHDialog = mock(EngineSSHDialog.class);
-        doNothing().when(mockEngineSSHDialog).connect();
-        doNothing().when(mockEngineSSHDialog).authenticate();
-        doReturn(mockEngineSSHDialog).when(getQuery()).getEngineSSHDialog();
     }
 
     private VDSReturnValue getVDSReturnValue() {
@@ -153,7 +147,8 @@ public class GetAddedGlusterServersQueryTest extends AbstractQueryTest<AddedGlus
     @SuppressWarnings("unchecked")
     @Test
     public void testExecuteQueryCommand() throws IOException {
-        doReturn(serverKeyFingerprint).when(mockEngineSSHDialog).getHostFingerprint();
+        backendInternal = mock(BackendInternal.class);
+        doReturn(backendInternal).when(getQuery()).getBackendInstance();
         getQuery().executeQueryCommand();
         Map<String, String> servers =
                 (Map<String, String>) getQuery().getQueryReturnValue().getReturnValue();

@@ -5,11 +5,11 @@ import java.util.Set;
 
 import javax.naming.AuthenticationException;
 
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
-import org.ovirt.engine.core.utils.gluster.GlusterUtil;
 
 /**
  * Query to fetch list of gluster servers via ssh using the given serverName and password.
@@ -22,6 +22,9 @@ import org.ovirt.engine.core.utils.gluster.GlusterUtil;
  *
  */
 public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParameters> extends GlusterQueriesCommandBase<P> {
+
+    // Currently we use only root user to authenticate with host
+    private static final String USER = "root";
 
     public GetGlusterServersForImportQuery(P parameters) {
         super(parameters);
@@ -38,6 +41,7 @@ public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParame
         try {
             Map<String, String> serverFingerPrintMap =
                     getGlusterUtil().getPeers(getParameters().getServerName(),
+                            USER,
                             getParameters().getPassword(),
                             getParameters().getFingerprint());
 
