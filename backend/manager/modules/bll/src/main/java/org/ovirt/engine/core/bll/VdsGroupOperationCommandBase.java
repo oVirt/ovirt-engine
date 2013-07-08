@@ -1,12 +1,20 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.customprop.SimpleCustomPropertiesUtil;
+import org.ovirt.engine.core.utils.customprop.ValidationError;
 
 public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationParameters> extends
         VdsGroupCommandBase<T> {
@@ -34,54 +42,65 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
         }
     }
 
-    protected boolean isCpuUtilizationValid(int cpuUtilization) {
-        return (cpuUtilization <= 100 && cpuUtilization >= 0)
-                || cpuUtilization == GET_CPU_THRESHOLDS_FROM_CONFIGURATION;
-    }
-
-    protected boolean isCpuUtilizationExist(int cpuUtilization) {
-        return cpuUtilization != GET_CPU_THRESHOLDS_FROM_CONFIGURATION;
-    }
-
-    protected boolean validateMetrics() {
-        boolean result = true;
-
-        VdsSelectionAlgorithm selectionAlgorithm = getVdsGroup().getselection_algorithm();
-
-        if (result && selectionAlgorithm != null && !selectionAlgorithm.equals(VdsSelectionAlgorithm.None)) {
-
-            if (result
-                    && (!isCpuUtilizationValid(getVdsGroup().gethigh_utilization()) || !isCpuUtilizationValid(getVdsGroup().getlow_utilization()))) {
-                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CPU_UTILIZATION_MUST_BE_IN_VALID_RANGE);
-                result = false;
-            }
-
-            if (result && getVdsGroup().getlow_utilization() > getVdsGroup().gethigh_utilization()) {
-                addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CPU_LOW_UTILIZATION_PERCENTAGE_MUST_BE_LOWER_THAN_HIGH_PERCENTAGE);
-                result = false;
-            }
-
-            if (result) {
-                if (selectionAlgorithm.equals(VdsSelectionAlgorithm.EvenlyDistribute)) {
-                    if (!isCpuUtilizationExist(getVdsGroup().gethigh_utilization())) {
-                        addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CPU_HIGH_UTILIZATION_PERCENTAGE_MUST_BE_DEFINED_WHEN_USING_EVENLY_DISTRIBUTED);
-                        result = false;
-                    }
-                } else if (selectionAlgorithm.equals(VdsSelectionAlgorithm.PowerSave)) {
-                    if (!isCpuUtilizationExist(getVdsGroup().gethigh_utilization())
-                            || !isCpuUtilizationExist(getVdsGroup().getlow_utilization())) {
-                        addCanDoActionMessage(VdcBllMessages.VDS_GROUP_BOTH_LOW_AND_HIGH_CPU_UTILIZATION_PERCENTAGE_MUST_BE_DEFINED_WHEN_USING_POWER_SAVING);
-                        result = false;
-                    }
-                }
-            }
-        }
-
-        return result;
-    }
-
     protected boolean isAllowClusterWithVirtGluster() {
         Boolean allowVirGluster = Config.<Boolean> GetValue(ConfigValues.AllowClusterWithVirtGlusterEnabled);
         return allowVirGluster;
+    }
+
+    protected boolean validateClusterPolicy() {
+        ClusterPolicy clusterPolicy = null;
+        if (getVdsGroup().getClusterPolicyId() != null) {
+            clusterPolicy =
+                SchedulingManager.getInstance().getClusterPolicy(getVdsGroup().getClusterPolicyId());
+        }
+        if (clusterPolicy == null) {
+            clusterPolicy = SchedulingManager.getInstance().getClusterPolicy(getVdsGroup().getClusterPolicyName());
+            if (clusterPolicy == null) {
+                return false;
+            }
+            getVdsGroup().setClusterPolicyId(clusterPolicy.getId());
+        }
+        updateClusterPolicyProperties(getVdsGroup(), clusterPolicy);
+        List<ValidationError> validationErrors =
+                SimpleCustomPropertiesUtil.getInstance().validateProperties(SchedulingManager.getInstance()
+                        .getCustomPropertiesRegexMap(clusterPolicy),
+                        getVdsGroup().getClusterPolicyProperties());
+        if (!validationErrors.isEmpty()) {
+            SimpleCustomPropertiesUtil.getInstance().handleCustomPropertiesError(validationErrors,
+                    getReturnValue().getCanDoActionMessages());
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Updates cluster policy parameters map to contain all default cluster properties and remove properties that
+     * doesn't exist in the cluster policy.
+     *
+     * @param cluster
+     * @param clusterPolicy
+     */
+    private void updateClusterPolicyProperties(VDSGroup cluster,
+            ClusterPolicy clusterPolicy) {
+        if (cluster.getClusterPolicyProperties() == null) {
+            cluster.setClusterPolicyProperties(new LinkedHashMap<String, String>());
+        }
+        Map<String, String> clusterPolicyProperties = cluster.getClusterPolicyProperties();
+        List<String> toRemoveKeysList = new ArrayList<String>();
+        if (clusterPolicy.getParameterMap() != null) {
+            for (Entry<String, String> entry : clusterPolicy.getParameterMap().entrySet()) {
+                if (!clusterPolicyProperties.containsKey(entry.getKey())) {
+                    clusterPolicyProperties.put(entry.getKey(), entry.getValue());
+                }
+            }
+            for (String key : clusterPolicyProperties.keySet()) {
+                if (!clusterPolicy.getParameterMap().containsKey(key)) {
+                    toRemoveKeysList.add(key);
+                }
+            }
+            for (String key : toRemoveKeysList) {
+                clusterPolicyProperties.remove(key);
+            }
+        }
     }
 }

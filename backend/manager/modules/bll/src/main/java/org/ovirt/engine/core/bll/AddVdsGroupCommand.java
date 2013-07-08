@@ -10,12 +10,9 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -34,37 +31,6 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
 
     @Override
     protected void executeCommand() {
-
-        // If either the low or the high utilization value is the configuration one, then we set both to the
-        // configuration value,
-        // to prevent cases where low utilization > high utilization due to specific configuration defaults
-        if (getVdsGroup().gethigh_utilization() == GET_CPU_THRESHOLDS_FROM_CONFIGURATION
-                || getVdsGroup().getlow_utilization() == GET_CPU_THRESHOLDS_FROM_CONFIGURATION) {
-
-            VdsSelectionAlgorithm selectionAlgorithm;
-            try {
-                selectionAlgorithm = VdsSelectionAlgorithm.valueOf(Config
-                        .<String> GetValue(ConfigValues.VdsSelectionAlgorithm));
-            } catch (java.lang.Exception e) {
-                selectionAlgorithm = VdsSelectionAlgorithm.None;
-            }
-
-            if (selectionAlgorithm == VdsSelectionAlgorithm.EvenlyDistribute) {
-                getVdsGroup().sethigh_utilization(
-                        Config.<Integer> GetValue(ConfigValues.HighUtilizationForEvenlyDistribute));
-                getVdsGroup().setlow_utilization(
-                        Config.<Integer> GetValue(ConfigValues.LowUtilizationForEvenlyDistribute));
-            } else if (selectionAlgorithm == VdsSelectionAlgorithm.PowerSave) {
-                getVdsGroup().sethigh_utilization(
-                        Config.<Integer> GetValue(ConfigValues.HighUtilizationForPowerSave));
-                getVdsGroup().setlow_utilization(
-                        Config.<Integer> GetValue(ConfigValues.LowUtilizationForPowerSave));
-            }
-        }
-        if (getVdsGroup().getcpu_over_commit_duration_minutes() == -1) {
-            getVdsGroup().setcpu_over_commit_duration_minutes(
-                    Config.<Integer> GetValue(ConfigValues.CpuOverCommitDurationMinutes));
-        }
         CheckMaxMemoryOverCommitValue();
         DbFacade.getInstance().getVdsGroupDao().save(getVdsGroup());
 
@@ -150,19 +116,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                                     .toString());
                     result = false;
                 }
-                // selection algorithm must be set to none in localfs
-                else if (getVdsGroup().getselection_algorithm() != VdsSelectionAlgorithm.None) {
-                    getReturnValue()
-                            .getCanDoActionMessages()
-                            .add(VdcBllMessages.VDS_GROUP_SELECTION_ALGORITHM_MUST_BE_SET_TO_NONE_ON_LOCAL_STORAGE
-                                    .toString());
-                    result = false;
-                }
             }
-        }
-
-        if (result) {
-            result = validateMetrics();
         }
 
         if (getVdsGroup().supportsGlusterService()
@@ -183,6 +137,9 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
             }
         }
 
+        if (result) {
+            result = validateClusterPolicy();
+        }
         return result;
     }
 

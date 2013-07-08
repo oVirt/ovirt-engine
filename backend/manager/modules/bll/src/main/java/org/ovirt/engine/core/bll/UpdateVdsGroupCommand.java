@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -247,22 +246,11 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                                     .toString());
                     result = false;
                 }
-                // selection algorithm must be set to none in localfs
-                else if (getVdsGroup().getselection_algorithm() != VdsSelectionAlgorithm.None) {
-                    getReturnValue()
-                            .getCanDoActionMessages()
-                            .add(VdcBllMessages.VDS_GROUP_SELECTION_ALGORITHM_MUST_BE_SET_TO_NONE_ON_LOCAL_STORAGE
-                                    .toString());
-                    result = false;
-                }
                 else if (VDSGroup.DEFAULT_VDS_GROUP_ID.equals(getVdsGroup().getId())) {
                     addCanDoActionMessage(VdcBllMessages.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
                     result = false;
                 }
             }
-        }
-        if (result) {
-            result = validateMetrics();
         }
 
         if (getVdsGroup().supportsGlusterService()
@@ -293,6 +281,9 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DISABLE_GLUSTER_WHEN_CLUSTER_CONTAINS_VOLUMES);
                 result = false;
             }
+        }
+        if (result) {
+            result = validateClusterPolicy();
         }
         return result;
     }

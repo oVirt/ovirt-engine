@@ -20,13 +20,12 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -161,17 +160,6 @@ public class UpdateVdsGroupCommandTest {
     }
 
     @Test
-    public void selectionAlgoNotNone() {
-        createCommandWithPowerSaveVdsGroup();
-        oldGroupIsDetachedDefault();
-        storagePoolIsLocalFS();
-        cpuExists();
-        cpuManufacturersMatch();
-        allQueriesForVms();
-        canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_SELECTION_ALGORITHM_MUST_BE_SET_TO_NONE_ON_LOCAL_STORAGE);
-    }
-
-    @Test
     public void vdsGroupWithNoCpu() {
         createCommandWithNoCpuName();
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createVdsGroupWithNoCpuName());
@@ -267,10 +255,6 @@ public class UpdateVdsGroupCommandTest {
         createCommand(createVdsGroupWithNoCpuName());
     }
 
-    private void createCommandWithPowerSaveVdsGroup() {
-        createCommand(createVdsGroupWithPowerSave());
-    }
-
     private void createCommandWithNoService() {
         createCommand(createVdsGroupWith(false, false));
     }
@@ -299,6 +283,7 @@ public class UpdateVdsGroupCommandTest {
         doReturn(storagePoolDAO).when(cmd).getStoragePoolDAO();
         doReturn(glusterVolumeDao).when(cmd).getGlusterVolumeDao();
         doReturn(vmDao).when(cmd).getVmDAO();
+        doReturn(true).when(cmd).validateClusterPolicy();
 
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createDefaultVdsGroup());
         when(vdsGroupDAO.getByName(anyString())).thenReturn(createDefaultVdsGroup());
@@ -361,12 +346,6 @@ public class UpdateVdsGroupCommandTest {
     private static VDSGroup createVdsGroupWithDifferentPool() {
         VDSGroup group = createNewVdsGroup();
         group.setStoragePoolId(Guid.newGuid());
-        return group;
-    }
-
-    private static VDSGroup createVdsGroupWithPowerSave() {
-        VDSGroup group = createDefaultVdsGroup();
-        group.setselection_algorithm(VdsSelectionAlgorithm.PowerSave);
         return group;
     }
 
