@@ -236,10 +236,14 @@ SELECT     	a.vm_guid AS vm_id,
 			a.fail_back,
 			cast(a.usb_policy as smallint) as usb_policy,
 			a.time_zone,
+			c.vm_pool_id,
+			d.vm_pool_name,
 			a._create_date AS create_date,
             a._update_date AS update_date
-FROM        vm_static as a INNER JOIN
-                      vm_static as b ON a.vmt_guid = b.vm_guid
+FROM        vm_static as a
+				INNER JOIN vm_static as b ON a.vmt_guid = b.vm_guid
+				LEFT OUTER JOIN vm_pool_map as c ON a.vm_guid = c. vm_guid
+					INNER JOIN vm_pools as d ON c.vm_pool_id = d.vm_pool_id
 WHERE     (a.entity_type = 'VM' AND b.entity_type = 'TEMPLATE') AND
           ((a._create_date >
                           (SELECT     var_datetime
