@@ -213,6 +213,12 @@ public class LocalConfig {
                         if (v != null) {
                             ret.append(v);
                         }
+                        else {
+                            v = System.getProperty(name);
+                            if (v != null) {
+                                ret.append(v);
+                            }
+                        }
                     break;
                     case '"':
                         inQuotes = !inQuotes;
