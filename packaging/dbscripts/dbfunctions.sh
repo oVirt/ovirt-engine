@@ -461,9 +461,9 @@ unlock_entity() {
        execute_command "${CMD}" "${DATABASE}" "${SERVERNAME}" "${PORT}"
        if [ $? -eq 0 ]; then
            log_unlock_entity ${object_type} ${id} ${user}
-           printf "unlock ${object_type} ${id} completed successfully."
+           printf "unlock ${object_type} ${id} completed successfully.\n"
        else
-           printf "unlock ${object_type} ${id} completed with errors.."
+           printf "unlock ${object_type} ${id} completed with errors.\n"
        fi
    fi
 }
