@@ -987,6 +987,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Description")
     String descriptionDc();
 
+    @DefaultStringValue("Comment")
+    String commentDc();
+
     // Storage DC
     @DefaultStringValue("Domain Status in Data-Center")
     String domainStatusInDcStorageDc();

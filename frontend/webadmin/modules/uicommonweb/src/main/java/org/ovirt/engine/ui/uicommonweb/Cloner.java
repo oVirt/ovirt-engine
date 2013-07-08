@@ -260,7 +260,6 @@ public final class Cloner
         obj.setId(instance.getId());
         obj.setName(instance.getName());
         obj.setdescription(instance.getdescription());
-        obj.setComment(instance.getComment());
         obj.setcpu_name(instance.getcpu_name());
 
         obj.setselection_algorithm(instance.getselection_algorithm());

@@ -10,7 +10,6 @@
 Create or replace FUNCTION InsertVdsGroups(
 	v_vds_group_id UUID,
 	v_description VARCHAR(4000),
-	v_free_text_comment text,
 	v_name VARCHAR(40),
 	v_cpu_name VARCHAR(255),
 	v_selection_algorithm INTEGER,
@@ -31,10 +30,10 @@ Create or replace FUNCTION InsertVdsGroups(
 RETURNS VOID
    AS $procedure$
 BEGIN
-      INSERT INTO vds_groups(vds_group_id,description, free_text_comment, name, cpu_name, selection_algorithm, high_utilization, low_utilization,
+      INSERT INTO vds_groups(vds_group_id,description, name, cpu_name, selection_algorithm, high_utilization, low_utilization,
 	cpu_over_commit_duration_minutes, storage_pool_id,  max_vds_memory_over_commit, count_threads_as_cores, compatibility_version,
     transparent_hugepages, migrate_on_error, virt_service, gluster_service, tunnel_migration, emulated_machine, trusted_service)
-	VALUES(v_vds_group_id,v_description, v_name, v_free_text_comment, v_cpu_name, v_selection_algorithm, v_high_utilization, v_low_utilization,
+	VALUES(v_vds_group_id,v_description, v_name, v_cpu_name, v_selection_algorithm, v_high_utilization, v_low_utilization,
 	v_cpu_over_commit_duration_minutes, v_storage_pool_id,  v_max_vds_memory_over_commit, v_count_threads_as_cores, v_compatibility_version,
     v_transparent_hugepages, v_migrate_on_error, v_virt_service, v_gluster_service, v_tunnel_migration, v_emulated_machine, v_trusted_service);
 END; $procedure$
@@ -45,7 +44,6 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION UpdateVdsGroup(v_description VARCHAR(4000) ,
-	v_free_text_comment text,
 	v_name VARCHAR(40),
 	v_vds_group_id UUID,
 	v_cpu_name VARCHAR(255) ,
@@ -70,7 +68,7 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       UPDATE vds_groups
-      SET description = v_description, free_text_comment = v_free_text_comment, name = v_name,cpu_name = v_cpu_name,selection_algorithm = v_selection_algorithm,
+      SET description = v_description,name = v_name,cpu_name = v_cpu_name,selection_algorithm = v_selection_algorithm,
       high_utilization = v_high_utilization,
       low_utilization = v_low_utilization,cpu_over_commit_duration_minutes = v_cpu_over_commit_duration_minutes,
       storage_pool_id = v_storage_pool_id,_update_date = LOCALTIMESTAMP,

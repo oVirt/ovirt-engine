@@ -88,7 +88,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         };
         getTable().addColumn(descColumn, constants.descriptionDc(), "300px"); //$NON-NLS-1$
 
-        getTable().addColumn(new CommentColumn<StoragePool>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
+        getTable().addColumn(new CommentColumn<StoragePool>(), constants.commentDc(), "80px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<StoragePool>(constants.newDC()) {
             @Override

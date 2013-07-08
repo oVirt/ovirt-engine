@@ -20,7 +20,6 @@ import org.ovirt.engine.ui.webadmin.uicommon.ReportActionsHelper;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
-import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -86,8 +85,6 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
             };
             getTable().addColumn(cpuNameColumn, constants.cpuNameCluster(), "150px"); //$NON-NLS-1$
         }
-
-        getTable().addColumn(new CommentColumn<VDSGroup>(), constants.commentLabel(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VDSGroup>(constants.newCluster()) {
             @Override
