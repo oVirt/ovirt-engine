@@ -160,6 +160,11 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <configuration combine.self="override">
               <excludes/>
+              <systemPropertyVariables>
+                <ovirt-engine.config.defaults>src/test/resources/engine.conf</ovirt-engine.config.defaults>
+                <ovirt-engine.config.vars>/dev/null</ovirt-engine.config.vars>
+                <ovirt-engine.config.base>${basedir}/src/test/resources</ovirt-engine.config.base>
+              </systemPropertyVariables>
             </configuration>
           </plugin>
         </plugins>
