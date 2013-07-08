@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 
 public class VdsGroupDAOTest extends BaseDAOTestCase {
     private static final int NUMBER_OF_GROUPS = 9;
@@ -29,6 +30,7 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
     private VDSGroup newGroup;
     private VDSGroup groupWithNoRunningVms;
     private StoragePool storagePool;
+    private ClusterPolicyDao clusterPolicyDao;
 
     @Override
     public void setUp() throws Exception {
@@ -53,6 +55,9 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         newGroup.setVirtService(true);
         newGroup.setGlusterService(false);
         newGroup.setClusterPolicyId(existingVdsGroup.getClusterPolicyId());
+        clusterPolicyDao = dbFacade.getClusterPolicyDao();
+        // set cluster policy name to allow equals method to succeed
+        newGroup.setClusterPolicyName(clusterPolicyDao.get(existingVdsGroup.getClusterPolicyId()).getName());
         newGroup.setClusterPolicyProperties(new LinkedHashMap<String, String>());
     }
 

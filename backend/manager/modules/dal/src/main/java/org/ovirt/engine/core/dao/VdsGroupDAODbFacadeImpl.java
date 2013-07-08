@@ -211,6 +211,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setEmulatedMachine(rs.getString("emulated_machine"));
             entity.setTrustedService(rs.getBoolean("trusted_service"));
             entity.setClusterPolicyId(Guid.createGuidFromString(rs.getString("cluster_policy_id")));
+            entity.setClusterPolicyName(rs.getString("cluster_policy_name"));
             entity.setClusterPolicyProperties(SerializationFactory.getDeserializer()
                     .deserializeOrCreateNew(rs.getString("cluster_policy_custom_properties"), LinkedHashMap.class));
             return entity;

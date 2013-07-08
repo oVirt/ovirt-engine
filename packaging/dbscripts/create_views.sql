@@ -921,9 +921,11 @@ LEFT JOIN storage_pool ON vds_groups.storage_pool_id = storage_pool.id;
 CREATE OR REPLACE VIEW vds_groups_view
 AS
 SELECT vds_groups.*,
-       storage_pool.name AS storage_pool_name
+       storage_pool.name AS storage_pool_name,
+       cluster_policies.name AS cluster_policy_name
 FROM vds_groups
-LEFT JOIN storage_pool ON vds_groups.storage_pool_id = storage_pool.id;
+LEFT JOIN storage_pool ON vds_groups.storage_pool_id = storage_pool.id
+LEFT JOIN cluster_policies ON vds_groups.cluster_policy_id = cluster_policies.id;
 
 CREATE OR REPLACE VIEW storage_domains_with_hosts_view
 

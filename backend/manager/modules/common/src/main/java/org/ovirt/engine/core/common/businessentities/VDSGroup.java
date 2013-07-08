@@ -75,6 +75,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private Guid clusterPolicyId;
 
+    private String clusterPolicyName;
+
     private Map<String, String> clusterPolicyProperties;
 
     public VDSGroup() {
@@ -275,6 +277,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         this.clusterPolicyId = clusterPolicyId;
     }
 
+    public String getClusterPolicyName() {
+        return clusterPolicyName;
+    }
+
+    public void setClusterPolicyName(String clusterPolicyName) {
+        this.clusterPolicyName = clusterPolicyName;
+    }
+
     public Map<String, String> getClusterPolicyProperties() {
         return clusterPolicyProperties;
     }
@@ -309,6 +319,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (emulatedMachine == null ? 0 : emulatedMachine.hashCode());
         result = prime * result + (trustedService ? 1231 : 1237);
         result = prime * result + ((clusterPolicyId == null) ? 0 : clusterPolicyId.hashCode());
+        result = prime * result + ((clusterPolicyName == null) ? 0 : clusterPolicyName.hashCode());
         result = prime * result + (clusterPolicyProperties == null ? 0 : clusterPolicyProperties.hashCode());
         return result;
     }
@@ -347,6 +358,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && ObjectUtils.objectsEqual(emulatedMachine, other.emulatedMachine)
                 && trustedService == other.trustedService
                 && ObjectUtils.objectsEqual(clusterPolicyId, other.clusterPolicyId)
+                && ObjectUtils.objectsEqual(clusterPolicyName, other.clusterPolicyName)
                 && ObjectUtils.objectsEqual(clusterPolicyProperties, other.clusterPolicyProperties));
     }
 }
