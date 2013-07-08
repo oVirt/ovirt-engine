@@ -120,11 +120,12 @@ public class ImportNetworksModel extends Model {
                     Iterable<StoragePool> dcList = getDataCenters().getItems();
                     externalNetwork.getDataCenters().setItems(dcList);
                     externalNetwork.getDataCenters().setSelectedItem(Linq.firstOrDefault(dcList));
-                    externalNetwork.setPublicUse(false);
+                    externalNetwork.setPublicUse(true);
                     items.add(externalNetwork);
                 }
                 Collections.sort(items, new Linq.ExternalNetworkComparator());
                 providerNetworks.setItems(items);
+                importedNetworks.setItems(new LinkedList<ExternalNetwork>());
 
                 stopProgress();
             }

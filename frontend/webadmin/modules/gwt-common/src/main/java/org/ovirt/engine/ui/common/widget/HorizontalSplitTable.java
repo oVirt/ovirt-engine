@@ -5,9 +5,13 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -15,8 +19,9 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.gwt.view.client.SelectionChangeEvent;
@@ -34,11 +39,14 @@ public class HorizontalSplitTable extends Composite {
     private final MultiSelectionModel<EntityModel> topSelectionModel;
     private final MultiSelectionModel<EntityModel> bottomSelectionModel;
 
-    @UiField
-    protected Button downButton;
+    private IEventListener topItemsChangedListener;
+    private IEventListener bottomItemsChangedListener;
 
     @UiField
-    protected Button upButton;
+    protected SimpleDialogButton downButton;
+
+    @UiField
+    protected SimpleDialogButton upButton;
 
     @UiField(provided = true)
     protected EntityModelCellTable<ListModel> topTable;
@@ -46,13 +54,23 @@ public class HorizontalSplitTable extends Composite {
     @UiField(provided = true)
     protected EntityModelCellTable<ListModel> bottomTable;
 
+    @UiField(provided = true)
+    protected Label topTitle;
+
+    @UiField(provided = true)
+    protected Label bottomTitle;
+
     @SuppressWarnings("unchecked")
     public HorizontalSplitTable(EntityModelCellTable<ListModel> topTable,
             EntityModelCellTable<ListModel> bottomTable,
+            String topTitle,
+            String bottomTitle,
             CommonApplicationConstants constants) {
 
         this.topTable = topTable;
         this.bottomTable = bottomTable;
+        this.topTitle = new Label(topTitle);
+        this.bottomTitle = new Label(bottomTitle);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
 
         topSelectionModel = (MultiSelectionModel<EntityModel>) topTable.getSelectionModel();
@@ -63,14 +81,15 @@ public class HorizontalSplitTable extends Composite {
         downButton.setEnabled(false);
         upButton.setEnabled(false);
 
-        addSelectionHandler(downButton);
-        addSelectionHandler(upButton);
-        addClickHandler(downButton);
-        addClickHandler(upButton);
+        addSelectionHandler(true);
+        addSelectionHandler(false);
+        addClickHandler(true);
+        addClickHandler(false);
     }
 
-    private void addSelectionHandler(final Button button) {
-        final MultiSelectionModel<EntityModel> selectionModel = getSelectionModelForButton(button);
+    private void addSelectionHandler(boolean topTable) {
+        final MultiSelectionModel<EntityModel> selectionModel = getSelectionModel(topTable);
+        final ButtonBase button = getButton(topTable);
         selectionModel.addSelectionChangeHandler(new Handler() {
 
             @Override
@@ -80,15 +99,15 @@ public class HorizontalSplitTable extends Composite {
         });
     }
 
-    private void addClickHandler(final Button button) {
-        button.addClickHandler(new ClickHandler() {
+    private void addClickHandler(final boolean topTableIsSource) {
+        getButton(topTableIsSource).addClickHandler(new ClickHandler() {
 
             @SuppressWarnings("unchecked")
             @Override
             public void onClick(ClickEvent event) {
-                MultiSelectionModel<EntityModel> sourceSelectionModel = getSelectionModelForButton(button);
-                EntityModelCellTable<ListModel> sourceTable = (button == downButton) ? topTable : bottomTable;
-                EntityModelCellTable<ListModel> targetTable = (button == downButton) ? bottomTable : topTable;
+                MultiSelectionModel<EntityModel> sourceSelectionModel = getSelectionModel(topTableIsSource);
+                EntityModelCellTable<ListModel> sourceTable = getTable(topTableIsSource);
+                EntityModelCellTable<ListModel> targetTable = getTable(!topTableIsSource);
 
                 Set<EntityModel> selectedItems = sourceSelectionModel.getSelectedSet();
                 ((Collection<EntityModel>) sourceTable.flush().getItems()).removeAll(selectedItems);
@@ -104,8 +123,16 @@ public class HorizontalSplitTable extends Composite {
         });
     }
 
-    private MultiSelectionModel<EntityModel> getSelectionModelForButton(Button button) {
-        return (button == downButton) ? topSelectionModel : bottomSelectionModel;
+    private MultiSelectionModel<EntityModel> getSelectionModel(boolean top) {
+        return top ? topSelectionModel : bottomSelectionModel;
+    }
+
+    private ButtonBase getButton(boolean down) {
+        return down ? downButton : upButton;
+    }
+
+    private EntityModelCellTable<ListModel> getTable(boolean top) {
+        return top ? topTable : bottomTable;
     }
 
     private void refresh() {
@@ -113,6 +140,28 @@ public class HorizontalSplitTable extends Composite {
         bottomSelectionModel.clear();
         topTable.edit(topTable.flush());
         bottomTable.edit(bottomTable.flush());
+    }
+
+    private void edit(ListModel model, final boolean topTableIsEdited) {
+        EntityModelCellTable<ListModel> table = getTable(topTableIsEdited);
+        IEventListener listener = topTableIsEdited ? topItemsChangedListener : bottomItemsChangedListener;
+        if (listener != null) {
+            table.flush().getItemsChangedEvent().removeListener(listener);
+        }
+        listener = new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                getSelectionModel(topTableIsEdited).clear();
+            }
+        };
+        model.getItemsChangedEvent().addListener(listener);
+        table.edit(model);
+    }
+
+    public void edit(ListModel topListModel, ListModel bottomListModel) {
+        edit(topListModel, true);
+        edit(bottomListModel, false);
     }
 
 }

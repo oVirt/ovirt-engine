@@ -1,37 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.HorizontalSplitTable.Style">
-		.centerPanel {
-			height: 100%;
-			width: 100%;
-			border-top: solid thin;
-			border-bottom: solid thin;
+		.headers {
+			font-weight: bold;
+		}
+
+		.tables {
+			height: 200px;
+			border-style: solid;
+			border-width: thin;
+		}
+
+		.buttons {
+			margin-left: 30px;
+			margin-right: 30px;
 		}
 	</ui:style>
 
-	<g:DockLayoutPanel ui:field="splitLayoutPanel" height="520px" width="100%">
+	<g:DockLayoutPanel ui:field="splitLayoutPanel" height="500px" width="100%">
 		<g:north size="230">
-			<g:ScrollPanel>
-				<e:EntityModelCellTable ui:field="topTable" />
-			</g:ScrollPanel>
+			<g:FlowPanel>
+				<g:Label ui:field="topTitle" addStyleNames="{style.headers}" />
+				<g:ScrollPanel addStyleNames="{style.tables}">
+					<e:EntityModelCellTable ui:field="topTable" />
+				</g:ScrollPanel>
+			</g:FlowPanel>
 		</g:north>
 		<g:center>
-			<g:HorizontalPanel ui:field="centerPanel" addStyleNames="{style.centerPanel}" >
+			<g:HorizontalPanel height="100%" width="100%">
 				<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-					<g:Button ui:field="downButton" />
-				</g:cell>
-				<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
-					<g:Button ui:field="upButton" />
+					<g:HorizontalPanel>
+						<d:SimpleDialogButton ui:field="downButton" addStyleNames="{style.buttons}" />
+						<d:SimpleDialogButton ui:field="upButton" addStyleNames="{style.buttons}" />
+					</g:HorizontalPanel>
 				</g:cell>
 			</g:HorizontalPanel>
 		</g:center>
 		<g:south size="230">
-			<g:ScrollPanel>
-				<e:EntityModelCellTable ui:field="bottomTable" />
-			</g:ScrollPanel>
+			<g:FlowPanel>
+				<g:Label ui:field="bottomTitle" addStyleNames="{style.headers}" />
+				<g:ScrollPanel addStyleNames="{style.tables}">
+					<e:EntityModelCellTable ui:field="bottomTable" />
+				</g:ScrollPanel>
+			</g:FlowPanel>
 		</g:south>
 	</g:DockLayoutPanel>
 

@@ -29,6 +29,7 @@ import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -44,6 +45,13 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
     interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ImportNetworksPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
+
+    interface Style extends CssResource {
+        String providersStyle();
+    }
+
+    @UiField
+    Style style;
 
     @UiField(provided = true)
     @Path(value = "providers.selectedItem")
@@ -75,10 +83,16 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
         });
         providerNetworks = new EntityModelCellTable<ListModel>(true, false, true);
         importedNetworks = new EntityModelCellTable<ListModel>(true, false, true);
-        splitTable = new HorizontalSplitTable(providerNetworks, importedNetworks, constants);
+        splitTable =
+                new HorizontalSplitTable(providerNetworks,
+                        importedNetworks,
+                        constants.providerNetworks(),
+                        constants.importedNetworks(),
+                        constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTables(constants, templates);
         providersEditor.setLabel(constants.networkProvider());
+        providersEditor.addWrapperStyleName(style.providersStyle());
         driver.initialize(this);
     }
 
@@ -181,8 +195,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
 
     @Override
     public void edit(ImportNetworksModel model) {
-        providerNetworks.edit(model.getProviderNetworks());
-        importedNetworks.edit(model.getImportedNetworks());
+        splitTable.edit(model.getProviderNetworks(), model.getImportedNetworks());
         dcColumn.edit(model.getDataCenters());
         driver.edit(model);
     }

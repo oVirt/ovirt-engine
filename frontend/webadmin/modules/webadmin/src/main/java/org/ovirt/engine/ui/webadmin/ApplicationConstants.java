@@ -2847,15 +2847,21 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String nameNetworkHeader();
 
-    @DefaultStringValue("External ID")
+    @DefaultStringValue("Provider Network ID")
     String idNetworkHeader();
 
     @DefaultStringValue("Data Center")
     String dcNetworkHeader();
 
-    @DefaultStringValue("Public Network")
+    @DefaultStringValue("Allow All")
     String publicNetwork();
 
     @DefaultStringValue("Network Provider")
     String networkProvider();
+
+    @DefaultStringValue("Provider Networks")
+    String providerNetworks();
+
+    @DefaultStringValue("Networks to Import")
+    String importedNetworks();
 }

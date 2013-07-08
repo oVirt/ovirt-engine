@@ -4,10 +4,20 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
-	<d:SimpleDialogPanel ui:field="mainPanel" width="620px" height="580px">
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ImportNetworksPopupView.Style">
+		.providersStyle {
+			width: 400px;
+		}
+
+		.section {
+			margin-bottom: 30px;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel ui:field="mainPanel" width="600px" height="650px">
 		<d:content>
 			<g:VerticalPanel>
-				<g:FlowPanel>
+				<g:FlowPanel addStyleNames="{style.section}">
 					<e:ListModelListBoxEditor ui:field="providersEditor" />
 				</g:FlowPanel>
 				<w:HorizontalSplitTable ui:field="splitTable" />
