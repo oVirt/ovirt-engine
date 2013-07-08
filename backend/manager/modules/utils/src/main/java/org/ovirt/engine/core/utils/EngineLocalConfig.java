@@ -55,16 +55,26 @@ public class EngineLocalConfig extends LocalConfig {
     }
 
     private EngineLocalConfig() {
-        // Locate the defaults file and add it to the list:
-        String defaultsPath = System.getenv("ENGINE_DEFAULTS");
-        if (defaultsPath == null) {
-            defaultsPath = DEFAULTS_PATH;
+        String v;
+
+        String defaultsPath = DEFAULTS_PATH;
+        v = System.getProperty("ovirt-engine.config.defaults");
+        if (v != null) {
+            defaultsPath = v;
+        }
+        v = System.getenv("ENGINE_DEFAULTS");
+        if (v != null) {
+            defaultsPath = v;
         }
 
-        // Locate the overridden values file and add it to the list:
-        String varsPath = System.getenv("ENGINE_VARS");
-        if (varsPath == null) {
-            varsPath = VARS_PATH;
+        String varsPath = VARS_PATH;
+        v = System.getProperty("ovirt-engine.config.vars");
+        if (v != null) {
+            varsPath = v;
+        }
+        v = System.getenv("ENGINE_VARS");
+        if (v != null) {
+            varsPath = v;
         }
 
         loadConfig(defaultsPath, varsPath);
