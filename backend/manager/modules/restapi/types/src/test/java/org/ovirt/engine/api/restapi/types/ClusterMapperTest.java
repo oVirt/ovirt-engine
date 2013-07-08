@@ -7,10 +7,11 @@ import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.SchedulingPolicy;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VDSGroup, VDSGroup> {
+
+    private static final String NONE = "none";
 
     public ClusterMapperTest() {
         super(Cluster.class, VDSGroup.class, VDSGroup.class);
@@ -90,13 +91,13 @@ public class ClusterMapperTest extends AbstractInvertibleMappingTest<Cluster, VD
     public void testSchedulingPolicyNone() {
         Cluster cluster = new Cluster();
         SchedulingPolicy policy = new SchedulingPolicy();
-        policy.setPolicy("None");
+        policy.setPolicy(NONE);
         cluster.setSchedulingPolicy(policy);
         VDSGroup transform = getMapper().map(cluster, null);
-        assertNotNull(transform.getselection_algorithm());
-        assertEquals(transform.getselection_algorithm(), VdsSelectionAlgorithm.None);
+        assertNotNull(transform.getClusterPolicyName());
+        assertEquals(transform.getClusterPolicyName(), NONE);
         transform.setId(Guid.Empty);
         cluster = ClusterMapper.map(transform, cluster);
-        assertNull(cluster.getSchedulingPolicy().getPolicy());
+        assertEquals(cluster.getSchedulingPolicy().getPolicy(), NONE);
     }
 }

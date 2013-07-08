@@ -2,6 +2,8 @@ package org.ovirt.engine.api.restapi.types;
 
 import static org.ovirt.engine.api.restapi.utils.VersionUtils.greaterOrEqual;
 
+import java.util.LinkedHashMap;
+
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
@@ -16,12 +18,13 @@ import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 
 public class ClusterMapper {
-
+    private static final String CPU_OVER_COMMIT_DURATION_MINUTES = "CpuOverCommitDurationMinutes";
+    private static final String HIGH_UTILIZATION = "HighUtilization";
+    private static final String LOW_UTILIZATION = "LowUtilization";
     static final org.ovirt.engine.core.compat.Version min_thp_version = new org.ovirt.engine.core.compat.Version(3,0);
 
     @Mapping(from = Cluster.class, to = VDSGroup.class)
@@ -147,19 +150,24 @@ public class ClusterMapper {
         if (model.isSetPolicy()) {
             SchedulingPolicyType policyType = SchedulingPolicyType.fromValue(model.getPolicy());
             if (policyType != null) {
-                entity.setselection_algorithm(map(policyType, null));
+                entity.setClusterPolicyId(null);
+                entity.setClusterPolicyName(policyType.name().toLowerCase());
             }
         }
         if (model.isSetThresholds()) {
             SchedulingPolicyThresholds thresholds = model.getThresholds();
-            if (thresholds.getLow()!=null) {
-                entity.setlow_utilization(thresholds.getLow());
+            if (entity.getClusterPolicyProperties() == null) {
+                entity.setClusterPolicyProperties(new LinkedHashMap<String, String>());
             }
-            if (thresholds.getHigh()!=null) {
-                entity.sethigh_utilization(thresholds.getHigh());
+            if (thresholds.getLow() != null) {
+                entity.getClusterPolicyProperties().put(LOW_UTILIZATION, thresholds.getLow().toString());
             }
-            if (thresholds.getDuration()!=null) {
-                entity.setcpu_over_commit_duration_minutes(Math.round(thresholds.getDuration() / 60.0f));
+            if (thresholds.getHigh() != null) {
+                entity.getClusterPolicyProperties().put(HIGH_UTILIZATION, thresholds.getHigh().toString());
+            }
+            if (thresholds.getDuration() != null) {
+                int round = Math.round(thresholds.getDuration() / 60.0f);
+                entity.getClusterPolicyProperties().put(CPU_OVER_COMMIT_DURATION_MINUTES, Integer.toString(round));
             }
         }
         return entity;
@@ -168,45 +176,27 @@ public class ClusterMapper {
     @Mapping(from = VDSGroup.class, to = SchedulingPolicy.class)
     public static SchedulingPolicy map(VDSGroup entity, SchedulingPolicy template) {
         SchedulingPolicy model = template != null ? template : new SchedulingPolicy();
-        if (entity.getselection_algorithm() != null) {
-            model.setPolicy(map(entity.getselection_algorithm(), null));
-            if (model.isSetPolicy()) {
+        if (entity.getClusterPolicyName() != null) {
+            model.setPolicy(entity.getClusterPolicyName().toLowerCase());
+            if (entity.getClusterPolicyProperties() != null && !entity.getClusterPolicyProperties().isEmpty()) {
                 model.setThresholds(new SchedulingPolicyThresholds());
-                switch (entity.getselection_algorithm()) {
-                case PowerSave:
-                    model.getThresholds().setLow(entity.getlow_utilization());
-                    // No need for break, PowerSave need to call setHight() and setDuration()
-                    // as well.
-                case EvenlyDistribute:
-                    model.getThresholds().setHigh(entity.gethigh_utilization());
-                    model.getThresholds().setDuration(entity.getcpu_over_commit_duration_minutes() * 60);
-                    break;
-                default:
-                    break;
+                String lowUtilization = entity.getClusterPolicyProperties().get(LOW_UTILIZATION);
+                String highUtilization = entity.getClusterPolicyProperties().get(HIGH_UTILIZATION);
+                String cpuOverCommitDurationMinutes =
+                        entity.getClusterPolicyProperties().get(CPU_OVER_COMMIT_DURATION_MINUTES);
+                if (lowUtilization != null) {
+                    model.getThresholds().setLow(Integer.parseInt(lowUtilization));
+                }
+                if (highUtilization != null) {
+                    model.getThresholds().setHigh(Integer.parseInt(highUtilization));
+                }
+                if (cpuOverCommitDurationMinutes != null) {
+                    int duration = Integer.parseInt(cpuOverCommitDurationMinutes) * 60;
+                    model.getThresholds().setDuration(duration);
                 }
             }
         }
         return model;
-    }
-
-    @Mapping(from = SchedulingPolicyType.class, to = VdsSelectionAlgorithm.class)
-    public static VdsSelectionAlgorithm map(SchedulingPolicyType model, VdsSelectionAlgorithm template) {
-        switch (model) {
-        case POWER_SAVING:       return VdsSelectionAlgorithm.PowerSave;
-        case EVENLY_DISTRIBUTED: return VdsSelectionAlgorithm.EvenlyDistribute;
-        case NONE:               return VdsSelectionAlgorithm.None;
-        default:                 return null;
-        }
-    }
-
-    @Mapping(from = VdsSelectionAlgorithm.class, to = String.class)
-    public static String map(VdsSelectionAlgorithm entity, String template) {
-        switch (entity) {
-        case PowerSave:        return SchedulingPolicyType.POWER_SAVING.value();
-        case EvenlyDistribute: return SchedulingPolicyType.EVENLY_DISTRIBUTED.value();
-        case None:             return null;
-        default:               return null;
-        }
     }
 
     @Mapping(from = StoragePool.class, to = VDSGroup.class)
