@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 /**
@@ -57,37 +58,41 @@ public class LocalConfig {
         // configuration files to merge, the defaults and the variables):
         List<File> configFiles = new ArrayList<File>(2);
 
-        File defaultsFile = new File(defaultsPath);
-        configFiles.add(defaultsFile);
+        if (!StringUtils.isEmpty(defaultsPath)) {
+            File defaultsFile = new File(defaultsPath);
+            configFiles.add(defaultsFile);
+        }
 
-        File varsFile = new File(varsPath);
-        configFiles.add(varsFile);
+        if (!StringUtils.isEmpty(varsPath)) {
+            File varsFile = new File(varsPath);
+            configFiles.add(varsFile);
 
-        // Locate the override values directory and add the .conf files inside
-        // to the list, sorted alphabetically:
-        File varsDir = new File(varsPath + ".d");
-        if (varsDir.isDirectory()) {
-            File[] varsFiles = varsDir.listFiles(
-                new FilenameFilter() {
-                    @Override
-                    public boolean accept(File parent, String name) {
-                        return name.endsWith(".conf");
+            // Locate the override values directory and add the .conf files inside
+            // to the list, sorted alphabetically:
+            File varsDir = new File(varsPath + ".d");
+            if (varsDir.isDirectory()) {
+                File[] varsFiles = varsDir.listFiles(
+                    new FilenameFilter() {
+                        @Override
+                        public boolean accept(File parent, String name) {
+                            return name.endsWith(".conf");
+                        }
                     }
-                }
-            );
-            Arrays.sort(
-                varsFiles,
-                new Comparator<File>() {
-                    @Override
-                    public int compare (File leftFile, File rightFile) {
-                        String leftName = leftFile.getName();
-                        String rightName = rightFile.getName();
-                        return leftName.compareTo(rightName);
+                );
+                Arrays.sort(
+                    varsFiles,
+                    new Comparator<File>() {
+                        @Override
+                        public int compare (File leftFile, File rightFile) {
+                            String leftName = leftFile.getName();
+                            String rightName = rightFile.getName();
+                            return leftName.compareTo(rightName);
+                        }
                     }
+                );
+                for (File file : varsFiles) {
+                    configFiles.add(file);
                 }
-            );
-            for (File file : varsFiles) {
-                configFiles.add(file);
             }
         }
 
