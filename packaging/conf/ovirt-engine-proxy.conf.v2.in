@@ -40,7 +40,7 @@
         # problem with some API clients):
         #
         <IfModule headers_module>
-            RequestHeader unset Expect early
+            RequestHeader unset Expect
         </IfModule>
 
         <IfModule deflate_module>
