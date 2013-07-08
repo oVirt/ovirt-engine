@@ -13,8 +13,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.ovirt.engine.core.bll.utils.EngineSSHDialog;
 import org.ovirt.engine.core.common.queries.ServerParameters;
-import org.ovirt.engine.core.utils.ssh.EngineSSHDialog;
 
 public class GetServerSSHKeyFingerprintQueryTest extends AbstractQueryTest<ServerParameters, GetServerSSHKeyFingerprintQuery<ServerParameters>> {
 

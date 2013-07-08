@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.utils.gluster;
+package org.ovirt.engine.core.bll.utils;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -17,8 +17,6 @@ import org.ovirt.engine.core.utils.XmlUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ssh.ConstraintByteArrayOutputStream;
-import org.ovirt.engine.core.utils.ssh.EngineSSHClient;
-import org.ovirt.engine.core.utils.ssh.SSHClient;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -76,7 +74,7 @@ public class GlusterUtil {
      *            The already connected and authenticated SSHClient object
      * @return Set of peers of the server
      */
-    public Set<String> getPeers(SSHClient client) {
+    public Set<String> getPeers(EngineSSHClient client) {
         String serversXml = executePeerStatusCommand(client);
         return extractServers(serversXml);
     }
@@ -134,7 +132,7 @@ public class GlusterUtil {
         }
     }
 
-    protected void authenticate(SSHClient client, String userId, String password) throws AuthenticationException {
+    protected void authenticate(EngineSSHClient client, String userId, String password) throws AuthenticationException {
         client.setUser(userId);
         client.setPassword(password);
         try {
@@ -147,7 +145,7 @@ public class GlusterUtil {
         }
     }
 
-    protected String executePeerStatusCommand(SSHClient client) {
+    protected String executePeerStatusCommand(EngineSSHClient client) {
         ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(500);
         String command = Config.<String> GetValue(ConfigValues.GlusterPeerStatusCommand);
         try {

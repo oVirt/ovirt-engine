@@ -17,6 +17,8 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.bll.utils.EngineSSHClient;
+import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -55,10 +57,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
-import org.ovirt.engine.core.utils.gluster.GlusterUtil;
 import org.ovirt.engine.core.utils.ssh.ConstraintByteArrayOutputStream;
-import org.ovirt.engine.core.utils.ssh.EngineSSHClient;
-import org.ovirt.engine.core.utils.ssh.SSHClient;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -363,11 +362,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return ClusterUtils.getInstance();
     }
 
-    public SSHClient getSSHClient() {
+    public EngineSSHClient getSSHClient() {
         Long timeout =
                 TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(ConfigValues.ConnectToServerTimeoutInSeconds));
 
-        SSHClient sshclient = new EngineSSHClient();
+        EngineSSHClient sshclient = new EngineSSHClient();
         sshclient.setHardTimeout(timeout);
         sshclient.setSoftTimeout(timeout);
         sshclient.setHost(getVds().getStaticData().getHostName(), getVds().getStaticData().getSshPort());
@@ -383,7 +382,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
      *
      * @param client - already connected ssh client
      */
-    private String getInstalledVdsIdIfExists(SSHClient client) {
+    private String getInstalledVdsIdIfExists(EngineSSHClient client) {
         try {
             ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(256);
             client.executeCommand(Config.<String> GetValue(ConfigValues.GetVdsmIdByVdsmToolCommand),
@@ -402,7 +401,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     protected boolean canConnect(VDS vds) {
         // execute the connectivity and id uniqueness validation for VDS type hosts
         if (vds.getVdsType() == VDSType.VDS && Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
-            SSHClient sshclient = null;
+            EngineSSHClient sshclient = null;
             try {
                 sshclient = getSSHClient();
                 sshclient.connect();
@@ -454,7 +453,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
      *            ID of the cluster to which the server is being added.
      * @return true if the server is good to be added to a gluster cluster, else false.
      */
-    private boolean isValidGlusterPeer(SSHClient sshclient, Guid clusterId) {
+    private boolean isValidGlusterPeer(EngineSSHClient sshclient, Guid clusterId) {
         if (isGlusterSupportEnabled() && clusterHasServers()) {
             try {
                 // Must not allow adding a server that already is part of another gluster cluster

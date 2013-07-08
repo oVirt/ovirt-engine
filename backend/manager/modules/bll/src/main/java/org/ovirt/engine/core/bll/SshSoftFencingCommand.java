@@ -2,10 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import java.io.ByteArrayOutputStream;
 
+import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.ssh.EngineSSHClient;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 /**
@@ -40,8 +40,7 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
 
         VdsValidator validator = new VdsValidator(getVds());
         if (validator.shouldVdsBeFenced()) {
-            boolean result = executeSshSoftFencingCommand(getVds().getHostName(),
-                            getVds().getVdsGroupCompatibilityVersion().toString());
+            boolean result = executeSshSoftFencingCommand(getVds().getVdsGroupCompatibilityVersion().toString());
             if (result) {
                 // SSH Soft Fencing executed without errors, tell VdsManager about it
                 ResourceManager.getInstance().GetVdsManager(getVds().getId()).finishSshSoftFencingExecution(getVds());
@@ -63,15 +62,14 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
      *            host to execute SSH Soft Fencing command on
      * @returns {@code true} if command has been executed successfully, {@code false} otherwise
      */
-    private boolean executeSshSoftFencingCommand(String host, String version) {
+    private boolean executeSshSoftFencingCommand(String version) {
         boolean result = true;
         EngineSSHClient sshClient = null;
         ByteArrayOutputStream bos = null;
 
         try {
             sshClient = new EngineSSHClient();
-            sshClient.setHost(host);
-            sshClient.setUser("root");
+            sshClient.setVds(getVds());
             sshClient.useDefaultKeyPair();
             sshClient.connect();
             sshClient.authenticate();
@@ -80,12 +78,10 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
                     null,
                     bos,
                     null);
-            log.info("SSH Soft Fencing command executed on host " + host);
+            log.info("SSH Soft Fencing command executed on host " + getVds().getHostName());
+            log.debug("SSH Soft Fencing command output " + bos.toString());
         } catch (Exception ex) {
-            log.error("SSH Soft Fencing command failed on host " + host, ex);
-            if (bos != null) {
-                log.error("SSH Soft Fencing command output " + bos.toString());
-            }
+            log.error("SSH Soft Fencing command failed on host " + getVds().getHostName(), ex);
             result = false;
         } finally {
             closeSshConnection(sshClient);

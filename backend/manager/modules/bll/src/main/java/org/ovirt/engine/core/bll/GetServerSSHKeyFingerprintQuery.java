@@ -2,8 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 
+import org.ovirt.engine.core.bll.utils.EngineSSHDialog;
 import org.ovirt.engine.core.common.queries.ServerParameters;
-import org.ovirt.engine.core.utils.ssh.EngineSSHDialog;
 
 /**
  * Query to fetch fingerprint of the given server name
