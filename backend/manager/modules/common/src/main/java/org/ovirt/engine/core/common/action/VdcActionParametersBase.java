@@ -58,8 +58,8 @@ public class VdcActionParametersBase implements java.io.Serializable {
     @Size(min = 1, max = BusinessEntitiesDefinitions.CORRELATION_ID_SIZE, groups = PreRun.class)
     private String correlationId;
 
-    private Guid jobId;
-    private Guid stepId;
+    private Guid jobId = null;
+    private Guid stepId = null;
 
     public VdcActionParametersBase() {
         shouldbelogged = true;

@@ -374,8 +374,19 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             VdcActionParametersBase parameters,
             boolean runAsInternal,
             CommandContext context) {
-        CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
-        return runAction(command, runAsInternal, context);
+        VdcReturnValueBase result;
+        // If non-monitored command is invoked with JobId or ActionId as parameters, reject this command on can do action.
+        if (!actionType.isActionMonitored() && (parameters.getJobId() != null || parameters.getStepId() != null)) {
+            result = new VdcReturnValueBase();
+            result.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_NON_MONITORED.toString());
+            result.setCanDoAction(false);
+            result.setSucceeded(false);
+        }
+        else {
+            CommandBase<?> command = CommandsFactory.CreateCommand(actionType, parameters);
+            result = runAction(command, runAsInternal, context);
+        }
+        return result;
     }
 
     protected VdcReturnValueBase runAction(CommandBase<?> command,
