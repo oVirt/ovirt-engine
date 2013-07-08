@@ -74,6 +74,18 @@ class Plugin(plugin.PluginBase):
         self.environment[osetupcons.ConfigEnv.FQDN] = config.get('ENGINE_FQDN')
         if not config.getboolean('ENGINE_PROXY_ENABLED'):
             self.environment[osetupcons.ApacheEnv.CONFIGURE_SSL] = True
+        else:
+            #if it's enabled it has been already done
+            self.environment[osetupcons.ApacheEnv.CONFIGURE_SSL] = False
+            for key in (
+                otopicons.CoreEnv.MODIFIED_FILES,
+                osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES,
+            ):
+                self.environment[key].append(
+                    self.environment[
+                        osetupcons.ApacheEnv.HTTPD_CONF_SSL
+                    ]
+                )
         self.environment[osetupcons.DBEnv.SECURED] = config.get(
             name='ENGINE_DB_SECURED',
             default=(
