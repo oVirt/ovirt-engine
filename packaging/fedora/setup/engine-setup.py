@@ -1749,9 +1749,10 @@ def _displaySummary():
 def _startHttpd():
     logging.debug("Handling the %s service"%(basedefs.HTTPD_SERVICE_NAME))
     srv = utils.Service(basedefs.HTTPD_SERVICE_NAME)
-    srv.autoStart(True)
-    srv.stop(False)
-    srv.start(True)
+    if srv.available():
+        srv.autoStart(True)
+        srv.stop(False)
+        srv.start(True)
 
 def _setupVarPrivileges():
     # previous versions mixed root/ovirt
@@ -2121,7 +2122,7 @@ def stopRhevmDbRelatedServices():
     """
     # If the rhevm-etl service is installed, then try and stop it.
 
-    if etlService.isServiceAvailable():
+    if etlService.available():
         try:
             etlService.stop(True)
         except:
@@ -2130,7 +2131,7 @@ def stopRhevmDbRelatedServices():
             controller.MESSAGES.append(output_messages.ERR_FAILED_STOP_SERVICE % "rhevm-etl")
 
     # If the rhevm-notifierd service is up, then try and stop it.
-    if notificationService.isServiceAvailable():
+    if notificationService.available():
         try:
             (status, rc) = notificationService.status()
             if utils.verifyStringFormat(status, ".*running.*"):

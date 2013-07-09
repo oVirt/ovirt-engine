@@ -452,7 +452,8 @@ def stopWebSocketProxy():
     logging.debug("stoping websocket proxy service.")
 
     proxy = utils.Service(basedefs.WEBSOCKET_PROXY_SERVICE_NAME)
-    proxy.stop(True)
+    if proxy.available():
+        proxy.stop(True)
 
 def runFunc(funcs, dispString):
     sys.stdout.write("%s..." % dispString)

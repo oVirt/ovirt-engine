@@ -749,7 +749,7 @@ def stopDbRelatedServices(etlService, notificationServices):
     in order to disconnect any open sessions to the db
     """
     # If the ovirt-engine-etl service is installed, then try and stop it.
-    if etlService.isServiceAvailable():
+    if etlService.available():
         try:
             etlService.stop(True)
         except:
@@ -759,7 +759,7 @@ def stopDbRelatedServices(etlService, notificationServices):
 
     # If the ovirt-engine-notifierd service is up, then try and stop it.
     for s in notificationServices:
-        if s.isServiceAvailable():
+        if s.available():
             try:
                 (status, rc) = s.status()
                 if utils.verifyStringFormat(status, ".*running.*"):
@@ -776,14 +776,14 @@ def startDbRelatedServices(etlService, notificationServices):
     we won't start services that are down
     but weren't stopped by us
     """
-    if etlService.isServiceAvailable():
+    if etlService.available():
         (output, rc) = etlService.conditionalStart()
         if rc != 0:
             logging.warn("Failed to start %s", etlService.name)
             messages.append(MSG_ERR_FAILED_START_SERVICE % etlService.name)
 
     for s in notificationServices:
-        if s.isServiceAvailable():
+        if s.available():
             (output, rc) = s.conditionalStart()
             if rc != 0:
                 logging.warn("Failed to start %s: exit code %d", s.name, rc)
@@ -1274,8 +1274,9 @@ def updateHttpdConf():
         basedefs.FILE_OVIRT_HTTPD_CONF_ROOT,
     )
     srv = utils.Service(basedefs.HTTPD_SERVICE_NAME)
-    srv.stop(False)
-    srv.start(True)
+    if srv.available():
+        srv.stop(False)
+        srv.start(True)
 
 
 def updateDatabaseConf():
@@ -1563,7 +1564,7 @@ def main(options):
     utils.execCmd(cmdList=cmd, failOnError=False)
 
     # Print log location on success
-    addAdditionalMessages(etlService.isServiceAvailable())
+    addAdditionalMessages(etlService.available())
     print "\n%s\n" % MSG_INFO_UPGRADE_OK
     printMessages()
 
