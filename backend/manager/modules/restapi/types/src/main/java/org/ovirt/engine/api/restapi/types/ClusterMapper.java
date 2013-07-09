@@ -36,6 +36,9 @@ public class ClusterMapper {
         if (model.isSetDescription()) {
             entity.setdescription(model.getDescription());
         }
+        if (model.isSetComment()) {
+            entity.setComment(model.getComment());
+        }
         if (model.isSetCpu() && model.getCpu().isSetId()) {
             entity.setcpu_name(model.getCpu().getId());
         }
@@ -84,6 +87,7 @@ public class ClusterMapper {
         model.setId(entity.getId().toString());
         model.setName(entity.getName());
         model.setDescription(entity.getdescription());
+        model.setComment(entity.getComment());
         if (entity.getcpu_name() != null) {
             CPU cpu = new CPU();
             cpu.setId(entity.getcpu_name());

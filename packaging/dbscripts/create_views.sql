@@ -908,7 +908,7 @@ FROM         storage_pool LEFT OUTER JOIN
 CREATE OR REPLACE VIEW vds_groups_storage_domain
 
 AS
-SELECT     vds_groups.vds_group_id, vds_groups.name, vds_groups.description, vds_groups.cpu_name, vds_groups._create_date,
+SELECT     vds_groups.vds_group_id, vds_groups.name, vds_groups.description, vds_groups.free_text_comment, vds_groups.cpu_name, vds_groups._create_date,
                       vds_groups._update_date, vds_groups.selection_algorithm, vds_groups.high_utilization, vds_groups.low_utilization,
                       vds_groups.cpu_over_commit_duration_minutes, vds_groups.storage_pool_id,
                       vds_groups.max_vds_memory_over_commit, vds_groups.count_threads_as_cores, vds_groups.compatibility_version,

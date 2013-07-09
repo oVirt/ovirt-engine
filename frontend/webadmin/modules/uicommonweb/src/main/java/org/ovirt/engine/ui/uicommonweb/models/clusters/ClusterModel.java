@@ -185,6 +185,18 @@ public class ClusterModel extends EntityModel
         privateDescription = value;
     }
 
+    private EntityModel privateComment;
+
+    public EntityModel getComment()
+    {
+        return privateComment;
+    }
+
+    public void setComment(EntityModel value)
+    {
+        privateComment = value;
+    }
+
     private ListModel privateDataCenter;
 
     public ListModel getDataCenter()
@@ -620,6 +632,7 @@ public class ClusterModel extends EntityModel
         setIsEdit(isEdit);
         setName(new EntityModel());
         setDescription(new EntityModel());
+        setComment(new EntityModel());
         setClusterPolicyModel(new ClusterPolicyModel());
         setAllowClusterWithVirtGlusterEnabled(true);
         AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
@@ -975,6 +988,7 @@ public class ClusterModel extends EntityModel
     private void postInit()
     {
         getDescription().setEntity(getEntity().getdescription());
+        getComment().setEntity(getEntity().getComment());
         setMemoryOverCommit(getEntity().getmax_vds_memory_over_commit());
 
         getCountThreadsAsCores().setEntity(getEntity().getCountThreadsAsCores());

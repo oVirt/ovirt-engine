@@ -15,7 +15,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 @ValidVdsGroup(groups = { CreateEntity.class })
-public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable {
+
+public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable, Commented {
 
     private static final long serialVersionUID = 5659359762655478095L;
 
@@ -32,6 +33,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String description;
+
+    private String comment;
 
     @Size(max = BusinessEntitiesDefinitions.CLUSTER_CPU_NAME_SIZE)
     private String cpu_name;
@@ -125,6 +128,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     public void setdescription(String value) {
         description = value;
+    }
+
+    public String getComment() {
+        return comment;
+    }
+
+    public void setComment(String value) {
+        comment = value;
     }
 
     public String getcpu_name() {
