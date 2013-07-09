@@ -226,6 +226,8 @@ public class GlusterHookResolveConflictsModel extends Model {
                 if ((Boolean) getResolveMissingConflictRemove().getEntity()) {
                     getResolveMissingConflictCopy().setEntity(Boolean.FALSE);
                 }
+
+                updateConflictActionsAvailability((Boolean) getResolveMissingConflictRemove().getEntity());
             }
         });
 
@@ -236,6 +238,13 @@ public class GlusterHookResolveConflictsModel extends Model {
         getResolveStatusConflictDisable().setEntity(Boolean.FALSE);
         getResolveMissingConflictCopy().setEntity(Boolean.TRUE);
         getResolveMissingConflictRemove().setEntity(Boolean.FALSE);
+    }
+
+    private void updateConflictActionsAvailability(boolean isRemove) {
+        getResolveContentConflict().setEntity(!isRemove);
+        getResolveContentConflict().setIsChangable(!isRemove);
+        getResolveStatusConflict().setEntity(!isRemove);
+        getResolveStatusConflict().setIsChangable(!isRemove);
     }
 
     private void onSelectedHookSourceChanged() {

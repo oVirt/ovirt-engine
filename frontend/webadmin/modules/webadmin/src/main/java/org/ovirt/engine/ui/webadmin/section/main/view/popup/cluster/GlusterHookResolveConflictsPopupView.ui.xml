@@ -76,9 +76,9 @@
 				<g:HorizontalPanel>
 					<g:Label ui:field="conflictReasonsLabel" addStyleNames="{style.sectionHeaderLabel}"/>
 					<g:VerticalPanel>
+						<g:Label ui:field="conflictReasonsMissingHookLabel" addStyleNames="{style.conflictReasonLabel}"/>
 						<g:Label ui:field="conflictReasonsContentDiffLabel" addStyleNames="{style.conflictReasonLabel}"/>
 						<g:Label ui:field="conflictReasonsStatusDiffLabel" addStyleNames="{style.conflictReasonLabel}"/>
-						<g:Label ui:field="conflictReasonsMissingHookLabel" addStyleNames="{style.conflictReasonLabel}"/>
 					</g:VerticalPanel>
 				</g:HorizontalPanel>
 
@@ -99,6 +99,14 @@
 				<g:VerticalPanel ui:field="resolvePanel">
 					<g:Label ui:field="resolveHeaderLabel" addStyleNames="{style.sectionHeaderLabel}"/>
 
+					<g:VerticalPanel ui:field="resolveMissingConflictPanel">
+						<e:EntityModelCheckBoxEditor ui:field="resolveMissingConflict"/>
+						<g:HorizontalPanel addStyleNames="{style.resolveConflictInternalPanel}">
+							<e:EntityModelRadioButtonEditor ui:field="resolveMissingConflictCopyEditor"/>
+							<e:EntityModelRadioButtonEditor ui:field="resolveMissingConflictRemoveEditor"/>
+						</g:HorizontalPanel>
+					</g:VerticalPanel>
+
 					<g:VerticalPanel ui:field="resolveContentConflictPanel">
 						<g:HorizontalPanel>
 							<e:EntityModelCheckBoxEditor ui:field="resolveContentConflict"/>
@@ -118,13 +126,6 @@
 						</g:HorizontalPanel>
 					</g:VerticalPanel>
 
-					<g:VerticalPanel ui:field="resolveMissingConflictPanel">
-						<e:EntityModelCheckBoxEditor ui:field="resolveMissingConflict"/>
-						<g:HorizontalPanel addStyleNames="{style.resolveConflictInternalPanel}">
-							<e:EntityModelRadioButtonEditor ui:field="resolveMissingConflictCopyEditor"/>
-							<e:EntityModelRadioButtonEditor ui:field="resolveMissingConflictRemoveEditor"/>
-						</g:HorizontalPanel>
-					</g:VerticalPanel>
 				</g:VerticalPanel>
 
 				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
