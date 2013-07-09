@@ -14,6 +14,9 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> extends AddVmCommand<T> {
@@ -41,6 +44,19 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         // if there are no tasks, we can end the command right away.
         if (getTaskIdList().isEmpty()) {
             endSuccessfully();
+        }
+        checkTrustedService();
+    }
+
+    private void checkTrustedService() {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.addCustomValue("VmName", getVmName());
+        logable.addCustomValue("VmTemplateName", getVmTemplateName());
+        if (getVmTemplate().isTrustedService() && !getVm().isTrustedService()) {
+            AuditLogDirector.log(logable, AuditLogType.USER_ADD_VM_FROM_TRUSTED_TO_UNTRUSTED);
+        }
+        else if (!getVmTemplate().isTrustedService() && getVm().isTrustedService()) {
+            AuditLogDirector.log(logable, AuditLogType.USER_ADD_VM_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }
 
