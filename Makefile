@@ -378,7 +378,6 @@ install-layout: \
 install_setup:
 	install -dm 755 "$(DESTDIR)$(DATA_DIR)/scripts"
 	install -dm 755 "$(DESTDIR)$(DATA_DIR)/scripts/plugins"
-	install -dm 755 "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
 
 	install -m 644 packaging/fedora/setup/nfsutils.py "$(DESTDIR)$(DATA_DIR)/scripts"
 	install -m 644 packaging/fedora/setup/basedefs.py "$(DESTDIR)$(DATA_DIR)/scripts"
@@ -404,15 +403,6 @@ install_setup:
 	install -m 755 packaging/fedora/setup/engine-upgrade.py "$(DESTDIR)$(DATA_DIR)/scripts"
 	ln -sf "$(DATA_DIR)/scripts/engine-upgrade.py" "$(DESTDIR)$(BIN_DIR)/engine-upgrade"
 	install -m 755 packaging/fedora/setup/engine-check-update "$(DESTDIR)$(BIN_DIR)"
-
-	# Task cleaner
-	install -dm 750 "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
-	install -m 750 backend/manager/tools/dbutils/common.sh "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
-	install -m 750 backend/manager/tools/dbutils/taskcleaner.sh "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
-	install -m 640 backend/manager/tools/dbutils/taskcleaner_sp.sql "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
-	install -m 750 backend/manager/tools/dbutils/fkvalidator.sh "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
-	install -m 640 backend/manager/tools/dbutils/fkvalidator_sp.sql "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
-	install -m 750 backend/manager/tools/dbutils/validatedb.sh "$(DESTDIR)$(DATA_DIR)/scripts/dbutils"
 
 	# Create a version file
 	echo "$(DISPLAY_VERSION)" > "$(DESTDIR)$(DATA_DIR)/conf/version"

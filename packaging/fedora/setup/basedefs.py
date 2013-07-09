@@ -214,7 +214,7 @@ EXEC_SEMANAGE="/usr/sbin/semanage"
 EXEC_FIREWALL_CMD = '/usr/bin/firewall-cmd'
 
 # DBUtils
-DIR_DBUTILS = "%s/ovirt-engine/scripts/dbutils" % DIR_USR_SHARE
+DIR_DBUTILS = "%s/ovirt-engine/setup/dbutils" % DIR_USR_SHARE
 EXEC_TASK_CLEANER = "%s/taskcleaner.sh" % DIR_DBUTILS
 EXEC_DBVALIDATOR = "%s/validatedb.sh" % DIR_DBUTILS
 

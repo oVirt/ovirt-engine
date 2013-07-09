@@ -790,15 +790,13 @@ fi
 # Log setup event script
 %{engine_data}/bin/ovirt-engine-log-setup-event.sh
 
-# DB-related tools
-%{engine_data}/scripts/dbutils
-
 # Setup
 %{engine_data}/setup/bin/ovirt-engine-setup
 %{engine_data}/setup/bin/ovirt-engine-remove
 %{engine_data}/setup/bin/ovirt-engine-setup.env
 %{engine_data}/setup/ovirt_engine_setup/*.py*
 %{engine_data}/setup/plugins/*/*/*.py*
+%{engine_data}/setup/dbutils
 
 # Firewalld configuration
 %{engine_data}/firewalld/base
