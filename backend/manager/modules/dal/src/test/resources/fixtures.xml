@@ -631,7 +631,7 @@
             <value>pc-1.0</value>
             <value>true</value>
         </row>
-		<row>
+        <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7d</value>
             <value>rhel6.nfs3</value>
             <null />
@@ -4975,6 +4975,51 @@
             <value>Service is stopped</value>
             <value>2012-12-28 09:27:18</value>
             <value>2012-12-31 11:54:27</value>
+        </row>
+    </table>
+
+    <table name="network_qos">
+        <column>id</column>
+        <column>name</column>
+        <column>storage_pool_id</column>
+        <column>inbound_average</column>
+        <column>inbound_peak</column>
+        <column>inbound_burst</column>
+        <column>outbound_average</column>
+        <column>outbound_peak</column>
+        <column>outbound_burst</column>
+        <row>
+            <value>ae956031-6be2-43d6-bb90-5191c9253314</value>
+            <value>qos_a</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <value>1000</value>
+            <value>2000</value>
+            <value>500</value>
+            <value>1000</value>
+            <value>2000</value>
+            <value>500</value>
+        </row>
+        <row>
+            <value>ae956031-6be2-43d6-bb90-5191c9253315</value>
+            <value>qos_b</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <value>1200</value>
+            <value>2400</value>
+            <value>500</value>
+            <value>1200</value>
+            <value>2400</value>
+            <value>500</value>
+        </row>
+        <row>
+            <value>ae956031-6be2-43d6-bb90-5191c9253316</value>
+            <value>qos_c</value>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <value>700</value>
+            <value>1400</value>
+            <value>500</value>
+            <value>700</value>
+            <value>1400</value>
+            <value>500</value>
         </row>
     </table>
 </dataset>

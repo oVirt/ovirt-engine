@@ -753,7 +753,16 @@ public enum AuditLogType {
     VDS_UNTRUSTED(10000, AuditLogTimeInterval.MINUTE.getValue()),
     // External tasks
     USER_ADD_EXTERNAL_JOB(11000),
-    USER_ADD_EXTERNAL_JOB_FAILED(11001);
+    USER_ADD_EXTERNAL_JOB_FAILED(11001),
+
+    //network Qos
+    USER_ADDED_NETWORK_QOS(10100),
+    USER_FAILED_TO_ADD_NETWORK_QOS(10101),
+    USER_REMOVED_NETWORK_QOS(10102),
+    USER_FAILED_TO_REMOVE_NETWORK_QOS(10103),
+    USER_UPDATED_NETWORK_QOS(10104),
+    USER_FAILED_TO_UPDATE_NETWORK_QOS(10105)
+    ;
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are supressed.

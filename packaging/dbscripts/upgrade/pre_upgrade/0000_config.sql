@@ -580,6 +580,12 @@ select fn_db_add_config_value('AttestationTruststorePass','password','general');
 select fn_db_add_config_value('AttestationServer','oat-server','general');
 select fn_db_add_config_value('AttestationFirstStageSize','10','general');
 
+select fn_db_add_config_value('MaxAverageNetworkQoSValue','1024','general');
+select fn_db_add_config_value('MaxPeakNetworkQoSValue','2048','general');
+select fn_db_add_config_value('MaxBurstNetworkQoSValue','10240','general');
+select fn_db_add_config_value('AverageToPeakRatio','2.0','general');
+select fn_db_add_config_value('AverageToBurstRatio','0.2','general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

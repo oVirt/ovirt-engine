@@ -46,6 +46,7 @@ public final class AuditLogDirector {
         initBookmarkSeverities();
         initVMSeverities();
         initQuotaSeverities();
+        initQoSSeverities();
         initTagSeverities();
         initClusterSeverities();
         initMLASeverities();
@@ -460,6 +461,15 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.QUOTA_STORAGE_RESIZE_LOWER_THEN_CONSUMPTION, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE, AuditLogSeverity.WARNING);
+    }
+
+    private static void initQoSSeverities() {
+        severities.put(AuditLogType.USER_ADDED_NETWORK_QOS, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_FAILED_TO_ADD_NETWORK_QOS, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.USER_REMOVED_NETWORK_QOS, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_FAILED_TO_REMOVE_NETWORK_QOS, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.USER_UPDATED_NETWORK_QOS, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_FAILED_TO_UPDATE_NETWORK_QOS, AuditLogSeverity.ERROR);
     }
 
     private static void initVMSeverities() {

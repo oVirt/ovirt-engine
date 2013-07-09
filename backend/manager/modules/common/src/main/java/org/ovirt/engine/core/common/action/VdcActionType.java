@@ -262,6 +262,9 @@ public enum VdcActionType {
     UpdateWatchdog(1701, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
     RemoveWatchdog(1702, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
 
+    AddNetworkQoS(1750, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
+    UpdateNetworkQoS(1751, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
+    RemoveNetworkQoS(1752, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
 
     // External Tasks
     AddExternalJob(1800, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE),

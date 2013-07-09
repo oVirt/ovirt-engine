@@ -93,7 +93,9 @@ public enum ConfigurationValues {
     MultipleGatewaysSupported,
     VirtIoScsiEnabled(ConfigAuthType.User),
     SshSoftFencingCommand,
-    MemorySnapshotSupported(ConfigAuthType.User)
+    MemorySnapshotSupported(ConfigAuthType.User),
+    AverageToPeakRatio,
+    AverageToBurstRatio
     ;
 
     public static enum ConfigAuthType {

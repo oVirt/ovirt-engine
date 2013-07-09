@@ -1432,6 +1432,26 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     ClusterEmulatedMachines(516),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1024")
+    MaxAverageNetworkQoSValue(517),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("2048")
+    MaxPeakNetworkQoSValue(518),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10240")
+    MaxBurstNetworkQoSValue(519),
+
+    @TypeConverterAttribute(Double.class)
+    @DefaultValueAttribute("2.0")
+    AverageToPeakRatio(520),
+
+    @TypeConverterAttribute(Double.class)
+    @DefaultValueAttribute("0.2")
+    AverageToBurstRatio(521),
+
     Invalid(65535);
 
     private int intValue;
