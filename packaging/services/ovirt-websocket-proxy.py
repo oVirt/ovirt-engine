@@ -144,6 +144,10 @@ class Daemon(service.Daemon):
             pidfile=self.pidfile,
         )
 
+    def daemonStdHandles(self):
+        consoleLog = open(os.devnull, 'w+')
+        return (consoleLog, consoleLog)
+
     def daemonContext(self):
         #
         # WORKAROUND-BEGIN
