@@ -105,10 +105,6 @@ public class GlusterServerService extends IVdcQueryable implements BusinessEntit
         this.serviceId = serviceId;
     }
 
-    public static void main(String[] args) {
-        System.out.println(Guid.newGuid());
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof GlusterServerService)) {
