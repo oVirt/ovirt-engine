@@ -98,16 +98,17 @@ def cleanNfsExports(comment, exportFilePath=basedefs.FILE_ETC_EXPORTS):
         comment = "#%s" % comment
     removed_exports = []
     new_lines = []
-    with open(exportFilePath, "r") as exportFile:
-        lines = exportFile.readlines()
-        for line in lines:
-            if comment in line or "#rhev installer" in line:
-                logging.debug("removing %s from %s" % (line, exportFilePath))
-                path = line.split("\t")[0]
-                removed_exports.append(path)
-                continue
-            else:
-                new_lines.append(line)
+    if os.path.exists(exportFilePath):
+        with open(exportFilePath, "r") as exportFile:
+            lines = exportFile.readlines()
+            for line in lines:
+                if comment in line or "#rhev installer" in line:
+                    logging.debug("removing %s from %s" % (line, exportFilePath))
+                    path = line.split("\t")[0]
+                    removed_exports.append(path)
+                    continue
+                else:
+                    new_lines.append(line)
     if len(removed_exports) == 0:
         # Unchanged
         return removed_exports
