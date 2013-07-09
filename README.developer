@@ -166,7 +166,7 @@ Press <Ctrl>-C to stop service.
 
 Access using HTTP or HTTPS:
  - http://<server>:8080
- - http://<server>:8443
+ - https://<server>:8443
 
 Debug port is available at 127.0.0.1:8787
 
