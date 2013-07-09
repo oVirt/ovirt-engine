@@ -383,6 +383,7 @@ Group: Virtualization/Management
 Requires: %{name}-setup
 Requires: %{name}-sdk >= 3.1.0.6
 Requires: openssh-server
+Requires: ovirt-host-deploy >= 1.1.0
 Requires: ovirt-host-deploy-offline >= 1.1.0
 Requires: vdsm
 

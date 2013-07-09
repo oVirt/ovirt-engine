@@ -28,9 +28,6 @@ from otopi import util
 from otopi import plugin
 
 
-from ovirt_host_deploy import hardware
-
-
 from ovirt_engine_setup import constants as osetupcons
 
 
@@ -106,6 +103,7 @@ class Plugin(plugin.PluginBase):
         priority=plugin.Stages.PRIORITY_HIGH,
     )
     def _setup(self):
+        from ovirt_host_deploy import hardware
         virtualization = hardware.Virtualization()
         result = virtualization.detect()
         if result == virtualization.DETECT_RESULT_UNSUPPORTED:
