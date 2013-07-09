@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateCommand<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
@@ -105,7 +105,19 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             getVmStaticDAO().incrementDbGeneration(getVmTemplate().getId());
             UpdateVmTemplate();
             updateWatchdog();
+            checkTrustedService();
             setSucceeded(true);
+        }
+    }
+
+    private void checkTrustedService() {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.addCustomValue("VmTemplateName", getVmTemplateName());
+        if (getVmTemplate().isTrustedService() && !getVdsGroup().supportsTrustedService()) {
+            AuditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
+        }
+        else if (!getVmTemplate().isTrustedService() && getVdsGroup().supportsTrustedService()) {
+            AuditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }
 

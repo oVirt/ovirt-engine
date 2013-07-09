@@ -51,6 +51,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -277,8 +279,19 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         if (!doesVmTemplateContainImages) {
             endMoveOrCopyCommand();
         }
-
+        checkTrustedService();
         setSucceeded(success);
+    }
+
+    private void checkTrustedService() {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.addCustomValue("VmTemplateName", getVmTemplateName());
+        if (getVmTemplate().isTrustedService() && !getVdsGroup().supportsTrustedService()) {
+            AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
+        }
+        else if (!getVmTemplate().isTrustedService() && getVdsGroup().supportsTrustedService()) {
+            AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
+        }
     }
 
     @Override

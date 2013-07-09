@@ -56,6 +56,8 @@ import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -469,7 +471,20 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         if (reloadVmTemplateFromDB() != null) {
             endDefaultOperations();
         }
+        checkTrustedService();
         setSucceeded(true);
+    }
+
+    private void checkTrustedService() {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.addCustomValue("VmName", getVmName());
+        logable.addCustomValue("VmTemplateName", getVmTemplateName());
+        if (getVm().isTrustedService() && !getVmTemplate().isTrustedService()) {
+            AuditLogDirector.log(logable, AuditLogType.USER_ADD_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
+        }
+        else if (!getVm().isTrustedService() && getVmTemplate().isTrustedService()) {
+            AuditLogDirector.log(logable, AuditLogType.USER_ADD_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
+        }
     }
 
     private void endSuccessfullySynchronous() {

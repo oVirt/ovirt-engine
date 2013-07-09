@@ -633,6 +633,10 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.HA_VM_RESTART_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_FAILED_ATTACH_DISK_TO_VM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.WATCHDOG_EVENT, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.USER_ADD_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.USER_ADD_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED, AuditLogSeverity.WARNING);
     }
 
     private static void initClusterSeverities() {
@@ -645,6 +649,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.SYSTEM_UPDATE_VDS_GROUP, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.SYSTEM_UPDATE_VDS_GROUP_FAILED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_UPDATE_VM_CLUSTER_DEFAULT_HOST_CLEARED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED, AuditLogSeverity.WARNING);
     }
 
     private static void initTagSeverities() {
