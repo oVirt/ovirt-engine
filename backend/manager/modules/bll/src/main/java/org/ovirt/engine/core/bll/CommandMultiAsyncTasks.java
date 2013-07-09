@@ -55,13 +55,19 @@ public class CommandMultiAsyncTasks {
             java.util.ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
 
             for (CommandAsyncTask task : CurrentActionTypeTasks) {
-                if (task.getState() != AsyncTaskState.Ended) {
-                    log.infoFormat("Task ID: '{0}' is in state {1}. End action for command {2} will proceed when all the entity's tasks are completed.",
+                // Check this is a task that is run on VDSM and is not in ENDED state.
+                if (task.getState() != AsyncTaskState.Ended && !Guid.isNullOrEmpty(task.getVdsmTaskId())) {
+                    log.infoFormat("Task with DB Task ID '{0}' and VDSM Task ID '{1}' is in state {2}. End action for command {3} will proceed when all the entity's tasks are completed.",
+                            task.getParameters().getDbAsyncTask().getTaskId(),
                             task.getVdsmTaskId(),
                             task.getState(),
                             getCommandId());
                     return false;
+                } else if (Guid.isNullOrEmpty(task.getVdsmTaskId())) {
+                    log.infoFormat("task with DB task ID '{0}' has  empty vdsm  task ID and is about to be cleared",
+                            task.getVdsmTaskId());
                 }
+
             }
         }
 

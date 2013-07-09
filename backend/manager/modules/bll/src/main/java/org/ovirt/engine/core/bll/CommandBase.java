@@ -378,7 +378,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private void clearAsyncTasksWithOutVdsmId() {
         for (Guid asyncTaskId : getReturnValue().getTaskPlaceHolderIdList()) {
             AsyncTasks task = getAsyncTaskDao().get(asyncTaskId);
-            if (Guid.isNullOrEmpty(task.getVdsmTaskId())) {
+            if (task != null && Guid.isNullOrEmpty(task.getVdsmTaskId())) {
                 AsyncTaskManager.removeTaskFromDbByTaskId(task.getTaskId());
             }
         }
@@ -1371,7 +1371,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         Guid taskId = Guid.Empty;
         try {
-            AsyncTasks task = createAsyncTask(new AsyncTaskCreationInfo(), parentCommand);
+            AsyncTaskCreationInfo creationInfo = new AsyncTaskCreationInfo();
+            creationInfo.setTaskType(getTaskType());
+            AsyncTasks task = createAsyncTask(creationInfo, parentCommand);
             taskId = task.getTaskId();
             getAsyncTaskDao().save(task);
             taskKeyToTaskIdMap.put(taskKey, taskId);

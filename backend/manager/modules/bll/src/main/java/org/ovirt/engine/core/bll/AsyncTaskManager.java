@@ -280,13 +280,19 @@ public final class AsyncTaskManager {
                 new TransactionMethod<Void>() {
                     @Override
                     public Void runInTransaction() {
-                        logAndFailTaskOfCommandWithEmptyVdsmId(task);
+                        logAndFailTaskOfCommandWithEmptyVdsmId(task,
+                                "Engine was restarted before all tasks of the command could be submitted to vdsm.");
                         return null;
                     }
                 });
     }
 
-    private static void logAndFailTaskOfCommandWithEmptyVdsmId(final AsyncTasks task) {
+    public static void logAndFailTaskOfCommandWithEmptyVdsmId(Guid asyncTaskId, String message) {
+        AsyncTasks task = DbFacade.getInstance().getAsyncTaskDao().get(asyncTaskId);
+        logAndFailTaskOfCommandWithEmptyVdsmId(task, message);
+    }
+
+    public static void logAndFailTaskOfCommandWithEmptyVdsmId(final AsyncTasks task, String message) {
         log.infoFormat(
                 "Failing task with empty vdsm id AsyncTaskType {0} : Task '{1}' Parent Command {2}",
                 task.getTaskType(),
@@ -310,7 +316,7 @@ public final class AsyncTaskManager {
         AsyncTaskStatus failureStatus = new AsyncTaskStatus();
         failureStatus.setStatus(AsyncTaskStatusEnum.finished);
         failureStatus.setResult(AsyncTaskResultEnum.failure);
-        failureStatus.setMessage("Engine was restarted before all tasks of the command could be submitted to vdsm.");
+        failureStatus.setMessage(message);
         spmTask.setState(AsyncTaskState.Ended);
         spmTask.setLastTaskStatus(failureStatus);
         spmTask.UpdateTask(failureStatus);
@@ -785,4 +791,5 @@ public final class AsyncTaskManager {
 
         return false;
     }
+
 }
