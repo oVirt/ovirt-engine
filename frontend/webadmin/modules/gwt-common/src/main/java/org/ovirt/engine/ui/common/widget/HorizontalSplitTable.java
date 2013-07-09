@@ -70,8 +70,7 @@ public class HorizontalSplitTable extends Composite {
     }
 
     private void addSelectionHandler(final Button button) {
-        final MultiSelectionModel<EntityModel> selectionModel =
-                (button == downButton) ? topSelectionModel : bottomSelectionModel;
+        final MultiSelectionModel<EntityModel> selectionModel = getSelectionModelForButton(button);
         selectionModel.addSelectionChangeHandler(new Handler() {
 
             @Override
