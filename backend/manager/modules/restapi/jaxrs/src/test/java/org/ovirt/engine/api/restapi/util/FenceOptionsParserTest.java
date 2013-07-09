@@ -91,32 +91,19 @@ public class FenceOptionsParserTest extends Assert {
         verifyResult(ret.get(0), "foo");
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testParseMissingType() {
-        try {
-            parse("foo:one=1", "two=int");
-            fail("expected IllegalArgumentException");
-        } catch (IllegalArgumentException iae) {
-            System.out.println(iae);
-        }
+        parse("foo:one=1", "two=int");
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testParseStrayColons() {
-        try {
-            parse("foo:::one=1,two=2,three=3", "one=bool,two=int,three=bool");
-            fail("expected IllegalArgumentException");
-        } catch (IllegalArgumentException iae) {
-        }
+        parse("foo:::one=1,two=2,three=3", "one=bool,two=int,three=bool");
     }
 
-    @Test
+    @Test(expected = IllegalArgumentException.class)
     public void testParseInvalidOption() {
-        try {
-            parse("foo:one=1,two=2,three", "one=bool,two=int,three=bool");
-            fail("expected IllegalArgumentException");
-        } catch (IllegalArgumentException iae) {
-        }
+        parse("foo:one=1,two=2,three", "one=bool,two=int,three=bool");
     }
 
     private void verifyResult(PowerManagement result, String type, String... options) {
