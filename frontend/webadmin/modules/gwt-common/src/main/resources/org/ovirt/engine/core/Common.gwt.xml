@@ -173,7 +173,6 @@
 		<include name="common/utils/VmDeviceType.java" />
 		<include name="common/utils/Pair.java" />
 		<include name="common/utils/PairQueryable.java" />
-		<include name="common/interfaces/IVdcUser.java" />
 		<include name="common/VdcObjectType.java" />
 		<include name="common/TimeZoneType.java" />
         <include name="common/osinfo/OsRepository.java"/>

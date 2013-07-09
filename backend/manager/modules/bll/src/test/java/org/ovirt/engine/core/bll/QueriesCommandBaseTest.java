@@ -12,9 +12,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
@@ -85,7 +85,7 @@ public class QueriesCommandBaseTest {
                         Guid guid = mock(Guid.class);
 
                         // Set up the user id env.
-                        IVdcUser user = mock(IVdcUser.class);
+                        VdcUser user = mock(VdcUser.class);
                         when(user.getUserId()).thenReturn(guid);
                         when(user.isAdmin()).thenReturn(isUserAdmin);
                         ThreadLocalParamsContainer.setHttpSessionId(sessionId);
@@ -113,7 +113,7 @@ public class QueriesCommandBaseTest {
 
     @Test
     public void testGetUserID() {
-        IVdcUser user = mock(IVdcUser.class);
+        VdcUser user = mock(VdcUser.class);
         when(user.getUserId()).thenReturn(Guid.EVERYONE);
 
         ThreadLocalParamsContainer.setVdcUser(user);

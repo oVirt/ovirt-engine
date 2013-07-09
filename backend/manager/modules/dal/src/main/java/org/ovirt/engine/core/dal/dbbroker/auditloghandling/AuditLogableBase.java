@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AdGroupDAO;
@@ -49,7 +49,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class AuditLogableBase extends TimeoutBase {
     private static final long serialVersionUID = -4764813076922800727L;
     private Guid mVmId = Guid.Empty;
-    private IVdcUser mVdcUser;
+    private VdcUser mVdcUser;
     private Guid mUserId = Guid.Empty;
     private String mUserName;
     private String mVmName;
@@ -142,11 +142,11 @@ public class AuditLogableBase extends TimeoutBase {
         mUserName = value;
     }
 
-    public IVdcUser getCurrentUser() {
+    public VdcUser getCurrentUser() {
         return mVdcUser;
     }
 
-    public void setCurrentUser(final IVdcUser value) {
+    public void setCurrentUser(final VdcUser value) {
         mVdcUser = value;
     }
 

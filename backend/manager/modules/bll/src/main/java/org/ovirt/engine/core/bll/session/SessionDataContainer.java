@@ -5,7 +5,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 
@@ -164,8 +164,8 @@ public class SessionDataContainer {
      * @param sessionId
      *            -id of session
      */
-    public IVdcUser addUserToThreadContext(String sessionId, boolean refresh) {
-        IVdcUser vdcUser = ThreadLocalParamsContainer.getVdcUser();
+    public VdcUser addUserToThreadContext(String sessionId, boolean refresh) {
+        VdcUser vdcUser = ThreadLocalParamsContainer.getVdcUser();
         if (vdcUser == null) {
             if (!StringUtils.isEmpty(sessionId)) {
                 vdcUser = getUser(sessionId, refresh);
@@ -183,7 +183,7 @@ public class SessionDataContainer {
      * @param sessionId The session to set
      * @param user The user to set
      */
-    public final void setUser(String sessionId, IVdcUser user) {
+    public final void setUser(String sessionId, VdcUser user) {
         SetData(sessionId, VDC_USER_PARAMETER_NAME, user);
     }
 
@@ -191,7 +191,7 @@ public class SessionDataContainer {
      * Sets the user for the current session
      * @param user The user to set
      */
-    public final boolean setUser(IVdcUser user) {
+    public final boolean setUser(VdcUser user) {
         return SetData(VDC_USER_PARAMETER_NAME, user);
     }
 
@@ -200,12 +200,12 @@ public class SessionDataContainer {
      * @param refresh Whether refreshing the session is needed
      * @return The user set for the given {@link #session}
      */
-    public IVdcUser getUser(String sessionId, boolean refresh) {
-        return (IVdcUser) GetData(sessionId, VDC_USER_PARAMETER_NAME, refresh);
+    public VdcUser getUser(String sessionId, boolean refresh) {
+        return (VdcUser) GetData(sessionId, VDC_USER_PARAMETER_NAME, refresh);
     }
 
     /** @return The user set in the current session */
-    public IVdcUser getUser(boolean refresh) {
-        return (IVdcUser) GetData(VDC_USER_PARAMETER_NAME, refresh);
+    public VdcUser getUser(boolean refresh) {
+        return (VdcUser) GetData(VDC_USER_PARAMETER_NAME, refresh);
     }
 }

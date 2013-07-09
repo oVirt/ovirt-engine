@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -48,7 +48,7 @@ public class ThreadPoolUtil {
     private static class InternalWrapperRunnable implements Runnable {
 
         private Runnable job;
-        private IVdcUser vdcUser;
+        private VdcUser vdcUser;
         private String httpSessionId;
 
         /**
@@ -56,7 +56,7 @@ public class ThreadPoolUtil {
          */
         private String correlationId;
 
-        public InternalWrapperRunnable(Runnable job, IVdcUser vdcUser, String httpSessionId, String correlationId) {
+        public InternalWrapperRunnable(Runnable job, VdcUser vdcUser, String httpSessionId, String correlationId) {
             this.job = job;
             this.vdcUser = vdcUser;
             this.httpSessionId = httpSessionId;
@@ -76,7 +76,7 @@ public class ThreadPoolUtil {
     private static class InternalCallable<V> implements Callable<V> {
 
         private Callable<V> job;
-        private IVdcUser vdcUser;
+        private VdcUser vdcUser;
         private String httpSessionId;
 
         /**

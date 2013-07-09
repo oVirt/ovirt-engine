@@ -10,7 +10,7 @@ import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.LdapGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -32,7 +32,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     }
 
     protected void initCredentials(String domain) {
-        IVdcUser curUser;
+        VdcUser curUser;
         if (StringUtils.isEmpty(getParameters().getSessionId())) {
             curUser = SessionDataContainer.getInstance().getUser(false);
         } else {

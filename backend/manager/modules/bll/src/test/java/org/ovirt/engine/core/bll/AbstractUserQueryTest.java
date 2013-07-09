@@ -8,15 +8,15 @@ import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
 /** An abstract test class for query classes that handles common mocking requirements */
 public abstract class AbstractUserQueryTest<P extends VdcQueryParametersBase, Q extends QueriesCommandBase<? extends P>>
         extends AbstractQueryTest<P, Q> {
 
-    private IVdcUser user;
+    private VdcUser user;
     private Guid userID;
 
     @Before
@@ -31,7 +31,7 @@ public abstract class AbstractUserQueryTest<P extends VdcQueryParametersBase, Q 
     /** Sets up a mock for {@link #user} */
     private void setUpMockUser() {
         userID = new Guid(UUID.randomUUID());
-        user = mock(IVdcUser.class);
+        user = mock(VdcUser.class);
         when(user.getUserId()).thenReturn(userID);
     }
 
@@ -48,7 +48,7 @@ public abstract class AbstractUserQueryTest<P extends VdcQueryParametersBase, Q 
     }
 
     /** @return The mocked user to use in the test */
-    protected IVdcUser getUser() {
+    protected VdcUser getUser() {
         return user;
     }
 

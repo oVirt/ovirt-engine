@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -158,25 +157,25 @@ public class AuditLogableBaseTest {
     @Test
     public void currentUserDefault() {
         final AuditLogableBase b = new AuditLogableBase();
-        final IVdcUser u = b.getCurrentUser();
+        final VdcUser u = b.getCurrentUser();
         assertNull(u);
     }
 
     @Test
     public void currentUserNull() {
         final AuditLogableBase b = new AuditLogableBase();
-        final IVdcUser u = null;
+        final VdcUser u = null;
         b.setCurrentUser(u);
-        final IVdcUser cu = b.getCurrentUser();
+        final VdcUser cu = b.getCurrentUser();
         assertEquals(u, cu);
     }
 
     @Test
     public void currentUser() {
         final AuditLogableBase b = new AuditLogableBase();
-        final IVdcUser u = new VdcUser();
+        final VdcUser u = new VdcUser();
         b.setCurrentUser(u);
-        final IVdcUser cu = b.getCurrentUser();
+        final VdcUser cu = b.getCurrentUser();
         assertEquals(u, cu);
     }
 

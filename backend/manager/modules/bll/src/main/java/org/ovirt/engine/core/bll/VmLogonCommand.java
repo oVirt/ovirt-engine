@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmLogonVDSCommandParameters;
 
@@ -39,7 +39,7 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
         final VM vm = getVm();
 
         // Send the log on command to the virtual machine:
-        final IVdcUser currentUser = getCurrentUser();
+        final VdcUser currentUser = getCurrentUser();
         final String domainController = currentUser != null ? currentUser.getDomainControler() : "";
         final String password = currentUser != null ? currentUser.getPassword() : "";
         final boolean sentToVM = Backend

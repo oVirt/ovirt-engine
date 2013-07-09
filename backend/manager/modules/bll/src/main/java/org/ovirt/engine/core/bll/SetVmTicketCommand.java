@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -119,7 +119,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         // Update the dynamic information of the virtual machine in memory (we need it
         // to update the database later):
         final VM vm = getVm();
-        final IVdcUser user = getCurrentUser();
+        final VdcUser user = getCurrentUser();
         vm.setConsoleUserId(user.getUserId());
         vm.setConsoleCurrentUserName(user.getFQN());
 
@@ -160,7 +160,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     private void dontSendTicket() {
         // Send messages to the log explaining the situation:
         final VM vm = getVm();
-        final IVdcUser user = getCurrentUser();
+        final VdcUser user = getCurrentUser();
         log.warnFormat("Can't give console of virtual machine \"{0}\" to user \"{1}\", it has probably been taken by another user.", vm.getId(), user.getUserId());
 
         // Set the result messages indicating that the operation failed:
@@ -176,7 +176,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
      */
     private void sendTicket() {
         // Send the ticket to the virtual machine:
-        final IVdcUser user = getCurrentUser();
+        final VdcUser user = getCurrentUser();
         final boolean sent = Backend
             .getInstance()
             .getResourceManager()

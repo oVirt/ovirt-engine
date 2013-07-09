@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.common.users;
 
+import java.io.Serializable;
+
 import org.ovirt.engine.core.common.businessentities.LdapUser;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VdcUser implements IVdcUser {
+public class VdcUser implements Serializable {
     private static final long serialVersionUID = -5689096270467866486L;
 
     private Guid mUserId = Guid.Empty;
@@ -14,12 +15,10 @@ public class VdcUser implements IVdcUser {
     private String mGroupNames;
     private String groupIds;
 
-    @Override
     public String getGroupIds() {
         return groupIds;
     }
 
-    @Override
     public void setGroupIds(String groupIds) {
         this.groupIds = groupIds;
     }
@@ -53,82 +52,66 @@ public class VdcUser implements IVdcUser {
         mDomainControler = domain;
     }
 
-    @Override
     public String getUserName() {
         return mUserName;
     }
 
-    @Override
     public void setUserName(String value) {
         mUserName = value;
     }
 
-    @Override
     public String getPassword() {
         return mPassword;
     }
 
-    @Override
     public void setPassword(String value) {
         mPassword = value;
     }
 
-    @Override
     public Guid getUserId() {
         return mUserId;
     }
 
-    @Override
     public void setUserId(Guid value) {
         mUserId = value;
     }
 
-    @Override
     public String getDomainControler() {
         return mDomainControler;
     }
 
-    @Override
     public void setDomainControler(String value) {
         mDomainControler = value;
     }
 
-    @Override
     public String getGroupNames() {
         return mGroupNames;
     }
 
-    @Override
     public void setGroupNames(String value) {
         mGroupNames = value;
     }
 
-    @Override
     public String getFirstName() {
         return mFirstName;
     }
 
-    @Override
     public void setFirstName(String value) {
         mFirstName = value;
     }
 
-    @Override
     public String getSurName() {
         return mSurName;
     }
 
-    @Override
     public void setSurName(String value) {
         mSurName = value;
     }
 
-    @Override
     public boolean isAdmin() {
         return mIsAdmin;
     }
 
-    @Override
     public void setAdmin(boolean isAdmin) {
         this.mIsAdmin = isAdmin;
     }
@@ -136,7 +119,6 @@ public class VdcUser implements IVdcUser {
     /**
      * return the FQDN of a user in a form of user@domain. if the domain is empty then only return the username
      */
-    @Override
     public String getFQN() {
         String domain = getDomainControler();
         String username = getUserName();

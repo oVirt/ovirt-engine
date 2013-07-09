@@ -9,10 +9,10 @@ import javax.validation.Validator;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcCommandBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -30,7 +30,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     // get correct return value type
     private final VdcQueryReturnValue returnValue;
     private final VdcQueryType queryType;
-    private final IVdcUser user;
+    private final VdcUser user;
     private final P parameters;
     private boolean isInternalExecution = false;
 
@@ -51,7 +51,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         }
     }
 
-    private final IVdcUser initUser() {
+    private final VdcUser initUser() {
         return SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId(),
                 parameters.getRefresh());
     }
@@ -165,7 +165,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         this.isInternalExecution = isInternalExecution;
     }
 
-    protected IVdcUser getUser() {
+    protected VdcUser getUser() {
         return user;
     }
 

@@ -11,7 +11,7 @@ import static org.mockito.Mockito.spy;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
 /**
@@ -80,7 +80,7 @@ public class SessionDataContainerTest {
 
     @Test
     public void testGetUserAndSetUserWithSessionParam() {
-        IVdcUser user = mock(IVdcUser.class);
+        VdcUser user = mock(VdcUser.class);
         container.setUser(TEST_SESSION_ID, user);
         assertEquals("Get should return the value with a given session",
                 user,
@@ -90,7 +90,7 @@ public class SessionDataContainerTest {
     @Test
     public void testGetUserAndSetUserWithoutSessionParam() {
         ThreadLocalParamsContainer.setHttpSessionId(TEST_SESSION_ID);
-        IVdcUser user = mock(IVdcUser.class);
+        VdcUser user = mock(VdcUser.class);
         container.setUser(user);
         assertEquals("Get should return the value with a given session",
                 user,
@@ -182,7 +182,7 @@ public class SessionDataContainerTest {
 
     /** Initializes the {@link #key} data */
     private void initDataForClearTest(String key) {
-        container.SetData(TEST_SESSION_ID, key, mock(IVdcUser.class));
+        container.SetData(TEST_SESSION_ID, key, mock(VdcUser.class));
     }
 
     @Test

@@ -1,11 +1,11 @@
 package org.ovirt.engine.core.utils;
 
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
+import org.ovirt.engine.core.common.users.VdcUser;
 
 public class ThreadLocalParamsContainer {
 
     private static ThreadLocal<String> httpSessionId = new ThreadLocal<String>();
-    private static ThreadLocal<IVdcUser> vdcUserKeeper = new ThreadLocal<IVdcUser>();
+    private static ThreadLocal<VdcUser> vdcUserKeeper = new ThreadLocal<VdcUser>();
 
     /**
      * Identifies the correlation-id associated with the current thread
@@ -20,11 +20,11 @@ public class ThreadLocalParamsContainer {
         return httpSessionId.get();
     }
 
-    public static void setVdcUser(IVdcUser vdcUser) {
+    public static void setVdcUser(VdcUser vdcUser) {
         vdcUserKeeper.set(vdcUser);
     }
 
-    public static IVdcUser getVdcUser() {
+    public static VdcUser getVdcUser() {
         return vdcUserKeeper.get();
     }
 

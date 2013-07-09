@@ -10,9 +10,9 @@ import org.apache.commons.lang.RandomStringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.users.VdcUser;
 
 /** A test case for the {@link Backend} class */
 public class BackendTest {
@@ -25,7 +25,7 @@ public class BackendTest {
     @Before
     public void setUp() {
         sessionIdToUse = RandomStringUtils.random(10);
-        SessionDataContainer.getInstance().setUser(sessionIdToUse, mock(IVdcUser.class));
+        SessionDataContainer.getInstance().setUser(sessionIdToUse, mock(VdcUser.class));
 
         parameters = mock(VdcQueryParametersBase.class);
         when(parameters.getHttpSessionId()).thenReturn(sessionIdToUse);

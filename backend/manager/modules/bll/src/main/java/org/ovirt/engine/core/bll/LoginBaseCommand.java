@@ -23,7 +23,6 @@ import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -139,7 +138,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     protected boolean isUserCanBeAuthenticated() {
         boolean authenticated = false;
-        IVdcUser vdcUser = SessionDataContainer.getInstance().getUser(false);
+        VdcUser vdcUser = SessionDataContainer.getInstance().getUser(false);
         if (vdcUser == null) {
             boolean domainFound = false;
             List<String> vdcDomains = LdapBrokerUtils.getDomainsList();

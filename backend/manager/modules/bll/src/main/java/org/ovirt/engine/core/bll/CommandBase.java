@@ -63,10 +63,10 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
-import org.ovirt.engine.core.common.interfaces.IVdcUser;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
@@ -170,7 +170,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected CommandBase(T parameters) {
         _parameters = parameters;
         // get the user from the session if the user is logged in
-        IVdcUser user = SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId(), true);
+        VdcUser user = SessionDataContainer.getInstance().addUserToThreadContext(parameters.getSessionId(), true);
         if (user != null) {
             setCurrentUser(user);
         } else
