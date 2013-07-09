@@ -132,6 +132,9 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             log.errorFormat(
                     "CreateSnapshotCommand::CreateSnapshotInIrsServer::Failed creating snapshot from image id -'{0}'",
                     getImage().getImageId());
+
+            AsyncTaskManager.logAndFailTaskOfCommandWithEmptyVdsmId(getAsyncTaskId(),
+                    "Create snapshot failed at VDSM. DB task ID is " + getAsyncTaskId());
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
         }
 
