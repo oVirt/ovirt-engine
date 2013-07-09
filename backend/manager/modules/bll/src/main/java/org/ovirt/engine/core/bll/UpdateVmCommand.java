@@ -47,7 +47,7 @@ import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils.VMCustomProperties;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 @LockIdNameAttribute
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
@@ -86,7 +86,19 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         updateVmPayload();
         VmDeviceUtils.updateVmDevices(getParameters(), oldVm);
         updateWatchdog();
+        checkTrustedService();
         setSucceeded(true);
+    }
+
+    private void checkTrustedService() {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.addCustomValue("VmName", getVmName());
+        if (getParameters().getVm().isTrustedService() && !getVdsGroup().supportsTrustedService()) {
+            AuditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_FROM_TRUSTED_TO_UNTRUSTED);
+        }
+        else if (!getParameters().getVm().isTrustedService() && getVdsGroup().supportsTrustedService()) {
+            AuditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_FROM_UNTRUSTED_TO_TRUSTED);
+        }
     }
 
     private void updateWatchdog() {

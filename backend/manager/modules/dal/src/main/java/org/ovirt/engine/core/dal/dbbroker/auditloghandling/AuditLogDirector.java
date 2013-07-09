@@ -639,6 +639,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.USER_ADD_VM_FROM_TRUSTED_TO_UNTRUSTED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.USER_ADD_VM_FROM_UNTRUSTED_TO_TRUSTED, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.USER_UPDATE_VM_FROM_TRUSTED_TO_UNTRUSTED, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.USER_UPDATE_VM_FROM_UNTRUSTED_TO_TRUSTED, AuditLogSeverity.WARNING);
     }
 
     private static void initClusterSeverities() {
