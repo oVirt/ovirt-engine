@@ -1082,8 +1082,20 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     @Override
     protected void endSuccessfully() {
+        checkTrustedService();
         endImportCommand();
     }
+
+    private void checkTrustedService() {
+        AuditLogableBase logable = new AuditLogableBase();
+        logable.addCustomValue("VmName", getVmName());
+        if (getVm().isTrustedService() && !getVdsGroup().supportsTrustedService()) {
+            AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_TRUSTED_TO_UNTRUSTED);
+        }
+        else if (!getVm().isTrustedService() && getVdsGroup().supportsTrustedService()) {
+            AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_UNTRUSTED_TO_TRUSTED);
+        }
+     }
 
     @Override
     protected void endActionOnAllImageGroups() {

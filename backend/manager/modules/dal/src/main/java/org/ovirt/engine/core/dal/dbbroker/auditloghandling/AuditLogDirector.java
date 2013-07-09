@@ -653,6 +653,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_UPDATE_VM_CLUSTER_DEFAULT_HOST_CLEARED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_TRUSTED_TO_UNTRUSTED, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_UNTRUSTED_TO_TRUSTED, AuditLogSeverity.WARNING);
     }
 
     private static void initTagSeverities() {
