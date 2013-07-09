@@ -195,6 +195,7 @@ public final class Cloner
         vm.setVmPoolName(instance.getVmPoolName());
         vm.setVmtGuid(instance.getVmtGuid());
         vm.setVmtName(instance.getVmtName());
+        vm.setCreatedByUserId(instance.getCreatedByUserId());
 
         return vm;
     }

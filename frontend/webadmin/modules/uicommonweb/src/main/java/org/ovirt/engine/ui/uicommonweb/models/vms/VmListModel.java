@@ -1979,6 +1979,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setCpuPinning((String) model.getCpuPinning()
                 .getEntity());
         getcurrentVm().setVncKeyboardLayout((String) model.getVncKeyboardLayout().getSelectedItem());
+        // explicitly pass non-editable field from the original VM
+        getcurrentVm().setCreatedByUserId(selectedItem.getCreatedByUserId());
 
         if ((Boolean) model.getIsAutoAssign().getEntity()) {
             getcurrentVm().setDedicatedVmForVds(null);

@@ -464,6 +464,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         template.setKernelParams((String) model.getKernel_parameters().getEntity());
         template.setInitrdUrl((String) model.getInitrd_path().getEntity());
         template.setVncKeyboardLayout((String) model.getVncKeyboardLayout().getSelectedItem());
+        template.setCreatedByUserId(selectedItem.getCreatedByUserId());
 
         if (model.getQuota().getIsAvailable() && model.getQuota().getSelectedItem() != null) {
             template.setQuotaId(((Quota) model.getQuota().getSelectedItem()).getId());
