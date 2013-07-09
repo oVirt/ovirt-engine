@@ -377,6 +377,8 @@ public class FixturesTool {
      */
     public static final Guid VM_NETWORK_INTERFACE_PM_PROFILE = new Guid("a667da39-27b0-47ec-a5fa-d4293a62b222");
 
+    public static final Guid VM_NETWORK_INTERFACE_PROFILE_NOT_USED = new Guid("2b75e023-a1fb-4dcb-9738-0ec7fe2d51c6");
+
     public static final String MAC_ADDRESS = "00:1a:4a:16:87:db";
 
     public static final int NUMBER_OF_VM_INTERFACES = 3;

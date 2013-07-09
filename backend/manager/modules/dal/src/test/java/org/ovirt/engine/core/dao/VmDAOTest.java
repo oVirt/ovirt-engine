@@ -398,6 +398,27 @@ public class VmDAOTest extends BaseDAOTestCase {
         assertTrue(result.isEmpty());
     }
 
+    /**
+     * Ensures that only the correct vm is fetched.
+     */
+    @Test
+    public void testGetAllForVnicProfile() {
+        List<VM> result = dao.getAllForVnicProfile(FixturesTool.VM_NETWORK_INTERFACE_PROFILE);
+        assertNotNull(result);
+        assertEquals(1, result.size());
+        assertEquals(existingVm, result.get(0));
+    }
+
+    /**
+     * Ensures that no vms are fetched
+     */
+    @Test
+    public void testGetAllForVnicProfileEmpty() {
+        List<VM> result = dao.getAllForVnicProfile(FixturesTool.VM_NETWORK_INTERFACE_PROFILE_NOT_USED);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
     private static void assertCorrectGetAllResult(List<VM> result) {
         assertNotNull(result);
         assertFalse(result.isEmpty());

@@ -1059,6 +1059,20 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetVmsByVnicProfileId(v_vnic_profile_id UUID) RETURNS SETOF vms
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM vms
+   WHERE EXISTS (
+      SELECT 1
+      FROM vm_interface
+      WHERE vm_interface.vnic_profile_id = v_vnic_profile_id
+      AND vm_interface.vm_guid = vms.vm_guid);
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION GetVmsByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vms
    AS $procedure$
 BEGIN

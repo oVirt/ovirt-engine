@@ -214,6 +214,13 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
+    public List<VM> getAllForVnicProfile(Guid vNicProfileId) {
+        return getCallsHandler().executeReadList("GetVmsByVnicProfileId",
+                VMRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("vnic_profile_id", vNicProfileId));
+    }
+
+    @Override
     public List<VM> getAllForVdsGroup(Guid vds_group_id) {
         return getCallsHandler().executeReadList("GetVmsByVdsGroupId",
                 VMRowMapper.instance,
