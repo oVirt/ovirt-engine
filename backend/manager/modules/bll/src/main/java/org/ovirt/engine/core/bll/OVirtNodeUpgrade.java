@@ -9,7 +9,6 @@ import java.nio.charset.Charset;
 
 import javax.naming.TimeLimitExceededException;
 
-import org.ovirt.engine.core.bll.utils.EngineSSHDialog;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -17,6 +16,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.ssh.EngineSSHDialog;
 import org.ovirt.engine.core.utils.ssh.SSHDialog;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -141,9 +141,10 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
     public void execute() throws Exception {
         try {
             _setVdsStatus(VDSStatus.Installing);
-            _dialog.setVds(_vds);
-            _dialog.connect();
+
             _dialog.useDefaultKeyPair();
+            _dialog.setHost(_vds.getHostName());
+            _dialog.connect();
             _messages.post(
                 InstallerMessages.Severity.INFO,
                 String.format(

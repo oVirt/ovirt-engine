@@ -923,8 +923,6 @@
         <column>vds_unique_id</column>
         <column>host_name</column>
         <column>port</column>
-        <column>ssh_port</column>
-        <column>ssh_username</column>
         <column>vds_group_id</column>
         <column>server_SSL_enabled</column>
         <column>vds_type</column>
@@ -954,8 +952,6 @@
             <value>farkle</value>
             <value>magenta-vdsc.redhat.com</value>
             <value>54321</value>
-            <value>22</value>
-            <value>root</value>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>1</value>
             <value>1</value>
@@ -986,8 +982,6 @@
             <value>farkle</value>
             <value>purple-vdsc.redhat.com</value>
             <value>54321</value>
-            <value>22</value>
-            <value>root</value>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
             <value>1</value>
             <value>0</value>
@@ -1018,8 +1012,6 @@
             <value>farkle</value>
             <value>localfs-vds.redhat.com</value>
             <value>54321</value>
-            <value>22</value>
-            <value>root</value>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7f</value>
             <value>1</value>
             <value>1</value>
@@ -1050,8 +1042,6 @@
             <value>farkle</value>
             <value>gluster1-vdsc.redhat.com</value>
             <value>54321</value>
-            <value>22</value>
-            <value>root</value>
             <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
             <value>1</value>
             <value>1</value>
@@ -1082,8 +1072,6 @@
             <value>farkle</value>
             <value>gluster2-vdsc.redhat.com</value>
             <value>54321</value>
-            <value>22</value>
-            <value>root</value>
             <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
             <value>1</value>
             <value>1</value>

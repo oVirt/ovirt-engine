@@ -821,9 +821,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         host.setVdsName((String) model.getName().getEntity());
         host.setHostName((String) model.getHost().getEntity());
         host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
-        host.setSshPort(Integer.parseInt(model.getHostPort().getEntity().toString()));
-        host.setSshUsername(model.getUserName().getEntity().toString());
-        host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity().toString());
+        host.setSSHKeyFingerprint(host.getSSHKeyFingerprint());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
         boolean consoleAddressSet = (Boolean) model.getConsoleAddressEnabled().getEntity();
         host.setConsoleAddress(!consoleAddressSet ? null : (String) model.getConsoleAddress().getEntity());
@@ -862,10 +860,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             AddVdsActionParameters parameters = new AddVdsActionParameters();
             parameters.setVdsId(host.getId());
             parameters.setvds(host);
-            parameters.setPassword((String) model.getUserPassword().getEntity());
+            parameters.setRootPassword((String) model.getRootPassword().getEntity());
             parameters.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
             parameters.setRebootAfterInstallation(isVirt) ;
-            parameters.setAuthMethod(model.getAuthenticationMethod());
 
             Frontend.RunAction(VdcActionType.AddVds, parameters,
                     new IFrontendActionAsyncCallback() {
@@ -885,10 +882,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             UpdateVdsActionParameters parameters = new UpdateVdsActionParameters();
             parameters.setvds(host);
             parameters.setVdsId(host.getId());
-            parameters.setPassword(""); //$NON-NLS-1$
+            parameters.setRootPassword(""); //$NON-NLS-1$
             parameters.setInstallVds(false);
             parameters.setRebootAfterInstallation(isVirt) ;
-            parameters.setAuthMethod(model.getAuthenticationMethod());
 
             if (!oldClusterId.equals(newClusterId))
             {

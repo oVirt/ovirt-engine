@@ -304,16 +304,8 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
     private boolean registerNewHost(Guid vdsGroupId, boolean IsPending) {
         boolean returnValue = true;
-
-        // For new registration use default ssh port and user 'root'
-        final int SSH_PORT = 22;
-        final String SSH_USER_NAME = "root";
-
         VdsStatic vds = new VdsStatic(getParameters().getVdsHostName(), "",
-                    getStrippedVdsUniqueId(), getParameters().getPort(),
-                    SSH_PORT,
-                    SSH_USER_NAME,
-                    vdsGroupId, Guid.Empty,
+                    getStrippedVdsUniqueId(), getParameters().getPort(), vdsGroupId, Guid.Empty,
                     getParameters().getVdsName(), Config.<Boolean> GetValue(ConfigValues.SSLEnabled),
                     getParameters().getVdsType()); // management
                                                                                  // ip
@@ -392,7 +384,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                         String old_host_name = vds_byHostName.getHostName();
                         vds_byHostName.setHostName(try_host_name);
                         UpdateVdsActionParameters parameters = new UpdateVdsActionParameters(
-                                vds_byHostName.getStaticData(), "" , false);
+                                vds_byHostName.getStaticData(), "", false);
                         parameters.setShouldBeLogged(false);
                         parameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                         VdcReturnValueBase ret = Backend.getInstance().runInternalAction(VdcActionType.UpdateVds, parameters);

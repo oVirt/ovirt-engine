@@ -95,9 +95,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
                 .addValue("otp_validity", vds.getOtpValidity())
                 .addValue("vds_spm_priority", vds.getVdsSpmPriority())
                 .addValue("console_address", vds.getConsoleAddress())
-                .addValue("sshKeyFingerprint", vds.getSshKeyFingerprint())
-                .addValue("ssh_port", vds.getSshPort())
-                .addValue("ssh_username", vds.getSshUsername());
+                .addValue("sshKeyFingerprint", vds.getSSHKeyFingerprint());
     }
 
     @Override
@@ -126,12 +124,6 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
             entity.setPort(rs.getInt("port"));
             entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
             entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
-            entity.setSshPort(rs.getInt("ssh_port"));
-            entity.setSshUsername(rs.getString("ssh_username"));
-            entity.setVdsGroupId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("vds_group_id")));
-            entity.setId(Guid.createGuidFromStringDefaultEmpty(rs
-                    .getString("vds_id")));
             entity.setVdsName(rs.getString("vds_name"));
             entity.setServerSslEnabled(rs
                     .getBoolean("server_SSL_enabled"));
@@ -152,7 +144,7 @@ public class VdsStaticDAODbFacadeImpl extends BaseDAODbFacade implements VdsStat
             entity.setPmSecondaryOptions(rs.getString("pm_secondary_options"));
             entity.setPmSecondaryConcurrent(rs.getBoolean("pm_secondary_concurrent"));
             entity.setOtpValidity(rs.getLong("otp_validity"));
-            entity.setSshKeyFingerprint(rs.getString("sshKeyFingerprint"));
+            entity.setSSHKeyFingerprint(rs.getString("sshKeyFingerprint"));
             entity.setConsoleAddress(rs.getString("console_address"));
 
             return entity;

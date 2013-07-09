@@ -17,8 +17,6 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
-import org.ovirt.engine.core.bll.utils.EngineSSHClient;
-import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -28,8 +26,6 @@ import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
-import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -58,13 +54,18 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
+import org.ovirt.engine.core.utils.gluster.GlusterUtil;
 import org.ovirt.engine.core.utils.ssh.ConstraintByteArrayOutputStream;
+import org.ovirt.engine.core.utils.ssh.EngineSSHClient;
+import org.ovirt.engine.core.utils.ssh.SSHClient;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<T> {
+
+    private static final String USER_NAME = "root";
 
     private VDS upServer;
 
@@ -149,8 +150,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         // do not install vds's which added in pending mode (currently power
         // clients). they are installed as part of the approve process
         if (Config.<Boolean> GetValue(ConfigValues.InstallVds) && !getParameters().getAddPending()) {
-            final InstallVdsParameters installVdsParameters = new InstallVdsParameters(getVdsId(), getParameters().getPassword());
-            installVdsParameters.setAuthMethod(getParameters().getAuthMethod());
+            final InstallVdsParameters installVdsParameters = new InstallVdsParameters(getVdsId(),
+                    getParameters().getRootPassword());
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
             installVdsParameters.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
             Map<String, String> values = new HashMap<String, String>();
@@ -316,11 +317,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             } else if (getVdsDAO().getAllForHostname(hostName).size() != 0) {
                 returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_SAME_HOST_EXIST);
-            } else if (!ValidationUtils.validatePort(vds.getSshPort())) {
-                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_PORT);
-            } else if ((StringUtils.isEmpty(vds.getSshUsername())) ||
-                       (vds.getSshUsername().length() > BusinessEntitiesDefinitions.USER_USER_NAME_SIZE)) {
-                returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_USERNAME);
             } else {
                 returnValue = returnValue && validateSingleHostAttachedToLocalStorage();
 
@@ -328,8 +324,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                         && !EngineEncryptionUtils.haveKey()) {
                     returnValue = failCanDoAction(VdcBllMessages.VDS_TRY_CREATE_SECURE_CERTIFICATE_NOT_FOUND);
                 } else if (!getParameters().getAddPending()
-                        && (getParameters().getAuthMethod() == AuthenticationMethod.Password)
-                        && StringUtils.isEmpty(getParameters().getPassword())) {
+                        && StringUtils.isEmpty(getParameters().getRootPassword())) {
                     // We block vds installations if it's not a RHEV-H and password is empty
                     // Note that this may override local host SSH policy. See BZ#688718.
                     returnValue = failCanDoAction(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
@@ -365,26 +360,16 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return ClusterUtils.getInstance();
     }
 
-    public EngineSSHClient getSSHClient() throws Exception {
+    public SSHClient getSSHClient(String hostname) {
         Long timeout =
                 TimeUnit.SECONDS.toMillis(Config.<Integer> GetValue(ConfigValues.ConnectToServerTimeoutInSeconds));
 
-        EngineSSHClient sshclient = new EngineSSHClient();
-        sshclient.setVds(getParameters().getvds());
+        SSHClient sshclient = new EngineSSHClient();
         sshclient.setHardTimeout(timeout);
         sshclient.setSoftTimeout(timeout);
-        sshclient.setPassword(getParameters().getPassword());
-        switch (getParameters().getAuthMethod()) {
-            case PublicKey:
-                sshclient.useDefaultKeyPair();
-                break;
-            case Password:
-                sshclient.setPassword(getParameters().getPassword());
-                break;
-            default:
-                throw new Exception("Invalid authentication method value was sent to AddVdsCommand");
-        }
-
+        sshclient.setHost(hostname);
+        sshclient.setUser(USER_NAME);
+        sshclient.setPassword(getParameters().getRootPassword());
         return sshclient;
     }
 
@@ -395,7 +380,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
      *
      * @param client - already connected ssh client
      */
-    private String getInstalledVdsIdIfExists(EngineSSHClient client) {
+    private String getInstalledVdsIdIfExists(SSHClient client) {
         try {
             ByteArrayOutputStream out = new ConstraintByteArrayOutputStream(256);
             client.executeCommand(Config.<String> GetValue(ConfigValues.GetVdsmIdByVdsmToolCommand),
@@ -414,9 +399,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     protected boolean canConnect(VDS vds) {
         // execute the connectivity and id uniqueness validation for VDS type hosts
         if (vds.getVdsType() == VDSType.VDS && Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
-            EngineSSHClient sshclient = null;
+            SSHClient sshclient = null;
             try {
-                sshclient = getSSHClient();
+                sshclient = getSSHClient(vds.getHostName());
                 sshclient.connect();
                 sshclient.authenticate();
 
@@ -466,7 +451,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
      *            ID of the cluster to which the server is being added.
      * @return true if the server is good to be added to a gluster cluster, else false.
      */
-    private boolean isValidGlusterPeer(EngineSSHClient sshclient, Guid clusterId) {
+    private boolean isValidGlusterPeer(SSHClient sshclient, Guid clusterId) {
         if (isGlusterSupportEnabled() && clusterHasServers()) {
             try {
                 // Must not allow adding a server that already is part of another gluster cluster

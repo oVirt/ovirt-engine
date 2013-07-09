@@ -142,8 +142,6 @@
       <xs:element name="network" type="Network" minOccurs="0"/>
       <!-- when installing a host, a root password is required -->
       <xs:element name="root_password" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <!-- when installing a host, ssh configuration is required -->
-      <xs:element ref="ssh" minOccurs="0" maxOccurs="1"/>
       <!-- when installing a rhev-h host, an ISO image file is required -->
       <xs:element name="image" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <!-- for host fence action -->
@@ -1270,7 +1268,6 @@
           <!-- when creating a new host, a root password is required, but
                this is not subsequently included in the representation -->
           <xs:element name="root_password" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="ssh" minOccurs="0"  maxOccurs="1"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="cpu" minOccurs="0" maxOccurs="1"/>
           <xs:element name="memory" type="xs:long" minOccurs="0"/>
@@ -1466,19 +1463,6 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
-
-  <xs:element name="ssh" type="SSH"/>
-    <xs:complexType name="SSH">
-      <xs:complexContent>
-        <xs:extension base="BaseResource">
-          <xs:sequence>
-            <xs:element name="port" type="xs:int" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="fingerprint" type="xs:string" minOccurs="0" maxOccurs="1"/>
-            <xs:element ref="user" minOccurs="0" maxOccurs="1"/>
-          </xs:sequence>
-        </xs:extension>
-      </xs:complexContent>
-    </xs:complexType>
 
   <xs:element name="group" type="Group"/>
 

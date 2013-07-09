@@ -8,7 +8,6 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
-import org.ovirt.engine.core.bll.utils.EngineSSHDialog;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.gluster.PeerStatus;
@@ -18,6 +17,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
+import org.ovirt.engine.core.utils.ssh.EngineSSHDialog;
 
 /**
  * Query to get Added Gluster Servers with/without server ssh key fingerprint

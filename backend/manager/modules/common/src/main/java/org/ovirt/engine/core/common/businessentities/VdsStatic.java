@@ -24,8 +24,6 @@ public class VdsStatic implements BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -1425566208615075937L;
     private static final int HOST_DEFAULT_SPM_PRIORITY = 5;
-    private static final int DEFAULT_SSH_PORT = 22;
-    private static final String DEFAULT_SSH_USERNAME = "root";
 
     private Guid id;
 
@@ -62,18 +60,6 @@ public class VdsStatic implements BusinessEntity<Guid> {
             max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
             message = "VALIDATION.VDS.PORT.RANGE")
     private int port;
-
-    @EditableOnVdsStatus
-    @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
-            max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
-            message = "VALIDATION.VDS.SSH_PORT.RANGE")
-    private int sshPort;
-
-    @EditableField
-    @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NAME_SIZE)
-    @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS_WITH_DOT, message = "VALIDATION_VDS_SSH_USERNAME_INVALID", groups = {
-            CreateEntity.class, UpdateEntity.class })
-    private String sshUsername;
 
     @EditableOnVdsStatus
     private Guid vdsGroupId;
@@ -153,7 +139,6 @@ public class VdsStatic implements BusinessEntity<Guid> {
 
     private boolean autoRecoverable = true;
 
-    @EditableField
     @Size(max = BusinessEntitiesDefinitions.SSH_KEY_FINGERPRINT_SIZE)
     private String sshKeyFingerprint;
 
@@ -171,11 +156,9 @@ public class VdsStatic implements BusinessEntity<Guid> {
         this.setPmOptions("");
         this.setPmSecondaryOptions("");
         this.vdsSpmPriority = HOST_DEFAULT_SPM_PRIORITY;
-        this.sshPort = DEFAULT_SSH_PORT;
-        this.sshUsername = DEFAULT_SSH_USERNAME;
     }
 
-    public VdsStatic(String host_name, String ip, String uniqueId, int port, int ssh_port, String ssh_username, Guid vds_group_id, Guid vds_id,
+    public VdsStatic(String host_name, String ip, String uniqueId, int port, Guid vds_group_id, Guid vds_id,
             String vds_name, boolean server_SSL_enabled, VDSType vds_type) {
         serverSslEnabled = false;
         vdsStrength = 100;
@@ -183,16 +166,6 @@ public class VdsStatic implements BusinessEntity<Guid> {
         this.managementIp = ip;
         this.uniqueId = uniqueId;
         this.port = port;
-        if (ssh_port > 0) {
-            this.sshPort = ssh_port;
-        } else {
-            this.sshPort = DEFAULT_SSH_PORT;
-        }
-        if (ssh_username != null) {
-            this.sshUsername = ssh_username;
-        } else {
-            this.sshUsername = DEFAULT_SSH_USERNAME;
-        }
         this.vdsGroupId = vds_group_id;
         this.id = vds_id;
         this.name = vds_name;
@@ -241,22 +214,6 @@ public class VdsStatic implements BusinessEntity<Guid> {
 
     public void setPort(int value) {
         this.port = value;
-    }
-
-    public int getSshPort() {
-        return this.sshPort;
-    }
-
-    public void setSshPort(int value) {
-        this.sshPort = value;
-    }
-
-    public String getSshUsername() {
-        return this.sshUsername;
-    }
-
-    public void setSshUsername(String value) {
-        this.sshUsername = value;
     }
 
     public Guid getVdsGroupId() {
@@ -450,11 +407,11 @@ public class VdsStatic implements BusinessEntity<Guid> {
         this.vdsSpmPriority = value;
     }
 
-    public String getSshKeyFingerprint() {
+    public String getSSHKeyFingerprint() {
         return sshKeyFingerprint;
     }
 
-    public void setSshKeyFingerprint(String sshKeyFingerprint) {
+    public void setSSHKeyFingerprint(String sshKeyFingerprint) {
         this.sshKeyFingerprint = sshKeyFingerprint;
     }
 
@@ -540,8 +497,6 @@ public class VdsStatic implements BusinessEntity<Guid> {
         result = prime * result + ((pmSecondaryType == null) ? 0 : pmSecondaryType.hashCode());
         result = prime * result + ((pmSecondaryUser == null) ? 0 : pmSecondaryUser.hashCode());
         result = prime * result + port;
-        result = prime * result + sshPort;
-        result = prime * result + ((sshUsername == null) ? 0 : sshUsername.hashCode());
         result = prime * result + ((serverSslEnabled == null) ? 0 : serverSslEnabled.hashCode());
         result = prime * result + ((uniqueId == null) ? 0 : uniqueId.hashCode());
         result = prime * result + ((vdsGroupId == null) ? 0 : vdsGroupId.hashCode());
@@ -584,8 +539,6 @@ public class VdsStatic implements BusinessEntity<Guid> {
                 && ObjectUtils.objectsEqual(pmSecondaryType, other.pmSecondaryType)
                 && ObjectUtils.objectsEqual(pmSecondaryUser, other.pmSecondaryUser)
                 && port == other.port
-                && sshPort == other.sshPort
-                && ObjectUtils.objectsEqual(sshUsername, other.sshUsername)
                 && ObjectUtils.objectsEqual(serverSslEnabled, other.serverSslEnabled)
                 && ObjectUtils.objectsEqual(uniqueId, other.uniqueId)
                 && ObjectUtils.objectsEqual(vdsGroupId, other.vdsGroupId)

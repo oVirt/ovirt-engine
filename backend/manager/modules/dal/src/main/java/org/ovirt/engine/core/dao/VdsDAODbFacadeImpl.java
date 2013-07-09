@@ -228,8 +228,6 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
                     .getBoolean("server_SSL_enabled"));
             entity.setHostName(rs.getString("host_name"));
             entity.setPort(rs.getInt("port"));
-            entity.setSshPort(rs.getInt("ssh_port"));
-            entity.setSshUsername(rs.getString("ssh_username"));
             entity.setStatus(VDSStatus.forValue(rs.getInt("status")));
             entity.setCpuCores((Integer) rs.getObject("cpu_cores"));
             entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
@@ -334,7 +332,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setOtpValidity(rs.getLong("otp_validity"));
             entity.setVdsSpmPriority(rs.getInt("vds_spm_priority"));
             entity.setAutoRecoverable(rs.getBoolean("recoverable"));
-            entity.setSshKeyFingerprint(rs.getString("sshKeyFingerprint"));
+            entity.setSSHKeyFingerprint(rs.getString("sshKeyFingerprint"));
             entity.setHardwareManufacturer(rs.getString("hw_manufacturer"));
             entity.setHardwareProductName(rs.getString("hw_product_name"));
             entity.setHardwareVersion(rs.getString("hw_version"));

@@ -99,23 +99,6 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         // REVISIT fencing options
         VDS vds = getEntity();
         UpdateVdsActionParameters params = new UpdateVdsActionParameters(vds.getStaticData(), action.getRootPassword(), true);
-        if (action.isSetSsh()) {
-            if (action.getSsh().isSetUser()) {
-                if (action.getSsh().getUser().isSetPassword()) {
-                    params.setPassword(action.getSsh().getUser().getPassword());
-                }
-                // TODO: adding username support.
-                //if (action.getSsh().getUser().isSetUserName()) {
-                //      params.getvds().setSshUsername(action.getSsh().getUser().getUserName());
-                //}
-            }
-            if (action.getSsh().isSetPort()) {
-                params.getvds().setSshPort(action.getSsh().getPort().intValue());
-            }
-            if (action.getSsh().isSetFingerprint()) {
-                params.getvds().setSshKeyFingerprint(action.getSsh().getFingerprint());
-            }
-        }
         if (vds.getVdsType()==VDSType.oVirtNode) {
             params.setIsReinstallOrUpgrade(true);
             if (action.isSetImage()) {

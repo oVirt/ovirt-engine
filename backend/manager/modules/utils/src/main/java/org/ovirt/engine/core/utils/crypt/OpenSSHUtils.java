@@ -137,11 +137,6 @@ public class OpenSSHUtils {
      * @return an array of bytes containing the fingerprint of the key
      */
     public static final byte[] getKeyFingerprintBytes(final PublicKey key) {
-        if (key == null) {
-            log.error("Public key is null, failed to retreive fingerprint.");
-            return null;
-        }
-
         // Get the serialized version of the key:
         final byte[] keyBytes = getKeyBytes(key);
         if (keyBytes == null) {

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.utils;
+package org.ovirt.engine.core.utils.gluster;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -19,6 +19,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.utils.ssh.EngineSSHClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GlusterUtilTest {

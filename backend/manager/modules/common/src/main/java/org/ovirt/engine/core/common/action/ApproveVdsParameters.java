@@ -7,7 +7,7 @@ public class ApproveVdsParameters extends InstallVdsParameters {
     private boolean isApprovedByRegister;
 
     public ApproveVdsParameters(Guid vdsId) {
-        super(vdsId);
+        super(vdsId, "");
     }
 
     public ApproveVdsParameters() {

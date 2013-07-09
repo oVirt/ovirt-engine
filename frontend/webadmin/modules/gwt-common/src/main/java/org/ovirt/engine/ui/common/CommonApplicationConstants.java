@@ -1302,10 +1302,4 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("▲")
     String horizontalSplitTableUp();
-
-    @DefaultStringValue("Password")
-    String hostPasswordLabel();
-
-    @DefaultStringValue("SSH PublicKey")
-    String hostPublicKeyLable();
 }

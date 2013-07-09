@@ -17,7 +17,6 @@ import java.util.concurrent.Callable;
 import javax.naming.TimeLimitExceededException;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.utils.EngineSSHDialog;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -33,6 +32,7 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.ssh.EngineSSHDialog;
 import org.ovirt.engine.core.utils.ssh.SSHDialog;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -262,13 +262,6 @@ public class VdsDeploy implements SSHDialog.Sink {
             _parser.cliEnvironmentSet(
                 NetEnv.SSH_ENABLE,
                 true
-            );
-            return null;
-        }},
-        new Callable<Object>() { public Object call() throws Exception {
-            _parser.cliEnvironmentSet(
-                NetEnv.SSH_USER,
-                _vds.getSshUsername()
             );
             return null;
         }},
@@ -845,7 +838,7 @@ public class VdsDeploy implements SSHDialog.Sink {
     public void execute() throws Exception {
         InputStream in = null;
         try {
-            _dialog.setVds(_vds);
+            _dialog.setHost(_vds.getHostName());
             _dialog.connect();
             _messages.post(
                 InstallerMessages.Severity.INFO,

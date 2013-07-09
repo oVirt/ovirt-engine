@@ -1,8 +1,5 @@
 package org.ovirt.engine.core.common.action;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -12,9 +9,9 @@ public class VdsOperationActionParameters extends VdsActionParameters {
     private static final long serialVersionUID = 4156122527623908516L;
 
     @Valid
-    private VdsStatic vdsStatic;
+    private VdsStatic _vdsStatic;
 
-    private String password;
+    private String _rootPassword;
 
     private boolean overrideFirewall;
 
@@ -23,68 +20,29 @@ public class VdsOperationActionParameters extends VdsActionParameters {
      */
     private boolean rebootAfterInstallation = true;
 
-    private AuthenticationMethod authMethod;
-
-    public enum AuthenticationMethod {
-        Password(0),
-        PublicKey(1);
-
-        private int intValue;
-        private static Map<Integer, AuthenticationMethod> mappings;
-
-        static {
-            mappings = new HashMap<Integer, AuthenticationMethod>();
-            for (AuthenticationMethod error : values()) {
-                mappings.put(error.getValue(), error);
-            }
+    public VdsOperationActionParameters(VdsStatic vdsStatic, String rootPassword) {
+        super(vdsStatic.getId());
+        if ("".equals(vdsStatic.getManagementIp())) {
+            vdsStatic.setManagementIp(null);
         }
-
-        private AuthenticationMethod(int value) {
-            intValue = value;
-        }
-
-        public int getValue() {
-            return intValue;
-        }
-
-        public static AuthenticationMethod forValue(int value) {
-            return mappings.get(value);
-        }
-    }
-
-    public VdsOperationActionParameters(VdsStatic vdsStaticVal, String passwordVal) {
-        super(vdsStaticVal.getId());
-        if ("".equals(vdsStaticVal.getManagementIp())) {
-            vdsStaticVal.setManagementIp(null);
-        }
-        vdsStatic = vdsStaticVal;
-        password = passwordVal;
-        authMethod = AuthenticationMethod.Password;
+        _vdsStatic = vdsStatic;
+        _rootPassword = rootPassword;
     }
 
     public VdsOperationActionParameters(VdsStatic vdsStatic) {
         this(vdsStatic, null);
-        authMethod = AuthenticationMethod.Password;
     }
 
     public VdsStatic getVdsStaticData() {
-        return vdsStatic;
+        return _vdsStatic;
     }
 
-    public String getPassword() {
-        return password;
+    public String getRootPassword() {
+        return _rootPassword;
     }
 
-    public void setPassword(String value) {
-        password = value;
-    }
-
-    public void setAuthMethod(AuthenticationMethod value) {
-        authMethod = value;
-    }
-
-    public AuthenticationMethod getAuthMethod() {
-        return authMethod;
+    public void setRootPassword(String value) {
+        _rootPassword = value;
     }
 
     public VdsOperationActionParameters() {
@@ -92,12 +50,12 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     public VDS getvds() {
         VDS vds = new VDS();
-        vds.setStaticData(vdsStatic);
+        vds.setStaticData(_vdsStatic);
         return vds;
     }
 
     public void setvds(VDS value) {
-        vdsStatic = value.getStaticData();
+        _vdsStatic = value.getStaticData();
     }
 
     public void setOverrideFirewall(boolean overrideFirewall) {

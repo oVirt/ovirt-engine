@@ -124,7 +124,7 @@ public class MultipleHostsPopupView extends AbstractModelBoundPopupView<Multiple
                 return ((HostDetailModel) object.getEntity()).getPassword();
             }
         };
-        hostsTable.addColumn(passwordColumn, constants.hostPopupPasswordLabel(), "100px"); //$NON-NLS-1$
+        hostsTable.addColumn(passwordColumn, constants.hostPopupRootPasswordLabel(), "100px"); //$NON-NLS-1$
         passwordColumn.setFieldUpdater(new FieldUpdater<EntityModel, String>() {
 
             @Override

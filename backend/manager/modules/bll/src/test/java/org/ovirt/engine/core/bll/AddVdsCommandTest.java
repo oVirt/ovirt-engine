@@ -18,8 +18,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
-import org.ovirt.engine.core.bll.utils.EngineSSHClient;
-import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -30,7 +28,10 @@ import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.gluster.GlusterUtil;
 import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.ssh.EngineSSHClient;
+import org.ovirt.engine.core.utils.ssh.SSHClient;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddVdsCommandTest {
@@ -64,9 +65,6 @@ public class AddVdsCommandTest {
     private VDS makeTestVds(Guid vdsId) {
         VDS newVdsData = new VDS();
         newVdsData.setHostName("BUZZ");
-        newVdsData.setSshPort(22);
-        newVdsData.setSshUsername("root");
-        newVdsData.setSshKeyFingerprint("1234");
         newVdsData.setVdsName("BAR");
         newVdsData.setVdsGroupCompatibilityVersion(new Version("1.2.3"));
         newVdsData.setVdsGroupId(Guid.newGuid());
@@ -77,7 +75,7 @@ public class AddVdsCommandTest {
     @Before
     public void createParameters() {
         parameters = new AddVdsActionParameters();
-        parameters.setPassword("secret");
+        parameters.setRootPassword("secret");
         VDS newVds = makeTestVds(vdsId);
         parameters.setvds(newVds);
     }
@@ -97,7 +95,7 @@ public class AddVdsCommandTest {
         when(commandMock.validateSingleHostAttachedToLocalStorage()).thenReturn(true);
         when(commandMock.isPowerManagementLegal()).thenReturn(true);
 
-        when(commandMock.getSSHClient()).thenReturn(sshClient);
+        when(commandMock.getSSHClient(any(String.class))).thenReturn(sshClient);
         doNothing().when(sshClient).connect();
         doNothing().when(sshClient).authenticate();
     }
@@ -115,7 +113,7 @@ public class AddVdsCommandTest {
         doCallRealMethod().when(commandMock).addCanDoActionMessage(any(VdcBllMessages.class));
 
         when(commandMock.getGlusterUtil()).thenReturn(glusterUtil);
-        when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenReturn(hasPeers ? Collections.singleton(PEER_1)
+        when(glusterUtil.getPeers(any(SSHClient.class))).thenReturn(hasPeers ? Collections.singleton(PEER_1)
                 : Collections.EMPTY_SET);
 
         when(commandMock.getGlusterDBUtils()).thenReturn(glusterDBUtils);
@@ -141,7 +139,7 @@ public class AddVdsCommandTest {
     @Test
     public void canDoActionSucceedsWhenHasPeersThrowsException() throws Exception {
         setupGlusterMock(true, new VDS(), true);
-        when(glusterUtil.getPeers(any(EngineSSHClient.class))).thenThrow(new RuntimeException());
+        when(glusterUtil.getPeers(any(SSHClient.class))).thenThrow(new RuntimeException());
 
         assertTrue(commandMock.canDoAction());
     }

@@ -825,10 +825,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             VDS host = new VDS();
             host.setVdsName(hostDetailModel.getName());
             host.setHostName(hostDetailModel.getAddress());
-            host.setSshKeyFingerprint(hostDetailModel.getFingerprint());
+            host.setSSHKeyFingerprint(hostDetailModel.getFingerprint());
             host.setPort(54321);
-            host.setSshPort(22);  // TODO: get from UI, till than using defaults.
-            host.setSshUsername("root"); //$NON-NLS-1$
 
             host.setVdsGroupId((Guid) hostsModel.getClusterModel().getClusterId());
             host.setpm_enabled(false);
@@ -836,7 +834,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             AddVdsActionParameters parameters = new AddVdsActionParameters();
             parameters.setVdsId(host.getId());
             parameters.setvds(host);
-            parameters.setPassword(hostDetailModel.getPassword());
+            parameters.setRootPassword(hostDetailModel.getPassword());
             parameters.setOverrideFirewall(false);
             parameters.setRebootAfterInstallation(hostsModel.getClusterModel().getEnableOvirtService().getIsSelected());
 

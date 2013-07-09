@@ -210,9 +210,8 @@ public final class Cloner
         VDS obj = new VDS();
 
         obj.setHostName(instance.getHostName());
-        obj.setSshKeyFingerprint(instance.getSshKeyFingerprint());
-        obj.setSshPort(instance.getSshPort());
-        obj.setSshUsername(instance.getSshUsername());
+        obj.setSSHKeyFingerprint(instance.getSSHKeyFingerprint());
+
         obj.setManagementIp(instance.getManagementIp());
         obj.setPmUser(instance.getPmUser());
         obj.setPmPassword(instance.getPmPassword());

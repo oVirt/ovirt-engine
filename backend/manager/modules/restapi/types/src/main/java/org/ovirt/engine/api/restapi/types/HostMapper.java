@@ -32,7 +32,6 @@ import org.ovirt.engine.api.model.StorageManager;
 import org.ovirt.engine.api.model.TransparentHugePages;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.model.VmSummary;
-import org.ovirt.engine.api.model.SSH;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -74,9 +73,6 @@ public class HostMapper {
         } else {
             entity.setPort(DEFAULT_VDSM_PORT);
         }
-        if (model.isSetSsh()) {
-            map(model.getSsh(), entity);
-        }
         if (model.isSetPowerManagement()) {
             entity = map(model.getPowerManagement(), entity);
         }
@@ -89,23 +85,6 @@ public class HostMapper {
             entity.setConsoleAddress("".equals(model.getDisplay().getAddress()) ? null : model.getDisplay().getAddress());
         }
 
-        return entity;
-    }
-
-    @Mapping(from = SSH.class, to = VdsStatic.class)
-    public static VdsStatic map(SSH model, VdsStatic template) {
-        VdsStatic entity = template != null ? template : new VdsStatic();
-        /* TODO: add when configured ssh username is enabled
-        if (model.isSetUser() && model.getUser().isSetUserName()) {
-            entity.setSshUsername(model.getUser().getUserName());
-        }
-        */
-        if (model.isSetPort() && model.getPort() > 0) {
-            entity.setSshPort(model.getPort());
-        }
-        if (model.isSetFingerprint()) {
-            entity.setSshKeyFingerprint(model.getFingerprint());
-        }
         return entity;
     }
 
@@ -282,7 +261,6 @@ public class HostMapper {
         }
         model.setPowerManagement(map(entity, (PowerManagement)null));
         model.setHardwareInformation(map(entity, (HardwareInformation)null));
-        model.setSsh(map(entity.getStaticData(),(SSH) null));
         CPU cpu = new CPU();
         CpuTopology cpuTopology = new CpuTopology();
         if (entity.getCpuSockets() != null) {
@@ -381,15 +359,6 @@ public class HostMapper {
         model.setSerialNumber(entity.getHardwareSerialNumber());
         model.setUuid(entity.getHardwareUUID());
         model.setVersion(entity.getHardwareVersion());
-        return model;
-    }
-
-    @Mapping(from = VdsStatic.class, to = SSH.class)
-    public static SSH map(VdsStatic entity, SSH template) {
-        SSH model = template != null ? template : new SSH();
-        model.setPort(entity.getSshPort());
-        model.getUser().setUserName(entity.getSshUsername());
-        model.setFingerprint(entity.getSshKeyFingerprint());
         return model;
     }
 

@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -88,8 +87,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                         && _oldVds.getStatus() != VDSStatus.InstallFailed) {
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_STATUS_ILLEGAL);
                 } else if (getParameters().getInstallVds()
-                        && getParameters().getAuthMethod() == AuthenticationMethod.Password
-                        && StringUtils.isEmpty(getParameters().getPassword())
+                        && StringUtils.isEmpty(getParameters().getRootPassword())
                         && getParameters().getVdsStaticData().getVdsType() == VDSType.VDS) {
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_INSTALL_EMPTY_PASSWORD);
                 } else if (!getParameters().getInstallVds()
@@ -131,12 +129,11 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         }
 
         if (getParameters().getInstallVds()) {
-            InstallVdsParameters tempVar = new InstallVdsParameters(getVdsId(), getParameters().getPassword());
+            InstallVdsParameters tempVar = new InstallVdsParameters(getVdsId(), getParameters().getRootPassword());
             tempVar.setIsReinstallOrUpgrade(getParameters().getIsReinstallOrUpgrade());
             tempVar.setoVirtIsoFile(getParameters().getoVirtIsoFile());
             tempVar.setOverrideFirewall(getParameters().getOverrideFirewall());
             tempVar.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
-            tempVar.setAuthMethod(getParameters().getAuthMethod());
             ArrayList<VdcReturnValueBase> resultList = Backend.getInstance().runInternalMultipleActions(
                     VdcActionType.InstallVds,
                     new ArrayList<VdcActionParametersBase>(Arrays

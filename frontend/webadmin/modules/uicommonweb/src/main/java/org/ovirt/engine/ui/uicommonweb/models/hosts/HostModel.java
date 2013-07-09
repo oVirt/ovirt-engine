@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -40,12 +39,12 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.KeyValuePairValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class HostModel extends Model
 {
@@ -121,66 +120,6 @@ public abstract class HostModel extends Model
     private void setName(EntityModel value)
     {
         privateName = value;
-    }
-
-    private EntityModel privateUserName;
-
-    public EntityModel getUserName()
-    {
-        return privateUserName;
-    }
-
-    private void setUserName(EntityModel value)
-    {
-        privateUserName = value;
-    }
-
-    private EntityModel privateFetchSshFingerprint;
-
-    public EntityModel getFetchSshFingerprint()
-    {
-        return privateFetchSshFingerprint;
-    }
-
-    private void setFetchSshFingerprint(EntityModel value)
-    {
-        privateFetchSshFingerprint = value;
-    }
-
-    private EntityModel privateHostPort;
-
-    public EntityModel getHostPort()
-    {
-        return privateHostPort;
-    }
-
-    private void setHostPort(EntityModel value)
-    {
-        privateHostPort = value;
-    }
-
-    private EntityModel privateUserPassword;
-
-    public EntityModel getUserPassword()
-    {
-        return privateUserPassword;
-    }
-
-    private void setUserPassword(EntityModel value)
-    {
-        privateUserPassword = value;
-    }
-
-    private EntityModel privatePublicKey;
-
-    public EntityModel getPublicKey()
-    {
-        return privatePublicKey;
-    }
-
-    private void setPublicKey(EntityModel value)
-    {
-        privatePublicKey = value;
     }
 
     private EntityModel privateProviderSearchFilterLabel;
@@ -267,26 +206,16 @@ public abstract class HostModel extends Model
         privatePort = value;
     }
 
-    private AuthenticationMethod hostAuthenticationMethod;
+    private EntityModel privateRootPassword;
 
-    public void setAuthenticationMethod(AuthenticationMethod value) {
-        hostAuthenticationMethod = value;
-    }
-
-    public AuthenticationMethod getAuthenticationMethod() {
-        return hostAuthenticationMethod;
-    }
-
-    private EntityModel privateFetchResult;
-
-    public EntityModel getFetchResult()
+    public EntityModel getRootPassword()
     {
-        return privateFetchResult;
+        return privateRootPassword;
     }
 
-    private void setFetchResult(EntityModel value)
+    private void setRootPassword(EntityModel value)
     {
-        privateFetchResult = value;
+        privateRootPassword = value;
     }
 
     private EntityModel privateOverrideIpTables;
@@ -659,16 +588,6 @@ public abstract class HostModel extends Model
         proxyDownCommand = value;
     }
 
-    private UICommand proxySSHFingerPrintCommand;
-
-    public UICommand getSSHFingerPrint() {
-        return proxySSHFingerPrintCommand;
-    }
-
-    public void setSSHFingerPrint(UICommand value) {
-        proxySSHFingerPrintCommand = value;
-    }
-
     private Integer postponedSpmPriority;
 
     public void setSpmPriorityValue(Integer value) {
@@ -779,37 +698,16 @@ public abstract class HostModel extends Model
                 proxyDown();
             }
         }));
-        setSSHFingerPrint(new UICommand("fetch", new ICommandTarget() {    //$NON-NLS-1$
-            @Override
-            public void executeCommand(UICommand command) {
-                fetchSSHFingerprint();
-            }
-
-            @Override
-            public void executeCommand(UICommand uiCommand, Object... parameters) {
-                fetchSSHFingerprint();
-            }
-        }));
 
         setName(new EntityModel());
         setHost(new EntityModel());
-        setHostPort(new EntityModel());
-        getHostPort().setEntity(constants.defaultHostSSHPort());
-        setUserName(new EntityModel());
-        getUserName().setEntity(constants.defaultUserName());
-        getUserName().setIsChangable(false);
-        setFetchSshFingerprint(new EntityModel());
-        getFetchSshFingerprint().setEntity(constants.empty());
-        setUserPassword(new EntityModel());
-        setPublicKey(new EntityModel());
-        getPublicKey().setEntity(constants.empty());
         setDataCenter(new ListModel());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
         getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
         setCluster(new ListModel());
         getCluster().getSelectedItemChangedEvent().addListener(this);
         setPort(new EntityModel());
-        setFetchResult(new EntityModel());
+        setRootPassword(new EntityModel());
         setOverrideIpTables(new EntityModel());
         getOverrideIpTables().setEntity(false);
 
@@ -897,7 +795,6 @@ public abstract class HostModel extends Model
         setSpmPriority(new ListModel());
 
         initSpmPriorities();
-        fetchPublicKey();
     }
 
     private void proxyUp() {
@@ -935,63 +832,6 @@ public abstract class HostModel extends Model
 
             getPmProxyPreferencesList().setItems(list);
             getPmProxyPreferencesList().setSelectedItem(selectedItem);
-        }
-    }
-
-    public void fetchPublicKey() {
-        AsyncQuery aQuery = new AsyncQuery();
-        aQuery.setModel(this);
-        aQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object result)
-            {
-                String pk = (String) result;
-                if (pk != null && pk.length() > 0)
-                {
-                    getPublicKey().setEntity(result);
-                }
-            }
-        };
-        AsyncDataProvider.getHostPublicKey(aQuery);
-    }
-
-    private void fetchSSHFingerprint() {
-        // Cleaning up fields for initialization
-        getFetchSshFingerprint().setEntity(ConstantsManager.getInstance().getConstants().empty());
-        getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().empty());
-
-        AsyncQuery aQuery = new AsyncQuery();
-        aQuery.setModel(this);
-        aQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object result)
-            {
-                String fingerprint = (String) result;
-                if (fingerprint != null && fingerprint.length() > 0)
-                {
-                    getFetchSshFingerprint().setEntity(result);
-                    getFetchResult().setEntity((String)
-                            ConstantsManager.getInstance().getConstants().successLoadingFingerprint());
-                }
-                else
-                {
-                    getFetchResult().setEntity((String)
-                             ConstantsManager.getInstance().getConstants().errorLoadingFingerprint());
-                }
-            }
-        };
-
-        getHost().validateEntity(new IValidation[] {
-                new NotEmptyValidation(),
-                new LengthValidation(255),
-                new HostAddressValidation() });
-        if (!getHost().getIsValid()) {
-            getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().fingerprintAddressError()
-                    + getHost().getInvalidityReasons().get(0));
-        }
-        else {
-            getFetchResult().setEntity((String) ConstantsManager.getInstance().getConstants().loadingFingerprint());
-            AsyncDataProvider.getHostFingerprint(aQuery, getHost().getEntity().toString());
         }
     }
 
@@ -1459,7 +1299,6 @@ public abstract class HostModel extends Model
                 new HostAddressValidation() });
 
         getPort().validateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
-        getHostPort().validateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
 
         if ((Boolean) getConsoleAddressEnabled().getEntity()) {
             getConsoleAddress().validateEntity(new IValidation[] {new NotEmptyValidation(), new HostAddressValidation()});
@@ -1528,15 +1367,12 @@ public abstract class HostModel extends Model
             SystemTreeItemModel selectedSystemTreeItem)
     {
         setHostId(vds.getId());
+        getRootPassword().setIsAvailable(showInstallationProperties());
         getOverrideIpTables().setIsAvailable(showInstallationProperties());
         setSpmPriorityValue(vds.getVdsSpmPriority());
         setOriginalName(vds.getName());
         getName().setEntity(vds.getName());
         getHost().setEntity(vds.getHostName());
-        getFetchSshFingerprint().setEntity(vds.getSshKeyFingerprint());
-        getHostPort().setIsChangable(false);
-        getUserName().setEntity(vds.getSshUsername());
-        getUserName().setIsChangable(false);
         setHostPort(vds);
         boolean consoleAddressEnabled = vds.getConsoleAddress() != null;
         getConsoleAddressEnabled().setEntity(consoleAddressEnabled);
