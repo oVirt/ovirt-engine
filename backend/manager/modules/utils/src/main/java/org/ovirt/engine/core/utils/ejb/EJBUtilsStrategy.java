@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.utils.ejb;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
@@ -27,6 +28,8 @@ public abstract class EJBUtilsStrategy {
     // names
     protected HashMap<BeanType, String> beanTypeToJNDINameMap = new HashMap<BeanType, String>();
 
+    private static final Map<String, Object> cachedJNDIReferences = new HashMap<>();
+
     protected EJBUtilsStrategy() {
         // Adds JNDI resources,
         addJNDIResources();
@@ -42,6 +45,17 @@ public abstract class EJBUtilsStrategy {
     protected void addJNDIResources() {
         addResourceJNDIName(ContainerManagedResourceType.TRANSACTION_MANAGER, "java:jboss/TransactionManager");
         addResourceJNDIName(ContainerManagedResourceType.DATA_SOURCE, "java:/ENGINEDataSource");
+    }
+
+    private static InitialContext context;
+
+    private static synchronized InitialContext getInitialContext() throws NamingException {
+
+        if (context == null) {
+            context = new InitialContext();
+        }
+
+        return context;
     }
 
     /**
@@ -61,8 +75,7 @@ public abstract class EJBUtilsStrategy {
         }
 
         try {
-            InitialContext context = new InitialContext();
-            return (T) context.lookup(jndiNameFromMap);
+            return getReference(jndiNameFromMap);
         } catch (NamingException ex) {
             log.error("Error looking up resource " + resourceValue);
             return null;
@@ -95,13 +108,13 @@ public abstract class EJBUtilsStrategy {
             jndiNameSB.append(getBeanSuffix(beanType, proxyType));
 
             if (proxyType == BeanProxyType.LOCAL) {
-                context = new InitialContext();
+                context = getInitialContext();
             }
 
             // appends "local" or "remote" to the jndi name, depends on the
             // proxy type
             if (context != null) {
-                return (T) context.lookup(jndiNameSB.toString());
+                return getReference(jndiNameSB.toString());
             } else {
                 log.errorFormat("Failed to create InitialContext which is currently null," +
                         " possibly because given BeanProxyType is null. Given BeanProxyType: {0}",
@@ -116,6 +129,20 @@ public abstract class EJBUtilsStrategy {
             log.error(errorMsgSb.toString(), e);
             return null;
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private synchronized <T> T getReference(String refName) throws NamingException {
+        T reference = (T) cachedJNDIReferences.get(refName);
+        if (reference != null) {
+            return reference;
+        }
+
+        reference = (T) getInitialContext().lookup(refName);
+        cachedJNDIReferences.put(refName, reference);
+
+        return reference;
+
     }
 
     protected void addResourceJNDIName(ContainerManagedResourceType aResourceEnumValue, String aJNDIName) {
