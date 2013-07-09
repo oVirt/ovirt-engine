@@ -29,6 +29,7 @@ from . import datadomain
 from . import firewall_manager
 from . import isodomain
 from . import database
+from . import ca
 
 
 @util.export
@@ -40,6 +41,7 @@ def createPlugins(context):
     firewall_manager.Plugin(context=context)
     isodomain.Plugin(context=context)
     database.Plugin(context=context)
+    ca.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
