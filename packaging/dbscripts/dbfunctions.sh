@@ -284,19 +284,19 @@ get_files() {
 
 is_view_or_sp_changed() {
     files=$(get_files "upgrade" 3)
-    md5sum_file=${MD5DIR}/.${DATABASE}.scripts.md5
-    md5sum_tmp_file=${md5sum_file}.tmp
+    md5sum_file="${MD5DIR}/.${DATABASE}.scripts.md5"
+    md5sum_tmp_file="${md5sum_file}.tmp"
     md5sum $files create_*views.sql *_sp.sql > ${md5sum_tmp_file}
-    diff -s -q ${md5sum_file} ${md5sum_tmp_file} >& /dev/null
+    diff -s -q "${md5sum_file}" "${md5sum_tmp_file}" >& /dev/null
     result=$?
 
     #  0 - identical , 1 - differ , 2 - error
     if [ $result -eq 0 ] ; then
-        rm -f ${md5sum_tmp_file}
+        rm -f "${md5sum_tmp_file}"
     else
 
         # there is a diff or md5 file does not exist
-        mv -f ${md5sum_tmp_file} ${md5sum_file}
+        mv -f "${md5sum_tmp_file}" "${md5sum_file}"
     fi
     return $result
 }
