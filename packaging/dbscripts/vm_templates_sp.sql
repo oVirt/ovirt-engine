@@ -418,3 +418,16 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetVmTemplatesByVnicProfileId(v_vnic_profile_id UUID) RETURNS SETOF vm_templates_view
+   AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM vm_templates_view
+   WHERE EXISTS (
+      SELECT 1
+      FROM vm_interface
+      WHERE vm_interface.vnic_profile_id = v_vnic_profile_id
+      AND vm_interface.vmt_guid = vm_templates_view.vmt_guid);
+END; $procedure$
+LANGUAGE plpgsql;
+

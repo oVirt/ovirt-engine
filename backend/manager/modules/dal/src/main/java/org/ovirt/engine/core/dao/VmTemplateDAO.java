@@ -125,4 +125,13 @@ public interface VmTemplateDAO extends GenericDao<VmTemplate, Guid>, StatusAware
      * @return the list of VmTemplates
      */
     List<VmTemplate> getAllForNetwork(Guid networkId);
+
+    /**
+     * Retrieves all VmTemplates that have a Network Interface that the given vnic profile is attached to.
+     *
+     * @param vnicProfileId
+     *            the vm network interface profile id
+     * @return the list of VmTemplates
+     */
+    List<VmTemplate> getAllForVnicProfile(Guid vnicProfileId);
 }

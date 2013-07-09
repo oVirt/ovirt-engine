@@ -205,6 +205,14 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
                         .addValue("network_id", id));
     }
 
+    @Override
+    public List<VmTemplate> getAllForVnicProfile(Guid vnicProfileId) {
+        return getCallsHandler().executeReadList("GetVmTemplatesByVnicProfileId",
+                VMTemplateRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("vnic_profile_id", vnicProfileId));
+    }
+
     private final static class VMTemplateRowMapper extends AbstractVmRowMapper<VmTemplate> {
         public static final VMTemplateRowMapper instance = new VMTemplateRowMapper();
 

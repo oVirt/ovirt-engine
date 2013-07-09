@@ -288,6 +288,25 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
         assertEquals(existingTemplate, result.get(0));
     }
 
+    /**
+     * Asserts that the correct template is returned for the given network id
+     */
+    @Test
+    public void testGetAllVnicProfile() {
+        List<VmTemplate> result = dao.getAllForVnicProfile(FixturesTool.VM_NETWORK_INTERFACE_PROFILE);
+        assertEquals(existingTemplate, result.get(0));
+    }
+
+    /**
+     * Asserts that the no templates are fetched
+     */
+    @Test
+    public void testGetAllVnicProfileWithNo() {
+        List<VmTemplate> result = dao.getAllForVnicProfile(FixturesTool.VM_NETWORK_INTERFACE_PROFILE_NOT_USED);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
     private static void assertGetResult(VmTemplate result) {
         assertNotNull(result);
         assertEquals(EXISTING_TEMPLATE_ID, result.getId());
