@@ -184,6 +184,7 @@ Requires: %{name}-tools = %{version}-%{release}
 Requires: %{name}-userportal = %{version}-%{release}
 Requires: %{name}-dbscripts = %{version}-%{release}
 Requires: %{name}-webadmin-portal = %{version}-%{release}
+Requires: %{name}-cli
 
 # Require other tool packages:
 Requires: ovirt-iso-uploader >= 3.3.0
@@ -382,7 +383,6 @@ Group: Virtualization/Management
 Requires: %{name}-setup
 Requires: %{name}-sdk >= 3.1.0.6
 Requires: openssh-server
-Requires: ovirt-engine-cli
 Requires: ovirt-host-deploy-offline >= 1.1.0
 Requires: vdsm
 
