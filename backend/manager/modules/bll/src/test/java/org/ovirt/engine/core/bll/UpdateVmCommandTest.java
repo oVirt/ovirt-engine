@@ -116,9 +116,6 @@ public class UpdateVmCommandTest {
         prepareVmToPassCanDoAction();
 
         boolean c = command.canDoAction();
-        System.out.println(command.getReturnValue().getCanDoActionMessages());
-        System.out.println(command.getParameters().getVm().getOs());
-
         assertTrue("canDoAction should have passed.", c);
     }
 
@@ -244,7 +241,7 @@ public class UpdateVmCommandTest {
     }
 
     private void mockValidateCustomProperties() {
-        doReturn(Collections.<ValidationError>emptyList()).when(command).validateCustomProperties(any(VmStatic.class));
+        doReturn(Collections.<ValidationError> emptyList()).when(command).validateCustomProperties(any(VmStatic.class));
     }
 
     private void mockSameNameQuery(boolean result) {
