@@ -1073,7 +1073,7 @@ public enum ConfigValues {
         "trap \"chmod -R u+rwX \\\"${MYTMP}\\\" > /dev/null 2>&1; rm -fr \\\"${MYTMP}\\\" > /dev/null 2>&1\" 0; " +
         "rm -fr \"${MYTMP}\" && " +
         "mkdir \"${MYTMP}\" && " +
-        "tar -C \"${MYTMP}\" -x && " +
+        "tar --warning=no-timestamp -C \"${MYTMP}\" -x && " +
         "@ENVIRONMENT@ \"${MYTMP}\"/setup DIALOG/dialect=str:machine DIALOG/customization=bool:True"
     )
     BootstrapCommand(373),
