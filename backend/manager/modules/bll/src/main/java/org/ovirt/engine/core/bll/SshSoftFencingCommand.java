@@ -63,9 +63,8 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
      * @returns {@code true} if command has been executed successfully, {@code false} otherwise
      */
     private boolean executeSshSoftFencingCommand(String version) {
-        boolean result = true;
+        boolean result = false;
         EngineSSHClient sshClient = null;
-        ByteArrayOutputStream bos = null;
 
         try {
             sshClient = new EngineSSHClient();
@@ -73,16 +72,24 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
             sshClient.useDefaultKeyPair();
             sshClient.connect();
             sshClient.authenticate();
-            bos = new ByteArrayOutputStream();
+        } catch (Exception ex) {
+            log.errorFormat("SSH connection to host {0} failed: {1}", getVds().getHostName(), ex);
+            closeSshConnection(sshClient);
+            return result;
+        }
+
+        ByteArrayOutputStream cmdOut = new ByteArrayOutputStream();
+        ByteArrayOutputStream cmdErr = new ByteArrayOutputStream();
+        try {
+            log.infoFormat("Executing SSH Soft Fencing command on host {0}", getVds().getHostName());
             sshClient.executeCommand(Config.<String> GetValue(ConfigValues.SshSoftFencingCommand, version),
                     null,
-                    bos,
-                    null);
-            log.info("SSH Soft Fencing command executed on host " + getVds().getHostName());
-            log.debug("SSH Soft Fencing command output " + bos.toString());
+                    cmdOut,
+                    cmdErr);
+            result = true;
         } catch (Exception ex) {
-            log.error("SSH Soft Fencing command failed on host " + getVds().getHostName(), ex);
-            result = false;
+            log.errorFormat("SSH Soft Fencing command failed on host {0}: {1}\nStdout: {2}\nStderr: {3}\nStacktrace: {4}",
+                    getVds().getHostName(), ex.getMessage(), cmdOut.toString(), cmdErr.toString(), ex);
         } finally {
             closeSshConnection(sshClient);
         }
