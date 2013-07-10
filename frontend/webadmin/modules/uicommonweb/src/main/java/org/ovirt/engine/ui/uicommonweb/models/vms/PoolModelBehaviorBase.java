@@ -88,6 +88,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             getModel().getTotalCPUCores().setEntity(Integer.toString(vmBase.getNumOfCpus()));
             getModel().getNumOfSockets().setSelectedItem(vmBase.getNumOfSockets());
             getModel().getNumOfMonitors().setSelectedItem(vmBase.getNumOfMonitors());
+            getModel().getIsSingleQxlEnabled().setEntity(vmBase.getSingleQxlPci());
             getModel().getDomain().setSelectedItem(vmBase.getDomain());
             getModel().getMemSize().setEntity(vmBase.getMemSizeMb());
             getModel().setBootSequence(vmBase.getDefaultBootSequence());

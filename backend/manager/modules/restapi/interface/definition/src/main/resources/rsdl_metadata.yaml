@@ -53,6 +53,7 @@ actions:
           vm.type: xs:string
           vm.os.initRd: xs:string
           vm.display.monitors: xs:int
+          vm.display.single_qxl_pci: xs:boolean
           vm.display.type: xs:string
           vm.display.allow_override: xs:boolean
           vm.display.smartcard_enabled: xs:boolean
@@ -114,6 +115,7 @@ actions:
           vm.type: xs:string
           vm.os.initRd: xs:string
           vm.display.monitors: xs:int
+          vm.display.single_qxl_pci: xs:boolean
           vm.display.type: xs:string
           vm.display.allow_override: xs:boolean
           vm.display.smartcard_enabled: xs:boolean
@@ -155,6 +157,7 @@ actions:
           vm.type: xs:string
           vm.os.initRd: xs:string
           vm.display.monitors: xs:int
+          vm.display.single_qxl_pci: xs:boolean
           vm.display.type: xs:string
           vm.display.allow_override: xs:boolean
           vm.display.smartcard_enabled: xs:boolean
@@ -2490,6 +2493,7 @@ actions:
           template.os.kernel: xs:string
           template.display.type: xs:string
           template.display.monitors: xs:int
+          vm.display.single_qxl_pci: xs:boolean
           template.display.allow_override: xs:boolean
           template.display.smartcard_enabled: xs:boolean
           template.display.keyboard_layout: xs:string
@@ -2530,6 +2534,7 @@ actions:
           template.os.kernel: xs:string
           template.display.type: xs:string
           template.display.monitors: xs:int
+          vm.display.single_qxl_pci: xs:boolean
           template.display.allow_override: xs:boolean
           template.display.smartcard_enabled: xs:boolean
           template.display.keyboard_layout: xs:string

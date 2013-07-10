@@ -59,9 +59,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     protected void buildVmVideoCards() {
         createInfo.put(VdsProperties.display, vm.getDisplayType().toString());
         // the requested display type might be different than the default display of
-        // the VM in Run Once scenario, in that case we need to add proper video device
+        // the VM in Run Once scenario, in that case we need to add proper video device.
         if (vm.getDisplayType() != vm.getDefaultDisplayType()) {
-            addVideoCardByDisplayType(vm.getDisplayType());
+            addVideoCardByDisplayType(vm.getDisplayType(), vm.getNumOfMonitors());
         }
         else {
             addVideoCardsDefinedForVmInDB(vm.getId());
@@ -71,12 +71,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     /**
      * Add video device according to the given display type
      */
-    private void addVideoCardByDisplayType(DisplayType displayType) {
+    private void addVideoCardByDisplayType(DisplayType displayType, int numOfMonitors) {
         Map<String, Object> struct = new HashMap<String, Object>();
         // create a monitor as an unmanaged device
         struct.put(VdsProperties.Type, VmDeviceGeneralType.VIDEO.getValue());
         struct.put(VdsProperties.Device, displayType.getVmDeviceType().getName());
-        struct.put(VdsProperties.SpecParams, getNewMonitorSpecParams());
+        struct.put(VdsProperties.SpecParams, getNewMonitorSpecParams(displayType, numOfMonitors));
         struct.put(VdsProperties.DeviceId, String.valueOf(Guid.newGuid()));
         devices.add(struct);
     }
@@ -606,9 +606,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
     }
 
-    private static HashMap<String, Object> getNewMonitorSpecParams() {
+    private static HashMap<String, Object> getNewMonitorSpecParams(DisplayType displayType, int numOfMonitors) {
         HashMap<String, Object> specParams = new HashMap<String, Object>();
-        specParams.put("vram", VmDeviceCommonUtils.HIGH_VIDEO_MEM);
+        specParams.put("vram", String.valueOf(VmDeviceCommonUtils.HIGH_VIDEO_MEM));
+        if (displayType == DisplayType.qxl) {
+            specParams.put("heads", numOfMonitors);
+        }
         return specParams;
     }
 

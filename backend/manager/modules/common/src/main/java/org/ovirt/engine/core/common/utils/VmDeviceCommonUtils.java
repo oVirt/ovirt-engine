@@ -15,8 +15,8 @@ import org.ovirt.engine.core.compat.Version;
 
 public class VmDeviceCommonUtils {
 
-    public final static String LOW_VIDEO_MEM = "32768";
-    public final static String HIGH_VIDEO_MEM = "65536";
+    public final static long LOW_VIDEO_MEM = 32768;
+    public final static long HIGH_VIDEO_MEM = 65536;
 
     final static String NETWORK_CHAR = "N";
     final static String CDROM_CHAR = "D";

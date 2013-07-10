@@ -477,6 +477,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         vm.setDeleteProtected((Boolean) model.getIsDeleteProtected().getEntity());
                         vm.setSmartcardEnabled((Boolean) model.getIsSmartcardEnabled().getEntity());
                         vm.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
+                        vm.setSingleQxlPci((Boolean)model.getIsSingleQxlEnabled().getEntity());
                         vm.setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain()
                                 .getSelectedItem() : ""); //$NON-NLS-1$
                         vm.setVmMemSizeMb((Integer) model.getMemSize().getEntity());

@@ -165,6 +165,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         getModel().getKernel_path().setEntity(this.template.getKernelUrl());
         getModel().getInitrd_path().setEntity(this.template.getInitrdUrl());
 
+        getModel().getIsSingleQxlEnabled().setEntity(this.template.getSingleQxlPci());
+
         updateTimeZone(template.getTimeZone());
 
         // Update domain list

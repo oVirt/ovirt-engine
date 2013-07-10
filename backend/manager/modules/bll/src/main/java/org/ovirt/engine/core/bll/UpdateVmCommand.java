@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -250,6 +251,14 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!VmHandler.isMemorySizeLegal(vmFromParams.getOs(),
                 vmFromParams.getMemSizeMb(), getReturnValue().getCanDoActionMessages(),
                 getVdsGroup().getcompatibility_version())) {
+            return false;
+        }
+
+        if (vmFromParams.getSingleQxlPci() &&
+                !VmHandler.isSingleQxlDeviceLegal(vmFromParams.getDefaultDisplayType(),
+                        vmFromParams.getOs(),
+                        getReturnValue().getCanDoActionMessages(),
+                        getVdsGroup().getcompatibility_version())) {
             return false;
         }
 

@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -41,6 +42,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 public class VmDeviceUtils {
     private static VmDeviceDAO dao = DbFacade.getInstance().getVmDeviceDao();
     private final static String VRAM = "vram";
+    private final static String HEADS = "heads";
     private final static String EHCI_MODEL = "ich9-ehci";
     private final static String UHCI_MODEL = "ich9-uhci";
     private final static int SLOTS_PER_CONTROLLER = 6;
@@ -66,11 +68,12 @@ public class VmDeviceUtils {
                     dao.remove(device.getId());
                 }
                 // add video device per each monitor
-                for (int i = 0; i<entity.getNumOfMonitors();i++) {
+                int monitors = entity.getSingleQxlPci() ? 1 : entity.getNumOfMonitors();
+                for (int i = 0; i<monitors; i++) {
                     addManagedDevice(new VmDeviceId(Guid.newGuid(), entity.getId()),
                             VmDeviceGeneralType.VIDEO,
                             entity.getDefaultDisplayType().getVmDeviceType(),
-                            getMemExpr(entity.getNumOfMonitors()),
+                            getMemExpr(entity.getNumOfMonitors(), entity.getSingleQxlPci()),
                             true,
                             false,
                             null);
@@ -285,7 +288,7 @@ public class VmDeviceUtils {
                         // to the new VMStatic params
                         continue;
                     } else {
-                        specParams.putAll(getMemExpr(vmBase.getNumOfMonitors()));
+                    specParams.putAll(getMemExpr(vmBase.getNumOfMonitors(), vmBase.getSingleQxlPci()));
                     }
                     break;
 
@@ -346,7 +349,8 @@ public class VmDeviceUtils {
             //  update devices boot order
             updateBootOrderInVmDeviceAndStoreToDB(vmBase);
 
-            int numOfMonitors = (vmBase.getDefaultDisplayType() == DisplayType.vnc) ? Math.max(1, vmBase.getNumOfMonitors()) : vmBase.getNumOfMonitors();
+            int numOfMonitors = (vmBase.getDefaultDisplayType() == DisplayType.vnc) ? Math.max(1, vmBase.getNumOfMonitors()) :
+                vmBase.getSingleQxlPci() ? 1 : vmBase.getNumOfMonitors();
             // create Video device. Multiple if display type is spice
             for (int i = 0; i < numOfMonitors; i++) {
                 addVideoDevice(vmBase);
@@ -393,7 +397,7 @@ public class VmDeviceUtils {
                 new VmDeviceId(Guid.newGuid(),vm.getId()),
                 VmDeviceGeneralType.VIDEO,
                 vm.getDefaultDisplayType().getVmDeviceType(),
-                getMemExpr(vm.getNumOfMonitors()),
+                getMemExpr(vm.getNumOfMonitors(), vm.getSingleQxlPci()),
                 true,
                 true,
                 null);
@@ -589,13 +593,13 @@ public class VmDeviceUtils {
         }
         if (newStatic.getNumOfMonitors() > prevNumOfMonitors) {
             // monitors were added
-            for (int i = prevNumOfMonitors; i < newStatic
-                    .getNumOfMonitors(); i++) {
+            int monitors = newStatic.getSingleQxlPci() ? 1 : newStatic.getNumOfMonitors();
+            for (int i = prevNumOfMonitors; i < monitors; i++) {
                 Guid newId = Guid.newGuid();
                 VmDeviceUtils.addManagedDevice(new VmDeviceId(newId, newStatic.getId()),
                         VmDeviceGeneralType.VIDEO,
                         VmDeviceType.QXL,
-                        getMemExpr(newStatic.getNumOfMonitors()),
+                        getMemExpr(newStatic.getNumOfMonitors(), newStatic.getSingleQxlPci()),
                         true,
                         false,
                         null);
@@ -789,7 +793,7 @@ public class VmDeviceUtils {
             }
             vmDevice.setIsManaged(true);
             if (vmDevice.getType() == VmDeviceGeneralType.VIDEO) {
-                vmDevice.setSpecParams(getMemExpr(entity.getNumOfMonitors()));
+                vmDevice.setSpecParams(getMemExpr(entity.getNumOfMonitors(), entity.getSingleQxlPci()));
             }
             if (vmDevice.getDevice().equals(VmDeviceType.CDROM.getName())){
                 hasCD = true;
@@ -820,10 +824,13 @@ public class VmDeviceUtils {
      *            Number of monitors
      * @return
      */
-    private static Map<String, Object> getMemExpr(int numOfMonitors) {
-        String mem = (numOfMonitors > 2 ? VmDeviceCommonUtils.LOW_VIDEO_MEM : VmDeviceCommonUtils.HIGH_VIDEO_MEM);
+    private static Map<String, Object> getMemExpr(int numOfMonitors, boolean singleQxlPci) {
+        int heads = singleQxlPci ? numOfMonitors : 1;
+        String mem = (numOfMonitors > 2 ? String.valueOf(VmDeviceCommonUtils.LOW_VIDEO_MEM * heads) :
+                String.valueOf(VmDeviceCommonUtils.HIGH_VIDEO_MEM * heads));
         Map<String, Object> specParams = new HashMap<String, Object>();
         specParams.put(VRAM, mem);
+        specParams.put(HEADS, String.valueOf(heads));
         return specParams;
     }
 

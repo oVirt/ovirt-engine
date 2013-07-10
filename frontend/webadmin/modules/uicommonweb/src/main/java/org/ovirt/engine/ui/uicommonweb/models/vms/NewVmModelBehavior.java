@@ -79,6 +79,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             getModel().getTotalCPUCores().setEntity(Integer.toString(template.getNumOfCpus()));
             getModel().getNumOfSockets().setSelectedItem(template.getNumOfSockets());
             getModel().getNumOfMonitors().setSelectedItem(template.getNumOfMonitors());
+            getModel().getIsSingleQxlEnabled().setEntity(template.getSingleQxlPci());
             getModel().getDomain().setSelectedItem(template.getDomain());
             getModel().getMemSize().setEntity(template.getMemSizeMb());
             getModel().setBootSequence(template.getDefaultBootSequence());

@@ -135,9 +135,19 @@ public class FeatureSupported {
     /**
      * @param version
      *            Compatibility version to check for.
-     * @return <code>true</code> iff Management Network normalization is supported for the cluster version.
+     * @return <code>true</code> if Management Network normalization is supported for the cluster version.
      */
     public static boolean setupManagementNetwork(Version version) {
         return supportedInConfig(ConfigValues.NormalizedMgmgNetworkEnabled, version);
+    }
+
+    /**
+     *
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if Single Qxl video display is supported for the cluster version.
+     */
+    public static boolean singleQxlPci(Version version) {
+        return supportedInConfig(ConfigValues.SingleQxlPciEnabled, version);
     }
 }

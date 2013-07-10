@@ -1232,6 +1232,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Migration is NOT currently supported using SPICE Native USB redirection on cluster version lower than 3.2")
     String nativeUsbSupportWarning();
 
+    @DefaultStringValue("Monitors")
+    String monitors();
+
     @DefaultStringValue("LUN is already in use - attaching it could cause data corruption.")
     String lunAlreadyUsedWarning();
 
@@ -1470,6 +1473,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Soundcard enabled")
     String soundcardEnabled();
+
+    @DefaultStringValue("Single PCI")
+    String singleQxlEnabled();
 
     @DefaultStringValue("Optimized for")
     String optimizedFor();

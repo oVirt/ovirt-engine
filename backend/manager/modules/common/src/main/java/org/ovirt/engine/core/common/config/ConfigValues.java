@@ -1449,6 +1449,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     NormalizedMgmgNetworkEnabled(522),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    SingleQxlPciEnabled(523),
+
     Invalid(65535);
 
     private int intValue;

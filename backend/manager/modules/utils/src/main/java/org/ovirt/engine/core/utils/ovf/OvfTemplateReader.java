@@ -132,6 +132,9 @@ public class OvfTemplateReader extends OvfReader {
             case 20:
                 _vmTemplate
                         .setNumOfMonitors(Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
+                if (node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS) != null) {
+                    _vmTemplate.setSingleQxlPci(Boolean.parseBoolean(node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS).InnerText));
+                }
                 readVmDevice(node, _vmTemplate, Guid.newGuid(), Boolean.TRUE);
                 break;
             // OTHER

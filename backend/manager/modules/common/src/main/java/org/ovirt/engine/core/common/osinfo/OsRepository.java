@@ -142,4 +142,10 @@ public interface OsRepository {
      *         </pre>
      */
     String osNameUpperCasedAndUnderscored(String name);
+
+    /**
+     * @param osId
+     * @return
+     */
+    boolean isSingleQxlDeviceEnabled(int osId);
 }

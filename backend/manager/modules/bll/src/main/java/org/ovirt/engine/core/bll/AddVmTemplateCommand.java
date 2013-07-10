@@ -276,6 +276,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
+        if (getParameters().getVm().getSingleQxlPci() &&
+                !VmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
+                        getParameters().getVm().getOs(),
+                        getReturnValue().getCanDoActionMessages(),
+                        getVdsGroup().getcompatibility_version())) {
+            return false;
+        }
+
         return imagesRelatedChecks() && AddVmCommand.CheckCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
                 getParameters().getMasterVm().getCpuPerSocket(), getVdsGroup()
                         .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
@@ -387,6 +395,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getVmTemplateId(),
                         getParameters().getMasterVm().getDomain(),
                         getParameters().getMasterVm().getNumOfMonitors(),
+                        getParameters().getMasterVm().getSingleQxlPci(),
                         VmTemplateStatus.Locked.getValue(),
                         getParameters().getMasterVm().getUsbPolicy().getValue(),
                         getParameters().getMasterVm().getTimeZone(),

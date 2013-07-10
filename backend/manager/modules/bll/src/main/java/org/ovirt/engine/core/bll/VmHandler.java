@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -386,6 +387,23 @@ public class VmHandler {
             reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS.toString());
         }
         return legal;
+    }
+
+    public static boolean isSingleQxlDeviceLegal(DisplayType displayType, int osId, List<String> reasons,
+            Version compatibilityVersion) {
+        if (!FeatureSupported.singleQxlPci(compatibilityVersion)) {
+             reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_INCOMPATIBLE_VERSION.toString());
+             return false;
+         }
+        if (displayType != DisplayType.qxl) {
+            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_DISPLAY_TYPE.toString());
+            return false;
+        }
+        if (!OsRepositoryImpl.INSTANCE.isSingleQxlDeviceEnabled(osId)) {
+            reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_OS_TYPE.toString());
+            return false;
+        }
+        return true;
     }
 
     /**

@@ -141,6 +141,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getDomain().setSelectedItem(vm.getVmDomain());
         getModel().getUsbPolicy().setSelectedItem(vm.getUsbPolicy());
         getModel().getNumOfMonitors().setSelectedItem(vm.getNumOfMonitors());
+        getModel().getIsSingleQxlEnabled().setEntity(vm.getSingleQxlPci());
         getModel().getAllowConsoleReconnect().setEntity(vm.getAllowConsoleReconnect());
         getModel().setBootSequence(vm.getDefaultBootSequence());
         getModel().getIsHighlyAvailable().setEntity(vm.isAutoStartup());

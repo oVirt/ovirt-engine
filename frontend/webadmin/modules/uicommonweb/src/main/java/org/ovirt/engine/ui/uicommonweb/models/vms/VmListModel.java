@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -81,6 +82,9 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.VmBaseListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserSelectedDisplayProtocolManager;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkCreateFrontendAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkCreateOrUpdateFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkUpdateFrontendAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -92,9 +96,6 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-import static org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkCreateFrontendAsyncCallback;
-import static org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkCreateOrUpdateFrontendActionAsyncCallback;
-import static org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModelNetworkAsyncCallbacks.NetworkUpdateFrontendAsyncCallback;
 
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext, UserSelectedDisplayProtocolManager
 {
@@ -1354,6 +1355,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         tempVar.setVmOs((Integer) model.getOSType().getSelectedItem());
         tempVar.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
+        tempVar.setSingleQxlPci((Boolean) model.getIsSingleQxlEnabled().getEntity());
         tempVar.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         tempVar.setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         tempVar.setVmMemSizeMb((Integer) model.getMemSize().getEntity());
@@ -1950,6 +1952,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
         getcurrentVm().setVmOs((Integer) model.getOSType().getSelectedItem());
         getcurrentVm().setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
+        getcurrentVm().setSingleQxlPci((Boolean) model.getIsSingleQxlEnabled().getEntity());
         getcurrentVm().setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         getcurrentVm().setVmDescription((String) model.getDescription().getEntity());
         getcurrentVm().setComment((String) model.getComment().getEntity());

@@ -97,6 +97,7 @@ public class VmMapper {
         staticVm.setInitrdUrl(entity.getInitrdUrl());
         staticVm.setTimeZone(entity.getTimeZone());
         staticVm.setNumOfMonitors(entity.getNumOfMonitors());
+        staticVm.setSingleQxlPci(entity.getSingleQxlPci());
         staticVm.setAllowConsoleReconnect(entity.isAllowConsoleReconnect());
         staticVm.setPriority(entity.getPriority());
         staticVm.setUsbPolicy(entity.getUsbPolicy());
@@ -201,6 +202,9 @@ public class VmMapper {
             }
             if (vm.getDisplay().isSetMonitors()) {
                 staticVm.setNumOfMonitors(vm.getDisplay().getMonitors());
+            }
+            if (vm.getDisplay().isSetSingleQxlPci()) {
+                staticVm.setSingleQxlPci(vm.getDisplay().isSingleQxlPci());
             }
             if (vm.getDisplay().isSetAllowOverride()) {
                 staticVm.setAllowConsoleReconnect(vm.getDisplay().isAllowOverride());
@@ -366,6 +370,7 @@ public class VmMapper {
             Integer displaySecurePort = entity.getDisplaySecurePort();
             model.getDisplay().setSecurePort(displaySecurePort==null || displaySecurePort==-1 ? null : displaySecurePort);
             model.getDisplay().setMonitors(entity.getNumOfMonitors());
+            model.getDisplay().setSingleQxlPci(entity.getSingleQxlPci());
         } else {
             if (model.getOs() != null) {
                 for (Boot boot : map(entity.getDefaultBootSequence(), null)) {
@@ -379,6 +384,7 @@ public class VmMapper {
         }
         if (model.getDisplay() != null) {
             model.getDisplay().setMonitors(entity.getNumOfMonitors());
+            model.getDisplay().setSingleQxlPci(entity.getSingleQxlPci());
             model.getDisplay().setAllowOverride(entity.getAllowConsoleReconnect());
             model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
             model.getDisplay().setKeyboardLayout(entity.getVncKeyboardLayout());

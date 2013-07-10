@@ -56,7 +56,7 @@ public class VmTemplate extends VmBase {
 
     public VmTemplate(int childCount, Date creationDate, String description, int memSizeMb, String name,
             int numOfSockets, int cpuPerSocket, int osId, Guid vdsGroupId, Guid vmtGuid, String domain,
-            int numOfMonitors, int status, int usbPolicy, String timeZone, int niceLevel,
+            int numOfMonitors, boolean singleQxlPci, int status, int usbPolicy, String timeZone, int niceLevel,
             boolean failBack, BootSequence defaultBootSequence, VmType vmType,
             boolean smartcardEnabled, boolean deleteProtected, Boolean tunnelMigration, String vncKeyboardLayout,
             int minAllocatedMem, boolean stateless, boolean runAndPause, Guid createdByUserId) {
@@ -71,6 +71,7 @@ public class VmTemplate extends VmBase {
                 numOfSockets,
                 cpuPerSocket,
                 numOfMonitors,
+                singleQxlPci,
                 domain,
                 timeZone,
                 vmType,

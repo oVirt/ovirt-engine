@@ -1459,6 +1459,15 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Illegal number of monitors is provided, max allowed number of monitors is 1 for VNC and the max number in the ValidNumOfMonitors configuration variable for SPICE.")
     String ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Cannot set single display device via VNC display.")
+    String ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_DISPLAY_TYPE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Cannot set single display device to non Linux operating system.")
+    String ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_OS_TYPE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Cluster does not support Single Qxl Pci devices.")
+    String ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_INCOMPATIBLE_VERSION();
+
     @DefaultStringValue("Cannot ${action} ${type}. Illegal Domain name: ${Domain}. Domain name has unsupported special character ${Char}.")
     String ACTION_TYPE_FAILED_ILLEGAL_DOMAIN_NAME();
 

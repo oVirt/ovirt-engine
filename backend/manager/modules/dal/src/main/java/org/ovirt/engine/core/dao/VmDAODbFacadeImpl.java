@@ -203,6 +203,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
                 .addValue("vm_name", vm.getName())
                 .addValue("vmt_guid", vm.getVmtGuid())
                 .addValue("num_of_monitors", vm.getNumOfMonitors())
+                .addValue("single_qxl_pci", vm.getSingleQxlPci())
                 .addValue("allow_console_reconnect", vm.getAllowConsoleReconnect())
                 .addValue("is_initialized", vm.isInitialized())
                 .addValue("num_of_sockets", vm.getNumOfSockets())
@@ -343,6 +344,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setVmPoolName(rs.getString("vm_pool_name"));
             entity.setVmPoolId(getGuid(rs, "vm_pool_id"));
             entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
+            entity.setSingleQxlPci(rs.getBoolean("single_qxl_pci"));
             entity.setAllowConsoleReconnect(rs.getBoolean("allow_console_reconnect"));
             entity.setInitialized(rs.getBoolean("is_initialized"));
             entity.setNumOfSockets(rs.getInt("num_of_sockets"));

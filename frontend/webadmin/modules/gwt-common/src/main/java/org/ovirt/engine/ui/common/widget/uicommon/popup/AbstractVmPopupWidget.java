@@ -1,31 +1,9 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup;
 
-
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.ClickEvent;
-import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.event.logical.shared.ValueChangeEvent;
-import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.text.shared.AbstractRenderer;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.cellview.client.CellTable;
-import com.google.gwt.user.cellview.client.CellTable.Resources;
-import com.google.gwt.user.client.ui.ButtonBase;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.HorizontalPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Panel;
-import com.google.gwt.user.client.ui.RadioButton;
-import com.google.gwt.user.client.ui.ValueLabel;
-import com.google.gwt.user.client.ui.Widget;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -76,6 +54,30 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.text.shared.AbstractRenderer;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.uibinder.client.UiHandler;
+import com.google.gwt.user.cellview.client.CellTable;
+import com.google.gwt.user.cellview.client.CellTable.Resources;
+import com.google.gwt.user.client.ui.ButtonBase;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.HorizontalPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.RadioButton;
+import com.google.gwt.user.client.ui.ValueLabel;
+import com.google.gwt.user.client.ui.Widget;
+
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.simpleField;
 
 public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWidget<UnitVmModel> {
@@ -103,6 +105,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         String generalTabExtendedRightWidgetWidth();
 
         String cdImageEditor();
+
+        String monitorsStyles();
     }
 
     @UiField
@@ -354,6 +358,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public ListModelListBoxEditor<Object> numOfMonitorsEditor;
 
     @UiField(provided = true)
+    @Path(value = "isSingleQxlEnabled.entity")
+    @WithElementId("isSingleQxlEnabled")
+    public EntityModelCheckBoxEditor isSingleQxlEnabledEditor;
+
+    @UiField(provided = true)
     @Path(value = "isStateless.entity")
     @WithElementId("isStateless")
     public EntityModelCheckBoxEditor isStatelessEditor;
@@ -592,6 +601,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isSoundcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         copyTemplatePermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isMemoryBalloonDeviceEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isSingleQxlEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
 
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
@@ -955,6 +965,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         corePerSocketEditor.setLabel(constants.coresPerSocket());
         numOfSocketsEditor.setLabel(constants.numOfSockets());
         isSoundcardEnabledEditor.setLabel(constants.soundcardEnabled());
+        isSingleQxlEnabledEditor.setLabel(constants.singleQxlEnabled());
     }
 
     protected void applyStyles() {
@@ -965,6 +976,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         provisioningCloneEditor.addContentWidgetStyleName(style.provisioningRadioContent());
         cdAttachedEditor.addContentWidgetStyleName(style.cdAttachedLabelWidth());
         cdImageEditor.addContentWidgetStyleName(style.cdImageEditor());
+        numOfMonitorsEditor.addContentWidgetStyleName(style.monitorsStyles());
+        numOfMonitorsEditor.setStyleName(style.monitorsStyles());
+        numOfMonitorsEditor.hideLabel();
     }
 
     @Override
@@ -1302,6 +1316,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         displayProtocolEditor.setTabIndex(nextTabIndex++);
         vncKeyboardLayoutEditor.setTabIndex(nextTabIndex++);
         usbSupportEditor.setTabIndex(nextTabIndex++);
+        isSingleQxlEnabledEditor.setTabIndex(nextTabIndex++);
         numOfMonitorsEditor.setTabIndex(nextTabIndex++);
         isSmartcardEnabledEditor.setTabIndex(nextTabIndex++);
         nextTabIndex = expander.setTabIndexes(nextTabIndex);
@@ -1358,6 +1373,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 putAll(consoleTabWidgets(), simpleField().visibleInAdvancedModeOnly()).
                 update(consoleTab, simpleField()).
                 update(numOfMonitorsEditor, simpleField()).
+                update(isSingleQxlEnabledEditor, simpleField()).
                 putOne(isSoundcardEnabledEditor, simpleField().visibleInAdvancedModeOnly()).
                 putOne(isConsoleDeviceEnabledEditor, simpleField().visibleInAdvancedModeOnly());
     }

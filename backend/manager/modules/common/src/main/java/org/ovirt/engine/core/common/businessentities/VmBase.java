@@ -71,6 +71,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             message = "VALIDATION.VM.NUM_OF_MONITORS.EXCEEDED")
     private int numOfMonitors;
 
+    @EditableOnVmStatusField
+    private boolean singleQxlPci = false;
+
     @EditableField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_DOMAIN_SIZE)
     private String domain;
@@ -210,6 +213,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             int numOfSockets,
             int cpusPerSocket,
             int numOfMonitors,
+            boolean singleQxlPci,
             String domain,
             String timezone,
             VmType vmType,
@@ -244,6 +248,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.numOfSockets = numOfSockets;
         this.cpuPerSocket = cpusPerSocket;
         this.numOfMonitors = numOfMonitors;
+        this.singleQxlPci = singleQxlPci;
         this.domain = domain;
         this.timeZone = timezone;
         this.vmType = vmType;
@@ -397,6 +402,14 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public void setNumOfMonitors(int value) {
         numOfMonitors = value;
+    }
+
+    public boolean getSingleQxlPci() {
+        return singleQxlPci;
+    }
+
+    public void setSingleQxlPci(boolean value) {
+        singleQxlPci = value;
     }
 
     public String getDomain() {
@@ -627,6 +640,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && niceLevel == other.niceLevel
                 && numOfSockets == other.numOfSockets
                 && numOfMonitors == other.numOfMonitors
+                && singleQxlPci == other.singleQxlPci
                 && origin == other.origin
                 && priority == other.priority
                 && stateless == other.stateless

@@ -998,4 +998,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         behavior.initNetworks(hotUpdateSupported, getModel().getSelectedCluster().getId(), query);
     }
+
+    public void updateSingleQxl(boolean visible) {
+       getModel().getIsSingleQxlEnabled().setIsAvailable(visible);
+    }
 }

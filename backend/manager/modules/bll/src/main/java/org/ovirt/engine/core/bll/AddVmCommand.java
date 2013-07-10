@@ -249,8 +249,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         returnValue = areParametersLegal(getReturnValue().getCanDoActionMessages());
         // Check if number of monitors passed is legal
         returnValue =
-                returnValue
-                        && checkNumberOfMonitors();
+                returnValue && checkNumberOfMonitors() && checkSingleQxlDisplay();
 
         returnValue =
                 returnValue
@@ -260,6 +259,16 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                         && canAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
                         && hostToRunExist();
         return returnValue;
+    }
+
+    protected boolean checkSingleQxlDisplay() {
+        if (!getParameters().getVmStaticData().getSingleQxlPci()) {
+            return true;
+        }
+        return (VmHandler.isSingleQxlDeviceLegal(getParameters().getVm().getDefaultDisplayType(),
+                        getParameters().getVm().getOs(),
+                        getReturnValue().getCanDoActionMessages(),
+                        getVdsGroup().getcompatibility_version()));
     }
 
     protected boolean checkNumberOfMonitors() {

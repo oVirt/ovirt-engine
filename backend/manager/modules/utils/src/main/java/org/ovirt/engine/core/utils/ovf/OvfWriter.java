@@ -330,6 +330,9 @@ public abstract class OvfWriter implements IOvfBuilder {
                 // we should write number of monitors for each entry for backward compatibility
                 _writer.WriteRaw(String.valueOf(numOfMonitors));
                 _writer.WriteEndElement();
+                _writer.WriteStartElement(RASD_URI, "SinglePciQxl");
+                _writer.WriteRaw(String.valueOf(vmBase.getSingleQxlPci()));
+                _writer.WriteEndElement();
                 writeVmDeviceInfo(vmDevice);
                 _writer.WriteEndElement(); // item
                 if (i++ == numOfMonitors) {

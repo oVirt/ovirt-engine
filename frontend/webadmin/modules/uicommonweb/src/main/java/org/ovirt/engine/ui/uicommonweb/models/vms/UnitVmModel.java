@@ -148,6 +148,7 @@ public class UnitVmModel extends Model {
             getDisplayProtocol().setIsChangable(false);
             getUsbPolicy().setIsChangable(false);
             getNumOfMonitors().setIsChangable(false);
+            getIsSingleQxlEnabled().setIsAvailable(false);
             getIsSmartcardEnabled().setIsChangable(false);
             getAllowConsoleReconnect().setIsChangable(false);
             getVncKeyboardLayout().setIsChangable(false);
@@ -455,6 +456,19 @@ public class UnitVmModel extends Model {
     {
         privateNumOfMonitors = value;
     }
+
+    private NotChangableForVmInPoolEntityModel privateIsSingleQxlEnabled;
+
+    public EntityModel getIsSingleQxlEnabled()
+    {
+        return privateIsSingleQxlEnabled;
+    }
+
+    private void setIsSingleQxlEnabled(NotChangableForVmInPoolEntityModel value)
+    {
+        privateIsSingleQxlEnabled = value;
+    }
+
 
     private NotChangableForVmInPoolEntityModel privateAllowConsoleReconnect;
 
@@ -1261,6 +1275,9 @@ public class UnitVmModel extends Model {
         setIsSoundcardEnabled(new NotChangableForVmInPoolEntityModel());
         getIsSoundcardEnabled().setEntity(false);
         getIsSoundcardEnabled().setIsChangable(false);
+
+        setIsSingleQxlEnabled(new NotChangableForVmInPoolEntityModel());
+        getIsSingleQxlEnabled().setEntity(false);
     }
 
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem)
@@ -1278,6 +1295,7 @@ public class UnitVmModel extends Model {
         getIsHighlyAvailable().setEntity(false);
         getIsAutoAssign().setEntity(true);
         getIsTemplatePublic().setEntity(true);
+        getIsSingleQxlEnabled().setEntity(false);
 
         getHostCpu().setEntity(false);
         getMigrationMode().setIsChangable(true);
@@ -1718,6 +1736,7 @@ public class UnitVmModel extends Model {
             getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.DISABLED);
             getIsSmartcardEnabled().setEntity(false);
         }
+        getBehavior().updateSingleQxl(type == DisplayType.qxl);
 
         getUsbPolicy().setIsChangable(type == DisplayType.qxl);
         getIsSmartcardEnabled().setIsChangable(type == DisplayType.qxl);

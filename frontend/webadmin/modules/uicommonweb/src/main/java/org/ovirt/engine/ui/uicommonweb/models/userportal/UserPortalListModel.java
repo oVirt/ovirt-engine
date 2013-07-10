@@ -598,6 +598,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         tempVar.setVmOs((Integer) model.getOSType().getSelectedItem());
 
         tempVar.setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
+        tempVar.setSingleQxlPci((Boolean) model.getIsSingleQxlEnabled().getEntity());
         tempVar.setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         tempVar.setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain().getSelectedItem() : ""); //$NON-NLS-1$
         tempVar.setVmMemSizeMb((Integer) model.getMemSize().getEntity());
@@ -1024,6 +1025,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         gettempVm().setName(name);
         gettempVm().setVmOs((Integer) model.getOSType().getSelectedItem());
         gettempVm().setNumOfMonitors((Integer) model.getNumOfMonitors().getSelectedItem());
+        gettempVm().setSingleQxlPci((Boolean) model.getIsSingleQxlEnabled().getEntity());
         gettempVm().setAllowConsoleReconnect((Boolean) model.getAllowConsoleReconnect().getEntity());
         gettempVm().setVmDescription((String) model.getDescription().getEntity());
         gettempVm().setVmDomain(model.getDomain().getIsAvailable() ? (String) model.getDomain()

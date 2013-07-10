@@ -62,8 +62,16 @@ public class FeaturesHelper {
             addForceSelectSpmFeature(features);
             addConsoleFeature(features);
             addFeatureStorageServerConnections(features);
+            addSingleQxlPciFeature(features);
         }
         return features;
+    }
+
+    private void addSingleQxlPciFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Single PCI for Qxl");
+        feature.setDescription("Ability to view multiple video devices via single PCI guest device");
+        features.getFeature().add(feature);
     }
 
     private void addSshAuthenticationFeature(Features features) {

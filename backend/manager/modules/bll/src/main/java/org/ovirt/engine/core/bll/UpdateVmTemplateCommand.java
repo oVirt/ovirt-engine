@@ -96,6 +96,14 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                             .toString(), getReturnValue().getCanDoActionMessages());
         }
 
+        if (returnValue && getParameters().getVmTemplateData().getSingleQxlPci() &&
+                !VmHandler.isSingleQxlDeviceLegal(getParameters().getVmTemplateData().getDefaultDisplayType(),
+                        getParameters().getVmTemplateData().getOsId(),
+                        getReturnValue().getCanDoActionMessages(),
+                        getVdsGroup().getcompatibility_version())) {
+            returnValue = false;
+        }
+
         return returnValue;
     }
 

@@ -110,6 +110,9 @@ public class TemplateMapper {
             if (model.getDisplay().isSetMonitors()) {
                 entity.setNumOfMonitors(model.getDisplay().getMonitors());
             }
+            if (model.getDisplay().isSetSingleQxlPci()) {
+                entity.setSingleQxlPci(model.getDisplay().isSingleQxlPci());
+            }
             if (model.getDisplay().isSetAllowOverride()) {
                 entity.setAllowConsoleReconnect(model.getDisplay().isAllowOverride());
             }
@@ -218,6 +221,9 @@ public class TemplateMapper {
             if (model.getDisplay().isSetMonitors()) {
                 staticVm.setNumOfMonitors(model.getDisplay().getMonitors());
             }
+            if (model.getDisplay().isSetSingleQxlPci()) {
+                staticVm.setSingleQxlPci(model.getDisplay().isSingleQxlPci());
+            }
             if (model.getDisplay().isSetAllowOverride()) {
                 staticVm.setAllowConsoleReconnect(model.getDisplay().isAllowOverride());
             }
@@ -300,6 +306,7 @@ public class TemplateMapper {
             model.setDisplay(new Display());
             model.getDisplay().setType(VmMapper.map(entity.getDefaultDisplayType(), null));
             model.getDisplay().setMonitors(entity.getNumOfMonitors());
+            model.getDisplay().setSingleQxlPci(entity.getSingleQxlPci());
             model.getDisplay().setAllowOverride(entity.isAllowConsoleReconnect());
             model.getDisplay().setSmartcardEnabled(entity.isSmartcardEnabled());
             model.getDisplay().setKeyboardLayout(entity.getVncKeyboardLayout());

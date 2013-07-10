@@ -64,6 +64,7 @@ public class VmStatic extends VmBase {
                 vmStatic.getNumOfSockets(),
                 vmStatic.getCpuPerSocket(),
                 vmStatic.getNumOfMonitors(),
+                vmStatic.getSingleQxlPci(),
                 vmStatic.getDomain(),
                 vmStatic.getTimeZone(),
                 vmStatic.getVmType(),

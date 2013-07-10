@@ -310,4 +310,8 @@ public enum OsRepositoryImpl implements OsRepository {
         }
     }
 
+    @Override
+    public boolean isSingleQxlDeviceEnabled(int osId) {
+        return isLinux(osId);
+    }
 }

@@ -119,6 +119,9 @@ public class OvfVmReader extends OvfReader {
             } else if (OvfHardware.Monitor.equals(resourceType)) {
                 _vm.getStaticData().setNumOfMonitors(
                         Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).InnerText));
+                if (node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS) != null) {
+                    _vm.setSingleQxlPci(Boolean.parseBoolean(node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS).InnerText));
+                }
                 readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
             } else if (OvfHardware.CD.equals(resourceType)) {
                 readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
