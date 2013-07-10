@@ -288,6 +288,9 @@ public final class VdsProperties {
         }
     }
 
+    // MoM policy tuning
+    public static final String balloonEnabled = "balloonEnabled";
+
     // properties for ServerConnectionListReturnForXmlRpc
     public static final String serverType = "serverType";
     public static final String target = "target";

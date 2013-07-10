@@ -72,6 +72,9 @@ public class ClusterMapper {
         if (model.isSetTrustedService()){
             entity.setTrustedService(model.isTrustedService());
         }
+        if (model.isSetBallooningEnabled()) {
+            entity.setEnableBallooning(model.isBallooningEnabled());
+        }
         return entity;
     }
 
@@ -104,6 +107,8 @@ public class ClusterMapper {
         model.setThreadsAsCores(entity.getCountThreadsAsCores());
         model.setTunnelMigration(entity.isTunnelMigration());
         model.setTrustedService(entity.supportsTrustedService());
+        model.setBallooningEnabled(entity.isEnableBallooning());
+
         return model;
     }
 

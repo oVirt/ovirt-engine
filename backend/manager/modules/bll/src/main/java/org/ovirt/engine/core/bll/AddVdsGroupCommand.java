@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -117,6 +118,14 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                     result = false;
                 }
             }
+        }
+
+        if (getVdsGroup().getcompatibility_version() != null
+                && Version.v3_3.compareTo(getVdsGroup().getcompatibility_version()) > 0
+                && getVdsGroup().isEnableBallooning()) {
+            // Members of pre-3.3 clusters don't support ballooning; here we act like a 3.2 engine
+            addCanDoActionMessage(VdcBllMessages.QOS_BALLOON_NOT_SUPPORTED);
+            result = false;
         }
 
         if (getVdsGroup().supportsGlusterService()

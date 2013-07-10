@@ -40,6 +40,8 @@ public interface IVdsServer {
 
     VDSInfoReturnForXmlRpc getVdsStats();
 
+    StatusOnlyReturnForXmlRpc setMOMPolicyParameters(Map<String, Object> key_value_store);
+
     StatusOnlyReturnForXmlRpc desktopLogin(String vmId, String domain, String user, String password);
 
     StatusOnlyReturnForXmlRpc desktopLogoff(String vmId, String force);

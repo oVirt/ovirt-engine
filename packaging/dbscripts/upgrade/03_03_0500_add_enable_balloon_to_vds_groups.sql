@@ -1,0 +1,1 @@
+select fn_db_add_column('vds_groups', 'enable_balloon', 'boolean not null default false');

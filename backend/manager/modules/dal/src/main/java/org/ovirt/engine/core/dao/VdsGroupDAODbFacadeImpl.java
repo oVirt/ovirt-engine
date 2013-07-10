@@ -172,7 +172,9 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("trusted_service", group.supportsTrustedService())
                 .addValue("cluster_policy_id", group.getClusterPolicyId())
                 .addValue("cluster_policy_custom_properties",
-                                SerializationFactory.getSerializer().serialize(group.getClusterPolicyProperties()));
+                                SerializationFactory.getSerializer().serialize(group.getClusterPolicyProperties()))
+                .addValue("enable_balloon", group.isEnableBallooning());
+
         return parameterSource;
     }
 
@@ -214,6 +216,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setClusterPolicyName(rs.getString("cluster_policy_name"));
             entity.setClusterPolicyProperties(SerializationFactory.getDeserializer()
                     .deserializeOrCreateNew(rs.getString("cluster_policy_custom_properties"), LinkedHashMap.class));
+            entity.setEnableBallooning(rs.getBoolean("enable_balloon"));
+
             return entity;
         }
     }

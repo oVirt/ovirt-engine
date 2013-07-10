@@ -51,6 +51,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private int max_vds_memory_over_commit = 0;
 
+    private boolean enableBallooning = false;
+
     private boolean countThreadsAsCores = false;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_VERSION_SIZE)
@@ -293,6 +295,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         this.clusterPolicyProperties = clusterPolicyProperties;
     }
 
+    public boolean isEnableBallooning() {
+        return enableBallooning;
+    }
+
+    public void setEnableBallooning(boolean enableBallooning) {
+        this.enableBallooning = enableBallooning;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -318,9 +328,9 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (tunnelMigration ? 1231 : 1237);
         result = prime * result + (emulatedMachine == null ? 0 : emulatedMachine.hashCode());
         result = prime * result + (trustedService ? 1231 : 1237);
-        result = prime * result + ((clusterPolicyId == null) ? 0 : clusterPolicyId.hashCode());
         result = prime * result + ((clusterPolicyName == null) ? 0 : clusterPolicyName.hashCode());
         result = prime * result + (clusterPolicyProperties == null ? 0 : clusterPolicyProperties.hashCode());
+        result = prime * result + (enableBallooning ? 1231 : 1237);
         return result;
     }
 
@@ -359,6 +369,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && trustedService == other.trustedService
                 && ObjectUtils.objectsEqual(clusterPolicyId, other.clusterPolicyId)
                 && ObjectUtils.objectsEqual(clusterPolicyName, other.clusterPolicyName)
-                && ObjectUtils.objectsEqual(clusterPolicyProperties, other.clusterPolicyProperties));
+                && ObjectUtils.objectsEqual(clusterPolicyProperties, other.clusterPolicyProperties)
+                && enableBallooning == other.enableBallooning);
     }
 }

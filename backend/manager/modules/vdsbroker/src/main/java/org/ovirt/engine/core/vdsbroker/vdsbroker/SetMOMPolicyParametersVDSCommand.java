@@ -1,0 +1,32 @@
+package org.ovirt.engine.core.vdsbroker.vdsbroker;
+
+import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
+import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Send variables that fine tune MoM policy to VDSM
+ */
+public class SetMOMPolicyParametersVDSCommand extends VdsBrokerCommand<MomPolicyVDSParameters> {
+
+    public SetMOMPolicyParametersVDSCommand(MomPolicyVDSParameters parameters) {
+        super(parameters, DbFacade.getInstance().getVdsDao().get(parameters.getVdsId()));
+    }
+
+    @Override
+    protected void ExecuteVdsBrokerCommand() {
+        // Do not do anything when the Host's compatibility level is too old
+        if (getVds().getVdsGroupCompatibilityVersion().compareTo(Version.v3_3) >= 0) {
+            status = getBroker().setMOMPolicyParameters(initDeviceStructure());
+            ProceedProxyReturnValue();
+        }
+    }
+    protected Map<String, Object> initDeviceStructure() {
+        Map<String, Object> deviceStruct = new HashMap<>();
+        deviceStruct.put(VdsProperties.balloonEnabled, getParameters().isEnableBalloon());
+        return deviceStruct;
+    }
+}

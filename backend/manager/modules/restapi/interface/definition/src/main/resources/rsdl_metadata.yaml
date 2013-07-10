@@ -1129,7 +1129,7 @@ actions:
         optionalArguments: {cluster.name: 'xs:string', cluster.description: 'xs:string', cluster.data_center.id: 'xs:string', cluster.cpu.id: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int',
         cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy: 'xs:string',
         cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int', cluster.scheduling_policy.thresholds.duration: 'xs:int',
-        cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean'}
+        cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -1143,7 +1143,7 @@ actions:
         optionalArguments: {cluster.description: 'xs:string', cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean',
         cluster.scheduling_policy.policy: 'xs:string', cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int',
         cluster.scheduling_policy.thresholds.duration: 'xs:int', cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean',
-        cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean'}
+        cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -1426,7 +1426,7 @@ actions:
         optionalArguments: {cluster.name: 'xs:string', cluster.description: 'xs:string', cluster.cpu.id: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int',
         cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy: 'xs:string',
         cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int', cluster.scheduling_policy.thresholds.duration: 'xs:int',
-        cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean'}
+        cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -1440,7 +1440,7 @@ actions:
         optionalArguments: {cluster.description: 'xs:string', cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean',
         cluster.scheduling_policy.policy: 'xs:string', cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int',
         cluster.scheduling_policy.thresholds.duration: 'xs:int', cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean',
-        cluster.tunnel_migration: 'xs:boolean'}
+        cluster.tunnel_migration: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}

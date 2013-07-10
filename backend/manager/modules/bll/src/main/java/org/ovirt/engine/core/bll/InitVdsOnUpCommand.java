@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
@@ -128,6 +129,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         if (InitializeStorage()) {
             processFence();
             processStoragePoolStatus();
+            runUpdateMomPolicy(getVdsGroup(), getVds());
         } else {
             Map<String, String> customLogValues = Collections.singletonMap("StoragePoolName", getStoragePoolName());
             setNonOperational(NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE, customLogValues);
@@ -241,6 +243,19 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                         AuditLogType.VDS_STORAGE_VDS_STATS_FAILED);
             }
         }
+        return result;
+    }
+
+    private EventResult runUpdateMomPolicy(final VDSGroup cluster, final VDS vds) {
+        EventResult result = new EventResult(true, EventType.VDSCONNECTTOPOOL);
+        try {
+            runVdsCommand(VDSCommandType.SetMOMPolicyParameters,
+                    new MomPolicyVDSParameters(vds, cluster.isEnableBallooning()));
+        } catch (VdcBLLException e) {
+            log.errorFormat("Could not update MoM policy on host {0}", vds.getName());
+            result.setSuccess(false);
+        }
+
         return result;
     }
 
