@@ -59,7 +59,7 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
         // it would be nice to handle this from command execution rather than
         // audit log messages
         initUserAndGroupData();
-        return _dbUser == null ? (_adGroup == null ? "" : _adGroup.getname()) : _dbUser.getusername();
+        return _dbUser == null ? (_adGroup == null ? "" : _adGroup.getname()) : _dbUser.getLoginName();
     }
 
     public void initUserAndGroupData() {

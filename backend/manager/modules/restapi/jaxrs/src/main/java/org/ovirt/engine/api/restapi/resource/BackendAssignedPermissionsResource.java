@@ -153,7 +153,7 @@ public class BackendAssignedPermissionsResource
     public Map<Guid, DbUser> getUsers() {
         HashMap<Guid, DbUser> users = new HashMap<Guid, DbUser>();
         for (DbUser user : lookupUsers()) {
-            users.put(user.getuser_id(), user);
+            users.put(user.getId(), user);
         }
         return users;
     }
@@ -187,7 +187,7 @@ public class BackendAssignedPermissionsResource
 
     //REVISIT: fix once BE can distinguish between the user and group
     private static boolean isUser(DbUser user) {
-        return user != null && !user.getIsGroup();
+        return user != null && !user.isGroup();
     }
 
     /**

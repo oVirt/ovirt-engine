@@ -188,10 +188,10 @@ public class BackendUsersResourceTest
     @Override
     protected DbUser getEntity(int index) {
         DbUser entity = new DbUser();
-        entity.setuser_id(GUIDS[index]);
-        entity.setusername(NAMES[index]);
-        entity.setgroups(GROUPS);
-        entity.setdomain(DOMAIN);
+        entity.setId(GUIDS[index]);
+        entity.setLoginName(NAMES[index]);
+        entity.setGroupNames(GROUPS);
+        entity.setDomain(DOMAIN);
         return entity;
     }
 

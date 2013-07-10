@@ -54,7 +54,7 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
         if (mAdUserName == null) {
             DbUser user = DbFacade.getInstance().getDbUserDao().get(getAdUserId());
             if (user != null) {
-                mAdUserName = user.getusername();
+                mAdUserName = user.getLoginName();
             }
         }
         return mAdUserName;

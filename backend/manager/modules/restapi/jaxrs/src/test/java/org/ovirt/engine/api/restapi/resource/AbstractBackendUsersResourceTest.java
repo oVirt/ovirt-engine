@@ -65,8 +65,8 @@ public abstract class AbstractBackendUsersResourceTest
     }
 
     static DbUser setUpEntityExpectations(DbUser entity, int index) {
-        expect(entity.getuser_id()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getname()).andReturn(NAMES[index]).anyTimes();
+        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
+        expect(entity.getFirstName()).andReturn(NAMES[index]).anyTimes();
         return entity;
     }
 

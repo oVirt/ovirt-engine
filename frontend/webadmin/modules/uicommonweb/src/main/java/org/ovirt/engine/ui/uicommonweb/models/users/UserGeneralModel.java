@@ -87,9 +87,9 @@ public class UserGeneralModel extends EntityModel
     {
         DbUser user = (DbUser) getEntity();
 
-        setDomain(user.getdomain());
-        setEmail(user.getemail());
-        setStatus(user.getAdStatus());
+        setDomain(user.getDomain());
+        setEmail(user.getEmail());
+        setStatus(user.getLdapStatus());
 
     }
 }

@@ -112,8 +112,8 @@ public final class EntityObject extends JavaScriptObject {
 
         // User
         else if (businessEntity instanceof DbUser) {
-            obj.setProperty("username", ((DbUser) businessEntity).getusername()); //$NON-NLS-1$
-            obj.setProperty("domain", ((DbUser) businessEntity).getdomain()); //$NON-NLS-1$
+            obj.setProperty("username", ((DbUser) businessEntity).getLoginName()); //$NON-NLS-1$
+            obj.setProperty("domain", ((DbUser) businessEntity).getDomain()); //$NON-NLS-1$
         }
 
         // Quota

@@ -256,7 +256,7 @@ public class AdElementListModel extends SearchableListModel
                     {
                         DbUser a = (DbUser) item;
 
-                        excludeUsers.add(a.getuser_id());
+                        excludeUsers.add(a.getId());
                     }
                 }
                 setusers(new ArrayList<EntityModel>());
@@ -266,12 +266,11 @@ public class AdElementListModel extends SearchableListModel
                     if (!excludeUsers.contains(a.getUserId()))
                     {
                         DbUser tempVar = new DbUser();
-                        tempVar.setuser_id(a.getUserId());
-                        tempVar.setIsGroup(false);
-                        tempVar.setname(a.getName());
-                        tempVar.setsurname(a.getSurName());
-                        tempVar.setusername(a.getUserName());
-                        tempVar.setdomain(a.getDomainControler());
+                        tempVar.setId(a.getUserId());
+                        tempVar.setFirstName(a.getName());
+                        tempVar.setLastName(a.getSurName());
+                        tempVar.setLoginName(a.getUserName());
+                        tempVar.setDomain(a.getDomainControler());
                         DbUser user = tempVar;
 
                         EntityModel tempVar2 = new EntityModel();
@@ -307,7 +306,7 @@ public class AdElementListModel extends SearchableListModel
                     {
                         DbUser a = (DbUser) item;
 
-                        excludeUsers.add(a.getuser_id());
+                        excludeUsers.add(a.getId());
                     }
                 }
                 adElementListModel.setgroups(new ArrayList<EntityModel>());
@@ -317,12 +316,11 @@ public class AdElementListModel extends SearchableListModel
                     if (!excludeUsers.contains(a.getid()))
                     {
                         DbUser tempVar3 = new DbUser();
-                        tempVar3.setuser_id(a.getid());
-                        tempVar3.setIsGroup(true);
-                        tempVar3.setname(a.getname());
-                        tempVar3.setsurname(""); //$NON-NLS-1$
-                        tempVar3.setusername(""); //$NON-NLS-1$
-                        tempVar3.setdomain(a.getdomain());
+                        tempVar3.setId(a.getid());
+                        tempVar3.setFirstName(a.getname());
+                        tempVar3.setLastName(""); //$NON-NLS-1$
+                        tempVar3.setLoginName(""); //$NON-NLS-1$
+                        tempVar3.setDomain(a.getdomain());
                         DbUser user = tempVar3;
 
                         EntityModel tempVar4 = new EntityModel();

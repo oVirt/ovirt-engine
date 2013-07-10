@@ -35,7 +35,7 @@ public class UserGroupListModel extends SearchableListModel
         if (getEntity() != null)
         {
             ArrayList<UserGroup> items = new ArrayList<UserGroup>();
-            for (String groupFullName : getEntity().getgroups().split("[,]", -1)) //$NON-NLS-1$
+            for (String groupFullName : getEntity().getGroupNames().split("[,]", -1)) //$NON-NLS-1$
             {
                 items.add(createUserGroup(groupFullName));
             }

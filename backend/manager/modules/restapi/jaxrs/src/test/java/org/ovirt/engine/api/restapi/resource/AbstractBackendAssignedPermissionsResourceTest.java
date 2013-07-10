@@ -156,9 +156,9 @@ public abstract class AbstractBackendAssignedPermissionsResourceTest
 
     protected DbUser getUserByIdx(int idx) {
         DbUser user = new DbUser();
-        user.setuser_id(GUIDS[idx]);
-        user.setname(NAMES[idx]);
-        user.setusername(NAMES[idx]);
+        user.setId(GUIDS[idx]);
+        user.setFirstName(NAMES[idx]);
+        user.setLoginName(NAMES[idx]);
         return user;
     }
 

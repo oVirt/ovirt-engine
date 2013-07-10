@@ -14,7 +14,7 @@ public class UserStatusColumn extends WebAdminImageResourceColumn<DbUser> {
         if (user.getLastAdminCheckStatus()) {
             return getApplicationResources().adminImage();
         }
-        if (user.getIsGroup()) {
+        if (user.isGroup()) {
             return getApplicationResources().userGroupImage();
         }
         return getApplicationResources().userImage();

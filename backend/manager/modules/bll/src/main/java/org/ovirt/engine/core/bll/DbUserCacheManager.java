@@ -51,7 +51,7 @@ public class DbUserCacheManager {
             // The predicate is used to filter out users which are not in one of
             // the domains that is defined by the "DomainName" configuration
             // value
-            return domains.contains(t.getdomain());
+            return domains.contains(t.getDomain());
         }
 
     }
@@ -95,51 +95,51 @@ public class DbUserCacheManager {
         boolean succeeded = false;
 
         if ((ldapUser == null) || (ldapUser.getUserId().equals(Guid.Empty))
-                || (!ldapUser.getUserId().equals(dbUser.getuser_id()))) {
-            if (dbUser.getstatus() != 0) {
+                || (!ldapUser.getUserId().equals(dbUser.getId()))) {
+            if (dbUser.getStatus() != 0) {
                 log.warnFormat("User {0} not found in directory server, its status switched to InActive",
-                        dbUser.getname());
-                dbUser.setstatus(0);
+                        dbUser.getFirstName());
+                dbUser.setStatus(0);
                 succeeded = true;
             }
         } else {
-            if (dbUser.getstatus() == 0) {
+            if (dbUser.getStatus() == 0) {
                 log.warnFormat("Inactive User {0} found in directory server, its status switched to Active",
-                        dbUser.getname());
-                dbUser.setstatus(1);
+                        dbUser.getFirstName());
+                dbUser.setStatus(1);
                 succeeded = true;
             }
-            if (!StringUtils.equals(dbUser.getname(), ldapUser.getName())) {
-                dbUser.setname(ldapUser.getName());
+            if (!StringUtils.equals(dbUser.getFirstName(), ldapUser.getName())) {
+                dbUser.setFirstName(ldapUser.getName());
                 succeeded = true;
             }
-            if (!StringUtils.equals(dbUser.getsurname(), ldapUser.getSurName())) {
-                dbUser.setsurname(ldapUser.getSurName());
+            if (!StringUtils.equals(dbUser.getLastName(), ldapUser.getSurName())) {
+                dbUser.setLastName(ldapUser.getSurName());
                 succeeded = true;
             }
-            if (!StringUtils.equals(dbUser.getdomain(), ldapUser.getDomainControler())) {
-                dbUser.setdomain(ldapUser.getDomainControler());
+            if (!StringUtils.equals(dbUser.getDomain(), ldapUser.getDomainControler())) {
+                dbUser.setDomain(ldapUser.getDomainControler());
                 succeeded = true;
             }
-            if (!StringUtils.equals(dbUser.getusername(), ldapUser.getUserName())) {
-                dbUser.setusername(ldapUser.getUserName());
+            if (!StringUtils.equals(dbUser.getLoginName(), ldapUser.getUserName())) {
+                dbUser.setLoginName(ldapUser.getUserName());
                 succeeded = true;
             }
-            if (!StringUtils.equals(dbUser.getgroups(), ldapUser.getGroup())) {
-                dbUser.setgroups(ldapUser.getGroup());
+            if (!StringUtils.equals(dbUser.getGroupNames(), ldapUser.getGroup())) {
+                dbUser.setGroupNames(ldapUser.getGroup());
                 succeeded = true;
-                updatedUsers.add(dbUser.getuser_id());
+                updatedUsers.add(dbUser.getId());
             }
-            if (!StringUtils.equals(dbUser.getdepartment(), ldapUser.getDepartment())) {
-                dbUser.setdepartment(ldapUser.getDepartment());
-                succeeded = true;
-            }
-            if (!StringUtils.equals(dbUser.getrole(), ldapUser.getTitle())) {
-                dbUser.setrole(ldapUser.getTitle());
+            if (!StringUtils.equals(dbUser.getDepartment(), ldapUser.getDepartment())) {
+                dbUser.setDepartment(ldapUser.getDepartment());
                 succeeded = true;
             }
-            if (!StringUtils.equals(dbUser.getemail(), ldapUser.getEmail())) {
-                dbUser.setemail(ldapUser.getEmail());
+            if (!StringUtils.equals(dbUser.getRole(), ldapUser.getTitle())) {
+                dbUser.setRole(ldapUser.getTitle());
+                succeeded = true;
+            }
+            if (!StringUtils.equals(dbUser.getEmail(), ldapUser.getEmail())) {
+                dbUser.setEmail(ldapUser.getEmail());
                 succeeded = true;
             }
             if (!StringUtils.equals(dbUser.getGroupIds(), ldapUser.getGroupIds())) {
@@ -147,7 +147,7 @@ public class DbUserCacheManager {
                 succeeded = true;
             }
             if (succeeded) {
-                dbUser.setstatus(dbUser.getstatus() + 1);
+                dbUser.setStatus(dbUser.getStatus() + 1);
             }
         }
         if (succeeded) {
@@ -167,13 +167,13 @@ public class DbUserCacheManager {
             // Filter all users by domains
             for (DbUser user : filteredUsers) {
                 Map<Guid, DbUser> domainUser;
-                if (!userByDomains.containsKey(user.getdomain())) {
+                if (!userByDomains.containsKey(user.getDomain())) {
                     domainUser = new HashMap<Guid, DbUser>();
-                    userByDomains.put(user.getdomain(), domainUser);
+                    userByDomains.put(user.getDomain(), domainUser);
                 } else {
-                    domainUser = userByDomains.get(user.getdomain());
+                    domainUser = userByDomains.get(user.getDomain());
                 }
-                domainUser.put(user.getuser_id(), user);
+                domainUser.put(user.getId(), user);
             }
 
             if (userByDomains.size() != 0) {
@@ -203,10 +203,10 @@ public class DbUserCacheManager {
                         log.warnFormat("No users for domain {0}",domain);
                     } else {
                         for (DbUser dbUser : usersForDomain) {
-                            if (dbUser.getstatus() != 0) {
+                            if (dbUser.getStatus() != 0) {
                                 log.warnFormat("User {0} not found in directory server, its status switched to InActive",
-                                        dbUser.getname());
-                                dbUser.setstatus(AsyncTaskStatusEnum.unknown.getValue());
+                                        dbUser.getFirstName());
+                                dbUser.setStatus(AsyncTaskStatusEnum.unknown.getValue());
                                 DbFacade.getInstance().getDbUserDao().update(dbUser);
                             }
                         }

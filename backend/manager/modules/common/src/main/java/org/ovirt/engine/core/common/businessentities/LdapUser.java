@@ -36,13 +36,13 @@ public class LdapUser extends IVdcQueryable implements Serializable {
     }
 
     public LdapUser(DbUser dbUser) {
-        setUserId(dbUser.getuser_id());
-        setUserName(dbUser.getusername());
-        setName(dbUser.getname());
-        setSurName(dbUser.getsurname());
-        setDepartment(dbUser.getdepartment());
-        setDomainControler(dbUser.getdomain());
-        setEmail(dbUser.getemail());
+        setUserId(dbUser.getId());
+        setUserName(dbUser.getLoginName());
+        setName(dbUser.getFirstName());
+        setSurName(dbUser.getLastName());
+        setDepartment(dbUser.getDepartment());
+        setDomainControler(dbUser.getDomain());
+        setEmail(dbUser.getEmail());
         mGroups = new HashMap<String, LdapGroup>();
     }
 

@@ -2933,7 +2933,7 @@ public final class AsyncDataProvider {
         }
         else if (entity instanceof DbUser)
         {
-            return ((DbUser) entity).getuser_id();
+            return ((DbUser) entity).getId();
         }
         else if (entity instanceof Quota)
         {

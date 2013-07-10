@@ -71,11 +71,11 @@ public final class BusinessEntitiesDefinitions {
     public static final int USER_DEPARTMENT_SIZE = 255;
     public static final int USER_DOMAIN_SIZE = 255;
     public static final int USER_EMAIL_SIZE = 255;
-    public static final int USER_NAME_SIZE = 255;
+    public static final int USER_FIRST_NAME_SIZE = 255;
     public static final int USER_NOTE_SIZE = 255;
     public static final int USER_ROLE_SIZE = 255;
-    public static final int USER_SURENAME_SIZE = 255;
-    public static final int USER_USER_NAME_SIZE = 255;
+    public static final int USER_LAST_NAME_SIZE = 255;
+    public static final int USER_LOGIN_NAME_SIZE = 255;
 
     // General descriptions
     public static final int GENERAL_NETWORK_ADDR_SIZE = 50;

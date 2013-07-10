@@ -162,22 +162,22 @@ public class SystemPermissionListModel extends SearchableListModel
         for (DbUser user : items)
         {
             permissions tempVar = new permissions();
-            tempVar.setad_element_id(user.getuser_id());
+            tempVar.setad_element_id(user.getId());
             tempVar.setrole_id(role.getId());
             permissions perm = tempVar;
 
-            if (user.getIsGroup())
+            if (user.isGroup())
             {
                 PermissionsOperationsParametes tempVar2 = new PermissionsOperationsParametes();
                 tempVar2.setPermission(perm);
-                tempVar2.setAdGroup(new LdapGroup(user.getuser_id(), user.getname(), user.getdomain()));
+                tempVar2.setAdGroup(new LdapGroup(user.getId(), user.getFirstName(), user.getDomain()));
                 list.add(tempVar2);
             }
             else
             {
                 PermissionsOperationsParametes tempVar3 = new PermissionsOperationsParametes();
                 tempVar3.setPermission(perm);
-                tempVar3.setVdcUser(new VdcUser(user.getuser_id(), user.getusername(), user.getdomain()));
+                tempVar3.setVdcUser(new VdcUser(user.getId(), user.getLoginName(), user.getDomain()));
                 list.add(tempVar3);
             }
         }

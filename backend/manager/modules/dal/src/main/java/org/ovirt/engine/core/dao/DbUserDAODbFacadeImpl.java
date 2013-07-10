@@ -23,18 +23,18 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
         @Override
         public DbUser mapRow(ResultSet rs, int rowNum) throws SQLException {
             DbUser entity = new DbUser();
-            entity.setdepartment(rs.getString("department"));
-            entity.setdomain(rs.getString("domain"));
-            entity.setemail(rs.getString("email"));
-            entity.setgroups(rs.getString("groups"));
-            entity.setname(rs.getString("name"));
-            entity.setnote(rs.getString("note"));
-            entity.setnote(rs.getString("note"));
-            entity.setrole(rs.getString("role"));
-            entity.setstatus(rs.getInt("status"));
-            entity.setsurname(rs.getString("surname"));
-            entity.setuser_id(getGuidDefaultEmpty(rs, "user_id"));
-            entity.setusername(rs.getString("username"));
+            entity.setDepartment(rs.getString("department"));
+            entity.setDomain(rs.getString("domain"));
+            entity.setEmail(rs.getString("email"));
+            entity.setGroupNames(rs.getString("groups"));
+            entity.setFirstName(rs.getString("name"));
+            entity.setNote(rs.getString("note"));
+            entity.setNote(rs.getString("note"));
+            entity.setRole(rs.getString("role"));
+            entity.setStatus(rs.getInt("status"));
+            entity.setLastName(rs.getString("surname"));
+            entity.setId(getGuidDefaultEmpty(rs, "user_id"));
+            entity.setLoginName(rs.getString("username"));
             entity.setLastAdminCheckStatus(rs.getBoolean("last_admin_check_status"));
             entity.setGroupIds(rs.getString("group_ids"));
             return entity;
@@ -45,17 +45,17 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             CustomMapSqlParameterSource {
         public DbUserMapSqlParameterSource(DbUser user) {
             super(dialect);
-            addValue("department", user.getdepartment());
-            addValue("domain", user.getdomain());
-            addValue("email", user.getemail());
-            addValue("groups", user.getgroups());
-            addValue("name", user.getname());
-            addValue("note", user.getnote());
-            addValue("role", user.getrole());
-            addValue("status", user.getstatus());
-            addValue("surname", user.getsurname());
-            addValue("user_id", user.getuser_id());
-            addValue("username", user.getusername());
+            addValue("department", user.getDepartment());
+            addValue("domain", user.getDomain());
+            addValue("email", user.getEmail());
+            addValue("groups", user.getGroupNames());
+            addValue("name", user.getFirstName());
+            addValue("note", user.getNote());
+            addValue("role", user.getRole());
+            addValue("status", user.getStatus());
+            addValue("surname", user.getLastName());
+            addValue("user_id", user.getId());
+            addValue("username", user.getLoginName());
             addValue("last_admin_check_status", user.getLastAdminCheckStatus());
             addValue("group_ids", user.getGroupIds());
         }

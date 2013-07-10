@@ -57,7 +57,7 @@ public class UserQuotaListModel extends SearchableListModel
             }
         };
         GetQuotasByAdElementIdQueryParameters parameters = new GetQuotasByAdElementIdQueryParameters();
-        parameters.setAdElementId(((DbUser) getEntity()).getuser_id());
+        parameters.setAdElementId(((DbUser) getEntity()).getId());
 
         parameters.setRefresh(getIsQueryFirstTime());
 

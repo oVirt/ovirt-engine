@@ -46,7 +46,7 @@ public class VmPoolHandler {
                 // should be only one user in the collection
                 for (DbUser dbUser : users) {
                     Backend.getInstance().runInternalAction(VdcActionType.DetachUserFromVmFromPool,
-                            new VmPoolSimpleUserParameters(map.getvm_pool_id(), dbUser.getuser_id(), vmId), context);
+                            new VmPoolSimpleUserParameters(map.getvm_pool_id(), dbUser.getId(), vmId), context);
                 }
             }
         } else {

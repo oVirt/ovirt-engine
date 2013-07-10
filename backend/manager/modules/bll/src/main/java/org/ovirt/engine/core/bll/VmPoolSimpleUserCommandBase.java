@@ -55,7 +55,7 @@ public abstract class VmPoolSimpleUserCommandBase<T extends VmPoolSimpleUserPara
         if (mAdUserName == null) {
             DbUser user = DbFacade.getInstance().getDbUserDao().get(getAdUserId());
             if (user != null) {
-                mAdUserName = user.getusername();
+                mAdUserName = user.getLoginName();
             }
         }
         return mAdUserName;

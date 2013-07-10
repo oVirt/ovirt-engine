@@ -153,13 +153,13 @@ public class UserListModel extends ListWithDetailsModel
         for (Object item : getSelectedItems())
         {
             DbUser user = (DbUser) item;
-            if (!user.getIsGroup())
+            if (!user.isGroup())
             {
-                userIds.add(user.getuser_id());
+                userIds.add(user.getId());
             }
             else
             {
-                grpIds.add(user.getuser_id());
+                grpIds.add(user.getId());
             }
         }
 
@@ -251,13 +251,13 @@ public class UserListModel extends ListWithDetailsModel
         for (Object item : getSelectedItems())
         {
             DbUser user = (DbUser) item;
-            if (user.getIsGroup())
+            if (user.isGroup())
             {
-                grpIds.add(user.getuser_id());
+                grpIds.add(user.getId());
             }
             else
             {
-                userIds.add(user.getuser_id());
+                userIds.add(user.getId());
             }
         }
 
@@ -359,7 +359,7 @@ public class UserListModel extends ListWithDetailsModel
         ArrayList<String> list = new ArrayList<String>();
         for (DbUser item : Linq.<DbUser> cast(getSelectedItems()))
         {
-            list.add(item.getname());
+            list.add(item.getFirstName());
         }
         model.setItems(list);
 
@@ -414,8 +414,8 @@ public class UserListModel extends ListWithDetailsModel
         if (getSelectedItem() != null)
         {
             DbUser adUser = (DbUser) getSelectedItem();
-            userGroupListModel.setIsAvailable(!adUser.getIsGroup());
-            userEventNotifierListModel.setIsAvailable(!adUser.getIsGroup());
+            userGroupListModel.setIsAvailable(!adUser.isGroup());
+            userEventNotifierListModel.setIsAvailable(!adUser.isGroup());
         }
     }
 
@@ -452,16 +452,16 @@ public class UserListModel extends ListWithDetailsModel
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         for (DbUser item : items)
         {
-            if (!item.getIsGroup())
+            if (!item.isGroup())
             {
                 AddUserParameters tempVar = new AddUserParameters();
-                tempVar.setVdcUser(new VdcUser(item.getuser_id(), item.getusername(), item.getdomain()));
+                tempVar.setVdcUser(new VdcUser(item.getId(), item.getLoginName(), item.getDomain()));
                 parameters.add(tempVar);
             }
             else
             {
                 AddUserParameters tempVar2 = new AddUserParameters();
-                tempVar2.setAdGroup(new LdapGroup(item.getuser_id(), item.getname(), item.getdomain()));
+                tempVar2.setAdGroup(new LdapGroup(item.getId(), item.getFirstName(), item.getDomain()));
                 parameters.add(tempVar2);
             }
         }
@@ -489,13 +489,13 @@ public class UserListModel extends ListWithDetailsModel
         ArrayList<VdcActionParametersBase> groupPrms = new ArrayList<VdcActionParametersBase>();
         for (DbUser item : items)
         {
-            if (!item.getIsGroup())
+            if (!item.isGroup())
             {
-                userPrms.add(new AdElementParametersBase(item.getuser_id()));
+                userPrms.add(new AdElementParametersBase(item.getId()));
             }
             else
             {
-                groupPrms.add(new AdElementParametersBase(item.getuser_id()));
+                groupPrms.add(new AdElementParametersBase(item.getId()));
             }
         }
 

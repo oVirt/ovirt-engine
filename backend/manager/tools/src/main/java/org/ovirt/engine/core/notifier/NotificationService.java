@@ -260,7 +260,7 @@ public class NotificationService implements Runnable {
                         methodsMapper.getMethod(EventNotificationMethods.forValue(eventSubscriber.getmethod_id()));
                 EventSenderResult sendResult = null;
                 try {
-                    sendResult = method.send(eventSubscriber, dbUser.getemail());
+                    sendResult = method.send(eventSubscriber, dbUser.getEmail());
                 } catch (Exception e) {
                     log.error("Failed to dispatch message", e);
                     sendResult = new EventSenderResult();
@@ -362,8 +362,8 @@ public class NotificationService implements Runnable {
             rs = ps.executeQuery(String.format("SELECT email FROM users WHERE user_id = '%s'", userId.toString()));
             if (rs.next()) {
                 dbUser = new DbUser();
-                dbUser.setuser_id(userId);
-                dbUser.setemail(rs.getString("email"));
+                dbUser.setId(userId);
+                dbUser.setEmail(rs.getString("email"));
             }
         } finally {
             DbUtils.closeQuietly(rs,ps,connection);

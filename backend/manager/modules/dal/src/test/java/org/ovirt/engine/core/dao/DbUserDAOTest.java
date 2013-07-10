@@ -35,12 +35,12 @@ public class DbUserDAOTest extends BaseDAOTestCase {
 
         newUser = new DbUser();
 
-        newUser.setname("Bob");
-        newUser.setsurname("Milqtoste");
-        newUser.setusername("newuser");
-        newUser.setemail("newuser@redhat.com");
-        newUser.setdomain("domain");
-        newUser.setgroups("groups");
+        newUser.setFirstName("Bob");
+        newUser.setLastName("Milqtoste");
+        newUser.setLoginName("newuser");
+        newUser.setEmail("newuser@redhat.com");
+        newUser.setDomain("domain");
+        newUser.setGroupNames("groups");
     }
 
     /**
@@ -58,7 +58,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGet() {
-        DbUser result = dao.get(existingUser.getuser_id());
+        DbUser result = dao.get(existingUser.getId());
 
         assertNotNull(result);
         assertEquals(existingUser, result);
@@ -79,7 +79,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByUsername() {
-        DbUser result = dao.getByUsername(existingUser.getusername());
+        DbUser result = dao.getByUsername(existingUser.getLoginName());
 
         assertNotNull(result);
         assertEquals(existingUser, result);
@@ -147,7 +147,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
     public void testSave() {
         dao.save(newUser);
 
-        DbUser result = dao.getByUsername(newUser.getusername());
+        DbUser result = dao.getByUsername(newUser.getLoginName());
 
         assertEquals(newUser, result);
     }
@@ -158,18 +158,18 @@ public class DbUserDAOTest extends BaseDAOTestCase {
     @Test
     public void testSaveUserWithTooManyGroups() {
         DbUser tooManyGroupsUser = new DbUser();
-        tooManyGroupsUser.setname("I");
-        tooManyGroupsUser.setsurname("Have");
-        tooManyGroupsUser.setusername("too");
-        tooManyGroupsUser.setemail("many@redhat.com");
-        tooManyGroupsUser.setdomain("domain");
-        tooManyGroupsUser.setgroups("groups");
+        tooManyGroupsUser.setFirstName("I");
+        tooManyGroupsUser.setLastName("Have");
+        tooManyGroupsUser.setLoginName("too");
+        tooManyGroupsUser.setEmail("many@redhat.com");
+        tooManyGroupsUser.setDomain("domain");
+        tooManyGroupsUser.setGroupNames("groups");
         // Using 2048 because that was the field size before the patch that changed it to text
         tooManyGroupsUser.setGroupIds(StringUtils.leftPad("groups", 2048));
 
         dao.save(tooManyGroupsUser);
 
-        DbUser result = dao.getByUsername(tooManyGroupsUser.getusername());
+        DbUser result = dao.getByUsername(tooManyGroupsUser.getLoginName());
 
         assertEquals(tooManyGroupsUser, result);
     }
@@ -179,12 +179,12 @@ public class DbUserDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdate() {
-        existingUser.setname("changedname");
-        existingUser.setsurname("changedsurname");
+        existingUser.setFirstName("changedname");
+        existingUser.setLastName("changedsurname");
 
         dao.update(existingUser);
 
-        DbUser result = dao.get(existingUser.getuser_id());
+        DbUser result = dao.get(existingUser.getId());
 
         assertEquals(existingUser, result);
     }
@@ -194,9 +194,9 @@ public class DbUserDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testRemove() {
-        dao.remove(deletableUser.getuser_id());
+        dao.remove(deletableUser.getId());
 
-        DbUser result = dao.get(deletableUser.getuser_id());
+        DbUser result = dao.get(deletableUser.getId());
 
         assertNull(result);
     }

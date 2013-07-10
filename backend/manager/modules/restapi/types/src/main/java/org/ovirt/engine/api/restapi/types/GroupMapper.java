@@ -27,12 +27,12 @@ public class GroupMapper {
     @Mapping(from = DbUser.class, to = Group.class)
     public static Group map(DbUser entity, Group template) {
         Group model = template != null ? template : new Group();
-        model.setName(entity.getname());
-        model.setId(entity.getuser_id().toString());
-        if (!StringUtils.isEmpty(entity.getdomain())) {
+        model.setName(entity.getFirstName());
+        model.setId(entity.getId().toString());
+        if (!StringUtils.isEmpty(entity.getDomain())) {
             Domain dom = new Domain();
-            dom.setName(entity.getdomain());
-            dom.setId(new Guid(entity.getdomain().getBytes(), true).toString());
+            dom.setName(entity.getDomain());
+            dom.setId(new Guid(entity.getDomain().getBytes(), true).toString());
             model.setDomain(dom);
         }
         return model;

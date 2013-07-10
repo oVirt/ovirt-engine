@@ -231,7 +231,7 @@ public class QuotaUserListModel extends SearchableListModel {
         if (model.getIsEveryoneSelected())
         {
             DbUser tempVar = new DbUser();
-            tempVar.setuser_id(ApplicationGuids.everyone.asGuid());
+            tempVar.setId(ApplicationGuids.everyone.asGuid());
             items.add(tempVar);
         }
         else {
@@ -252,20 +252,20 @@ public class QuotaUserListModel extends SearchableListModel {
         for (DbUser user : items)
         {
             permissions tempVar2 = new permissions();
-            tempVar2.setad_element_id(user.getuser_id());
+            tempVar2.setad_element_id(user.getId());
             tempVar2.setrole_id(ApplicationGuids.quotaConsumer.asGuid());
             permissions perm = tempVar2;
             perm.setObjectId(((Quota) getEntity()).getId());
             perm.setObjectType(VdcObjectType.Quota);
 
             permissionParams = new PermissionsOperationsParametes();
-            if (user.getIsGroup())
+            if (user.isGroup())
             {
-                permissionParams.setAdGroup(new LdapGroup(user.getuser_id(), user.getname(), user.getdomain()));
+                permissionParams.setAdGroup(new LdapGroup(user.getId(), user.getFirstName(), user.getDomain()));
             }
             else
             {
-                permissionParams.setVdcUser(new VdcUser(user.getuser_id(), user.getusername(), user.getdomain()));
+                permissionParams.setVdcUser(new VdcUser(user.getId(), user.getLoginName(), user.getDomain()));
             }
             permissionParams.setPermission(perm);
             list.add(permissionParams);

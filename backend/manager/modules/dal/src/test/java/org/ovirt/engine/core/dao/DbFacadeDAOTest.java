@@ -139,8 +139,8 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         assertFalse(nonAdminUser.getLastAdminCheckStatus());
 
         // execute and validate when not admin
-        dbFacade.updateLastAdminCheckStatus(nonAdminUser.getuser_id());
-        nonAdminUser = dbFacade.getDbUserDao().get(nonAdminUser.getuser_id());
+        dbFacade.updateLastAdminCheckStatus(nonAdminUser.getId());
+        nonAdminUser = dbFacade.getDbUserDao().get(nonAdminUser.getId());
 
         assertFalse(nonAdminUser.getLastAdminCheckStatus());
 
@@ -149,7 +149,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
 
         // An available role from the fixtures
         perms.setrole_id(ADMIN_ROLE_TYPE_FROM_FIXTURE_ID);
-        perms.setad_element_id(nonAdminUser.getuser_id());
+        perms.setad_element_id(nonAdminUser.getId());
         perms.setObjectId(SYSTEM_OBJECT_ID);
         perms.setObjectType(VdcObjectType.System);
 
@@ -158,8 +158,8 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         assertNotNull(dbFacade.getPermissionDao().get(perms.getId()));
 
         // execute and validate when admin
-        dbFacade.updateLastAdminCheckStatus(nonAdminUser.getuser_id());
-        nonAdminUser = dbFacade.getDbUserDao().get(nonAdminUser.getuser_id());
+        dbFacade.updateLastAdminCheckStatus(nonAdminUser.getId());
+        nonAdminUser = dbFacade.getDbUserDao().get(nonAdminUser.getId());
 
         assertTrue(nonAdminUser.getLastAdminCheckStatus());
     }
@@ -276,7 +276,7 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     public void testGetEntityNameByIdAndTypeForUser() {
         DbUser dbUser = dbFacade.getDbUserDao().get(USER_ID);
         assertNotNull(dbUser);
-        String name = dbUser.getusername();
+        String name = dbUser.getLoginName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(USER_ID, VdcObjectType.User)));
     }
 

@@ -66,7 +66,7 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
                 if (getDetailModel().getEntity() == null) {
                     return false;
                 }
-                return !((DbUser) getDetailModel().getEntity()).getIsGroup();
+                return !((DbUser) getDetailModel().getEntity()).isGroup();
             }
         });
     }

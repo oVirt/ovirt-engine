@@ -16,7 +16,7 @@ public class LogoutUserCommand<T extends LogoutUserParameters> extends CommandBa
         super(parameters);
         if (getCurrentUser() == null) {
             DbUser dbUser = DbFacade.getInstance().getDbUserDao().get(parameters.getUserId());
-            setCurrentUser(new VdcUser(dbUser.getuser_id(), dbUser.getusername(), dbUser.getdomain()));
+            setCurrentUser(new VdcUser(dbUser.getId(), dbUser.getLoginName(), dbUser.getDomain()));
         }
     }
 

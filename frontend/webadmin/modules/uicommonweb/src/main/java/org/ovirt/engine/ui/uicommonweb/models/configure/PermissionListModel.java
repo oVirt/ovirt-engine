@@ -218,7 +218,7 @@ public class PermissionListModel extends SearchableListModel
         if (model.getIsEveryoneSelected())
         {
             DbUser tempVar = new DbUser();
-            tempVar.setuser_id(ApplicationGuids.everyone.asGuid());
+            tempVar.setId(ApplicationGuids.everyone.asGuid());
             items.add(tempVar);
         }
         else
@@ -240,24 +240,24 @@ public class PermissionListModel extends SearchableListModel
         for (DbUser user : items)
         {
             permissions tempVar2 = new permissions();
-            tempVar2.setad_element_id(user.getuser_id());
+            tempVar2.setad_element_id(user.getId());
             tempVar2.setrole_id(role.getId());
             permissions perm = tempVar2;
             perm.setObjectId(getEntityGuid());
             perm.setObjectType(this.getObjectType());
 
-            if (user.getIsGroup())
+            if (user.isGroup())
             {
                 PermissionsOperationsParametes tempVar3 = new PermissionsOperationsParametes();
                 tempVar3.setPermission(perm);
-                tempVar3.setAdGroup(new LdapGroup(user.getuser_id(), user.getname(), user.getdomain()));
+                tempVar3.setAdGroup(new LdapGroup(user.getId(), user.getFirstName(), user.getDomain()));
                 list.add(tempVar3);
             }
             else
             {
                 PermissionsOperationsParametes tempVar4 = new PermissionsOperationsParametes();
                 tempVar4.setPermission(perm);
-                tempVar4.setVdcUser(new VdcUser(user.getuser_id(), user.getusername(), user.getdomain()));
+                tempVar4.setVdcUser(new VdcUser(user.getId(), user.getLoginName(), user.getDomain()));
                 list.add(tempVar4);
             }
         }

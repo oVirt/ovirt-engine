@@ -83,7 +83,7 @@ public class UserPermissionListModel extends SearchableListModel
         {
             return;
         }
-        IdQueryParameters mlaParams = new IdQueryParameters(getEntity().getuser_id());
+        IdQueryParameters mlaParams = new IdQueryParameters(getEntity().getId());
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -206,7 +206,7 @@ public class UserPermissionListModel extends SearchableListModel
 
         permissions p = (permissions) getSelectedItem();
         if (p != null && getEntity() != null) {
-            isInherited = !p.getad_element_id().equals(getEntity().getuser_id());
+            isInherited = !p.getad_element_id().equals(getEntity().getId());
         }
 
         getRemoveCommand().setIsExecutionAllowed(!isInherited && (getSelectedItem() != null

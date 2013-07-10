@@ -16,24 +16,24 @@ public class UserMapper {
     @Mapping(from = DbUser.class, to = User.class)
     public static User map(DbUser entity, User template) {
         User model = template != null ? template : new User();
-        model.setName(entity.getname());
-        model.setUserName(entity.getusername());
-        model.setId(entity.getuser_id().toString());
-        model.setLastName(entity.getsurname());
-        model.setEmail(entity.getemail());
-        model.setDepartment(entity.getdepartment());
-        if (entity.getgroups() != null && entity.getgroups().trim().length() > 0) {
+        model.setName(entity.getFirstName());
+        model.setUserName(entity.getLoginName());
+        model.setId(entity.getId().toString());
+        model.setLastName(entity.getLastName());
+        model.setEmail(entity.getEmail());
+        model.setDepartment(entity.getDepartment());
+        if (entity.getGroupNames() != null && entity.getGroupNames().trim().length() > 0) {
             model.setGroups(new Groups());
-            for (String name : entity.getgroups().split(",")) {
+            for (String name : entity.getGroupNames().split(",")) {
                 Group group = new Group();
                 group.setName(name);
                 model.getGroups().getGroups().add(group);
             }
         }
-        if (!StringUtils.isEmpty(entity.getdomain())) {
+        if (!StringUtils.isEmpty(entity.getDomain())) {
             Domain dom = new Domain();
-            dom.setName(entity.getdomain());
-            dom.setId(new Guid(entity.getdomain().getBytes(), true).toString());
+            dom.setName(entity.getDomain());
+            dom.setId(new Guid(entity.getDomain().getBytes(), true).toString());
             model.setDomain(dom);
         }
         return model;

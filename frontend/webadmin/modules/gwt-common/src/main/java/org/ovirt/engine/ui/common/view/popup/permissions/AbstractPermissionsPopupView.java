@@ -134,21 +134,21 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         searchItems.addEntityModelColumn(new EntityModelTextColumn<DbUser>() {
             @Override
             public String getText(DbUser user) {
-                return user.getname();
+                return user.getFirstName();
             }
         }, constants.firsNamePermissionsPopup());
 
         searchItems.addEntityModelColumn(new EntityModelTextColumn<DbUser>() {
             @Override
             public String getText(DbUser user) {
-                return user.getsurname();
+                return user.getLastName();
             }
         }, constants.lastNamePermissionsPopup());
 
         searchItems.addEntityModelColumn(new EntityModelTextColumn<DbUser>() {
             @Override
             public String getText(DbUser user) {
-                return user.getusername();
+                return user.getLoginName();
             }
         }, constants.userNamePermissionsPopup());
     }

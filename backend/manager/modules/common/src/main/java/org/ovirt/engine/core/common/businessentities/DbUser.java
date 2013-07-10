@@ -4,27 +4,23 @@ import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.StringHelper;
 
 public class DbUser extends IVdcQueryable {
     private static final long serialVersionUID = 7052102138405696755L;
 
     private Guid id = Guid.Empty;
 
-    @Size(max = BusinessEntitiesDefinitions.USER_NAME_SIZE)
-    private String name = "";
-
-    @Size(max = BusinessEntitiesDefinitions.USER_SURENAME_SIZE)
-    private String surname = "";
-
     @Size(min = 1, max = BusinessEntitiesDefinitions.USER_DOMAIN_SIZE)
     private String domain;
 
-    @Size(min = 1, max = BusinessEntitiesDefinitions.USER_USER_NAME_SIZE)
-    private String username = "";
+    @Size(min = 1, max = BusinessEntitiesDefinitions.USER_LOGIN_NAME_SIZE)
+    private String loginName = "";
 
-    @Size(min = 1, max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    private String groups;
+    @Size(max = BusinessEntitiesDefinitions.USER_FIRST_NAME_SIZE)
+    private String firstName = "";
+
+    @Size(max = BusinessEntitiesDefinitions.USER_LAST_NAME_SIZE)
+    private String lastName = "";
 
     @Size(max = BusinessEntitiesDefinitions.USER_DEPARTMENT_SIZE)
     private String department = "";
@@ -38,21 +34,181 @@ public class DbUser extends IVdcQueryable {
     @Size(max = BusinessEntitiesDefinitions.USER_NOTE_SIZE)
     private String note = "";
 
+    /**
+     * The status of the user in the directory, 0 for inactive and any other
+     * value for active.
+     */
     private int status;
 
     /**
-     * GUI flag only. Do not use for internal logic. The sole purpose of calculating this field is for the GUI user to
-     * understand who is admin in a snap on the user-grid
+     * GUI flag only. Do not use for internal logic. The sole purpose of
+     * calculating this field is for the GUI user to understand who is admin in
+     * a snap on the user grid.
      */
     private boolean lastAdminCheckStatus;
 
+
     /**
-     * comma delimited list of group guids
+     * Comma delimited list of group names.
+     */
+    @Size(min = 1, max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    private String groupNames;
+
+    /**
+     * Comma delimited list of group identifiers.
      */
     @Size(max = BusinessEntitiesDefinitions.USER_GROUP_IDS_SIZE)
     private String groupIds;
 
     public DbUser() {
+        // Nothing.
+    }
+
+    public DbUser(LdapUser ldapUser) {
+        id = ldapUser.getUserId();
+        domain = ldapUser.getDomainControler();
+        loginName = getFullLoginName(ldapUser);
+        firstName = ldapUser.getName();
+        lastName = ldapUser.getSurName();
+        department = ldapUser.getDepartment();
+        email = ldapUser.getEmail();
+        status = LdapRefStatus.Active.getValue();
+        groupNames = ldapUser.getGroup();
+        groupIds = ldapUser.getGroupIds();
+    }
+
+    public Guid getId() {
+        return id;
+    }
+
+    public void setId(Guid id) {
+        this.id = id;
+    }
+
+    public String getDomain() {
+        return domain;
+    }
+
+    public void setDomain(String value) {
+        domain = value;
+    }
+
+    public String getLoginName() {
+        return loginName;
+    }
+
+    public void setLoginName(String value) {
+        loginName = value;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String value) {
+        firstName = value;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String value) {
+        lastName = value;
+    }
+
+    public String getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(String value) {
+        department = value;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String value) {
+        email = value;
+    }
+
+    public String getGroupNames() {
+        return groupNames;
+    }
+
+    public void setGroupNames(String value) {
+        groupNames = value;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String value) {
+        note = value;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String value) {
+        role = value;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int value) {
+        status = value;
+    }
+
+    public LdapRefStatus getLdapStatus() {
+        return status == 0? LdapRefStatus.Inactive: LdapRefStatus.Active;
+    }
+
+    public boolean isGroup() {
+        return loginName == null || loginName.trim().isEmpty();
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return getId();
+    }
+
+    public void setLastAdminCheckStatus(boolean value) {
+        lastAdminCheckStatus = value;
+    }
+
+    public boolean getLastAdminCheckStatus() {
+        return lastAdminCheckStatus;
+    }
+
+    private String getFullLoginName(LdapUser ldapUser) {
+        String fullName = ldapUser.getUserName();
+        if (fullName.indexOf("@") == -1) {
+            fullName = fullName +"@"+ ldapUser.getDomainControler();
+        }
+        return fullName;
+    }
+
+    /**
+     * Returns the set of group names as an array.
+     *
+     * @return the group names
+     */
+    public String[] getGroupNamesAsArray() {
+        return groupNames.split(",");
+    }
+
+    public void setGroupIds(String groupIds) {
+        this.groupIds = groupIds;
+    }
+
+    public String getGroupIds() {
+        return groupIds;
     }
 
     @Override
@@ -63,14 +219,14 @@ public class DbUser extends IVdcQueryable {
         result = prime * result + ((department == null) ? 0 : department.hashCode());
         result = prime * result + ((domain == null) ? 0 : domain.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
-        result = prime * result + ((groups == null) ? 0 : groups.hashCode());
+        result = prime * result + ((groupNames == null) ? 0 : groupNames.hashCode());
         result = prime * result + (lastAdminCheckStatus ? 1231 : 1237);
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
         result = prime * result + ((note == null) ? 0 : note.hashCode());
         result = prime * result + ((role == null) ? 0 : role.hashCode());
         result = prime * result + status;
-        result = prime * result + ((surname == null) ? 0 : surname.hashCode());
-        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
+        result = prime * result + ((loginName == null) ? 0 : loginName.hashCode());
         return result;
     }
 
@@ -90,176 +246,13 @@ public class DbUser extends IVdcQueryable {
                 && ObjectUtils.objectsEqual(department, other.department)
                 && ObjectUtils.objectsEqual(domain, other.domain)
                 && ObjectUtils.objectsEqual(email, other.email)
-                && ObjectUtils.objectsEqual(groups, other.groups)
+                && ObjectUtils.objectsEqual(groupNames, other.groupNames)
                 && lastAdminCheckStatus == other.lastAdminCheckStatus
-                && ObjectUtils.objectsEqual(name, other.name)
+                && ObjectUtils.objectsEqual(firstName, other.firstName)
                 && ObjectUtils.objectsEqual(note, other.note)
                 && ObjectUtils.objectsEqual(role, other.role)
                 && status == other.status
-                && ObjectUtils.objectsEqual(surname, other.surname)
-                && ObjectUtils.objectsEqual(username, other.username));
-    }
-
-    public String getdepartment() {
-        return this.department;
-    }
-
-    public void setdepartment(String value) {
-        this.department = value;
-    }
-
-    public String getdomain() {
-        return this.domain;
-    }
-
-    public void setdomain(String value) {
-        this.domain = value;
-    }
-
-    public String getemail() {
-        return this.email;
-    }
-
-    public void setemail(String value) {
-        this.email = value;
-    }
-
-    public String getgroups() {
-        return this.groups;
-    }
-
-    public void setgroups(String value) {
-        this.groups = value;
-    }
-
-    public String getname() {
-        return this.name;
-    }
-
-    public void setname(String value) {
-        this.name = value;
-    }
-
-    public String getnote() {
-        return this.note;
-    }
-
-    public void setnote(String value) {
-        this.note = value;
-    }
-
-    public String getrole() {
-        return this.role;
-    }
-
-    public void setrole(String value) {
-        this.role = value;
-    }
-
-    public int getstatus() {
-        return this.status;
-    }
-
-    public void setstatus(int value) {
-        this.status = value;
-    }
-
-    public String getsurname() {
-        return this.surname;
-    }
-
-    public void setsurname(String value) {
-        this.surname = value;
-    }
-
-    public Guid getuser_id() {
-        return this.id;
-    }
-
-    public void setuser_id(Guid value) {
-        this.id = value;
-    }
-
-    public String getusername() {
-        return this.username;
-    }
-
-    public void setusername(String value) {
-        this.username = value;
-    }
-
-    public DbUser(LdapUser ldapUser) {
-        setuser_id(ldapUser.getUserId());
-        setusername(getFullUserName(ldapUser));
-        setname(ldapUser.getName());
-        setsurname(ldapUser.getSurName());
-        setdepartment(ldapUser.getDepartment());
-        setdomain(ldapUser.getDomainControler());
-        setemail(ldapUser.getEmail());
-        setgroups(ldapUser.getGroup());
-        setstatus(LdapRefStatus.Active.getValue());
-        setGroupIds(ldapUser.getGroupIds());
-    }
-
-    private String getFullUserName(LdapUser ldapUser) {
-        String userName = ldapUser.getUserName();
-        if (userName.indexOf("@") == -1) {
-            userName = userName +"@"+ ldapUser.getDomainControler();
-        }
-        return userName;
-    }
-
-    public LdapRefStatus getAdStatus() {
-        if (getstatus() == 0) {
-            return LdapRefStatus.Inactive;
-        }
-        return LdapRefStatus.Active;
-    }
-
-    public boolean getIsGroup() {
-        return StringHelper.isNullOrEmpty(getusername());
-    }
-
-    public void setIsGroup(boolean value) {
-        // do nothing for nothing
-    }
-
-    @Override
-    public Object getQueryableId() {
-        return getuser_id();
-    }
-
-    public void setLastAdminCheckStatus(boolean val) {
-        this.lastAdminCheckStatus = val;
-    }
-
-    public boolean getLastAdminCheckStatus() {
-        return lastAdminCheckStatus;
-    }
-
-    /**
-     * Returns the user's given and family name and username in a standard format.
-     *
-     * @return the coalesced name
-     */
-    public String getCoalescedName() {
-        return name + " " + surname + " (" + username + ")";
-    }
-
-    /**
-     * Returns the set of group names as an array.
-     *
-     * @return the group names
-     */
-    public String[] getGroupsAsArray() {
-        return groups.split(",");
-    }
-
-    public void setGroupIds(String groupIds) {
-        this.groupIds = groupIds;
-    }
-
-    public String getGroupIds() {
-        return groupIds;
+                && ObjectUtils.objectsEqual(lastName, other.lastName)
+                && ObjectUtils.objectsEqual(loginName, other.loginName));
     }
 }

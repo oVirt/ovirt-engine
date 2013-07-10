@@ -89,7 +89,7 @@ public class UserEventNotifierListModel extends SearchableListModel
         super.syncSearch();
 
         super.syncSearch(VdcQueryType.GetEventSubscribersBySubscriberIdGrouped,
-                new IdQueryParameters(getEntity().getuser_id()));
+                new IdQueryParameters(getEntity().getId()));
     }
 
     public void manageEvents()
@@ -156,9 +156,9 @@ public class UserEventNotifierListModel extends SearchableListModel
         }
 
         model.setEventGroupModels(list);
-        if (!StringHelper.isNullOrEmpty(getEntity().getemail()))
+        if (!StringHelper.isNullOrEmpty(getEntity().getEmail()))
         {
-            model.getEmail().setEntity(getEntity().getemail());
+            model.getEmail().setEntity(getEntity().getEmail());
         }
         else if (items.size() > 0)
         {
@@ -260,7 +260,7 @@ public class UserEventNotifierListModel extends SearchableListModel
                 toAddList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getTitle(),
                         EventNotificationMethods.EMAIL.getValue(),
                         (String) model.getEmail().getEntity(),
-                        getEntity().getuser_id(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
+                        getEntity().getId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
         else
@@ -270,7 +270,7 @@ public class UserEventNotifierListModel extends SearchableListModel
                 toAddList.add(new EventSubscriptionParametesBase(new event_subscriber(a.getTitle(),
                         EventNotificationMethods.EMAIL.getValue(),
                         (String) model.getEmail().getEntity(),
-                        getEntity().getuser_id(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
+                        getEntity().getId(), ""), "")); //$NON-NLS-1$ //$NON-NLS-2$
             }
 
             for (event_subscriber a : removed)
@@ -311,7 +311,7 @@ public class UserEventNotifierListModel extends SearchableListModel
 
     private void updateActionAvailability()
     {
-        if (getEntity() == null || getEntity().getIsGroup() == true)
+        if (getEntity() == null || getEntity().isGroup() == true)
         {
             getManageEventsCommand().setIsExecutionAllowed(false);
         }

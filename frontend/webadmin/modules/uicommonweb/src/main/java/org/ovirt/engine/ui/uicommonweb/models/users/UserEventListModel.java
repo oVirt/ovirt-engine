@@ -38,7 +38,7 @@ public class UserEventListModel extends SubTabEventListModel
     {
         if (getEntity() != null)
         {
-            setSearchString("events: usrname=" + getEntity().getusername()); //$NON-NLS-1$
+            setSearchString("events: usrname=" + getEntity().getLoginName()); //$NON-NLS-1$
             super.search();
         }
     }

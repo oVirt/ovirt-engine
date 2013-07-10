@@ -320,7 +320,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             } else if (!ValidationUtils.validatePort(vds.getSshPort())) {
                 returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_PORT);
             } else if ((StringUtils.isBlank(vds.getSshUsername())) ||
-                       (vds.getSshUsername().length() > BusinessEntitiesDefinitions.USER_USER_NAME_SIZE)) {
+                       (vds.getSshUsername().length() > BusinessEntitiesDefinitions.USER_LOGIN_NAME_SIZE)) {
                 returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_WITH_INVALID_SSH_USERNAME);
             } else {
                 returnValue = returnValue && validateSingleHostAttachedToLocalStorage();
