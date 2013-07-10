@@ -22,6 +22,8 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -40,45 +42,45 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
 
     @Override
     protected boolean canDoAction() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
         StorageDomain storage = DbFacade.getInstance().getStorageDomainDao().getForStoragePool(
                 getParameters().getStorageDomainId(), getParameters().getStoragePoolId());
         if (storage == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
         if (storage.getStatus() == null || storage.getStatus() != StorageDomainStatus.Active) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
         }
 
         if (storage.getStorageDomainType() != StorageDomainType.ImportExport) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
         // getVm() is the vm from the export domain
         if (getVm() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND_ON_EXPORT_DOMAIN);
         }
 
         // not using getVm() since its overridden to get vm from export domain
         VM vm = getVmDAO().get(getVmId());
         if (vm != null && vm.getStatus() == VMStatus.ImageLocked) {
             if (AsyncTaskManager.getInstance().hasTasksForEntityIdAndAction(vm.getId(), VdcActionType.ExportVm)) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_DURING_EXPORT);
-                return false;
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_DURING_EXPORT);
             }
         }
+
         return true;
     }
 
     @Override
     protected void executeVmCommand() {
-        removeVmInSpm(getParameters().getStoragePoolId(), getVmId(), getParameters().getStorageDomainId());
+        removeVmInSpm();
+        removeDiskImages();
+
+        setSucceeded(true);
+    }
+
+    private void removeDiskImages() {
         List<DiskImage> images =
                 ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false);
         for (DiskImage image : images) {
@@ -86,8 +88,18 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
             image.setStoragePoolId(getParameters().getStoragePoolId());
         }
         removeVmImages(images);
+    }
 
-        setSucceeded(true);
+    private boolean removeVmInSpm() {
+        return runVdsCommand(VDSCommandType.RemoveVM, buildRemoveVmParameters())
+                .getSucceeded();
+    }
+
+    private RemoveVMVDSCommandParameters buildRemoveVmParameters() {
+        return new RemoveVMVDSCommandParameters(
+                getParameters().getStoragePoolId(),
+                getVmId(),
+                getParameters().getStorageDomainId());
     }
 
     @Override

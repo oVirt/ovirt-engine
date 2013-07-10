@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -159,11 +158,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_EXCEEDED_MAX_IDE_SLOTS.name());
         }
         return result;
-    }
-
-    protected boolean removeVmInSpm(Guid storagePoolId, Guid vmID, Guid storageDomainId) {
-        return runVdsCommand(VDSCommandType.RemoveVM,
-                new RemoveVMVDSCommandParameters(storagePoolId, vmID, storageDomainId)).getSucceeded();
     }
 
     protected void removeVmStatic() {
