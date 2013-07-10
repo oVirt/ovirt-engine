@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -13,8 +12,6 @@ import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -78,18 +75,10 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
 
     @Override
     protected boolean canDoAction() {
-        if (getVds() == null) {
-            return failCanDoAction(VdcBllMessages.VDS_DOES_NOT_EXIST);
-        }
-
-        if (StringUtils.isBlank(getVds().getUniqueId()) && Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
-            return failCanDoAction(VdcBllMessages.VDS_NO_UUID);
-        }
-
-        if (getVds().getStatus() == VDSStatus.Up) {
-            return failCanDoAction(VdcBllMessages.VDS_ALREADY_UP);
-        }
-        return true;
+        VdsValidator validator = new VdsValidator(getVds());
+        return validate(validator.exists()) &&
+                validate(validator.validateStatusForActivation()) &&
+                validate(validator.validateUniqueId());
     }
 
     @Override

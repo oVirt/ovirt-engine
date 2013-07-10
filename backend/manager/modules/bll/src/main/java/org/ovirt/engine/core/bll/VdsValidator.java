@@ -1,6 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 /**
  * Contains methods used to validate VDS status to execute some operation on it
@@ -16,12 +21,8 @@ public class VdsValidator {
      *
      * @param vds
      *            specified VDS
-     * @exception IllegalArgumentException if {@code vds} is {@code null}
      */
     public VdsValidator(VDS vds) {
-        if (vds == null) {
-            throw new IllegalArgumentException();
-        }
         this.vds = vds;
     }
 
@@ -32,6 +33,10 @@ public class VdsValidator {
      */
     public boolean shouldVdsBeFenced() {
         boolean result = false;
+        // Not using exists() here in order not to add canDoAction message
+        if (vds == null) {
+            return false;
+        }
 
         switch (vds.getStatus()) {
         case Down:
@@ -47,5 +52,30 @@ public class VdsValidator {
         }
 
         return result;
+    }
+
+    public ValidationResult exists() {
+        if (vds == null) {
+            return new ValidationResult(VdcBllMessages.VDS_DOES_NOT_EXIST);
+        }
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult validateStatusForActivation() {
+        ValidationResult existsValidation = exists();
+        if (!existsValidation.isValid()) {
+            return existsValidation;
+        }
+        if (VDSStatus.Up == vds.getStatus()) {
+            return new ValidationResult(VdcBllMessages.VDS_ALREADY_UP);
+        }
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult validateUniqueId() {
+        if (StringUtils.isBlank(vds.getUniqueId()) && Config.<Boolean> GetValue(ConfigValues.InstallVds)) {
+            return new ValidationResult(VdcBllMessages.VDS_NO_UUID);
+        }
+        return ValidationResult.VALID;
     }
 }
