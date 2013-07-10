@@ -183,6 +183,7 @@ public class VmMapperTest extends
         entity.setStatus(VMStatus.Up);
         Guid guid = Guid.newGuid();
         entity.setRunOnVds(guid);
+        OsTypeMockUtils.mockOsTypes();
         VM model = VmMapper.map(entity, null);
         assertEquals(guid.toString(), model.getHost().getId());
     }
