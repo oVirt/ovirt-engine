@@ -69,6 +69,9 @@ public class VdsValidator {
         if (VDSStatus.Up == vds.getStatus()) {
             return new ValidationResult(VdcBllMessages.VDS_ALREADY_UP);
         }
+        if (VDSStatus.NonResponsive == vds.getStatus()) {
+            return new ValidationResult(VdcBllMessages.VDS_NON_RESPONSIVE);
+        }
         return ValidationResult.VALID;
     }
 

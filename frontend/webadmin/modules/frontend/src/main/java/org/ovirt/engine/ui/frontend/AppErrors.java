@@ -226,6 +226,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Host has no unique id.")
     String VDS_NO_UUID();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Host is non responsive.")
+    String VDS_NON_RESPONSIVE();
+
     @DefaultStringValue("Cannot ${action} ${type}. Host does not exist.")
     String VDS_DOES_NOT_EXIST();
 
