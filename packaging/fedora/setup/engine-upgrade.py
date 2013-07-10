@@ -672,12 +672,12 @@ def stopEngine(service=basedefs.ENGINE_SERVICE_NAME):
     ]
     output, rc = utils. execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_STOP_ENGINE_SERVICE)
 
-def stopWebSocketProxy():
+def stopWebSocketProxy(srv):
     logging.debug("stopping websocket-proxy service.")
-    cmd = [
-        basedefs.EXEC_SERVICE, basedefs.WEBSOCKET_PROXY_SERVICE_NAME, "stop",
-    ]
-    utils. execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_STOP_WEBSOCKET_PROXY_SERVICE)
+    if srv.available():
+        out, rc = srv.status()
+        if rc == 0:
+            srv.stop()
 
 def startEngine(service=basedefs.ENGINE_SERVICE_NAME):
     logging.debug("starting %s service.", service)
@@ -686,12 +686,10 @@ def startEngine(service=basedefs.ENGINE_SERVICE_NAME):
     ]
     output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_START_ENGINE_SERVICE)
 
-def startWebSocketProxy():
+def startWebSocketProxy(srv):
     logging.debug("starting websocket-proxy service.")
-    cmd = [
-        basedefs.EXEC_SERVICE, basedefs.WEBSOCKET_PROXY_SERVICE_NAME, "start",
-    ]
-    output, rc = utils.execCmd(cmdList=cmd, failOnError=True, msg=MSG_ERR_FAILED_START_WEBSOCKET_PROXYSERVICE)
+    if srv.available():
+        srv.conditionalStart()
 
 def runPost():
     logging.debug("Running post script")
@@ -1369,8 +1367,9 @@ def main(options):
 
     # Functions/parameters definitions
     currentDbName = basedefs.DB_NAME
-    stopEngineService = [stopEngine, stopWebSocketProxy]
-    startEngineService = [startEngine, startWebSocketProxy]
+    websocketProxyService = utils.Service(basedefs.WEBSOCKET_PROXY_SERVICE_NAME)
+    stopEngineService = [stopEngine, [stopWebSocketProxy, websocketProxyService]]
+    startEngineService = [startEngine, [startWebSocketProxy, websocketProxyService]]
     preupgradeFunc = [preupgradeUUIDCheck]
     upgradeFunc = [
         rhyum.update,
