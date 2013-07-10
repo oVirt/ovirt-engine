@@ -89,6 +89,7 @@ public enum VdcActionType {
     // VnicProfile Commands
     AddVnicProfile(160, ActionGroup.CREATE_NETWORK_VNIC_PROFILE, false, QuotaDependency.NONE),
     UpdateVnicProfile(161, ActionGroup.CONFIGURE_NETWORK_VNIC_PROFILE, false, QuotaDependency.NONE),
+    RemoveVnicProfile(162, ActionGroup.DELETE_NETWORK_VNIC_PROFILE, false, QuotaDependency.NONE),
 
     // VmTemplatesCommand
     AddVmTemplate(201, ActionGroup.CREATE_TEMPLATE, QuotaDependency.BOTH),
