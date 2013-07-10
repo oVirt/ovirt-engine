@@ -41,6 +41,7 @@
 
 		.contentEditor textarea {
 			height: 150px;
+			resize: none;
 		}
 
 		.resolveConflictInternalPanel {
