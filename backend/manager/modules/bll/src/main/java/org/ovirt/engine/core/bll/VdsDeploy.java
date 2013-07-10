@@ -6,11 +6,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.lang.reflect.Method;
 import java.security.KeyPair;
 import java.security.KeyStoreException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.Callable;
 
@@ -205,6 +213,27 @@ public class VdsDeploy implements SSHDialog.Sink {
      */
 
     /**
+     * Values to determine when customization should be performed.
+     */
+    private static enum CustomizationCondition {
+        IPTABLES_OVERRIDE
+    };
+    /**
+     * Special annotation to specify when the customization is necessary.
+     */
+    @Target(ElementType.METHOD)
+    @Retention(RetentionPolicy.RUNTIME)
+    private @interface CallWhen {
+        /**
+         * @return A condition that determines if the customization should run.
+         */
+        CustomizationCondition[] value();
+    }
+    /**
+     * A set of conditions under which the conditional customizations should run.
+     */
+    private Set<CustomizationCondition> _customizationConditions = new HashSet<>();
+    /**
      * Customization tick.
      */
     private int _customizationIndex = 0;
@@ -272,23 +301,20 @@ public class VdsDeploy implements SSHDialog.Sink {
             );
             return null;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
+        new Callable<Object>() {@CallWhen(CustomizationCondition.IPTABLES_OVERRIDE)
+        public Object call() throws Exception {
             _parser.cliEnvironmentSet(
                 NetEnv.IPTABLES_ENABLE,
-                _iptables.length() > 0
+                true
             );
             return null;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
-            if (_iptables.length() == 0) {
-                _parser.cliNoop();
-            }
-            else {
-                _parser.cliEnvironmentSet(
-                    NetEnv.IPTABLES_RULES,
-                    _iptables.split("\n")
-                );
-            }
+        new Callable<Object>() {@CallWhen(CustomizationCondition.IPTABLES_OVERRIDE)
+        public Object call() throws Exception {
+            _parser.cliEnvironmentSet(
+                NetEnv.IPTABLES_RULES,
+                _iptables.split("\n")
+            );
             return null;
         }},
         new Callable<Object>() { public Object call() throws Exception {
@@ -347,10 +373,11 @@ public class VdsDeploy implements SSHDialog.Sink {
              }
              return null;
         }},
-        new Callable<Object>() { public Object call() throws Exception {
-            String minimal = Config.<String> GetValue(ConfigValues.BootstrapMinimalVdsmVersion);
-            if (minimal.trim().length() == 0) {
-                _parser.cliNoop();
+        new Callable<Object>() {
+            public Object call() throws Exception {
+                String minimal = Config.<String> GetValue(ConfigValues.BootstrapMinimalVdsmVersion);
+                if (minimal.trim().length() == 0) {
+                    _parser.cliNoop();
             }
             else {
                 _parser.cliEnvironmentSet(
@@ -419,7 +446,16 @@ public class VdsDeploy implements SSHDialog.Sink {
                 _parser.cliAbort();
             }
             else {
-                _customizationDialog[_customizationIndex++].call();
+                Callable<?> customizationStep = _customizationDialog[_customizationIndex++];
+                Method callMethod = customizationStep.getClass().getDeclaredMethod("call");
+                if (callMethod != null) {
+                    CallWhen ann = callMethod.getAnnotation(CallWhen.class);
+                    if (ann != null && !_customizationConditions.containsAll(Arrays.asList(ann.value()))) {
+                        _parser.cliNoop();
+                        return;
+                    }
+                }
+                customizationStep.call();
             }
         }
         catch (ArrayIndexOutOfBoundsException e) {
@@ -819,6 +855,7 @@ public class VdsDeploy implements SSHDialog.Sink {
     public void setFirewall(boolean doFirewall) {
         if (doFirewall) {
             _iptables = _getIpTables();
+            _customizationConditions.add(CustomizationCondition.IPTABLES_OVERRIDE);
         }
     }
 
