@@ -69,6 +69,21 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
     @Source("images/os/large/windows_2012x64.png")
     ImageResource windows_2012x64LargeImage();
 
+    @Source("images/os/large/sles_11.png")
+    ImageResource sles_11LargeImage();
+
+    @Source("images/os/large/ubuntu_12_04.png")
+    ImageResource ubuntu_12_04LargeImage();
+
+    @Source("images/os/large/ubuntu_12_10.png")
+    ImageResource ubuntu_12_10LargeImage();
+
+    @Source("images/os/large/ubuntu_13_04.png")
+    ImageResource ubuntu_13_04LargeImage();
+
+    @Source("images/os/large/ubuntu_13_10.png")
+    ImageResource ubuntu_13_10LargeImage();
+
     // OS type small images
 
     // TODO remove the same resources from ApplicationResources and rename this
@@ -134,6 +149,21 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
 
     @Source("images/os/windows_2012x64.png")
     ImageResource windows_2012x64SmallImage();
+
+    @Source("images/os/sles_11.png")
+    ImageResource sles_11SmallImage();
+
+    @Source("images/os/ubuntu_12_04.png")
+    ImageResource ubuntu_12_04SmallImage();
+
+    @Source("images/os/ubuntu_12_10.png")
+    ImageResource ubuntu_12_10SmallImage();
+
+    @Source("images/os/ubuntu_13_04.png")
+    ImageResource ubuntu_13_04SmallImage();
+
+    @Source("images/os/ubuntu_13_10.png")
+    ImageResource ubuntu_13_10SmallImage();
 
     @Source("images/vmtypes/desktop_vm_icon.png")
     ImageResource desktopVmIcon();
