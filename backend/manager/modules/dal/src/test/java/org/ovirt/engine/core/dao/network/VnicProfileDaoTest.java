@@ -106,7 +106,7 @@ public class VnicProfileDaoTest extends BaseDAOTestCase {
         List<VnicProfile> result = dao.getAll();
 
         assertNotNull(result);
-        assertEquals(2, result.size());
+        assertEquals(5, result.size());
     }
 
     /**

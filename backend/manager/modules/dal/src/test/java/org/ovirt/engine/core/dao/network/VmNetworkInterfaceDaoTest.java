@@ -50,6 +50,7 @@ public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
         newVmInterface = new VmNetworkInterface();
         newVmInterface.setStatistics(new VmNetworkStatistics());
         newVmInterface.setId(Guid.newGuid());
+        newVmInterface.setVnicProfileId(FixturesTool.VM_NETWORK_INTERFACE_PROFILE);
         newVmInterface.setName("eth77");
         newVmInterface.setNetworkName("enginet");
         newVmInterface.setLinked(true);

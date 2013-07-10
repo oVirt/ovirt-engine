@@ -453,6 +453,7 @@ Create or replace FUNCTION Insertvm_interface(v_id UUID,
 	v_name VARCHAR(50),
 	v_network_name VARCHAR(50) ,
 	v_speed INTEGER ,
+	v_vnic_profile_id UUID ,
 	v_vm_guid UUID ,
 	v_vmt_guid UUID ,
     v_type INTEGER,
@@ -461,8 +462,8 @@ Create or replace FUNCTION Insertvm_interface(v_id UUID,
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_interface(id, mac_addr, name, network_name, speed, VM_GUID, VMT_GUID, type, port_mirroring, linked)
-	VALUES(v_id, v_mac_addr, v_name, v_network_name, v_speed, v_vm_guid, v_vmt_guid, v_type, v_port_mirroring, v_linked);
+INSERT INTO vm_interface(id, mac_addr, name, network_name, speed, vnic_profile_id, VM_GUID, VMT_GUID, type, port_mirroring, linked)
+	VALUES(v_id, v_mac_addr, v_name, v_network_name, v_speed, v_vnic_profile_id, v_vm_guid, v_vmt_guid, v_type, v_port_mirroring, v_linked);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -475,6 +476,7 @@ Create or replace FUNCTION Updatevm_interface(v_id UUID,
 	v_name VARCHAR(50),
 	v_network_name VARCHAR(50) ,
 	v_speed INTEGER ,
+	v_vnic_profile_id UUID ,
 	v_vm_guid UUID ,
 	v_vmt_guid UUID ,
     v_type INTEGER,
@@ -487,7 +489,7 @@ RETURNS VOID
 BEGIN
       UPDATE vm_interface
       SET mac_addr = v_mac_addr,name = v_name,network_name = v_network_name,
-      speed = v_speed,VM_GUID = v_vm_guid,VMT_GUID = v_vmt_guid,type = v_type,
+      speed = v_speed, vnic_profile_id = v_vnic_profile_id, VM_GUID = v_vm_guid,VMT_GUID = v_vmt_guid,type = v_type,
       _update_date = LOCALTIMESTAMP, port_mirroring = v_port_mirroring, linked = v_linked
       WHERE id = v_id;
 END; $procedure$

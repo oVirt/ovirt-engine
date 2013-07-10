@@ -841,7 +841,7 @@ CREATE OR REPLACE VIEW vds_interface_view AS
 CREATE OR REPLACE VIEW vm_interface_view AS
   SELECT vm_interface_statistics.rx_rate, vm_interface_statistics.tx_rate, vm_interface_statistics.rx_drop,
       vm_interface_statistics.tx_drop, vm_interface_statistics.iface_status, vm_interface.type, vm_interface.speed,
-      vm_interface.mac_addr, vm_interface.network_name, vm_interface.name, vm_static.vm_guid, vm_interface.vmt_guid,
+      vm_interface.mac_addr, vm_interface.network_name, vm_interface.name, vm_interface.vnic_profile_id, vm_static.vm_guid, vm_interface.vmt_guid,
       vm_static.vm_name, vm_interface.id, 0 AS boot_protocol, 0 AS is_vds, vm_device.is_plugged,
       vm_device.custom_properties, vm_interface.port_mirroring, vm_interface.linked,
       vm_static.vds_group_id AS vds_group_id, vm_static.entity_type AS vm_entity_type
@@ -852,7 +852,7 @@ CREATE OR REPLACE VIEW vm_interface_view AS
   UNION
   SELECT vm_interface_statistics.rx_rate, vm_interface_statistics.tx_rate, vm_interface_statistics.rx_drop,
       vm_interface_statistics.tx_drop, vm_interface_statistics.iface_status, vm_interface.type, vm_interface.speed,
-      vm_interface.mac_addr, vm_interface.network_name, vm_interface.name, NULL::uuid as vm_guid,
+      vm_interface.mac_addr, vm_interface.network_name, vm_interface.name, vm_interface.vnic_profile_id, NULL::uuid as vm_guid,
       vm_interface.vmt_guid, vm_templates.vm_name AS vm_name, vm_interface.id, 0 AS boot_protocol, 0 AS is_vds,
       vm_device.is_plugged as is_plugged, vm_device.custom_properties as custom_properties, vm_interface.port_mirroring,
       vm_interface.linked, vm_templates.vds_group_id AS vds_group_id, vm_templates.entity_type AS vm_entity_type

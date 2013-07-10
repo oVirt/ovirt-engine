@@ -36,6 +36,7 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
                     entity.setNetworkName(rs.getString("network_name"));
                     entity.setName(rs.getString("name"));
                     entity.setVmId(getGuid(rs, "vm_guid"));
+                    entity.setVnicProfileId(getGuid(rs, "vnic_profile_id"));
                     entity.setVmTemplateId(getGuid(rs, "vmt_guid"));
                     entity.setVmName(rs.getString("vm_name"));
                     entity.setId(getGuidDefaultEmpty(rs, "id"));
@@ -101,6 +102,7 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
                 .addValue("network_name", stats.getNetworkName())
                 .addValue("speed", stats.getSpeed())
                 .addValue("vm_guid", stats.getVmId())
+                .addValue("vnic_profile_id", stats.getVnicProfileId())
                 .addValue("vmt_guid", stats.getVmTemplateId())
                 .addValue("type", stats.getType())
                 .addValue("port_mirroring", stats.isPortMirroring())
@@ -118,6 +120,7 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
                 .addValue("network_name", iface.getNetworkName())
                 .addValue("speed", iface.getSpeed())
                 .addValue("vm_guid", iface.getVmId())
+                .addValue("vnic_profile_id", iface.getVnicProfileId())
                 .addValue("vmt_guid", iface.getVmTemplateId())
                 .addValue("type", iface.getType())
                 .addValue("port_mirroring", iface.isPortMirroring())

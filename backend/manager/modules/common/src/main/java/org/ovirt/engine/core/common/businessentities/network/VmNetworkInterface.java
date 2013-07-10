@@ -26,6 +26,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
     protected static final String VALIDATION_MESSAGE_MAC_ADDRESS_INVALID = "VALIDATION.VM.NETWORK.MAC.ADDRESS.INVALID";
 
     private Guid vmId;
+    private Guid vnicProfileId;
     private String vmName;
     private Guid vmTemplateId;
     private boolean plugged = true;
@@ -179,6 +180,8 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
                 .append(isPortMirroring())
                 .append(", vmId=")
                 .append(getVmId())
+                .append(", vnicProfileId=")
+                .append(getVnicProfileId())
                 .append(", vmName=")
                 .append(getVmName())
                 .append(", vmTemplateId=")
@@ -195,6 +198,7 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
         result = prime * result + (customProperties == null ? 0 : customProperties.hashCode());
         result = prime * result + (linked ? 1231 : 1237);
         result = prime * result + ((vmId == null) ? 0 : vmId.hashCode());
+        result = prime * result + ((vnicProfileId == null) ? 0 : vnicProfileId.hashCode());
         result = prime * result + ((vmName == null) ? 0 : vmName.hashCode());
         result = prime * result + ((vmTemplateId == null) ? 0 : vmTemplateId.hashCode());
         return result;
@@ -230,6 +234,13 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
         } else if (!vmId.equals(other.vmId)) {
             return false;
         }
+        if (vnicProfileId == null) {
+            if (other.vnicProfileId != null) {
+                return false;
+            }
+        } else if (!vnicProfileId.equals(other.vnicProfileId)) {
+            return false;
+        }
         if (vmName == null) {
             if (other.vmName != null) {
                 return false;
@@ -253,5 +264,13 @@ public class VmNetworkInterface extends NetworkInterface<VmNetworkStatistics> {
 
     public void setPortMirroring(boolean portMirroring) {
         this.portMirroring = portMirroring;
+    }
+
+    public Guid getVnicProfileId() {
+        return vnicProfileId;
+    }
+
+    public void setVnicProfileId(Guid vnicProfileId) {
+        this.vnicProfileId = vnicProfileId;
     }
 }

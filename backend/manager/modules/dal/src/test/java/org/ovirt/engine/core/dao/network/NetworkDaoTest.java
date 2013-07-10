@@ -21,7 +21,8 @@ public class NetworkDaoTest extends BaseDAOTestCase {
     private Guid cluster;
     private Guid datacenter;
     private Network new_net;
-    private static final String EXISTING_NETWORK_NAME = "engine";
+    private static final String EXISTING_NETWORK_NAME1 = "engine";
+    private static final String EXISTING_NETWORK_NAME2 = "engine3";
     private static final int NUM_OF_NETWORKS = 5;
 
     @Override
@@ -54,10 +55,10 @@ public class NetworkDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByName() {
-        Network result = dao.getByName(EXISTING_NETWORK_NAME);
+        Network result = dao.getByName(EXISTING_NETWORK_NAME1);
 
         assertNotNull(result);
-        assertEquals(EXISTING_NETWORK_NAME, result.getName());
+        assertEquals(EXISTING_NETWORK_NAME1, result.getName());
     }
 
     /**
@@ -65,10 +66,10 @@ public class NetworkDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByNameAndDataCenter() {
-        Network result = dao.getByNameAndDataCenter(EXISTING_NETWORK_NAME, datacenter);
+        Network result = dao.getByNameAndDataCenter(EXISTING_NETWORK_NAME1, datacenter);
 
         assertNotNull(result);
-        assertEquals(EXISTING_NETWORK_NAME, result.getName());
+        assertEquals(EXISTING_NETWORK_NAME1, result.getName());
     }
 
     /**
@@ -76,10 +77,10 @@ public class NetworkDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByNameAndCluster() {
-        Network result = dao.getByNameAndCluster(EXISTING_NETWORK_NAME, cluster);
+        Network result = dao.getByNameAndCluster(EXISTING_NETWORK_NAME1, cluster);
 
         assertNotNull(result);
-        assertEquals(EXISTING_NETWORK_NAME, result.getName());
+        assertEquals(EXISTING_NETWORK_NAME1, result.getName());
     }
 
     /**
@@ -300,13 +301,13 @@ public class NetworkDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdate() {
-        Network before = dao.getByName(EXISTING_NETWORK_NAME);
+        Network before = dao.getByName(EXISTING_NETWORK_NAME1);
 
         before.setDescription("This is a completely changed description");
 
         dao.update(before);
 
-        Network after = dao.getByName(EXISTING_NETWORK_NAME);
+        Network after = dao.getByName(EXISTING_NETWORK_NAME1);
 
         assertNotNull(after);
         assertEquals(before, after);
@@ -317,13 +318,13 @@ public class NetworkDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testRemove() {
-        Network result = dao.getByName(EXISTING_NETWORK_NAME);
+        Network result = dao.getByName(EXISTING_NETWORK_NAME2);
 
         assertNotNull(result);
 
         dao.remove(result.getId());
 
-        result = dao.getByName(EXISTING_NETWORK_NAME);
+        result = dao.getByName(EXISTING_NETWORK_NAME2);
 
         assertNull(result);
     }

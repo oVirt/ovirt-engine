@@ -920,6 +920,33 @@
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
         </row>
+        <row>
+            <value>d0f2ca62-f564-447c-aa55-ce2aa12ea798</value>
+            <value>engine2_profile</value>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607189</value>
+            <value>false</value>
+            <value></value>
+            <value>2013-07-02 08:38:36</value>
+            <value>2013-07-02 08:38:36</value>
+        </row>
+        <row>
+            <value>471b199e-9454-47a1-85dd-4461f665abc5</value>
+            <value>engine3_profile</value>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607190</value>
+            <value>false</value>
+            <value></value>
+            <value>2013-07-02 08:38:36</value>
+            <value>2013-07-02 08:38:36</value>
+        </row>
+        <row>
+            <value>2b75e023-a1fb-4dcb-9738-0ec7fe2d51c6</value>
+            <value>engine4_profile</value>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607191</value>
+            <value>false</value>
+            <value></value>
+            <value>2013-07-02 08:38:36</value>
+            <value>2013-07-02 08:38:36</value>
+        </row>
     </table>
 
     <table name="network_cluster">
@@ -3412,6 +3439,7 @@
     <table name="vm_interface">
         <column>id</column>
         <column>network_name</column>
+        <column>vnic_profile_id</column>
         <column>vm_guid</column>
         <column>vmt_guid</column>
         <column>mac_addr</column>
@@ -3424,6 +3452,7 @@
         <row>
             <value>e2817b12-f873-4046-b0da-0098293c14fd</value>
             <value>engine</value>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
             <null/>
             <value>00:1a:4a:16:87:d9</value>
@@ -3437,6 +3466,7 @@
         <row>
             <value>e2817b12-f873-4046-b0da-0098293c0000</value>
             <value>engine</value>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
             <null/>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
             <value>00:1a:4a:16:87:d9</value>
@@ -3450,6 +3480,7 @@
         <row>
             <value>14550e82-1e1f-47b5-ae41-b009348dabfa</value>
             <value>engine2</value>
+            <value>d0f2ca62-f564-447c-aa55-ce2aa12ea798</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
             <value>00:1a:4a:16:87:da</value>
@@ -3463,6 +3494,7 @@
         <row>
             <value>14550e82-1e1f-47b5-ae41-b009348dabfb</value>
             <value>engine4</value>
+            <null />
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
             <value>00:1a:4a:16:87:db</value>
