@@ -39,6 +39,7 @@ import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.customprop.ValidationError;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -266,13 +267,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected boolean removeMemoryVolumes(String memVols, VdcActionType parentCommand, boolean startPollingTasks) {
         // this is temp code until it will be implemented in SPM
-        String[] strings = memVols.split(",");
-        Guid[] guids = new Guid[strings.length];
-        for (int i=0; i<strings.length; ++i) {
-            guids[i] = new Guid(strings[i]);
-        }
+        List<Guid> guids = GuidUtils.getGuidListFromString(memVols);
 
-        if (guids.length == 6) {
+        if (guids.size() == 6) {
             // get all vm disks in order to check post zero - if one of the
             // disks is marked with wipe_after_delete
             boolean postZero =
@@ -288,35 +285,35 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
             // delete first image
             // the next 'DeleteImageGroup' command should also take care of the image removal:
-            VDSReturnValue vdsRetValue1 = runVdsCommand(
+            VDSReturnValue vdsRetValue = runVdsCommand(
                     VDSCommandType.DeleteImageGroup,
-                    new DeleteImageGroupVDSCommandParameters(guids[1], guids[0], guids[2],
+                    new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(2),
                             postZero, false, getVm().getVdsGroupCompatibilityVersion().toString()));
 
-            if (!vdsRetValue1.getSucceeded()) {
+            if (!vdsRetValue.getSucceeded()) {
                 return false;
             }
 
             Guid guid1 =
-                    createTask(taskId1, vdsRetValue1.getCreationInfo(), parentCommand, VdcObjectType.Storage, guids[0]);
+                    createTask(taskId1, vdsRetValue.getCreationInfo(), parentCommand, VdcObjectType.Storage, guids.get(0));
             getTaskIdList().add(guid1);
 
             Guid taskId2 = persistAsyncTaskPlaceHolder(parentCommand, DELETE_SECONDARY_IMAGES_TASK_KEY);
             // delete second image
             // the next 'DeleteImageGroup' command should also take care of the image removal:
-            VDSReturnValue vdsRetValue2 = runVdsCommand(
+            vdsRetValue = runVdsCommand(
                     VDSCommandType.DeleteImageGroup,
-                    new DeleteImageGroupVDSCommandParameters(guids[1], guids[0], guids[4],
+                    new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(4),
                             postZero, false, getVm().getVdsGroupCompatibilityVersion().toString()));
 
-            if (!vdsRetValue2.getSucceeded()) {
+            if (!vdsRetValue.getSucceeded()) {
                 if (startPollingTasks) {
                     AsyncTaskManager.getInstance().StartPollingTask(guid1);
                 }
                 return false;
             }
 
-            Guid guid2 = createTask(taskId2, vdsRetValue2.getCreationInfo(), parentCommand);
+            Guid guid2 = createTask(taskId2, vdsRetValue.getCreationInfo(), parentCommand);
             getTaskIdList().add(guid2);
 
             if (startPollingTasks) {
