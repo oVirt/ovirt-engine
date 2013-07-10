@@ -1,43 +1,35 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveVmFromImportExportParamenters extends RemoveVmParameters implements java.io.Serializable {
     private static final long serialVersionUID = 1841755064122049392L;
-    private VM _vm;
 
-    public RemoveVmFromImportExportParamenters(VM vm, Guid storageDomainId, Guid storagePoolId) {
-        super(vm.getId(), false);
-        _vm = vm;
-        this.setStorageDomainId(storageDomainId);
-        this.setStoragePoolId(storagePoolId);
+    private Guid storagePoolId = Guid.Empty;
+    private Guid storageDomainId = Guid.Empty;
+
+    public RemoveVmFromImportExportParamenters() {
     }
 
-    public VM getVm() {
-        return _vm;
+    public RemoveVmFromImportExportParamenters(Guid vmId, Guid storageDomainId, Guid storagePoolId) {
+        super(vmId, false);
+        setStorageDomainId(storageDomainId);
+        setStoragePoolId(storagePoolId);
     }
-
-    private Guid privateStorageDomainId = Guid.Empty;
 
     public Guid getStorageDomainId() {
-        return privateStorageDomainId;
+        return storageDomainId;
     }
 
     public void setStorageDomainId(Guid value) {
-        privateStorageDomainId = value;
+        storageDomainId = value;
     }
 
-    private Guid privateStoragePoolId = Guid.Empty;
-
     public Guid getStoragePoolId() {
-        return privateStoragePoolId;
+        return storagePoolId;
     }
 
     public void setStoragePoolId(Guid value) {
-        privateStoragePoolId = value;
-    }
-
-    public RemoveVmFromImportExportParamenters() {
+        storagePoolId = value;
     }
 }

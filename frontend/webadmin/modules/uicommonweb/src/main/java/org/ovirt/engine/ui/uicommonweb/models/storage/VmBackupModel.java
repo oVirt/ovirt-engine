@@ -141,7 +141,7 @@ public class VmBackupModel extends ManageBackupModel {
                             new ArrayList<VdcActionParametersBase>();
                     for (Object item : backupModel.getSelectedItems()) {
                         VM vm = (VM) item;
-                        list.add(new RemoveVmFromImportExportParamenters(vm,
+                        list.add(new RemoveVmFromImportExportParamenters(vm.getId(),
                                 backupModel.getEntity().getId(), pool.getId()));
                     }
 
