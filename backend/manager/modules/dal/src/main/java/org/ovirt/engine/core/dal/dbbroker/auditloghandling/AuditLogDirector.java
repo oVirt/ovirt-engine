@@ -785,6 +785,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.VLAN_ID_MISMATCH_FOR_MANAGEMENT_NETWORK_CONFIGURATION, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.SETUP_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK_CONFIGURATION, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.PERSIST_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.ADD_VNIC_PROFILE, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.ADD_VNIC_PROFILE_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initExtrnalEvents() {
