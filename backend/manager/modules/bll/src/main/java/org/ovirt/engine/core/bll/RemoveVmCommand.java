@@ -207,31 +207,20 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_WITH_DETACH_DISKS_BASED_ON_TEMPLATE);
         }
 
-
-        boolean isSnapshotsPresent = false;
         for (Disk disk : getVm().getDiskList()) {
             List<DiskImage> diskImageList = getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId());
             if (diskImageList.size() > 1) {
-                isSnapshotsPresent = true;
-                break;
+                return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_WITH_DETACH_DISKS_SNAPSHOTS_EXIST);
             }
-        }
-
-        if (isSnapshotsPresent) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_WITH_DETACH_DISKS_SNAPSHOTS_EXIST);
         }
 
         return true;
     }
 
     protected VdcReturnValueBase removeVmImages(List<DiskImage> images) {
-        RemoveAllVmImagesParameters tempVar = new RemoveAllVmImagesParameters(getVmId(), images);
-        tempVar.setParentCommand(getActionType());
-        tempVar.setEntityInfo(getParameters().getEntityInfo());
-        tempVar.setParentParameters(getParameters());
         VdcReturnValueBase vdcRetValue =
                 Backend.getInstance().runInternalAction(VdcActionType.RemoveAllVmImages,
-                        tempVar,
+                        buildRemoveAllVmImagesParameters(images),
                         ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
         if (vdcRetValue.getSucceeded()) {
@@ -239,6 +228,14 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         }
 
         return vdcRetValue;
+    }
+
+    private RemoveAllVmImagesParameters buildRemoveAllVmImagesParameters(List<DiskImage> images) {
+        RemoveAllVmImagesParameters params = new RemoveAllVmImagesParameters(getVmId(), images);
+        params.setParentCommand(getActionType());
+        params.setEntityInfo(getParameters().getEntityInfo());
+        params.setParentParameters(getParameters());
+        return params;
     }
 
     @Override
@@ -295,7 +292,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
-        List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
+        List<QuotaConsumptionParameter> list = new ArrayList<>();
         for (DiskImage disk : getVm().getDiskList()){
             if (disk.getQuotaId() != null && !Guid.Empty.equals(disk.getQuotaId())) {
                 list.add(new QuotaStorageConsumptionParameter(
