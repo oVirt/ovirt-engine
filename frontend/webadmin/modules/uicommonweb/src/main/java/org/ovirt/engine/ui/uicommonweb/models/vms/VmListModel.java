@@ -1979,8 +1979,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setCpuPinning((String) model.getCpuPinning()
                 .getEntity());
         getcurrentVm().setVncKeyboardLayout((String) model.getVncKeyboardLayout().getSelectedItem());
-        // explicitly pass non-editable field from the original VM
-        getcurrentVm().setCreatedByUserId(selectedItem.getCreatedByUserId());
 
         if ((Boolean) model.getIsAutoAssign().getEntity()) {
             getcurrentVm().setDedicatedVmForVds(null);
@@ -2094,6 +2092,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             {
                 return;
             }
+
+            // explicitly pass non-editable field from the original VM
+            getcurrentVm().setCreatedByUserId(selectedItem.getCreatedByUserId());
 
             // runEditVM: should be true if Cluster hasn't changed or if
             // Cluster has changed and Editing it in the Backend has succeeded:
