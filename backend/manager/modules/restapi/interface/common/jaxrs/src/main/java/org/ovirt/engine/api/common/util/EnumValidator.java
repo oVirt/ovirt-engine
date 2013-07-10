@@ -17,11 +17,14 @@
 package org.ovirt.engine.api.common.util;
 
 import java.text.MessageFormat;
+import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Fault;
+import org.ovirt.engine.api.model.OsTypeUtils;
 
 public class EnumValidator {
 
@@ -42,6 +45,22 @@ public class EnumValidator {
     public static <E extends Enum<E>> E validateEnum(Class<E> clz, String name) {
         return validateEnum(clz, name, false);
     }
+
+    /**
+     * Use this method wherever the list of possible values is extended beyond the enum values.;
+     * This would commonly be seen in situations we where enums are deprecated they're value become system configurable;
+     * instead of hard-coded. e.g {@link org.ovirt.engine.core.common.osinfo.OsRepository}
+     * @param clz the emum class
+     * @param externalValues the extended list of values to validate the input upon
+     * @param name the actual value to be looked up. could be the enum member or part of extended list of values
+     * @param toUppercase
+     * @param <E>
+     * @return
+     */
+    public static <E extends Enum<E>> String validateEnum(Class<E> clz, Set<String> externalValues, String name, boolean toUppercase) {
+        return validateEnum(INVALID_ENUM_REASON, INVALID_ENUM_DETAIL, clz, externalValues,  name, toUppercase);
+    }
+
 
     public static <E extends Enum<E>> E validateEnum(Class<E> clz, String name, boolean toUppercase) {
         return validateEnum(INVALID_ENUM_REASON, INVALID_ENUM_DETAIL, clz, name, toUppercase);
@@ -69,6 +88,29 @@ public class EnumValidator {
             detail = detail + getPossibleValues(clz);
             throw new WebApplicationException(response(reason, MessageFormat.format(detail, name, clz.getSimpleName())));
         }
+    }
+
+    public static <E extends Enum<E>> String validateEnum(String reason, String detail, Class<E> clz,Set<String> externalValues, String name, boolean toUppercase) {
+        for (String externalValue : externalValues) {
+            if (externalValue.equalsIgnoreCase(name)) {
+                return name;
+            }
+        }
+
+        try {
+            return Enum.valueOf(clz, toUppercase ? name.toUpperCase() : name).name();
+        } catch (IllegalArgumentException e) {
+            detail = detail + getPossibleValues(clz, OsTypeUtils.getAllValues());
+            throw new WebApplicationException(response(reason, MessageFormat.format(detail, name, clz.getSimpleName())));
+        }
+    }
+
+    private static <E extends Enum<E>> String getPossibleValues(Class<E> clz, Set<String> allValues) {
+        for (E enumValue: clz.getEnumConstants()) {
+            allValues.add(enumValue.name().toLowerCase());
+        }
+        return ". Possible values for " + clz.getSimpleName() + " and its extended configurable values are: "
+                + StringUtils.join(allValues.toArray(), ", ");
     }
 
     private static <E extends Enum<E>> String getPossibleValues(Class<E> clz) {

@@ -35,6 +35,12 @@
       <scope>provided</scope>
     </dependency>
 
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>common</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>

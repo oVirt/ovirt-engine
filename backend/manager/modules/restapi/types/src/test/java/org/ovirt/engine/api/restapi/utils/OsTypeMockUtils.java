@@ -17,7 +17,6 @@ public class OsTypeMockUtils {
         HashMap<Integer, String> osNames = new HashMap<>(1);
         osNames.put(0, "Unassigned");
         expect(osRepositoryMock.getUniqueOsNames()).andReturn(osNames).anyTimes();
-        expect(osRepositoryMock.osNameUpperCasedAndUnderscored("Unassigned")).andReturn("UNASSIGNED").anyTimes();
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepositoryMock);
         control.replay();
     }

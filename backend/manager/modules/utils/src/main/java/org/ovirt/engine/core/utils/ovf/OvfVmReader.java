@@ -46,6 +46,10 @@ public class OvfVmReader extends OvfReader {
         _vm.getStaticData().setId(new Guid(section.Attributes.get("ovf:id").getValue()));
         XmlNode node = section.SelectSingleNode("Description");
         if (node != null) {
+            // backward compatibility code - os id of type Other is now 0 . "Unassigned" is removed but its Id is in use
+            if (node.InnerText.equals(String.valueOf(OsRepository.OLD_OTHER_ID))) {
+                node.InnerText = String.valueOf(OsRepository.DEFAULT_OS);
+            }
             _vm.getStaticData().setOsId(osRepository.getOsIdByUniqueName(node.InnerText));
         }
     }

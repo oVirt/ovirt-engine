@@ -6,8 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.ovirt.engine.core.compat.Version;
 
@@ -19,7 +17,6 @@ public enum OsRepositoryImpl implements OsRepository {
     INSTANCE;
 
     private static final String OS_ROOT_NODE = "/os/";
-    private static Pattern firstDigitOrUpperCased = Pattern.compile("(\\w)([a-z]*)?([0-9]*)?([a-zA-Z]*)?([0-9]*)?(.*)?");
     /**
      * the configuration tree holding all the os data.
      */
@@ -285,29 +282,6 @@ public enum OsRepositoryImpl implements OsRepository {
      */
     private String versionedValuePath(Version version) {
         return version == null ? "value" : "value." + version.toString();
-    }
-
-    @Override
-    public String osNameUpperCasedAndUnderscored(String name) {
-        // underscore position is the first digit or second camel-cased word
-        Matcher matcher = firstDigitOrUpperCased.matcher(name);
-        if (matcher.matches()) {
-            StringBuilder sb = new StringBuilder();
-            sb.append(matcher.group(1)).append(matcher.group(2));
-            if (!matcher.group(3).isEmpty()) {
-                sb.append("_").append(matcher.group(3)).append(matcher.group(4)).append(matcher.group(5));
-            }
-            else if (!matcher.group(5).isEmpty()) {
-                sb.append(matcher.group(4)).append("_").append(matcher.group(5));
-            }
-            else if (!matcher.group(4).isEmpty()) {
-                sb.append("_").append(matcher.group(4));
-            }
-            sb.append(matcher.group(6));
-            return sb.toString().toUpperCase();
-        } else {
-            return name;
-        }
     }
 
     @Override

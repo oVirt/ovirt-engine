@@ -48,6 +48,7 @@ import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.NicInterfaces;
 import org.ovirt.engine.api.model.NicStatus;
 import org.ovirt.engine.api.model.OsType;
+import org.ovirt.engine.api.model.OsTypeUtils;
 import org.ovirt.engine.api.model.OsTypes;
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.PermitType;
@@ -195,7 +196,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addnetworkBootProtocols(version, BootProtocol.values());
         addMigrateOnErrorOptions(version, MigrateOnError.values());
         addStorageFormatOptions(version, StorageFormat.values());
-        addOsTypes(version, OsType.values());
+        addOsTypes(version);
         addNfsVersions(version, NfsVersion.values());
 
         addGlusterTypesAndStates(version);
@@ -340,10 +341,14 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         return currentVersion;
     }
 
-    private void addOsTypes(VersionCaps version, OsType[] types) {
+    private void addOsTypes(VersionCaps version) {
         version.setOsTypes(new OsTypes());
-        for (OsType type : types) {
-            version.getOsTypes().getOsTypes().add(type.value());
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
+            version.getOsTypes().getOsTypes().addAll(OsTypeUtils.getAllValues());
+        } else {
+            for (OsType type : OsType.values()) {
+                version.getOsTypes().getOsTypes().add(type.name());
+            }
         }
     }
 

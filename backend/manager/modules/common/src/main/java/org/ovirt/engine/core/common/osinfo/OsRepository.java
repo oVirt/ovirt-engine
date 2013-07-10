@@ -11,6 +11,8 @@ import org.ovirt.engine.core.compat.Version;
 public interface OsRepository {
 
     public final static int DEFAULT_OS = 0;
+    public final static int OLD_OTHER_ID = 6;
+
 
     /**
      * @return all loaded os ids
@@ -124,24 +126,6 @@ public interface OsRepository {
      * @return the os id. 0 if non found for that name.
      */
     int getOsIdByUniqueName(String uniqueOsName);
-
-    /**
-     * Helper method to retire the old hard-code mapping of OsName to OS_NAME.<br>
-     * As time goes by more OSs will be added, specifically by admins which the<br>
-     * code is agnostic of and this method serves as the conventional way to keep<br>
-     * this behaviour backward compatible.<br>
-     *
-     * @param name os name as represented by the namespace os.$osname e.g os.rhel6 name is rhel6<br>
-     * @return the first digit met or first camel-cased word is getted separated by an underscore (_) or the original
-     *         name otherwise<br>
-     *         <p/>
-     *         <pre>
-     *                rhel6       -> RHEL_6 <br>
-     *                rhel6x64    -> RHEL_6X64  <br>
-     *                otherLinux  -> OTHER_LINUX <br>
-     *         </pre>
-     */
-    String osNameUpperCasedAndUnderscored(String name);
 
     /**
      * @param osId

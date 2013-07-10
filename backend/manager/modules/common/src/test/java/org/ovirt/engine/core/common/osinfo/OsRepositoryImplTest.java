@@ -137,23 +137,6 @@ public class OsRepositoryImplTest {
     }
 
     @Test
-    public void testOsNameUpperCasedAndUnderscored() throws Exception {
-        assertEquals("UNASSIGNED", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("Unassigned"));
-        assertEquals("WINDOWS_XP", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("WindowsXP"));
-        assertEquals("RHEL_5", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("RHEL5"));
-        assertEquals("RHEL_6", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("Rhel6"));
-        assertEquals("RHEL_6X64", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("rhel6x64"));
-        assertEquals("OTHER_LINUX", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("OtherLinux"));
-        assertEquals("WINDOWS_2003", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("Windows2003"));
-        assertEquals("WINDOWS_2008", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("Windows2008"));
-        assertEquals("WINDOWS_2003X64", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("Windows2003x64"));
-        assertEquals("WINDOWS_7", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("Windows7"));
-        assertEquals("WINDOWS_7X64", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("Windows7x64"));
-        assertEquals("RHEL_5X64", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("RHEL5x64"));
-        assertEquals("WINDOWS_2012X64", OsRepositoryImpl.INSTANCE.osNameUpperCasedAndUnderscored("Windows2012x64"));
-    }
-
-    @Test
     public void testNonExistingKey() {
         assertEquals("", OsRepositoryImpl.INSTANCE.getOsFamily(666));
     }

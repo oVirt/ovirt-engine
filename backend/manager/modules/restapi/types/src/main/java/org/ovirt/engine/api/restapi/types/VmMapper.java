@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.types;
 import static org.ovirt.engine.core.compat.Guid.createGuidFromString;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -151,10 +150,7 @@ public class VmMapper {
         }
         if (vm.isSetOs()) {
             if (vm.getOs().isSetType()) {
-                OsType osType = OsType.fromValue(vm.getOs().getType());
-                if (osType != null) {
-                    staticVm.setOsId(map(osType, Integer.class));
-                }
+                staticVm.setOsId(mapOsType(vm.getOs().getType()));
             }
             if (vm.getOs().isSetBoot() && vm.getOs().getBoot().size() > 0) {
                 staticVm.setDefaultBootSequence(map(vm.getOs().getBoot(), null));
@@ -251,6 +247,15 @@ public class VmMapper {
         return staticVm;
     }
 
+    public static int mapOsType(String type) {
+        //TODO remove this treatment when OsType enum is deleted.
+        //backward compatibility code - UNASSIGNED is mapped to OTHER
+        if (OsType.UNASSIGNED.name().equalsIgnoreCase(type)) {
+            type = OsType.OTHER.name();
+        }
+        return SimpleDependecyInjector.getInstance().get(OsRepository.class).getOsIdByUniqueName(type);
+    }
+
     @Mapping(from = VmAffinity.class, to = MigrationSupport.class)
     public static MigrationSupport map(VmAffinity vmAffinity, MigrationSupport template) {
         if(vmAffinity!=null){
@@ -309,10 +314,8 @@ public class VmMapper {
             entity.getKernelParams() != null) {
             OperatingSystem os = new OperatingSystem();
 
-            OsType osType = VmMapper.map(entity.getOs(), OsType.class);
-            if (osType != null) {
-                os.setType(osType.value());
-            }
+            os.setType(SimpleDependecyInjector.getInstance().get(OsRepository.class).getUniqueOsNames().get(entity.getVmOsId()));
+
             os.setKernel(entity.getKernelUrl());
             os.setInitrd(entity.getInitrdUrl());
             os.setCmdline(entity.getKernelParams());
@@ -811,23 +814,6 @@ public class VmMapper {
             }
         }
         return null;
-    }
-
-    @Mapping(from = Integer.class, to = OsType.class)
-    public static OsType map(int type, Class<OsType> incomingType) {
-        HashMap<Integer, String> osUniqueNames = SimpleDependecyInjector.getInstance().get(OsRepository.class).getUniqueOsNames();
-        String name = osUniqueNames.get(type);
-        return OsType.valueOf(SimpleDependecyInjector.getInstance().get(OsRepository.class).osNameUpperCasedAndUnderscored(name));
-    }
-
-    @Mapping(from = OsType.class, to = Integer.class)
-    public static int map(OsType type, Class<Integer> incoming) {
-        for (Map.Entry<Integer, String> e : SimpleDependecyInjector.getInstance().get(OsRepository.class).getUniqueOsNames().entrySet()) {
-            if (e.getValue().equalsIgnoreCase(type.name().replace("_",""))) {
-                return e.getKey();
-            }
-        }
-        return 0;
     }
 
     @Mapping(from = VmPayload.class, to = Payload.class)

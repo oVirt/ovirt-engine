@@ -10,7 +10,6 @@ import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.HighAvailability;
 import org.ovirt.engine.api.model.OperatingSystem;
-import org.ovirt.engine.api.model.OsType;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.TemplateStatus;
 import org.ovirt.engine.api.model.Usb;
@@ -23,6 +22,8 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 
 public class TemplateMapper {
 
@@ -82,10 +83,7 @@ public class TemplateMapper {
         }
         if (model.isSetOs()) {
             if (model.getOs().isSetType()) {
-                OsType osType = OsType.fromValue(model.getOs().getType());
-                if (osType != null) {
-                    entity.setOsId(VmMapper.map(osType, null));
-                 }
+                entity.setOsId(VmMapper.mapOsType(model.getOs().getType()));
             }
             if (model.getOs().isSetBoot() && model.getOs().getBoot().size() > 0) {
                 entity.setDefaultBootSequence(VmMapper.map(model.getOs().getBoot(), null));
@@ -193,10 +191,7 @@ public class TemplateMapper {
         }
         if (model.isSetOs()) {
             if (model.getOs().isSetType()) {
-                OsType osType = OsType.fromValue(model.getOs().getType());
-                if (osType != null) {
-                    staticVm.setOsId(VmMapper.map(osType, null));
-                 }
+                staticVm.setOsId(VmMapper.mapOsType(model.getOs().getType()));
             }
             if (model.getOs().isSetBoot() && model.getOs().getBoot().size() > 0) {
                 staticVm.setDefaultBootSequence(VmMapper.map(model.getOs().getBoot(), null));
@@ -278,10 +273,8 @@ public class TemplateMapper {
             entity.getKernelParams() != null) {
             OperatingSystem os = new OperatingSystem();
 
-            OsType osType = VmMapper.map(entity.getOsId(), OsType.class);
-            if (osType != null) {
-                os.setType(osType.value());
-            }
+            os.setType(SimpleDependecyInjector.getInstance().get(OsRepository.class).getUniqueOsNames().get(entity.getOsId()));
+
             if (entity.getDefaultBootSequence() != null) {
                 for (Boot boot : VmMapper.map(entity.getDefaultBootSequence(), null)) {
                     os.getBoot().add(boot);
