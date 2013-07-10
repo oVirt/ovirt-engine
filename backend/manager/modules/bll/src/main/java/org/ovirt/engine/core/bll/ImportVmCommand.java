@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -15,6 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.memory.MemoryImageRemover;
+import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -102,6 +102,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     private final List<Guid> diskGuidList = new ArrayList<Guid>();
     private final List<Guid> imageGuidList = new ArrayList<Guid>();
     private final List<String> macsAdded = new ArrayList<String>();
+    private final SnapshotsManager snapshotsManager = new SnapshotsManager();
 
     public ImportVmCommand(ImportVmParameters parameters) {
         super(parameters);
@@ -383,15 +384,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         return true;
     }
 
-    private Set<String> getMemoryVolumesToBeImported() {
-        Set<String> memories = new HashSet<String>();
-        for (Snapshot snapshot : getVm().getSnapshots()) {
-            memories.add(snapshot.getMemoryVolume());
-        }
-        memories.remove(StringUtils.EMPTY);
-        return memories;
-    }
-
     /**
      * This method fills the given map of domain to the required size for storing memory images
      * within it, and also update the memory volume in each snapshot that has memory volume with
@@ -425,26 +417,14 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
             domain2requiredSize.put(storageDomain,
                     domain2requiredSize.get(storageDomain) + requiredSizeForMemory);
-            String modifiedMemoryVolume = createMemoryVolumeStringWithGivenDomainAndPool(
-                    memoryVolume, storageDomain, getParameters().getStoragePoolId());
+            String modifiedMemoryVolume = MemoryUtils.changeStorageDomainAndPoolInMemoryVolume(
+                    memoryVolume, storageDomain.getId(), getParameters().getStoragePoolId());
             // replace the volume representation with the one with the correct domain & pool
             snapshot.setMemoryVolume(modifiedMemoryVolume);
             // save it in case we'll find other snapshots with the same memory volume
             handledMemoryVolumes.put(memoryVolume, modifiedMemoryVolume);
         }
         return true;
-    }
-
-    /**
-     * Modified the given memory volume String representation to have the given storage
-     * pool and storage domain
-     */
-    private String createMemoryVolumeStringWithGivenDomainAndPool(String originalMemoryVolume,
-            StorageDomain storageDomain, Guid storagePoolId) {
-        List<Guid> guids = GuidUtils.getGuidListFromString(originalMemoryVolume);
-        return String.format("%1$s,%2$s,%3$s,%4$s,%5$s,%6$s",
-                storageDomain.getId().toString(), storagePoolId.toString(),
-                guids.get(2), guids.get(3), guids.get(4), guids.get(5));
     }
 
     /**
@@ -656,7 +636,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     private void copyAllMemoryImages(Guid containerId) {
-        for (String memoryVolumes : getMemoryVolumesToBeImported()) {
+        for (String memoryVolumes : MemoryUtils.getMemoryVolumesFromSnapshots(getVm().getSnapshots())) {
             List<Guid> guids = GuidUtils.getGuidListFromString(memoryVolumes);
 
             // copy the memory dump image
@@ -876,10 +856,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
      * @return The generated snapshot
      */
     protected Snapshot addActiveSnapshot(Guid snapshotId) {
-        return new SnapshotsManager().
-                addActiveSnapshot(snapshotId, getVm(),
-                        getMemoryVolumeForNewActiveSnapshot(),
-                        getCompensationContext());
+        return snapshotsManager.addActiveSnapshot(snapshotId, getVm(),
+                getMemoryVolumeForNewActiveSnapshot(), getCompensationContext());
     }
 
     private String getMemoryVolumeForNewActiveSnapshot() {
@@ -1097,8 +1075,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     private void removeVmSnapshots(VM vm) {
-        Collection<String> memoriesOfRemovedSnapshots =
-                new SnapshotsManager().removeSnapshots(vm.getId());
+        Set<String> memoriesOfRemovedSnapshots =
+                snapshotsManager.removeSnapshots(vm.getId());
         new MemoryImageRemover(vm, this).removeMemoryVolumes(memoriesOfRemovedSnapshots);
     }
 

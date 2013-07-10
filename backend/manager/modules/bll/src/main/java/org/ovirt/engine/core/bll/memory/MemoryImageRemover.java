@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll.memory;
 
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.AsyncTaskManager;
 import org.ovirt.engine.core.bll.Backend;
@@ -22,7 +22,8 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 public class MemoryImageRemover {
 
     private TaskHandlerCommand<?> enclosingCommand;
-    private VM vm;
+    protected VM vm;
+    protected Boolean cachedPostZero;
 
     public MemoryImageRemover(VM vm, TaskHandlerCommand<?> enclosingCommand) {
         this.enclosingCommand = enclosingCommand;
@@ -35,7 +36,7 @@ public class MemoryImageRemover {
         }
     }
 
-    public void removeMemoryVolumes(Collection<String> memoryVolumes) {
+    public void removeMemoryVolumes(Set<String> memoryVolumes) {
         for (String memoryVols : memoryVolumes) {
             removeMemoryVolume(memoryVols);
         }
@@ -58,17 +59,6 @@ public class MemoryImageRemover {
         List<Guid> guids = GuidUtils.getGuidListFromString(memVols);
 
         if (guids.size() == 6) {
-            // get all vm disks in order to check post zero - if one of the
-            // disks is marked with wipe_after_delete
-            boolean postZero =
-                    LinqUtils.filter(
-                            getDbFacade().getDiskDao().getAllForVm(vm.getId()),
-                            new Predicate<Disk>() {
-                                @Override
-                                public boolean eval(Disk disk) {
-                                    return disk.isWipeAfterDelete();
-                                }
-                            }).size() > 0;
 
             Guid taskId1 = enclosingCommand.persistAsyncTaskPlaceHolder(VmCommand.DELETE_PRIMARY_IMAGE_TASK_KEY);
             // delete first image
@@ -79,8 +69,7 @@ public class MemoryImageRemover {
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.DeleteImageGroup,
-                            new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0),
-                                    guids.get(2), postZero, false));
+                            buildDeleteMemoryImageParams(guids));
 
             if (!vdsRetValue.getSucceeded()) {
                 return false;
@@ -100,8 +89,7 @@ public class MemoryImageRemover {
                     .getResourceManager()
                     .RunVdsCommand(
                             VDSCommandType.DeleteImageGroup,
-                            new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0),
-                                    guids.get(4), postZero, false));
+                            buildDeleteMemoryConfParams(guids));
 
             if (!vdsRetValue.getSucceeded()) {
                 if (startPollingTasks) {
@@ -123,4 +111,30 @@ public class MemoryImageRemover {
         return true;
     }
 
+    protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryImageParams(List<Guid> guids) {
+        return new DeleteImageGroupVDSCommandParameters(
+                guids.get(1), guids.get(0), guids.get(2), isPostZero(), false);
+    }
+
+    protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryConfParams(List<Guid> guids) {
+        return new DeleteImageGroupVDSCommandParameters(
+                guids.get(1), guids.get(0), guids.get(4), isPostZero(), false);
+    }
+
+    protected boolean isPostZero() {
+        if (cachedPostZero == null) {
+            // get all vm disks in order to check post zero - if one of the
+            // disks is marked with wipe_after_delete
+            cachedPostZero =
+                    LinqUtils.filter(
+                            getDbFacade().getDiskDao().getAllForVm(vm.getId()),
+                            new Predicate<Disk>() {
+                                @Override
+                                public boolean eval(Disk disk) {
+                                    return disk.isWipeAfterDelete();
+                                }
+                            }).size() > 0;
+        }
+        return cachedPostZero;
+    }
 }
