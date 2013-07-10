@@ -586,6 +586,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Network")
     String VAR__TYPE__NETWORK();
 
+    @DefaultStringValue("$type VM network interface profile")
+    String VAR__TYPE__VNIC_PROFILE();
+
     @DefaultStringValue("$type provider")
     String VAR__TYPE__PROVIDER();
 
