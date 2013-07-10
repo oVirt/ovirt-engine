@@ -221,13 +221,13 @@ public interface AppErrors extends ConstantsWithLookup {
     String VDS_STATUS_NOT_VALID_FOR_UPDATE();
 
     @DefaultStringValue("Cannot ${action} ${type}. Host in Up status.")
-    String VDS_CANNOT_ACTIVATE_VDS_ALREADY_UP();
+    String VDS_ALREADY_UP();
 
     @DefaultStringValue("Cannot ${action} ${type}. Host has no unique id.")
-    String VDS_CANNOT_ACTIVATE_VDS_NO_UUID();
+    String VDS_NO_UUID();
 
     @DefaultStringValue("Cannot ${action} ${type}. Host does not exist.")
-    String VDS_CANNOT_ACTIVATE_VDS_NOT_EXIST();
+    String VDS_DOES_NOT_EXIST();
 
     @DefaultStringValue("Cannot ${action} ${type}. Invalid Host Id.")
     String VDS_INVALID_SERVER_ID();
