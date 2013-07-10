@@ -88,7 +88,6 @@ public class CreateImagePlaceholderTaskHandler extends AbstractSPMAsyncTaskHandl
                         .getDiskImageDao()
                         .get(getEnclosingCommand().getParameters().getDestinationImageId())
                         .isWipeAfterDelete(),
-                getEnclosingCommand().getParameters().getForceDelete(),
-                null);
+                getEnclosingCommand().getParameters().getForceDelete());
     }
 }

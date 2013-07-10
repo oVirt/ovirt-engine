@@ -25,14 +25,12 @@ public class MoveImageGroupVDSCommandParameters extends TargetDomainImageGroupVD
     }
 
     public MoveImageGroupVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
-            Guid dstStorageDomainId, Guid vmId, ImageOperation op, boolean postZero, boolean force,
-            String compatibilityVersion) {
+            Guid dstStorageDomainId, Guid vmId, ImageOperation op, boolean postZero, boolean force) {
         super(storagePoolId, storageDomainId, imageGroupId, dstStorageDomainId);
         setVmId(vmId);
         setOp(op);
         setPostZero(postZero);
         setForce(force);
-        setCompatibilityVersion(compatibilityVersion);
     }
 
     private boolean privatePostZero;

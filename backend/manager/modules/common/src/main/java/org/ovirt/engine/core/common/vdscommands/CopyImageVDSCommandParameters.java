@@ -9,7 +9,7 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
     public CopyImageVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid vmId, Guid imageGroupId,
             Guid srcImageId, Guid dstImageGroupId, Guid dstVolUUID, String description, Guid dstStorageDomainId,
             CopyVolumeType copyVolumeType, VolumeFormat volumeFormat, VolumeType preallocate, boolean postZero,
-            boolean force, String compatibilityVersion) {
+            boolean force) {
         super(storagePoolId, storageDomainId, imageGroupId, srcImageId);
         this.setdstImageGroupId(dstImageGroupId);
         setVmId(vmId);
@@ -21,7 +21,6 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         setCopyVolumeType(copyVolumeType);
         setVolumeFormat(volumeFormat);
         setPreallocate(preallocate);
-        setCompatibilityVersion(compatibilityVersion);
     }
 
     private Guid privatedstImageGroupId = Guid.Empty;

@@ -110,8 +110,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                                             mNewCreatedDiskImage.getVolumeFormat(),
                                             getDiskImage().getimage_group_id(),
                                             getDestinationImageId(),
-                                            "",
-                                            getStoragePool().getcompatibility_version().toString()));
+                                            ""));
 
             if (vdsReturnValue.getSucceeded()) {
                 getParameters().setVdsmTaskIds(new java.util.ArrayList<Guid>());

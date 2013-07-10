@@ -3,35 +3,32 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DeleteImageGroupVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
-    public DeleteImageGroupVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
-            boolean postZeros, boolean force, String competabilityVersion) {
+    private boolean postZeros;
+    private boolean forceDelete;
+
+    public DeleteImageGroupVDSCommandParameters(Guid storagePoolId,
+            Guid storageDomainId, Guid imageGroupId, boolean postZeros, boolean force) {
         super(storagePoolId, storageDomainId, imageGroupId);
         setPostZeros(postZeros);
         setForceDelete(force);
-        setCompatibilityVersion(competabilityVersion);
     }
 
-    private boolean privatePostZeros;
+    public DeleteImageGroupVDSCommandParameters() { }
 
     public boolean getPostZeros() {
-        return privatePostZeros;
+        return postZeros;
     }
 
     protected void setPostZeros(boolean value) {
-        privatePostZeros = value;
+        postZeros = value;
     }
 
-    private boolean privateForceDelete;
-
     public boolean getForceDelete() {
-        return privateForceDelete;
+        return forceDelete;
     }
 
     public void setForceDelete(boolean value) {
-        privateForceDelete = value;
-    }
-
-    public DeleteImageGroupVDSCommandParameters() {
+        forceDelete = value;
     }
 
     @Override

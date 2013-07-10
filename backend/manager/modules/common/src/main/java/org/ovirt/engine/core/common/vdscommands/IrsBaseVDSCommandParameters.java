@@ -3,46 +3,34 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.compat.Guid;
 
 public class IrsBaseVDSCommandParameters extends VDSParametersBase {
+    private Guid storagePoolId = Guid.Empty;
+    private boolean ignoreFailoverLimit;
+
     public IrsBaseVDSCommandParameters(Guid storagePoolId) {
         setStoragePoolId(storagePoolId);
     }
 
-    private Guid privateStoragePoolId = Guid.Empty;
+    public IrsBaseVDSCommandParameters() { }
 
     public Guid getStoragePoolId() {
-        return privateStoragePoolId;
+        return storagePoolId;
     }
 
     public void setStoragePoolId(Guid value) {
-        privateStoragePoolId = value;
+        storagePoolId = value;
     }
 
-    private boolean privateIgnoreFailoverLimit;
-
     public boolean getIgnoreFailoverLimit() {
-        return privateIgnoreFailoverLimit;
+        return ignoreFailoverLimit;
     }
 
     public void setIgnoreFailoverLimit(boolean value) {
-        privateIgnoreFailoverLimit = value;
-    }
-
-    private String privateCompatibilityVersion;
-
-    public String getCompatibilityVersion() {
-        return privateCompatibilityVersion;
-    }
-
-    public void setCompatibilityVersion(String value) {
-        privateCompatibilityVersion = value;
-    }
-
-    public IrsBaseVDSCommandParameters() {
+        ignoreFailoverLimit = value;
     }
 
     @Override
     public String toString() {
-        return String.format("storagePoolId = %s, ignoreFailoverLimit = %s, compatabilityVersion = %s",
-                getStoragePoolId(), getIgnoreFailoverLimit(), getCompatibilityVersion());
+        return String.format("storagePoolId = %s, ignoreFailoverLimit = %s",
+                getStoragePoolId(), getIgnoreFailoverLimit());
     }
 }

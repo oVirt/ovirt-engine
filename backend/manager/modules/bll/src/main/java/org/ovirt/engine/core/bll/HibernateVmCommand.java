@@ -135,8 +135,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                                             getMemoryVolumeType(),
                                             VolumeFormat.RAW,
                                             hiberVol1,
-                                            "",
-                                            getStoragePool().getcompatibility_version().toString()));
+                                            ""));
 
             if (!ret1.getSucceeded()) {
                 return;
@@ -177,9 +176,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                                             VolumeType.Sparse,
                                             VolumeFormat.COW,
                                             hiberVol2,
-                                            "",
-                                            getStoragePool().getcompatibility_version()
-                                                    .toString()));
+                                            ""));
 
             if (!ret2.getSucceeded()) {
                 return;

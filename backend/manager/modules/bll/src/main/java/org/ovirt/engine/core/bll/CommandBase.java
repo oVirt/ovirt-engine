@@ -1698,10 +1698,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         taskIdAsList);
                 // call revert task only if ended successfully
                 if (tasksStatuses.get(0).getTaskEndedSuccessfully()) {
-                    SPMTaskGuidBaseVDSCommandParameters tempVar = new SPMTaskGuidBaseVDSCommandParameters(
-                            getStoragePool().getId(), taskId);
-                    tempVar.setCompatibilityVersion(getStoragePool().getcompatibility_version().toString());
-                    getBackend().getResourceManager().RunVdsCommand(VDSCommandType.SPMRevertTask, tempVar);
+                    getBackend().getResourceManager().RunVdsCommand(
+                            VDSCommandType.SPMRevertTask,
+                            new SPMTaskGuidBaseVDSCommandParameters(
+                                    getStoragePool().getId(), taskId));
                 }
                 taskIdAsList.clear();
             }

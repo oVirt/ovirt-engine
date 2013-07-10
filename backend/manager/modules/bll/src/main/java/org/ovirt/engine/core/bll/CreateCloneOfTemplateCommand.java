@@ -60,12 +60,11 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                     .RunVdsCommand(
                             VDSCommandType.CopyImage,
                             new CopyImageVDSCommandParameters(storagePoolID, getDiskImage().getStorageIds().get(0),
-                                    getVmTemplateId(), getDiskImage().getimage_group_id(), getImage()
-                                            .getImageId(), mNewCreatedDiskImage.getimage_group_id(), getDestinationImageId(),
-                                    "", getDestinationStorageDomainId(),
-                                    CopyVolumeType.LeafVol, mNewCreatedDiskImage.getVolumeFormat(),
-                                    mNewCreatedDiskImage.getVolumeType(), getDiskImage().isWipeAfterDelete(),
-                                    false, getStoragePool().getcompatibility_version().toString()));
+                                    getVmTemplateId(), getDiskImage().getimage_group_id(), getImage().getImageId(),
+                                    mNewCreatedDiskImage.getimage_group_id(), getDestinationImageId(),
+                                    "", getDestinationStorageDomainId(), CopyVolumeType.LeafVol,
+                                    mNewCreatedDiskImage.getVolumeFormat(), mNewCreatedDiskImage.getVolumeType(),
+                                    getDiskImage().isWipeAfterDelete(), false));
 
             if (vdsReturnValue.getSucceeded()) {
                 getReturnValue().getInternalVdsmTaskIdList().add(

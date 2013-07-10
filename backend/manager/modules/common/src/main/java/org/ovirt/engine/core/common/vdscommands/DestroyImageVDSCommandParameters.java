@@ -6,12 +6,11 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class DestroyImageVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
     public DestroyImageVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
-            ArrayList<Guid> imageList, boolean postZero, boolean force, String compatibilityVersion) {
+            ArrayList<Guid> imageList, boolean postZero, boolean force) {
         super(storagePoolId, storageDomainId, imageGroupId, Guid.Empty);
         setPostZero(postZero);
         setImageList(imageList);
         setForce(force);
-        setCompatibilityVersion(compatibilityVersion);
     }
 
     private ArrayList<Guid> privateImageList;

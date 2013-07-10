@@ -5,13 +5,12 @@ import org.ovirt.engine.core.compat.Guid;
 public class MergeSnapshotsVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
     private Guid _imageId2 = Guid.Empty;
 
-    public MergeSnapshotsVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid vmId, Guid imageGroupId,
-            Guid imageId, Guid imageId2, boolean postZero, String compatibilityVersion) {
+    public MergeSnapshotsVDSCommandParameters(Guid storagePoolId, Guid storageDomainId,
+            Guid vmId, Guid imageGroupId, Guid imageId, Guid imageId2, boolean postZero) {
         super(storagePoolId, storageDomainId, imageGroupId, imageId);
         _imageId2 = imageId2;
         setVmId(vmId);
         setPostZero(postZero);
-        setCompatibilityVersion(compatibilityVersion);
     }
 
     public Guid getImageId2() {

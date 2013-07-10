@@ -63,8 +63,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                                 VolumeType.Sparse,
                                 VolumeFormat.COW,
                                 vmConfVolumeId,
-                                "",
-                                storagePool.getcompatibility_version().toString()));
+                                ""));
 
         if (!retVal.getSucceeded()) {
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError,
@@ -94,8 +93,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                                 HibernateVmCommand.getMemoryVolumeTypeForPool(storagePool.getStorageType()),
                                 VolumeFormat.RAW,
                                 memoryDumpVolumeId,
-                                "",
-                                storagePool.getcompatibility_version().toString()));
+                                ""));
 
         if (!retVal.getSucceeded()) {
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError,

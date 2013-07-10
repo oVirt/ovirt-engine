@@ -42,8 +42,7 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
                         VDSCommandType.MergeSnapshots,
                         new MergeSnapshotsVDSCommandParameters(storagePoolId, storageDomainId, getVmId(), imageGroupId,
                                 getDiskImage().getImageId(), getDestinationDiskImage().getImageId(),
-                                getDiskImage().isWipeAfterDelete(), getStoragePool().getcompatibility_version()
-                                        .toString()));
+                                getDiskImage().isWipeAfterDelete()));
 
         if (vdsReturnValue != null && vdsReturnValue.getCreationInfo() != null) {
             getReturnValue().getInternalVdsmTaskIdList().add(

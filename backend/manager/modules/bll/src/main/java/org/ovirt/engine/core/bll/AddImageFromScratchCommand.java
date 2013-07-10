@@ -83,8 +83,7 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
                         new CreateImageVDSCommandParameters(getParameters().getStoragePoolId(), getParameters()
                                 .getStorageDomainId(), getImageGroupId(), getParameters().getDiskInfo().getSize(),
                                 getParameters().getDiskInfo().getVolumeType(), getParameters().getDiskInfo()
-                                        .getVolumeFormat(), getDestinationImageId(), "", getStoragePool()
-                                        .getcompatibility_version().toString()));
+                                        .getVolumeFormat(), getDestinationImageId(), ""));
         if (vdsReturnValue.getSucceeded()) {
             getParameters().setVdsmTaskIds(new ArrayList<Guid>());
             getParameters().getVdsmTaskIds().add(

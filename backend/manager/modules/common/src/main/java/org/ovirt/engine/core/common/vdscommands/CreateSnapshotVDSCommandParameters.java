@@ -7,9 +7,9 @@ import org.ovirt.engine.core.compat.Guid;
 public class CreateSnapshotVDSCommandParameters extends CreateImageVDSCommandParameters {
     public CreateSnapshotVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
             Guid imageId, long imgSizeInBytes, VolumeType imageType, VolumeFormat volFormat,
-            Guid sourceImageGroupId, Guid newImageId, String newImageDescription, String competabilityVersion) {
+            Guid sourceImageGroupId, Guid newImageId, String newImageDescription) {
         super(storagePoolId, storageDomainId, imageGroupId, imgSizeInBytes, imageType, volFormat, newImageId,
-                newImageDescription, competabilityVersion);
+                newImageDescription);
         _imageId = imageId;
         setSourceImageGroupId(sourceImageGroupId);
     }

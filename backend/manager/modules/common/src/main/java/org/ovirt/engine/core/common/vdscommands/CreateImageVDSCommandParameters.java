@@ -7,14 +7,13 @@ import org.ovirt.engine.core.compat.Guid;
 public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
     public CreateImageVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
             long imageSizeInBytes, VolumeType imageType, VolumeFormat volFormat, Guid newImageId,
-            String newImageDescription, String competabilityVersion) {
+            String newImageDescription) {
         super(storagePoolId, storageDomainId, imageGroupId);
         _imageSizeInBytes = imageSizeInBytes;
         _imageType = imageType;
         this.setVolumeFormat(volFormat);
         setNewImageID(newImageId);
         setNewImageDescription(newImageDescription);
-        setCompatibilityVersion(competabilityVersion);
     }
 
     private long _imageSizeInBytes;

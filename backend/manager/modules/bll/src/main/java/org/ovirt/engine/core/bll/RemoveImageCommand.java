@@ -316,12 +316,10 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             getDiskImage().setImageStatus(ImageStatus.ILLEGAL);
             lockImageWithCompensation();
         }
-        VDSReturnValue returnValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
+        return runVdsCommand(VDSCommandType.DeleteImageGroup,
                 new DeleteImageGroupVDSCommandParameters(getDiskImage().getStoragePoolId(),
                         getStorageDomainId(), getDiskImage().getId(),
-                                getDiskImage().isWipeAfterDelete(), getParameters()
-                                .getForceDelete(), getStoragePool().getcompatibility_version().toString()));
-        return returnValue;
+                        getDiskImage().isWipeAfterDelete(), getParameters().getForceDelete()));
     }
 
     protected VmDeviceDAO getVmDeviceDAO() {

@@ -78,8 +78,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                                     .getVolumeType(),
                             isWipeAfterDelete(),
                             getParameters()
-                                    .getForceOverride(),
-                            getStoragePool().getcompatibility_version().toString()));
+                                    .getForceOverride()));
         } else {
             vdsReturnValue = runVdsCommand(
                     VDSCommandType.MoveImageGroup,
@@ -93,8 +92,7 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                             getParameters().getContainerId(),
                             ImageOperation.Copy,
                             isWipeAfterDelete(),
-                            getParameters().getForceOverride(),
-                            getStoragePool().getcompatibility_version().toString()));
+                            getParameters().getForceOverride()));
         }
 
         if (vdsReturnValue.getSucceeded()) {

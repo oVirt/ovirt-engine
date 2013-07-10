@@ -143,8 +143,7 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
                         .getDiskImageDao()
                         .get(getEnclosingCommand().getParameters().getDestinationImageId())
                         .isWipeAfterDelete(),
-                getEnclosingCommand().getParameters().getForceDelete(),
-                null);
+                getEnclosingCommand().getParameters().getForceDelete());
     }
 
     @Override

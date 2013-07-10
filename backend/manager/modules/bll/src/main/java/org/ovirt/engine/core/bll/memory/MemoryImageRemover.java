@@ -80,8 +80,7 @@ public class MemoryImageRemover {
                     .RunVdsCommand(
                             VDSCommandType.DeleteImageGroup,
                             new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0),
-                                    guids.get(2), postZero, false,
-                                    vm.getVdsGroupCompatibilityVersion().toString()));
+                                    guids.get(2), postZero, false));
 
             if (!vdsRetValue.getSucceeded()) {
                 return false;
@@ -102,8 +101,7 @@ public class MemoryImageRemover {
                     .RunVdsCommand(
                             VDSCommandType.DeleteImageGroup,
                             new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0),
-                                    guids.get(4), postZero, false,
-                                    vm.getVdsGroupCompatibilityVersion().toString()));
+                                    guids.get(4), postZero, false));
 
             if (!vdsRetValue.getSucceeded()) {
                 if (startPollingTasks) {

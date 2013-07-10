@@ -281,8 +281,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             // the next 'DeleteImageGroup' command should also take care of the image removal:
             VDSReturnValue vdsRetValue = runVdsCommand(
                     VDSCommandType.DeleteImageGroup,
-                    new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(2),
-                            postZero, false, getVm().getVdsGroupCompatibilityVersion().toString()));
+                    new DeleteImageGroupVDSCommandParameters(guids.get(1),
+                            guids.get(0), guids.get(2), postZero, false));
 
             if (!vdsRetValue.getSucceeded()) {
                 return false;
@@ -297,8 +297,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             // the next 'DeleteImageGroup' command should also take care of the image removal:
             vdsRetValue = runVdsCommand(
                     VDSCommandType.DeleteImageGroup,
-                    new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(4),
-                            postZero, false, getVm().getVdsGroupCompatibilityVersion().toString()));
+                    new DeleteImageGroupVDSCommandParameters(guids.get(1),
+                            guids.get(0), guids.get(4), postZero, false));
 
             if (!vdsRetValue.getSucceeded()) {
                 if (startPollingTasks) {
