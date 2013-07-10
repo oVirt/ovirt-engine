@@ -250,17 +250,21 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                         }
                     }
                 } else {
-                    revertToActiveSnapshot(createdSnapshot.getId());
-                    // If the removed snapshot contained memory, remove the memory volumes
-                    // Note that the memory volumes might not have been created
-                    String memoryVolume = createdSnapshot.getMemoryVolume();
-                    if (!memoryVolume.isEmpty() &&
-                            getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1) {
-                        boolean succeed = removeMemoryVolumes(memoryVolume, getActionType(), false);
-                        if (!succeed) {
-                            log.warnFormat("Failed to remove memory {0} of snapshot {1}",
-                                    memoryVolume, createdSnapshot.getId());
+                    if (createdSnapshot != null) {
+                        revertToActiveSnapshot(createdSnapshot.getId());
+                        // If the removed snapshot contained memory, remove the memory volumes
+                        // Note that the memory volumes might not have been created
+                        String memoryVolume = createdSnapshot.getMemoryVolume();
+                        if (!memoryVolume.isEmpty() &&
+                                getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1) {
+                            boolean succeed = removeMemoryVolumes(memoryVolume, getActionType(), false);
+                            if (!succeed) {
+                                log.warnFormat("Failed to remove memory {0} of snapshot {1}",
+                                        memoryVolume, createdSnapshot.getId());
+                            }
                         }
+                    } else {
+                        log.warnFormat("No snapshot was created for VM {0} which is in LOCKED status", getVmId());
                     }
                 }
 
