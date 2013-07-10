@@ -864,8 +864,6 @@ fi
 %dir %{engine_etc}/ovirt-websocket-proxy.conf.d
 %{engine_data}/conf/ovirt-websocket-proxy.conf.defaults
 %{engine_data}/services/ovirt-websocket-proxy.*
-%{engine_data}/services/config.py*
-%{engine_data}/services/service.py*
 
 # Files needed by the service:
 %if %{install_systemd}
