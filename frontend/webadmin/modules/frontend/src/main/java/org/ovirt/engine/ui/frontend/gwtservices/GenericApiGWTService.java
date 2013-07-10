@@ -11,7 +11,9 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 import com.google.gwt.rpc.client.RpcService;
+import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
 
+@RemoteServiceRelativePath("GenericApiGWTService")
 public interface GenericApiGWTService extends RpcService {
 
     public VdcQueryReturnValue RunQuery(VdcQueryType search,
@@ -36,5 +38,5 @@ public interface GenericApiGWTService extends RpcService {
 
     public VdcReturnValueBase logOff(DbUser userToLogoff);
 
-    public VdcReturnValueBase Login(String user, String password, String domain);
+    public VdcReturnValueBase Login(String user, String password, String domain, VdcActionType loginType);
 }

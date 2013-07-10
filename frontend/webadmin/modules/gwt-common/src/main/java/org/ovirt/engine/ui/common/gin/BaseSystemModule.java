@@ -13,6 +13,14 @@ import org.ovirt.engine.ui.common.system.ErrorPopupManagerImpl;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.utils.DynamicMessages;
+import org.ovirt.engine.ui.frontend.AppErrors;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.VdsmErrors;
+import org.ovirt.engine.ui.frontend.communication.CommunicationProvider;
+import org.ovirt.engine.ui.frontend.communication.GWTRPCCommunicationProvider;
+import org.ovirt.engine.ui.frontend.communication.OperationProcessor;
+import org.ovirt.engine.ui.frontend.communication.VdcOperationManager;
+import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
 
 import com.google.gwt.event.shared.SimpleEventBus;
@@ -30,7 +38,12 @@ public abstract class BaseSystemModule extends AbstractGinModule {
 
     protected void bindCommonInfrastructure(Class<? extends PlaceManager> placeManager) {
         bindEventBus();
+        bind(GenericApiGWTServiceAsync.class).asEagerSingleton();
         bind(TokenFormatter.class).to(ParameterTokenFormatter.class).in(Singleton.class);
+        bind(OperationProcessor.class).asEagerSingleton();
+        bind(VdcOperationManager.class).asEagerSingleton();
+        bind(CommunicationProvider.class).to(GWTRPCCommunicationProvider.class).in(Singleton.class);
+        bind(Frontend.class).asEagerSingleton();
         bind(RootPresenter.class).asEagerSingleton();
         bind(PlaceManager.class).to(placeManager);
         bind(placeManager).in(Singleton.class);
@@ -42,6 +55,8 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bind(ClientStorage.class).in(Singleton.class);
         bind(ApplicationFocusManager.class).asEagerSingleton();
         bind(LockInteractionManager.class).asEagerSingleton();
+        bind(AppErrors.class).in(Singleton.class);
+        bind(VdsmErrors.class).in(Singleton.class);
     }
 
     private void bindEventBus() {

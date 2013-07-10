@@ -283,7 +283,7 @@ public class LoginModel extends Model
         };
         Frontend.LoginAsync(fullUserName,
                 (String) getPassword().getEntity(),
-                StringHelper.isNullOrEmpty(domain) ? (String) getDomain().getSelectedItem() : domain,
+                StringHelper.isNullOrEmpty(domain) ? (String) getDomain().getSelectedItem() : domain, true,
                 _asyncQuery);
     }
 
@@ -299,6 +299,7 @@ public class LoginModel extends Model
         getDomain().setSelectedItem(user.getDomain());
         disableLoginScreen();
         setLoggedUser(user);
+        Frontend.getInstance().setLoggedInUser(user);
         raiseLoggedInEvent();
     }
 

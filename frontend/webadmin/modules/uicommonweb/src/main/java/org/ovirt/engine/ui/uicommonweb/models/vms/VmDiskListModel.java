@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -530,7 +530,7 @@ public class VmDiskListModel extends VmDiskListModelBase
     private void cancel()
     {
         setWindow(null);
-        Frontend.Unsubscribe();
+        Frontend.getInstance().unsubscribe();
     }
 
     @Override
@@ -850,7 +850,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     protected void updateExtendImageSizeSupported()
     {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
         AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback()
         {
             @Override

@@ -145,7 +145,7 @@ public class CommonModel extends ListModel
 
         initItems();
 
-        setLoggedInUser(Frontend.getLoggedInUser());
+        setLoggedInUser(Frontend.getInstance().getLoggedInUser());
     }
 
     private void initItems()
@@ -529,7 +529,7 @@ public class CommonModel extends ListModel
         getSystemPermissionListModel().stopRefresh();
         getClusterPolicyListModel().stopRefresh();
 
-        if (Frontend.getIsUserLoggedIn())
+        if (Frontend.getInstance().getIsUserLoggedIn())
         {
             AsyncQuery _asyncQuery = new AsyncQuery();
             _asyncQuery.setHandleFailure(true);
@@ -542,7 +542,7 @@ public class CommonModel extends ListModel
             setLoggedInUser(null);
             getSignedOutEvent().raise(this, EventArgs.Empty);
 
-            Frontend.LogoffAsync(Frontend.getLoggedInUser(), _asyncQuery);
+            Frontend.LogoffAsync(Frontend.getInstance().getLoggedInUser(), _asyncQuery);
         }
     }
 

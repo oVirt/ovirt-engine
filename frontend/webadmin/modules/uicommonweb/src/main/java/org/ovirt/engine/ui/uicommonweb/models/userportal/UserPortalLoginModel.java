@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.userportal;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.ChangeUserPasswordParameters;
-import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -26,9 +25,7 @@ import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
-import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -195,41 +192,34 @@ public class UserPortalLoginModel extends LoginModel
         getLoginCommand().setIsExecutionAllowed(false);
         getIsAutoConnect().setIsChangable(false);
 
-        Frontend.RunAction(VdcActionType.LoginUser, new LoginUserParameters((String) getUserName().getEntity(),
-                (String) getPassword().getEntity(),
-                (String) getDomain().getSelectedItem(), "", //$NON-NLS-1$
-                "", //$NON-NLS-1$
-                ""), //$NON-NLS-1$
-                new IFrontendActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendActionAsyncResult result) {
-
-                        UserPortalLoginModel model = (UserPortalLoginModel) result.getState();
-                        VdcReturnValueBase returnValue = result.getReturnValue();
-                        boolean success = returnValue != null && returnValue.getSucceeded();
-                        if (success)
-                        {
-                            model.setLoggedUser((DbUser) returnValue.getActionReturnValue());
-                            model.raiseLoggedInEvent();
-                        }
-                        else
-                        {
-                            model.getPassword().setEntity(""); //$NON-NLS-1$
-                            if (returnValue != null)
-                            {
-                                model.setMessage(Linq.firstOrDefault(returnValue.getCanDoActionMessages()));
-                            }
-                            model.getUserName().setIsChangable(true);
-                            model.getPassword().setIsChangable(true);
-                            model.getDomain().setIsChangable(true);
-                            model.getLoginCommand().setIsExecutionAllowed(true);
-                            getIsAutoConnect().setIsChangable(true);
-                            model.getLoginFailedEvent().raise(this, EventArgs.Empty);
-                        }
-                        stopProgress();
+        AsyncQuery asyncQuery = new AsyncQuery();
+        asyncQuery.setModel(this);
+        asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(final Object model, final Object result) {
+                UserPortalLoginModel loginModel = (UserPortalLoginModel) model;
+                VdcReturnValueBase returnValue = (VdcReturnValueBase) result;
+                boolean success = returnValue != null && returnValue.getSucceeded();
+                if (success) {
+                    loginModel.setLoggedUser((DbUser) returnValue.getActionReturnValue());
+                    loginModel.raiseLoggedInEvent();
+                } else {
+                    loginModel.getPassword().setEntity(""); //$NON-NLS-1$
+                    if (returnValue != null) {
+                        loginModel.setMessage(Linq.firstOrDefault(returnValue.getCanDoActionMessages()));
                     }
-                },
-                this);
+                    loginModel.getUserName().setIsChangable(true);
+                    loginModel.getPassword().setIsChangable(true);
+                    loginModel.getDomain().setIsChangable(true);
+                    loginModel.getLoginCommand().setIsExecutionAllowed(true);
+                    getIsAutoConnect().setIsChangable(true);
+                    loginModel.getLoginFailedEvent().raise(this, EventArgs.Empty);
+                }
+                stopProgress();
+            }
+        };
+        Frontend.LoginAsync((String) getUserName().getEntity(), (String) getPassword().getEntity(),
+                (String) getDomain().getSelectedItem(), false, asyncQuery);
     }
 
     private void changePassword()

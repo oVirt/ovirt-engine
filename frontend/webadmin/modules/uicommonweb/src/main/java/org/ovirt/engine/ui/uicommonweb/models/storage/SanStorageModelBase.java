@@ -262,8 +262,8 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
 
     protected SanStorageModelBase()
     {
-        Frontend.getQueryStartedEvent().addListener(this);
-        Frontend.getQueryCompleteEvent().addListener(this);
+        Frontend.getInstance().getQueryStartedEvent().addListener(this);
+        Frontend.getInstance().getQueryCompleteEvent().addListener(this);
 
         setHashName("SanStorageModelBase"); //$NON-NLS-1$
         setHash(getHashName() + new Date());
@@ -301,12 +301,12 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         {
             useUserAuth_EntityChanged(sender, args);
         }
-        else if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
+        else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             frontend_QueryStarted();
         }
-        else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
+        else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             frontend_QueryComplete();

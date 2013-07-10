@@ -221,7 +221,7 @@ public abstract class ConsoleModel extends EntityModel {
     protected void executeCommandWithConsoleSafenessWarning(final UICommand command) {
         VM vm = getEntity();
         if (vm.getAllowConsoleReconnect() || vm.getConsoleCurentUserName() == null ||
-                Frontend.getLoggedInUser().getId().equals(vm.getConsoleUserId())) {
+            Frontend.getInstance().getLoggedInUser().getId().equals(vm.getConsoleUserId())) {
             command.execute();
             return;
         }
@@ -232,7 +232,7 @@ public abstract class ConsoleModel extends EntityModel {
                         vm.getId());
 
         final HasAdElementReconnectPermissionParameters portalUserReconnectPermParams =
-                new HasAdElementReconnectPermissionParameters(Frontend.getLoggedInUser().getId(),
+                new HasAdElementReconnectPermissionParameters(Frontend.getInstance().getLoggedInUser().getId(),
                         vm.getId());
 
         final AsyncQuery portalUserReconnectPermissionQuery = new AsyncQuery();

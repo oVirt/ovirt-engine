@@ -269,59 +269,87 @@ public class VdcActionParametersBase implements java.io.Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
         VdcActionParametersBase other = (VdcActionParametersBase) obj;
         if (imagesParameters == null) {
-            if (other.imagesParameters != null)
+            if (other.imagesParameters != null) {
                 return false;
-        } else if (!imagesParameters.equals(other.imagesParameters))
+            }
+        } else if (!imagesParameters.equals(other.imagesParameters)) {
             return false;
-        if (shouldbelogged != other.shouldbelogged)
+        }
+        if (shouldbelogged != other.shouldbelogged) {
             return false;
-        if (transctionOption != other.transctionOption)
+        }
+        if (transctionOption != other.transctionOption) {
             return false;
+        }
         if (entityInfo == null) {
-            if (other.entityInfo != null)
+            if (other.entityInfo != null) {
                 return false;
-        } else if (!entityInfo.equals(other.entityInfo))
+            }
+        } else if (!entityInfo.equals(other.entityInfo)) {
             return false;
-        if (multipleAction != other.multipleAction)
+        }
+        if (multipleAction != other.multipleAction) {
             return false;
+        }
         if (parametersCurrentUser == null) {
-            if (other.parametersCurrentUser != null)
+            if (other.parametersCurrentUser != null) {
                 return false;
-        } else if (!parametersCurrentUser.equals(other.parametersCurrentUser))
+            }
+        } else if (!parametersCurrentUser.equals(other.parametersCurrentUser)) {
             return false;
-        if (parentCommand != other.parentCommand)
+        }
+        if (parentCommand != other.parentCommand) {
             return false;
+        }
         if (vdsmTaskIds == null) {
-            if (other.vdsmTaskIds != null)
+            if (other.vdsmTaskIds != null) {
                 return false;
-        } else if (!vdsmTaskIds.equals(other.vdsmTaskIds))
+            }
+        } else if (!vdsmTaskIds.equals(other.vdsmTaskIds)) {
             return false;
+        }
         if (correlationId == null) {
-            if (other.correlationId != null)
+            if (other.correlationId != null) {
                 return false;
-        } else if (!correlationId.equals(other.correlationId))
+            }
+        } else if (!correlationId.equals(other.correlationId)) {
             return false;
-        if (executionIndex != other.executionIndex)
+        }
+        if (executionIndex != other.executionIndex) {
             return false;
+        }
         if (jobId == null) {
-            if (other.jobId != null)
+            if (other.jobId != null) {
                 return false;
-        } else if (!jobId.equals(other.jobId))
+            }
+        } else if (!jobId.equals(other.jobId)) {
             return false;
+        }
         if (stepId == null) {
-            if (other.stepId != null)
+            if (other.stepId != null) {
                 return false;
-        } else if (!stepId.equals(other.stepId))
+            }
+        } else if (!stepId.equals(other.stepId)) {
             return false;
-
+        }
+        if (commandId == null) {
+            if (other.commandId != null) {
+                return false;
+            }
+        } else if (!commandId.equals(other.commandId)) {
+            return false;
+        }
         return true;
     }
 

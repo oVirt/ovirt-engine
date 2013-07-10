@@ -146,7 +146,7 @@ public abstract class IUserPortalListModel extends ListWithDetailsModel implemen
 
     protected void cancel()
     {
-        Frontend.Unsubscribe();
+        Frontend.getInstance().unsubscribe();
         setWindow(null);
         setConfirmWindow(null);
     }

@@ -419,7 +419,7 @@ public class AdElementListModel extends SearchableListModel
     private boolean handleQueryError(VdcQueryReturnValue returnValue, AdElementListModel model) {
         model.setMessage(null);
         if (!returnValue.getSucceeded()) {
-            model.setMessage(Frontend.getAppErrorsTranslator()
+            model.setMessage(Frontend.getInstance().getAppErrorsTranslator()
                     .TranslateErrorTextSingle(returnValue.getExceptionString()));
             getSearchInProgress().setEntity(false);
 

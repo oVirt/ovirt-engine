@@ -20,22 +20,22 @@ public class AbstractRdp {
     private Boolean redirectSmartCards = false;
 
     public String getUserNameAndDomain() {
-        String username = Frontend.getLoggedInUser().getLoginName();
-        String domain = Frontend.getLoggedInUser().getDomain();
+        String username = Frontend.getInstance().getLoggedInUser().getLoginName();
+        String domain = Frontend.getInstance().getLoggedInUser().getDomain();
 
         return username.contains("@") ? username : username + "@" + domain;//$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public String getUserName() {
-        return Frontend.getLoggedInUser().getLoginName();
+        return Frontend.getInstance().getLoggedInUser().getLoginName();
     }
 
     public String getUserPassword() {
-        return Frontend.getLoginPassword();
+        return Frontend.getInstance().getLoginPassword();
     }
 
     public String getUserDomainController() {
-        return Frontend.getLoggedInUser().getDomain();
+        return Frontend.getInstance().getLoggedInUser().getDomain();
     }
 
     public Boolean getFullScreen() {

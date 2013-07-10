@@ -197,12 +197,12 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         this.behavior = behavior;
         this.behavior.setModel(this);
 
-        Frontend.getQueryStartedEvent().addListener(this);
-        Frontend.getQueryCompleteEvent().addListener(this);
-        Frontend.subscribeAdditionalQueries(new VdcQueryType[] { VdcQueryType.Search, VdcQueryType.GetConfigurationValue,
-                VdcQueryType.GetStoragePoolsByStorageDomainId, VdcQueryType.GetStorageDomainsByStoragePoolId,
-                VdcQueryType.GetLunsByVgId, VdcQueryType.GetAllVdsByStoragePool,
-                VdcQueryType.DiscoverSendTargets, VdcQueryType.GetDeviceList,
+        Frontend.getInstance().getQueryStartedEvent().addListener(this);
+        Frontend.getInstance().getQueryCompleteEvent().addListener(this);
+        Frontend.getInstance().subscribeAdditionalQueries(new VdcQueryType[] {VdcQueryType.Search,
+                VdcQueryType.GetConfigurationValue, VdcQueryType.GetStoragePoolsByStorageDomainId,
+                VdcQueryType.GetStorageDomainsByStoragePoolId, VdcQueryType.GetLunsByVgId,
+                VdcQueryType.GetAllVdsByStoragePool, VdcQueryType.DiscoverSendTargets, VdcQueryType.GetDeviceList,
                 VdcQueryType.GetExistingStorageDomainList, VdcQueryType.GetHostsForStorageOperation });
 
         setName(new EntityModel());
@@ -259,12 +259,12 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
         {
             nfsStorageModel_PathChanged(sender, args);
         }
-        else if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
+        else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             frontend_QueryStarted();
         }
-        else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
+        else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             frontend_QueryComplete();

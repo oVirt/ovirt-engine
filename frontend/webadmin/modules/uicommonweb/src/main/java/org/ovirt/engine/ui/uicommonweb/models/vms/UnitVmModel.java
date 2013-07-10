@@ -1136,10 +1136,10 @@ public class UnitVmModel extends Model {
 
     public UnitVmModel(VmModelBehaviorBase behavior)
     {
-        Frontend.getQueryStartedEvent().addListener(this);
-        Frontend.getQueryCompleteEvent().addListener(this);
+        Frontend.getInstance().getQueryStartedEvent().addListener(this);
+        Frontend.getInstance().getQueryCompleteEvent().addListener(this);
 
-        Frontend.Subscribe(new VdcQueryType[] { VdcQueryType.GetStorageDomainsByStoragePoolId,
+        Frontend.getInstance().subscribe(new VdcQueryType[] { VdcQueryType.GetStorageDomainsByStoragePoolId,
                 VdcQueryType.GetImagesListByStoragePoolId,
                 VdcQueryType.GetDefaultTimeZone, VdcQueryType.GetStoragePoolsByClusterService,
                 VdcQueryType.GetDomainList, VdcQueryType.GetConfigurationValue,
@@ -1386,12 +1386,12 @@ public class UnitVmModel extends Model {
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
+        if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             frontend_QueryStarted();
         }
-        else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
+        else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             frontend_QueryComplete();
@@ -2028,7 +2028,7 @@ public class UnitVmModel extends Model {
             getDataCenterWithClustersList().setSelectedItem(Linq.firstOrDefault(dataCentersWithClusters));
         } else {
             model.getDataCenterWithClustersList().setSelectedItem(Linq.firstOrDefault(dataCentersWithClusters,
-                    new Linq.DataCenterWithClusterAccordingClusterPredicate((Guid) selectedCluster)));
+                    new Linq.DataCenterWithClusterAccordingClusterPredicate(selectedCluster)));
         }
     }
 
@@ -2156,7 +2156,7 @@ public class UnitVmModel extends Model {
             };
 
             if (getSelectedCluster() != null) {
-                AsyncDataProvider.getOsMaxRam(osType, ((VDSGroup) getSelectedCluster()).getcompatibility_version(), asyncQuery);
+                AsyncDataProvider.getOsMaxRam(osType, getSelectedCluster().getcompatibility_version(), asyncQuery);
             }
 
             getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
@@ -2377,8 +2377,9 @@ public class UnitVmModel extends Model {
     private class NotChangableForVmInPoolListModel extends ListModel {
         @Override
         public ListModel setIsChangable(boolean value) {
-            if (!isVmAttachedToPool())
+            if (!isVmAttachedToPool()) {
                 super.setIsChangable(value);
+            }
             return this;
         }
     }
@@ -2386,8 +2387,9 @@ public class UnitVmModel extends Model {
     private class NotChangableForVmInPoolEntityModel extends EntityModel {
         @Override
         public EntityModel setIsChangable(boolean value) {
-            if (!isVmAttachedToPool())
+            if (!isVmAttachedToPool()) {
                 super.setIsChangable(value);
+            }
             return this;
         }
     }
@@ -2395,8 +2397,9 @@ public class UnitVmModel extends Model {
     private class NotChangableForVmInPoolKeyValueModel extends KeyValueModel {
         @Override
         public KeyValueModel setIsChangable(boolean value) {
-            if (!isVmAttachedToPool())
+            if (!isVmAttachedToPool()) {
                 super.setIsChangable(value);
+            }
             return this;
         }
     }

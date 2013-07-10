@@ -313,9 +313,9 @@ public abstract class AbstractDiskModel extends DiskModel
         setHash(getHashName() + new Date());
 
         // Add progress listeners
-        Frontend.getQueryStartedEvent().addListener(this);
-        Frontend.getQueryCompleteEvent().addListener(this);
-        Frontend.subscribeAdditionalQueries(new VdcQueryType[] { VdcQueryType.Search,
+        Frontend.getInstance().getQueryStartedEvent().addListener(this);
+        Frontend.getInstance().getQueryCompleteEvent().addListener(this);
+        Frontend.getInstance().subscribeAdditionalQueries(new VdcQueryType[] { VdcQueryType.Search,
                 VdcQueryType.GetStoragePoolById, VdcQueryType.GetNextAvailableDiskAliasNameByVMId,
                 VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, VdcQueryType.GetAllVdsByStoragePool,
                 VdcQueryType.GetAllAttachableDisks, VdcQueryType.GetAllDisksByVmId,
@@ -781,7 +781,7 @@ public abstract class AbstractDiskModel extends DiskModel
             LunDisk lunDisk = getLunDisk();
             DiskInterface diskInterface = (DiskInterface) getDiskInterface().getSelectedItem();
             if (DiskInterface.VirtIO_SCSI.equals(diskInterface)) {
-                lunDisk.setSgio(Boolean.TRUE.equals((Boolean) getIsSgIoUnfiltered().getEntity()) ?
+                lunDisk.setSgio(Boolean.TRUE.equals(getIsSgIoUnfiltered().getEntity()) ?
                         ScsiGenericIO.UNFILTERED : ScsiGenericIO.FILTERED);
             }
             setDisk(lunDisk);
@@ -844,12 +844,12 @@ public abstract class AbstractDiskModel extends DiskModel
         {
             storageDomain_SelectedItemChanged();
         }
-        else if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
+        else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             frontend_QueryStarted();
         }
-        else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
+        else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             frontend_QueryComplete();

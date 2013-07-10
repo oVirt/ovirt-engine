@@ -41,9 +41,9 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
             ConnectAutomaticallyManager connectAutomaticallyManager,
             CurrentUserRole userRole,
             ApplicationDynamicMessages dynamicMessages,
-            ClientAgentType clientAgentType) {
+            ClientAgentType clientAgentType, Frontend frontend) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
-                user, eventBus, loginModelProvider, lockInteractionManager);
+                user, eventBus, loginModelProvider, lockInteractionManager, frontend);
         this.userRole = userRole;
         this.connectAutomaticallyManager = connectAutomaticallyManager;
         this.clientAgentType = clientAgentType;
@@ -102,7 +102,7 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
                     Window.Location.reload();
                 }
 
-                Frontend.clearLoggedInUser();
+                frontend.clearLoggedInUser();
                 getLoginModel().resetAfterLogout();
                 AsyncDataProvider.clearCache();
                 connectAutomaticallyManager.resetAlreadyOpened();
@@ -110,7 +110,7 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
             }
         };
 
-        Frontend.LogoffAsync(Frontend.getLoggedInUser(), query);
+        frontend.logoffAsync(frontend.getLoggedInUser(), query);
     }
 
 }

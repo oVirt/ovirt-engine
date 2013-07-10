@@ -41,9 +41,10 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
             Provider<LoginModel> loginModelProvider,
             LockInteractionManager lockInteractionManager,
             ApplicationDynamicMessages dynamicMessages,
-            RestApiSessionManager restApiSessionManager) {
+            RestApiSessionManager restApiSessionManager,
+            Frontend frontend) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
-                user, eventBus, loginModelProvider, lockInteractionManager);
+                user, eventBus, loginModelProvider, lockInteractionManager, frontend);
         this.restApiSessionManager = restApiSessionManager;
         Window.setTitle(dynamicMessages.applicationTitle());
 
@@ -90,7 +91,7 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         super.initFrontend();
 
         // Configure REST API integration for UI plugin infrastructure
-        Frontend.setLoginHandler(new FrontendLoginHandler() {
+        Frontend.getInstance().setLoginHandler(new FrontendLoginHandler() {
             @Override
             public void onLoginSuccess(final String userName, final String password, final String domain) {
                 Scheduler.get().scheduleDeferred(new ScheduledCommand() {

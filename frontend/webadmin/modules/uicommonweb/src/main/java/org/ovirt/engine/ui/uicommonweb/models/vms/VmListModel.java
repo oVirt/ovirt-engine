@@ -2243,7 +2243,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     public void cancel()
     {
-        Frontend.Unsubscribe();
+        Frontend.getInstance().unsubscribe();
 
         cancelConfirmation();
 

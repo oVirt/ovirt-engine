@@ -138,9 +138,9 @@ public class ConfigureLocalStorageModel extends Model {
         setFormattedStorageName(new EntityModel());
 
         // Subscribe to the Frontend events.
-        Frontend.getQueryStartedEvent().addListener(this);
-        Frontend.getQueryCompleteEvent().addListener(this);
-        Frontend.Subscribe(new VdcQueryType[] {
+        Frontend.getInstance().getQueryStartedEvent().addListener(this);
+        Frontend.getInstance().getQueryCompleteEvent().addListener(this);
+        Frontend.getInstance().subscribe(new VdcQueryType[] {
                 VdcQueryType.Search,
                 VdcQueryType.GetVdsGroupsByStoragePoolId,
                 VdcQueryType.GetAllVdsGroups,
@@ -167,10 +167,10 @@ public class ConfigureLocalStorageModel extends Model {
 
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDataCenter().getVersion()) {
             dataCenterVersion_SelectedItemChanged();
-        } else if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
+        } else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), frontendHash)) {
             frontend_QueryStarted();
-        } else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
+        } else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), frontendHash)) {
             frontend_QueryComplete();
         }

@@ -163,7 +163,7 @@ public class StorageIsoListModel extends SearchableListModel
 
     public void cancel() {
         setWindow(null);
-        Frontend.Unsubscribe();
+        Frontend.getInstance().unsubscribe();
     }
 
     private void updateActionAvailability() {

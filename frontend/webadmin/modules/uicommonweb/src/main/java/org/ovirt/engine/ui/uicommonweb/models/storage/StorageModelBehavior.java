@@ -47,10 +47,12 @@ public abstract class StorageModelBehavior extends Model
 
     public void updateItemsAvailability()
     {
-        if (!Frontend.getQueryStartedEvent().getListeners().contains(this))
-            Frontend.getQueryStartedEvent().addListener(this);
-        if (!Frontend.getQueryCompleteEvent().getListeners().contains(this))
-            Frontend.getQueryCompleteEvent().addListener(this);
+        if (!Frontend.getInstance().getQueryStartedEvent().getListeners().contains(this)) {
+            Frontend.getInstance().getQueryStartedEvent().addListener(this);
+        }
+        if (!Frontend.getInstance().getQueryCompleteEvent().getListeners().contains(this)) {
+            Frontend.getInstance().getQueryCompleteEvent().addListener(this);
+        }
     }
 
     public void filterUnSelectableModels()
@@ -95,12 +97,12 @@ public abstract class StorageModelBehavior extends Model
     {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(Frontend.QueryStartedEventDefinition)
+        if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             getModel().frontend_QueryStarted();
         }
-        else if (ev.matchesDefinition(Frontend.QueryCompleteEventDefinition)
+        else if (ev.matchesDefinition(Frontend.getInstance().getQueryCompleteEventDefinition())
                 && StringHelper.stringsEqual(Frontend.getCurrentContext(), getHash()))
         {
             getModel().frontend_QueryComplete();

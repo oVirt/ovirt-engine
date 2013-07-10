@@ -423,7 +423,7 @@ public class ProviderModel extends Model {
             errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
         } else if (!result.getSucceeded()) {
             if (result.getFault() != null) {
-                errorMessage = Frontend.translateVdcFault(result.getFault());
+                errorMessage = Frontend.getInstance().translateVdcFault(result.getFault());
             } else {
                 errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
             }

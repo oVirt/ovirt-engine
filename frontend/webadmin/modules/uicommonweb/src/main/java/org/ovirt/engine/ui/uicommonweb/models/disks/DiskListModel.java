@@ -258,7 +258,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     public void cancel()
     {
         setWindow(null);
-        Frontend.Unsubscribe();
+        Frontend.getInstance().unsubscribe();
     }
 
     @Override

@@ -26,6 +26,11 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.communication.CommunicationProvider;
+import org.ovirt.engine.ui.frontend.communication.GWTRPCCommunicationProvider;
+import org.ovirt.engine.ui.frontend.communication.OperationProcessor;
+import org.ovirt.engine.ui.frontend.communication.VdcOperationManager;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -44,12 +49,22 @@ import com.google.gwt.user.client.rpc.StatusCodeException;
  * actions
  */
 public class FrontendActionTest {
+    /**
+     * Instance of the class under test.
+     */
+    Frontend frontend;
+
+    /**
+     * Fake GWT scheduler that can immediately call instead of deferring.
+     */
+    FakeGWTScheduler fakeScheduler;
+
     @Mock
     GenericApiGWTServiceAsync mockService;
     @Mock
-    ErrorTranslator mockVdsmErrorsTranslator;
+    VdsmErrors mockVdsmErrorsTranslator;
     @Mock
-    ErrorTranslator mockCanDoActionErrorsTranslator;
+    AppErrors mockCanDoActionErrorsTranslator;
     @Mock
     IFrontendMultipleActionAsyncCallback mockMultipleActionCallback;
     @Mock
@@ -79,12 +94,17 @@ public class FrontendActionTest {
 
     @Before
     public void setUp() throws Exception {
-        Frontend.setAppErrorsTranslator(mockCanDoActionErrorsTranslator);
-        Frontend.setVdsmErrorsTranslator(mockVdsmErrorsTranslator);
-        Frontend.setEventsHandler(mockEventsHandler);
-        Frontend.constants = mockConstants;
-        Frontend.frontendFailureEvent = mockFrontendFailureEvent;
-        Frontend.setLoginHandler(mockLoginHandler);
+        fakeScheduler = new FakeGWTScheduler();
+        CommunicationProvider communicationsProvider = new GWTRPCCommunicationProvider(mockService);
+        OperationProcessor operationProcessor = new OperationProcessor(communicationsProvider);
+        operationProcessor.setScheduler(fakeScheduler);
+        VdcOperationManager operationsManager = new VdcOperationManager(operationProcessor);
+        operationsManager.setLoggedIn(true);
+        frontend = new Frontend(operationsManager, mockCanDoActionErrorsTranslator, mockVdsmErrorsTranslator);
+        frontend.setEventsHandler(mockEventsHandler);
+        frontend.setConstants(mockConstants);
+        frontend.frontendFailureEvent = mockFrontendFailureEvent;
+        frontend.setLoginHandler(mockLoginHandler);
         when(mockAsyncQuery.getDel()).thenReturn(mockAsyncCallback);
     }
 
@@ -100,8 +120,8 @@ public class FrontendActionTest {
     public void testRunMultipleActions_ignored_failure_multiple() {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         parameters.add(new VdcActionParametersBase());
-        Frontend.RunMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
-                null, mockService);
+        frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
+                null);
         verify(mockService).RunMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
                 callbackMultipleActions.capture());
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
@@ -124,17 +144,19 @@ public class FrontendActionTest {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         parameters.add(new VdcActionParametersBase());
         Object testState = new Object();
-        Frontend.RunMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
-                testState, mockService);
+        frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
+                testState);
         verify(mockService).RunMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
                 callbackMultipleActions.capture());
-        StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND, "404 status code"); //$NON-NLS-1$
+        StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND,
+                "404 status code"); //$NON-NLS-1$
         callbackMultipleActions.getValue().onFailure(exception);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         verify(mockMultipleActionCallback).executed(callbackMultipleParam.capture());
         assertEquals("ActionType should be 'AddLocalStorageDomain'", VdcActionType.AddLocalStorageDomain, //$NON-NLS-1$
                 callbackMultipleParam.getValue().getActionType());
-        assertEquals("Parameters should match", parameters, callbackMultipleParam.getValue().getParameters()); //$NON-NLS-1$
+        assertEquals("Parameters should match", parameters, //$NON-NLS-1$
+                callbackMultipleParam.getValue().getParameters());
         assertNull("There should be no result", callbackMultipleParam.getValue().getReturnValue()); //$NON-NLS-1$
         assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
     }
@@ -149,12 +171,15 @@ public class FrontendActionTest {
      */
     @Test
     public void testRunMultipleActionsMultipleSuccess() {
+        // Don't immediately call process until both queries are in the queue.
+        fakeScheduler.setThreshold(2);
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         parameters.add(new VdcActionParametersBase());
+        parameters.get(0).setCommandId(Guid.Empty);
         parameters.add(new VdcActionParametersBase());
         Object testState = new Object();
-        Frontend.RunMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
-                testState, mockService);
+        frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
+                testState);
         verify(mockService).RunMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
                 callbackMultipleActions.capture());
         ArrayList<VdcReturnValueBase> returnValues = new ArrayList<VdcReturnValueBase>();
@@ -165,8 +190,10 @@ public class FrontendActionTest {
         callbackMultipleActions.getValue().onSuccess(returnValues);
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         verify(mockMultipleActionCallback).executed(callbackMultipleParam.capture());
-        assertEquals("Parameters should match", parameters, callbackMultipleParam.getValue().getParameters()); //$NON-NLS-1$
-        assertEquals("Result should match", returnValues, callbackMultipleParam.getValue().getReturnValue()); //$NON-NLS-1$
+        assertEquals("Parameters should match", parameters, //$NON-NLS-1$
+                callbackMultipleParam.getValue().getParameters());
+        assertEquals("Result should match", returnValues, //$NON-NLS-1$
+                callbackMultipleParam.getValue().getReturnValue());
         assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
     }
 
@@ -181,12 +208,15 @@ public class FrontendActionTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testRunMultipleActionsMultipleSuccess_oneFailure() {
+        // Don't immediately call process until both queries are in the queue.
+        fakeScheduler.setThreshold(2);
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         parameters.add(new VdcActionParametersBase());
         parameters.add(new VdcActionParametersBase());
+        parameters.get(0).setCommandId(Guid.Empty);
         Object testState = new Object();
-        Frontend.RunMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
-                testState, mockService);
+        frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
+                testState);
         verify(mockService).RunMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
                 callbackMultipleActions.capture());
         ArrayList<VdcReturnValueBase> returnValues = new ArrayList<VdcReturnValueBase>();
@@ -203,8 +233,10 @@ public class FrontendActionTest {
         assertEquals("There is one failure", 1, failedCaptor.getValue().size()); //$NON-NLS-1$
         assertEquals("Failures should match", returnValues.get(1), failedCaptor.getValue().get(0)); //$NON-NLS-1$
         verify(mockMultipleActionCallback).executed(callbackMultipleParam.capture());
-        assertEquals("Parameters should match", parameters, callbackMultipleParam.getValue().getParameters()); //$NON-NLS-1$
-        assertEquals("Result should match", returnValues, callbackMultipleParam.getValue().getReturnValue()); //$NON-NLS-1$
+        assertEquals("Parameters should match", parameters,  //$NON-NLS-1$
+                callbackMultipleParam.getValue().getParameters());
+        assertEquals("Result should match", returnValues, //$NON-NLS-1$
+                callbackMultipleParam.getValue().getReturnValue());
         assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
     }
 
@@ -219,14 +251,19 @@ public class FrontendActionTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testRunMultipleActionsMultipleSuccess_multipleFailure() {
+        // Don't immediately call process until all queries are in the queue.
+        fakeScheduler.setThreshold(4);
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         parameters.add(new VdcActionParametersBase());
         parameters.add(new VdcActionParametersBase());
         parameters.add(new VdcActionParametersBase());
         parameters.add(new VdcActionParametersBase());
+        parameters.get(0).setCommandId(Guid.Empty);
+        parameters.get(1).setCommandId(Guid.EVERYONE);
+        parameters.get(2).setCommandId(Guid.SYSTEM);
         Object testState = new Object();
-        Frontend.RunMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
-                testState, mockService);
+        frontend.runMultipleAction(VdcActionType.AddLocalStorageDomain, parameters, false, mockMultipleActionCallback,
+                testState);
         verify(mockService).RunMultipleActions(eq(VdcActionType.AddLocalStorageDomain), eq(parameters), eq(false),
                 callbackMultipleActions.capture());
         ArrayList<VdcReturnValueBase> returnValues = new ArrayList<VdcReturnValueBase>();
@@ -248,8 +285,10 @@ public class FrontendActionTest {
         assertEquals("Failures should match", returnValues.get(1), failedCaptor.getValue().get(0)); //$NON-NLS-1$
         assertEquals("Failures should match", returnValues.get(3), failedCaptor.getValue().get(1)); //$NON-NLS-1$
         verify(mockMultipleActionCallback).executed(callbackMultipleParam.capture());
-        assertEquals("Parameters should match", parameters, callbackMultipleParam.getValue().getParameters()); //$NON-NLS-1$
-        assertEquals("Result should match", returnValues, callbackMultipleParam.getValue().getReturnValue()); //$NON-NLS-1$
+        assertEquals("Parameters should match", parameters, //$NON-NLS-1$
+                callbackMultipleParam.getValue().getParameters());
+        assertEquals("Result should match", returnValues, //$NON-NLS-1$
+                callbackMultipleParam.getValue().getReturnValue());
         assertEquals("States should match", testState, callbackMultipleParam.getValue().getState()); //$NON-NLS-1$
     }
 
@@ -266,8 +305,7 @@ public class FrontendActionTest {
     public void testRunActionImpl_ignored_failure() {
         Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
-        Frontend.runActionImpl(VdcActionType.AddDisk, testParameters, mockActionCallback, testState, false,
-                mockService);
+        frontend.runAction(VdcActionType.AddDisk, testParameters, mockActionCallback, testState, false);
         verify(mockService).RunAction(eq(VdcActionType.AddDisk), eq(testParameters), callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
@@ -288,10 +326,10 @@ public class FrontendActionTest {
     public void testRunActionImpl_404_failure() {
         Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
-        Frontend.runActionImpl(VdcActionType.AddDisk, testParameters, mockActionCallback, testState, false,
-                mockService);
+        frontend.runAction(VdcActionType.AddDisk, testParameters, mockActionCallback, testState, false);
         verify(mockService).RunAction(eq(VdcActionType.AddDisk), eq(testParameters), callbackAction.capture());
-        StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND, "404 status code"); //$NON-NLS-1$
+        StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND,
+                "404 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         verify(mockActionCallback).executed(callbackParam.capture());
@@ -314,8 +352,7 @@ public class FrontendActionTest {
     public void testRunActionImpl_success() {
         Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
-        Frontend.runActionImpl(VdcActionType.AddDisk, testParameters, mockActionCallback, testState, false,
-                mockService);
+        frontend.runAction(VdcActionType.AddDisk, testParameters, mockActionCallback, testState, false);
         verify(mockService).RunAction(eq(VdcActionType.AddDisk), eq(testParameters), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         callbackAction.getValue().onSuccess(returnValue);
@@ -343,7 +380,7 @@ public class FrontendActionTest {
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setCanDoAction(false); // Yes this is the default, but to make sure.
-        Frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
+        frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, false);
         verify(mockActionCallback).executed(callbackParam.capture());
         assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
@@ -376,7 +413,7 @@ public class FrontendActionTest {
         returnValue.setSucceeded(false); // Yes this is the default, but to make sure.
         VdcFault testFault = new VdcFault();
         returnValue.setFault(testFault);
-        Frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
+        frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, true);
         verify(mockActionCallback).executed(callbackParam.capture());
         assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
@@ -408,7 +445,7 @@ public class FrontendActionTest {
         returnValue.setFault(testFault);
         returnValue.setDescription("This is a description"); //$NON-NLS-1$
         returnValue.setCanDoAction(false); // Yes this is the default, but to make sure.
-        Frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
+        frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, false);
         verify(mockActionCallback).executed(callbackParam.capture());
         assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
@@ -438,11 +475,8 @@ public class FrontendActionTest {
      */
     @Test
     public void testHandleActionResult_isRaiseErrorModalPanel_withActionMessageSize1() {
-        ArrayList<String> messageResult = new ArrayList<String>();
-        messageResult.add("Translated Message"); //$NON-NLS-1$
         VdcFault testFault = new VdcFault();
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);
-        when(mockCanDoActionErrorsTranslator.translateErrorText((ArrayList<String>) any())).thenReturn(messageResult);
         Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
@@ -450,7 +484,7 @@ public class FrontendActionTest {
         returnValue.setDescription("This is a description"); //$NON-NLS-1$
         returnValue.getCanDoActionMessages().add("Message 1"); //$NON-NLS-1$
         returnValue.setCanDoAction(false); // Yes this is the default, but to make sure.
-        Frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
+        frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, false);
         verify(mockActionCallback).executed(callbackParam.capture());
         assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
@@ -463,7 +497,7 @@ public class FrontendActionTest {
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), failureCaptor.capture());
         assertEquals("Descriptions should match", "This is a description", //$NON-NLS-1$ //$NON-NLS-2$
                 failureCaptor.getValue().getMessage().getDescription());
-        assertEquals("Text should match translation", "Translated Message", //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("Text should match translation", "message 1", //$NON-NLS-1$ //$NON-NLS-2$
                 failureCaptor.getValue().getMessage().getText());
     }
 
@@ -478,15 +512,10 @@ public class FrontendActionTest {
      * </ol>
      * Test just the handler method.
      */
-    @SuppressWarnings("unchecked")
     @Test
     public void testHandleActionResult_isRaiseErrorModalPanel_withActionMessageSizeGreaterThan1() {
         VdcFault testFault = new VdcFault();
-        ArrayList<String> messageResult = new ArrayList<String>();
-        messageResult.add("Translated Message 1"); //$NON-NLS-1$
-        messageResult.add("Translated Message 2"); //$NON-NLS-1$
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);
-        when(mockCanDoActionErrorsTranslator.translateErrorText((ArrayList<String>) any())).thenReturn(messageResult);
         Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
@@ -495,7 +524,7 @@ public class FrontendActionTest {
         returnValue.getCanDoActionMessages().add("Message 1"); //$NON-NLS-1$
         returnValue.getCanDoActionMessages().add("Message 2"); //$NON-NLS-1$
         returnValue.setCanDoAction(false); // Yes this is the default, but to make sure.
-        Frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
+        frontend.handleActionResult(VdcActionType.AddDisk, testParameters, returnValue, mockActionCallback,
                 testState, false);
         verify(mockActionCallback).executed(callbackParam.capture());
         assertEquals("Parameters should match", testParameters, callbackParam.getValue().getParameters()); //$NON-NLS-1$
@@ -507,9 +536,9 @@ public class FrontendActionTest {
                 ArgumentCaptor.forClass(FrontendFailureEventArgs.class);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), failureCaptor.capture());
         assertNull("Message should be null", failureCaptor.getValue().getMessage()); //$NON-NLS-1$
-        assertEquals("Translated text should match", "Translated Message 1", //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("text should match", "message 1", //$NON-NLS-1$ //$NON-NLS-2$
                 failureCaptor.getValue().getMessages().get(0).getText());
-        assertEquals("Translated text should match", "Translated Message 2", //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("text should match", "message 2", //$NON-NLS-1$ //$NON-NLS-2$
                 failureCaptor.getValue().getMessages().get(1).getText());
     }
 
@@ -529,8 +558,7 @@ public class FrontendActionTest {
         List<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
         callbacks.add(mockActionCallback);
         Object testState = new Object();
-        Frontend.RunMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState,
-                mockService);
+        frontend.runMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState);
         verify(mockService).RunAction(eq(VdcActionType.AddDisk), eq(testParameters.get(0)), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setCanDoAction(true);
@@ -562,8 +590,7 @@ public class FrontendActionTest {
         callbacks.add(mockActionCallback);
         callbacks.add(mockActionCallback);
         Object testState = new Object();
-        Frontend.RunMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState,
-                mockService);
+        frontend.runMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState);
         verify(mockService).RunAction(eq(VdcActionType.AddDisk), eq(testParameters.get(0)), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setCanDoAction(true);
@@ -602,8 +629,7 @@ public class FrontendActionTest {
         callbacks.add(mockActionCallback);
         callbacks.add(mockActionCallback);
         Object testState = new Object();
-        Frontend.RunMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState,
-                mockService);
+        frontend.runMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState);
         verify(mockService).RunAction(eq(VdcActionType.AddDisk), eq(testParameters.get(0)), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setCanDoAction(true);
@@ -642,8 +668,7 @@ public class FrontendActionTest {
         callbacks.add(mockActionCallback);
         callbacks.add(mockActionCallback);
         Object testState = new Object();
-        Frontend.RunMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState,
-                mockService);
+        frontend.runMultipleActions(actionTypes, testParameters, callbacks, mockActionFailureCallback, testState);
         verify(mockService).RunAction(eq(VdcActionType.AddDisk), eq(testParameters.get(0)), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setCanDoAction(false);
@@ -663,16 +688,44 @@ public class FrontendActionTest {
      *   <li>Have the login fail with a status code of 0, which is an ignored failure</li>
      *   <li>Check to make sure the callback is not called</li>
      *   <li>Check to make sure the events handler is never called</li>
+     *   <li>Login a non admin user</li>
      *   <li>Make sure the frontend failure handler is never called</li>
      * </ol>
      */
     @Test
-    public void testLoginAsync_ignored_failure() {
+    public void testLoginAsync_non_admin_ignored_failure() {
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
         String testDomain = "testdomain"; //$NON-NLS-1$
-        Frontend.LoginAsync(testUser, testPassword, testDomain, mockAsyncQuery, mockService);
-        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), callbackAction.capture());
+        frontend.loginAsync(testUser, testPassword, testDomain, true, mockAsyncQuery);
+        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), eq(VdcActionType.LoginAdminUser),
+                callbackAction.capture());
+        StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
+        callbackAction.getValue().onFailure(exception);
+        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (EventArgs) any());
+        verify(mockEventsHandler, never()).runQueryFailed(null);
+        verify(mockAsyncQuery, never()).isHandleFailure();
+    }
+
+    /**
+     * Run the following test case.
+     * <ol>
+     *   <li>Attempt to login</li>
+     *   <li>Have the login fail with a status code of 0, which is an ignored failure</li>
+     *   <li>Check to make sure the callback is not called</li>
+     *   <li>Check to make sure the events handler is never called</li>
+     *   <li>Login an admin user</li>
+     *   <li>Make sure the frontend failure handler is never called</li>
+     * </ol>
+     */
+    @Test
+    public void testLoginAsync_admin_ignored_failure() {
+        String testUser = "testUser"; //$NON-NLS-1$
+        String testPassword = "testpassword"; //$NON-NLS-1$
+        String testDomain = "testdomain"; //$NON-NLS-1$
+        frontend.loginAsync(testUser, testPassword, testDomain, false, mockAsyncQuery);
+        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), eq(VdcActionType.LoginUser),
+                callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (EventArgs) any());
@@ -695,15 +748,17 @@ public class FrontendActionTest {
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
         String testDomain = "testdomain"; //$NON-NLS-1$
-        Frontend.initLoggedInUser(new DbUser(), testPassword);
+        Frontend.getInstance().initLoggedInUser(new DbUser(), testPassword);
         when(mockAsyncQuery.isHandleFailure()).thenReturn(Boolean.TRUE);
-        Frontend.LoginAsync(testUser, testPassword, testDomain, mockAsyncQuery, mockService);
-        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), callbackAction.capture());
-        StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND, "404 status code"); //$NON-NLS-1$
+        frontend.loginAsync(testUser, testPassword, testDomain, false, mockAsyncQuery);
+        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), eq(VdcActionType.LoginUser),
+                callbackAction.capture());
+        StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND,
+                "404 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
         verify(mockEventsHandler).runQueryFailed(null);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), (EventArgs) any());
-        assertNull("Logged in user should be null", Frontend.getLoggedInUser()); //$NON-NLS-1$
+        assertNull("Logged in user should be null", frontend.getLoggedInUser()); //$NON-NLS-1$
         verify(mockAsyncCallback).onSuccess(any(), any());
     }
 
@@ -724,10 +779,11 @@ public class FrontendActionTest {
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
         String testDomain = "testdomain"; //$NON-NLS-1$
-        Frontend.initLoggedInUser(new DbUser(), testPassword);
+        Frontend.getInstance().initLoggedInUser(new DbUser(), testPassword);
         when(mockAsyncQuery.isHandleFailure()).thenReturn(Boolean.TRUE);
-        Frontend.LoginAsync(testUser, testPassword, testDomain, mockAsyncQuery, mockService);
-        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), callbackAction.capture());
+        frontend.loginAsync(testUser, testPassword, testDomain, false, mockAsyncQuery);
+        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), eq(VdcActionType.LoginUser),
+                callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setSucceeded(true);
         callbackAction.getValue().onSuccess(returnValue);
@@ -753,10 +809,11 @@ public class FrontendActionTest {
         String testUser = "testUser"; //$NON-NLS-1$
         String testPassword = "testpassword"; //$NON-NLS-1$
         String testDomain = "testdomain"; //$NON-NLS-1$
-        Frontend.initLoggedInUser(new DbUser(), testPassword);
+        Frontend.getInstance().initLoggedInUser(new DbUser(), testPassword);
         when(mockAsyncQuery.isHandleFailure()).thenReturn(Boolean.TRUE);
-        Frontend.LoginAsync(testUser, testPassword, testDomain, mockAsyncQuery, mockService);
-        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), callbackAction.capture());
+        frontend.loginAsync(testUser, testPassword, testDomain, false, mockAsyncQuery);
+        verify(mockService).Login(eq(testUser), eq(testPassword), eq(testDomain), eq(VdcActionType.LoginUser),
+                callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         returnValue.setSucceeded(false); // Yes I know this is the default, just to be sure.
         callbackAction.getValue().onSuccess(returnValue);
@@ -781,7 +838,7 @@ public class FrontendActionTest {
         when(mockAsyncQuery.getModel()).thenReturn(model);
         DbUser testUser = new DbUser();
         testUser.setLoginName("testUser"); //$NON-NLS-1$
-        Frontend.LogoffAsync(testUser, mockAsyncQuery, mockService);
+        frontend.logoffAsync(testUser, mockAsyncQuery);
         verify(mockService).logOff(eq(testUser), callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
@@ -806,9 +863,10 @@ public class FrontendActionTest {
         when(mockAsyncQuery.getModel()).thenReturn(model);
         DbUser testUser = new DbUser();
         testUser.setLoginName("testUser"); //$NON-NLS-1$
-        Frontend.LogoffAsync(testUser, mockAsyncQuery, mockService);
+        frontend.logoffAsync(testUser, mockAsyncQuery);
         verify(mockService).logOff(eq(testUser), callbackAction.capture());
-        StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND, "404 status code"); //$NON-NLS-1$
+        StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND,
+                "404 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), (EventArgs) any());
         verify(mockEventsHandler).runQueryFailed(null);
@@ -830,7 +888,7 @@ public class FrontendActionTest {
         when(mockAsyncQuery.getModel()).thenReturn(model);
         DbUser testUser = new DbUser();
         testUser.setLoginName("testUser"); //$NON-NLS-1$
-        Frontend.LogoffAsync(testUser, mockAsyncQuery, mockService);
+        frontend.logoffAsync(testUser, mockAsyncQuery);
         verify(mockService).logOff(eq(testUser), callbackAction.capture());
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
         callbackAction.getValue().onSuccess(returnValue);

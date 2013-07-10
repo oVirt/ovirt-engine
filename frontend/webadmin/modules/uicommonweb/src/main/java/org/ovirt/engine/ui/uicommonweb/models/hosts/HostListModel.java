@@ -1682,7 +1682,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         if (hasAdminSystemPermission == null) {
 
-            DbUser dbUser = Frontend.getLoggedInUser();
+            DbUser dbUser = Frontend.getInstance().getLoggedInUser();
 
             if (dbUser == null) {
                 hasAdminSystemPermission = false;

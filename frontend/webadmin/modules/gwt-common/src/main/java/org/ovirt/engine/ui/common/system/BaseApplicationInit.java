@@ -34,6 +34,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
 
     protected final CurrentUser user;
     protected final EventBus eventBus;
+    protected final Frontend frontend;
 
     // Using Provider because any UiCommon model will fail before TypeResolver is initialized
     private final Provider<T> loginModelProvider;
@@ -45,7 +46,8 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
             FrontendFailureEventListener frontendFailureEventListener,
             CurrentUser user, EventBus eventBus,
             Provider<T> loginModelProvider,
-            LockInteractionManager lockInteractionManager) {
+            LockInteractionManager lockInteractionManager,
+            Frontend frontend) {
         this.typeResolver = typeResolver;
         this.frontendEventsHandler = frontendEventsHandler;
         this.frontendFailureEventListener = frontendFailureEventListener;
@@ -53,6 +55,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
         this.eventBus = eventBus;
         this.loginModelProvider = loginModelProvider;
         this.lockInteractionManager = lockInteractionManager;
+        this.frontend = frontend;
 
         // Handle UI logout requests
         user.setLogoutHandler(this);
@@ -100,7 +103,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
         String loginPassword = (String) loginModel.getPassword().getEntity();
 
         // UiCommon login preparation
-        Frontend.initLoggedInUser(loggedUser, loginPassword);
+        frontend.initLoggedInUser(loggedUser, loginPassword);
         beforeUiCommonInitEvent(loginModel);
         UiCommonInitEvent.fire(eventBus);
 
@@ -125,18 +128,17 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Logou
 
     protected void initFrontend() {
         // Set up Frontend event handlers
-        Frontend.setEventsHandler(frontendEventsHandler);
-        Frontend.getFrontendFailureEvent().addListener(frontendFailureEventListener);
+        frontend.setEventsHandler(frontendEventsHandler);
+        frontend.getFrontendFailureEvent().addListener(frontendFailureEventListener);
 
-        Frontend.getFrontendNotLoggedInEvent().addListener(new IEventListener() {
+        frontend.getFrontendNotLoggedInEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 user.logout();
             }
         });
 
-        Frontend.setFilterQueries(filterFrontendQueries());
-
+        frontend.setFilterQueries(filterFrontendQueries());
     }
 
     /**

@@ -95,7 +95,7 @@ public class VmGuideModel extends GuideModel
     public void cancel()
     {
         setWindow(null);
-        Frontend.Unsubscribe();
+        Frontend.getInstance().unsubscribe();
     }
 
     @Override
