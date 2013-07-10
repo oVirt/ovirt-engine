@@ -214,6 +214,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             } else {
                 for (StorageDomain domain : destStorages) {
                     StorageDomainValidator storageDomainValidator = new StorageDomainValidator(domain);
+                    if (!validate(storageDomainValidator.isDomainExistAndActive())) {
+                        return false;
+                    }
                     if (!validate(storageDomainValidator.isDomainWithinThresholds())
                             || !validate(storageDomainValidator.isDomainHasSpaceForRequest(getNeededDiskSize(domain.getId())))) {
                         return false;
