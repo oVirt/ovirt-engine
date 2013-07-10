@@ -43,8 +43,13 @@ class Plugin(plugin.PluginBase):
 
     def _digestFile(self, filename):
         md5 = hashlib.new('md5')
+        # Read file in chunks of 10KB
         with open(filename, 'rb') as f:
-            md5.update(f.read(1000))
+            while True:
+                data = f.read(10240)
+                if not data:
+                    break
+                md5.update(data)
         return md5.hexdigest()
 
     def _safeDelete(self, filename):
