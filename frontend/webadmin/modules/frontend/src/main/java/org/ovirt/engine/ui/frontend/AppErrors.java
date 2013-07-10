@@ -1042,7 +1042,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot detach a non empty Storage Domain.\n-Please remove all VMs / Templates / Disks and try again.")
     String ERROR_CANNOT_DETACH_STORAGE_DOMAIN_WITH_IMAGES();
 
-    @DefaultStringValue("Cannot remove Data Center while there are volumes on it.\n-Please remove all VMs and Templates first.")
+    @DefaultStringValue("Cannot remove Data Center while it contains disks.\n-Please remove them first.")
     String ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_IMAGES();
 
     @DefaultStringValue("Cannot remove Data Center while there are VMs on it.\n-Please remove all VMs and Templates first.")
