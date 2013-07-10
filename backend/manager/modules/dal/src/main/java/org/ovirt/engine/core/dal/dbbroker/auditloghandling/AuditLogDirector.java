@@ -787,6 +787,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.PERSIST_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.ADD_VNIC_PROFILE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.ADD_VNIC_PROFILE_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.UPDATE_VNIC_PROFILE, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.UPDATE_VNIC_PROFILE_FAILED, AuditLogSeverity.ERROR);
     }
 
     private static void initExtrnalEvents() {
