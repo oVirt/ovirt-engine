@@ -11,7 +11,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;
@@ -141,10 +140,10 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     private boolean pmSecondaryConcurrent;
 
     @EditableField
-    private ValueObjectMap pmOptionsMap;
+    private HashMap<String, String> pmOptionsMap;
 
     @EditableField
-    private ValueObjectMap pmSecondaryOptionsMap;
+    private HashMap<String, String> pmSecondaryOptionsMap;
 
     @EditableField
     private long otpValidity;
@@ -355,11 +354,11 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         pmOptionsMap = PmOptionsStringToMap(value);
     }
 
-    public ValueObjectMap getPmOptionsMap() {
+    public HashMap<String, String> getPmOptionsMap() {
         return pmOptionsMap;
     }
 
-    public void setPmOptionsMap(ValueObjectMap value) {
+    public void setPmOptionsMap(HashMap<String, String> value) {
         pmOptionsMap = value;
         pmOptions = PmOptionsMapToString(value);
     }
@@ -437,11 +436,11 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         pmSecondaryConcurrent = value;
     }
 
-    public ValueObjectMap getPmSecondaryOptionsMap() {
+    public HashMap<String, String> getPmSecondaryOptionsMap() {
         return pmSecondaryOptionsMap;
     }
 
-    public void setPmSecondaryOptionsMap(ValueObjectMap value) {
+    public void setPmSecondaryOptionsMap(HashMap<String, String> value) {
         pmSecondaryOptionsMap = value;
     }
 
@@ -483,10 +482,9 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
      * @param map
      * @return
      */
-    public static String PmOptionsMapToString(ValueObjectMap optionsMap) {
+    public static String PmOptionsMapToString(HashMap<String, String> map) {
         String result = "";
         String seperator = "";
-        Map map = optionsMap.asMap();
         Iterator<Map.Entry<String, String>> it = map.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String, String> pairs = it.next();
@@ -500,16 +498,20 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     }
 
     /**
-     * Converts a PM Options string to a map
+     * Converts a PM Options string to a map.
      *
-     * @param pmOptions
-     * @return
+     * <b<Note:</b> A {@link HashMap} is used instead of the interface
+     * {@link Map}, as this method is used by the frontend, and requires
+     * GWT compilation.
+     *
+     * @param pmOptions String representation of the map
+     * @return A parsed map
      */
-    public static ValueObjectMap PmOptionsStringToMap(String pmOptions) {
-        if (pmOptions == null || pmOptions.equals("")) {
-            return new ValueObjectMap();
-        }
+    public static HashMap<String, String> PmOptionsStringToMap(String pmOptions) {
         HashMap<String, String> map = new HashMap<String, String>();
+        if (pmOptions == null || pmOptions.equals("")) {
+            return map;
+        }
         String[] tokens = pmOptions.split(",");
         for (String token : tokens) {
             String[] pair = token.split("=");
@@ -522,7 +524,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 map.put(pair[0], "");
             }
         }
-        return new ValueObjectMap(map, false);
+        return map;
     }
 
     @Override

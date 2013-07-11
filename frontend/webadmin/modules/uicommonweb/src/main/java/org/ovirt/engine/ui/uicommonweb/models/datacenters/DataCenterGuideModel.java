@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -1613,14 +1612,14 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         host.setPmUser((String) model.getPmUserName().getEntity());
         host.setPmPassword((String) model.getPmPassword().getEntity());
         host.setPmType((String) model.getPmType().getSelectedItem());
-        host.setPmOptionsMap(new ValueObjectMap(model.getPmOptionsMap(), false));
+        host.setPmOptionsMap(model.getPmOptionsMap());
 
         // Save secondary PM parameters.
         host.setPmSecondaryIp((String) model.getPmSecondaryIp().getEntity());
         host.setPmSecondaryUser((String) model.getPmSecondaryUserName().getEntity());
         host.setPmSecondaryPassword((String) model.getPmSecondaryPassword().getEntity());
         host.setPmSecondaryType((String) model.getPmSecondaryType().getSelectedItem());
-        host.setPmSecondaryOptionsMap(new ValueObjectMap(model.getPmSecondaryOptionsMap(), false));
+        host.setPmSecondaryOptionsMap(model.getPmSecondaryOptionsMap());
 
         // Save other PM parameters.
         host.setpm_enabled((Boolean) model.getIsPm().getEntity());

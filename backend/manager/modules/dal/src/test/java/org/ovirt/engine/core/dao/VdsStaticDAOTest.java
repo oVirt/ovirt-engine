@@ -5,13 +5,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -36,7 +36,7 @@ public class VdsStaticDAOTest extends BaseDAOTestCase {
         newStaticVds.setSshUsername("root");
         newStaticVds.setVdsGroupId(existingVds.getVdsGroupId());
         newStaticVds.setSshKeyFingerprint("b5:ad:16:19:06:9f:b3:41:69:eb:1c:42:1d:12:b5:31");
-        newStaticVds.setPmSecondaryOptionsMap(new ValueObjectMap());
+        newStaticVds.setPmSecondaryOptionsMap(new HashMap<String, String>());
     }
 
     /**

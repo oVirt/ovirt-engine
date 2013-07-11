@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.queries;
 
+import java.util.HashMap;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -11,7 +12,7 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
     }
 
     public GetNewVdsFenceStatusParameters(Guid vds_id, Guid vdsGroupId, Guid storagePolId, String managementIp,
-            ValueObjectMap fencinOptions, String pmType, String user, String password, String pmProxyPreferences) {
+            HashMap<String, String> fencinOptions, String pmType, String user, String password, String pmProxyPreferences) {
         _vds_id = vds_id;
         _storagePoolId = storagePolId;
         _managementIp = managementIp;
@@ -25,7 +26,7 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
     }
 
     public GetNewVdsFenceStatusParameters(Guid vds_id, Guid storagePolId, String managementIp,
-            ValueObjectMap fencinOptions, String pmType, String user, String password, FenceAgentOrder order) {
+            HashMap<String, String> fencinOptions, String pmType, String user, String password, FenceAgentOrder order) {
         _vds_id = vds_id;
         _storagePoolId = storagePolId;
         _managementIp = managementIp;
@@ -67,13 +68,13 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _managementIp = value;
     }
 
-    private ValueObjectMap _fencingOptions;
+    private HashMap<String, String> _fencingOptions;
 
-    public ValueObjectMap getFencingOptions() {
+    public HashMap<String, String> getFencingOptions() {
         return _fencingOptions;
     }
 
-    public void setFencingOptions(ValueObjectMap value) {
+    public void setFencingOptions(HashMap<String, String> value) {
         _fencingOptions = value;
     }
 

@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetNewVdsFenceStatusParameters;
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -517,7 +516,7 @@ public abstract class HostModel extends Model
         pmSecondarySecure = value;
     }
 
-    public Map<String, String> getPmSecondaryOptionsMap() {
+    public HashMap<String, String> getPmSecondaryOptionsMap() {
 
         // For secondary map determine (workarround) if it's was specified
         // by checking secondary PM fields.
@@ -615,7 +614,7 @@ public abstract class HostModel extends Model
         }
     }
 
-    public Map<String, String> getPmOptionsMap() {
+    public HashMap<String, String> getPmOptionsMap() {
         return getPmOptionsMapInternal(getPmPort(), getPmSlot(), getPmSecure(), getPmOptions());
     }
 
@@ -1347,9 +1346,9 @@ public abstract class HostModel extends Model
         }
     }
 
-    private Map<String,String> getPmOptionsMapInternal(EntityModel port, EntityModel slot, EntityModel secure, EntityModel options) {
+    private HashMap<String,String> getPmOptionsMapInternal(EntityModel port, EntityModel slot, EntityModel secure, EntityModel options) {
 
-        Map<String, String> dict = new HashMap<String, String>();
+        HashMap<String, String> dict = new HashMap<String, String>();
 
         if ((Boolean) getIsPm().getEntity()) {
             // Add well known pm options.
@@ -1521,7 +1520,7 @@ public abstract class HostModel extends Model
         param.setUser(isPrimary ? (String) getPmUserName().getEntity() : (String) getPmSecondaryUserName().getEntity());
         param.setPassword(isPrimary ? (String) getPmPassword().getEntity() : (String) getPmSecondaryPassword().getEntity());
         param.setStoragePoolId(cluster.getStoragePoolId() != null ? cluster.getStoragePoolId() : Guid.Empty);
-        param.setFencingOptions(new ValueObjectMap(getPmOptionsMap(), false));
+        param.setFencingOptions(getPmOptionsMap());
         param.setPmProxyPreferences(getPmProxyPreferences());
 
         Frontend.RunQuery(VdcQueryType.GetNewVdsFenceStatus, param, new AsyncQuery(this, new INewAsyncCallback() {
@@ -1684,14 +1683,14 @@ public abstract class HostModel extends Model
         getPmUserName().setEntity(vds.getPmUser());
         getPmPassword().setEntity(vds.getPmPassword());
         getPmType().setSelectedItem(vds.getPmType());
-        setPmOptionsMap(VdsStatic.PmOptionsStringToMap(vds.getPmOptions()).asMap());
+        setPmOptionsMap(VdsStatic.PmOptionsStringToMap(vds.getPmOptions()));
 
         // Set secondary PM parameters.
         getPmSecondaryIp().setEntity(vds.getPmSecondaryIp());
         getPmSecondaryUserName().setEntity(vds.getPmSecondaryUser());
         getPmSecondaryPassword().setEntity(vds.getPmSecondaryPassword());
         getPmSecondaryType().setSelectedItem(vds.getPmSecondaryType());
-        setPmSecondaryOptionsMap(vds.getPmSecondaryOptionsMap().asMap());
+        setPmSecondaryOptionsMap(vds.getPmSecondaryOptionsMap());
 
         // Set other PM parameters.
         if (isEditWithPMemphasis) {

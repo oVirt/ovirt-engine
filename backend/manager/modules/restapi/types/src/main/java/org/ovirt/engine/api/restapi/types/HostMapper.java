@@ -44,8 +44,6 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
-import org.ovirt.engine.core.common.queries.ValueObjectPair;
 import org.ovirt.engine.core.compat.Guid;
 
 public class HostMapper {
@@ -451,20 +449,20 @@ public class HostMapper {
         return model;
     }
 
-    @Mapping(from = ValueObjectMap.class, to = Options.class)
-    public static Options map(ValueObjectMap entity, Options template) {
+    @Mapping(from = Map.class, to = Options.class)
+    public static Options map(Map<String, String> entity, Options template) {
         Options model = template != null ? template : new Options();
-        for (ValueObjectPair option : entity.getValuePairs()) {
+        for (Map.Entry<String, String> option : entity.entrySet()) {
             model.getOptions().add(map(option, null));
         }
         return model;
     }
 
-    @Mapping(from = ValueObjectPair.class, to = Option.class)
-    public static Option map(ValueObjectPair entity, Option template) {
+    @Mapping(from = Map.Entry.class, to = Option.class)
+    public static Option map(Map.Entry<String, String> entity, Option template) {
         Option model = template != null ? template : new Option();
-        model.setName((String)entity.getKey());
-        model.setValue((String)entity.getValue());
+        model.setName(entity.getKey());
+        model.setValue(entity.getValue());
         return model;
     }
 

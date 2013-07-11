@@ -3,12 +3,12 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -1015,18 +1015,19 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         mVdsStatic.setPmOptions(value);
     }
 
-    public ValueObjectMap getPmOptionsMap() {
+    public HashMap<String, String> getPmOptionsMap() {
         return mVdsStatic.getPmOptionsMap();
     }
 
-    public ValueObjectMap getPmSecondaryOptionsMap() {
+    public HashMap<String, String> getPmSecondaryOptionsMap() {
         return mVdsStatic.getPmSecondaryOptionsMap();
     }
 
-    public void setPmSecondaryOptionsMap(ValueObjectMap value) {
+    public void setPmSecondaryOptionsMap(HashMap<String, String> value) {
         mVdsStatic.setPmSecondaryOptionsMap(value);
     }
-    public void setPmOptionsMap(ValueObjectMap value) {
+
+    public void setPmOptionsMap(HashMap<String, String> value) {
         mVdsStatic.setPmOptionsMap(value);
     }
 
