@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -64,28 +63,10 @@ public class VdsFenceOptions implements Serializable {
         Init();
     }
 
-    public ValueObjectMap getFencingAgentInstanceOptionsMap() {
-        return new ValueObjectMap(fencingAgentInstanceOptions, false);
-    }
-
-    @SuppressWarnings("unchecked")
-    public void setFencingAgentInstanceOptionsMap(ValueObjectMap value) {
-        fencingAgentInstanceOptions = (value != null) ? new HashMap<String, String>(value.asMap()) : null;
-    }
-
     public HashMap<String, HashMap<String, String>> getFencingOptionMappingMap() {
         return fencingOptionMapping;
     }
 
-    public ValueObjectMap getFencingOptionTypesMap() {
-        return new ValueObjectMap(fencingOptionTypes, false);
-    }
-
-    @SuppressWarnings("unchecked")
-    public void setFencingOptionTypesMap(ValueObjectMap value) {
-        fencingOptionTypes = (value != null) ? new HashMap<String, String>(value.asMap())
-                : null;
-    }
 
     /**
      * Caches the fencing agents options mapping. Mapping are stored in the following format <!--
