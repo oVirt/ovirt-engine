@@ -20,12 +20,12 @@
 		}
 
 		.header {
-			background-color: #D3D3D3;
-			border-bottom: 1px solid #CED8DF;
+			background-color: #e5e5e5;
 			margin-bottom: 15px;
 			padding-top: 6px;
-			margin-top: 4px;
-			margin-right: 3px;
+			/*Neutralize the 5px padding of the parent*/
+			margin-left: -5px;
+			border: 2px solid #d3d3d3;
 			display: none;
 		}
 	</ui:style>
