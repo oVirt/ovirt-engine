@@ -39,7 +39,7 @@ public interface Enums extends LocalizedEnums {
 
     String StoragePoolStatus___NotOperational();
 
-    String StoragePoolStatus___Problematic();
+    String StoragePoolStatus___NonResponsive();
 
     String StoragePoolStatus___Contend();
 
