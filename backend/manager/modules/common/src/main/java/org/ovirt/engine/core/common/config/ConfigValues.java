@@ -691,10 +691,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("auth-conf")
     SASL_QOP(286),
 
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("%JBOSS_HOME%\\standalone\\deployments\\engine.ear")
-    ENGINEEarLib(287),
-
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000")
@@ -1197,9 +1193,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     SupportForceExtendVG(398),
 
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    ENGINEEARLib(399),
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     MinimalETLVersion(400),

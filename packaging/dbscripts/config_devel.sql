@@ -1,5 +1,4 @@
 select fn_db_update_config_value('AdminPassword','letmein!','general');
-select fn_db_update_config_value('ENGINEEARLib','%JBOSS_HOME%/server/engine-slimmed/deploy/engine.ear','general');
 select fn_db_update_config_value('InstallVds', 'false','general');
 select fn_db_update_config_value('SSLEnabled', 'false','general');
 select fn_db_update_config_value('SysPrep2K3Path','backend/manager/conf/sysprep/sysprep.2k3','general');

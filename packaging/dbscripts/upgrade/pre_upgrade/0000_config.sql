@@ -105,7 +105,6 @@ select fn_db_add_config_value('EnableSwapCheck','true','general');
 select fn_db_add_config_value('EnableUSBAsDefault','true','general');
 --Handling Enables Host Load Balancing system.
 select fn_db_add_config_value('EnableVdsLoadBalancing','true','general');
-select fn_db_add_config_value('ENGINEEARLib','','general');
 --Handling Engine working mode
 select fn_db_add_config_value('EngineMode','Active','general');
 --Handling Use Default Credentials
@@ -824,6 +823,7 @@ select fn_db_delete_config_value('DiskConfigurationList','general');
 select fn_db_delete_config_value('DefaultTimeZone','general');
 select fn_db_delete_config_value('NumberOfVmsForTopSizeVms','general');
 select fn_db_delete_config_value_all_versions('EmulatedMachine');
+select fn_db_delete_config_value_all_versions('ENGINEEARLib');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

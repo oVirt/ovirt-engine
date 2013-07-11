@@ -1264,10 +1264,7 @@ def _updateVDCOptions():
     #some options must be set before others in order for the keystore passwords to be set encrypted
     #since python doesn't iterate on the dict in a sorted order, we must seperate them to different dicts
     #1st we update the keystore and CA related paths, only then we can set the passwords and the rest options
-    options = (
-        {
-            "ENGINEEARLib":["%s/engine.ear" %(basedefs.DIR_ENGINE), 'text'],
-        },
+    options = [
         {
             "LocalAdminPassword":[controller.CONF["AUTH_PASS"], 'pass'],
             "SSLEnabled":[ "true", 'text'],
@@ -1289,8 +1286,8 @@ def _updateVDCOptions():
             "OrganizationName":[controller.CONF["ORG_NAME"], 'text'],
             "ProductRPMVersion":[utils.getEngineVersion(), 'text'],
             "AdminPassword":[controller.CONF["AUTH_PASS"], 'pass']
-        }
-    )
+        },
+    ]
 
     try:
         if (os.path.exists(basedefs.FILE_ENGINE_CONFIG_BIN)):

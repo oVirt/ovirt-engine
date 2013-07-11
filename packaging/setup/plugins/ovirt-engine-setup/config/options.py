@@ -157,13 +157,6 @@ class Plugin(plugin.PluginBase):
         self.environment[osetupcons.DBEnv.STATEMENT].updateVdcOptions(
             options=[
                 {
-                    'name': 'ENGINEEARLib',
-                    'value': os.path.join(
-                        osetupcons.FileLocations.DATADIR,
-                        'engine.ear',
-                    ),
-                },
-                {
                     'name': 'SSLEnabled',
                     'value': 'true',
                 },
