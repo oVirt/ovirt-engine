@@ -66,4 +66,9 @@ public class GlusterServerInfo {
                 && (ObjectUtils.objectsEqual(getStatus(), host.getStatus())));
     }
 
+    @Override
+    public String toString() {
+        return getHostnameOrIp() + ":" + getStatus().name();
+    }
+
 }

@@ -125,6 +125,10 @@ public class GlusterSyncJob extends GlusterJob {
         }
 
         acquireLock(cluster.getId());
+
+        log.debugFormat("Refreshing Gluster Server data for cluster {0} using server {1} ",
+                cluster.getName(),
+                upServer.getName());
         try {
             List<GlusterServerInfo> fetchedServers = fetchServers(cluster, upServer, existingServers);
             if (fetchedServers != null) {
@@ -138,19 +142,25 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void removeDetachedServers(List<VDS> existingServers, List<GlusterServerInfo> fetchedServers) {
+        boolean serverRemoved = false;
         for (VDS server : existingServers) {
             if (isRemovableStatus(server.getStatus()) && serverDetached(server, fetchedServers)) {
-                log.debugFormat("Server {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
+                log.infoFormat("Server {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
                         server.getName());
                 logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI);
                 try {
                     removeServerFromDb(server);
                     // remove the server from resource manager
                     runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(server.getId()));
+                    serverRemoved = true;
                 } catch (Exception e) {
                     log.errorFormat("Error while removing server {0} from database!", server.getName(), e);
                 }
             }
+        }
+        if (serverRemoved) {
+            log.infoFormat("Servers detached using gluster CLI  is removed from engine after inspecting the Gluster servers list {0}",
+                    fetchedServers);
         }
     }
 
@@ -238,6 +248,7 @@ public class GlusterSyncJob extends GlusterJob {
         }
 
         if (fetchedServers.size() == 1 && existingServers.size() > 2) {
+            log.infoFormat("Gluster servers list fetched from server {0} has only one server", upServer.getName());
             // It's possible that the server we are using to get list of servers itself has been removed from the
             // cluster, and hence is returning a single server (itself)
             GlusterServerInfo server = fetchedServers.iterator().next();
@@ -286,8 +297,11 @@ public class GlusterSyncJob extends GlusterJob {
     private List<GlusterServerInfo> fetchServers(VDS upServer, List<VDS> existingServers) {
         List<GlusterServerInfo> fetchedServers = null;
         while (fetchedServers == null && !existingServers.isEmpty()) {
+            log.debugFormat("Fetching gluster servers list from server {0}", upServer.getName());
             fetchedServers = fetchServers(upServer);
             if (fetchedServers == null) {
+                log.infoFormat("Gluster servers list failed in server {0} moving it to NonOperational",
+                        upServer.getName());
                 logUtil.logServerMessage(upServer, AuditLogType.GLUSTER_SERVERS_LIST_FAILED);
                 // Couldn't fetch servers from the up server. Mark it as non-operational
                 setNonOperational(upServer);
@@ -302,7 +316,7 @@ public class GlusterSyncJob extends GlusterJob {
         SetNonOperationalVdsParameters nonOpParams =
                 new SetNonOperationalVdsParameters(server.getId(),
                         NonOperationalReason.GLUSTER_COMMAND_FAILED,
-                        Collections.singletonMap(GlusterConstants.COMMAND, "gluster peer probe"));
+                        Collections.singletonMap(GlusterConstants.COMMAND, "gluster peer status"));
         nonOpParams.setSaveToDb(true);
         Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds,
                 nonOpParams,
