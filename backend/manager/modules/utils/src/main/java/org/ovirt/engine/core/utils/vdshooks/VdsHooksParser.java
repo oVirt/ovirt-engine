@@ -4,8 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Parsers a hooks string to a ValueObjectMap of script directories/events to a ValueObjectMap of script names to a
- * ValueObjectMap of script properties The string is in format of a "toString" invocation on java.util.map object - for
+ * Parsers a hooks string to a  map of script directories/events to a map of script names to a
+ * map of script properties.
+ * The string is in format of a "toString" invocation on java.util.map object - for
  * example "{before_vm_hibernate={myscript.sh={md5=5d9c4609cd936e80bac8c9ef7b27ea73},
  * 01_log={md5=f388923356e84c2b4149572a44fde2b4}},
  * after_vm_migrate_destination={myscript.sh={md5=677da3bdd8fbd16d4b8917a9fe0f6f89}},
