@@ -8,6 +8,7 @@
 
 	<ui:with field='resources' type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
 	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ClusterPopupView.WidgetStyle">
 		.generalTabTopDecorator {
 			background-color: #D3D3D3;
@@ -187,6 +188,10 @@
 									<d:InfoIcon ui:field="cpuThreadsInfo" addStyleNames="{style.panelInfo}" />
 									<e:EntityModelCheckBoxEditor ui:field="countThreadsAsCoresEditor" />
 								</g:FlowPanel>
+                                <g:FlowPanel addStyleNames="{style.nestedSubsequentPanel}">
+                                    <g:Label text="{constants.ballooningLabelTitle}" addStyleNames="{style.panelTitle}" />
+                                    <e:EntityModelCheckBoxEditor ui:field="enableBallooning" />
+                                </g:FlowPanel>
 							</g:FlowPanel>
 						</t:content>
 					</t:DialogTab>

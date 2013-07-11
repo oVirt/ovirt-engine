@@ -242,6 +242,11 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @Ignore
     protected KeyValueWidget customPropertiesSheetEditor;
 
+    @UiField(provided = true)
+    @Path(value = "enableBallooning.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor enableBallooning;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private final ApplicationMessages messages;
@@ -319,6 +324,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         additionPropsPanelTitle.setText(constants.clusterPolicyAdditionalPropsPanelTitle());
         enableTrustedServiceEditor.setLabel(constants.clusterPolicyEnableTrustedServiceLabel());
         clusterPolicyEditor.setLabel(constants.clusterPolicySelectPolicyLabel());
+
+        enableBallooning.setLabel(constants.enableBallooningLabel());
     }
 
     private void initRadioButtonEditors() {
@@ -373,6 +380,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         countThreadsAsCoresEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         enableTrustedServiceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+
+        enableBallooning = new EntityModelCheckBoxEditor(Align.RIGHT);
     }
 
     private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates)

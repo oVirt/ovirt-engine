@@ -478,6 +478,16 @@ public class ClusterModel extends EntityModel
         privateMigrateOnErrorOption_HA_ONLY = value;
     }
 
+    private EntityModel enableBallooning;
+
+    public EntityModel getEnableBallooning() {
+        return enableBallooning;
+    }
+
+    public void setEnableBallooning(EntityModel enableBallooning) {
+        this.enableBallooning = enableBallooning;
+    }
+
     private boolean isGeneralTabValid;
 
     public boolean getIsGeneralTabValid()
@@ -783,7 +793,8 @@ public class ClusterModel extends EntityModel
         tempVar7.setEntity(false);
         setMigrateOnErrorOption_HA_ONLY(tempVar7);
         getMigrateOnErrorOption_HA_ONLY().getEntityChangedEvent().addListener(this);
-
+        setEnableBallooning(new EntityModel());
+        getEnableBallooning().setEntity(false);
         // Optimization methods:
         // default value =100;
         setDefaultMemoryOvercommit(AsyncDataProvider.getClusterDefaultMemoryOverCommit());
@@ -992,6 +1003,7 @@ public class ClusterModel extends EntityModel
         setMemoryOverCommit(getEntity().getmax_vds_memory_over_commit());
 
         getCountThreadsAsCores().setEntity(getEntity().getCountThreadsAsCores());
+        getEnableBallooning().setEntity(getEntity().isEnableBallooning());
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -1126,7 +1138,8 @@ public class ClusterModel extends EntityModel
 
         // CPU Thread support is only available for clusters of version 3.2 or greater
         getVersionSupportsCpuThreads().setEntity(version.compareTo(Version.v3_2) >= 0);
-
+        getEnableBallooning().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ballooningNotAvailable());
+        getEnableBallooning().setIsChangable(version.compareTo(Version.v3_3) >= 0);
     }
 
     private void initCPU()

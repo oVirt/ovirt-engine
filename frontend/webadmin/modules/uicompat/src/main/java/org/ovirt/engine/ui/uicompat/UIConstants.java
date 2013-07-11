@@ -2017,4 +2017,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Cluster Policy(ies):")
     String removeClusterPolicyMessage();
+
+    @DefaultStringValue("Ballooning is only available for Cluster compatibility version 3.3 and higher")
+    String ballooningNotAvailable();
 }

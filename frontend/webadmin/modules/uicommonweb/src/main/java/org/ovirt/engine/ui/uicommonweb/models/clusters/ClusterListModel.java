@@ -349,6 +349,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.getEnableOvirtService().setIsChangable(true);
         clusterModel.getEnableGlusterService().setEntity(cluster.supportsGlusterService());
         clusterModel.getEnableGlusterService().setIsChangable(true);
+        clusterModel.getEnableBallooning().setEntity(cluster.isEnableBallooning());
 
         if (cluster.supportsTrustedService())
         {
@@ -623,6 +624,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setmax_vds_memory_over_commit(model.getMemoryOverCommit());
         cluster.setCountThreadsAsCores(Boolean.TRUE.equals(model.getVersionSupportsCpuThreads().getEntity())
                 && Boolean.TRUE.equals(model.getCountThreadsAsCores().getEntity()));
+        cluster.setEnableBallooning(Boolean.TRUE.equals(model.getEnableBallooning().getEntity())
+                && version.compareTo(Version.v3_3) >= 0);
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
         cluster.setcompatibility_version(version);
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());

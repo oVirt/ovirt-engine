@@ -138,6 +138,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Enable Trusted Service")
     String clusterPolicyEnableTrustedServiceLabel();
 
+    @DefaultStringValue("Enable Memory Balloon Optimization")
+    String enableBallooningLabel();
+
+    @DefaultStringValue("Memory Balloon")
+    String ballooningLabelTitle();
+
     @DefaultStringValue("VM network")
     String clusterNewNetworkPopupVmNetworkLabel();
 
