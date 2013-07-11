@@ -18,12 +18,13 @@ public class DiscoverNetworksModel extends ImportNetworksModel {
     }
 
     public void discoverNetworks() {
+        getProviders().setItems(Collections.singletonList(provider));
         getProviders().setSelectedItem(provider);
     }
 
     @Override
     protected void initProviderList() {
-        getProviders().setItems(Collections.singletonList(provider));
+        // do nothing, already have the only provider to be displayed in the list
     }
 
 }
