@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -783,15 +784,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
     }
 
-    private void remove()
-    {
-        if (getConfirmWindow() != null)
-        {
+    private void remove() {
+        if (getConfirmWindow() != null) {
             return;
         }
-
-        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
-        VM vm = (VM) selectedItem.getEntity();
 
         ConfirmationModel confirmModel = new ConfirmationModel();
         setConfirmWindow(confirmModel);
@@ -801,7 +797,10 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         confirmModel.setMessage(ConstantsManager.getInstance().getConstants().virtualMachineMsg());
 
         ArrayList<String> list = new ArrayList<String>();
-        list.add(vm.getName());
+        for (VM vm : getSelectedVms()) {
+            list.add(vm.getName());
+        }
+
         confirmModel.setItems(list);
 
         UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
@@ -814,14 +813,15 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
         getConfirmWindow().getCommands().add(tempVar2);
     }
 
-    private void onRemove()
-    {
-        UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
-        VM vm = (VM) selectedItem.getEntity();
-
+    private void onRemove() {
         getConfirmWindow().startProgress(null);
 
-        Frontend.RunAction(VdcActionType.RemoveVm, new RemoveVmParameters(vm.getId(), false),
+        List<VdcActionParametersBase> paramsList = new ArrayList<VdcActionParametersBase>();
+        for (VM vm : getSelectedVms()) {
+            paramsList.add(new RemoveVmParameters(vm.getId(), false));
+        }
+
+        Frontend.RunMultipleActions(VdcActionType.RemoveVm, paramsList,
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -833,6 +833,23 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                 },
                 this);
 
+    }
+
+    private List<VM> getSelectedVms() {
+        List<VM> vms = new ArrayList<VM>();
+        if (getSelectedItems() == null) {
+            return vms;
+        }
+
+        for (Object selectedItem : getSelectedItems()) {
+            UserPortalItemModel itemModel = (UserPortalItemModel) selectedItem;
+            VM vm = itemModel.getVM();
+            if (vm != null) {
+                vms.add(vm);
+            }
+        }
+
+        return vms;
     }
 
     private void changeCD()
