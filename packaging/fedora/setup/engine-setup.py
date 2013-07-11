@@ -2392,7 +2392,7 @@ def _checkAvailableMemory(interactive):
     availableMemory = int(availableMemory)
     #multiplying CONST_MIN_MEMORY by 0.95 to have tolerance of 5%
     if availableMemory < (basedefs.CONST_MIN_MEMORY_MB * 0.95):
-        reqNotMet = 'Availble memory (%s) is lower then the minimum requirments (%s)' % (
+        reqNotMet = 'Available memory (%s) is lower than the minimum requirements (%s)' % (
            availableMemory,
            basedefs.CONST_MIN_MEMORY_MB,
         )
