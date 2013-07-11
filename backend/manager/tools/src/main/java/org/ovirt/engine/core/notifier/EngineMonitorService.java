@@ -38,7 +38,7 @@ import org.ovirt.engine.core.utils.db.DbUtils;
 /**
  * Class uses to monitor the oVirt Engineanager service by sampling its health servlet. Upon response other than code 200,
  * will report to <i>audit_log</i> table upon ENGINE error. <br>
- * If a server state was change from non-responsive to responsive, will report the status change. <br>
+ * If a server state was change from non responsive to responsive, will report the status change. <br>
  * The monitor service is detached from the notification service, being executed as a separated thread, with different
  * execution rate.
  */
@@ -278,7 +278,7 @@ public class EngineMonitorService implements Runnable {
         if (statusChanged || repeatNonResponsiveNotification)
         {
             if (isResponsive) {
-                // if server is up, report only if its status was changed from non-responsive.
+                // if server is up, report only if its status was changed from non responsive.
                 if (statusChanged) {
                     insertEventIntoAuditLogSafe(AuditLogType.VDC_START,
                             AuditLogSeverity.NORMAL,
@@ -286,18 +286,18 @@ public class EngineMonitorService implements Runnable {
                             "Failed auditing event down (for responsive server).");
                 }
             } else {
-                // reports an error for non-responsive server
+                // reports an error for non responsive server
                 if(new File(pidFile).exists()) {
                     // assumed crash, since the pid file is still there
                     insertEventIntoAuditLogSafe(AuditLogType.VDC_STOP,
                             AuditLogSeverity.ERROR,
                             ENGINE_NOT_RESPONDING_ERROR,
-                            "Failed auditing event up (for crashed non-responsive server).");
+                            "Failed auditing event up (for crashed non responsive server).");
                 } else {
                     insertEventIntoAuditLogSafe(AuditLogType.VDC_STOP,
                             AuditLogSeverity.WARNING,
                             ENGINE_NOT_RESPONDING_ERROR,
-                            "Failed auditing event up (for stopped non-responsive server).");
+                            "Failed auditing event up (for stopped non responsive server).");
                 }
             }
         }

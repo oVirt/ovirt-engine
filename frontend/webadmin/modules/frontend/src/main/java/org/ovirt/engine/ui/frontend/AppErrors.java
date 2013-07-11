@@ -142,10 +142,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Failed set User Role, operation canceled")
     String USER_FAILED_SET_USER_ROLE();
 
-    @DefaultStringValue("Cannot switch Host to Maintenance mode.\nHost still has running VMs on it and is in Non-Responsive state.")
+    @DefaultStringValue("Cannot switch Host to Maintenance mode.\nHost still has running VMs on it and is in Non Responsive state.")
     String VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_WITH_VMS();
 
-    @DefaultStringValue("Cannot switch Host to Maintenance mode.\nHost is Storage Pool Manager and is in Non-Responsive state.\n"
+    @DefaultStringValue("Cannot switch Host to Maintenance mode.\nHost is Storage Pool Manager and is in Non Responsive state.\n"
             +
             "- If power management is configured, engine will try to fence automatically.\n"
             +
@@ -208,7 +208,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot perform Stop operation, Host has to be in Maintenance mode in order to be stopped.")
     String VDS_STATUS_NOT_VALID_FOR_STOP();
 
-    @DefaultStringValue("Cannot perform Start operation, Host has to be in one of the following statuses: Down ,Non-Responsive or Maintenance.")
+    @DefaultStringValue("Cannot perform Start operation, Host has to be in one of the following statuses: Down ,Non Responsive or Maintenance.")
     String VDS_STATUS_NOT_VALID_FOR_START();
 
     @DefaultStringValue("There is no other Host in the Data Center that can be used to test the Power Management settings.")

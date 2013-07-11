@@ -301,7 +301,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     }
 
     /**
-     * If found hosts which are non-responsive and has VM's on them, add the host names to the message.
+     * If found hosts which are non responsive and has VM's on them, add the host names to the message.
      *
      * @param hostNotRespondingList
      *            - List of non responsive hosts with running VM's on them.
