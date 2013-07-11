@@ -12,10 +12,6 @@ public class VdcQueryReturnValue implements Serializable {
     private String _exceptionString;
     private Object returnValue;
 
-    public ValueObject getSerializaedReturnValue() {
-        return ValueObject.createValueObject(returnValue);
-    }
-
     public Object getReturnValue() {
         return returnValue;
     }
