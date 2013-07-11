@@ -121,7 +121,7 @@ public class BackendTemplatesResource
     protected Templates mapCollection(List<VmTemplate> entities) {
         Templates collection = new Templates();
         for (VmTemplate entity : entities) {
-            collection.getTemplates().add(addLinks(map(entity)));
+            collection.getTemplates().add(addLinks(populate(map(entity), entity)));
         }
         return collection;
     }
