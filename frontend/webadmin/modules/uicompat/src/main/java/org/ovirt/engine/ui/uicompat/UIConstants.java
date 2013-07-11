@@ -1747,7 +1747,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
             "(i.e. some disks will be imported to a different Storage Domain).")
     String importNotApplicableForDefaultStorage();
 
-    @DefaultStringValue("One of the templates cannot be found in the system, VM(s) cannot be imported")
+    @DefaultStringValue("VM(s) cannot be imported: One of the templates cannot be found. Please verify that the template exists in both setup and export domain.")
     String errorTemplateCannotBeFoundMessage();
 
     // Import Gluster Cluster
