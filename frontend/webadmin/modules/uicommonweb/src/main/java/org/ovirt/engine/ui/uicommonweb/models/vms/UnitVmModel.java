@@ -1894,10 +1894,7 @@ public class UnitVmModel extends Model {
             {
             case Templates:
             case DataCenter:
-                StoragePool selectDataCenter =
-                        (StoragePool) model.getBehavior().getSystemTreeSelectedItem().getEntity();
-                return findDataCenterById(list, selectDataCenter.getId());
-
+                return (StoragePool) model.getBehavior().getSystemTreeSelectedItem().getEntity();
             case Cluster:
             case Cluster_Gluster:
             case VMs:
