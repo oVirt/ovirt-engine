@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.SerializationExeption;
@@ -38,8 +37,6 @@ public class JsonObjectDeserializer implements Deserializer {
         formattedMapper.getDeserializationConfig().addMixInAnnotations(IVdcQueryable.class,
                 JsonIVdcQueryableMixIn.class);
         formattedMapper.getDeserializationConfig().addMixInAnnotations(VM.class, JsonVmMixIn.class);
-        formattedMapper.getDeserializationConfig().addMixInAnnotations(ValueObjectMap.class,
-                JsonValueObjectMapMixIn.class);
         formattedMapper.getDeserializationConfig().addMixInAnnotations(VdsStatic.class, JsonVdsStaticMixIn.class);
         formattedMapper.getDeserializationConfig().addMixInAnnotations(VDS.class, JsonVDSMixIn.class);
         formattedMapper.getDeserializationConfig().addMixInAnnotations(AddVmTemplateParameters.class,

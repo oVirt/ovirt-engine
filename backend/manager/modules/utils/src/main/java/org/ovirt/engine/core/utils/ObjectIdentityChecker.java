@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.queries.ValueObjectMap;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.IObjectDescriptorContainer;
 import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
@@ -185,7 +184,7 @@ public class ObjectIdentityChecker {
                 Object sourceValue = property.getValue(source, null);
                 Object destinationValue = property.getValue(destination, null);
 
-                if (!(property.isPropertyInstanceOf(ValueObjectMap.class)) && property.getCanWrite()
+                if (property.getCanWrite()
                         && sourceValue != null && !sourceValue.equals(destinationValue)
                         || ((sourceValue == null && destinationValue != null))) {
                     returnValue.add(property.getName());
