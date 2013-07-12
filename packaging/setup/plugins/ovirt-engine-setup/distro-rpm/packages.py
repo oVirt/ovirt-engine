@@ -27,8 +27,10 @@ import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
+from otopi import constants as otopicons
 from otopi import util
 from otopi import plugin
+from otopi import transaction
 
 
 from ovirt_engine_setup import constants as osetupcons
@@ -41,75 +43,113 @@ class Plugin(plugin.PluginBase):
     Package upgrade plugin.
     """
 
-    def _filterVersionLock(self):
-        modified = False
-        content = []
+    class VersionLockTransaction(transaction.TransactionElement):
+        """version lock transaction element.
+        Not that this is real transaction, but we need to
+        rollback/commit same as packager.
+        We cannot actually prepare the transaction at prepration
+        because new packages are not installed.
+        But we must restore file as we do not know what packages
+        were locked at previous version.
+        """
 
-        if os.path.exists(
-            osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK
-        ):
-            with open(
-                osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-            ) as f:
-                for line in f.read().splitlines():
-                    if line.find(
-                        osetupcons.Const.ENGINE_PACKAGE_NAME
-                    ) == -1:
-                        content.append(line)
-                    else:
-                        modified = True
+        def _filterVersionLock(self):
+            modified = False
+            content = []
 
-        return (modified, content)
+            if os.path.exists(
+                osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK
+            ):
+                with open(
+                    osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
+                ) as f:
+                    for line in f.read().splitlines():
+                        if line.find(
+                            osetupcons.Const.ENGINE_PACKAGE_NAME
+                        ) == -1:
+                            content.append(line)
+                        else:
+                            modified = True
+            return (modified, content)
 
-    def _removeMeFromVersionLock(self):
-        modified, content = self._filterVersionLock()
-        if modified:
-            os.rename(
-                osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-                '%s.%s' % (
+        @property
+        def environment(self):
+            return self._parent.environment
+
+        def __init__(self, parent):
+            self._parent = parent
+            self._backup = None
+
+        def __str__(self):
+            return _("Version Lock Transaction")
+
+        def prepare(self):
+            if not self._parent._enabled:
+                return
+
+            modified, content = self._filterVersionLock()
+
+            if modified:
+                self._backup = '%s.%s' % (
                     osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
                     datetime.datetime.now().strftime('%Y%m%d%H%M%S'),
-                ),
+                )
+                os.rename(
+                    osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
+                    self._backup,
+                )
+                with open(
+                    osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
+                    'w'
+                ) as f:
+                    f.write('\n'.join(content)+'\n')
+
+        def abort(self):
+            if (
+                self._backup is not None and
+                os.path.exists(self._backup)
+            ):
+                os.rename(
+                    self._backup,
+                    osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
+                )
+
+        def commit(self):
+            # This must be always execucted so we be sure we
+            # are locked
+
+            # execute rpm directly
+            # yum is not good in offline usage
+            rc, out, err = self._parent.execute(
+                args=[
+                    self._parent.command.get('rpm'),
+                    '-q',
+                ] + osetupcons.Const.RPM_LOCK_LIST,
             )
+
+            self.environment[
+                osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+            ].append(osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK)
+
+            self.environment[
+                osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+            ].createGroup(
+                group='versionlock',
+                description='YUM version locking configuration',
+                optional=False
+            ).addLines(
+                'versionlock',
+                osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
+                out,
+            )
+
+            modified, content = self._filterVersionLock()
+            content.extend(out)
             with open(
                 osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-                'w'
+                'w',
             ) as f:
-                f.write('\n'.join(content)+'\n')
-
-    def _addMeToVersionLock(self):
-        # execute rpm directly
-        # yum is not good in offline usage
-        rc, out, err = self.execute(
-            args=[
-                self.command.get('rpm'),
-                '-q',
-            ] + osetupcons.Const.RPM_LOCK_LIST,
-        )
-
-        self.environment[
-            osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-        ].append(osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK)
-
-        self.environment[
-            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
-        ].createGroup(
-            group='versionlock',
-            description='YUM version locking configuration',
-            optional=False
-        ).addLines(
-            'versionlock',
-            osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-            out,
-        )
-
-        modified, content = self._filterVersionLock()
-        content.extend(out)
-        with open(
-            osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-            'w',
-        ) as f:
-            f.write('\n'.join(content) + '\n')
+                f.write('\n'.join(content) + '\n')
 
     def _getSink(self):
         class MyMiniYumSink(self._miniyum.MiniYumSinkBase):
@@ -239,6 +279,12 @@ class Plugin(plugin.PluginBase):
         if self._distribution in ('redhat', 'fedora', 'centos'):
             self.command.detect('rpm')
 
+            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                self.VersionLockTransaction(
+                    parent=self,
+                )
+            )
+
             from otopi import miniyum
             self._miniyum = miniyum
             self._enabled = True
@@ -254,6 +300,9 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _customization(self):
+        # assume we have nothing to do
+        self._enabled = False
+
         upgradeAvailable = None
         haveRollback = None
 
@@ -303,7 +352,9 @@ class Plugin(plugin.PluginBase):
                     haveRollback,
                 ) = self._checkForProductUpdate()
 
-            if upgradeAvailable:
+            if not upgradeAvailable:
+                self.dialog.note(text=_('No update is available'))
+            else:
                 if not haveRollback:
                     if self.environment[
                         osetupcons.RPMDistroEnv.REQUIRE_ROLLBACK
@@ -332,21 +383,9 @@ class Plugin(plugin.PluginBase):
                             _('Package rollback information is unavailable')
                         )
 
-        self._enabled = self.environment[
-            osetupcons.RPMDistroEnv.ENABLE_UPGRADE
-        ]
-
-        if not upgradeAvailable:
-            self.dialog.note(text=_('No update is available'))
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_TRANSACTION_BEGIN,
-        priority=plugin.Stages.PRIORITY_HIGH,
-        condition=lambda self: self._enabled,
-    )
-    def transactionBegin(self):
-        self._shouldResultVersionLock = True
-        self._removeMeFromVersionLock()
+                self._enabled = self.environment[
+                    osetupcons.RPMDistroEnv.ENABLE_UPGRADE
+                ]
 
     @plugin.event(
         stage=plugin.Stages.STAGE_PACKAGES,
@@ -361,13 +400,6 @@ class Plugin(plugin.PluginBase):
             self.packager.update(
                 packages=(osetupcons.Const.ENGINE_PACKAGE_NAME,),
             )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_CLEANUP,
-        condition=lambda self: self._shouldResultVersionLock,
-    )
-    def cleanup(self):
-        self._addMeToVersionLock()
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
