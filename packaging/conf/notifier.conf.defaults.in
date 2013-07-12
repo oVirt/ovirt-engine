@@ -11,7 +11,7 @@ JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64
 #
 # The location of the application server used by the engine:
 #
-JBOSS_HOME=/usr/share/jboss-as
+JBOSS_HOME="@JBOSS_HOME@"
 
 #
 # Important directories used by the engine:
