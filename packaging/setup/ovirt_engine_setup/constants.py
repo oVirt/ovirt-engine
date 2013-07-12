@@ -29,8 +29,6 @@ from otopi import util
 
 
 from . import config
-from . import branding
-branding = branding.branding  # python-2.6 workaround
 
 
 def osetupattrsclass(o):
@@ -546,9 +544,9 @@ class Const(object):
 
     ENGINE_URI = '/ovirt-engine'
 
-    ENGINE_PACKAGE_NAME = branding.getMessage('package_name')
+    ENGINE_PACKAGE_NAME = 'ovirt-engine'
     ENGINE_PACKAGE_SETUP_NAME = '%s-setup' % ENGINE_PACKAGE_NAME
-    UPGRADE_YUM_GROUP = branding.getMessage('upgrade_yum_group')
+    UPGRADE_YUM_GROUP = 'ovirt-engine-3.3'
 
     @classproperty
     def RPM_LOCK_LIST(self):
