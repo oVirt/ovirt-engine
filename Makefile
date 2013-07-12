@@ -275,7 +275,6 @@ copy-recursive:
 		cd "$(SOURCEDIR)" && find . -type f -printf '%P\n' | \
 		while read f; do \
 			exclude=false; \
-			set -x; \
 			for x in $(EXCLUDE_GEN); do \
 				if [ "$(SOURCEDIR)/$${f}" = "$${x}.in" ]; then \
 					exclude=true; \
@@ -289,7 +288,6 @@ copy-recursive:
 				fi; \
 			done; \
 			$${exclude} || echo "$${f}"; \
-			set +x; \
 		done \
 	) | while read f; do \
 		[ -x "$(SOURCEDIR)/$${f}" ] && MASK=0755 || MASK=0644; \
