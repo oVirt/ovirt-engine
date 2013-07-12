@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -23,6 +24,13 @@ public abstract class NetworkCommon<T extends AddNetworkStoragePoolParameters> e
 
     public String getNetworkName() {
         return getNetwork().getName();
+    }
+
+    protected void removeVnicProfiles() {
+        List<VnicProfile> profiles = getVnicProfileDao().getAllForNetwork(getNetwork().getId());
+        for (VnicProfile vnicProfile : profiles) {
+            getVnicProfileDao().remove(vnicProfile.getId());
+        }
     }
 
     @Override
