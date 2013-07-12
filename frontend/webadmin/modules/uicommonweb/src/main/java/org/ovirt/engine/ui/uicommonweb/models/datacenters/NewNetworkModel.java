@@ -122,7 +122,6 @@ public class NewNetworkModel extends NetworkModel {
                 postSaveAction(succeeded ? (Guid) retVal.getActionReturnValue()
                         : null,
                         succeeded);
-
             }
         };
 
@@ -139,7 +138,6 @@ public class NewNetworkModel extends NetworkModel {
         } else {
             final AddNetworkStoragePoolParameters parameters =
                     new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork());
-            parameters.setPublicUse((Boolean) getPublicUse().getEntity());
             Frontend.RunAction(VdcActionType.AddNetwork,
                     parameters,
                     addNetworkCallback,

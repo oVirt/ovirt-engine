@@ -13,8 +13,6 @@ public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
     @NotNull
     private Network network;
 
-    private boolean publicUse;
-
     public AddNetworkStoragePoolParameters() {
     }
 
@@ -25,13 +23,5 @@ public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
 
     public Network getNetwork() {
         return network;
-    }
-
-    public void setPublicUse(boolean publicUse) {
-        this.publicUse = publicUse;
-    }
-
-    public boolean isPublicUse() {
-        return publicUse;
     }
 }

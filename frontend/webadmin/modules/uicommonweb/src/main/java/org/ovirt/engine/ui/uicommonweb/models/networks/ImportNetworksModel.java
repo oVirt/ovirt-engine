@@ -164,7 +164,6 @@ public class ImportNetworksModel extends Model {
             externalNetwork.getNetwork().setDataCenterId(dcId);
             AddNetworkStoragePoolParameters params =
                     new AddNetworkStoragePoolParameters(dcId, externalNetwork.getNetwork());
-            params.setPublicUse(externalNetwork.isPublicUse());
             mulipleActionParameters.add(params);
         }
 
