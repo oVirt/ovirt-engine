@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ISingleAsyncOperation;
 import org.ovirt.engine.core.utils.SyncronizeNumberOfAsyncOperations;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -64,8 +63,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         /**
          * Detach master storage domain last.
          */
-        List<StorageDomain> storageDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(
-                    getStoragePool().getId());
+        List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
         Collections.sort(storageDomains, new Comparator<StorageDomain>() {
             @Override
             public int compare(StorageDomain o1, StorageDomain o2) {
@@ -95,11 +93,10 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
             @Override
             public Void runInTransaction() {
-                final List<Network> networks = DbFacade.getInstance().getNetworkDao()
-                        .getAllForDataCenter(getStoragePoolId());
+                final List<Network> networks = getNetworkDAO().getAllForDataCenter(getStoragePoolId());
                 for (final Network net : networks) {
                     getCompensationContext().snapshotEntity(net);
-                    DbFacade.getInstance().getNetworkDao().remove(net.getId());
+                    getNetworkDAO().remove(net.getId());
                 }
                 getCompensationContext().stateChanged();
                 return null;
@@ -139,9 +136,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             public Void runInTransaction() {
                 getCompensationContext().snapshotEntity(masterDomain.getStoragePoolIsoMapData());
                 masterDomain.setStatus(StorageDomainStatus.Locked);
-                DbFacade.getInstance()
-                        .getStoragePoolIsoMapDao()
-                        .update(masterDomain.getStoragePoolIsoMapData());
+                getDbFacade().getStoragePoolIsoMapDao().update(masterDomain.getStoragePoolIsoMapData());
                 getCompensationContext().stateChanged();
                 return null;
             }
@@ -171,7 +166,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             public Void runInTransaction() {
                 getCompensationContext().snapshotEntity(masterDomain.getStorageStaticData());
                 masterDomain.setStorageDomainType(StorageDomainType.Data);
-                DbFacade.getInstance().getStorageDomainStaticDao().update(masterDomain.getStorageStaticData());
+                getDbFacade().getStorageDomainStaticDao().update(masterDomain.getStorageStaticData());
                 getCompensationContext().stateChanged();
                 return null;
             }
@@ -251,7 +246,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                 // as it will be impossible to remove it.
                 StorageHelperDirector.getInstance().getItem(domain.getStorageType())
                         .storageDomainRemoved(domain.getStorageStaticData());
-                DbFacade.getInstance().getStorageDomainDao().remove(domain.getId());
+                getStorageDomainDAO().remove(domain.getId());
                 return null;
             }
         });
@@ -316,10 +311,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             for (StorageDomain domain : poolDomains) {
                 // check that there are no images on data domains
                 if ((domain.getStorageDomainType() == StorageDomainType.Data || domain.getStorageDomainType() == StorageDomainType.Master)
-                        && DbFacade.getInstance()
-                                .getDiskImageDao()
-                                .getAllSnapshotsForStorageDomain(domain.getId())
-                                .size() != 0) {
+                        && getDbFacade().getDiskImageDao().getAllSnapshotsForStorageDomain(domain.getId()).size() != 0) {
                     return failCanDoAction(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_POOL_WITH_IMAGES);
                 }
             }
