@@ -12,6 +12,7 @@ public class RemoveNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected void executeCommand() {
+        removeVnicProfiles();
         getNetworkDAO().remove(getNetwork().getId());
         setSucceeded(true);
     }
