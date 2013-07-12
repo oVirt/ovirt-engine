@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -95,6 +96,11 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             public Void runInTransaction() {
                 final List<Network> networks = getNetworkDAO().getAllForDataCenter(getStoragePoolId());
                 for (final Network net : networks) {
+                    List<VnicProfile> profiles = getDbFacade().getVnicProfileDao().getAllForNetwork(net.getId());
+                    for (VnicProfile vnicProfile : profiles) {
+                        getCompensationContext().snapshotEntity(vnicProfile);
+                        getDbFacade().getVnicProfileDao().remove(vnicProfile.getId());
+                    }
                     getCompensationContext().snapshotEntity(net);
                     getNetworkDAO().remove(net.getId());
                 }

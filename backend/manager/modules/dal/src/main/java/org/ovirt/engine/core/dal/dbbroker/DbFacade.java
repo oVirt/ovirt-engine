@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
@@ -157,6 +158,7 @@ public class DbFacade {
             put(Image.class, ImageDao.class);
             put(Job.class, JobDao.class);
             put(Step.class, StepDao.class);
+            put(VnicProfile.class, VnicProfileDao.class);
         }
     };
 
