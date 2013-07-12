@@ -14,6 +14,7 @@ import tempfile
 import cracklib
 import uuid
 import socket
+import sys
 
 
 def validateNFSMountPoint(param, options=[]):
@@ -138,7 +139,7 @@ def ensurePortPreCondition(param, options=[]):
     if "Disabled" in out:
         logging.debug("SELINUX was found in disabled mode")
         print output_messages.MSG_ENABLE_SELINUX
-        return False
+        sys.exit(1)
     #Need httpd stopped for later port validation
     logging.debug("stopping httpd service")
     utils.Service(basedefs.HTTPD_SERVICE_NAME).stop()

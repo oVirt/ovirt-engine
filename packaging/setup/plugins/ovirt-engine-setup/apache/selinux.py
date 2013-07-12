@@ -42,6 +42,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_SETUP,
     )
     def _setup(self):
+        self.command.detect('selinuxenabled')
         self.command.detect('semanage')
         self._enabled = not self.environment[
             osetupcons.CoreEnv.DEVELOPER_MODE
@@ -52,8 +53,16 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _validation(self):
-        if self.command.get('semanage', optional=True) is None:
+        if self.command.get('selinuxenabled', optional=True) is None:
             self._enabled = False
+        else:
+            rc, stdout, stderr = self.execute(
+                (
+                    self.command.get('selinuxenabled'),
+                ),
+                raiseOnError=False,
+            )
+            self._enabled = rc == 0
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
