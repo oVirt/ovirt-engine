@@ -574,6 +574,7 @@ fi
 
 %pre setup
 %create_vdsm_user
+%create_engine_user
 
 
 %pre tools
