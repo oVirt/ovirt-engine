@@ -68,6 +68,7 @@ class Plugin(plugin.PluginBase):
                 '-nodes',
                 '-nocerts',
             ),
+            logStreams=False,
         )
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
