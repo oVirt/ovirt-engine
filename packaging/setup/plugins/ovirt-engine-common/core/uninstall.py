@@ -36,6 +36,7 @@ from ovirt_engine_setup import constants as osetupcons
 
 
 class RegisterGroups(object):
+
     def __init__(self, environment):
         super(RegisterGroups, self).__init__()
         self.environment = environment
@@ -64,10 +65,10 @@ class RegisterGroups(object):
             osetupcons.CoreEnv.FILE_GROUP_PREFIX + group
         ].append(fileList)
 
-    def addLines(self, group, filename, lines):
+    def addChanges(self, group, filename, changes):
         self.environment[
             osetupcons.CoreEnv.LINES_GROUP_PREFIX + group
-        ].setdefault(filename, []).extend(lines)
+        ].setdefault(filename, []).extend(changes)
 
 
 @util.export
@@ -129,12 +130,12 @@ class Plugin(plugin.PluginBase):
                         self._digestFile(name),
                     )
 
-        def _addLines(section, changes):
+        def _addChanges(section, changes):
             for file_index, filename in enumerate(
                 sorted(set(changes))
             ):
                 for line_index, content in enumerate(
-                    sorted(set(changes[filename]))
+                    sorted(list(changes[filename]))
                 ):
                     if os.path.exists(filename):
                         prefix = 'line.{file_index:03}{line_index:03}'.format(
@@ -146,12 +147,18 @@ class Plugin(plugin.PluginBase):
                             prefix + '.name',
                             filename,
                         )
-                        config.set(
-                            section,
-                            prefix + '.content',
-                            content,
-                        )
-
+                        if 'added' in content:
+                            config.set(
+                                section,
+                                prefix + '.content.added',
+                                content['added'],
+                            )
+                        if 'removed' in content:
+                            config.set(
+                                section,
+                                prefix + '.content.removed',
+                                content['removed'],
+                            )
         if self.environment[
             otopicons.CoreEnv.MODIFIED_FILES
         ]:
@@ -227,7 +234,7 @@ class Plugin(plugin.PluginBase):
                     group_config['description'],
                     group_config['optional'],
                 )
-                _addLines(
+                _addChanges(
                     osetupcons.Const.FILE_GROUP_SECTION_PREFIX + section,
                     changes,
                 )

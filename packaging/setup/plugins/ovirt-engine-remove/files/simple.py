@@ -68,13 +68,29 @@ class Plugin(plugin.PluginBase):
                 )
             )
 
-    def _cleanLines(self, filename, remove_lines):
+    def _revertChanges(self, filename, changes):
         new_content = []
         with open(filename, 'r') as f:
             old_content = f.read().splitlines()
+        just_remove = []
+        just_add = []
+        replace = {}
+
+        for c in changes:
+            if not 'removed' in c:
+                just_remove.append(c['added'])
+            elif not 'added' in c:
+                just_add.append(c['removed'])
+            else:
+                replace[c['added']] = c['removed']
         for line in old_content:
-            if line not in remove_lines:
+            if line not in just_remove:
+                #should be updated or added
+                if line in replace:
+                    line = replace[line]
                 new_content.append(line)
+        new_content.extend(just_add)
+
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=filename,
@@ -195,16 +211,41 @@ class Plugin(plugin.PluginBase):
             def getLines(section):
                 associated_lines = {}
                 aggregated_lines = {}
+                #line.{file_index:03}{line_index:03}.name
+                #line.{file_index:03}{line_index:03}.content.added
+                #line.{file_index:03}{line_index:03}.content.removed
                 for name, value in config.items(section):
                     comps = name.split('.')
                     if comps[0] == 'line':
-                        associated_lines.setdefault(
-                            comps[1], {}
-                        )[comps[2]] = value
+
+                        index = comps[1]        # '00001', '00002', etc
+                        line_type = comps[2]    # 'name' or 'content'
+
+                        # TODO: Remove the following 'if' for 3.4.
+                        # It supports the format that was in the development
+                        # tree prior to merging http://gerrit.ovirt.org/16768
+                        if len(comps) == 3 and line_type == 'content':
+                            comps.append('added')
+
+                        if line_type == 'content':
+                            action = comps[3]   # 'added' or 'removed'
+
+                        associated_lines.setdefault(index, {})
+                        if line_type == 'name':
+                            associated_lines[index][line_type] = value
+                        elif line_type == 'content':
+                            associated_lines[index].setdefault(line_type, {})[
+                                action
+                            ] = value
+
                 for f in associated_lines.values():
                     aggregated_lines.setdefault(
                         f['name'], []
                     ).append(f['content'])
+                self.logger.debug(
+                    'getLines: aggregated_lines = %s',
+                    aggregated_lines,
+                )
                 return aggregated_lines
 
             for uninstall_group in [
@@ -245,10 +286,10 @@ class Plugin(plugin.PluginBase):
         priority=plugin.Stages.PRIORITY_LOW,
     )
     def _misc(self):
-        self.logger.info(_('Removing added lines'))
+        self.logger.info(_('Reverting changes to files'))
         for f in self._tomodifylines:
             if os.path.exists(f):
-                self._cleanLines(f, self._lines[f])
+                self._revertChanges(f, self._lines[f])
         self.logger.info(_('Removing files'))
         for f in self._toremove:
             if os.path.exists(f):

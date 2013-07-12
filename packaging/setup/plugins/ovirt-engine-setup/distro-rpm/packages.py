@@ -126,7 +126,13 @@ class Plugin(plugin.PluginBase):
                     '-q',
                 ) + osetupcons.Const.RPM_LOCK_LIST,
             )
-
+            changes = []
+            for line in out:
+                changes.append(
+                    {
+                        'added': line,
+                    }
+                )
             self.environment[
                 osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
             ].append(osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK)
@@ -137,10 +143,10 @@ class Plugin(plugin.PluginBase):
                 group='versionlock',
                 description='YUM version locking configuration',
                 optional=False
-            ).addLines(
+            ).addChanges(
                 'versionlock',
                 osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
-                out,
+                changes,
             )
 
             modified, content = self._filterVersionLock()
