@@ -57,14 +57,20 @@ class Plugin(plugin.PluginBase):
         for line in content.splitlines():
             f = self._RE_PARAM.match(line)
             if f is not None and f.group('param') in params:
-                line = '{spaces}{param} {value}'.format(
+                newline = '{spaces}{param} {value}'.format(
                     spaces=f.group('spaces'),
                     param=f.group('param'),
                     value=params[f.group('param')],
                 )
+                self._changed_lines.append(
+                    {
+                        'added': newline,
+                        'removed': line,
+                    }
+                )
+                line = newline
             newcontent.append(line)
-
-        return '\n'.join(newcontent) + '\n'
+        return newcontent
 
     def _findMissingParams(self, params, content):
         missingParams = params.keys()
@@ -92,6 +98,7 @@ class Plugin(plugin.PluginBase):
                 osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT
             ),
         }
+        self._changed_lines = []
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -216,10 +223,18 @@ class Plugin(plugin.PluginBase):
                     self._params,
                     self._sslData
                 ),
-                modifiedList=self.environment[
-                    otopicons.CoreEnv.MODIFIED_FILES
-                ],
             )
+        )
+        self.environment[
+            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+        ].createGroup(
+            group='ssl',
+            description='Apache SSL configuration',
+            optional=True
+        ).addChanges(
+            'ssl',
+            self.environment[osetupcons.ApacheEnv.HTTPD_CONF_SSL],
+            self._changed_lines,
         )
         self.environment[
             osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
