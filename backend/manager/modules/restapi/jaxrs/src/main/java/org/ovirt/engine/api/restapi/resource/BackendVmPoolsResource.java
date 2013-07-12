@@ -33,7 +33,7 @@ public class BackendVmPoolsResource
     static final String SUB_COLLECTION = "permissions";
 
     public BackendVmPoolsResource() {
-        super(VmPool.class, org.ovirt.engine.core.common.businessentities.VmPool.class);
+        super(VmPool.class, org.ovirt.engine.core.common.businessentities.VmPool.class, SUB_COLLECTION);
     }
 
     @Override
