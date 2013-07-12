@@ -2005,7 +2005,9 @@ public class UnitVmModel extends Model {
                 }
             };
 
-            AsyncDataProvider.getOsMaxRam(osType, ((VDSGroup) getSelectedCluster()).getcompatibility_version(), asyncQuery);
+            if (getSelectedCluster() != null) {
+                AsyncDataProvider.getOsMaxRam(osType, ((VDSGroup) getSelectedCluster()).getcompatibility_version(), asyncQuery);
+            }
         }
 
         if (getIsAutoAssign().getEntity() != null && ((Boolean) getIsAutoAssign().getEntity()) == false) {
