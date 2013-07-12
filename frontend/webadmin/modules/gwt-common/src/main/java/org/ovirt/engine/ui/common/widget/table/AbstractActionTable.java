@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
@@ -100,10 +101,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     private int tableContainerHorizontalScrollPosition = 0;
 
     public AbstractActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
-            Resources resources, Resources headerResources, EventBus eventBus) {
+            Resources resources, Resources headerResources, EventBus eventBus, ClientStorage clientStorage) {
         super(dataProvider, eventBus);
         this.selectionModel = new OrderedMultiSelectionModel<T>(dataProvider);
-
         this.table = new ActionCellTable<T>(dataProvider, resources) {
 
             @Override
@@ -218,6 +218,13 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
         // Default to 'no items to display'
         this.table.setEmptyTableWidget(new NoItemsLabel());
+
+        // column resizing persistence -- can be enabled only when the tableHeader widget is visible
+        if (isTableHeaderVisible()) {
+            tableHeader.enableColumnWidthPersistence(clientStorage, dataProvider.getModel());
+            table.enableColumnWidthPersistence(clientStorage, dataProvider.getModel());
+        }
+
     }
 
     protected void updateTableControls() {
@@ -343,7 +350,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         // Attach table widget to the corresponding panel
         tableContainer.setWidget(table);
         tableHeaderContainer.setWidget(tableHeader);
-        tableHeaderContainer.setVisible(!showDefaultHeader);
+        tableHeaderContainer.setVisible(isTableHeaderVisible());
 
         // Use relative positioning for tableHeader, in order to align it with main table
         tableHeader.getElement().getStyle().setPosition(Position.RELATIVE);
@@ -509,7 +516,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
      */
     public void enableColumnResizing() {
         // Column resizing is supported only when the tableHeader widget is visible
-        if (!showDefaultHeader) {
+        if (isTableHeaderVisible()) {
             table.enableColumnResizing();
             tableHeader.enableColumnResizing();
         }
@@ -553,6 +560,10 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     public String getContentTableElementId() {
         return table.getElementId();
+    }
+
+    boolean isTableHeaderVisible() {
+        return !showDefaultHeader;
     }
 
 }

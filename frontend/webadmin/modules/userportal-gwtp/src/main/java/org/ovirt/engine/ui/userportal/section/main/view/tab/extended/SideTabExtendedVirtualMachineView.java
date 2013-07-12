@@ -95,6 +95,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         return new UserPortalSimpleActionTable<UserPortalItemModel>(modelProvider,
                 getTableResources(),
                 ClientGinjectorProvider.getEventBus(),
+                ClientGinjectorProvider.getClientStorage(),
                 new UserPortalRefreshManager(modelProvider,
                         ClientGinjectorProvider.getEventBus(),
                         ClientGinjectorProvider.getClientStorage()));

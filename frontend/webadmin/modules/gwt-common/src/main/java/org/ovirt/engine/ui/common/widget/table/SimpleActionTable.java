@@ -54,8 +54,9 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     }
 
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
-            EventBus eventBus, AbstractRefreshManager<RefreshPanel> refreshManager) {
-        this(dataProvider, null, null, eventBus, refreshManager);
+            EventBus eventBus, ClientStorage clientStorage,
+            AbstractRefreshManager<RefreshPanel> refreshManager) {
+        this(dataProvider, null, null, eventBus, clientStorage, refreshManager);
     }
 
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
@@ -64,22 +65,23 @@ public class SimpleActionTable<T> extends AbstractActionTable<T> {
     }
 
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
-            Resources resources, EventBus eventBus,
+            Resources resources, EventBus eventBus, ClientStorage clientStorage,
             AbstractRefreshManager<RefreshPanel> refreshManager) {
-        this(dataProvider, resources, null, eventBus, refreshManager);
+        this(dataProvider, resources, null, eventBus, clientStorage, refreshManager);
     }
 
     public SimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerResources,
             EventBus eventBus, ClientStorage clientStorage) {
-        this(dataProvider, resources, headerResources, eventBus,
+        this(dataProvider, resources, headerResources, eventBus, clientStorage,
                 new SimpleRefreshManager(dataProvider, eventBus, clientStorage));
     }
 
     public SimpleActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerResources,
-            EventBus eventBus, AbstractRefreshManager<RefreshPanel> refreshManager) {
-        super(dataProvider, resources, headerResources, eventBus);
+            EventBus eventBus, ClientStorage clientStorage,
+            AbstractRefreshManager<RefreshPanel> refreshManager) {
+        super(dataProvider, resources, headerResources, eventBus, clientStorage);
         this.refreshPanel = refreshManager.getRefreshPanel();
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         initStyles();

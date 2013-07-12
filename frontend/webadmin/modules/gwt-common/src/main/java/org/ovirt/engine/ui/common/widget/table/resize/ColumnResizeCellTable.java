@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlCellWithTooltip;
+import org.ovirt.engine.ui.uicommonweb.models.GridController;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
@@ -35,11 +37,25 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     private int minimumColumnWidth = DEFAULT_MINIMUM_COLUMN_WIDTH;
 
+    // Prefix for keys used to store widths of individual columns
+    private static final String GRID_COLUMN_WIDTH_PREFIX = "GridColumnWidth"; //$NON-NLS-1$
+
+
     // Empty, no-width column used with resizable columns feature
     // that occupies remaining horizontal space within the table
     private Column<T, ?> emptyNoWidthColumn;
 
     private boolean columnResizingEnabled = false;
+    private boolean columnResizePersistenceEnabled = false;
+
+    // used to store column width preferences
+    private ClientStorage clientStorage;
+
+    // used to store column width preferences
+    private GridController gridController;
+
+    // used to prevent default column widths from overriding persisted column widths
+    private final List<Column<T, ?>> initializedColumns = new ArrayList<Column<T, ?>>();
 
     public ColumnResizeCellTable() {
         super();
@@ -145,6 +161,17 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         setColumnWidth(column, width);
     }
 
+    /**
+     * Removes a column.
+     *
+     */
+    @Override
+    public void removeColumn(int index) {
+        Column<T, ?> column = getColumn(index);
+        super.removeColumn(index);
+        initializedColumns.remove(column);
+    }
+
     Header<?> createHeader(Column<T, ?> column, String headerTextOrHtml, boolean allowHtml) {
         SafeHtml headerHtml = allowHtml ? SafeHtmlUtils.fromSafeConstant(headerTextOrHtml)
                 : SafeHtmlUtils.fromString(headerTextOrHtml);
@@ -198,6 +225,14 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     @Override
     public void setColumnWidth(Column<T, ?> column, String width) {
+        if (columnResizePersistenceEnabled && !initializedColumns.contains(column)) {
+            String persistedWidth = readColumnWidth(column);
+            if (persistedWidth != null) {
+                width = persistedWidth;
+            }
+            initializedColumns.add(column);
+        }
+
         super.setColumnWidth(column, width);
 
         if (columnResizingEnabled) {
@@ -260,6 +295,11 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
         // Redraw the table
         redraw();
+
+        if (columnResizePersistenceEnabled) {
+            String width = getColumnWidth(column);
+            saveColumnWidth(column, width);
+        }
     }
 
     @Override
@@ -274,6 +314,45 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     public void setMinimumColumnWidth(int minimumColumnWidth) {
         this.minimumColumnWidth = minimumColumnWidth;
+    }
+
+    /**
+     * Enables saving this table's column widths to LocalStorage (or a cookie if LocalStorage unsupported).
+     * @param clientStorage
+     * @param gridController
+     */
+    public void enableColumnWidthPersistence(ClientStorage clientStorage, GridController gridController) {
+        this.clientStorage = clientStorage;
+        this.gridController = gridController;
+        if (clientStorage != null && gridController != null) {
+            columnResizePersistenceEnabled = true;
+        }
+    }
+
+    protected String getColumnWidthKey(Column<T, ?> column) {
+        if (columnResizePersistenceEnabled) {
+            return GRID_COLUMN_WIDTH_PREFIX + "_" + gridController.getId() + "_" + getColumnIndex(column); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        return null;
+    }
+
+    protected void saveColumnWidth(Column<T, ?> column, String width) {
+        if (columnResizePersistenceEnabled) {
+            String key = getColumnWidthKey(column);
+            if (key != null) {
+                clientStorage.setLocalItem(key, width);
+            }
+        }
+    }
+
+    protected String readColumnWidth(Column<T, ?> column) {
+        if (columnResizePersistenceEnabled) {
+            String key = getColumnWidthKey(column);
+            if (key != null) {
+                return clientStorage.getLocalItem(key);
+            }
+        }
+        return null;
     }
 
 }

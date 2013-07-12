@@ -33,8 +33,9 @@ public class UserPortalSimpleActionTable<T> extends SimpleActionTable<T> {
     public UserPortalSimpleActionTable(SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources,
             EventBus eventBus,
+            ClientStorage clientStorage,
             AbstractRefreshManager<RefreshPanel> refreshManager) {
-        super(dataProvider, resources, eventBus, refreshManager);
+        super(dataProvider, resources, eventBus, clientStorage, refreshManager);
     }
 
     @Override
