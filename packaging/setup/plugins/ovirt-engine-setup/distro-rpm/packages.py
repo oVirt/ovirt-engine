@@ -271,7 +271,7 @@ class Plugin(plugin.PluginBase):
                     dialog=self.dialog,
                     name='OVESETUP_RPMDISTRO_PACKAGE_UPGRADE',
                     note=_(
-                        'Setup has found packages to be upgrade, '
+                        'Setup has found packages to be upgraded, '
                         'do you wish to upgrade them now? '
                         '(@VALUES@) [@DEFAULT@]: '
                     ),
@@ -288,7 +288,7 @@ class Plugin(plugin.PluginBase):
             ):
                 self.logger.error(
                     _(
-                        'An upgrade for the etup package was found. '
+                        'An upgrade for the setup package was found. '
                         'Please upgrade that package and the execute '
                         'setup again. Package name is {package}.'
                     ).format(
