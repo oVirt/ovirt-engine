@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -31,7 +32,19 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         for (NetworkCluster clusterAttachment : getNetworkClusterDAO().getAllForNetwork(getNetwork().getId())) {
             NetworkClusterHelper.setStatus(clusterAttachment.getClusterId(), getNetwork());
         }
+
+        if (networkChangedToNonVmNetwork()) {
+            List<VnicProfile> profiles = getVnicProfileDao().getAllForNetwork(getNetwork().getId());
+            for (VnicProfile vnicProfile : profiles) {
+                getVnicProfileDao().remove(vnicProfile.getId());
+            }
+        }
+
         setSucceeded(true);
+    }
+
+    private boolean networkChangedToNonVmNetwork() {
+        return getOldNetwork().isVmNetwork() && !getNetwork().isVmNetwork();
     }
 
     @Override
