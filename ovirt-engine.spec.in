@@ -191,11 +191,6 @@ Requires: ovirt-iso-uploader >= 3.3.0
 Requires: ovirt-image-uploader >= 3.3.0
 Requires: ovirt-log-collector >= 3.3.0
 
-# Make sure that obsolete subpackages are removed:
-Obsoletes: %{name}-genericapi
-Obsoletes: %{name}-notification-service
-Obsoletes: %{name}-tools-common
-Obsoletes: %{name}-config
 
 %description
 %{product_name} is a feature-rich server virtualization management
@@ -308,6 +303,16 @@ Requires(post): systemd
 Requires(preun): systemd
 Requires(postun): systemd
 %endif
+
+# Make sure that obsolete subpackages are removed:
+Obsoletes: %{name}-config < 3.3.0
+Obsoletes: %{name}-genericapi < 3.3.0
+Obsoletes: %{name}-notification-service < 3.3.0
+Obsoletes: %{name}-tools-common < 3.3.0
+Provides: %{name}-config = %{version}-%{release}
+Provides:  %{name}-genericapi = %{version}-%{release}
+Provides: %{name}-notification-service = %{version}-%{release}
+Provides: %{name}-tools-common = %{version}-%{release}
 
 %description tools
 %{product_name_short} Tools
