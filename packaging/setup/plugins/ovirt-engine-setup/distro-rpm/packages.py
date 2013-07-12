@@ -387,6 +387,11 @@ class Plugin(plugin.PluginBase):
                     osetupcons.RPMDistroEnv.ENABLE_UPGRADE
                 ]
 
+        if not self._enabled and upgradeAvailable:
+            raise RuntimeError(
+                _('Aborted, packages must be updated')
+            )
+
     @plugin.event(
         stage=plugin.Stages.STAGE_PACKAGES,
         condition=lambda self: self._enabled,
