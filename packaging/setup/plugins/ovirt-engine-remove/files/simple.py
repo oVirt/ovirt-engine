@@ -165,7 +165,7 @@ class Plugin(plugin.PluginBase):
                         self.environment[
                             osetupcons.CoreEnv.
                             UNINSTALL_ENABLED_FILE_GROUPS
-                        ] += group + ','
+                        ] += ',' + group
 
             def getFiles(section):
                 files = {}
