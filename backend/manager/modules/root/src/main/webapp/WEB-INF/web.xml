@@ -198,6 +198,7 @@
     <servlet-name>RegisterServlet</servlet-name>
     <url-pattern>/OvirtEngineWeb/register</url-pattern>
     <url-pattern>/OvirtEngineWeb/VdsAutoRegistration.aspx</url-pattern>
+    <url-pattern>/RHEVManagerWeb/VdsAutoRegistration.aspx</url-pattern>
   </servlet-mapping>
 
   <!-- Servlet used by external applications (the notification service
