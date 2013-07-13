@@ -52,7 +52,9 @@ class OvirtWebSocketProxy(websockify.WebSocketProxy):
         target_host and target_port if successful and sets an ssl_target
         flag.
         """
-        connection_data = json.loads(urllib.unquote(self._ticketDecoder.decode(path[1:])))
+        connection_data = json.loads(
+            urllib.unquote(self._ticketDecoder.decode(path[1:]))
+        )
         target_host = connection_data['host'].encode('utf8')
         target_port = connection_data['port'].encode('utf8')
         self.ssl_target = connection_data['ssl_target']
