@@ -76,9 +76,13 @@ public class VmReplicateDiskStartTaskHandler extends AbstractSPMAsyncTaskHandler
                         getEnclosingCommand().getParameters().getDestinationImageId()
                 );
 
-        VDSReturnValue ret =
-                ResourceManager.getInstance().runVdsCommand(VDSCommandType.VmReplicateDiskFinish, migrationStartParams);
-        if (!ret.getSucceeded()) {
+        try {
+            VDSReturnValue ret = ResourceManager.getInstance().runVdsCommand(
+                    VDSCommandType.VmReplicateDiskFinish, migrationStartParams);
+            if (!ret.getSucceeded()) {
+                getEnclosingCommand().preventRollback();
+            }
+        } catch (RuntimeException e) {
             getEnclosingCommand().preventRollback();
         }
     }
