@@ -7,7 +7,6 @@ import org.ovirt.engine.core.bll.AsyncTaskManager;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -49,54 +48,53 @@ public abstract class MemoryImageRemover {
 
         if (guids.size() == 6) {
 
-            Guid taskId1 = enclosingCommand.persistAsyncTaskPlaceHolder(VmCommand.DELETE_PRIMARY_IMAGE_TASK_KEY);
-            // delete first image
-            // the next 'DeleteImageGroup' command should also take care of the image removal:
-            VDSReturnValue vdsRetValue =
-                    Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.DeleteImageGroup,
-                            buildDeleteMemoryImageParams(guids));
-
-            if (!vdsRetValue.getSucceeded()) {
+            Guid guid1 = removeMemoryImage(guids);
+            if (guid1 == null) {
                 return false;
             }
 
-            Guid guid1 =
-                    enclosingCommand.createTask(taskId1, vdsRetValue.getCreationInfo(),
-                            enclosingCommand.getActionType(), VdcObjectType.Storage, guids.get(0));
-            enclosingCommand.getTaskIdList().add(guid1);
-
-            Guid taskId2 = enclosingCommand.persistAsyncTaskPlaceHolder(VmCommand.DELETE_SECONDARY_IMAGES_TASK_KEY);
-            // delete second image
-            // the next 'DeleteImageGroup' command should also take care of the image removal:
-            vdsRetValue =
-                    Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.DeleteImageGroup,
-                            buildDeleteMemoryConfParams(guids));
-
-            if (!vdsRetValue.getSucceeded()) {
-                if (startPollingTasks) {
-                    AsyncTaskManager.getInstance().StartPollingTask(guid1);
-                }
-                return false;
-            }
-
-            Guid guid2 = enclosingCommand.createTask(taskId2, vdsRetValue.getCreationInfo(),
-                    enclosingCommand.getActionType());
-            enclosingCommand.getTaskIdList().add(guid2);
+            Guid guid2 = removeConfImage(guids);
 
             if (startPollingTasks) {
                 AsyncTaskManager.getInstance().StartPollingTask(guid1);
-                AsyncTaskManager.getInstance().StartPollingTask(guid2);
+
+                if (guid2 != null) {
+                    AsyncTaskManager.getInstance().StartPollingTask(guid2);
+                }
             }
+
+            return guid2 != null;
         }
 
         return true;
+    }
+
+    protected Guid removeMemoryImage(List<Guid> guids) {
+        return removeImage(
+                VmCommand.DELETE_PRIMARY_IMAGE_TASK_KEY,
+                buildDeleteMemoryImageParams(guids));
+    }
+
+    protected Guid removeConfImage(List<Guid> guids) {
+        return removeImage(
+                VmCommand.DELETE_SECONDARY_IMAGES_TASK_KEY,
+                buildDeleteMemoryConfParams(guids));
+    }
+
+    protected Guid removeImage(String taskKey, DeleteImageGroupVDSCommandParameters parameters) {
+        Guid taskId2 = enclosingCommand.persistAsyncTaskPlaceHolder(taskKey);
+
+        VDSReturnValue vdsRetValue = Backend.getInstance().getResourceManager().RunVdsCommand(
+                VDSCommandType.DeleteImageGroup,
+                parameters);
+
+        if (!vdsRetValue.getSucceeded()) {
+            return null;
+        }
+
+        Guid guid2 = enclosingCommand.createTask(taskId2, vdsRetValue.getCreationInfo(),
+                enclosingCommand.getActionType());
+        enclosingCommand.getTaskIdList().add(guid2);
+        return guid2;
     }
 }
