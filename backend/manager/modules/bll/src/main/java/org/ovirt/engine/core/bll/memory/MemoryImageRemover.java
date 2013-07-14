@@ -16,8 +16,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.GuidUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class MemoryImageRemover {
 
@@ -123,17 +121,15 @@ public class MemoryImageRemover {
 
     protected boolean isPostZero() {
         if (cachedPostZero == null) {
-            // get all vm disks in order to check post zero - if one of the
-            // disks is marked with wipe_after_delete
+            // check if one of the disks is marked with wipe_after_delete
             cachedPostZero =
-                    LinqUtils.filter(
-                            getDbFacade().getDiskDao().getAllForVm(vm.getId()),
-                            new Predicate<Disk>() {
+                    getDbFacade().getDiskDao().getAllForVm(vm.getId()).contains(
+                            new Object() {
                                 @Override
-                                public boolean eval(Disk disk) {
-                                    return disk.isWipeAfterDelete();
+                                public boolean equals(Object obj) {
+                                    return ((Disk) obj).isWipeAfterDelete();
                                 }
-                            }).size() > 0;
+                            });
         }
         return cachedPostZero;
     }
