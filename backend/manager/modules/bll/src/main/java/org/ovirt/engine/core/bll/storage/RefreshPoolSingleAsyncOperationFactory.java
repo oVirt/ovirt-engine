@@ -12,11 +12,11 @@ public class RefreshPoolSingleAsyncOperationFactory extends ActivateDeactivateSi
     public void initialize(ArrayList parameters) {
         super.initialize(parameters);
         if (!(parameters.get(3) instanceof java.util.ArrayList)) {
-            throw new InvalidOperationException();
+            throw new IllegalArgumentException();
         }
         ArrayList l = (ArrayList) parameters.get(3);
         if (!l.isEmpty() && !(l.get(0) instanceof Integer)) {
-            throw new InvalidOperationException();
+            throw new IllegalArgumentException();
         }
         _vdsIdsToSetNonOperational = (ArrayList<Guid>) parameters.get(3);
     }

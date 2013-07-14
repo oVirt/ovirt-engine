@@ -28,19 +28,19 @@ public abstract class ActivateDeactivateSingleAsyncOperationFactory implements I
     @Override
     public void initialize(ArrayList parameters) {
         if (!(parameters.get(0) instanceof ArrayList)) {
-            throw new InvalidOperationException();
+            throw new IllegalArgumentException();
         }
         ArrayList l = (ArrayList) parameters.get(0);
         if (!l.isEmpty() && !(l.get(0) instanceof VDS)) {
-            throw new InvalidOperationException();
+            throw new IllegalArgumentException();
         }
         _vdss = (ArrayList<VDS>) parameters.get(0);
         if (parameters.get(1) != null && !(parameters.get(1) instanceof StorageDomain)) {
-            throw new InvalidOperationException();
+            throw new IllegalArgumentException();
         }
         _storageDomain = (StorageDomain) parameters.get(1);
         if (!(parameters.get(2) instanceof StoragePool)) {
-            throw new InvalidOperationException();
+            throw new IllegalArgumentException();
         }
         _storagePool = (StoragePool) parameters.get(2);
     }

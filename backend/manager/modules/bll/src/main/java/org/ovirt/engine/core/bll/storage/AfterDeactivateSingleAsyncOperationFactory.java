@@ -17,11 +17,11 @@ public class AfterDeactivateSingleAsyncOperationFactory extends ActivateDeactiva
     public void initialize(java.util.ArrayList parameters) {
         super.initialize(parameters);
         if (!(parameters.get(3) instanceof Boolean)) {
-            throw new InvalidOperationException();
+            throw new IllegalArgumentException();
         }
         _isLastMaster = (Boolean) (parameters.get(3));
         if (!(parameters.get(4) instanceof Guid)) {
-            throw new InvalidOperationException();
+            throw new IllegalArgumentException();
         }
         _newMasterStorageDomainId = (Guid) parameters.get(4);
     }
