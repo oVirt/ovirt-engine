@@ -295,9 +295,9 @@ public class ExecutionHandler {
                     }
                 } else {
                     Step contextStep = context.getStep();
-                    step.setExternal(isExternal);
                     if (context.getExecutionMethod() == ExecutionMethod.AsStep && contextStep != null) {
                         step = addSubStep(contextStep, stepName, description);
+                        step.setExternal(isExternal);
                     }
                 }
             } catch (Exception e) {
