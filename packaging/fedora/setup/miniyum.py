@@ -36,6 +36,7 @@ import yum.rpmtrans
 import yum.callbacks
 import yum.Errors
 import yum.callbacks
+import yum.constants
 
 
 class MiniYumSinkBase(object):
@@ -468,6 +469,8 @@ class MiniYum(object):
 
         """
         try:
+            self._yb = None
+
             if sink is None:
                 self._sink = self._VoidSink()
             else:
@@ -513,6 +516,12 @@ class MiniYum(object):
 
         except Exception as e:
             self._sink.error(e)
+
+    def __del__(self):
+        """Destructor"""
+        if self._yb is not None:
+            del self._yb
+            self._yb = None
 
     def selinux_role(self):
         """Setup proper selinux role.
@@ -582,6 +591,12 @@ class MiniYum(object):
     def clean(self, what):
         """Clean yum data."""
 
+        self._sink.verbose(
+            _('Cleaning caches: {what}.').format(
+                what=what,
+            )
+        )
+
         try:
             doall = 'all' in what
 
@@ -643,6 +658,7 @@ class MiniYum(object):
                                     cacheonly=1
                                 )
                                 del self._yb.tsInfo
+                                del self._yb.ts
                                 if self._yb.history_undo(transactionCurrent):
                                     if self.buildTransaction():
                                         self.processTransaction()
@@ -760,6 +776,13 @@ class MiniYum(object):
                 else:
                     raise yum.Errors.YumBaseError(msg)
 
+                self._sink.verbose('Transaction Summary:')
+                for p in self.queryTransaction():
+                    self._sink.verbose('    %-10s - %s' % (
+                        p['operation'],
+                        p['display_name']
+                    ))
+
                 return ret
 
         except Exception as e:
@@ -770,17 +793,20 @@ class MiniYum(object):
         try:
             with self._disableOutput:
                 ret = []
-                self._yb.tsInfo.makelists()
-                for op, l in (
-                    ('install', self._yb.tsInfo.installed),
-                    ('update', self._yb.tsInfo.updated),
-                    ('install', self._yb.tsInfo.depinstalled),
-                    ('update', self._yb.tsInfo.depupdated),
-                ):
-                    for p in l:
-                        info = self._get_package_info(p)
-                        info['operation'] = op
-                        ret.append(info)
+                state = {
+                    yum.constants.TS_UPDATE: "update",
+                    yum.constants.TS_INSTALL: "install",
+                    yum.constants.TS_TRUEINSTALL: "trueinstall",
+                    yum.constants.TS_ERASE: "erase",
+                    yum.constants.TS_OBSOLETED: "obsoleted",
+                    yum.constants.TS_OBSOLETING: "obsoleting",
+                    yum.constants.TS_AVAILABLE: "available",
+                    yum.constants.TS_UPDATED: "updated",
+                }
+                for txmbr in sorted(self._yb.tsInfo):
+                    info = self._get_package_info(txmbr)
+                    info['operation'] = state[txmbr.output_state]
+                    ret.append(info)
                 return ret
 
         except Exception as e:
