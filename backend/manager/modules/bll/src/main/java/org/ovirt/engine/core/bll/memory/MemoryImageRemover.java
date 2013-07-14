@@ -8,16 +8,14 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.GuidUtils;
 
-public class MemoryImageRemover {
+public abstract class MemoryImageRemover {
 
     private TaskHandlerCommand<?> enclosingCommand;
     protected VM vm;
@@ -27,6 +25,12 @@ public class MemoryImageRemover {
         this.enclosingCommand = enclosingCommand;
         this.vm = vm;
     }
+
+    protected abstract boolean shouldRemoveMemorySnapshotVolumes(String memoryVolume);
+
+    protected abstract DeleteImageGroupVDSCommandParameters buildDeleteMemoryImageParams(List<Guid> guids);
+
+    protected abstract DeleteImageGroupVDSCommandParameters buildDeleteMemoryConfParams(List<Guid> guids);
 
     public void removeMemoryVolume(String memoryVolumes) {
         if (shouldRemoveMemorySnapshotVolumes(memoryVolumes)) {
@@ -38,19 +42,6 @@ public class MemoryImageRemover {
         for (String memoryVols : memoryVolumes) {
             removeMemoryVolume(memoryVols);
         }
-    }
-
-    protected DbFacade getDbFacade() {
-        return DbFacade.getInstance();
-    }
-
-    /**
-     * There is a one to many relation between memory volumes and snapshots, so memory
-     * volumes should be removed only if the only snapshot that points to them is removed
-     */
-    protected boolean shouldRemoveMemorySnapshotVolumes(String memoryVolume) {
-        return !memoryVolume.isEmpty() &&
-                getDbFacade().getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1;
     }
 
     protected boolean removeMemoryVolumes(String memVols, boolean startPollingTasks) {
@@ -107,30 +98,5 @@ public class MemoryImageRemover {
         }
 
         return true;
-    }
-
-    protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryImageParams(List<Guid> guids) {
-        return new DeleteImageGroupVDSCommandParameters(
-                guids.get(1), guids.get(0), guids.get(2), isPostZero(), false);
-    }
-
-    protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryConfParams(List<Guid> guids) {
-        return new DeleteImageGroupVDSCommandParameters(
-                guids.get(1), guids.get(0), guids.get(4), isPostZero(), false);
-    }
-
-    protected boolean isPostZero() {
-        if (cachedPostZero == null) {
-            // check if one of the disks is marked with wipe_after_delete
-            cachedPostZero =
-                    getDbFacade().getDiskDao().getAllForVm(vm.getId()).contains(
-                            new Object() {
-                                @Override
-                                public boolean equals(Object obj) {
-                                    return ((Disk) obj).isWipeAfterDelete();
-                                }
-                            });
-        }
-        return cachedPostZero;
     }
 }

@@ -13,7 +13,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.memory.MemoryImageRemover;
+import org.ovirt.engine.core.bll.memory.MemoryImageRemoverOnDataDomain;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -1116,7 +1116,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     private void removeVmSnapshots(VM vm) {
         Set<String> memoriesOfRemovedSnapshots =
                 snapshotsManager.removeSnapshots(vm.getId());
-        new MemoryImageRemover(vm, this).removeMemoryVolumes(memoriesOfRemovedSnapshots);
+        new MemoryImageRemoverOnDataDomain(vm, this).removeMemoryVolumes(memoriesOfRemovedSnapshots);
     }
 
     protected void removeVmNetworkInterfaces() {

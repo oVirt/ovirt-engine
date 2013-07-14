@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.bll.memory;
 
+import java.util.List;
+
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
@@ -17,6 +20,18 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
         this.storageDomainId = storageDomainId;
     }
 
+    @Override
+    protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryImageParams(List<Guid> guids) {
+        return new DeleteImageGroupVDSCommandParameters(
+                guids.get(1), guids.get(0), guids.get(2), isPostZero(), false);
+    }
+
+    @Override
+    protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryConfParams(List<Guid> guids) {
+        return new DeleteImageGroupVDSCommandParameters(
+                guids.get(1), guids.get(0), guids.get(4), isPostZero(), false);
+    }
+
     /**
      * We set the post zero field on memory image deletion from export domain as we do
      * when it is deleted from data domain even though the export domain is NFS and NFS
@@ -24,7 +39,6 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
      * code that do the same, and to be prepared for supporting export domains which
      * are not NFS.
      */
-    @Override
     protected boolean isPostZero() {
         if (cachedPostZero == null) {
             // check if one of the disks is marked with wipe_after_delete
