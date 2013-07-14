@@ -2,16 +2,16 @@ package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class RemoveVmFromImportExportParamenters extends RemoveVmParameters implements java.io.Serializable {
+public class RemoveVmFromImportExportParameters extends RemoveVmParameters implements java.io.Serializable {
     private static final long serialVersionUID = 1841755064122049392L;
 
     private Guid storagePoolId = Guid.Empty;
     private Guid storageDomainId = Guid.Empty;
 
-    public RemoveVmFromImportExportParamenters() {
+    public RemoveVmFromImportExportParameters() {
     }
 
-    public RemoveVmFromImportExportParamenters(Guid vmId, Guid storageDomainId, Guid storagePoolId) {
+    public RemoveVmFromImportExportParameters(Guid vmId, Guid storageDomainId, Guid storagePoolId) {
         super(vmId, false);
         setStorageDomainId(storageDomainId);
         setStoragePoolId(storagePoolId);

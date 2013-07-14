@@ -13,7 +13,7 @@ import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
+import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
@@ -38,7 +38,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @NonTransactiveCommandAttribute
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
-public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportParamenters> extends RemoveVmCommand<T> implements TaskHandlerCommand<RemoveVmFromImportExportParamenters>{
+public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportParameters> extends RemoveVmCommand<T> implements TaskHandlerCommand<RemoveVmFromImportExportParameters>{
 
     // this is needed since overriding getVmTemplate()
     private VM exportVm;

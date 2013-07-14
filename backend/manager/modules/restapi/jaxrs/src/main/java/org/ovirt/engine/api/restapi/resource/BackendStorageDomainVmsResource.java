@@ -9,7 +9,7 @@ import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
 import org.ovirt.engine.api.resource.StorageDomainContentResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
-import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
+import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -52,7 +52,7 @@ public class BackendStorageDomainVmsResource
 
     @Override
     public Response performRemove(String id) {
-        RemoveVmFromImportExportParamenters params = new RemoveVmFromImportExportParamenters(
+        RemoveVmFromImportExportParameters params = new RemoveVmFromImportExportParameters(
                 GuidUtils.asGuid(id),
                 storageDomainId,
                 getDataCenterId(storageDomainId));

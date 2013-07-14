@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.ImportVmParameters;
-import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParamenters;
+import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -141,7 +141,7 @@ public class VmBackupModel extends ManageBackupModel {
                             new ArrayList<VdcActionParametersBase>();
                     for (Object item : backupModel.getSelectedItems()) {
                         VM vm = (VM) item;
-                        list.add(new RemoveVmFromImportExportParamenters(vm.getId(),
+                        list.add(new RemoveVmFromImportExportParameters(vm.getId(),
                                 backupModel.getEntity().getId(), pool.getId()));
                     }
 
