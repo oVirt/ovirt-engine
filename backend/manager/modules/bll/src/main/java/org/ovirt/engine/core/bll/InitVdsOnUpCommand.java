@@ -154,7 +154,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         if (getVds().getSpmStatus() != VdsSpmStatus.None) {
             StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(getVds().getStoragePoolId());
             if (pool != null && pool.getstatus() == StoragePoolStatus.NotOperational) {
-                pool.setstatus(StoragePoolStatus.Problematic);
+                pool.setstatus(StoragePoolStatus.NonResponsive);
                 DbFacade.getInstance().getStoragePoolDao().updateStatus(pool.getId(), pool.getstatus());
                 StoragePoolStatusHandler.PoolStatusChanged(pool.getId(), pool.getstatus());
             }

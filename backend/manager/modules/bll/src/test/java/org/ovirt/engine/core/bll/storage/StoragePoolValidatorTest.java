@@ -110,7 +110,7 @@ public class StoragePoolValidatorTest {
 
     @Test
     public void testIsUpdInvalid() {
-        storagePool.setstatus(StoragePoolStatus.Problematic);
+        storagePool.setstatus(StoragePoolStatus.NonResponsive);
         assertMessage(validator.isUp(), VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
     }
 

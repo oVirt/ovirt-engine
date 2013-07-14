@@ -114,7 +114,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
                                     (Boolean) returnVal.getActionReturnValue() : false;
 
                             getStoragePoolDAO().updateStatus(getStoragePool().getId(),
-                                    StoragePoolStatus.Problematic);
+                                    StoragePoolStatus.NonResponsive);
 
                             if (!succeeded) {
                                 getStoragePoolIsoMapDAO().remove(domainPoolMap.getId());

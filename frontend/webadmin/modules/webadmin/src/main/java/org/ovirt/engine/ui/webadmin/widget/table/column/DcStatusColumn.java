@@ -15,7 +15,7 @@ public class DcStatusColumn extends WebAdminImageResourceColumn<StoragePool> {
         case Maintenance:
             return getApplicationResources().maintenanceImage();
         case NotOperational:
-        case Problematic:
+        case NonResponsive:
         case Uninitialized:
             return getApplicationResources().downImage();
         case Up:

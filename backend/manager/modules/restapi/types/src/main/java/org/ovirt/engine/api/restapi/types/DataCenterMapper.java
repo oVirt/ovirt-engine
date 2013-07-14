@@ -85,7 +85,7 @@ public class DataCenterMapper {
             return DataCenterStatus.MAINTENANCE;
         case NotOperational:
             return DataCenterStatus.NOT_OPERATIONAL;
-        case Problematic:
+        case NonResponsive:
             return DataCenterStatus.PROBLEMATIC;
         case Uninitialized:
             return DataCenterStatus.UNINITIALIZED;

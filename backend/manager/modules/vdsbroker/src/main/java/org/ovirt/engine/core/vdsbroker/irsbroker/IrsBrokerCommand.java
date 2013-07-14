@@ -182,7 +182,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                 .get(_storagePoolId);
                         if (storagePool != null
                                 && (storagePool.getstatus() == StoragePoolStatus.Up
-                                        || storagePool.getstatus() == StoragePoolStatus.Problematic || storagePool
+                                        || storagePool.getstatus() == StoragePoolStatus.NonResponsive || storagePool
                                         .getstatus() == StoragePoolStatus.Contend)) {
                             proceedStoragePoolStats(storagePool);
                         }
@@ -210,20 +210,20 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     || !result.getSucceeded()
                     || (result.getSucceeded() && ((SpmStatusResult) result.getReturnValue()).getSpmStatus() != SpmStatus.SPM)) {
                 // update pool status to problematic until fence will happen
-                if (storagePool.getstatus() != StoragePoolStatus.Problematic
+                if (storagePool.getstatus() != StoragePoolStatus.NonResponsive
                         && storagePool.getstatus() != StoragePoolStatus.NotOperational) {
                     if (result != null && result.getVdsError() != null) {
                         ResourceManager
                                 .getInstance()
                                 .getEventListener()
-                                .storagePoolStatusChange(_storagePoolId, StoragePoolStatus.Problematic,
+                                .storagePoolStatusChange(_storagePoolId, StoragePoolStatus.NonResponsive,
                                         AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC_WITH_ERROR,
                                         result.getVdsError().getCode());
                     } else {
                         ResourceManager
                                 .getInstance()
                                 .getEventListener()
-                                .storagePoolStatusChange(_storagePoolId, StoragePoolStatus.Problematic,
+                                .storagePoolStatusChange(_storagePoolId, StoragePoolStatus.NonResponsive,
                                         AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC,
                                         VdcBllErrors.ENGINE);
                     }
@@ -262,7 +262,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 }
             } else if (result.getSucceeded()
                     && ((SpmStatusResult) result.getReturnValue()).getSpmStatus() == SpmStatus.SPM
-                    && (storagePool.getstatus() == StoragePoolStatus.Problematic || storagePool.getstatus() == StoragePoolStatus.Contend)) {
+                    && (storagePool.getstatus() == StoragePoolStatus.NonResponsive || storagePool.getstatus() == StoragePoolStatus.Contend)) {
                 // if recovered from network exception set back to up
                 DbFacade.getInstance().getStoragePoolDao().updateStatus(storagePool.getId(), StoragePoolStatus.Up);
                 storagePool.setstatus(StoragePoolStatus.Up);
@@ -593,12 +593,12 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             waitForVdsIfIsInitializing(curVdsId);
             // update pool status to problematic while selecting spm
             StoragePoolStatus prevStatus = storagePool.getstatus();
-            if (prevStatus != StoragePoolStatus.Problematic) {
+            if (prevStatus != StoragePoolStatus.NonResponsive) {
                 try {
                     ResourceManager
                             .getInstance()
                             .getEventListener()
-                            .storagePoolStatusChange(_storagePoolId, StoragePoolStatus.Problematic,
+                            .storagePoolStatusChange(_storagePoolId, StoragePoolStatus.NonResponsive,
                                     AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC_SEARCHING_NEW_SPM,
                                     VdcBllErrors.ENGINE, TransactionScopeOption.RequiresNew);
                 } catch (RuntimeException ex) {
@@ -738,7 +738,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 storagePool.setspm_vds_id(selectedVds.argvalue.getId());
                 // if were problemtaic or not operational and succeeded to find
                 // host move pool to up
-                if (prevStatus != StoragePoolStatus.NotOperational && prevStatus != StoragePoolStatus.Problematic) {
+                if (prevStatus != StoragePoolStatus.NotOperational && prevStatus != StoragePoolStatus.NonResponsive) {
                     storagePool.setstatus(prevStatus);
                 } else {
                     storagePool.setstatus(StoragePoolStatus.Up);
@@ -790,7 +790,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             ResourceManager
                     .getInstance()
                     .getEventListener()
-                    .storagePoolStatusChange(storagePool.getId(), StoragePoolStatus.Problematic,
+                    .storagePoolStatusChange(storagePool.getId(), StoragePoolStatus.NonResponsive,
                             AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC, VdcBllErrors.ENGINE);
 
             storagePool.setspm_vds_id(null);
@@ -952,7 +952,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                 .getInstance()
                                 .getEventListener()
                                 .storagePoolStatusChange(storagePool.getId(),
-                                        StoragePoolStatus.Problematic,
+                                        StoragePoolStatus.NonResponsive,
                                         AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC,
                                         VdcBllErrors.ENGINE,
                                         TransactionScopeOption.RequiresNew);
@@ -1029,7 +1029,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             StoragePool storagePool =
                     DbFacade.getInstance().getStoragePoolDao().get(_storagePoolId);
             if (storagePool != null
-                    && (storagePool.getstatus() == StoragePoolStatus.Up || storagePool.getstatus() == StoragePoolStatus.Problematic)) {
+                    && (storagePool.getstatus() == StoragePoolStatus.Up || storagePool.getstatus() == StoragePoolStatus.NonResponsive)) {
 
                 try {
                     // build a list of all domains in pool

@@ -247,7 +247,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 (masterDomain == null) ? StoragePoolStatus.Uninitialized
                         : (masterDomain.getStatus() != null && masterDomain.getStatus() == StorageDomainStatus.Maintenance) ? StoragePoolStatus.Maintenance
                                 : (masterDomain.getStatus() != null && masterDomain.getStatus() == StorageDomainStatus.Active) ? StoragePoolStatus.Up
-                                        : StoragePoolStatus.Problematic;
+                                        : StoragePoolStatus.NonResponsive;
         if (newStatus != getStoragePool().getstatus()) {
             getCompensationContext().snapshotEntity(getStoragePool());
             getStoragePool().setstatus(newStatus);

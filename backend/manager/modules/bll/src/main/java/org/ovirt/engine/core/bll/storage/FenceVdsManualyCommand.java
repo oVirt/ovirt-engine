@@ -71,7 +71,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                     returnValue = returnValue && initializeVds();
                 }
                 if (returnValue && getStoragePool().getstatus() != StoragePoolStatus.NotOperational
-                        && getStoragePool().getstatus() != StoragePoolStatus.Problematic
+                        && getStoragePool().getstatus() != StoragePoolStatus.NonResponsive
                         && getStoragePool().getstatus() != StoragePoolStatus.Maintenance) {
                     returnValue = false;
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);

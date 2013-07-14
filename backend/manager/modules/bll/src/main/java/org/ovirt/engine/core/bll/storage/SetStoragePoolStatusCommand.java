@@ -22,7 +22,7 @@ public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameter
         getStoragePool().setstatus(getParameters().getStatus());
         setVdsIdRef(getStoragePool().getspm_vds_id());
         DbFacade.getInstance().getStoragePoolDao().updateStatus(getStoragePool().getId(), getStoragePool().getstatus());
-        if (getParameters().getStatus() == StoragePoolStatus.Problematic
+        if (getParameters().getStatus() == StoragePoolStatus.NonResponsive
                 || getParameters().getStatus() == StoragePoolStatus.NotOperational) {
             List<StoragePoolIsoMap> storagesStatusInPool = DbFacade.getInstance()
                     .getStoragePoolIsoMapDao().getAllForStoragePool(getStoragePool().getId());

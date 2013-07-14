@@ -5,7 +5,7 @@ public enum StoragePoolStatus implements Identifiable {
     Up,
     Maintenance,
     NotOperational,
-    Problematic,
+    NonResponsive,
     Contend;
 
     @Override

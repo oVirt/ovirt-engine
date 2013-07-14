@@ -41,7 +41,7 @@ public class DataCenterMapperTest extends
         testStatusMapping(StoragePoolStatus.Contend, DataCenterStatus.CONTEND);
         testStatusMapping(StoragePoolStatus.Maintenance, DataCenterStatus.MAINTENANCE);
         testStatusMapping(StoragePoolStatus.NotOperational, DataCenterStatus.NOT_OPERATIONAL);
-        testStatusMapping(StoragePoolStatus.Problematic, DataCenterStatus.PROBLEMATIC);
+        testStatusMapping(StoragePoolStatus.NonResponsive, DataCenterStatus.PROBLEMATIC);
         testStatusMapping(StoragePoolStatus.Uninitialized, DataCenterStatus.UNINITIALIZED);
         testStatusMapping(StoragePoolStatus.Up, DataCenterStatus.UP);
     }

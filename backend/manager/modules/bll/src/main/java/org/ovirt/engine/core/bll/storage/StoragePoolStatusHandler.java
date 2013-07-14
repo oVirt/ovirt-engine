@@ -94,7 +94,7 @@ public final class StoragePoolStatusHandler {
                     + " to status Problematic from status NotOperational on a one time basis to try to recover");
             Backend.getInstance().runInternalAction(
                     VdcActionType.SetStoragePoolStatus,
-                    new SetStoragePoolStatusParameters(pool.getId(), StoragePoolStatus.Problematic,
+                    new SetStoragePoolStatusParameters(pool.getId(), StoragePoolStatus.NonResponsive,
                             AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC_FROM_NON_OPERATIONAL));
             synchronized (_nonOperationalPools) {
                 _nonOperationalPools.remove(pool.getId());
