@@ -81,9 +81,8 @@ public class VdsHandler extends BaseHandler {
      * @return a version class of the oVirt OS version, or null if failed to parse.
      */
     static public RpmVersion getOvirtHostOsVersion(VDS vds) {
-        RpmVersion vdsOsVersion = null;
         try {
-            vdsOsVersion = new RpmVersion(vds.getHostOs(), "RHEV Hypervisor -", true);
+            return new RpmVersion(vds.getHostOs(), "RHEV Hypervisor -", true);
         } catch (RuntimeException e) {
             log.errorFormat("Failed to parse version of Host {0},{1} and Host OS '{2}' with error {3}",
                     vds.getId(),
@@ -91,7 +90,7 @@ public class VdsHandler extends BaseHandler {
                     vds.getHostOs(),
                     ExceptionUtils.getMessage(e));
         }
-        return vdsOsVersion;
+        return null;
     }
 
     /**
@@ -120,13 +119,9 @@ public class VdsHandler extends BaseHandler {
      */
     public static VDSReturnValue handleVdsResult(VDSReturnValue result) {
         if (StringUtils.isNotEmpty(result.getExceptionString())) {
-            VdcBLLException exp;
-            if (result.getVdsError() != null) {
-                exp = new VdcBLLException(result.getVdsError().getCode(), result.getExceptionString());
-            } else {
-                exp = new VdcBLLException(VdcBllErrors.ENGINE, result.getExceptionString());
-            }
-            throw exp;
+            throw new VdcBLLException(
+                    result.getVdsError() != null ? result.getVdsError().getCode() : VdcBllErrors.ENGINE,
+                    result.getExceptionString());
         }
         return result;
     }
