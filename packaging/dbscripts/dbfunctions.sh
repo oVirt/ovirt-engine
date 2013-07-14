@@ -68,6 +68,24 @@ execute_file () {
     return $retval
 }
 
+#cleans db by dropping all objects
+cleandb() {
+# common stored procedures are executed first (for new added functions to be valid)
+    file=$(mktemp)
+    execute_file "common_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+    CMD="select * from generate_drop_all_seq_syntax();"
+    execute_command "$CMD" ${DATABASE} ${SERVERNAME} ${PORT} > $file
+    CMD="select * from generate_drop_all_tables_syntax();"
+    execute_command "$CMD" ${DATABASE} ${SERVERNAME} ${PORT} >> $file
+    CMD="select * from generate_drop_all_views_syntax();"
+    execute_command "$CMD" ${DATABASE} ${SERVERNAME} ${PORT} >> $file
+    CMD="select * from generate_drop_all_functions_syntax();"
+    execute_command "$CMD"  ${DATABASE} ${SERVERNAME} ${PORT} >> $file
+    execute_file "${file}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+    CMD="DROP FUNCTION IF EXISTS uuid_generate_v1();"
+    execute_command "$CMD" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+}
+
 #drops views before upgrade or refresh operations
 drop_views() {
 # common stored procedures are executed first (for new added functions to be valid)

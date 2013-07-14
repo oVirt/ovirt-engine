@@ -296,6 +296,19 @@ RETURN QUERY select 'DROP VIEW if exists ' || table_name || ' CASCADE;' from inf
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION generate_drop_all_tables_syntax() RETURNS SETOF text
+   AS $procedure$
+BEGIN
+RETURN QUERY select 'DROP TABLE if exists ' || table_name || ' CASCADE;' from information_schema.tables where table_schema = 'public' and table_type = 'BASE TABLE' order by table_name;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION generate_drop_all_seq_syntax() RETURNS SETOF text
+   AS $procedure$
+BEGIN
+RETURN QUERY select 'DROP SEQUENCE if exists ' || sequence_name || ' CASCADE;' from information_schema.sequences  where sequence_schema = 'public' order by sequence_name;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION fn_get_column_size( v_table varchar(64), v_column varchar(64)) returns integer
    AS $procedure$

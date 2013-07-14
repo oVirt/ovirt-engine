@@ -97,7 +97,7 @@ class Plugin(plugin.PluginBase):
             self.logger.debug('exception', exc_info=True)
             self.logger.warning(
                 _(
-                    'Cannot connect to database: {error}'
+                    'Cannot clear database: {error}'
                 ).format(
                     error=e,
                 )
