@@ -417,7 +417,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             }
             domain2requiredSize.put(storageDomain,
                     domain2requiredSize.get(storageDomain) + requiredSizeForMemory);
-            String modifiedMemoryVolume = MemoryUtils.changeStorageDomainAndPoolInMemoryVolume(
+            String modifiedMemoryVolume = MemoryUtils.changeStorageDomainAndPoolInMemoryState(
                     memoryVolume, storageDomain.getId(), getParameters().getStoragePoolId());
             // replace the volume representation with the one with the correct domain & pool
             snapshot.setMemoryVolume(modifiedMemoryVolume);

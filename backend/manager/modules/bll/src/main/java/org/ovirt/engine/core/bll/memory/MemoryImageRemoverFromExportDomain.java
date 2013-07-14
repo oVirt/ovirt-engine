@@ -47,7 +47,7 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
     @Override
     public void removeMemoryVolume(String memoryVolumes) {
         super.removeMemoryVolume(
-                MemoryUtils.changeStorageDomainAndPoolInMemoryVolume(
+                MemoryUtils.changeStorageDomainAndPoolInMemoryState(
                         memoryVolumes, storageDomainId, storagePoolId));
     }
 }

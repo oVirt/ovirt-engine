@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -186,10 +187,9 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
             // this is the new param that should be passed to the hibernate
             // command
-            getVm().setHibernationVolHandle(
-                    String.format("%1$s,%2$s,%3$s,%4$s,%5$s,%6$s", getStorageDomainId().toString(), getVm()
-                            .getStoragePoolId().toString(), image1GroupId.toString(), hiberVol1.toString(),
-                            image2GroupId.toString(), hiberVol2.toString()));
+            getVm().setHibernationVolHandle(MemoryUtils.createMemoryStateString(
+                    getStorageDomainId(), getVm().getStoragePoolId(),
+                    image1GroupId, hiberVol1, image2GroupId, hiberVol2));
             // end of temp code
 
             Backend.getInstance()

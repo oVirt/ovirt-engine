@@ -15,12 +15,23 @@ public class MemoryUtils {
      * Modified the given memory volume String representation to have the given storage
      * pool and storage domain
      */
-    public static String changeStorageDomainAndPoolInMemoryVolume(
+    public static String changeStorageDomainAndPoolInMemoryState(
             String originalMemoryVolume, Guid storageDomainId, Guid storagePoolId) {
         List<Guid> guids = GuidUtils.getGuidListFromString(originalMemoryVolume);
-        return String.format("%1$s,%2$s,%3$s,%4$s,%5$s,%6$s",
-                storageDomainId.toString(), storagePoolId.toString(),
+        return createMemoryStateString(storageDomainId, storagePoolId,
                 guids.get(2), guids.get(3), guids.get(4), guids.get(5));
+    }
+
+    public static String createMemoryStateString(
+            Guid storageDomainId, Guid storagePoolId, Guid memoryImageId,
+            Guid memoryVolumeId, Guid confImageId, Guid confVolumeId) {
+        return String.format("%1$s,%2$s,%3$s,%4$s,%5$s,%6$s",
+                storageDomainId,
+                storagePoolId,
+                memoryImageId,
+                memoryVolumeId,
+                confImageId,
+                confVolumeId);
     }
 
     public static Set<String> getMemoryVolumesFromSnapshots(List<Snapshot> snapshots) {

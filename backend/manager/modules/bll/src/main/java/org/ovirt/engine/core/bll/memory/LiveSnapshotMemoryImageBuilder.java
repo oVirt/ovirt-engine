@@ -111,7 +111,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     }
 
     public String getVolumeStringRepresentation() {
-        return String.format("%1$s,%2$s,%3$s,%4$s,%5$s,%6$s",
+        return MemoryUtils.createMemoryStateString(
                 storageDomainId,
                 storagePool.getId(),
                 memoryDumpImageGroupId,
