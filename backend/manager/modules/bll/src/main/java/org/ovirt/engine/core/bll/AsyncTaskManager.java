@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -71,12 +72,13 @@ public final class AsyncTaskManager {
      */
     private Map<Guid, AsyncTasks> partiallyCompletedCommandTasks = new ConcurrentHashMap<>();
 
+    private CountDownLatch irsBrokerLatch;
+
     private static final AsyncTaskManager _taskManager = new AsyncTaskManager();
 
     public static AsyncTaskManager getInstance() {
         return _taskManager;
     }
-
 
     private AsyncTaskManager() {
         _tasks = new ConcurrentHashMap<Guid, SPMAsyncTask>();
@@ -90,8 +92,19 @@ public final class AsyncTaskManager {
                 new Object[]{}, Config.<Integer>GetValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds),
                 Config.<Integer>GetValue(ConfigValues.AsyncTaskStatusCacheRefreshRateInSeconds), TimeUnit.SECONDS);
         _cacheTimeInMinutes = Config.<Integer>GetValue(ConfigValues.AsyncTaskStatusCachingTimeInMinutes);
+    }
+
+    public void InitAsyncTaskManager() {
         tasksInDbAfterRestart = new ConcurrentHashMap();
         Map<Guid, List<AsyncTasks>> rootCommandIdToTasksMap = groupTasksByRootCommandId(DbFacade.getInstance().getAsyncTaskDao().getAll());
+        int numberOfCommandsWithEmptyVdsmId = 0;
+        for (Entry<Guid, List<AsyncTasks>> entry : rootCommandIdToTasksMap.entrySet()) {
+            if (hasTasksWithoutVdsmId(rootCommandIdToTasksMap.get(entry.getKey()))) {
+                log.infoFormat("Root Command {0} has tasks without vdsm id.", entry.getKey());
+                numberOfCommandsWithEmptyVdsmId++;
+            }
+        }
+        irsBrokerLatch = new CountDownLatch(numberOfCommandsWithEmptyVdsmId);
         for (Entry<Guid, List<AsyncTasks>> entry : rootCommandIdToTasksMap.entrySet()) {
             if (hasTasksWithoutVdsmId(rootCommandIdToTasksMap.get(entry.getKey()))) {
                 log.infoFormat("Root Command {0} has tasks without vdsm id.", entry.getKey());
@@ -104,10 +117,12 @@ public final class AsyncTaskManager {
                 }
             }
         }
-    }
+        try {
+            irsBrokerLatch.await();
+            log.info("Initialization of AsyncTaskManager completed successfully.");
+        } catch (InterruptedException e) {
+        }
 
-    public void InitAsyncTaskManager() {
-        log.info("Initialization of AsyncTaskManager completed successfully.");
     }
 
     @OnTimerMethodAnnotation("_timer_Elapsed")
@@ -192,11 +207,15 @@ public final class AsyncTaskManager {
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
                     @Override
                     public Object runInTransaction() {
-                        boolean isPartiallySubmittedCommand = isPartiallySubmittedCommand(tasks);
-                        for (AsyncTasks task : tasks) {
-                            handleTaskOfCommandWithEmptyVdsmId(isPartiallySubmittedCommand, task);
+                        try {
+                            boolean isPartiallySubmittedCommand = isPartiallySubmittedCommand(tasks);
+                            for (AsyncTasks task : tasks) {
+                                handleTaskOfCommandWithEmptyVdsmId(isPartiallySubmittedCommand, task);
+                            }
+                            return null;
+                        } finally {
+                            irsBrokerLatch.countDown();
                         }
-                        return null;
                     }
                 });
             }
