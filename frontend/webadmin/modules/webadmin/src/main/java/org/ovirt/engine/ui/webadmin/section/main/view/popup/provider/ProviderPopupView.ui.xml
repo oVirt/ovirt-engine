@@ -3,7 +3,8 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
+	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
+	xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.provider">
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ProviderPopupView.Style">
@@ -50,22 +51,6 @@
 			vertical-align: middle;
 			margin-right: 10px;
 		}
-
-        .qpidInnerPanel {
-            padding-left: 20px;
-        }
-
-        .qpidHeader {
-			font-weight: bold;
-            margin-top: 10px;
-            margin-bottom: 10px;
-            paading-right: 6px;
-		}
-
-        .explanationLabel {
-            font-style: italic;
-            margin: 10px 5px;
-        }
 	</ui:style>
 
 	<d:SimpleDialogPanel width="600px" height="450px">
@@ -105,20 +90,7 @@
                 <t:tab>
                     <t:DialogTab ui:field="agentConfigurationTab">
                         <t:content>
-							<g:FlowPanel>
-								<g:FlowPanel>
-									<e:EntityModelTextBoxEditor ui:field="interfaceMappings"/>
-								</g:FlowPanel>
-								<g:FlowPanel addStyleNames="{style.sectionStyle}">
-									<g:Label text="{constants.qpid}" addStyleNames="{style.qpidHeader}"/>
-									<g:FlowPanel addStyleNames="{style.qpidInnerPanel}">
-										<e:EntityModelTextBoxEditor ui:field="host"/>
-										<e:EntityModelTextBoxEditor ui:field="qpidPort"/>
-										<e:EntityModelTextBoxEditor ui:field="userName"/>
-										<e:EntityModelPasswordBoxEditor ui:field="agentConfigPassword"/>
-									</g:FlowPanel>
-								</g:FlowPanel>
-                            </g:FlowPanel>
+							<p:NeutronAgentWidget ui:field="neutronAgentWidget" />
                         </t:content>
                     </t:DialogTab>
                 </t:tab>

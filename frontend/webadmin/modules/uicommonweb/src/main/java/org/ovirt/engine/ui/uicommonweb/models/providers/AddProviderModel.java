@@ -8,8 +8,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class AddProviderModel extends ProviderModel {
 
-    private static final String QPID_PORT_DEFAULT = "5672"; //$NON-NLS-1$
-
     @SuppressWarnings("unchecked")
     public AddProviderModel(ProviderListModel sourceListModel) {
         super(sourceListModel, VdcActionType.AddProvider, new Provider());
@@ -18,8 +16,6 @@ public class AddProviderModel extends ProviderModel {
 
         getType().setSelectedItem(Linq.firstOrDefault((Iterable<ProviderType>) getType().getItems()));
         getRequiresAuthentication().setEntity(false);
-
-        getQpidPort().setEntity(QPID_PORT_DEFAULT);
     }
 
 }

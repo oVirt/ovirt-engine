@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.provider.NeutronAgentWidget;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -113,30 +114,9 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @Ignore
     DialogTab agentConfigurationTab;
 
-    @UiField
-    @Path(value = "host.entity")
-    @WithElementId("host")
-    EntityModelTextBoxEditor host;
-
-    @UiField
-    @Path(value = "qpidPort.entity")
-    @WithElementId("qpidPort")
-    EntityModelTextBoxEditor qpidPort;
-
-    @UiField
-    @Path(value = "userName.entity")
-    @WithElementId("userName")
-    EntityModelTextBoxEditor userName;
-
-    @UiField
-    @Path(value = "agentConfigPassword.entity")
-    @WithElementId("agentConfigPassword")
-    EntityModelPasswordBoxEditor agentConfigPassword;
-
-    @UiField
-    @Path(value = "interfaceMappings.entity")
-    @WithElementId("interfaceMappings")
-    EntityModelTextBoxEditor interfaceMappings;
+    @UiField(provided = true)
+    @Ignore
+    NeutronAgentWidget neutronAgentWidget;
 
     @UiField
     Style style;
@@ -150,6 +130,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
         typeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
         requiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        neutronAgentWidget = new NeutronAgentWidget(constants);
 
         this.resources = resources;
         this.constants = constants;
@@ -177,21 +158,18 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
         // Agent configuration tab
         agentConfigurationTab.setLabel(constants.providerPopupAgentConfigurationTabLabel());
-        host.setLabel(constants.hostQpid());
-        qpidPort.setLabel(constants.portQpid());
-        userName.setLabel(constants.usernameQpid());
-        agentConfigPassword.setLabel(constants.passwordQpid());
     }
 
     @Override
     public void edit(ProviderModel model) {
-        customizeAgentTab((Boolean) model.getAgentTabAvailable().getEntity(),
-                (String) model.getInterfaceMappingsLabel().getEntity());
+        setAgentTabVisibility(model.getNeutronAgentModel().getIsAvailable());
         driver.edit(model);
+        neutronAgentWidget.edit(model.getNeutronAgentModel());
     }
 
     @Override
     public ProviderModel flush() {
+        neutronAgentWidget.flush();
         return driver.flush();
     }
 
@@ -223,9 +201,8 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     }
 
     @Override
-    public void customizeAgentTab(boolean tabAvailable, String ifMappingsLabel) {
-        agentConfigurationTab.setVisible(tabAvailable);
-        interfaceMappings.setLabel(ifMappingsLabel);
+    public void setAgentTabVisibility(boolean visible) {
+        agentConfigurationTab.setVisible(visible);
     }
 
 }

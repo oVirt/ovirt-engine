@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
+	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.provider.NeutronAgentWidget.Style">
+		.sectionStyle {
+			margin-top: 20px;
+		}
+
+        .qpidInnerPanel {
+            padding-left: 20px;
+        }
+
+        .qpidHeader {
+			font-weight: bold;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            paading-right: 6px;
+		}
+	</ui:style>
+
+	<g:FlowPanel>
+		<g:FlowPanel>
+			<e:EntityModelTextBoxEditor ui:field="interfaceMappings"/>
+		</g:FlowPanel>
+		<g:FlowPanel addStyleNames="{style.sectionStyle}">
+			<g:Label ui:field="qpidTitle" addStyleNames="{style.qpidHeader}"/>
+			<g:FlowPanel addStyleNames="{style.qpidInnerPanel}">
+				<e:EntityModelTextBoxEditor ui:field="qpidHost"/>
+				<e:EntityModelTextBoxEditor ui:field="qpidPort"/>
+				<e:EntityModelTextBoxEditor ui:field="qpidUsername"/>
+				<e:EntityModelPasswordBoxEditor ui:field="qpidPassword"/>
+			</g:FlowPanel>
+		</g:FlowPanel>
+	</g:FlowPanel>
+
+</ui:UiBinder>

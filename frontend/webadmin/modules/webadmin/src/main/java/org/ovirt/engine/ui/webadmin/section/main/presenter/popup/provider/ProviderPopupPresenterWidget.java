@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -17,7 +18,7 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<ProviderModel> {
         HasUiCommandClickHandlers getTestButton();
         void setTestResultImage(String errorMessage);
-        void customizeAgentTab(boolean tabAvailable, String ifMappingsLabel);
+        void setAgentTabVisibility(boolean visible);
     }
 
     @Inject
@@ -44,25 +45,15 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
                 getView().setTestResultImage((String) model.getTestResult().getEntity());
             }
         });
-        model.getAgentTabAvailable().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getNeutronAgentModel().getPropertyChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                customizeAgentTab(model);
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                    getView().setAgentTabVisibility(model.getNeutronAgentModel().getIsAvailable());
+                }
             }
         });
-        model.getInterfaceMappingsLabel().getEntityChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                customizeAgentTab(model);
-            }
-        });
-    }
-
-    private void customizeAgentTab(ProviderModel model) {
-        getView().customizeAgentTab((Boolean) model.getAgentTabAvailable().getEntity(),
-                (String) model.getInterfaceMappingsLabel().getEntity());
     }
 
 }

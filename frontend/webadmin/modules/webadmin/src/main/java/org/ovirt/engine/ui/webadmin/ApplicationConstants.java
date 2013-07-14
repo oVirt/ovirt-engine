@@ -186,18 +186,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network Label")
     String networkLabel();
 
-    @DefaultStringValue("Host")
-    String hostQpid();
-
-    @DefaultStringValue("Port")
-    String portQpid();
-
-    @DefaultStringValue("Username")
-    String usernameQpid();
-
-    @DefaultStringValue("Password")
-    String passwordQpid();
-
     @DefaultStringValue("Comment")
     String commentLabel();
 

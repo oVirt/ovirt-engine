@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common;
 
 import com.google.gwt.i18n.client.Constants;
+import com.google.gwt.i18n.client.Constants.DefaultStringValue;
 
 public interface CommonApplicationConstants extends Constants {
 
@@ -207,6 +208,18 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Force Remove")
     String forceRemove();
+
+    @DefaultStringValue("Host")
+    String hostQpid();
+
+    @DefaultStringValue("Port")
+    String portQpid();
+
+    @DefaultStringValue("Username")
+    String usernameQpid();
+
+    @DefaultStringValue("Password")
+    String passwordQpid();
 
     // General
     @DefaultStringValue("Yes")
