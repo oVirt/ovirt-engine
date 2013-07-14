@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.VnicProfileValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
@@ -16,6 +17,14 @@ public class AddVnicProfileCommand<T extends VnicProfileParameters> extends Vnic
 
     public AddVnicProfileCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected boolean canDoAction() {
+        VnicProfileValidator validator = new VnicProfileValidator(getVnicProfile());
+        return validate(validator.vnicProfileIsSet())
+                && validate(validator.networkExists())
+                && validate(validator.vnicProfileNameNotUsed());
     }
 
     @Override

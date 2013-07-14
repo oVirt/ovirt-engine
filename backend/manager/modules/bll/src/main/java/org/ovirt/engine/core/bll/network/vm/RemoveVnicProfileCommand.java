@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.validator.VnicProfileValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -11,6 +12,15 @@ public class RemoveVnicProfileCommand<T extends VnicProfileParameters> extends V
 
     public RemoveVnicProfileCommand(T parameters) {
         super(parameters);
+    }
+
+    @Override
+    protected boolean canDoAction() {
+        VnicProfileValidator validator = new VnicProfileValidator(getVnicProfile());
+        return validate(validator.vnicProfileIsSet())
+                && validate(validator.vnicProfileExists())
+                && validate(validator.vnicProfileNotUsedByVms())
+                && validate(validator.vnicProfileNotUsedByTemplates());
     }
 
     @Override
