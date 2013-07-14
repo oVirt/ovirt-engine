@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
@@ -386,7 +387,8 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         TransactionSupport.executeInNewTransaction(method);
     }
 
-    private static final class LastTimeUsedAsMasterComp implements Comparator<StorageDomain> {
+    private static final class LastTimeUsedAsMasterComp implements Comparator<StorageDomain>, Serializable {
+        private static final long serialVersionUID = -7736904426129973519L;
         public static final LastTimeUsedAsMasterComp instance = new LastTimeUsedAsMasterComp();
 
         @Override
