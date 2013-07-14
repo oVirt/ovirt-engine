@@ -35,7 +35,7 @@ public class SubTabClusterVmPresenter extends AbstractSubTabPresenter<VDSGroup, 
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().clusterVmSubTabLabel(), 4,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().clusterVmSubTabLabel(), 3,
                 ginjector.getSubTabClusterVmModelProvider());
     }
 

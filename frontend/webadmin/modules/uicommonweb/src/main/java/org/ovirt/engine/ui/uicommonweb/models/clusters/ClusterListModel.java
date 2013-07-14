@@ -147,16 +147,6 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         privateGuideContext = value;
     }
 
-    private ClusterPolicyModel clusterPolicyModel;
-
-    public ClusterPolicyModel getClusterPolicyModel() {
-        return clusterPolicyModel;
-    }
-
-    public void setClusterPolicyModel(ClusterPolicyModel clusterPolicyModel) {
-        this.clusterPolicyModel = clusterPolicyModel;
-    }
-
     private ClusterServiceModel clusterServiceModel;
 
     public ClusterServiceModel getClusterServiceModel() {
@@ -198,7 +188,6 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
-        getClusterPolicyModel().setEditPolicyCommand(getEditCommand());
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setGuideCommand(new UICommand("Guide", this)); //$NON-NLS-1$
         setAddMultipleHostsCommand(new UICommand("AddHosts", this)); //$NON-NLS-1$
@@ -244,13 +233,11 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         super.initDetailModels();
 
         setClusterVmListModel(new ClusterVmListModel());
-        setClusterPolicyModel(new ClusterPolicyModel());
         setClusterServiceModel(new ClusterServiceModel());
         setClusterGlusterHookListModel(new ClusterGlusterHookListModel());
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new ClusterGeneralModel());
-        list.add(getClusterPolicyModel());
         list.add(new ClusterNetworkListModel());
         list.add(new ClusterHostListModel());
         list.add(getClusterVmListModel());
@@ -269,7 +256,6 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 && GlusterFeaturesUtil.isGlusterVolumeServicesSupported(vdsGroup.getcompatibility_version()));
         getClusterGlusterHookListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()
                 && GlusterFeaturesUtil.isGlusterHookSupported(vdsGroup.getcompatibility_version()));
-        getClusterPolicyModel().setIsAvailable(false);
     }
 
     @Override
@@ -353,7 +339,6 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         final ClusterModel clusterModel = new ClusterModel();
         clusterModel.setEntity(cluster);
         clusterModel.init(true);
-        clusterModel.getClusterPolicyModel().setEditClusterPolicyFirst(clusterPolicyFirst);
         clusterModel.getEnableTrustedService().setEntity(cluster.supportsTrustedService());
         setWindow(clusterModel);
         clusterModel.setTitle(ConstantsManager.getInstance().getConstants().editClusterTitle());
@@ -364,12 +349,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.getEnableOvirtService().setIsChangable(true);
         clusterModel.getEnableGlusterService().setEntity(cluster.supportsGlusterService());
         clusterModel.getEnableGlusterService().setIsChangable(true);
-        clusterModel.getClusterPolicyModel().setSelectionAlgorithm(cluster.getselection_algorithm());
-        clusterModel.getClusterPolicyModel().getOverCommitTime().setEntity(cluster.getcpu_over_commit_duration_minutes());
-        clusterModel.getClusterPolicyModel().setOverCommitLowLevel(cluster.getlow_utilization());
-        clusterModel.getClusterPolicyModel().setOverCommitHighLevel(cluster.gethigh_utilization());
 
-        clusterModel.getClusterPolicyModel().saveDefaultValues();
         if (cluster.supportsTrustedService())
         {
             clusterModel.getEnableGlusterService().setIsChangable(false);
@@ -648,15 +628,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setMigrateOnError(model.getMigrateOnErrorOption());
         cluster.setVirtService((Boolean) model.getEnableOvirtService().getEntity());
         cluster.setGlusterService((Boolean) model.getEnableGlusterService().getEntity());
-        cluster.setselection_algorithm(model.getClusterPolicyModel().getSelectionAlgorithm());
         cluster.setTrustedService((Boolean) model.getEnableTrustedService().getEntity());
-        if (model.getClusterPolicyModel().getOverCommitTime().getIsAvailable())
-        {
-            cluster.setcpu_over_commit_duration_minutes(Integer.parseInt(model.getClusterPolicyModel().getOverCommitTime()
-                    .getEntity()
-                    .toString()));
-        }        cluster.setlow_utilization(model.getClusterPolicyModel().getOverCommitLowLevel());
-        cluster.sethigh_utilization(model.getClusterPolicyModel().getOverCommitHighLevel());
         cluster.setClusterPolicyId(((ClusterPolicy) model.getClusterPolicy().getSelectedItem()).getId());
         cluster.setClusterPolicyProperties(KeyValueModel.convertProperties(model.getCustomPropertySheet().getEntity()));
 

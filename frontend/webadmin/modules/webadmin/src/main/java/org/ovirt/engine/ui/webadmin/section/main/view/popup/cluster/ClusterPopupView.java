@@ -401,10 +401,6 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     public void edit(final ClusterModel object) {
         driver.edit(object);
 
-        if (object.getClusterPolicyModel().isEditClusterPolicyFirst()) {
-            tabsPanel.switchTab(clusterPolicyTab);
-        }
-
         servicesCheckboxPanel.setVisible(object.getAllowClusterWithVirtGlusterEnabled());
         servicesRadioPanel.setVisible(!object.getAllowClusterWithVirtGlusterEnabled());
 

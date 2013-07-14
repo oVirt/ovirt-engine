@@ -39,14 +39,6 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     @Size(max = BusinessEntitiesDefinitions.CLUSTER_CPU_NAME_SIZE)
     private String cpu_name;
 
-    private VdsSelectionAlgorithm selection_algorithm = VdsSelectionAlgorithm.None;
-
-    private int high_utilization = 0;
-
-    private int low_utilization = 0;
-
-    private int cpu_over_commit_duration_minutes = 0;
-
     private Guid storagePoolId;
 
     @Size(max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
@@ -85,10 +77,6 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     private Map<String, String> clusterPolicyProperties;
 
     public VDSGroup() {
-        selection_algorithm = VdsSelectionAlgorithm.None;
-        high_utilization = -1;
-        low_utilization = -1;
-        cpu_over_commit_duration_minutes = -1;
         migrateOnError = MigrateOnErrorOptions.YES;
     }
 
@@ -144,38 +132,6 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     public void setcpu_name(String value) {
         this.cpu_name = value;
-    }
-
-    public VdsSelectionAlgorithm getselection_algorithm() {
-        return selection_algorithm;
-    }
-
-    public void setselection_algorithm(VdsSelectionAlgorithm value) {
-        selection_algorithm = value;
-    }
-
-    public int gethigh_utilization() {
-        return this.high_utilization;
-    }
-
-    public void sethigh_utilization(int value) {
-        this.high_utilization = value;
-    }
-
-    public int getlow_utilization() {
-        return this.low_utilization;
-    }
-
-    public void setlow_utilization(int value) {
-        this.low_utilization = value;
-    }
-
-    public int getcpu_over_commit_duration_minutes() {
-        return this.cpu_over_commit_duration_minutes;
-    }
-
-    public void setcpu_over_commit_duration_minutes(int value) {
-        this.cpu_over_commit_duration_minutes = value;
     }
 
     @Override
@@ -322,15 +278,11 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + ((compatVersion == null) ? 0 : compatVersion.hashCode());
         result = prime * result + ((compatibility_version == null) ? 0 : compatibility_version.hashCode());
         result = prime * result + ((cpu_name == null) ? 0 : cpu_name.hashCode());
-        result = prime * result + cpu_over_commit_duration_minutes;
         result = prime * result + ((description == null) ? 0 : description.hashCode());
-        result = prime * result + high_utilization;
-        result = prime * result + low_utilization;
         result = prime * result + max_vds_memory_over_commit;
         result = prime * result + (countThreadsAsCores ? 1231 : 1237);
         result = prime * result + ((migrateOnError == null) ? 0 : migrateOnError.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((selection_algorithm == null) ? 0 : selection_algorithm.hashCode());
         result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
         result = prime * result + ((storagePoolName == null) ? 0 : storagePoolName.hashCode());
         result = prime * result + (transparentHugepages ? 1231 : 1237);
@@ -361,15 +313,11 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && ObjectUtils.objectsEqual(compatVersion, other.compatVersion)
                 && ObjectUtils.objectsEqual(compatibility_version, other.compatibility_version)
                 && ObjectUtils.objectsEqual(cpu_name, other.cpu_name)
-                && cpu_over_commit_duration_minutes == other.cpu_over_commit_duration_minutes
                 && ObjectUtils.objectsEqual(description, other.description)
-                && high_utilization == other.high_utilization
-                && low_utilization == other.low_utilization
                 && max_vds_memory_over_commit == other.max_vds_memory_over_commit
                 && countThreadsAsCores == other.countThreadsAsCores
                 && migrateOnError == other.migrateOnError
                 && ObjectUtils.objectsEqual(name, other.name)
-                && ObjectUtils.objectsEqual(selection_algorithm, other.selection_algorithm)
                 && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
                 && ObjectUtils.objectsEqual(storagePoolName, other.storagePoolName)
                 && transparentHugepages == other.transparentHugepages

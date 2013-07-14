@@ -928,16 +928,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         storagePoolName = value;
     }
 
-    private VdsSelectionAlgorithm selectionAlgorithm = VdsSelectionAlgorithm.forValue(0);
-
-    public VdsSelectionAlgorithm getSelectionAlgorithm() {
-        return selectionAlgorithm;
-    }
-
-    public void setSelectionAlgorithm(VdsSelectionAlgorithm value) {
-        selectionAlgorithm = value;
-    }
-
     public List<VmNetworkInterface> getInterfaces() {
         return vmStatic.getInterfaces();
     }
@@ -1249,7 +1239,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         result = prime * result + ((privateGuestAgentVersion == null) ? 0 : privateGuestAgentVersion.hashCode());
         result = prime * result + ((runOnVdsName == null) ? 0 : runOnVdsName.hashCode());
         result = prime * result + (runOnce ? 1231 : 1237);
-        result = prime * result + ((selectionAlgorithm == null) ? 0 : selectionAlgorithm.hashCode());
         result = prime * result + ((snapshots == null) ? 0 : snapshots.hashCode());
         result = prime * result + ((spiceDriverVersion == null) ? 0 : spiceDriverVersion.hashCode());
         result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());

@@ -53,7 +53,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         result = prime * result + maxVdsMemoryOverCommit;
         result = prime * result + ((privateDomains == null) ? 0 : privateDomains.hashCode());
         result = prime * result + ((vdsSpmId == null) ? 0 : vdsSpmId.hashCode());
-        result = prime * result + ((selectionAlgorithm == null) ? 0 : selectionAlgorithm.hashCode());
         result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
         result = prime * result + ((storagePoolName == null) ? 0 : storagePoolName.hashCode());
         result = prime * result
@@ -91,7 +90,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                 && maxVdsMemoryOverCommit == other.maxVdsMemoryOverCommit
                 && ObjectUtils.objectsEqual(privateDomains, other.privateDomains)
                 && ObjectUtils.objectsEqual(vdsSpmId, other.vdsSpmId)
-                && selectionAlgorithm == other.selectionAlgorithm
                 && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
                 && ObjectUtils.objectsEqual(storagePoolName, other.storagePoolName)
                 && ObjectUtils.objectsEqual(vdsGroupCompatibilityVersion, other.vdsGroupCompatibilityVersion)
@@ -941,16 +939,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
 
     public void setStoragePoolName(String value) {
         this.storagePoolName = value;
-    }
-
-    private VdsSelectionAlgorithm selectionAlgorithm = VdsSelectionAlgorithm.forValue(0);
-
-    public VdsSelectionAlgorithm getSelectionAlgorithm() {
-        return this.selectionAlgorithm;
-    }
-
-    public void setSelectionAlgorithm(VdsSelectionAlgorithm value) {
-        this.selectionAlgorithm = value;
     }
 
     private int maxVdsMemoryOverCommit;

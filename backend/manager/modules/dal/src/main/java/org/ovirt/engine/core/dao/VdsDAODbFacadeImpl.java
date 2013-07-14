@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
-import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.compat.Guid;
@@ -271,17 +270,10 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setVdsGroupCpuName(rs.getString("vds_group_cpu_name"));
             entity.setStoragePoolId(getGuidDefaultEmpty(rs, "storage_pool_id"));
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
-            entity.setSelectionAlgorithm(VdsSelectionAlgorithm.forValue(rs
-                    .getInt("selection_algorithm")));
             entity.setPendingVcpusCount((Integer) rs
                     .getObject("pending_vcpus_count"));
             entity.setCpuOverCommitTimestamp(DbFacadeUtils.fromDate(rs
                     .getTimestamp("cpu_over_commit_time_stamp")));
-            entity.setHighUtilization(rs.getInt("high_utilization"));
-            entity.setLowUtilization(rs.getInt("low_utilization"));
-            entity.setCpuOverCommitDurationMinutes(rs
-                    .getInt("cpu_over_commit_duration_minutes"));
-
             entity.setPendingVmemSize(rs.getInt("pending_vmem_size"));
             entity.setVdsStrength(rs.getInt("vds_strength"));
             entity.setMaxVdsMemoryOverCommit(rs

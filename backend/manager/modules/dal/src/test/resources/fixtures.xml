@@ -588,10 +588,6 @@
         <column>cpu_name</column>
         <column>_create_date</column>
         <column>_update_date</column>
-        <column>selection_algorithm</column>
-        <column>high_utilization</column>
-        <column>low_utilization</column>
-        <column>cpu_over_commit_duration_minutes</column>
         <column>storage_pool_id</column>
         <column>max_vds_memory_over_commit</column>
         <column>compatibility_version</column>
@@ -611,10 +607,6 @@
             <value>Intel Xeon Core2</value>
             <value>2010-10-12 03:38:36</value>
             <value>2010-10-27 12:18:51</value>
-            <value>0</value>
-            <value>0</value>
-            <value>0</value>
-            <value>1</value>
             <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
             <value>200</value>
             <value>2.3</value>
@@ -635,10 +627,6 @@
             <value>Intel Xeon Core2</value>
             <value>2010-10-12 03:38:36</value>
             <value>2010-10-27 12:18:51</value>
-            <value>0</value>
-            <value>0</value>
-            <value>0</value>
-            <value>1</value>
             <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
             <value>200</value>
             <value>2.3</value>
@@ -659,10 +647,6 @@
             <value>Intel Xeon Core2</value>
             <value>2010-10-12 03:38:36</value>
             <value>2010-10-27 12:18:51</value>
-            <value>0</value>
-            <value>0</value>
-            <value>0</value>
-            <value>1</value>
             <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
             <value>200</value>
             <value>2.3</value>
@@ -683,10 +667,6 @@
             <value>Intel Conroe Family</value>
             <value>2010-10-12 03:38:36</value>
             <value>2010-10-27 12:18:51</value>
-            <value>0</value>
-            <value>-1</value>
-            <value>-1</value>
-            <value>2</value>
             <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
             <value>100</value>
             <value>2.3</value>
@@ -707,10 +687,6 @@
             <value>Intel Conroe Family</value>
             <value>2010-10-12 03:38:36</value>
             <value>2010-10-27 12:18:51</value>
-            <value>0</value>
-            <value>-1</value>
-            <value>-1</value>
-            <value>2</value>
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
             <value>100</value>
             <value>2.3</value>
@@ -731,10 +707,6 @@
             <value>Intel Conroe Family</value>
             <value>2010-10-12 03:38:36</value>
             <value>2010-10-27 12:18:51</value>
-            <value>0</value>
-            <value>-1</value>
-            <value>-1</value>
-            <value>2</value>
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a1</value>
             <value>100</value>
             <value>2.3</value>
@@ -755,10 +727,6 @@
             <value>Intel Xeon Core2</value>
             <value>2010-10-12 03:38:36</value>
             <value>2010-10-27 12:18:51</value>
-            <value>0</value>
-            <value>0</value>
-            <value>0</value>
-            <value>1</value>
             <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
             <value>200</value>
             <value>2.3</value>
@@ -779,10 +747,6 @@
             <value>Intel Xeon Core2</value>
             <value>2010-10-12 03:38:36</value>
             <value>2010-10-27 12:18:51</value>
-            <value>0</value>
-            <value>0</value>
-            <value>0</value>
-            <value>1</value>
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a2</value>
             <value>200</value>
             <value>2.3</value>
@@ -803,10 +767,6 @@
             <value>Intel Xeon Core2</value>
             <value>2010-10-12 03:38:36</value>
             <value>2010-10-27 12:18:51</value>
-            <value>0</value>
-            <value>0</value>
-            <value>0</value>
-            <value>1</value>
             <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
             <value>200</value>
             <value>2.3</value>

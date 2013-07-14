@@ -35,7 +35,7 @@ public class SubTabClusterHostPresenter extends AbstractSubTabPresenter<VDSGroup
 
     @TabInfo(container = ClusterSubTabPanelPresenter.class)
     static TabData getTabData(ClientGinjector ginjector) {
-        return new ModelBoundTabData(ginjector.getApplicationConstants().clusterHostSubTabLabel(), 3,
+        return new ModelBoundTabData(ginjector.getApplicationConstants().clusterHostSubTabLabel(), 2,
                 ginjector.getSubTabClusterHostModelProvider());
     }
 

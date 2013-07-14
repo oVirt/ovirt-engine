@@ -40,7 +40,6 @@ import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGlusterHookListMod
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkListModel;
-import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterPolicyModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterServiceModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -157,7 +156,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterPermissionPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterPolicyPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterServicePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterSubTabPanelPresenter;
@@ -431,10 +429,6 @@ public interface ManagedComponents {
     AsyncProvider<SubTabClusterGeneralPresenter> getSubTabClusterGeneralPresenter();
 
     DetailModelProvider<ClusterListModel, ClusterGeneralModel> getSubTabClusterGeneralModelProvider();
-
-    AsyncProvider<SubTabClusterPolicyPresenter> getSubTabClusterPolicyPresenter();
-
-    DetailModelProvider<ClusterListModel, ClusterPolicyModel> getSubTabClusterPolicyModelProvider();
 
     AsyncProvider<SubTabClusterHostPresenter> getSubTabClusterHostPresenter();
 

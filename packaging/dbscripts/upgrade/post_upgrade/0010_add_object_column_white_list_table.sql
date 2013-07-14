@@ -38,7 +38,7 @@ BEGIN
        from information_schema.columns
        where table_name = 'vds' and
        column_name in (
-          'vds_group_id', 'vds_group_name', 'vds_group_description', 'selection_algorithm',
+          'vds_group_id', 'vds_group_name', 'vds_group_description',
           'vds_id', 'vds_name', 'ip', 'vds_unique_id', 'host_name', 'port', 'vds_strength',
           'server_ssl_enabled', 'vds_type', 'pm_type', 'pm_user', 'pm_port', 'pm_options',  'pm_enabled',
           'pm_proxy_preferences', 'pm_secondary_ip', 'pm_secondary_type', 'pm_secondary_user', 'pm_secondary_port',
@@ -46,8 +46,7 @@ BEGIN
           'cpu_model', 'cpu_speed_mh', 'if_total_speed', 'kvm_enabled', 'physical_mem_mb',
           'pending_vcpus_count', 'pending_vmem_size', 'mem_commited', 'vm_active', 'vm_count',
           'vm_migrating', 'vms_cores_count', 'cpu_over_commit_time_stamp', 'hypervisor_type',
-          'net_config_dirty', 'high_utilization', 'low_utilization', 'max_vds_memory_over_commit',
-          'cpu_over_commit_duration_minutes', 'storage_pool_id', 'storage_pool_name', 'reserved_mem',
+          'net_config_dirty', 'max_vds_memory_over_commit', 'storage_pool_id', 'storage_pool_name', 'reserved_mem',
           'guest_overhead', 'software_version', 'version_name', 'build_name', 'previous_status',
           'cpu_idle', 'cpu_load', 'cpu_sys', 'cpu_user', 'usage_mem_percent', 'usage_cpu_percent',
           'usage_network_percent', 'mem_available', 'mem_shared', 'swap_free', 'swap_total', 'ksm_cpu_percent',

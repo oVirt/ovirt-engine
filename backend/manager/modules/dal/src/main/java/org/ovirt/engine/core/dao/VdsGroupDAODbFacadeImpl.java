@@ -8,7 +8,6 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -151,11 +150,6 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("free_text_comment", group.getComment())
                 .addValue("vds_group_id", group.getId())
                 .addValue("cpu_name", group.getcpu_name())
-                .addValue("selection_algorithm", group.getselection_algorithm())
-                .addValue("high_utilization", group.gethigh_utilization())
-                .addValue("low_utilization", group.getlow_utilization())
-                .addValue("cpu_over_commit_duration_minutes",
-                        group.getcpu_over_commit_duration_minutes())
                 .addValue("storage_pool_id", group.getStoragePoolId())
                 .addValue("max_vds_memory_over_commit",
                         group.getmax_vds_memory_over_commit())
@@ -191,12 +185,6 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setId(getGuidDefaultEmpty(rs, "vds_group_id"));
             entity.setComment(rs.getString("free_text_comment"));
             entity.setcpu_name(rs.getString("cpu_name"));
-            entity.setselection_algorithm(VdsSelectionAlgorithm.forValue(rs
-                    .getInt("selection_algorithm")));
-            entity.sethigh_utilization(rs.getInt("high_utilization"));
-            entity.setlow_utilization(rs.getInt("low_utilization"));
-            entity.setcpu_over_commit_duration_minutes(rs
-                    .getInt("cpu_over_commit_duration_minutes"));
             entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
             entity.setStoragePoolName(rs
                     .getString("storage_pool_name"));

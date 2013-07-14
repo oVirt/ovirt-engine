@@ -494,16 +494,6 @@ public class ClusterModel extends EntityModel
         }
     }
 
-    private ClusterPolicyModel clusterPolicyModel;
-
-    public ClusterPolicyModel getClusterPolicyModel() {
-        return clusterPolicyModel;
-    }
-
-    public void setClusterPolicyModel(ClusterPolicyModel clusterPolicyModel) {
-        this.clusterPolicyModel = clusterPolicyModel;
-    }
-
     private MigrateOnErrorOptions migrateOnErrorOption = MigrateOnErrorOptions.values()[0];
 
     public MigrateOnErrorOptions getMigrateOnErrorOption()
@@ -644,7 +634,6 @@ public class ClusterModel extends EntityModel
         setDescription(new EntityModel());
         setComment(new EntityModel());
         setEnableTrustedService(new EntityModel(false));
-        setClusterPolicyModel(new ClusterPolicyModel());
         setAllowClusterWithVirtGlusterEnabled(true);
         AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
@@ -1310,7 +1299,7 @@ public class ClusterModel extends EntityModel
                         && getGlusterHostPassword().getIsValid()
                         && isFingerprintVerified()) : true));
 
-        return getClusterPolicyModel().validate() && getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
+        return getName().getIsValid() && getDataCenter().getIsValid() && getCPU().getIsValid()
                 && getVersion().getIsValid() && validService && getGlusterHostAddress().getIsValid()
                 && getGlusterHostPassword().getIsValid()
                 && ((Boolean) getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()

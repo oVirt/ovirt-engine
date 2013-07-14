@@ -281,10 +281,6 @@ public final class Cloner
         obj.setComment(instance.getComment());
         obj.setcpu_name(instance.getcpu_name());
 
-        obj.setselection_algorithm(instance.getselection_algorithm());
-        obj.sethigh_utilization(instance.gethigh_utilization());
-        obj.setlow_utilization(instance.getlow_utilization());
-        obj.setcpu_over_commit_duration_minutes(instance.getcpu_over_commit_duration_minutes());
         obj.setcompatibility_version(instance.getcompatibility_version());
         obj.setMigrateOnError(instance.getMigrateOnError());
         obj.setTransparentHugepages(instance.getTransparentHugepages());

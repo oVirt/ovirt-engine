@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VdsSelectionAlgorithm;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -370,7 +369,6 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setVmType(VmType.forValue(rs.getInt("vm_type")));
             entity.setStoragePoolId(getGuidDefaultEmpty(rs, "storage_pool_id"));
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
-            entity.setSelectionAlgorithm(VdsSelectionAlgorithm.forValue(rs.getInt("selection_algorithm")));
             entity.setTransparentHugePages(rs.getBoolean("transparent_hugepages"));
             entity.setNiceLevel(rs.getInt("nice_level"));
             entity.setHibernationVolHandle(rs.getString("hibernation_vol_handle"));

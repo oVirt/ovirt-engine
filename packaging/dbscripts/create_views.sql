@@ -539,7 +539,7 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_static.vmt_guid as vmt_guid, vm_static.os as vm_os, vm_static.description as vm_description, vm_static.vds_group_id as vds_group_id,
                       vm_static.domain as vm_domain, vm_static.creation_date as vm_creation_date, vm_static.auto_startup as auto_startup, vm_static.is_stateless as is_stateless, vm_static.is_smartcard_enabled as is_smartcard_enabled, vm_static.is_delete_protected as is_delete_protected, vm_static.dedicated_vm_for_vds as dedicated_vm_for_vds,
                       vm_static.fail_back as fail_back, vm_static.default_boot_sequence as default_boot_sequence, vm_static.vm_type as vm_type,
-					  vds_groups.name as vds_group_name, vds_groups.selection_algorithm as selection_algorithm, vds_groups.transparent_hugepages as transparent_hugepages, vds_groups.trusted_service as trusted_service,
+					  vds_groups.name as vds_group_name, vds_groups.transparent_hugepages as transparent_hugepages, vds_groups.trusted_service as trusted_service,
 					  storage_pool.id as storage_pool_id, storage_pool.name as storage_pool_name,
                       vds_groups.description as vds_group_description, vm_templates.vm_name as vmt_name,
                       vm_templates.mem_size_mb as vmt_mem_size_mb, vm_templates.os as vmt_os, vm_templates.creation_date as vmt_creation_date,
@@ -582,7 +582,7 @@ AS
 SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.vmt_guid, vms.vm_os, vms.vm_description,
             vms.vds_group_id, vms.vm_domain, vms.vm_creation_date, vms.auto_startup, vms.is_stateless, vms.is_smartcard_enabled, vms.is_delete_protected,
             vms.dedicated_vm_for_vds, vms.fail_back, vms.default_boot_sequence, vms.vm_type,
-            vms.vds_group_name, vms.selection_algorithm, vms.storage_pool_id, vms.storage_pool_name,
+            vms.vds_group_name, vms.storage_pool_id, vms.storage_pool_name,
             vms.vds_group_description, vms.vmt_name, vms.vmt_mem_size_mb, vms.vmt_os, vms.vmt_creation_date,
             vms.vmt_child_count, vms.vmt_num_of_sockets, vms.vmt_cpu_per_socket, vms.vmt_description, vms.status, vms.vm_ip,
             vms.vm_host, vms.vmt_num_of_sockets * vms.vmt_cpu_per_socket AS vmt_num_of_cpus, vms.vm_pid,
@@ -637,7 +637,7 @@ WHERE vm_type = '0';
 CREATE OR REPLACE VIEW vds
 as
 SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group_name, vds_groups.description as vds_group_description,
-                      vds_groups.selection_algorithm as selection_algorithm, vds_static.vds_id as vds_id, vds_static.vds_name as vds_name, vds_static.ip as ip, vds_static.vds_unique_id as vds_unique_id,
+                      vds_static.vds_id as vds_id, vds_static.vds_name as vds_name, vds_static.ip as ip, vds_static.vds_unique_id as vds_unique_id,
                       vds_static.host_name as host_name, vds_static.free_text_comment as free_text_comment,
                       vds_static.port as port, vds_static.vds_strength as vds_strength, vds_static.server_SSL_enabled as server_SSL_enabled, vds_static.vds_type as vds_type,
                       vds_static.pm_type as pm_type, vds_static.pm_user as pm_user, vds_static.pm_password as pm_password, vds_static.pm_port as pm_port,
@@ -651,8 +651,7 @@ SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group
                       vds_dynamic.if_total_speed as if_total_speed, vds_dynamic.kvm_enabled as kvm_enabled, vds_dynamic.physical_mem_mb as physical_mem_mb,
                       vds_dynamic.pending_vcpus_count as pending_vcpus_count, vds_dynamic.pending_vmem_size as pending_vmem_size,vds_dynamic.mem_commited as mem_commited, vds_dynamic.vm_active as vm_active, vds_dynamic.vm_count as vm_count,
                       vds_dynamic.vm_migrating as vm_migrating, vds_dynamic.vms_cores_count as vms_cores_count, vds_dynamic.cpu_over_commit_time_stamp as cpu_over_commit_time_stamp,
-                      vds_dynamic.net_config_dirty as net_config_dirty, vds_groups.high_utilization as high_utilization, vds_groups.low_utilization as low_utilization,
-                      vds_groups.max_vds_memory_over_commit as max_vds_memory_over_commit, vds_groups.cpu_over_commit_duration_minutes as cpu_over_commit_duration_minutes, vds_groups.count_threads_as_cores as count_threads_as_cores,
+                      vds_groups.max_vds_memory_over_commit as max_vds_memory_over_commit, vds_dynamic.net_config_dirty as net_config_dirty, vds_groups.count_threads_as_cores as count_threads_as_cores,
                       storage_pool.id as storage_pool_id, storage_pool.name as storage_pool_name, vds_dynamic.reserved_mem as reserved_mem,
                       vds_dynamic.guest_overhead as guest_overhead, vds_dynamic.rpm_version as rpm_version, vds_dynamic.software_version as software_version, vds_dynamic.version_name as version_name, vds_dynamic.build_name as build_name,
                       vds_dynamic.previous_status as previous_status, vds_statistics.cpu_idle as cpu_idle, vds_statistics.cpu_load as cpu_load, vds_statistics.cpu_sys as cpu_sys, vds_statistics.cpu_user as cpu_user,
@@ -679,7 +678,7 @@ vds_spm_id_map ON vds_static.vds_id = vds_spm_id_map.vds_id;
 CREATE OR REPLACE VIEW vds_with_tags
 as
 SELECT     vds_groups.vds_group_id, vds_groups.name AS vds_group_name, vds_groups.description AS vds_group_description,
-                      vds_groups.selection_algorithm, vds_static.vds_id, vds_static.vds_name, vds_static.ip, vds_static.vds_unique_id,
+                      vds_static.vds_id, vds_static.vds_name, vds_static.ip, vds_static.vds_unique_id,
                       vds_static.host_name, vds_static.free_text_comment, vds_static.port, vds_static.vds_strength, vds_static.server_SSL_enabled, vds_static.vds_type,
                       vds_static.pm_type, vds_static.pm_user, vds_static.pm_password, vds_static.pm_port,
                       vds_dynamic.hw_product_name, vds_dynamic.hw_version, vds_dynamic.hw_serial_number, vds_dynamic.hw_uuid, vds_dynamic.hw_family,
@@ -693,8 +692,7 @@ SELECT     vds_groups.vds_group_id, vds_groups.name AS vds_group_name, vds_group
                       vds_dynamic.physical_mem_mb, vds_dynamic.pending_vcpus_count, vds_dynamic.pending_vmem_size,
                       vds_dynamic.mem_commited, vds_dynamic.vm_active, vds_dynamic.vm_count, vds_dynamic.vm_migrating,
                       vds_dynamic.vms_cores_count, vds_dynamic.cpu_over_commit_time_stamp,
-                      vds_dynamic.net_config_dirty, vds_groups.high_utilization, vds_groups.low_utilization,
-                      vds_groups.max_vds_memory_over_commit, vds_groups.cpu_over_commit_duration_minutes, vds_groups.count_threads_as_cores,
+                      vds_dynamic.net_config_dirty, vds_groups.max_vds_memory_over_commit, vds_groups.count_threads_as_cores,
                       storage_pool.id AS storage_pool_id, storage_pool.name AS storage_pool_name, tags_vds_map_view.tag_name,
                       tags_vds_map_view.tag_id, vds_dynamic.reserved_mem, vds_dynamic.guest_overhead, vds_dynamic.rpm_version, vds_dynamic.software_version,
                       vds_dynamic.version_name, vds_dynamic.build_name, vds_dynamic.previous_status, vds_statistics.cpu_idle,
@@ -912,8 +910,7 @@ CREATE OR REPLACE VIEW vds_groups_storage_domain
 
 AS
 SELECT     vds_groups.vds_group_id, vds_groups.name, vds_groups.description, vds_groups.free_text_comment, vds_groups.cpu_name, vds_groups._create_date,
-                      vds_groups._update_date, vds_groups.selection_algorithm, vds_groups.high_utilization, vds_groups.low_utilization,
-                      vds_groups.cpu_over_commit_duration_minutes, vds_groups.storage_pool_id,
+                      vds_groups._update_date, vds_groups.storage_pool_id,
                       vds_groups.max_vds_memory_over_commit, vds_groups.count_threads_as_cores, vds_groups.compatibility_version,
                       vds_groups.transparent_hugepages, vds_groups.migrate_on_error,
                       storage_pool_iso_map.storage_id, storage_pool.name AS storage_pool_name
