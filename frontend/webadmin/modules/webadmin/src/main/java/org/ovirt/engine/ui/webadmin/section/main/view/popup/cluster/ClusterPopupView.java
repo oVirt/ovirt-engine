@@ -229,7 +229,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     Label additionPropsPanelTitle;
 
     @UiField(provided = true)
-    @Path(value = "clusterPolicyModel.enableTrustedService.entity")
+    @Path(value = "enableTrustedService.entity")
     @WithElementId
     EntityModelCheckBoxEditor enableTrustedServiceEditor;
 

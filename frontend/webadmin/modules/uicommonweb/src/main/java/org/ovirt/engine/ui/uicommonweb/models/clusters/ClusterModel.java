@@ -580,6 +580,16 @@ public class ClusterModel extends EntityModel
         }
     }
 
+    private EntityModel privateEnableTrustedService;
+
+    public EntityModel getEnableTrustedService() {
+        return privateEnableTrustedService;
+    }
+
+    public void setEnableTrustedService(EntityModel value) {
+        this.privateEnableTrustedService = value;
+    }
+
     public int getMemoryOverCommit()
     {
         if ((Boolean) getOptimizationNone_IsSelected().getEntity())
@@ -633,6 +643,7 @@ public class ClusterModel extends EntityModel
         setName(new EntityModel());
         setDescription(new EntityModel());
         setComment(new EntityModel());
+        setEnableTrustedService(new EntityModel(false));
         setClusterPolicyModel(new ClusterPolicyModel());
         setAllowClusterWithVirtGlusterEnabled(true);
         AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
@@ -652,24 +663,24 @@ public class ClusterModel extends EntityModel
                     getEnableGlusterService().setEntity(Boolean.FALSE);
                 }
                 getEnableGlusterService().setIsChangable(true);
-                getClusterPolicyModel().getEnableTrustedService().setEntity(false);
+                getEnableTrustedService().setEntity(false);
                 if (getEnableOvirtService().getEntity() != null
                         && (Boolean)getEnableOvirtService().getEntity())
                 {
                     if (getEnableGlusterService().getEntity() != null
                             && !(Boolean)getEnableGlusterService().getEntity())
                     {
-                        getClusterPolicyModel().getEnableTrustedService().setIsChangable(true);
+                        getEnableTrustedService().setIsChangable(true);
                     }
                     else
                     {
-                        getClusterPolicyModel().getEnableTrustedService().setIsChangable(false);
+                        getEnableTrustedService().setIsChangable(false);
                     }
 
                 }
                 else
                 {
-                    getClusterPolicyModel().getEnableTrustedService().setIsChangable(false);
+                    getEnableTrustedService().setIsChangable(false);
                 }
             }
         });
@@ -709,30 +720,30 @@ public class ClusterModel extends EntityModel
                 if (getEnableGlusterService().getEntity() != null
                         && (Boolean) getEnableGlusterService().getEntity())
                 {
-                    getClusterPolicyModel().getEnableTrustedService().setEntity(false);
-                    getClusterPolicyModel().getEnableTrustedService().setIsChangable(false);
+                    getEnableTrustedService().setEntity(false);
+                    getEnableTrustedService().setIsChangable(false);
                 }
                 else
                 {
                     if (getEnableOvirtService().getEntity() != null
                             && (Boolean)getEnableOvirtService().getEntity())
                     {
-                        getClusterPolicyModel().getEnableTrustedService().setIsChangable(true);
+                        getEnableTrustedService().setIsChangable(true);
                     }
                     else
                     {
-                        getClusterPolicyModel().getEnableTrustedService().setIsChangable(false);
+                        getEnableTrustedService().setIsChangable(false);
                     }
                 }
             }
 
        });
 
-        getClusterPolicyModel().getEnableTrustedService().getEntityChangedEvent().addListener(new IEventListener() {
+        getEnableTrustedService().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (getClusterPolicyModel().getEnableTrustedService().getEntity() != null
-                        && (Boolean)getClusterPolicyModel().getEnableTrustedService().getEntity())
+                if (getEnableTrustedService().getEntity() != null
+                        && (Boolean) getEnableTrustedService().getEntity())
                 {
                     getEnableGlusterService().setEntity(false);
                     getEnableGlusterService().setIsChangable(false);

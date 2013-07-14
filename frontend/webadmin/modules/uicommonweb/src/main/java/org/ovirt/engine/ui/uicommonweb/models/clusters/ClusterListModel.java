@@ -354,7 +354,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.setEntity(cluster);
         clusterModel.init(true);
         clusterModel.getClusterPolicyModel().setEditClusterPolicyFirst(clusterPolicyFirst);
-        clusterModel.getClusterPolicyModel().getEnableTrustedService().setEntity(cluster.supportsTrustedService());
+        clusterModel.getEnableTrustedService().setEntity(cluster.supportsTrustedService());
         setWindow(clusterModel);
         clusterModel.setTitle(ConstantsManager.getInstance().getConstants().editClusterTitle());
         clusterModel.setHashName("edit_cluster"); //$NON-NLS-1$
@@ -376,11 +376,11 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
         if (cluster.supportsVirtService()&& !cluster.supportsGlusterService())
         {
-            clusterModel.getClusterPolicyModel().getEnableTrustedService().setIsChangable(true);
+            clusterModel.getEnableTrustedService().setIsChangable(true);
         }
         else
         {
-            clusterModel.getClusterPolicyModel().getEnableTrustedService().setIsChangable(false);
+            clusterModel.getEnableTrustedService().setIsChangable(false);
         }
 
         AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
@@ -433,8 +433,10 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                         ArrayList<VDS> vdsList = (ArrayList<VDS>) result;
                         if (vdsList.size() > 0)
                         {
-                            clusterModel.getClusterPolicyModel().getEnableTrustedService().setIsChangable(false);
-                            clusterModel.getClusterPolicyModel().getEnableTrustedService().setInfo(ConstantsManager.getInstance().getConstants().trustedServiceDisabled());
+                            clusterModel.getEnableTrustedService().setIsChangable(false);
+                            clusterModel.getEnableTrustedService().setInfo(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .trustedServiceDisabled());
                         }
                     }
                 };
@@ -647,7 +649,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         cluster.setVirtService((Boolean) model.getEnableOvirtService().getEntity());
         cluster.setGlusterService((Boolean) model.getEnableGlusterService().getEntity());
         cluster.setselection_algorithm(model.getClusterPolicyModel().getSelectionAlgorithm());
-        cluster.setTrustedService((Boolean) model.getClusterPolicyModel().getEnableTrustedService().getEntity());
+        cluster.setTrustedService((Boolean) model.getEnableTrustedService().getEntity());
         if (model.getClusterPolicyModel().getOverCommitTime().getIsAvailable())
         {
             cluster.setcpu_over_commit_duration_minutes(Integer.parseInt(model.getClusterPolicyModel().getOverCommitTime()
@@ -835,7 +837,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             host.setSshPort(22); // TODO: get from UI, till then using defaults.
             host.setSshUsername("root"); //$NON-NLS-1$
 
-            host.setVdsGroupId((Guid) hostsModel.getClusterModel().getClusterId());
+            host.setVdsGroupId(hostsModel.getClusterModel().getClusterId());
             host.setpm_enabled(false);
 
             AddVdsActionParameters parameters = new AddVdsActionParameters();
