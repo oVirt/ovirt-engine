@@ -5,19 +5,15 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
-import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
-import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.OsLoader;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -118,13 +114,4 @@ public enum OsInfoPreferencesLoader implements OsLoader {
         node.put(key, value);
     }
 
-    public static void main(String[] args) {
-        INSTANCE.init(FileSystems.getDefault().getPath(EngineLocalConfig.getInstance().getEtcDir().getAbsolutePath(),
-                "/conf/osinfo.conf.d"));
-        OsRepositoryImpl.INSTANCE.init(INSTANCE.getPreferences());
-        for (Map.Entry<Integer, String> e : OsRepositoryImpl.INSTANCE.getOsNames().entrySet()) {
-            System.out.println(e);
-        }
-        System.out.println(OsRepositoryImpl.INSTANCE.getMaximumRam(100, null));
-    }
 }
