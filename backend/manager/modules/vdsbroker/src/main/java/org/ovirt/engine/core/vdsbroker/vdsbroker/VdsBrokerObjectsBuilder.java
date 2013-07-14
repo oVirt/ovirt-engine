@@ -42,7 +42,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.EnumUtils;
-import org.ovirt.engine.core.compat.FormatException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -65,12 +64,7 @@ public class VdsBrokerObjectsBuilder {
     public static VmDynamic buildVMDynamicDataFromList(Map<String, Object> xmlRpcStruct) {
         VmDynamic vmdynamic = new VmDynamic();
         if (xmlRpcStruct.containsKey(VdsProperties.vm_guid)) {
-            try {
-                vmdynamic.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
-            } catch (FormatException e) {
-                log.info("vm id is not in uuid format, ", e);
-                vmdynamic.setId(Guid.Empty);
-            }
+            vmdynamic.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
         }
         if (xmlRpcStruct.containsKey(VdsProperties.status)) {
             vmdynamic.setStatus(convertToVmStatus((String) xmlRpcStruct.get(VdsProperties.status)));
@@ -105,12 +99,7 @@ public class VdsBrokerObjectsBuilder {
 
     public static void updateVMDynamicData(VmDynamic vm, Map<String, Object> xmlRpcStruct) {
         if (xmlRpcStruct.containsKey(VdsProperties.vm_guid)) {
-            try {
-                vm.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
-            } catch (FormatException e) {
-                log.info("vm id is not in uuid format, ", e);
-                vm.setId(Guid.Empty);
-            }
+            vm.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
         }
         if (xmlRpcStruct.containsKey(VdsProperties.session)) {
             String session = (String) xmlRpcStruct.get(VdsProperties.session);
@@ -260,12 +249,7 @@ public class VdsBrokerObjectsBuilder {
 
     public static void updateVMStatisticsData(VmStatistics vm, Map<String, Object> xmlRpcStruct) {
         if (xmlRpcStruct.containsKey(VdsProperties.vm_guid)) {
-            try {
-                vm.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
-            } catch (FormatException e) {
-                log.info("vm id is not in uuid format, ", e);
-                vm.setId(Guid.Empty);
-            }
+            vm.setId(new Guid((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
         }
 
         vm.setelapsed_time(AssignDoubleValue(xmlRpcStruct, VdsProperties.elapsed_time));
