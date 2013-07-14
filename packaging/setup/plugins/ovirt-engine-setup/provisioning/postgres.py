@@ -474,6 +474,13 @@ class Plugin(plugin.PluginBase):
                 osetupcons.DBEnv.SECURED_HOST_VALIDATION
             ] = osetupcons.Defaults.DEFAULT_DB_SECURED_HOST_VALIDATION
 
+            self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
+                {
+                    'name': 'ovirt-postgres',
+                    'directory': 'base'
+                },
+            ])
+
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: self._enabled,
