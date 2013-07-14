@@ -42,6 +42,7 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> extends StorageHandlingCommandBase<T> {
@@ -227,7 +228,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                         Backend.getInstance()
                                 .getResourceManager()
                                 .RunVdsCommand(VDSCommandType.SpmStopOnIrs,
-                                        new IrsBaseVDSCommandParameters(getStoragePool().getId()));
+                                        new SpmStopOnIrsVDSCommandParameters(getStoragePool().getId()));
                         return null;
                     }
                 });

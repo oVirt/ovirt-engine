@@ -184,6 +184,21 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Internal Error: Host does not exists in DB.")
     String VDS_NOT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The Host ${VdsName} is not active.")
+    String CANNOT_FORCE_SELECT_SPM_VDS_NOT_UP();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The Host ${VdsName} is already SPM or contending.")
+    String CANNOT_FORCE_SELECT__SPM_VDS_ALREADY_SPM();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The SPM priority of Host ${VdsName} is set to 'never'. This Host cannot be elected as SPM.")
+    String CANNOT_FORCE_SELECT__SPM_VDS_MARKED_AS_NEVER_SPM();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The Storage Pool has running tasks.")
+    String CANNOT_FORCE_SELECT__SPM_STORAGE_POOL_HAS_RUNNING_TASKS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The Host is not a part of a Storage Pool.")
+    String CANNOT_FORCE_SELECT_SPM_VDS_NOT_IN_POOL();
+
     @DefaultStringValue("Internal error: Host protocol error.")
     String VDS_PROTOCOL_ERROR();
 
@@ -643,6 +658,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Network QoS")
     String VAR__TYPE__NETWORK_QOS();
 
+    @DefaultStringValue("$type SPM")
+    String VAR__TYPE__SPM();
+
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
 
@@ -780,6 +798,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$action scan alignment")
     String VAR__ACTION__SCAN_ALIGNMENT();
+
+    @DefaultStringValue("$action force select")
+    String VAR__ACTION__FORCE_SELECT();
 
     @DefaultStringValue("$action assign")
     String VAR__ACTION__ASSIGN();

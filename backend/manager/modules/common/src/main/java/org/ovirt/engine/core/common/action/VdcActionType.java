@@ -64,6 +64,7 @@ public enum VdcActionType {
     InitVdsOnUp(115, QuotaDependency.NONE),
     SetNonOperationalVds(117, QuotaDependency.NONE),
     AddVdsSpmId(119, QuotaDependency.NONE),
+    ForceSelectSPM(120, QuotaDependency.NONE),
     // Fencing (including RestartVds above)
     StartVds(121, ActionGroup.MANIPUTLATE_HOST, QuotaDependency.NONE),
     StopVds(122, ActionGroup.MANIPUTLATE_HOST, QuotaDependency.NONE),

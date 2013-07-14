@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.common.action.AttachVdsToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
+import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
@@ -22,6 +24,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -29,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -129,6 +133,18 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     private void setRemoveCommand(UICommand value)
     {
         privateRemoveCommand = value;
+    }
+
+    private UICommand selectAsSpmCommand;
+
+    public UICommand getSelectAsSpmCommand()
+    {
+        return selectAsSpmCommand;
+    }
+
+    private void setSelectAsSpmCommand(UICommand value)
+    {
+        selectAsSpmCommand = value;
     }
 
     private UICommand privateActivateCommand;
@@ -318,6 +334,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setEditWithPMemphasisCommand(new UICommand("EditWithPMemphasis", this)); //$NON-NLS-1$
+        setSelectAsSpmCommand(new UICommand("SelectAsSpm", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setActivateCommand(new UICommand("Activate", this, true)); //$NON-NLS-1$
         setMaintenanceCommand(new UICommand("Maintenance", this, true)); //$NON-NLS-1$
@@ -1603,6 +1620,8 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         getNewCommand().setIsAvailable(isAvailable);
         getRemoveCommand().setIsAvailable(isAvailable);
 
+        getSelectAsSpmCommand().setIsExecutionAllowed(isSelectAsSpmCommandAllowed(items));
+
         updateConfigureLocalStorageCommandAvailability();
 
         getRefreshCapabilitiesCommand().setIsExecutionAllowed(items.size() > 0 && VdcActionUtils.CanExecute(items,
@@ -1692,6 +1711,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         else if (command == getRemoveCommand())
         {
             remove();
+        }
+        else if (command == getSelectAsSpmCommand())
+        {
+            selectAsSPM();
         }
         else if (command == getActivateCommand())
         {
@@ -1789,6 +1812,32 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         {
             onConfigureLocalStorage();
         }
+    }
+
+    private void selectAsSPM() {
+        ForceSelectSPMParameters params =
+                new ForceSelectSPMParameters(((VDS) getSelectedItem()).getStoragePoolId(),
+                        ((VDS) getSelectedItem()).getId());
+        Frontend.RunAction(VdcActionType.ForceSelectSPM, params);
+
+    }
+
+    private boolean isSelectAsSpmCommandAllowed(List<VDS> selectedItems) {
+        if (selectedItems.size() != 1) {
+            return false;
+        }
+
+        VDS vds = selectedItems.get(0);
+
+        if (vds.getStatus() != VDSStatus.Up || vds.getSpmStatus() != VdsSpmStatus.None) {
+            return false;
+        }
+
+        if (vds.getVdsSpmPriority() == BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY) {
+            return false;
+        }
+
+        return true;
     }
 
     // @Override

@@ -614,7 +614,7 @@ public class AuditLogableBase extends TimeoutBase {
         return getDbFacade().getNetworkDao();
     }
 
-    protected AsyncTaskDAO getAsyncTaskDao() {
+    public AsyncTaskDAO getAsyncTaskDao() {
         return getDbFacade().getAsyncTaskDao();
     }
 

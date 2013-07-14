@@ -1142,6 +1142,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Maintenance")
     String maintenanceHost();
 
+    @DefaultStringValue("Select as SPM")
+    String selectHostAsSPM();
+
     @DefaultStringValue("Confirm 'Host has been Rebooted'")
     String confirmRebootedHost();
 

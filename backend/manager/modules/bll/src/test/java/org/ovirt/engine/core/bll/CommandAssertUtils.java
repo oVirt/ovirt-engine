@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
@@ -24,4 +25,17 @@ public class CommandAssertUtils {
         }
     }
 
+    /**
+     * This method checks if the return CDA messages contain the expected messages, it is different from checkMessages
+     * by the fact that it does not check by the order the parameters were given, the order is irrelevant most of the
+     * time and it does not check that the size of the returned messages matches the size of the expected messages, this
+     * comes in handy for example in scenarios where the CDA messages return a resolved parameters (e.g. '$VmName MyVM')
+     */
+    public static void checkMessagesContains(CommandBase<?> cmd, VdcBllMessages... expected) {
+        List<String> cdaMessages = cmd.getReturnValue().getCanDoActionMessages();
+        for (int i = 0; i < expected.length; i++) {
+            assertTrue("CanDoAction message does not contain the message " + expected[i],
+                    cdaMessages.contains(expected[i].toString()));
+        }
+    }
 }

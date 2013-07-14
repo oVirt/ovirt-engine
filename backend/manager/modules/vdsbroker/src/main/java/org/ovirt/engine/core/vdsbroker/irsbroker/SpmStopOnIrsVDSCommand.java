@@ -1,11 +1,10 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
-import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ResetIrsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
-public class SpmStopOnIrsVDSCommand<P extends IrsBaseVDSCommandParameters> extends IrsBrokerCommand<P> {
+public class SpmStopOnIrsVDSCommand<P extends SpmStopOnIrsVDSCommandParameters> extends IrsBrokerCommand<P> {
     public SpmStopOnIrsVDSCommand(P parameters) {
         super(parameters);
     }
@@ -15,6 +14,6 @@ public class SpmStopOnIrsVDSCommand<P extends IrsBaseVDSCommandParameters> exten
         ResourceManager.getInstance().runVdsCommand(
                 VDSCommandType.ResetIrs,
                 new ResetIrsVDSCommandParameters(getParameters().getStoragePoolId(),
-                        getCurrentIrsProxyData().getCurrentVdsId()));
+                        getCurrentIrsProxyData().getCurrentVdsId(), getParameters().getPreferredSPMId()));
     }
 }

@@ -299,6 +299,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_REMOVE_VDS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_REMOVE_VDS, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_VDS_RESTART, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_FORCE_SELECTED_SPM, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_VDS_RESTART, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_VDS_START, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_VDS_START, AuditLogSeverity.ERROR);

@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DeactivateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -32,6 +31,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
 
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -203,7 +203,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         }
         if (_isLastMaster && spm != null) {
             final VDSReturnValue stopSpmReturnValue = runVdsCommand(VDSCommandType.SpmStopOnIrs,
-                    new IrsBaseVDSCommandParameters(getStoragePool().getId()));
+                    new SpmStopOnIrsVDSCommandParameters(getStoragePool().getId()));
             if (!stopSpmReturnValue.getSucceeded()) {
                 // no need to continue because DisconnectStoragePool will
                 // fail if host is SPM

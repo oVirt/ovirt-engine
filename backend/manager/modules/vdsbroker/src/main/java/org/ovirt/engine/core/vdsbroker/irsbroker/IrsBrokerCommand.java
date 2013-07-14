@@ -81,7 +81,6 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
-
 @Logged(errorLevel = LogLevel.ERROR)
 public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> extends BrokerCommandBase<P> {
     public static final long BYTES_TO_GB = 1024 * 1024 * 1024;
@@ -122,19 +121,21 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     }
 
     protected static class IrsProxyData {
-        // TODO the syncObj initial purposs was to lock the IrsBroker creation
-        // but eventually because the IRS is singlethreaded and suppose to have
+        // TODO the syncObj initial purpose was to lock the IrsBroker creation
+        // but eventually because the IRS is single threaded and suppose to have
         // quite a load of requests,
-        // In order to avoid unexpected behaviour we have used the syncObj to
+        // In order to avoid unexpected behavior we have used the syncObj to
         // lock each request to the IRS
-        // and by that we caused a searialization of requests to the IRS.
+        // and by that we caused a serialization of requests to the IRS.
         // This lock should be removed as soon as the IrsBroker is turned
-        // multithreaded
+        // multi threaded
         public Object syncObj = new Object();
 
         private final String storagePoolRefreshJobId;
         private final java.util.HashSet<Guid> mTriedVdssList = new java.util.HashSet<Guid>();
         private Guid mCurrentVdsId;
+
+        private Guid preferredHostId;
 
         public Guid getCurrentVdsId() {
             return getIrsProxy() != null ? mCurrentVdsId : Guid.Empty;
@@ -188,7 +189,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
                     }
                 }
-            } catch (java.lang.Exception ex) {
+            } catch (Exception ex) {
             }
         }
 
@@ -228,7 +229,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     }
                 }
 
-                // if spm status didnt work or not spm and NOT NETWORK
+                // if spm status didn't work or not spm and NOT NETWORK
                 // PROBLEM
                 // then cause failover with attempts
                 if (result != null && !(result.getExceptionObject() instanceof VDSNetworkException)) {
@@ -298,6 +299,14 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     }
                 }
             }
+        }
+
+        public Guid getPreferredHostId() {
+            return preferredHostId;
+        }
+
+        public void setPreferredHostId(Guid preferredHostId) {
+            this.preferredHostId = preferredHostId;
         }
 
         private void proceedStorageDomain(StorageDomain data, int dataMasterVersion, StoragePool storagePool) {
@@ -694,11 +703,20 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             // deal with the case that there are several hosts with the same priority.
             List<VDS> allVds = DbFacade.getInstance().getVdsDao().getListForSpmSelection(_storagePoolId);
             List<VDS> vdsRelevantForSpmSelection = new ArrayList<VDS>();
+            Guid preferredHost = getIrsProxyData(_storagePoolId).getPreferredHostId();
+            getIrsProxyData(_storagePoolId).setPreferredHostId(null);
+
             for (VDS vds : allVds) {
                 if (!mTriedVdssList.contains(vds.getId()) && !vds.getId().equals(curVdsId)) {
-                    vdsRelevantForSpmSelection.add(vds);
+                    if (vds.getId().equals(preferredHost)) {
+                        vdsRelevantForSpmSelection.add(0, vds);
+                    }
+                    else {
+                        vdsRelevantForSpmSelection.add(vds);
+                    }
                 }
             }
+
             return vdsRelevantForSpmSelection;
         }
 

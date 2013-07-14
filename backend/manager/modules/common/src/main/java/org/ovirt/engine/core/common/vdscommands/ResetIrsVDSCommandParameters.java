@@ -3,12 +3,23 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
+
+    private Guid privateVdsId;
+
+    private Guid preferredSPMId;
+
+    public ResetIrsVDSCommandParameters() {
+    }
+
     public ResetIrsVDSCommandParameters(Guid storagePoolId, Guid vdsId) {
         super(storagePoolId);
         setVdsId(vdsId);
     }
 
-    private Guid privateVdsId;
+    public ResetIrsVDSCommandParameters(Guid storagePoolId, Guid vdsId, Guid preferredSPMId) {
+        this(storagePoolId, vdsId);
+        setPreferredSPMId(preferredSPMId);
+    }
 
     public Guid getVdsId() {
         return privateVdsId;
@@ -24,11 +35,16 @@ public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
         return privateIgnoreStopFailed;
     }
 
-    public void setIgnoreStopFailed(boolean value) {
-        privateIgnoreStopFailed = value;
+    public Guid getPreferredSPMId() {
+        return preferredSPMId;
     }
 
-    public ResetIrsVDSCommandParameters() {
+    public void setPreferredSPMId(Guid preferredSPMId) {
+        this.preferredSPMId = preferredSPMId;
+    }
+
+    public void setIgnoreStopFailed(boolean value) {
+        privateIgnoreStopFailed = value;
     }
 
     @Override
