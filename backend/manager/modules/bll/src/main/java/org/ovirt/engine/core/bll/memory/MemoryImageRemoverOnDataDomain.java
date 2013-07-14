@@ -11,8 +11,12 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class MemoryImageRemoverOnDataDomain extends MemoryImageRemover {
 
+    protected Boolean cachedPostZero;
+    private VM vm;
+
     public MemoryImageRemoverOnDataDomain(VM vm, TaskHandlerCommand<?> enclosingCommand) {
-        super(vm, enclosingCommand);
+        super(enclosingCommand);
+        this.vm = vm;
     }
 
     @Override
@@ -47,7 +51,7 @@ public class MemoryImageRemoverOnDataDomain extends MemoryImageRemover {
      * volumes should be removed only if the only snapshot that points to them is removed
      */
     @Override
-    protected boolean shouldRemoveMemorySnapshotVolumes(String memoryVolume) {
+    protected boolean isMemoryStateRemovable(String memoryVolume) {
         return !memoryVolume.isEmpty() &&
                 getDbFacade().getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1;
     }

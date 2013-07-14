@@ -12,10 +12,13 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
 
     private Guid storagePoolId;
     private Guid storageDomainId;
+    protected Boolean cachedPostZero;
+    private VM vm;
 
     public MemoryImageRemoverFromExportDomain(VM vm, TaskHandlerCommand<?> enclosingCommand,
             Guid storagePoolId, Guid storageDomainId) {
-        super(vm, enclosingCommand);
+        super(enclosingCommand);
+        this.vm = vm;
         this.storagePoolId = storagePoolId;
         this.storageDomainId = storageDomainId;
     }
@@ -54,7 +57,7 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
     }
 
     @Override
-    protected boolean shouldRemoveMemorySnapshotVolumes(String memoryVolume) {
+    protected boolean isMemoryStateRemovable(String memoryVolume) {
         return !memoryVolume.isEmpty();
     }
 
