@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -503,7 +503,7 @@ public class VmHandler {
      *         or null if no such storage domain exists in the pool
      */
     public static StorageDomain findStorageDomainForMemory(Guid storagePoolId, long sizeRequested) {
-        return findStorageDomainForMemory(storagePoolId, sizeRequested, new HashMap<StorageDomain, Integer>());
+        return findStorageDomainForMemory(storagePoolId, sizeRequested, Collections.<StorageDomain, Integer>emptyMap());
     }
 
     /**
