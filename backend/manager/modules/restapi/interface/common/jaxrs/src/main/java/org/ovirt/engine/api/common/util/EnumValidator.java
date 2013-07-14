@@ -33,7 +33,7 @@ public class EnumValidator {
 
     private static final Response.Status INVALID_ENUM_STATUS = Response.Status.BAD_REQUEST;
 
-    /* Validate that @name is the name of an enum constant from the
+    /** Validate that @name is the name of an enum constant from the
      * enum class @clz.
      *
      * @param clz  the enum class
@@ -66,7 +66,7 @@ public class EnumValidator {
         return validateEnum(INVALID_ENUM_REASON, INVALID_ENUM_DETAIL, clz, name, toUppercase);
     }
 
-    /* Validate that @name is the name of an enum constant from the
+    /** Validate that @name is the name of an enum constant from the
      * enum class @clz.
      *
      * @param reason    the fault reason
