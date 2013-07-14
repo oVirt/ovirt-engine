@@ -79,7 +79,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableField
     private VmType vmType = VmType.Desktop;
 
-    @EditableField
+    @EditableOnVmStatusField
     private UsbPolicy usbPolicy = UsbPolicy.DISABLED;
 
     private boolean failBack;
