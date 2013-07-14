@@ -393,10 +393,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
         @Override
         public int compare(StorageDomain o1, StorageDomain o2) {
-            // TODO: When moving to JDK7 - this can be replaced with
-            // Long.compare(o1.getLastTimeUsedAsMaster(),o2.getLastTimeUsedAsMaster());
-            return (o1.getLastTimeUsedAsMaster() < o2.getLastTimeUsedAsMaster()) ? -1
-                    : ((o1.getLastTimeUsedAsMaster() == o2.getLastTimeUsedAsMaster()) ? 0 : 1);
+            return Long.compare(o1.getLastTimeUsedAsMaster(),o2.getLastTimeUsedAsMaster());
         }
     }
 }
