@@ -64,7 +64,11 @@ public class EvenDistributionPolicyUnit extends PolicyUnitImpl {
             return null;
         }
         VDS randomHost = overUtilizedHosts.get(new Random().nextInt(overUtilizedHosts.size()));
-        VM vm = getBestVmToMigrate(randomHost.getId(), getMigrableVmsRunningOnVds(randomHost.getId()));
+        List<VM> migrableVmsOnRandomHost = getMigrableVmsRunningOnVds(randomHost.getId());
+        if(migrableVmsOnRandomHost.isEmpty()) {
+            return null;
+        }
+        VM vm = getBestVmToMigrate(randomHost.getId(), migrableVmsOnRandomHost);
 
         List<Guid> underUtilizedHostsKeys = new ArrayList<Guid>();
         for (VDS vds : underUtilizedHosts) {
