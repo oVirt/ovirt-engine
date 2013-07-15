@@ -450,3 +450,5 @@ install-dev:	\
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/setup"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/notifier"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/engine-manage-domains"
+
+	touch "$(DESTDIR)$(PKG_STATE_DIR)/deployments/engine.ear.deployed"
