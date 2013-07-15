@@ -956,6 +956,7 @@ public class VdsBrokerObjectsBuilder {
                                 currVlans,
                                 networkVlans,
                                 network,
+                                vds,
                                 net);
                     }
 
@@ -1075,7 +1076,7 @@ public class VdsBrokerObjectsBuilder {
                     if (config != null && config.get("BONDING_OPTS") != null) {
                         iface.setBondOptions(config.get("BONDING_OPTS").toString());
                     }
-                    addBootProtocol(config, iface);
+                    addBootProtocol(config, vds, iface);
                 }
             }
         }
@@ -1124,7 +1125,7 @@ public class VdsBrokerObjectsBuilder {
                 }
 
                 iStats.setVdsId(vds.getId());
-                addBootProtocol((Map<String, Object>) vlan.get("cfg"), iface);
+                addBootProtocol((Map<String, Object>) vlan.get("cfg"), vds, iface);
                 vds.getInterfaces().add(iface);
             }
         }
@@ -1151,7 +1152,7 @@ public class VdsBrokerObjectsBuilder {
                 iface.setName(entry.getKey());
                 iface.setVdsId(vds.getId());
 
-                updateNetworkInterfaceDataFromHost(iface, (Map<String, Object>) entry.getValue());
+                updateNetworkInterfaceDataFromHost(iface, vds, (Map<String, Object>) entry.getValue());
 
                 iStats.setVdsId(vds.getId());
                 vds.getInterfaces().add(iface);
@@ -1167,7 +1168,8 @@ public class VdsBrokerObjectsBuilder {
      * @param nic
      *            A key-value map of the interface properties and their value
      */
-    private static void updateNetworkInterfaceDataFromHost(VdsNetworkInterface iface, Map<String, Object> nic) {
+    private static void updateNetworkInterfaceDataFromHost(
+            VdsNetworkInterface iface, VDS host, Map<String, Object> nic) {
         if (nic != null) {
             if (nic.get("speed") != null) {
                 Object speed = nic.get("speed");
@@ -1183,7 +1185,7 @@ public class VdsBrokerObjectsBuilder {
             if (StringUtils.isNotBlank((String) nic.get(VdsProperties.MTU))) {
                 iface.setMtu(Integer.parseInt((String) nic.get(VdsProperties.MTU)));
             }
-            addBootProtocol((Map<String, Object>) nic.get("cfg"), iface);
+            addBootProtocol((Map<String, Object>) nic.get("cfg"), host, iface);
         }
     }
 
@@ -1205,6 +1207,7 @@ public class VdsBrokerObjectsBuilder {
             Map<String, Integer> currVlans,
             Map<String, Integer> networkVlans,
             Map<String, Object> network,
+            VDS host,
             Network net) {
 
         if (iface != null) {
@@ -1223,11 +1226,11 @@ public class VdsBrokerObjectsBuilder {
             iface.setSubnet(net.getSubnet());
             boolean bridgedNetwork = isBridgedNetwork(network);
             iface.setBridged(bridgedNetwork);
-            setGatewayIfManagementNetwork(iface, net.getGateway());
+            setGatewayIfManagementNetwork(iface, host, net.getGateway());
 
             if (bridgedNetwork) {
                 Map<String, Object> networkConfig = (Map<String, Object>) network.get("cfg");
-                addBootProtocol(networkConfig, iface);
+                addBootProtocol(networkConfig, host, iface);
             }
         }
     }
@@ -1262,7 +1265,7 @@ public class VdsBrokerObjectsBuilder {
         }
     }
 
-    private static void addBootProtocol(Map<String, Object> cfg, VdsNetworkInterface iface) {
+    private static void addBootProtocol(Map<String, Object> cfg, VDS host, VdsNetworkInterface iface) {
         NetworkBootProtocol bootproto = NetworkBootProtocol.NONE;
 
         if (cfg != null) {
@@ -1283,7 +1286,7 @@ public class VdsBrokerObjectsBuilder {
             if (bootproto == NetworkBootProtocol.STATIC_IP) {
                 String gateway = (String) cfg.get(VdsProperties.GATEWAY);
                 if (StringUtils.isNotEmpty(gateway)) {
-                    setGatewayIfManagementNetwork(iface, gateway.toString());
+                    setGatewayIfManagementNetwork(iface, host, gateway.toString());
                 }
             }
         }
@@ -1305,16 +1308,17 @@ public class VdsBrokerObjectsBuilder {
     }
 
     /**
-     * Store the gateway for management network only. If gateway was provided for non-management network, its value
-     * should be ignored
+     * Store the gateway for management network or the active interface only (could happen when there is no management
+     * network yet). If gateway was provided for non-management network, its value should be ignored.
      *
      * @param iface
      *            the host network interface
      * @param gateway
      *            the gateway value to be set
      */
-    private static void setGatewayIfManagementNetwork(VdsNetworkInterface iface, String gateway) {
-        if (NetworkUtils.getEngineNetwork().equals(iface.getNetworkName())) {
+    private static void setGatewayIfManagementNetwork(VdsNetworkInterface iface, VDS host, String gateway) {
+        if (NetworkUtils.getEngineNetwork().equals(iface.getNetworkName())
+                || iface.getName().equals(host.getActiveNic())) {
             iface.setGateway(gateway);
         }
     }
