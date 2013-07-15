@@ -44,10 +44,10 @@ public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* ex
         }
     }
 
-    protected final R performUpdate(R incoming,
+    protected final <T> R performUpdate(R incoming,
                               Q entity,
                               R model,
-                              EntityIdResolver<Guid> entityResolver,
+                              EntityIdResolver<T> entityResolver,
                               VdcActionType update,
                               ParametersProvider<R, Q> updateProvider) {
 
@@ -71,8 +71,8 @@ public abstract class AbstractBackendSubResource<R extends BaseResource, Q /* ex
         return entity;
     }
 
-    protected R performUpdate(R incoming,
-            EntityIdResolver<Guid> entityResolver,
+    protected <T> R performUpdate(R incoming,
+            EntityIdResolver<T> entityResolver,
             VdcActionType update,
             ParametersProvider<R, Q> updateProvider) {
         Q entity = getEntity(entityResolver, true);
