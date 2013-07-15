@@ -43,7 +43,6 @@ RPMBUILD=rpmbuild
 PYTHON=python
 PREFIX=/usr/local
 LOCALSTATE_DIR=$(PREFIX)/var
-ENGINE_STATE=$(LOCALSTATE_DIR)/lib/$(ENGINE_NAME)
 BIN_DIR=$(PREFIX)/bin
 PID_DIR=$(LOCALSTATE_DIR)/run
 SYSCONF_DIR=$(PREFIX)/etc
@@ -61,6 +60,7 @@ PKG_JBOSS_MODULES=$(DATA_DIR)/modules
 PKG_CACHE_DIR=$(LOCALSTATE_DIR)/cache/$(ENGINE_NAME)
 PKG_LOG_DIR=$(LOCALSTATE_DIR)/log/$(ENGINE_NAME)
 PKG_TMP_DIR=$(LOCALSTATE_DIR)/tmp/$(ENGINE_NAME)
+PKG_STATE_DIR=$(LOCALSTATE_DIR)/lib/$(ENGINE_NAME)
 SPICE_DIR=/usr/share/spice
 JBOSS_HOME=/usr/share/jboss-as
 PYTHON_DIR=$(PYTHON_SYS_DIR)
@@ -139,7 +139,7 @@ BUILD_TARGET=install
 	-e "s|@ENGINE_TMP@|$(PKG_TMP_DIR)|g" \
 	-e "s|@ENGINE_USR@|$(DATA_DIR)|g" \
 	-e "s|@ENGINE_DOC@|$(PKG_DOC_DIR)|g" \
-	-e "s|@ENGINE_VAR@|$(ENGINE_STATE)|g" \
+	-e "s|@ENGINE_VAR@|$(PKG_STATE_DIR)|g" \
 	-e "s|@ENGINE_CACHE@|$(PKG_CACHE_DIR)|g" \
 	-e "s|@ENGINE_PID@|$(PID_DIR)/$(ENGINE_NAME).pid|g" \
 	-e "s|@RPM_VERSION@|$(RPM_VERSION)|g" \
@@ -364,7 +364,7 @@ install-layout: \
 	install -d -m 755 "$(DESTDIR)$(PKG_PKI_DIR)/requests"
 	install -d -m 755 "$(DESTDIR)$(DATA_DIR)/ui-plugins"
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding"
-	install -d -m 750 "$(DESTDIR)$(ENGINE_STATE)/backups"
+	install -d -m 750 "$(DESTDIR)$(PKG_STATE_DIR)/backups"
 
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding"
 	-rm -f "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
@@ -435,12 +435,11 @@ install-dev:	\
 		EXTRA_BUILD_FLAGS="$(DEV_BUILD_FLAGS)" \
 		PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
 		$(NULL)
-	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/tmp"
-	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/run/notifier"
-	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/cache/ovirt-engine"
-	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/lib/ovirt-engine/backups"
-	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/lib/ovirt-engine/deployments"
-	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/lib/ovirt-engine/content"
-	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/log/ovirt-engine/host-deploy"
-	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/log/ovirt-engine/notifier"
-	install -d "$(DESTDIR)$(LOCALSTATE_DIR)/log/ovirt-engine/engine-manage-domains"
+
+	install -d "$(DESTDIR)$(PKG_TMP_DIR)"
+	install -d "$(DESTDIR)$(PKG_CACHE_DIR)"
+	install -d "$(DESTDIR)$(PKG_STATE_DIR)/deployments"
+	install -d "$(DESTDIR)$(PKG_STATE_DIR)/content"
+	install -d "$(DESTDIR)$(PKG_LOG_DIR)/host-deploy"
+	install -d "$(DESTDIR)$(PKG_LOG_DIR)/notifier"
+	install -d "$(DESTDIR)$(PKG_LOG_DIR)/engine-manage-domains"

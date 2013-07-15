@@ -97,7 +97,6 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	DISPLAY_VERSION=%{version}-%{release} \\\
 	ENGINE_NAME=%{engine_name} \\\
 	LOCALSTATE_DIR=%{_localstatedir} \\\
-	ENGINE_STATE=%{engine_state} \\\
 	PREFIX=%{_prefix} \\\
 	SYSCONF_DIR=%{_sysconfdir} \\\
 	BIN_DIR=%{_bindir} \\\
@@ -117,6 +116,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 	PKG_CACHE_DIR=%{engine_cache} \\\
 	PKG_LOG_DIR=%{engine_log} \\\
 	PKG_TMP_DIR=%{engine_tmp} \\\
+	PKG_STATE_DIR=%{engine_state} \\\
 	PKG_USER=%{engine_user} \\\
 	PKG_GROUP=%{engine_group} \\\
 	%{?BUILD_FLAGS:BUILD_FLAGS="%{BUILD_FLAGS}"} \\\
