@@ -52,6 +52,7 @@ public enum VDSCommandType {
     HSMRevertTask("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     UpdateVmDynamicData("org.ovirt.engine.core.vdsbroker"),
     CollectVdsNetworkData("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    CollectVdsNetworkDataAfterInstallation("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetVmsInfo("org.ovirt.engine.core.vdsbroker.irsbroker"),
     HSMGetStorageDomainInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     HSMGetStorageDomainsList("org.ovirt.engine.core.vdsbroker.vdsbroker"),

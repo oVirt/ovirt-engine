@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
-import org.ovirt.engine.core.common.vdscommands.CollectVdsNetworkDataVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -28,9 +28,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
-public class CollectVdsNetworkDataVDSCommand<P extends CollectVdsNetworkDataVDSCommandParameters>
-        extends GetCapabilitiesVDSCommand<P> {
-    public CollectVdsNetworkDataVDSCommand(P parameters) {
+public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<VdsIdAndVdsVDSCommandParametersBase> {
+    public CollectVdsNetworkDataVDSCommand(VdsIdAndVdsVDSCommandParametersBase parameters) {
         super(parameters);
     }
 
@@ -41,9 +40,16 @@ public class CollectVdsNetworkDataVDSCommand<P extends CollectVdsNetworkDataVDSC
         updateNetConfigDirtyFlag();
 
         // update to db
-        persistAndEnforceNetworkCompliance(getVds(), getParameters().isManagementNetworkSkipped());
+        persistAndEnforceNetworkCompliance(getVds(), skipManagementNetwork());
 
         ProceedProxyReturnValue();
+    }
+
+    /**
+     * @return By default, don't skip the management network check.
+     */
+    protected boolean skipManagementNetwork() {
+        return false;
     }
 
     /**
