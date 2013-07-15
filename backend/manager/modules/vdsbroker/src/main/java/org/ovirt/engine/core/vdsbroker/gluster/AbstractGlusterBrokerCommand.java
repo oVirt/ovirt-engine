@@ -56,10 +56,8 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterHookChecksumMismatch:
         case GlusterHookAddFailed:
         case GlusterHookRemoveFailed:
-        case GlusterServicesFailed:
+        case GlusterServicesActionFailed:
         case GlusterServiceActionNotSupported:
-        case GlusterServiceManageFailed:
-        case GlusterServiceNotSupported:
             // Capture error from gluster command and record failure
             getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));
             getVDSReturnValue().setSucceeded(false);

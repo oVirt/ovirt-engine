@@ -767,15 +767,9 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Failed to remove hook")
     String GlusterHookRemoveFailed();
 
-    @DefaultStringValue("Gluster service operation failed")
-    String GlusterServicesFailed();
+    @DefaultStringValue("Gluster service action failed")
+    String GlusterServicesActionFailed();
 
     @DefaultStringValue("Gluster service action not supported")
     String GlusterServiceActionNotSupported();
-
-    @DefaultStringValue("Manage (start/stop/restart) service failed")
-    String GlusterServiceManageFailed();
-
-    @DefaultStringValue("Gluster service not supported")
-    String GlusterServiceNotSupported();
 }

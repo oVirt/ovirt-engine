@@ -239,5 +239,5 @@ public interface VdsServerConnector {
 
     public Map<String,Object> glusterHookRemove(String glusterCommand, String stage, String hookName);
 
-    public Map<String, Object> glusterServicesManage(String[] serviceNames, String action, boolean failOnError);
+    public Map<String, Object> glusterServicesAction(String[] serviceNames, String action);
 }
