@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.adbroker;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -74,6 +75,7 @@ public class DirectorySearcher {
         }
 
         List<URI> ldapServerURIs = domain.getLdapServers();
+        List<URI> editableLdapServerURIs = new ArrayList<>(ldapServerURIs);
         if (log.isDebugEnabled()) {
             log.debug("Ldap server list: " + StringUtils.join(ldapServerURIs, ", "));
         }
@@ -81,12 +83,12 @@ public class DirectorySearcher {
 
         for (Iterator<URI> iterator = ldapServerURIs.iterator(); iterator.hasNext();) {
             URI ldapURI = iterator.next();
-            response = findAndOrderServers(queryData, ldapURI, domainName, resultCount, ldapServerURIs);
+            response = findAndOrderServers(queryData, ldapURI, domainName, resultCount, editableLdapServerURIs);
             if (response != null) {
                 break;
             }
         }
-        domain.setLdapServers(ldapServerURIs);
+        domain.setLdapServers(editableLdapServerURIs);
         return response;
     }
 
