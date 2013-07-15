@@ -409,6 +409,9 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_FAILED_COPY_TEMPLATE, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_UPDATE_VM_DISK, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_UPDATE_VM_DISK, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.USER_EXTEND_DISK_SIZE_FAILURE, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.USER_FAILED_UPDATE_VM_DISK, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.USER_EXTEND_DISK_SIZE_SUCCESS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_HOTPLUG_DISK, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_HOTPLUG_DISK, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_HOTUNPLUG_DISK, AuditLogSeverity.NORMAL);

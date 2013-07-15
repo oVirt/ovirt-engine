@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
@@ -32,6 +33,15 @@ public class ImageDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Image, Guid>
                 .addValue("image_id", id)
                 .addValue("vm_snapshot_id", vmSnapshotId);
         getCallsHandler().executeModification("UpdateImageVmSnapshotId", parameterSource);
+    }
+
+    @Override
+    public void updateImageSize(Guid id, long size) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("image_id", id)
+                .addValue("size", size)
+                .addValue("lastModified", new Date());
+        getCallsHandler().executeModification("UpdateImageSize", parameterSource);
     }
 
     @Override

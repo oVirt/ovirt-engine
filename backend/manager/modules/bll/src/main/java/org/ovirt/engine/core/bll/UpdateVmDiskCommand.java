@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,20 +9,28 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.DiskValidator;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ExtendImageSizeParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -33,79 +42,106 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
-@NonTransactiveCommandAttribute
+@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
+@NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends AbstractDiskVmCommand<T>
         implements QuotaStorageDependent {
 
     private List<PermissionSubject> listPermissionSubjects;
-    protected final Disk oldDisk;
-    protected final Disk newDisk;
     private Map<Guid, List<Disk>> otherVmDisks = new HashMap<Guid, List<Disk>>();
-    private Map<String, Pair<String, String>> sharedLockMap;
-    private Map<String, Pair<String, String>> exclusiveLockMap;
+    private List<VM> vmsDiskPluggedTo;
+    private Disk oldDisk;
 
     public UpdateVmDiskCommand(T parameters) {
         super(parameters);
-        oldDisk = getDiskDao().get(getParameters().getDiskId());
-        newDisk = getParameters().getDiskInfo();
+    }
+
+    /**
+     * This constructor is mandatory for activation of the compensation process
+     * after the server restart.
+     * @param commandId
+     */
+    public UpdateVmDiskCommand(Guid commandId) {
+        super(commandId);
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        Map<String, Pair<String, String>> sharedLock = new HashMap<String, Pair<String, String>>();
+        List<VM> vmsDiskPluggedTo = getVmsDiskPluggedTo();
+
+        for (VM vm : vmsDiskPluggedTo) {
+            sharedLock.put(vm.getId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_LOCKED));
+        }
+        return sharedLock.isEmpty() ? null : sharedLock;
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        Map<String, Pair<String, String>> exclusiveLock = new HashMap<String, Pair<String, String>>();
+        List<VM> vmsDiskPluggedTo = getVmsDiskPluggedTo();
+
+        if (getNewDisk().isBoot()) {
+            for (VM vm : vmsDiskPluggedTo) {
+                exclusiveLock.put(vm.getId().toString(),
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+            }
+        }
+
+        if (shouldResizeDiskImage()) {
+            exclusiveLock.put(getOldDisk().getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED));
+        }
+
+        return exclusiveLock.isEmpty() ? null : exclusiveLock;
     }
 
     @Override
     protected void executeVmCommand() {
-        performDiskUpdate();
+        ImagesHandler.setDiskAlias(getParameters().getDiskInfo(), getVm());
+
+        if (shouldResizeDiskImage()) {
+            extendDiskImageSize();
+        } else {
+            try {
+                performDiskUpdate(false);
+            } finally {
+                freeLock();
+            }
+        }
     }
 
     @Override
     protected boolean canDoAction() {
-        if (!isVmExist()) {
-            return false;
-        }
-        if (!isDiskExist(oldDisk)) {
+        if (!isVmExist() || !isDiskExist(getOldDisk())) {
             return false;
         }
 
-        DiskValidator diskValidator = new DiskValidator(newDisk);
-        List<VM> vmsDiskPluggedTo = getVmDAO().getForDisk(oldDisk.getId()).get(Boolean.TRUE);
-
+        List<VM> vmsDiskPluggedTo = getVmsDiskPluggedTo();
         if (vmsDiskPluggedTo != null && !vmsDiskPluggedTo.isEmpty()) {
-            buildSharedLockMap(vmsDiskPluggedTo);
-            buildExclusiveLockMap(vmsDiskPluggedTo);
-            acquireLockInternal();
-
-            // Check if all VMs are in status down.
-            for (VM vm : vmsDiskPluggedTo) {
-                if (vm.getStatus() != VMStatus.Down) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
-                }
+            // only virtual drive size can be updated when VMs is running
+            if (isAtLeastOneVmIsNotDown(vmsDiskPluggedTo) && shouldUpdatePropertiesOtherThanSize()) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             }
 
-            if (!checkCanPerformRegularUpdate(vmsDiskPluggedTo)) {
+            boolean isUpdatedAsBootable = !getOldDisk().isBoot() && getNewDisk().isBoot();
+            if (isUpdatedAsBootable && !validate(noVmsContainBootableDisks(vmsDiskPluggedTo))) {
+                return false;
+            }
+
+            boolean isDiskInterfaceUpdated = getOldDisk().getDiskInterface() != getNewDisk().getDiskInterface();
+            if (isDiskInterfaceUpdated && !validatePciAndIdeLimit(vmsDiskPluggedTo)) {
                 return false;
             }
         }
 
-        // Set disk alias name in the disk retrieved from the parameters.
-        ImagesHandler.setDiskAlias(newDisk, getVm());
-        return validateShareableDisk() && validate(diskValidator.isVirtIoScsiValid(getVm()));
-    }
-
-
-    private void buildSharedLockMap(List<VM> vmsDiskPluggedTo) {
-        sharedLockMap = new HashMap<String, Pair<String, String>>();
-        for (VM vm : vmsDiskPluggedTo) {
-            sharedLockMap.put(vm.getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        if (shouldResizeDiskImage() && !validateCanResizeDisk()) {
+            return false;
         }
-    }
 
-    private void buildExclusiveLockMap(List<VM> vmsDiskPluggedTo) {
-        if (newDisk.isBoot()) {
-            exclusiveLockMap = new HashMap<String, Pair<String, String>>();
-            for (VM vm : vmsDiskPluggedTo) {
-                exclusiveLockMap.put(vm.getId().toString(),
-                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_DISK_BOOT, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-            }
-        }
+        DiskValidator diskValidator = new DiskValidator(getNewDisk());
+        return validateCanUpdateShareable() && validate(diskValidator.isVirtIoScsiValid(getVm()));
     }
 
     @Override
@@ -114,30 +150,17 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
     }
 
-    private boolean checkCanPerformRegularUpdate(List<VM> vmsDiskPluggedTo) {
+    private boolean validatePciAndIdeLimit(List<VM> vmsDiskPluggedTo) {
         for (VM vm : vmsDiskPluggedTo) {
-            Guid vmId = vm.getId();
-            if (oldDisk.getDiskInterface() != newDisk.getDiskInterface()) {
-                List<VmNetworkInterface> allVmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vmId);
+            List<VmNetworkInterface> allVmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
+            List<Disk> allVmDisks = new LinkedList<Disk>(getOtherVmDisks(vm.getId()));
+            allVmDisks.add(getNewDisk());
 
-                List<Disk> allVmDisks = new LinkedList<Disk>(getOtherVmDisks(vmId));
-                allVmDisks.add(newDisk);
-                if (!checkPciAndIdeLimit(vm.getNumOfMonitors(),
-                        allVmInterfaces,
-                        allVmDisks,
-                        getReturnValue().getCanDoActionMessages())) {
-                    return false;
-                }
-            }
-        }
-
-        // Validate update boot disk.
-        if (newDisk.isBoot() && !oldDisk.isBoot()) {
-            if (!validate(noVmsContainBootableDisks(vmsDiskPluggedTo))) {
+            if (!checkPciAndIdeLimit(vm.getNumOfMonitors(), allVmInterfaces, allVmDisks,
+                    getReturnValue().getCanDoActionMessages())) {
                 return false;
             }
         }
-
         return true;
     }
 
@@ -148,7 +171,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             Iterator<Disk> iter = disks.iterator();
             while (iter.hasNext()) {
                 Disk evalDisk = iter.next();
-                if (evalDisk.getId().equals(oldDisk.getId())) {
+                if (evalDisk.getId().equals(getOldDisk().getId())) {
                     iter.remove();
                     break;
                 }
@@ -164,55 +187,62 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
      * it also should not contain snapshots and it is not bootable.
      * @return Indication whether the disk can be shared or not.
      */
-    private boolean validateShareableDisk() {
-        if (DiskStorageType.LUN == oldDisk.getDiskStorageType()) {
+    private boolean validateCanUpdateShareable() {
+        if (DiskStorageType.LUN == getOldDisk().getDiskStorageType()) {
             return true;
         }
-        boolean isDiskUpdatedToShareable = newDisk.isShareable();
-        boolean isOldDiskShareable = oldDisk.isShareable();
 
         // Check if VM is not during snapshot.
         if (!isVmNotInPreviewSnapshot()) {
             return false;
         }
 
-        if (!isOldDiskShareable && isDiskUpdatedToShareable) {
+        if (isUpdatedToShareable(getOldDisk(), getNewDisk())) {
             List<DiskImage> diskImageList =
-                    getDiskImageDao().getAllSnapshotsForImageGroup(oldDisk.getId());
+                    getDiskImageDao().getAllSnapshotsForImageGroup(getOldDisk().getId());
 
             // If disk image list is more then one then we assume that it has a snapshot, since one image is the active
             // disk and all the other images are the snapshots.
-            if ((diskImageList.size() > 1) || !Guid.Empty.equals(((DiskImage) oldDisk).getImageTemplateId())) {
-                addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
-                return false;
+            if ((diskImageList.size() > 1) || !Guid.Empty.equals(((DiskImage) getOldDisk()).getImageTemplateId())) {
+                return failCanDoAction(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_FOR_DISK);
             }
-            if (!isVersionSupportedForShareable(oldDisk, getStoragePoolDAO().get(getVm().getStoragePoolId())
+
+            if (!isVersionSupportedForShareable(getOldDisk(), getStoragePoolDAO().get(getVm().getStoragePoolId())
                     .getcompatibility_version()
                     .getValue())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
-                return false;
+                return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
             }
 
-            DiskImage diskImage = (DiskImage) newDisk;
-            if (!isVolumeFormatSupportedForShareable(diskImage.getVolumeFormat())) {
-                addCanDoActionMessage(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
-                return false;
+            if (!isVolumeFormatSupportedForShareable(((DiskImage) getNewDisk()).getVolumeFormat())) {
+                return failCanDoAction(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
             }
-
-            // If user want to update the disk to be shareable then update the vm snapshot id to be null.
-            ((DiskImage) oldDisk).setVmSnapshotId(null);
-        } else if (isOldDiskShareable && !isDiskUpdatedToShareable) {
-            if (getVmDAO().getVmsListForDisk(oldDisk.getId()).size() > 1) {
-                addCanDoActionMessage(VdcBllMessages.DISK_IS_ALREADY_SHARED_BETWEEN_VMS);
-                return false;
+        } else if (isUpdatedToNonShareable(getOldDisk(), getNewDisk())) {
+            if (getVmDAO().getVmsListForDisk(getOldDisk().getId()).size() > 1) {
+                return failCanDoAction(VdcBllMessages.DISK_IS_ALREADY_SHARED_BETWEEN_VMS);
             }
-
-            // If disk is not floating, then update its vm snapshot id to the active VM snapshot.
-            ((DiskImage) oldDisk).setVmSnapshotId(getSnapshotDao()
-                    .getId(getVmId(), SnapshotType.ACTIVE));
-
         }
         return true;
+    }
+
+    private boolean validateCanResizeDisk() {
+        DiskImage oldDiskImage = (DiskImage) getOldDisk();
+        DiskImage newDiskImage = (DiskImage) getNewDisk();
+
+        if (oldDiskImage.getSize() > newDiskImage.getSize()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL);
+        }
+
+        if (!VdcActionUtils.CanExecute(getVmsDiskPluggedTo(), VM.class, VdcActionType.ExtendImageSize)) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
+        }
+
+        long additionalDiskSpaceInGB = newDiskImage.getSizeInGigabytes() - oldDiskImage.getSizeInGigabytes();
+        StorageDomain storageDomain = getStorageDomainDAO().getForStoragePool(
+                newDiskImage.getStorageIds().get(0), newDiskImage.getStoragePoolId());
+        StorageDomainValidator storageDomainValidator = new StorageDomainValidator(storageDomain);
+
+        return validate(storageDomainValidator.isDomainExistAndActive()) &&
+                validate(storageDomainValidator.isDomainHasSpaceForRequest(additionalDiskSpaceInGB));
     }
 
     @Override
@@ -220,12 +250,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         if (listPermissionSubjects == null) {
             listPermissionSubjects = new ArrayList<PermissionSubject>();
 
-            Guid diskId = oldDisk == null ? null : oldDisk.getId();
+            Guid diskId = (getOldDisk() == null) ? null : getOldDisk().getId();
             listPermissionSubjects.add(new PermissionSubject(diskId,
                     VdcObjectType.Disk,
                     ActionGroup.EDIT_DISK_PROPERTIES));
 
-            if (oldDisk != null && newDisk != null && oldDisk.getSgio() != newDisk.getSgio()) {
+            if (getOldDisk() != null && getNewDisk() != null && getOldDisk().getSgio() != getNewDisk().getSgio()) {
                 listPermissionSubjects.add(new PermissionSubject(diskId,
                         VdcObjectType.Disk,
                         ActionGroup.CONFIGURE_SCSI_GENERIC_IO));
@@ -234,48 +264,90 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return listPermissionSubjects;
     }
 
-    private void performDiskUpdate() {
+    private void performDiskUpdate(final boolean unlockImage) {
+        final Disk disk = getDiskDao().get(getParameters().getDiskId());
+        applyUserChanges(disk);
+
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
             @Override
             public Object runInTransaction() {
                 getVmStaticDAO().incrementDbGeneration(getVm().getId());
-                clearAddressOnInterfaceChange();
-                oldDisk.setBoot(newDisk.isBoot());
-                oldDisk.setDiskInterface(newDisk.getDiskInterface());
-                oldDisk.setPropagateErrors(newDisk.getPropagateErrors());
-                oldDisk.setWipeAfterDelete(newDisk.isWipeAfterDelete());
-                oldDisk.setDiskAlias(newDisk.getDiskAlias());
-                oldDisk.setDiskDescription(newDisk.getDiskDescription());
-                oldDisk.setShareable(newDisk.isShareable());
-                oldDisk.setSgio(newDisk.getSgio());
-                getBaseDiskDao().update(oldDisk);
-                if (oldDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                    DiskImage diskImage = (DiskImage) oldDisk;
+                clearAddressOnInterfaceChange(disk, getNewDisk());
+                getBaseDiskDao().update(disk);
+                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    DiskImage diskImage = (DiskImage) disk;
                     diskImage.setQuotaId(getQuotaId());
+                    if (unlockImage && diskImage.getImageStatus() == ImageStatus.LOCKED) {
+                        diskImage.setImageStatus(ImageStatus.OK);
+                    }
                     getImageDao().update(diskImage.getImage());
                 }
-                // update cached image
-                VmHandler.updateDisksFromDb(getVm());
-                // update vm device boot order
-                VmDeviceUtils.updateBootOrderInVmDeviceAndStoreToDB(getVm().getStaticData());
+                updateVmDisksAndDevice();
 
                 setSucceeded(true);
                 return null;
             }
 
-            private void clearAddressOnInterfaceChange() {
+            private void clearAddressOnInterfaceChange(Disk diskToUpdate, Disk diskWithUserChanges) {
                 // clear the disk address if the type has changed
-                if (oldDisk.getDiskInterface() != newDisk.getDiskInterface()) {
-                    getVmDeviceDao().clearDeviceAddress(getVmDeviceDao().get(new VmDeviceId(oldDisk.getId(), getVmId()))
-                            .getDeviceId());
+                if (diskToUpdate.getDiskInterface() != diskWithUserChanges.getDiskInterface()) {
+                    getVmDeviceDao().clearDeviceAddress(getVmDeviceDao().get(new VmDeviceId(diskToUpdate.getId(),
+                            getVmId())).getDeviceId());
                 }
             }
         });
     }
 
+    private void applyUserChanges(Disk diskToUpdate) {
+        updateSnapshotIdOnShareableChange(diskToUpdate, getNewDisk());
+        diskToUpdate.setBoot(getNewDisk().isBoot());
+        diskToUpdate.setDiskInterface(getNewDisk().getDiskInterface());
+        diskToUpdate.setPropagateErrors(getNewDisk().getPropagateErrors());
+        diskToUpdate.setWipeAfterDelete(getNewDisk().isWipeAfterDelete());
+        diskToUpdate.setDiskAlias(getNewDisk().getDiskAlias());
+        diskToUpdate.setDiskDescription(getNewDisk().getDiskDescription());
+        diskToUpdate.setShareable(getNewDisk().isShareable());
+        diskToUpdate.setSgio(getNewDisk().getSgio());
+    }
+
+    protected void updateVmDisksAndDevice() {
+        // update cached image
+        VmHandler.updateDisksFromDb(getVm());
+        // update vm device boot order
+        VmDeviceUtils.updateBootOrderInVmDeviceAndStoreToDB(getVm().getStaticData());
+    }
+
+    private void extendDiskImageSize() {
+        lockImageInDb();
+
+        VdcReturnValueBase ret = getBackend().runInternalAction(
+                VdcActionType.ExtendImageSize,
+                createExtendImageSizeParameters(),
+                ExecutionHandler.createDefaultContexForTasks(getExecutionContext())
+        );
+
+        if (ret.getSucceeded()) {
+            getReturnValue().getVdsmTaskIdList().addAll(ret.getInternalVdsmTaskIdList());
+        } else {
+            propagateInternalCommandFailure(ret);
+            getReturnValue().setFault(ret.getFault());
+        }
+        setSucceeded(ret.getSucceeded());
+    }
+
     @Override
-    public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_UPDATE_VM_DISK : AuditLogType.USER_FAILED_UPDATE_VM_DISK;
+    protected void endSuccessfully() {
+        VdcReturnValueBase ret = getBackend().EndAction(VdcActionType.ExtendImageSize,
+                createExtendImageSizeParameters());
+
+        if (ret.getSucceeded()) {
+            performDiskUpdate(true);
+        } else {
+            unlockImageInDb();
+        }
+
+        getReturnValue().setEndActionTryAgain(false);
+        setSucceeded(ret.getSucceeded());
     }
 
     private ValidationResult noVmsContainBootableDisks(List<VM> vms) {
@@ -297,18 +369,27 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     @Override
+    protected void endWithFailure() {
+        endInternalCommandWithFailure();
+        unlockImageInDb();
+        getReturnValue().setEndActionTryAgain(false);
+        setSucceeded(true);
+    }
+
+    private void endInternalCommandWithFailure() {
+        ExtendImageSizeParameters params = createExtendImageSizeParameters();
+        params.setTaskGroupSuccess(false);
+        getBackend().EndAction(VdcActionType.ExtendImageSize, params);
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.USER_UPDATE_VM_DISK : AuditLogType.USER_FAILED_UPDATE_VM_DISK;
+    }
+
+    @Override
     public String getDiskAlias() {
-        return oldDisk.getDiskAlias();
-    }
-
-    @Override
-    protected Map<String, Pair<String, String>> getSharedLocks() {
-        return sharedLockMap;
-    }
-
-    @Override
-    protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return exclusiveLockMap;
+        return getOldDisk().getDiskAlias();
     }
 
     @Override
@@ -321,13 +402,12 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private boolean isQuotaValidationNeeded() {
-        return oldDisk != null && newDisk != null && oldDisk instanceof DiskImage &&
-                newDisk instanceof DiskImage && DiskStorageType.IMAGE == oldDisk.getDiskStorageType();
+        return getOldDisk() != null && getNewDisk() != null && DiskStorageType.IMAGE == getOldDisk().getDiskStorageType();
     }
 
     protected Guid getQuotaId() {
-        if (newDisk != null && isQuotaValidationNeeded()) {
-            return ((DiskImage) newDisk).getQuotaId();
+        if (getNewDisk() != null && isQuotaValidationNeeded()) {
+            return ((DiskImage) getNewDisk()).getQuotaId();
         }
         return null;
     }
@@ -337,33 +417,148 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
 
         if (isQuotaValidationNeeded()) {
-            DiskImage oldDiskImage = (DiskImage) oldDisk;
-            DiskImage newDiskImage = (DiskImage) newDisk;
+            DiskImage oldDiskImage = (DiskImage) getOldDisk();
+            DiskImage newDiskImage = (DiskImage) getNewDisk();
 
             boolean emptyOldQuota = oldDiskImage.getQuotaId() == null || Guid.Empty.equals(oldDiskImage.getQuotaId());
             boolean differentNewQuota = !emptyOldQuota && !oldDiskImage.getQuotaId().equals(newDiskImage.getQuotaId());
 
             if (emptyOldQuota || differentNewQuota) {
                 list.add(new QuotaStorageConsumptionParameter(
-                    newDiskImage.getQuotaId(),
-                    null,
-                    QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
-                    //TODO: Shared Disk?
-                    newDiskImage.getStorageIds().get(0),
-                    (double)newDiskImage.getSizeInGigabytes()));
+                        newDiskImage.getQuotaId(),
+                        null,
+                        QuotaStorageConsumptionParameter.QuotaAction.CONSUME,
+                        //TODO: Shared Disk?
+                        newDiskImage.getStorageIds().get(0),
+                        (double)newDiskImage.getSizeInGigabytes()));
             }
 
             if (differentNewQuota) {
                 list.add(new QuotaStorageConsumptionParameter(
-                    oldDiskImage.getQuotaId(),
-                    null,
-                    QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
-                    //TODO: Shared Disk?
-                    oldDiskImage.getStorageIds().get(0),
-                    (double)oldDiskImage.getSizeInGigabytes()));
+                        oldDiskImage.getQuotaId(),
+                        null,
+                        QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
+                        //TODO: Shared Disk?
+                        oldDiskImage.getStorageIds().get(0),
+                        (double)oldDiskImage.getSizeInGigabytes()));
             }
         }
         return list;
     }
 
+    private boolean shouldResizeDiskImage() {
+        return getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE &&
+                getNewDisk().getSize() != getOldDisk().getSize();
+    }
+
+    private boolean shouldUpdatePropertiesOtherThanSize() {
+        return shouldUpdateDiskProperties() || shouldUpdateImageProperties();
+    }
+
+    private boolean shouldUpdateDiskProperties() {
+        return getOldDisk().isBoot() != getNewDisk().isBoot() ||
+                getOldDisk().getDiskInterface() != getNewDisk().getDiskInterface() ||
+                getOldDisk().getPropagateErrors() != getNewDisk().getPropagateErrors() ||
+                getOldDisk().isWipeAfterDelete() != getNewDisk().isWipeAfterDelete() ||
+                getOldDisk().isShareable() != getNewDisk().isShareable() ||
+                getOldDisk().getSgio() != getNewDisk().getSgio() ||
+                !StringUtils.equals(getOldDisk().getDiskDescription(), getNewDisk().getDiskDescription()) ||
+                !StringUtils.equals(getOldDisk().getDiskAlias(), getNewDisk().getDiskAlias());
+    }
+
+    private boolean shouldUpdateImageProperties() {
+        return (getOldDisk().getDiskStorageType() == DiskStorageType.IMAGE) &&
+                !((DiskImage) getOldDisk()).getQuotaId().equals(getQuotaId());
+    }
+
+    private boolean isAtLeastOneVmIsNotDown(List<VM> vmsDiskPluggedTo) {
+        for (VM vm : vmsDiskPluggedTo) {
+            if (vm.getStatus() != VMStatus.Down) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isUpdatedToShareable(Disk oldDisk, Disk newDisk) {
+        return newDisk.isShareable() && !oldDisk.isShareable();
+    }
+
+    private boolean isUpdatedToNonShareable(Disk oldDisk, Disk newDisk) {
+        return !newDisk.isShareable() && oldDisk.isShareable();
+    }
+
+    private void updateSnapshotIdOnShareableChange(Disk oldDisk, Disk newDisk) {
+        if (isUpdatedToShareable(oldDisk, newDisk)) {
+            ((DiskImage) oldDisk).setVmSnapshotId(null);
+        } else if (isUpdatedToNonShareable(oldDisk, newDisk))  {
+            // If disk is not floating, then update its vm snapshot id to the active VM snapshot.
+            ((DiskImage) oldDisk).setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
+        }
+    }
+
+    private Disk getOldDisk() {
+        if (oldDisk == null) {
+            oldDisk = getDiskDao().get(getParameters().getDiskId());
+        }
+        return oldDisk;
+    }
+
+    private Disk getNewDisk() {
+        return getParameters().getDiskInfo();
+    }
+
+    private List<VM> getVmsDiskPluggedTo() {
+        if (vmsDiskPluggedTo == null) {
+            vmsDiskPluggedTo = getVmDAO().getForDisk(getOldDisk().getId()).get(Boolean.TRUE);
+
+            if (vmsDiskPluggedTo == null) {
+                vmsDiskPluggedTo = Collections.emptyList();
+            }
+        }
+
+        return vmsDiskPluggedTo;
+    }
+
+    private void lockImageInDb() {
+        final DiskImage diskImage = (DiskImage) getOldDisk();
+        final ImageStatus imgStatus = diskImage.getImageStatus();
+
+         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                getCompensationContext().snapshotEntityStatus(diskImage.getImage(), imgStatus);
+                getCompensationContext().stateChanged();
+                diskImage.setImageStatus(ImageStatus.LOCKED);
+                ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
+                return null;
+            }
+         });
+    }
+
+    private void unlockImageInDb() {
+        final DiskImage diskImage = (DiskImage) getOldDisk();
+        diskImage.setImageStatus(ImageStatus.OK);
+        ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.OK);
+    }
+
+    private ExtendImageSizeParameters createExtendImageSizeParameters() {
+        DiskImage diskImage = (DiskImage) getNewDisk();
+        ExtendImageSizeParameters params = new ExtendImageSizeParameters(diskImage.getImageId(), diskImage.getSize());
+        params.setStoragePoolId(diskImage.getStoragePoolId());
+        params.setStorageDomainId(diskImage.getStorageIds().get(0));
+        params.setImageGroupID(diskImage.getId());
+        params.setParentCommand(VdcActionType.UpdateVmDisk);
+        params.setParentParameters(getParameters());
+        return params;
+    }
+
+    private void propagateInternalCommandFailure(VdcReturnValueBase internalReturnValue) {
+        getReturnValue().getExecuteFailedMessages().clear();
+        getReturnValue().getExecuteFailedMessages().addAll(internalReturnValue.getExecuteFailedMessages());
+        getReturnValue().setFault(internalReturnValue.getFault());
+        getReturnValue().getCanDoActionMessages().clear();
+        getReturnValue().getCanDoActionMessages().addAll(internalReturnValue.getCanDoActionMessages());
+        getReturnValue().setCanDoAction(internalReturnValue.getCanDoAction());
+    }
 }

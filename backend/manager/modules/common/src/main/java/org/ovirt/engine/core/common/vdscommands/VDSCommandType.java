@@ -112,6 +112,8 @@ public enum VDSCommandType {
     Snapshot("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     UpdateVmInterface("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GetHardwareInfo("org.ovirt.engine.core.vdsbroker.vdsbroker"),
+    ExtendImageSize("org.ovirt.engine.core.vdsbroker.irsbroker"),
+    ExtendVmDiskSize("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     // Gluster VDS commands
     CreateGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     SetGlusterVolumeOption("org.ovirt.engine.core.vdsbroker.gluster"),

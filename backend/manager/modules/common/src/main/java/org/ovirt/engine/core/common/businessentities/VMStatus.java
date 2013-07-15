@@ -125,4 +125,8 @@ public enum VMStatus implements Identifiable {
     public boolean isHibernating() {
         return this == SavingState || this == PreparingForHibernate;
     }
+
+    public boolean isDownOrSuspended() {
+        return this == Down || this == Suspended;
+    }
 }

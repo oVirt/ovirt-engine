@@ -833,6 +833,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Size(GB)")
     String sizeVmDiskPopup();
 
+    @DefaultStringValue("Extend size by(GB)")
+    String extendImageSizeBy();
+
     @DefaultStringValue("Storage Domain")
     String storageDomainVmDiskPopup();
 

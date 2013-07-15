@@ -280,4 +280,16 @@ public class IrsServerWrapper implements IIrsServer {
         UUIDListReturnForXmlRpc wrapper = new UUIDListReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
     }
+
+    @Override
+    public OneUuidReturnForXmlRpc extendVolumeSize(String spUUID,
+                                                   String sdUUID,
+                                                   String imageUUID,
+                                                   String volumeUUID,
+                                                   String newSize) {
+        Map<String, Object> xmlRpcReturnValue = irsServer.extendVolumeSize(spUUID, sdUUID, imageUUID,
+                volumeUUID, newSize);
+        OneUuidReturnForXmlRpc wrapper = new OneUuidReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
 }

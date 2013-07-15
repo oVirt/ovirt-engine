@@ -877,6 +877,17 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public ImageSizeReturnForXmlRpc diskSizeExtend(String vmId, Map<String, String> diskParams, String newSize) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.diskSizeExtend(vmId, diskParams, newSize);
+            ImageSizeReturnForXmlRpc wrapper = new ImageSizeReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public OneUuidReturnForXmlRpc glusterVolumeCreate(String volumeName,
             String[] brickList,
             int replicaCount,

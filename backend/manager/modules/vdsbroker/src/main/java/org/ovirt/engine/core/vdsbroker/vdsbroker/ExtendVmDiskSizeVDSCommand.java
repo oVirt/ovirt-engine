@@ -1,0 +1,32 @@
+package org.ovirt.engine.core.vdsbroker.vdsbroker;
+
+import org.ovirt.engine.core.common.vdscommands.ExtendVmDiskSizeVDSCommandParameters;
+
+public class ExtendVmDiskSizeVDSCommand <P extends ExtendVmDiskSizeVDSCommandParameters> extends VdsBrokerCommand<P> {
+
+    private ImageSizeReturnForXmlRpc result;
+
+    public ExtendVmDiskSizeVDSCommand(P parameters) {
+        super(parameters);
+    }
+
+    @Override
+    protected void ExecuteVdsBrokerCommand() {
+        result = getBroker().diskSizeExtend(
+                getParameters().getVmId().toString(),
+                getParameters().getDriveSpecs(),
+                String.valueOf(getParameters().getNewSize())
+        );
+
+        ProceedProxyReturnValue();
+
+        if (getVDSReturnValue().getSucceeded()) {
+            setReturnValue(result.getImageSize());
+        }
+    }
+
+    @Override
+    protected StatusForXmlRpc getReturnStatus() {
+        return result.mStatus;
+    }
+}

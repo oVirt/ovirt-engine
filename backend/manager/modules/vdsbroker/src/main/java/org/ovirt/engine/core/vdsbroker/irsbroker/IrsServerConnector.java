@@ -98,4 +98,7 @@ public interface IrsServerConnector {
     public Map<String, Object> getImagesList(String sdUUID);
 
     public Map<String, Object> getVolumesList(String sdUUID, String spUUID, String imgUUID);
+
+    public Map<String, Object> extendVolumeSize(String spUUID, String sdUUID, String imageUUID,
+                                                String volumeUUID, String newSize);
 }

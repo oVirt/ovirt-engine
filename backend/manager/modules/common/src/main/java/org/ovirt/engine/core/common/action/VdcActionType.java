@@ -217,6 +217,7 @@ public enum VdcActionType {
     LiveMigrateDisk(1010, QuotaDependency.NONE),
     LiveMigrateVmDisks(1011, false, QuotaDependency.STORAGE),
     MoveDisks(1012, false, QuotaDependency.NONE),
+    ExtendImageSize(1013, false, QuotaDependency.STORAGE),
     // Event Notification
     AddEventSubscription(1100, false, QuotaDependency.NONE),
     RemoveEventSubscription(1101, false, QuotaDependency.NONE),

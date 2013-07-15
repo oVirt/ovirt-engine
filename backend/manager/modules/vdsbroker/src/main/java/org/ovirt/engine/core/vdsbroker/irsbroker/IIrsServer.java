@@ -84,4 +84,7 @@ public interface IIrsServer {
     ImagesListReturnForXmlRpc getImagesList(String sdUUID);
 
     UUIDListReturnForXmlRpc getVolumesList(String sdUUID, String spUUID, String imgUUID);
+
+    OneUuidReturnForXmlRpc extendVolumeSize(String spUUID, String sdUUID, String imageUUID,
+                                            String volumeUUID, String newSize);
 }

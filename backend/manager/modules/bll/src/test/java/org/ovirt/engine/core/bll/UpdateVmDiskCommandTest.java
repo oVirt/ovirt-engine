@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -18,6 +19,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import org.infinispan.transaction.tm.DummyTransactionManager;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,14 +39,21 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
+import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockEJBStrategyRule;
+import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
+
 
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateVmDiskCommandTest {
@@ -59,6 +68,12 @@ public class UpdateVmDiskCommandTest {
     @Mock
     private DiskDao diskDao;
     @Mock
+    private VmStaticDAO vmStaticDAO;
+    @Mock
+    private BaseDiskDao baseDiskDao;
+    @Mock
+    private ImageDao imageDao;
+    @Mock
     private VmNetworkInterfaceDao vmNetworkInterfaceDAO;
     @Mock
     private SnapshotDao snapshotDao;
@@ -70,9 +85,12 @@ public class UpdateVmDiskCommandTest {
     private DbFacade dbFacade;
 
     @ClassRule
+    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
+
+    @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1.toString(), true)
-            );
+    );
 
     /**
      * The command under test.
@@ -149,6 +167,7 @@ public class UpdateVmDiskCommandTest {
         mockVmStatusDown();
 
         assertTrue(command.canDoAction());
+        command.executeVmCommand();
         assertTrue(oldDisk.getVmSnapshotId() == null);
     }
 
@@ -237,6 +256,14 @@ public class UpdateVmDiskCommandTest {
         doReturn(snapshotDao).when(command).getSnapshotDao();
         doReturn(diskImageDao).when(command).getDiskImageDao();
         doReturn(storagePoolDao).when(command).getStoragePoolDAO();
+        doReturn(vmStaticDAO).when(command).getVmStaticDAO();
+        doReturn(baseDiskDao).when(command).getBaseDiskDao();
+        doReturn(imageDao).when(command).getImageDao();
+        doNothing().when(command).updateVmDisksAndDevice();
+
+        ejbRule.mockResource(ContainerManagedResourceType.TRANSACTION_MANAGER, new DummyTransactionManager());
+        DbFacadeLocator.setDbFacade(dbFacade);
+        doReturn(diskDao).when(dbFacade).getDiskDao();
 
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();

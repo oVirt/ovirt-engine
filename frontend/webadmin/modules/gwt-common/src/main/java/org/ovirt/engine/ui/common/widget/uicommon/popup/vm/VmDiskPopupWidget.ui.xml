@@ -88,6 +88,7 @@
 			<g:HorizontalPanel>
 				<g:VerticalPanel>
 					<e:EntityModelTextBoxEditor ui:field="sizeEditor" addStyleNames="{style.boxEditor}"/>
+          <e:EntityModelTextBoxEditor ui:field="sizeExtendEditor" addStyleNames="{style.boxEditor}"/>
 					<e:EntityModelTextBoxEditor ui:field="aliasEditor" addStyleNames="{style.boxEditor}"/>
 					<e:EntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.boxEditor}"/>
 					<e:ListModelListBoxEditor ui:field="interfaceEditor" addStyleNames="{style.boxEditor}"/>

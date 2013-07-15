@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -9,14 +10,20 @@ import org.ovirt.engine.core.common.businessentities.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NonNegativeLongNumberValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+
+import java.util.Arrays;
 
 public class EditDiskModel extends AbstractDiskModel
 {
@@ -27,17 +34,8 @@ public class EditDiskModel extends AbstractDiskModel
     public void initialize() {
         super.initialize();
 
-        getStorageDomain().setIsChangable(false);
-        getHost().setIsChangable(false);
-        getStorageType().setIsChangable(false);
-        getDataCenter().setIsChangable(false);
-        getVolumeType().setIsChangable(false);
-        getSize().setIsChangable(false);
-        getSize().setEntity(getDisk().getDiskStorageType() == DiskStorageType.IMAGE ?
-                ((DiskImage) getDisk()).getSizeInGigabytes() :
-                ((LunDisk) getDisk()).getLun().getDeviceSize());
+        disableNonChangeableEntities();
 
-        getIsInternal().setEntity(getDisk().getDiskStorageType() == DiskStorageType.IMAGE);
         getAlias().setEntity(getDisk().getDiskAlias());
         getDescription().setEntity(getDisk().getDiskDescription());
         getIsShareable().setEntity(getDisk().isShareable());
@@ -46,20 +44,29 @@ public class EditDiskModel extends AbstractDiskModel
 
         if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) getDisk();
-
+            getSize().setEntity(diskImage.getSizeInGigabytes());
+            getIsInternal().setEntity(true);
             getVolumeType().setSelectedItem(diskImage.getVolumeType());
             setVolumeFormat(diskImage.getVolumeFormat());
-            Guid storageDomainId = diskImage.getStorageIds().get(0);
 
+            boolean isExtendImageSizeEnabled = getVm() != null &&
+                    VdcActionUtils.CanExecute(Arrays.asList(getVm()), VM.class, VdcActionType.ExtendImageSize);
+            getSizeExtend().setIsChangable(isExtendImageSizeEnabled);
+
+            Guid storageDomainId = diskImage.getStorageIds().get(0);
             AsyncDataProvider.getStorageDomainById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     DiskModel diskModel = (DiskModel) target;
                     StorageDomain storageDomain = (StorageDomain) returnValue;
-
                     diskModel.getStorageDomain().setSelectedItem(storageDomain);
                 }
             }, getHash()), storageDomainId);
+        } else {
+            LunDisk lunDisk = (LunDisk) getDisk();
+            getSize().setEntity(lunDisk.getLun().getDeviceSize());
+            getIsInternal().setEntity(false);
+            getSizeExtend().setIsAvailable(false);
         }
     }
 
@@ -123,6 +130,29 @@ public class EditDiskModel extends AbstractDiskModel
 
     @Override
     public boolean validate() {
-        return super.validate();
+        super.validate();
+        getSizeExtend().validateEntity(new IValidation[] {
+                new NotEmptyValidation(),
+                new NonNegativeLongNumberValidation()
+        });
+        return getSizeExtend().getIsValid();
+    }
+
+    private void disableNonChangeableEntities() {
+        getStorageDomain().setIsChangable(false);
+        getHost().setIsChangable(false);
+        getStorageType().setIsChangable(false);
+        getDataCenter().setIsChangable(false);
+        getVolumeType().setIsChangable(false);
+        getSize().setIsChangable(false);
+
+        if (getVm() == null || !getVm().isDown()) {
+            getDescription().setIsChangable(false);
+            getAlias().setIsChangable(false);
+            getIsShareable().setIsChangable(false);
+            getIsBootable().setIsChangable(false);
+            getIsWipeAfterDelete().setIsChangable(false);
+            getDiskInterface().setIsChangable(false);
+        }
     }
 }

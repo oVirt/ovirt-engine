@@ -88,6 +88,23 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION UpdateImageSize(
+    v_image_id UUID,
+    v_size BIGINT,
+    v_lastModified TIMESTAMP WITH TIME ZONE)
+RETURNS VOID
+AS $procedure$
+BEGIN
+    UPDATE images
+    SET    size = v_size,
+           lastModified = v_lastModified
+    WHERE  image_guid = v_image_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 Create or replace FUNCTION UpdateImage(
     v_creation_date TIMESTAMP WITH TIME ZONE,
     v_image_guid UUID,

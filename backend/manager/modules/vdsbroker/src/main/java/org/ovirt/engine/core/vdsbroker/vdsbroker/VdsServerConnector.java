@@ -162,6 +162,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> getDiskAlignment(String vmId, Map<String, String> driveSpecs);
 
+    public Map<String, Object> diskSizeExtend(String vmId, Map<String, String> diskParams, String newSize);
+
     // Gluster vdsm commands
     public Map<String, Object> glusterVolumeCreate(String volumeName,
             String[] brickList,

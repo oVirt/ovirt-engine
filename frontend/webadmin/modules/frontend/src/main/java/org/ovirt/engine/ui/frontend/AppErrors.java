@@ -2485,4 +2485,13 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("QoS name length must be under 255 characters.")
     String QOS_NAME_TOO_LONG();
+
+    @DefaultStringValue("Cannot ${action}. New disk size cannot be smaller than the current.")
+    String ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL();
+
+    @DefaultStringValue("Cannot ${action}. The selected disk format is not supported.")
+    String ACTION_TYPE_FAILED_NOT_SUPPORTED_IMAGE_FORMAT();
+
+    @DefaultStringValue("$action extend image size")
+    String VAR__ACTION__EXTEND_IMAGE_SIZE();
 }

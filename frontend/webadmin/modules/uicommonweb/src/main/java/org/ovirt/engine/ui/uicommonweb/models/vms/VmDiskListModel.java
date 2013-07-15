@@ -2,8 +2,10 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ChangeQuotaParameters;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
@@ -189,6 +191,11 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
     }
 
+    public boolean isExtendImageSizeEnabled() {
+        return (getEntity() != null) ?
+                VdcActionUtils.CanExecute(Arrays.asList(getEntity()), VM.class, VdcActionType.ExtendImageSize) : false;
+    }
+
     public VmDiskListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().disksTitle());
@@ -225,6 +232,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         if (getEntity() != null)
         {
+            updateDataCenterVersion();
             getSearchCommand().execute();
             updateIsDiskHotPlugAvailable();
             updateLiveStorageMigrationEnabled();
@@ -544,8 +552,10 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         getNewCommand().setIsExecutionAllowed(true);
 
+        boolean isExtendImageSizeSupportedAndEnabled = isExtendImageSizeSupported() && isExtendImageSizeEnabled();
         getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && getSelectedItems() != null
-                && getSelectedItems().size() == 1 && (isVmDown() || !disk.getPlugged()) && !isDiskLocked);
+                && getSelectedItems().size() == 1 && disk.getPlugged() && !isDiskLocked &&
+                (isVmDown() || isExtendImageSizeSupportedAndEnabled));
 
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
                 && isRemoveCommandAvailable());
@@ -784,6 +794,67 @@ public class VmDiskListModel extends VmDiskListModelBase
                         dcCompatibilityVersion);
             }
         }), vm.getStoragePoolId());
+    }
+
+    protected void updateDataCenterVersion()
+    {
+        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                VmDiskListModel model = (VmDiskListModel) target;
+                StoragePool storagePool = (StoragePool) returnValue;
+                model.setDataCenterVersion(storagePool.getcompatibility_version());
+            }
+        });
+        AsyncDataProvider.getDataCenterById(query, getEntity().getStoragePoolId());
+    }
+
+    protected void updateExtendImageSizeSupported()
+    {
+        VM vm = (VM) getEntity();
+        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback()
+        {
+            @Override
+            public void onSuccess(Object target, Object returnValue)
+            {
+                VmDiskListModel model = (VmDiskListModel) target;
+                model.setExtendImageSizeSupported((Boolean) returnValue);
+            }
+        });
+        AsyncDataProvider.isCommandCompatible(query, VdcActionType.ExtendImageSize,
+                vm.getVdsGroupCompatibilityVersion(), dataCenterVersion);
+    }
+
+
+    private Version dataCenterVersion;
+
+    public Version getDataCenterVersion()
+    {
+        return dataCenterVersion;
+    }
+
+    public void setDataCenterVersion(Version dataCenterVersion)
+    {
+        if (dataCenterVersion != null && !dataCenterVersion.equals(this.dataCenterVersion))
+        {
+            this.dataCenterVersion = dataCenterVersion;
+            updateExtendImageSizeSupported();
+        }
+    }
+
+    private boolean extendImageSizeSupported = true;
+
+    public boolean isExtendImageSizeSupported()
+    {
+        return extendImageSizeSupported;
+    }
+
+    public void setExtendImageSizeSupported(boolean extendImageSizeSupported)
+    {
+        if (this.extendImageSizeSupported != extendImageSizeSupported) {
+            this.extendImageSizeSupported = extendImageSizeSupported;
+            updateActionAvailability();
+        }
     }
 
     @Override

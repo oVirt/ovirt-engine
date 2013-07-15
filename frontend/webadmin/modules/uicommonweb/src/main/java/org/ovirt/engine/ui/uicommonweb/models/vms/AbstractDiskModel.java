@@ -64,6 +64,7 @@ public abstract class AbstractDiskModel extends DiskModel
     private EntityModel isInternal;
     private EntityModel isDirectLunDiskAvaialable;
     private EntityModel isSgIoUnfiltered;
+    private EntityModel sizeExtend;
 
     private ListModel storageType;
     private ListModel host;
@@ -209,6 +210,14 @@ public abstract class AbstractDiskModel extends DiskModel
         this.systemTreeSelectedItem = systemTreeSelectedItem;
     }
 
+    public EntityModel getSizeExtend() {
+        return sizeExtend;
+    }
+
+    public void setSizeExtend(EntityModel sizeExtend) {
+        this.sizeExtend = sizeExtend;
+    }
+
     public String getHash() {
         return hash;
     }
@@ -227,6 +236,9 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     public AbstractDiskModel() {
+        setSizeExtend(new EntityModel());
+        getSizeExtend().setEntity("0");  //$NON-NLS-1$
+
         setIsAttachDisk(new EntityModel());
         getIsAttachDisk().setEntity(false);
         getIsAttachDisk().getEntityChangedEvent().addListener(this);
@@ -446,7 +458,7 @@ public abstract class AbstractDiskModel extends DiskModel
                 ConfigurationValues.ShareableDiskEnabled, datacenter.getcompatibility_version().getValue());
 
         getIsShareable().setChangeProhibitionReason(CONSTANTS.shareableDiskNotSupported());
-        getIsShareable().setIsChangable(isShareableDiskEnabled);
+        getIsShareable().setIsChangable(isShareableDiskEnabled && getVm() != null && getVm().isDown());
     }
 
     private void updateDirectLunDiskEnabled(StoragePool datacenter) {
@@ -469,7 +481,7 @@ public abstract class AbstractDiskModel extends DiskModel
             getIsShareable().setEntity(false);
         }
         else {
-            getIsShareable().setIsChangable(true);
+            getIsShareable().setIsChangable(getVm() != null && getVm().isDown());
         }
     }
 
@@ -542,6 +554,7 @@ public abstract class AbstractDiskModel extends DiskModel
         boolean isInternal = (Boolean) getIsInternal().getEntity();
 
         getSize().setIsAvailable(isInternal);
+        getSizeExtend().setIsAvailable(isInternal && !getIsNew());
         getStorageDomain().setIsAvailable(isInternal);
         getVolumeType().setIsAvailable(isInternal);
         getIsWipeAfterDelete().setIsAvailable(isInternal);
@@ -708,6 +721,12 @@ public abstract class AbstractDiskModel extends DiskModel
             if (getQuota().getIsAvailable() && getQuota().getSelectedItem() != null) {
                 diskImage.setQuotaId(((Quota) getQuota().getSelectedItem()).getId());
             }
+
+            long sizeToAddInGigabytes = Long.valueOf((String) getSizeExtend().getEntity());
+            if (sizeToAddInGigabytes > 0) {
+                diskImage.setSizeInGigabytes(diskImage.getSizeInGigabytes() + sizeToAddInGigabytes);
+            }
+
             setDisk(diskImage);
         }
         else {

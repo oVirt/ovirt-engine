@@ -47,6 +47,8 @@ public class NewDiskModel extends AbstractDiskModel
         if (getVm() != null) {
             updateSuggestedDiskAlias();
         }
+
+        getSizeExtend().setIsAvailable(false);
     }
 
     private void updateSuggestedDiskAlias() {
