@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
+import java.util.Map;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -26,8 +28,8 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
     @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
     private Guid networkId;
     private boolean portMirroring;
-    private String customProperties;
     private String description;
+    private Map<String, String> customProperties;
 
     @Override
     public Guid getId() {
@@ -56,11 +58,11 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
         this.portMirroring = portMirroring;
     }
 
-    public String getCustomProperties() {
+    public Map<String, String> getCustomProperties() {
         return customProperties;
     }
 
-    public void setCustomProperties(String customProperties) {
+    public void setCustomProperties(Map<String, String> customProperties) {
         this.customProperties = customProperties;
     }
 

@@ -915,8 +915,8 @@
             <value>engine_profile_pm</value>
             <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
             <value>true</value>
-            <value>{}</value>
-            <null/>
+            <null />
+            <null />
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
         </row>
@@ -925,7 +925,7 @@
             <value>engine2_profile</value>
             <value>58d5c1c6-cb15-4832-b2a4-023770607189</value>
             <value>false</value>
-            <value></value>
+            <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
         </row>
@@ -934,7 +934,7 @@
             <value>engine3_profile</value>
             <value>58d5c1c6-cb15-4832-b2a4-023770607190</value>
             <value>false</value>
-            <value></value>
+            <value>{ "prop1" : "true" }</value>
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
         </row>
@@ -943,7 +943,7 @@
             <value>engine4_profile</value>
             <value>58d5c1c6-cb15-4832-b2a4-023770607191</value>
             <value>false</value>
-            <value></value>
+            <value>{}</value>
             <value>2013-07-02 08:38:36</value>
             <value>2013-07-02 08:38:36</value>
         </row>
