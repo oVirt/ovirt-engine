@@ -50,7 +50,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllNetworkQos() RETURNS SETOF network_qos
+Create or replace FUNCTION GetAllFromNetworkQoss() RETURNS SETOF network_qos
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
