@@ -3319,7 +3319,7 @@ actions:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
-        optionalArguments: {action.force: 'xs:boolean', action.status.state'xs:string'}
+        optionalArguments: {action.force: 'xs:boolean', action.status.state: 'xs:string'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
