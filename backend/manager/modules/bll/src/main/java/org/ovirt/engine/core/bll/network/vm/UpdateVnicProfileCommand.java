@@ -2,13 +2,20 @@ package org.ovirt.engine.core.bll.network.vm;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.validator.VnicProfileValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
-public class UpdateVnicProfileCommand<T extends VnicProfileParameters> extends VnicProfileCommandBase<T> {
+public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
+        extends VnicProfileCommandBase<T> implements RenamedEntityInfoProvider {
+
+    private VnicProfile oldVnicProfile;
 
     public UpdateVnicProfileCommand(T parameters) {
         super(parameters);
@@ -26,6 +33,7 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters> extends V
 
     @Override
     protected void executeCommand() {
+        getOldVnicProfile();
         getVnicProfileDao().update(getVnicProfile());
         setSucceeded(true);
     }
@@ -46,5 +54,32 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters> extends V
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.UPDATE_VNIC_PROFILE
                 : AuditLogType.UPDATE_VNIC_PROFILE_FAILED;
+    }
+
+    @Override
+    public String getEntityType() {
+        return VdcObjectType.VnicProfile.getVdcObjectTranslation();
+    }
+
+    @Override
+    public String getEntityOldName() {
+        return getOldVnicProfile().getName();
+    }
+
+    @Override
+    public String getEntityNewName() {
+        return getVnicProfile().getName();
+    }
+
+    @Override
+    public void setEntityId(AuditLogableBase logable) {
+    }
+
+    private VnicProfile getOldVnicProfile() {
+        if (oldVnicProfile == null) {
+            oldVnicProfile = getDbFacade().getVnicProfileDao().get(getVnicProfile().getId());
+        }
+
+        return oldVnicProfile;
     }
 }
