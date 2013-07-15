@@ -6,6 +6,22 @@
 #
 <IfModule proxy_ajp_module>
 
+    #
+    # Remove the Expect headers from API requests (this is needed to fix a
+    # problem with some API clients):
+    #
+    # This is required because otherwise Expect header, which is hop-by-hop
+    # will be caught by the Apache and will NOT be forwared to the proxy.
+    #
+    # It currenly is used here, which means GLOBALLY for the server. It is done
+    # this way because RequestHeader 'early' doesn't allow using in either
+    # 'Directory' or 'Location' nested clauses.
+    #
+    # TODO: find a way to filter Expect headers for /api name space only.
+    <IfModule headers_module>
+        RequestHeader unset Expect early
+    </IfModule>
+
     <Proxy ajp://localhost:@JBOSS_AJP_PORT@>
         # This is needed to make sure that connections to the application server
         # are recovered in a short time interval (5 seconds at the moment)
@@ -39,14 +55,6 @@
         # directive:
         #
         ProxyPass ajp://localhost:@JBOSS_AJP_PORT@/api timeout=3600
-
-        #
-        # Remove the Expect headers from API requests (this is needed to fix a
-        # problem with some API clients):
-        #
-        <IfModule headers_module>
-            RequestHeader unset Expect
-        </IfModule>
 
         <IfModule deflate_module>
             AddOutputFilterByType DEFLATE text/javascript text/css text/html text/xml text/json application/xml application/json application/x-yaml
