@@ -460,7 +460,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Custom Properties")
     String customPropsVmPopup();
 
-    @DefaultStringValue("Run On:")
+    @DefaultStringValue("Start Running On:")
     String runOnVmPopup();
 
     @DefaultStringValue("Migration Options:")
