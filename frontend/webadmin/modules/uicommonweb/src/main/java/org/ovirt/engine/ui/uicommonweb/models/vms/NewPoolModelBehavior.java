@@ -18,6 +18,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         super.initialize(systemTreeSelectedItem);
 
         getModel().getVmType().setIsChangable(true);
+        getModel().getMaxAssignedVmsPerUser().setIsChangable(false);
     }
 
     @Override
