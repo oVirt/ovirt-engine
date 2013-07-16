@@ -78,7 +78,7 @@ public class PolicyUnitPanel extends FocusPanel {
 
     protected void fillMenuBar(MenuBar menuBar) {
         if (used) {
-            menuBar.addItem("Remove Filter", new Command() { //$NON-NLS-1$
+            menuBar.addItem(constants.removeFilter(), new Command() {
 
                         @Override
                         public void execute() {
@@ -87,7 +87,7 @@ public class PolicyUnitPanel extends FocusPanel {
                         }
                     });
         } else {
-            menuBar.addItem("Add Filter", new Command() { //$NON-NLS-1$
+            menuBar.addItem(constants.addFilter(), new Command() {
 
                         @Override
                         public void execute() {
@@ -101,7 +101,7 @@ public class PolicyUnitPanel extends FocusPanel {
     protected void addSubMenu(MenuBar menuBar) {
         MenuBar subMenu = new MenuBar(true);
         if (position >= 0) {
-            subMenu.addItem("First", new Command() { //$NON-NLS-1$
+            subMenu.addItem(constants.firstFilter(), new Command() {
 
                         @Override
                         public void execute() {
@@ -111,7 +111,7 @@ public class PolicyUnitPanel extends FocusPanel {
                     });
         }
         if (position <= 0) {
-            subMenu.addItem("Last", new Command() { //$NON-NLS-1$
+            subMenu.addItem(constants.lastFilter(), new Command() {
 
                         @Override
                         public void execute() {
@@ -120,12 +120,12 @@ public class PolicyUnitPanel extends FocusPanel {
                         }
                     });
         }
-        menuBar.addItem("Position", subMenu); //$NON-NLS-1$
+        menuBar.addItem(constants.position(), subMenu);
     }
 
     protected MenuBar createMenu() {
         MenuBar menuBar = new MenuBar(true);
-        menuBar.addItem("Action Items", (Command) null); //$NON-NLS-1$
+        menuBar.addItem(constants.actionItems(), (Command) null);
         menuBar.addSeparator();
         return menuBar;
     }

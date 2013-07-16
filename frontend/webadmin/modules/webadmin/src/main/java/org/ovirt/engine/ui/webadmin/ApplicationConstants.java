@@ -3037,4 +3037,16 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Feedback")
     String feedbackMessage();
+
+    @DefaultStringValue("Remove Filter")
+    String removeFilter();
+
+    @DefaultStringValue("Add Filter")
+    String addFilter();
+
+    @DefaultStringValue("Position")
+    String position();
+
+    @DefaultStringValue("Action Items")
+    String actionItems();
 }
