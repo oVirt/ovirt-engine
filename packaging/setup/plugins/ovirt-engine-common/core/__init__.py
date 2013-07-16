@@ -27,6 +27,7 @@ from . import misc
 from . import engine
 from . import websocket_proxy
 from . import answerfile
+from . import uninstall
 
 
 @util.export
@@ -36,6 +37,7 @@ def createPlugins(context):
     engine.Plugin(context=context)
     websocket_proxy.Plugin(context=context)
     answerfile.Plugin(context=context)
+    uninstall.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
