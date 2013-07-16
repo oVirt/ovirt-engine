@@ -204,7 +204,6 @@ Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 Requires: java
 Requires: python-daemon
-Requires: openssh
 Requires: openssl
 Requires: logrotate
 Requires: novnc
