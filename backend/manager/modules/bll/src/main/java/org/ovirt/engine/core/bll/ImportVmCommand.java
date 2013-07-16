@@ -121,12 +121,28 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        return Collections.singletonMap(getVmId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(
+                        LockingGroup.REMOTE_VM,
+                        getVmIsBeingImportedMessage()));
+    }
+
+    @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (!StringUtils.isBlank(getParameters().getVm().getName())) {
             return Collections.singletonMap(getParameters().getVm().getName(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME, VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
         }
         return null;
+    }
+
+    private String getVmIsBeingImportedMessage() {
+        StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED.name());
+        if (getVmName() != null) {
+            builder.append(String.format("$VmName %1$s", getVmName()));
+        }
+        return builder.toString();
     }
 
     protected ImportVmCommand(Guid commandId) {

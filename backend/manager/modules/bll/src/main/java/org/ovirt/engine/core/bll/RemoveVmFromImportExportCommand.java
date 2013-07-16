@@ -25,9 +25,11 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,6 +37,7 @@ import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @NonTransactiveCommandAttribute
+@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportParamenters> extends RemoveVmCommand<T> implements TaskHandlerCommand<RemoveVmFromImportExportParamenters>{
 
     // this is needed since overriding getVmTemplate()
@@ -42,9 +45,25 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
 
     public RemoveVmFromImportExportCommand(T parameters) {
         super(parameters);
-        super.setVmId(parameters.getVmId());
+        setVmId(parameters.getVmId());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, parameters.getVmId()));
         setStorageDomainId(parameters.getStorageDomainId());
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getVmId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(
+                        LockingGroup.REMOTE_VM,
+                        getVmIsBeingRemovedFromExportDomainMessage()));
+    }
+
+    private String getVmIsBeingRemovedFromExportDomainMessage() {
+        StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_BEING_REMOVED_FROM_EXPORT_DOMAIN.name());
+        if (getVmName() != null) {
+            builder.append(String.format("$VmName %1$s", getVmName()));
+        }
+        return builder.toString();
     }
 
     @Override
