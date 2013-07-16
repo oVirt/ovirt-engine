@@ -192,6 +192,9 @@ public final class VdsProperties {
     public static final String session = "session";
     public static final String spiceSslCipherSuite = "spiceSslCipherSuite";
 
+    public static final String vm_balloonInfo = "balloonInfo";
+    public static final String vm_balloon_cur = "balloon_cur";
+
     public static final String DriveC = "hda"; // drive C:
     public static final String DriveE = "hdb"; // drive E: (D: is the CD-ROM)
     public static final String DriveF = "hdc"; // drive F:

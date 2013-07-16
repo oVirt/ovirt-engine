@@ -11,6 +11,8 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     private static final long serialVersionUID = -7480866662740734452L;
 
     private Double cpu_sysField = 0.0;
+    // NOT PERSISTED
+    private Long currentMemory;
 
     @Override
     public int hashCode() {
@@ -128,6 +130,14 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
 
     public void setusage_mem_percent(Integer value) {
         this.usage_mem_percentField = value;
+    }
+
+    public Long getCurrentMemory() {
+        return currentMemory;
+    }
+
+    public void setCurrentMemory(Long value) {
+        currentMemory = value;
     }
 
     private String disksUsage;

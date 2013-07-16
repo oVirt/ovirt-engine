@@ -83,7 +83,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 
-@SuppressWarnings({ "synthetic-access", "unchecked" ,"rawtypes"})
+@SuppressWarnings({ "synthetic-access", "unchecked", "rawtypes" })
 public class VdsUpdateRunTimeInfo {
     private Map<Guid, VmInternalData> _runningVms;
     private final Map<Guid, VmDynamic> _vmDynamicToSave = new HashMap<Guid, VmDynamic>();
@@ -117,6 +117,8 @@ public class VdsUpdateRunTimeInfo {
     private boolean runningVmsInTransition;
 
     private static final Log log = LogFactory.getLog(VdsUpdateRunTimeInfo.class);
+
+    private static final int TO_MEGA_BYTES = 1024;
 
     private void saveDataToDb() {
         if (_saveVdsDynamic) {
@@ -225,8 +227,9 @@ public class VdsUpdateRunTimeInfo {
      * @param dao
      *            The DAO used for updating.
      */
-    private static <T extends BusinessEntity<ID> & Comparable<T>, ID extends Serializable & Comparable<? super ID>> void updateAllInTransaction(final Collection<T> entities, final MassOperationsDao<T, ID> dao) {
-        updateAllInTransaction(null, entities,dao);
+    private static <T extends BusinessEntity<ID> & Comparable<T>, ID extends Serializable & Comparable<? super ID>> void updateAllInTransaction(final Collection<T> entities,
+            final MassOperationsDao<T, ID> dao) {
+        updateAllInTransaction(null, entities, dao);
     }
 
     /**
@@ -244,22 +247,21 @@ public class VdsUpdateRunTimeInfo {
      */
 
     private static <T extends BusinessEntity<ID> & Comparable<T>, ID extends Serializable & Comparable<? super ID>> void updateAllInTransaction
-        (final String procedureName, final Collection<T> entities, final MassOperationsDao<T, ID> dao) {
-    final List<T> sortedList = new ArrayList<T>(entities);
-    Collections.sort(sortedList);
-    if (!entities.isEmpty()) {
-        TransactionSupport.executeInScope(TransactionScopeOption.Required,
-            new TransactionMethod<Void>() {
+            (final String procedureName, final Collection<T> entities, final MassOperationsDao<T, ID> dao) {
+        final List<T> sortedList = new ArrayList<T>(entities);
+        Collections.sort(sortedList);
+        if (!entities.isEmpty()) {
+            TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                    new TransactionMethod<Void>() {
 
-                @Override
-                public Void runInTransaction() {
+                        @Override
+                        public Void runInTransaction() {
                             dao.updateAll(procedureName, sortedList);
-                    return null;
-                }
-            });
+                            return null;
+                        }
+                    });
+        }
     }
-}
-
 
     /**
      * check if value is less than configurable threshold , if yes , generated event log message
@@ -269,7 +271,8 @@ public class VdsUpdateRunTimeInfo {
     private void checkVdsMemoryThreshold(VdsStatistics stat) {
 
         Integer minAvailableThreshold = Config.GetValue(ConfigValues.LogPhysicalMemoryThresholdInMB);
-        Integer maxUsedPercentageThreshold = Config.GetValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage);
+        Integer maxUsedPercentageThreshold =
+                Config.GetValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage);
 
         if (stat.getMemFree() == null || stat.getusage_mem_percent() == null) {
             return;
@@ -962,6 +965,7 @@ public class VdsUpdateRunTimeInfo {
 
             proceedDownVms();
 
+            proceedGuaranteedMemoryCheck();
             // update repository and check if there are any vm in cache that not
             // in vdsm
             updateRepository(running);
@@ -1098,6 +1102,7 @@ public class VdsUpdateRunTimeInfo {
 
     /**
      * gets VM full information for the given list of VMs
+     *
      * @param vmsToUpdate
      * @return
      */
@@ -1115,7 +1120,7 @@ public class VdsUpdateRunTimeInfo {
         String deviceType = getDeviceType(device);
 
         if (shouldLogDeviceDetails(deviceType)) {
-            Map<String,Object> deviceInfo = device;
+            Map<String, Object> deviceInfo = device;
             log.infoFormat(message + ": {2}", StringUtils.defaultString(deviceType), vmId, deviceInfo);
         } else {
             log.infoFormat(message, StringUtils.defaultString(deviceType), vmId);
@@ -1124,6 +1129,7 @@ public class VdsUpdateRunTimeInfo {
 
     /**
      * Actually process the VM device update in DB.
+     *
      * @param vm
      */
     private void processVmDevices(Map vm) {
@@ -1162,6 +1168,7 @@ public class VdsUpdateRunTimeInfo {
 
     /**
      * Removes unmanaged devices from DB if were removed by libvirt. Empties device address with isPlugged = false
+     *
      * @param vmId
      * @param processedDevices
      */
@@ -1195,6 +1202,7 @@ public class VdsUpdateRunTimeInfo {
 
     /**
      * Adds new devices recognized by libvirt
+     *
      * @param vmId
      * @param device
      */
@@ -1229,6 +1237,7 @@ public class VdsUpdateRunTimeInfo {
 
     /**
      * gets the device id from the structure returned by VDSM device ids are stored in specParams map
+     *
      * @param device
      * @return
      */
@@ -1239,6 +1248,7 @@ public class VdsUpdateRunTimeInfo {
 
     /**
      * gets the device type from the structure returned by VDSM
+     *
      * @param device
      * @return
      */
@@ -1259,7 +1269,7 @@ public class VdsUpdateRunTimeInfo {
 
                 if (vmToUpdate == null
                         || (vmToUpdate.getStatus() != runningVm.getStatus() &&
-                            !(vmToUpdate.getStatus() == VMStatus.PreparingForHibernate && runningVm.getStatus() == VMStatus.Up))) {
+                        !(vmToUpdate.getStatus() == VMStatus.PreparingForHibernate && runningVm.getStatus() == VMStatus.Up))) {
                     GetVmStatsVDSCommand<GetVmStatsVDSCommandParameters> command =
                             new GetVmStatsVDSCommand<GetVmStatsVDSCommandParameters>(new GetVmStatsVDSCommandParameters(
                                     _vds, runningVm.getId()));
@@ -1288,11 +1298,29 @@ public class VdsUpdateRunTimeInfo {
                 AuditLogableBase auditLogable = new AuditLogableBase();
                 auditLogable.setVmId(vmDynamic.getId());
                 auditLogable.addCustomValue("wdaction", vmDynamic.getLastWatchdogAction());
-                //for the interpretation of vdsm's response see http://docs.python.org/2/library/time.html
+                // for the interpretation of vdsm's response see http://docs.python.org/2/library/time.html
                 auditLogable.addCustomValue("wdevent",
                         ObjectUtils.toString(new Date(vmDynamic.getLastWatchdogEvent().longValue() * 1000)));
                 AuditLogDirector.log(auditLogable, AuditLogType.WATCHDOG_EVENT);
             }
+        }
+    }
+
+    private void proceedGuaranteedMemoryCheck() {
+        for (VmInternalData vmInternalData : _runningVms.values()) {
+            VM savedVm = _vmDict.get(vmInternalData.getVmDynamic().getId());
+            VmStatistics vmStatistics = vmInternalData.getVmStatistics();
+            if (vmStatistics.getCurrentMemory() != null && vmStatistics.getCurrentMemory() > 0 &&
+                    savedVm.getMinAllocatedMem() > vmStatistics.getCurrentMemory() / TO_MEGA_BYTES) {
+                AuditLogableBase auditLogable = new AuditLogableBase();
+                auditLogable.addCustomValue("VmName", savedVm.getName());
+                auditLogable.addCustomValue("VdsName", this._vds.getName());
+                auditLogable.addCustomValue("MemGuaranteed", String.valueOf(savedVm.getMinAllocatedMem()));
+                auditLogable.addCustomValue("MemActual",
+                        Long.toString((vmStatistics.getCurrentMemory() / TO_MEGA_BYTES)));
+                auditLog(auditLogable, AuditLogType.VM_MEMORY_UNDER_GUARANTEED_VALUE);
+            }
+
         }
     }
 
@@ -1301,7 +1329,6 @@ public class VdsUpdateRunTimeInfo {
         return vmTo != null && lastWatchdogEvent != null
                 && (vmTo.getLastWatchdogEvent() == null || vmTo.getLastWatchdogEvent() < lastWatchdogEvent);
     }
-
 
     /**
      * Delete all vms with status Down
@@ -1324,7 +1351,8 @@ public class VdsUpdateRunTimeInfo {
                     ResourceManager.getInstance().InternalSetVmStatus(vmTo, VMStatus.Suspended);
                 }
 
-                clearVm(vmTo, vmInternalData.getVmDynamic().getExitStatus(), vmInternalData.getVmDynamic().getExitMessage());
+                clearVm(vmTo, vmInternalData.getVmDynamic().getExitStatus(), vmInternalData.getVmDynamic()
+                        .getExitMessage());
             }
 
             VmStatistics vmStatistics = getDbFacade().getVmStatisticsDao().get(vm.getId());
@@ -1424,7 +1452,10 @@ public class VdsUpdateRunTimeInfo {
                     }
                 }
                 // set vm status to down if source vm crushed
-                ResourceManager.getInstance().InternalSetVmStatus(curVm, VMStatus.Down, vmDynamic.getExitStatus(), vmDynamic.getExitMessage());
+                ResourceManager.getInstance().InternalSetVmStatus(curVm,
+                        VMStatus.Down,
+                        vmDynamic.getExitStatus(),
+                        vmDynamic.getExitMessage());
                 addVmDynamicToList(curVm.getDynamicData());
                 addVmStatisticsToList(curVm.getStatisticsData());
                 addVmInterfaceStatisticsToList(curVm.getInterfaces());
@@ -1673,7 +1704,8 @@ public class VdsUpdateRunTimeInfo {
 
         // if the VM's status on source host was MigratingFrom and now the VM is running and its status
         // is not MigratingFrom, it means the migration failed
-        if (oldVmStatus == VMStatus.MigratingFrom && currentVmStatus != VMStatus.MigratingFrom && currentVmStatus.isRunning()) {
+        if (oldVmStatus == VMStatus.MigratingFrom && currentVmStatus != VMStatus.MigratingFrom
+                && currentVmStatus.isRunning()) {
             _vmsToRerun.add(runningVm.getId());
             log.infoFormat("Adding VM {0} to re-run list", runningVm.getId());
             vmToUpdate.setMigratingToVds(null);
@@ -1907,7 +1939,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void clearVm(VM vm, VmExitStatus exitStatus, String exitMessage) {
-        if (vm.getStatus() != VMStatus.MigratingFrom ) {
+        if (vm.getStatus() != VMStatus.MigratingFrom) {
             // we must check that vm.getStatus() != VMStatus.Down because if it was set to down
             // the exit status and message were set, and we don't want to override them here.
             // we will add it to _vmDynamicToSave though because it might been removed from it in #updateRepository
@@ -1925,6 +1957,7 @@ public class VdsUpdateRunTimeInfo {
 
     /**
      * An access method for test usages
+     *
      * @return The devices to be added to the database
      */
     protected List<VmDevice> getNewVmDevices() {
@@ -1933,6 +1966,7 @@ public class VdsUpdateRunTimeInfo {
 
     /**
      * An access method for test usages
+     *
      * @return The devices to be removed from the database
      */
     protected List<VmDeviceId> getRemovedVmDevices() {

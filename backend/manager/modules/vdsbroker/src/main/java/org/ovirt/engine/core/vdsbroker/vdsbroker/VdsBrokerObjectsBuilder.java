@@ -306,7 +306,16 @@ public class VdsBrokerObjectsBuilder {
 
         // ------------- vm memory statistics -----------------------
         vm.setusage_mem_percent(AssignIntValue(xmlRpcStruct, VdsProperties.vm_usage_mem_percent));
+        vm.setCurrentMemory(getCurrMemory(xmlRpcStruct));
 
+    }
+
+    private static Long getCurrMemory(Map<String, Object> xmlRpcStruct) {
+        Map<String, Object> balloonInfo = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.vm_balloonInfo);
+        if (balloonInfo != null) {
+            return AssignLongValue(balloonInfo, VdsProperties.vm_balloon_cur);
+        }
+        return null;
     }
 
     public static void updateVDSDynamicData(VDS vds, Map<String, Object> xmlRpcStruct) {
