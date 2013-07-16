@@ -13,6 +13,8 @@ public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
     @NotNull
     private Network network;
 
+    private boolean vnicProfileRequired = true;
+
     public AddNetworkStoragePoolParameters() {
     }
 
@@ -23,5 +25,13 @@ public class AddNetworkStoragePoolParameters extends StoragePoolParametersBase {
 
     public Network getNetwork() {
         return network;
+    }
+
+    public boolean isVnicProfileRequired() {
+        return vnicProfileRequired;
+    }
+
+    public void setVnicProfileRequired(boolean vnicProfileRequired) {
+        this.vnicProfileRequired = vnicProfileRequired;
     }
 }
