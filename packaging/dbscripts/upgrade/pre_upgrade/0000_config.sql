@@ -678,7 +678,7 @@ select fn_db_update_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,m
 select fn_db_update_config_value('SpiceDriverNameInGuest','{"windows": "RHEV-Spice", "linux" : "xorg-x11-drv-qxl" }','general');
 select fn_db_update_config_value('SupportedClusterLevels','3.0,3.1,3.2,3.3','general');
 select fn_db_update_config_value('SupportedStorageFormats','0,2,3','3.1,3.2,3.3');
-select fn_db_update_config_value('SupportedVDSMVersions','4.9,4.10,4.11','general');
+select fn_db_update_config_value('SupportedVDSMVersions','4.9,4.10,4.11,4.12','general');
 select fn_db_update_config_value('VdcVersion','3.3.0.0','general');
 select fn_db_update_config_value('ProductRPMVersion','3.3.0.0','general');
 select fn_db_update_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.0');
