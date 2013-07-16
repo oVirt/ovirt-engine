@@ -27,7 +27,7 @@
 			margin-top: 20px;
 		}
 
-		.exportField {
+		.dependentField {
 			padding-left: 10px;
 		}
 
@@ -61,7 +61,7 @@
 
 	</ui:style>
 
-	<d:SimpleDialogPanel ui:field="mainPanel" width="670px" height="520px">
+	<d:SimpleDialogPanel ui:field="mainPanel" width="670px" height="550px">
 		<d:content>
 			<t:DialogTabPanel ui:field="tabPanel" height="100%">
                 <t:tab>
@@ -78,17 +78,17 @@
                         		<g:FlowPanel addStyleNames="{style.sectionStyle}">
 									<g:Label ui:field="exportLabel" addStyleNames="{style.mainLabel}" />
                         			<e:EntityModelCheckBoxEditor ui:field="exportEditor" />
-									<e:ListModelListBoxEditor ui:field="externalProviderEditor" addStyleNames="{style.exportField}" />
-									<e:EntityModelTextBoxEditor ui:field="networkLabel" addStyleNames="{style.exportField}" />
+									<e:ListModelListBoxEditor ui:field="externalProviderEditor" addStyleNames="{style.dependentField}" />
+									<e:EntityModelTextBoxEditor ui:field="networkLabel" addStyleNames="{style.dependentField}" />
 								</g:FlowPanel>
 								<g:FlowPanel addStyleNames="{style.sectionStyle}">
 									<g:Label ui:field="mainLabel" addStyleNames="{style.mainLabel}" />
-									<g:HorizontalPanel>
+									<g:HorizontalPanel addStyleNames="{style.dependentField}">
 										<e:EntityModelCheckBoxEditor ui:field="vlanTagging"/>
 										<e:EntityModelTextBoxOnlyEditor ui:field="vlanTag" />
 									</g:HorizontalPanel>
-									<e:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" />
-									<g:HorizontalPanel>
+									<e:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" addStyleNames="{style.dependentField}" />
+									<g:HorizontalPanel addStyleNames="{style.dependentField}">
 										<e:EntityModelCheckBoxEditor ui:field="hasMtuEditor"/>
 										<e:EntityModelTextBoxOnlyEditor ui:field="mtuEditor" />
 									</g:HorizontalPanel>

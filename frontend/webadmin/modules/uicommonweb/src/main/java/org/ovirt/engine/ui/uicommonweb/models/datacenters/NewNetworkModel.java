@@ -96,6 +96,19 @@ public class NewNetworkModel extends NetworkModel {
     }
 
     @Override
+    protected void onExportChanged() {
+        boolean externalNetwork = (Boolean) getExport().getEntity();
+        getExternalProviders().setIsChangable(externalNetwork);
+        getNetworkLabel().setIsChangable(externalNetwork);
+        getIsVmNetwork().setIsChangable(!externalNetwork);
+        getHasMtu().setIsChangable(!externalNetwork);
+        if (externalNetwork) {
+            getIsVmNetwork().setEntity(true);
+            getHasMtu().setEntity(false);
+        }
+    }
+
+    @Override
     protected void executeSave() {
         IFrontendActionAsyncCallback addNetworkCallback = new IFrontendActionAsyncCallback() {
             @Override

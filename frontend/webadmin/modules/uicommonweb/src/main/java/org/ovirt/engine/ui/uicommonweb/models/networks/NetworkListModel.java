@@ -121,7 +121,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
             networkModel.getDataCenters().setItems(Arrays.asList(dc));
             networkModel.getDataCenters().setSelectedItem(dc);
             networkModel.getDataCenters().setIsChangable(false);
-            initExternalNetworksList(networkModel);
+            initExternalProvidersList(networkModel);
             return;
         }
 
@@ -141,12 +141,12 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
                 } else {
                     networkModel.getDataCenters().setSelectedItem(Linq.firstOrDefault(dataCenters));
                 }
-                initExternalNetworksList(networkModel);
+                initExternalProvidersList(networkModel);
             }
         }));
     }
 
-    private void initExternalNetworksList(final NetworkModel networkModel) {
+    private void initExternalProvidersList(final NetworkModel networkModel) {
         if (networkModel instanceof NewNetworkModel) {
             AsyncQuery getProvidersQuery = new AsyncQuery();
             getProvidersQuery.asyncCallback = new INewAsyncCallback() {
@@ -161,9 +161,12 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
             };
             AsyncDataProvider.GetAllProviders(getProvidersQuery);
         } else {
-            Provider provider = new Provider();
-            provider.setName(((NetworkView) getSelectedItem()).getProviderName());
-            networkModel.getExternalProviders().setSelectedItem(provider);
+            NetworkView network = (NetworkView) getSelectedItem();
+            if (network.isExternal()) {
+                Provider provider = new Provider();
+                provider.setName(network.getProviderName());
+                networkModel.getExternalProviders().setSelectedItem(provider);
+            }
             networkModel.stopProgress();
         }
     }

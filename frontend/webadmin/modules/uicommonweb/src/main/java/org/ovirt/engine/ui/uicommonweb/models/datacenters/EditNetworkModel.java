@@ -33,6 +33,9 @@ public class EditNetworkModel extends NetworkModel {
         initMtu();
         initIsVm();
         getExport().setEntity(getNetwork().isExternal());
+        getExport().setIsChangable(false);
+        getExternalProviders().setIsChangable(false);
+        getNetworkLabel().setIsChangable(false);
     }
 
     @Override
@@ -53,6 +56,17 @@ public class EditNetworkModel extends NetworkModel {
     protected void initMtu() {
         getHasMtu().setEntity(getNetwork().getMtu() != 0);
         getMtu().setEntity(getNetwork().getMtu() != 0 ? String.valueOf(getNetwork().getMtu()) : null);
+    }
+
+    @Override
+    protected void onExportChanged() {
+        if ((Boolean) getExport().getEntity()) {
+            getHasVLanTag().setIsChangable(false);
+            getVLanTag().setIsChangable(false);
+            getIsVmNetwork().setIsChangable(false);
+            getHasMtu().setIsChangable(false);
+            getMtu().setIsChangable(false);
+        }
     }
 
     @Override

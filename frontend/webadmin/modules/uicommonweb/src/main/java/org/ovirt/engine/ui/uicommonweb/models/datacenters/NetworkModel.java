@@ -356,6 +356,7 @@ public abstract class NetworkModel extends Model
 
         setMTUOverrideSupported(isMTUOverrideSupported);
 
+        onExportChanged();
     }
 
     protected void addCommands() {
@@ -447,22 +448,10 @@ public abstract class NetworkModel extends Model
 
     protected abstract void initIsVm();
 
-    private void onExportChanged() {
-        boolean externalNetwork = (Boolean) getExport().getEntity();
-        getExternalProviders().setIsChangable(externalNetwork);
-        getNetworkLabel().setIsChangable(externalNetwork);
-        getHasVLanTag().setIsChangable(!externalNetwork);
-        getIsVmNetwork().setIsChangable(!externalNetwork);
-        getHasMtu().setIsChangable(!externalNetwork);
-        if (externalNetwork) {
-            getHasVLanTag().setEntity(false);
-            getIsVmNetwork().setEntity(true);
-            getHasMtu().setEntity(false);
-        }
-    }
+    protected abstract void onExportChanged();
 
     private void updateVlanTagChangeability() {
-        getVLanTag().setIsChangable((Boolean) getHasVLanTag().getEntity() && !((Boolean) getExport().getEntity()));
+        getVLanTag().setIsChangable((Boolean) getHasVLanTag().getEntity());
     }
 
     private void updateMtuChangeability() {
