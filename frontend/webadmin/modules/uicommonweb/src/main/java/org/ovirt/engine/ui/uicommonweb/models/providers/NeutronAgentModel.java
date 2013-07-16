@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.QpidConfiguration;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -130,6 +132,36 @@ public class NeutronAgentModel extends EntityModel {
             return getInterfaceMappings().getIsValid() && getQpidHost().getIsValid() && getQpidPort().getIsValid();
         }
         return true;
+    }
+
+    public void init(AgentConfiguration agentConfiguration) {
+        if (agentConfiguration != null) {
+            getInterfaceMappings().setEntity(agentConfiguration.getNetworkMappings());
+
+            QpidConfiguration qpidConfiguration = agentConfiguration.getQpidConfiguration();
+            if (qpidConfiguration != null) {
+                getQpidHost().setEntity(qpidConfiguration.getAddress());
+                Integer port = qpidConfiguration.getPort();
+                getQpidPort().setEntity(port == null ? null : Integer.toString(port));
+                getQpidUsername().setEntity(qpidConfiguration.getUsername());
+                getQpidPassword().setEntity(qpidConfiguration.getPassword());
+            }
+        }
+    }
+
+    public AgentConfiguration flush() {
+        AgentConfiguration agentConfiguration = new AgentConfiguration();
+        agentConfiguration.setNetworkMappings((String) getInterfaceMappings().getEntity());
+
+        QpidConfiguration qpidConfiguration = new QpidConfiguration();
+        agentConfiguration.setQpidConfiguration(qpidConfiguration);
+        qpidConfiguration.setAddress((String) getQpidHost().getEntity());
+        String port = (String) getQpidPort().getEntity();
+        qpidConfiguration.setPort(port == null ? null : Integer.valueOf(port));
+        qpidConfiguration.setUsername((String) getQpidUsername().getEntity());
+        qpidConfiguration.setPassword((String) getQpidPassword().getEntity());
+
+        return agentConfiguration;
     }
 
 }

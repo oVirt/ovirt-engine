@@ -121,7 +121,7 @@ public class ProviderModel extends Model {
         return neutronAgentModel;
     }
 
-    public boolean isTypeOpenStackNetwork() {
+    protected boolean isTypeOpenStackNetwork() {
         return (ProviderType) getType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK;
     }
 
@@ -238,6 +238,7 @@ public class ProviderModel extends Model {
             OpenstackNetworkProviderProperties properties = new OpenstackNetworkProviderProperties();
             properties.setPluginType(NeutronPluginTranslator.
                     getPluginNameForDisplayString((String) getPluginType().getSelectedItem()));
+            properties.setAgentConfiguration(getNeutronAgentModel().flush());
             provider.setAdditionalProperties(properties);
         } else if (isTypeOpenStackImage()) {
             OpenstackImageProviderProperties properties = new OpenstackImageProviderProperties();

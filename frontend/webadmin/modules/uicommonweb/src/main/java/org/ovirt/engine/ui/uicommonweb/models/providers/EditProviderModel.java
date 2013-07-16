@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -43,6 +44,11 @@ public class EditProviderModel extends ProviderModel {
         getRequiresAuthentication().setEntity(provider.isRequiringAuthentication());
         getUsername().setEntity(provider.getUsername());
         getPassword().setEntity(provider.getPassword());
+
+        if (isTypeOpenStackNetwork()) {
+            getNeutronAgentModel().init(((OpenstackNetworkProviderProperties) provider.getAdditionalProperties()).
+                    getAgentConfiguration());
+        }
 
         oldUrl = provider.getUrl();
     }
