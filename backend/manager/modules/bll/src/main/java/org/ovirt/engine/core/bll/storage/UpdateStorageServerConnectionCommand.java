@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -68,11 +68,6 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
         if (checkIsConnectionFieldEmpty(newConnectionDetails)) {
             return false;
-        }
-
-        Guid vdsmId = getParameters().getVdsId();
-        if (vdsmId == null || vdsmId.equals(Guid.Empty)) {
-            return failCanDoAction(VdcBllMessages.VDS_EMPTY_NAME_OR_ID);
         }
 
         // Check if connection exists by id, otherwise there's nothing to update
@@ -153,11 +148,13 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                 Guid storageDomainId = lun.getStorageDomainId();
                 if (storageDomainId != null) {
                     StorageDomain domain = getStorageDomainDao().get(storageDomainId);
-                    if (!domain.getStatus().equals(StorageDomainStatus.Maintenance)) {
-                        String domainName = domain.getStorageName();
-                        problematicDomainNames.add(domainName);
-                    } else {
-                        domains.add(domain);
+                    for (StoragePoolIsoMap map : getStoragePoolIsoMap(domain)) {
+                        if (!map.getstatus().equals(StorageDomainStatus.Maintenance)) {
+                            String domainName = domain.getStorageName();
+                            problematicDomainNames.add(domainName);
+                        } else {
+                            domains.add(domain);
+                        }
                     }
                 }
             }
@@ -194,8 +191,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     @Override
     protected void executeCommand() {
-        boolean isDomainUpdateRequired = doDomainsUseConnection(getConnection());
-        StoragePoolIsoMap map = null;
+        boolean isDomainUpdateRequired = !Guid.isNullOrEmpty(getVdsId()) && doDomainsUseConnection(getConnection());
         List<StorageDomain> updatedDomains = new ArrayList<>();
         boolean hasConnectStorageSucceeded = false;
         if (isDomainUpdateRequired) {
@@ -220,8 +216,9 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         getStorageConnDao().update(getParameters().getStorageServerConnection());
         if (isDomainUpdateRequired) {
             for (StorageDomain domain : domains) {
-                map = getStoragePoolIsoMap(domain);
-                restoreStateAfterUpdate(map);
+                for (StoragePoolIsoMap map : getStoragePoolIsoMap(domain)) {
+                    restoreStateAfterUpdate(map);
+                }
             }
             if (hasConnectStorageSucceeded) {
                 disconnectFromStorage();
@@ -245,22 +242,22 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
         return !getLuns().isEmpty();
     }
 
-    protected StoragePoolIsoMap getStoragePoolIsoMap(StorageDomain storageDomain) {
-        StoragePoolIsoMapId mapId = new StoragePoolIsoMapId(storageDomain.getId(), getParameters().getStoragePoolId());
-        return getStoragePoolIsoMapDao().get(mapId);
+    protected Collection<StoragePoolIsoMap> getStoragePoolIsoMap(StorageDomain storageDomain) {
+        return getStoragePoolIsoMapDao().getAllForStorage(storageDomain.getId());
     }
 
     protected void changeStorageDomainStatusInTransaction(final StorageDomainStatus status) {
         executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
+                CompensationContext context = getCompensationContext();
                 for (StorageDomain domain : domains) {
-                    StoragePoolIsoMap map = getStoragePoolIsoMap(domain);
-                    CompensationContext context = getCompensationContext();
-                      context.snapshotEntityStatus(map, map.getstatus());
-                    updateStatus(map, status);
-                    getCompensationContext().stateChanged();
+                    for (StoragePoolIsoMap map : getStoragePoolIsoMap(domain)) {
+                        context.snapshotEntityStatus(map, map.getstatus());
+                        updateStatus(map, status);
+                    }
                 }
+                getCompensationContext().stateChanged();
                 return null;
             }
         });
@@ -282,6 +279,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     }
 
     protected void updateStatus(StoragePoolIsoMap map, StorageDomainStatus status) {
+        log.infoFormat("Setting domain %s to status $s", map.getId(), status.name());
         map.setstatus(status);
         getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getstatus());
     }
@@ -293,7 +291,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     protected boolean connectToStorage() {
         StorageServerConnectionManagementVDSParameters newConnectionParametersForVdsm =
                 createParametersForVdsm(getParameters().getVdsId(),
-                        getParameters().getStoragePoolId(),
+                        Guid.Empty,
                         getParameters().getStorageServerConnection().getstorage_type(),
                         getParameters().getStorageServerConnection());
         return runVdsCommand(VDSCommandType.ConnectStorageServer, newConnectionParametersForVdsm).getSucceeded();
@@ -302,7 +300,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     protected void disconnectFromStorage() {
         StorageServerConnectionManagementVDSParameters connectionParametersForVdsm =
                 createParametersForVdsm(getParameters().getVdsId(),
-                        getParameters().getStoragePoolId(),
+                        Guid.Empty,
                         getConnection().getstorage_type(),
                         getConnection());
         boolean isDisconnectSucceeded =

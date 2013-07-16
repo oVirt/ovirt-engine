@@ -1513,10 +1513,8 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         VDS host = (VDS) model.getHost().getSelectedItem();
 
         Guid hostId = Guid.Empty;
-        Guid storagePoolId = Guid.Empty;
         if (host != null) {
             hostId = host.getId();
-            storagePoolId = host.getStoragePoolId();
         }
         IStorageModel storageModel = model.getSelectedItem();
         connection = new StorageServerConnections();
@@ -1533,7 +1531,6 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         StorageServerConnectionParametersBase parameters =
                 new StorageServerConnectionParametersBase(connection, hostId);
-        parameters.setStoragePoolId(storagePoolId);
         Frontend.RunAction(VdcActionType.UpdateStorageServerConnection, parameters,
                 new IFrontendActionAsyncCallback() {
                     @Override

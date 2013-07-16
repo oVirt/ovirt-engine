@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
@@ -71,7 +71,6 @@ public class RemoveStorageServerConnectionCommandTest {
     private void prepareCommand() {
         parameters = new StorageServerConnectionParametersBase();
         parameters.setVdsId(Guid.newGuid());
-        parameters.setStoragePoolId(Guid.newGuid());
 
         command = spy(new RemoveStorageServerConnectionCommand(parameters));
         doReturn(lunDAO).when(command).getLunDao();

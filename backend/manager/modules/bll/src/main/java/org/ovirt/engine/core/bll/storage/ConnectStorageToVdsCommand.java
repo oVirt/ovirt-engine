@@ -5,9 +5,7 @@ import java.util.Arrays;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
@@ -19,20 +17,6 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         StorageServerConnectionCommandBase<T> {
     public ConnectStorageToVdsCommand(T parameters) {
         super(parameters);
-    }
-
-    @Override
-    protected boolean canDoAction() {
-        Guid id = getParameters().getStoragePoolId();
-        if (id != null && !id.equals(Guid.Empty)) {
-            StoragePool dc = getStoragePoolDAO().get(id);
-            if (dc == null) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
-                return false;
-            }
-        }
-        return true;
-
     }
 
     @Override
@@ -62,7 +46,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
                 .getResourceManager()
                 .RunVdsCommand(
                         VDSCommandType.ConnectStorageServer,
-                        new StorageServerConnectionManagementVDSParameters(vdsId, getParameters().getStoragePoolId(),
+                        new StorageServerConnectionManagementVDSParameters(vdsId, Guid.Empty,
                                 getParameters().getStorageServerConnection().getstorage_type(),
                                 new java.util.ArrayList<StorageServerConnections>(java.util.Arrays
                                         .asList(new StorageServerConnections[] { getConnection() }))))

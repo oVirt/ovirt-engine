@@ -6,6 +6,9 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -23,9 +26,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @RunWith(MockitoJUnitRunner.class)
 public class AddStorageServerConnectionCommandTest {
     @ClassRule
@@ -42,20 +42,25 @@ public class AddStorageServerConnectionCommandTest {
     public void prepareParams() {
         parameters = new StorageServerConnectionParametersBase();
         parameters.setVdsId(Guid.newGuid());
-        parameters.setStoragePoolId(Guid.newGuid());
         command = spy(new AddStorageServerConnectionCommand<StorageServerConnectionParametersBase>(parameters));
         doReturn(storageConnDao).when(command).getStorageConnDao();
     }
 
-
-     private StorageServerConnections createPosixConnection(String connection, StorageType type, String vfsType, String mountOptions) {
+    private StorageServerConnections createPosixConnection(String connection,
+            StorageType type,
+            String vfsType,
+            String mountOptions) {
         StorageServerConnections connectionDetails = populateBasicConnectionDetails(connection, type);
         connectionDetails.setVfsType(vfsType);
         connectionDetails.setMountOptions(mountOptions);
         return connectionDetails;
     }
 
-    private StorageServerConnections createISCSIConnection(String connection, StorageType type, String iqn, String user, String password) {
+    private StorageServerConnections createISCSIConnection(String connection,
+            StorageType type,
+            String iqn,
+            String user,
+            String password) {
         StorageServerConnections connectionDetails = populateBasicConnectionDetails(connection, type);
         connectionDetails.setiqn(iqn);
         connectionDetails.setuser_name(user);
@@ -78,7 +83,6 @@ public class AddStorageServerConnectionCommandTest {
                         null,
                         "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
-        parameters.setStoragePoolId(Guid.Empty);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
     }
@@ -92,44 +96,42 @@ public class AddStorageServerConnectionCommandTest {
                         "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
-        parameters.setStoragePoolId(Guid.Empty);
         doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection);
-        doReturn(true).when(command).initializeVds();
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
-     @Test
-     public void addISCSIEmptyIqn() {
-        StorageServerConnections newISCSIConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI,"","user1","mypassword123");
+    @Test
+    public void addISCSIEmptyIqn() {
+        StorageServerConnections newISCSIConnection =
+                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "user1", "mypassword123");
         parameters.setStorageServerConnection(newISCSIConnection);
         parameters.setVdsId(Guid.Empty);
-        parameters.setStoragePoolId(Guid.Empty);
-        doReturn(true).when(command).initializeVds();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
     }
 
-     @Test
-     public void addISCSINonEmptyIqn() {
-        StorageServerConnections newISCSIConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI,"iqn.2013-04.myhat.com:aaa-target1","user1","mypassword123");
+    @Test
+    public void addISCSINonEmptyIqn() {
+        StorageServerConnections newISCSIConnection =
+                createISCSIConnection("10.35.16.25",
+                        StorageType.ISCSI,
+                        "iqn.2013-04.myhat.com:aaa-target1",
+                        "user1",
+                        "mypassword123");
         parameters.setStorageServerConnection(newISCSIConnection);
         parameters.setVdsId(Guid.Empty);
-        parameters.setStoragePoolId(Guid.Empty);
-        doReturn(true).when(command).initializeVds();
         doReturn(false).when(command).isConnWithSameDetailsExists(newISCSIConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
-     @Test
-     public void addNFSEmptyConn() {
-        StorageServerConnections newPosixConnection = createPosixConnection("",StorageType.POSIXFS, "nfs" , "timeo=30");
+    @Test
+    public void addNFSEmptyConn() {
+        StorageServerConnections newPosixConnection = createPosixConnection("", StorageType.POSIXFS, "nfs", "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
-        parameters.setStoragePoolId(Guid.Empty);
-        doReturn(true).when(command).initializeVds();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION);
-     }
+    }
 
     @Test
     public void addExistingConnection() {
@@ -140,14 +142,32 @@ public class AddStorageServerConnectionCommandTest {
                         "timeo=30");
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
-        doReturn(true).when(command).initializeVds();
         doReturn(true).when(command).isConnWithSameDetailsExists(newPosixConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
     }
 
     @Test
-    public void addNewConnection() {
+    public void addNewConnectionWithVds() {
+        StorageServerConnections newPosixConnection =
+                createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1",
+                        StorageType.POSIXFS,
+                        "nfs",
+                        "timeo=30");
+        newPosixConnection.setid("");
+        parameters.setStorageServerConnection(newPosixConnection);
+        doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection);
+        Pair<Boolean, Integer> connectResult = new Pair(true, 0);
+        doReturn(connectResult).when(command).connectHostToStorage();
+        doReturn(null).when(command).getConnectionFromDbById(newPosixConnection.getid());
+        doNothing().when(command).saveConnection(newPosixConnection);
+
+        command.executeCommand();
+        CommandAssertUtils.checkSucceeded(command, true);
+    }
+
+    @Test
+    public void addNewConnectionEmptyVdsId() {
         StorageServerConnections newPosixConnection =
                 createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1",
                         StorageType.POSIXFS,
@@ -156,10 +176,25 @@ public class AddStorageServerConnectionCommandTest {
         newPosixConnection.setid("");
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
-        doReturn(true).when(command).initializeVds();
         doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection);
-        Pair<Boolean, Integer> connectResult = new Pair(true, 0);
-        doReturn(connectResult).when(command).connectHostToStorage();
+        doReturn(null).when(command).getConnectionFromDbById(newPosixConnection.getid());
+        doNothing().when(command).saveConnection(newPosixConnection);
+
+        command.executeCommand();
+        CommandAssertUtils.checkSucceeded(command, true);
+    }
+
+    @Test
+    public void addNewConnectionNullVdsId() {
+        StorageServerConnections newPosixConnection =
+                createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1",
+                        StorageType.POSIXFS,
+                        "nfs",
+                        "timeo=30");
+        newPosixConnection.setid("");
+        parameters.setStorageServerConnection(newPosixConnection);
+        parameters.setVdsId(null);
+        doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection);
         doReturn(null).when(command).getConnectionFromDbById(newPosixConnection.getid());
         doNothing().when(command).saveConnection(newPosixConnection);
 
@@ -177,22 +212,25 @@ public class AddStorageServerConnectionCommandTest {
         newPosixConnection.setid(Guid.newGuid().toString());
         parameters.setStorageServerConnection(newPosixConnection);
         parameters.setVdsId(Guid.Empty);
-        doReturn(true).when(command).initializeVds();
         doReturn(true).when(command).isConnWithSameDetailsExists(newPosixConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_NOT_EMPTY);
     }
 
+
     @Test
-     public void addISCSIEmptyConn() {
-        StorageServerConnections newISCSIConnection = createISCSIConnection("", StorageType.ISCSI,"iqn.2013-04.myhat.com:aaa-target1","user1","mypassword123");
+    public void addISCSIEmptyConn() {
+        StorageServerConnections newISCSIConnection =
+                createISCSIConnection("",
+                        StorageType.ISCSI,
+                        "iqn.2013-04.myhat.com:aaa-target1",
+                        "user1",
+                        "mypassword123");
         parameters.setStorageServerConnection(newISCSIConnection);
         parameters.setVdsId(Guid.Empty);
-        parameters.setStoragePoolId(Guid.Empty);
-        doReturn(true).when(command).initializeVds();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_CONNECTION);
-     }
+    }
 
     @Test
     public void isConnWithSameDetailsExist() {

@@ -31,24 +31,31 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
     @Override
     protected void executeCommand() {
-        StorageServerConnections connection = getConnection();
-        boolean isValidConnection = true;
-        Pair<Boolean, Integer> result = connectHostToStorage();
-        isValidConnection = result.getFirst();
+        boolean success = true;
 
-        // Add storage connection to the database.
-        if (isValidConnection) {
+        // Attempt to connect only if a host is given.
+        // If not, just save the connection to the database
+        if (!Guid.isNullOrEmpty(getParameters().getVdsId())) {
+            Pair<Boolean, Integer> result = connectHostToStorage();
+            boolean isValidConnection = result.getFirst();
+
+            // Process failure
+            if (!isValidConnection) {
+                VdcFault fault = new VdcFault();
+                fault.setError(VdcBllErrors.forValue(result.getSecond()));
+                getReturnValue().setFault(fault);
+                success = false;
+            }
+        }
+
+        if (success) {
+            StorageServerConnections connection = getConnection();
             connection.setid(Guid.newGuid().toString());
             saveConnection(connection);
-            getReturnValue().setActionReturnValue(getConnection().getid());
-            setSucceeded(true);
+            getReturnValue().setActionReturnValue(connection.getid());
         }
-        else {
-            VdcFault fault = new VdcFault();
-            fault.setError(VdcBllErrors.forValue(result.getSecond()));
-            getReturnValue().setFault(fault);
-            setSucceeded(false);
-        }
+
+        setSucceeded(success);
     }
 
     protected StorageServerConnections getConnectionFromDbById(String connectionId) {
@@ -96,14 +103,16 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS);
         }
 
-        if (getParameters().getVdsId().equals(Guid.Empty)) {
-            if (!initializeVds()) {
-                return false;
+        // If a Guid is not supplied, we won't attempt to [dis]connect.
+        // If one is supplied, [dis]connecting will be attempted, so we need to
+        // validate that it's a valid VDS ID and that the VDS is up.
+        if (!Guid.isNullOrEmpty(getParameters().getVdsId())) {
+            if (getVds() == null) {
+                return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
             }
-        } else if (getVds() == null) {
-            return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
-        } else if (getVds().getStatus() != VDSStatus.Up) {
-            return failCanDoAction(VdcBllMessages.VDS_ADD_STORAGE_SERVER_STATUS_MUST_BE_UP);
+            if (getVds().getStatus() != VDSStatus.Up) {
+                return failCanDoAction(VdcBllMessages.VDS_ADD_STORAGE_SERVER_STATUS_MUST_BE_UP);
+            }
         }
         return true;
     }

@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +100,6 @@ public class UpdateStorageServerConnectionCommandTest {
     private void prepareCommand() {
         parameters = new StorageServerConnectionParametersBase();
         parameters.setVdsId(Guid.newGuid());
-        parameters.setStoragePoolId(Guid.newGuid());
 
         command = spy(new UpdateStorageServerConnectionCommand<StorageServerConnectionParametersBase>(parameters));
         doReturn(storageConnDao).when(command).getStorageConnDao();
@@ -147,7 +147,6 @@ public class UpdateStorageServerConnectionCommandTest {
         return connectionDetails;
     }
 
-
     private StorageServerConnections populateBasicConnectionDetails(Guid id, String connection, StorageType type) {
         StorageServerConnections connectionDetails = new StorageServerConnections();
         connectionDetails.setid(id.toString());
@@ -174,7 +173,7 @@ public class UpdateStorageServerConnectionCommandTest {
         parameters.setVdsId(null);
         parameters.setStorageServerConnection(newNFSConnection);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.VDS_EMPTY_NAME_OR_ID);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
     @Test
@@ -187,7 +186,8 @@ public class UpdateStorageServerConnectionCommandTest {
                 0);
         parameters.setStorageServerConnection(newNFSConnection);
         parameters.setVdsId(Guid.Empty);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.VDS_EMPTY_NAME_OR_ID);
+        when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
     @Test
@@ -379,6 +379,9 @@ public class UpdateStorageServerConnectionCommandTest {
         domain1.setStorageName("storagedomain4");
         domains.add(domain1);
         when(storageDomainDAO.get(storageDomainId)).thenReturn(domain1);
+        when(storagePoolIsoMapDAO.getAllForStorage(storageDomainId)).
+                thenReturn(Collections.singletonList
+                        (new StoragePoolIsoMap(storageDomainId, Guid.newGuid(), StorageDomainStatus.Active)));
         List<String> messages = CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_MAINTENANCE);
         assertTrue(messages.contains("$vmNames vm1"));
@@ -451,6 +454,9 @@ public class UpdateStorageServerConnectionCommandTest {
         domain1.setStorageName("storagedomain4");
         domains.add(domain1);
         when(storageDomainDAO.get(storageDomainId)).thenReturn(domain1);
+        when(storagePoolIsoMapDAO.getAllForStorage(storageDomainId)).
+                thenReturn(Collections.singletonList
+                        (new StoragePoolIsoMap(storageDomainId, Guid.newGuid(), StorageDomainStatus.Active)));
         List<String> messages =
                 CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                         VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_MAINTENANCE);
@@ -526,7 +532,7 @@ public class UpdateStorageServerConnectionCommandTest {
         returnValueConnectSuccess.setSucceeded(true);
         StorageDomainDynamic domainDynamic = new StorageDomainDynamic();
         StorageDomain domain = createDomain(domainDynamic);
-        doReturn(map).when(command).getStoragePoolIsoMap(domain);
+        doReturn(Collections.singletonList(map)).when(command).getStoragePoolIsoMap(domain);
         returnValueConnectSuccess.setReturnValue(domain);
         doReturn(returnValueConnectSuccess).when(command).getStatsForDomain(domain);
         doReturn(true).when(command).connectToStorage();
@@ -559,9 +565,9 @@ public class UpdateStorageServerConnectionCommandTest {
         doNothing().when(storageConnDao).update(newNFSConnection);
         command.executeCommand();
         CommandAssertUtils.checkSucceeded(command, true);
-        verify(command,never()).connectToStorage();
-        verify(command,never()).disconnectFromStorage();
-        verify(command,never()).changeStorageDomainStatusInTransaction(StorageDomainStatus.Locked);
+        verify(command, never()).connectToStorage();
+        verify(command, never()).disconnectFromStorage();
+        verify(command, never()).changeStorageDomainStatusInTransaction(StorageDomainStatus.Locked);
 
     }
 
@@ -582,7 +588,7 @@ public class UpdateStorageServerConnectionCommandTest {
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
         StorageDomainDynamic domainDynamic = new StorageDomainDynamic();
         StoragePoolIsoMap map = new StoragePoolIsoMap();
-        doReturn(map).when(command).getStoragePoolIsoMap(domain);
+        doReturn(Collections.singletonList(map)).when(command).getStoragePoolIsoMap(domain);
         doReturn(returnValueUpdate).when(command).getStatsForDomain(domain);
         doReturn(true).when(command).connectToStorage();
         doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Locked);
@@ -611,7 +617,7 @@ public class UpdateStorageServerConnectionCommandTest {
         domains.add(domain);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
         StoragePoolIsoMap map = new StoragePoolIsoMap();
-        doReturn(map).when(command).getStoragePoolIsoMap(domain);
+        doReturn(Collections.singletonList(map)).when(command).getStoragePoolIsoMap(domain);
         doReturn(returnValueUpdate).when(command).getStatsForDomain(domain);
         doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Locked);
         doNothing().when(command).changeStorageDomainStatusInTransaction(StorageDomainStatus.Maintenance);

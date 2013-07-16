@@ -2,12 +2,14 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
 public class DisconnectStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends
@@ -26,8 +28,8 @@ public class DisconnectStorageServerConnectionCommand<T extends StorageServerCon
                .getResourceManager()
                .RunVdsCommand(
                     VDSCommandType.DisconnectStorageServer,
-                        new StorageServerConnectionManagementVDSParameters(getParameters().getVdsId(), getParameters()
-                                .getStoragePoolId(), getParameters().getStorageServerConnection().getstorage_type(),
+                        new StorageServerConnectionManagementVDSParameters(getParameters().getVdsId(), Guid.Empty,
+                                getParameters().getStorageServerConnection().getstorage_type(),
                                 new ArrayList<>(Arrays
                                         .asList(new StorageServerConnections[] { getConnection() })))).getSucceeded() ;
     }
