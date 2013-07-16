@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.provider.NeutronAgentWid
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
@@ -125,12 +126,15 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     @Inject
-    public ProviderPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public ProviderPopupView(EventBus eventBus,
+            ApplicationResources resources,
+            ApplicationConstants constants,
+            ApplicationTemplates templates) {
         super(eventBus, resources);
 
         typeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
         requiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        neutronAgentWidget = new NeutronAgentWidget(constants);
+        neutronAgentWidget = new NeutronAgentWidget(constants, resources, templates);
 
         this.resources = resources;
         this.constants = constants;

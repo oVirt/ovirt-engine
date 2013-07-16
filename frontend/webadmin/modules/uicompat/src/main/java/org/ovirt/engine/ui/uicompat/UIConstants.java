@@ -1954,6 +1954,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Bridge Mappings")
     String bridgeMappings();
 
+    @DefaultStringValue("Please use a comma-separated list of 'label:interface'")
+    String interfaceMappingsExplanation();
+
+    @DefaultStringValue("Please use a comma-separated list of 'label:bridge'")
+    String bridgeMappingsExplanation();
+
     @DefaultStringValue("The given mappings are of an invalid format.")
     String interfaceMappingsInvalid();
 

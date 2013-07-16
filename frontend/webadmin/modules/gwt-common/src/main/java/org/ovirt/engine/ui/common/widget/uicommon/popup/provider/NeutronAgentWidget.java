@@ -1,24 +1,26 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.provider;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAgentModel> {
@@ -40,13 +42,17 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
     }
 
     @UiField
-    @Path(value = "interfaceMappings.entity")
-    @WithElementId("interfaceMappings")
-    EntityModelTextBoxEditor interfaceMappings;
+    @Path(value = "interfaceMappingsLabel.entity")
+    @WithElementId("interfaceMappingsLabel")
+    EntityModelLabel mappingsLabel;
 
     @UiField
-    @Ignore
-    Label qpidTitle;
+    @Path(value = "interfaceMappings.entity")
+    @WithElementId("interfaceMappings")
+    EntityModelTextBoxOnlyEditor interfaceMappings;
+
+    @UiField(provided = true)
+    InfoIcon mappingsExplanation;
 
     @UiField
     @Path(value = "qpidHost.entity")
@@ -71,12 +77,19 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
     @UiField
     Style style;
 
+    private final CommonApplicationTemplates templates;
+
     @Inject
-    public NeutronAgentWidget(CommonApplicationConstants constants) {
+    public NeutronAgentWidget(CommonApplicationConstants constants,
+            CommonApplicationResources resources,
+            CommonApplicationTemplates templates) {
+
+        this.templates = templates;
+
+        mappingsExplanation = new InfoIcon(templates.italicText(new String()), resources);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
-        qpidTitle.setText(constants.qpid());
         qpidHost.setLabel(constants.hostQpid());
         qpidPort.setLabel(constants.portQpid());
         qpidUsername.setLabel(constants.usernameQpid());
@@ -87,25 +100,16 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
 
     @Override
     public void edit(final NeutronAgentModel model) {
-        qpidTitle.setVisible(model.getIsAvailable());
-        interfaceMappings.setLabel((String) model.getInterfaceMappingsLabel().getEntity());
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
-                    qpidTitle.setVisible(model.getIsAvailable());
-                }
-            }
-        });
-        model.getInterfaceMappingsLabel().getEntityChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                interfaceMappings.setLabel((String) model.getInterfaceMappingsLabel().getEntity());
-            }
-        });
         driver.edit(model);
+        mappingsExplanation.setText(templates.italicText((String) model.getInterfaceMappingsExplanation().getEntity()));
+        model.getInterfaceMappingsExplanation().getEntityChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                mappingsExplanation.setText(templates.italicText((String) model.getInterfaceMappingsExplanation()
+                        .getEntity()));
+            }
+        });
     }
 
     @Override

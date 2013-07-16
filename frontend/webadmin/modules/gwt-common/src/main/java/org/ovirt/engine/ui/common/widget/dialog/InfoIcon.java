@@ -49,4 +49,8 @@ public class InfoIcon extends FocusPanel {
         infoImage = new Image(resources.dialogIconHelp());
         infoImageHover = new Image(resources.dialogIconHelpRollover());
     }
+
+    public void setText(SafeHtml text) {
+        infoPanel.setWidget(new HTML(text));
+    }
 }

@@ -535,7 +535,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
             }
         });
         providerTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
-        neutronAgentWidget = new NeutronAgentWidget(constants);
+        neutronAgentWidget = new NeutronAgentWidget(constants, resources, applicationTemplates);
         rbPassword = new RadioButton("1"); //$NON-NLS-1$
         rbPublicKey = new RadioButton("1"); //$NON-NLS-1$
     }

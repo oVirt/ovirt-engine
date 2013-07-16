@@ -21,6 +21,7 @@ public class NeutronAgentModel extends EntityModel {
     private final ListModel pluginType;
 
     private EntityModel interfaceMappingsLabel = new EntityModel();
+    private EntityModel interfaceMappingsExplanation = new EntityModel();
     private EntityModel interfaceMappings = new EntityModel();
     private EntityModel qpidHost = new EntityModel();
     private EntityModel qpidPort = new EntityModel();
@@ -35,12 +36,16 @@ public class NeutronAgentModel extends EntityModel {
         return pluginType;
     }
 
-    public EntityModel getInterfaceMappings() {
-        return interfaceMappings;
-    }
-
     public EntityModel getInterfaceMappingsLabel() {
         return interfaceMappingsLabel;
+    }
+
+    public EntityModel getInterfaceMappingsExplanation() {
+        return interfaceMappingsExplanation;
+    }
+
+    public EntityModel getInterfaceMappings() {
+        return interfaceMappings;
     }
 
     public EntityModel getQpidHost() {
@@ -80,18 +85,27 @@ public class NeutronAgentModel extends EntityModel {
                         getInterfaceMappingsLabel().setEntity(ConstantsManager.getInstance()
                                 .getConstants()
                                 .bridgeMappings());
+                        getInterfaceMappingsExplanation().setEntity(ConstantsManager.getInstance()
+                                .getConstants()
+                                .bridgeMappingsExplanation());
                             break;
                         case LINUX_BRIDGE:
                         default:
                         getInterfaceMappingsLabel().setEntity(ConstantsManager.getInstance()
                                 .getConstants()
                                 .interfaceMappings());
+                        getInterfaceMappingsExplanation().setEntity(ConstantsManager.getInstance()
+                                .getConstants()
+                                .interfaceMappingsExplanation());
                     }
                 }
             }
         });
 
         getInterfaceMappingsLabel().setEntity(ConstantsManager.getInstance().getConstants().interfaceMappings());
+        getInterfaceMappingsExplanation().setEntity(ConstantsManager.getInstance()
+                .getConstants()
+                .interfaceMappingsExplanation());
         getQpidPort().setEntity(QPID_PORT_DEFAULT);
     }
 
