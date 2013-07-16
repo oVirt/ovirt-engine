@@ -203,6 +203,7 @@ Summary: Engine core of %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 Requires: java
+Requires: python-daemon
 Requires: openssh
 Requires: openssl
 Requires: logrotate
@@ -248,7 +249,6 @@ Requires: lsof
 Requires: nfs-utils
 Requires: python-cheetah
 Requires: yum
-Requires: python-daemon
 Requires: python-psycopg2
 Requires: iproute
 Requires: openssh
@@ -297,6 +297,7 @@ Summary: %{product_name_short} Tools
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
 Requires: java
+Requires: python-daemon
 
 %if %{install_systemd}
 Requires(post): systemd
@@ -347,6 +348,7 @@ fi
 %package websocket-proxy
 Summary: %{product_name_short} Websocket Proxy
 Group: Virtualization/Management
+Requires: python-daemon
 Requires: python-websockify
 Requires: m2crypto
 Requires: %{name}
