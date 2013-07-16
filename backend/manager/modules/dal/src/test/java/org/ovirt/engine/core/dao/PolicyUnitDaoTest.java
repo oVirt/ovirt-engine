@@ -30,7 +30,6 @@ public class PolicyUnitDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testGet() {
-        // TODO Auto-generated method stub
         PolicyUnit result = dao.get(FixturesTool.POLICY_UNIT_MIGRATION);
         assertTrue(result.equals(existingPolicyUnit));
     }
