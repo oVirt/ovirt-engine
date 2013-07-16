@@ -92,7 +92,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-@LockIdNameAttribute
+@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameters>
         implements QuotaStorageDependent, TaskHandlerCommand<ImportVmParameters> {
     private static final Log log = LogFactory.getLog(ImportVmCommand.class);
@@ -124,7 +124,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (!StringUtils.isBlank(getParameters().getVm().getName())) {
             return Collections.singletonMap(getParameters().getVm().getName(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME, VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
         }
         return null;
     }
@@ -605,7 +605,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 return null;
             }
         });
-        freeLock();
     }
 
     private void processImages() {
