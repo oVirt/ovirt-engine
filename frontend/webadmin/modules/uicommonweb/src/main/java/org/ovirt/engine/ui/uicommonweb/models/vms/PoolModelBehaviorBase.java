@@ -301,7 +301,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 new IValidation[]
                 {
                         new NotEmptyValidation(),
-                        new IntegerValidation(1, assignedVms)
+                        new IntegerValidation(1, Integer.MAX_VALUE)
                 });
 
         getModel().setIsGeneralTabValid(getModel().getIsGeneralTabValid()

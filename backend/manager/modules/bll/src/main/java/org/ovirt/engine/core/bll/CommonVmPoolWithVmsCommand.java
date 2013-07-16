@@ -237,12 +237,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             return false;
         }
 
-        pool = getParameters().getVmPool();
-        if (pool.getMaxAssignedVmsPerUser() < 1 || pool.getMaxAssignedVmsPerUser() > pool.getAssignedVmsCount()) {
-            addCanDoActionMessage(VdcBllMessages.VM_POOL_NUMBER_OF_ASSIGNED_VMS_OUT_OF_RANGE);
-            return false;
-        }
-
         return checkFreeSpaceAndTypeOnDestDomains();
     }
 
