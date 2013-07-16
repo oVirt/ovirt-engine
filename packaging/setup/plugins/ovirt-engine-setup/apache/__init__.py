@@ -22,7 +22,6 @@
 from otopi import util
 
 
-from . import core
 from . import root
 from . import ssl
 from . import selinux
@@ -31,7 +30,6 @@ from . import ovirt_engine
 
 @util.export
 def createPlugins(context):
-    core.Plugin(context=context)
     root.Plugin(context=context)
     ssl.Plugin(context=context)
     ovirt_engine.Plugin(context=context)
