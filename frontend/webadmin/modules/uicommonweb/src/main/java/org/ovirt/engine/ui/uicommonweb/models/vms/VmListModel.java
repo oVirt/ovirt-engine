@@ -2332,7 +2332,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1));
 
         getConsoleConnectCommand().setIsExecutionAllowed(isConsoleCommandsExecutionAllowed());
-        getEditConsoleCommand().setIsExecutionAllowed(isConsoleCommandsExecutionAllowed());
+        getEditConsoleCommand().setIsExecutionAllowed(isConsoleEditEnabled());
+    }
+
+    private boolean isConsoleEditEnabled() {
+        return getSelectedItem() != null && ((VM) getSelectedItem()).isRunningOrPaused();
     }
 
     private boolean isConsoleCommandsExecutionAllowed() {

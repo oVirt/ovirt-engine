@@ -324,6 +324,13 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
                         getView().selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Plugin);
                     }
                 }));
+        registerHandler(getView().getSpiceHtml5ImplRadioButton()
+                .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+                    @Override
+                    public void onValueChange(ValueChangeEvent<Boolean> event) {
+                        getView().selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Html5);
+                    }
+                }));
 
          registerHandler(getView().getNoVncImplRadioButton()
                 .addValueChangeHandler(new ValueChangeHandler<Boolean>() {

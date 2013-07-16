@@ -24,9 +24,10 @@ import org.ovirt.engine.ui.userportal.section.main.view.AbstractSideTabWithDetai
 import org.ovirt.engine.ui.userportal.uicommon.model.vm.UserPortalListProvider;
 import org.ovirt.engine.ui.userportal.widget.action.UserPortalButtonDefinition;
 import org.ovirt.engine.ui.userportal.widget.basic.MainTabBasicListItemMessagesTranslator;
+import org.ovirt.engine.ui.userportal.widget.extended.vm.AbstractConsoleButtonCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.BorderedCompositeCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleButtonCell;
-import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleButtonCell.ConsoleButtonCommand;
+import org.ovirt.engine.ui.userportal.widget.extended.vm.ConsoleEditButtonCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ImageButtonCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ImageMaskCell;
 import org.ovirt.engine.ui.userportal.widget.extended.vm.ImageMaskCell.ShowMask;
@@ -188,7 +189,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                 applicationResources.sideTabExtendedVmStyle().enabledConsoleButton(),
                 applicationResources.sideTabExtendedVmStyle().disabledConsoleButton(),
                 constants.openConsoleLabel(),
-                new ConsoleButtonCommand() {
+                new AbstractConsoleButtonCell.ConsoleButtonCommand() {
                     @Override
                     public void execute(UserPortalItemModel model) {
                         String message =
@@ -203,12 +204,11 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
 
         getTable().addColumn(new UserPortalItemSimpleColumn(openConsoleCell), constants.empty(), "100px"); //$NON-NLS-1$
 
-        ConsoleButtonCell consoleEditCell = new ConsoleButtonCell(
-                consoleUtils,
+        ConsoleEditButtonCell consoleEditCell = new ConsoleEditButtonCell(
                 applicationResources.sideTabExtendedVmStyle().enabledEditConsoleButton(),
                 applicationResources.sideTabExtendedVmStyle().disabledEditConsoleButton(),
                 constants.editConsoleLabel(),
-                new ConsoleButtonCommand() {
+                new AbstractConsoleButtonCell.ConsoleButtonCommand() {
                     @Override
                     public void execute(UserPortalItemModel model) {
                         getModel().getEditConsoleCommand().execute();

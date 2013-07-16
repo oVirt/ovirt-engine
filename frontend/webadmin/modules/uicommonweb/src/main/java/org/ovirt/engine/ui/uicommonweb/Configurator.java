@@ -267,7 +267,6 @@ public abstract class Configurator {
         return wsConfig != null && !"".equals(wsConfig) && !"Off".equalsIgnoreCase(wsConfig); //$NON-NLS-1$ $NON-NLS-2$
     }
 
-
     public final class FileFetchEventArgs extends EventArgs {
         private String fileContent;
 
@@ -344,10 +343,6 @@ public abstract class Configurator {
         return clientOsType().equalsIgnoreCase("Linux") && clientBrowserType().equalsIgnoreCase("Firefox"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public boolean isClientWindowExplorerWithWebsockets() {
-        return isClientWindowsExplorer();
-    }
-
     public boolean isClientWindowsExplorer() {
         return isClientWindows() && clientBrowserType().equalsIgnoreCase("Explorer"); //$NON-NLS-1$ //$NON-NLS-2$
     }
@@ -369,16 +364,13 @@ public abstract class Configurator {
 
     protected abstract String clientPlatformType();
 
+    public abstract Float clientBrowserVersion();
+
     protected abstract void onUpdateDocumentationBaseURL();
 
     public boolean isSpiceProxyDefined() {
         String spiceProxy = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
         return spiceProxy != null && !"".equals(spiceProxy); //$NON-NLS-1$
-    }
-
-    public boolean isWebsocketProxySet() {
-        String websocketProxy = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.WebSocketProxy);
-        return websocketProxy != null && !"".equals(websocketProxy) && !"Off".equals(websocketProxy); //$NON-NLS-1$
     }
 
 }

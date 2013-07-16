@@ -82,7 +82,7 @@ public class RdpNativeImpl extends AbstractRdp implements IRdp {
         configBuilder.append("\nredirectprinters:i:").append(booleanToInt(getRedirectPrinters()));//$NON-NLS-1$
         configBuilder.append("\nredirectsmartcards:i:").append(booleanToInt(getRedirectSmartCards()));//$NON-NLS-1$
         configBuilder.append("\nredirectclipboard:i:").append(booleanToInt(getRedirectClipboard()));//$NON-NLS-1$
-        configBuilder.append("username:s:").append(getVdcUserNameAndDomain());//$NON-NLS-1$
+        configBuilder.append("\nusername:s:").append(getVdcUserNameAndDomain());//$NON-NLS-1$
 
         ConsoleModel.makeConsoleConfigRequest("console.rdp", "application/rdp; charset=UTF-8", configBuilder.toString());//$NON-NLS-1$$NON-NLS-2$
     }

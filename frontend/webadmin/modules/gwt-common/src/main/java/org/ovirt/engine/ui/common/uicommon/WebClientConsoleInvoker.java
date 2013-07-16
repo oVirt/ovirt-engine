@@ -1,30 +1,78 @@
 package org.ovirt.engine.ui.common.uicommon;
 
 import com.google.gwt.http.client.URL;
+import com.google.gwt.user.client.Window;
+import org.ovirt.engine.core.common.queries.SignStringParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 
 public class WebClientConsoleInvoker {
 
-    private final String connectionTicket;
+    private final String clientPage;
+    private final WebsocketProxyConfig proxyConfig;
     private final String password;
-    private final String clientUrl;
-    private boolean listensOnPostMessage = false;
+    private final boolean useSsl;
+    private final String host;
+    private final String port;
 
-    public WebClientConsoleInvoker(String connectionTicket, String password, String clientUrl) {
-        this.connectionTicket = connectionTicket;
+    public WebClientConsoleInvoker(String clientPage, WebsocketProxyConfig proxyConfig, String host, String port, String password, boolean useSsl) {
+        this.clientPage = clientPage;
+        this.proxyConfig = proxyConfig;
+        this.host = host;
+        this.port = port;
         this.password = password;
-        this.clientUrl = clientUrl;
+        this.useSsl = useSsl;
     }
 
-    /**
+    public void invokeClient() {
+        AsyncQuery signCallback = new AsyncQuery();
+        signCallback.setModel(this);
+        signCallback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                VdcQueryReturnValue queryRetVal = (VdcQueryReturnValue) returnValue;
+                invokeClientNative((String) queryRetVal.getReturnValue());
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.SignString,
+                new SignStringParameters(createConnectionString(host, port, useSsl)),
+                signCallback);
+    }
+
+    private native void invokeClientNative(String connectionTicket)/*-{
+       if (!this.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::isClientBrowserSupported()()) {
+           alert("This feature is not supported in your browser.");
+       }
+
+       var that = this;
+       var clientUrl = this.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::createClientUrl()();
+       var win = $wnd.open(clientUrl, "_blank");
+
+       win.addEventListener('load', function() {
+           var dataToSend = {
+             connectionTicket: connectionTicket,
+             password: that.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::password
+           };
+
+           win.postMessage(dataToSend, clientUrl);
+       }, false);
+       win.focus();
+       }-*/;
+
+   /**
      * Creates an urlencoded json object that represent target endpoint.
      * @params host, port, sslTarget
      * @return encoded json object that holds host, port and sslTarget information.
      */
-    public static String createConnectionString(String host, String port, boolean sslTarget) {
+   private static String createConnectionString(String host, String port, boolean sslTarget) {
         return URL.encode(createConnectionJsonString(host, port, sslTarget));
-    }
+   }
 
     /**
      * Helper method for creating json object out of host, port and sslTarget
@@ -37,45 +85,17 @@ public class WebClientConsoleInvoker {
             });
     }-*/;
 
-    public native void invokeClientNative()/*-{
-       if (this.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::isClientBrowserUnsupported()()) {
-           alert("This feature is not supported in your browser.");
-       }
-
-       var that = this;
-
-       var clientUrl = this.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::clientUrl;
-
-       function postMessage(target) {
-           var dataToSend = {
-             connectionTicket: that.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::connectionTicket,
-             password: that.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::password
-           };
-
-           target.postMessage(dataToSend, clientUrl);
-       }
-
-
-       if (!this.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::listensOnPostMessage) {
-           this.@org.ovirt.engine.ui.common.uicommon.WebClientConsoleInvoker::listensOnPostMessage = true;
-           $wnd.addEventListener("message", postMessage, false);
-       }
-
-       var win = $wnd.open(clientUrl, "_blank");
-       win.focus();
-
-       setTimeout(function() {
-         postMessage(win);
-       }, 1000);
-
-       }-*/;
-
-    private boolean isClientBrowserUnsupported() {
-        return ((Configurator) TypeResolver.getInstance().resolve(Configurator.class)).isClientWindowsExplorer();
+    private String createClientUrl() {
+        return Window.Location.getProtocol() + "//" + Window.Location.getHost() + //$NON-NLS-1$
+            "/" + clientPage + //$NON-NLS-1$
+            "?host=" + proxyConfig.getProxyHost() + //$NON-NLS-1$
+            "&port=" + proxyConfig.getProxyPort(); //$NON-NLS-1$
     }
 
-    public void setListensOnPostMessage(boolean val) {
-        this.listensOnPostMessage = val;
-    }
+    private boolean isClientBrowserSupported() {
+        boolean isExplorer = ((Configurator) TypeResolver.getInstance().resolve(Configurator.class)).isClientWindowsExplorer();
+        Float browserVersion = ((Configurator) TypeResolver.getInstance().resolve(Configurator.class)).clientBrowserVersion();
 
+        return isExplorer ? (browserVersion >= 11f) : true;
+    }
 }

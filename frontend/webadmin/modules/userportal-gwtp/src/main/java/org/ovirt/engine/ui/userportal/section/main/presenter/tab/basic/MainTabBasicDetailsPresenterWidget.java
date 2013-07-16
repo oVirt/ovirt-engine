@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent;
 import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
@@ -184,13 +183,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     }
 
     private boolean isEditConsoleEnabled(UserPortalItemModel item) {
-        if (!item.isPool() && consoleUtils.determineConnectionProtocol(item) != null
-                && item.getStatus().equals(VMStatus.Up)) {
-
-            return true;
-        }
-
-        return false;
+        return item.getVM() != null && item.getVM().isRunningOrPaused();
     }
 
 }

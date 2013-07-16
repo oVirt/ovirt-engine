@@ -146,6 +146,11 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
     }
 
     @Override
+    public Float clientBrowserVersion() {
+        return clientAgentType.version;
+    }
+
+    @Override
     protected void onUpdateDocumentationBaseURL() {
         fetchFile(getDocumentationBaseURL() + "UserPortalDocumentationPath.csv", documentationFileFetchedEvent); //$NON-NLS-1$
     }

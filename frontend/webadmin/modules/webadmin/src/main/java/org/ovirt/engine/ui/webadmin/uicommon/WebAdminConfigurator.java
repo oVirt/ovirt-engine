@@ -95,6 +95,11 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     }
 
     @Override
+    public Float clientBrowserVersion() {
+        return clientAgentType.version;
+    }
+
+    @Override
     protected void onUpdateDocumentationBaseURL() {
         fetchFile(getDocumentationBaseURL() + "DocumentationPath.csv", documentationFileFetchedEvent); //$NON-NLS-1$
     }
