@@ -864,6 +864,8 @@ public abstract class HostModel extends Model
         getHostPort().setEntity(constants.defaultHostSSHPort());
         setUserName(new EntityModel());
         getUserName().setEntity(constants.defaultUserName());
+        // TODO: remove setIsChangable when configured ssh username is enabled
+        getUserName().setIsChangable(false);
         setFetchSshFingerprint(new EntityModel());
         getFetchSshFingerprint().setEntity(constants.empty());
         setUserPassword(new EntityModel());

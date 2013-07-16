@@ -771,6 +771,8 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         });
 
         updatePmPanelsVisibility(true);
+        // TODO: remove setIsChangable when configured ssh username is enabled
+        userNameEditor.setEnabled(false);
         externalProviderPanel.setVisible(object.showExternalProviderPanel());
 
         networkProviderTab.setVisible(object.showNetworkProviderTab());

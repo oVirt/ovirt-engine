@@ -553,9 +553,10 @@ public class HostMapper {
                 if (action.getSsh().getUser().isSetPassword()) {
                     params.setRootPassword(action.getSsh().getUser().getPassword());
                 }
-                if (action.getSsh().getUser().isSetUserName()) {
-                      params.getvds().setSshUsername(action.getSsh().getUser().getUserName());
-                }
+                // TODO: uncomment when non-root username support is available
+                //if (action.getSsh().getUser().isSetUserName()) {
+                //      params.getvds().setSshUsername(action.getSsh().getUser().getUserName());
+                //}
             }
             if (action.getSsh().isSetPort()) {
                 params.getvds().setSshPort(action.getSsh().getPort());
