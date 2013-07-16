@@ -108,6 +108,8 @@ fi
 echo "Restore of database $DATABASE from $FILE started..."
 if file "${FILE}" | grep 'tar'; then
     createdb -h ${SERVERNAME} -p ${PORT} -U postgres ${DATABASE}
+    # Creating the plpgsql language
+    createlang --host=${SERVERNAME} --port=${PORT} --dbname=${DATABASE} --username=${USERNAME} plpgsql >& /dev/null
     restore_from_tar
 else
     psql -w -h ${SERVERNAME} -p ${PORT} -U ${USERNAME} -f ${FILE}
