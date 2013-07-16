@@ -14,6 +14,24 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
         this.pluginType = pluginType;
     }
 
+    /**
+     * Convenience method to know if the plugin represented is Linux Bridge.
+     *
+     * @return <code>true</code> iff the plugin type represents a Linux Bridge plugin.
+     */
+    public final boolean isLinuxBridge() {
+        return OpenstackNetworkPluginType.LINUX_BRIDGE.name().equals(getPluginType());
+    }
+
+    /**
+     * Convenience method to know if the plugin represented is Open vSwitch.
+     *
+     * @return <code>true</code> iff the plugin type represents a Open vSwitch plugin.
+     */
+    public final boolean isOpenVSwitch() {
+        return OpenstackNetworkPluginType.OPEN_VSWITCH.name().equals(getPluginType());
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
