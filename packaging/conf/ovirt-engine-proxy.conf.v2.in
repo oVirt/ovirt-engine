@@ -33,7 +33,12 @@
     </LocationMatch>
 
     <Location /api>
-        ProxyPass ajp://localhost:@JBOSS_AJP_PORT@/api
+        #
+        # The timeout has to be specified here again because versions of
+        # Apache older than 2.4 don't copy the setting from the Proxy
+        # directive:
+        #
+        ProxyPass ajp://localhost:@JBOSS_AJP_PORT@/api timeout=3600
 
         #
         # Remove the Expect headers from API requests (this is needed to fix a
