@@ -72,6 +72,11 @@ public class VnicProfileValidator {
                 VdcBllMessages.VAR__ENTITIES__VM_TEMPLATES);
     }
 
+    public ValidationResult vnicProfileForVmNetworkOnly() {
+        return getNetwork().isVmNetwork() ? ValidationResult.VALID
+                : new ValidationResult(VdcBllMessages.CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK);
+    }
+
     protected ValidationResult vnicProfileNotUsed(List<? extends Nameable> entities, VdcBllMessages entitiesReplacement) {
         if (entities.isEmpty()) {
             return ValidationResult.VALID;

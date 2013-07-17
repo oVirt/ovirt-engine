@@ -216,4 +216,20 @@ public class VnicProfileValidatorTest {
 
         vnicProfileNotUsedByTemplatesTest(failsWithVnicProfileInUse(), Collections.singletonList(template));
     }
+
+    @Test
+    public void vnicProfileForVmNetwork() {
+        vnicProfileForVmNetworkTest(true, isValid());
+    }
+
+    @Test
+    public void vnicProfileForNonVmNetwork() {
+        vnicProfileForVmNetworkTest(false, failsWith(VdcBllMessages.CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK));
+    }
+
+    private void vnicProfileForVmNetworkTest(boolean vmNetwork, Matcher<ValidationResult> matcher) {
+        when(network.isVmNetwork()).thenReturn(vmNetwork);
+        when(networkDao.get(any(Guid.class))).thenReturn(network);
+        assertThat(validator.vnicProfileForVmNetworkOnly(), matcher);
+    }
 }
