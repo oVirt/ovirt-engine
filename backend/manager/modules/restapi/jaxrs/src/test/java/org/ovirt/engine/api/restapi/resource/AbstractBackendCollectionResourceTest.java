@@ -247,9 +247,11 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                 expect(taskResult.getActionReturnValue()).andReturn(taskReturn).anyTimes();
             } else {
                 expect(taskResult.getExecuteFailedMessages()).andReturn(asList(FAILURE)).anyTimes();
+                setUpL10nExpectations(asList(FAILURE));
             }
         } else {
             expect(taskResult.getCanDoActionMessages()).andReturn(asList(CANT_DO)).anyTimes();
+            setUpL10nExpectations(asList(CANT_DO));
         }
         expect(taskResult.getHasAsyncTasks()).andReturn(asyncTasks != null).anyTimes();
         if (asyncTasks != null) {
