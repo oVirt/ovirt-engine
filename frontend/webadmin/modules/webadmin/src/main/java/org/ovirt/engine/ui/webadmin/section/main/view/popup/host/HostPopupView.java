@@ -131,6 +131,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @WithElementId("fetchResult")
     Label fetchResult;
 
+    @UiField
     @Path(value = "comment.entity")
     @WithElementId("comment")
     EntityModelTextBoxEditor commentEditor;
