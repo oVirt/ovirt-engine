@@ -230,6 +230,7 @@ public class DnsSRVLocator {
                     protocol,
                     domain,
                     ex.getMessage());
+            log.debug("Stacktrace: ", ex);
             throw ex;
         }
     }
