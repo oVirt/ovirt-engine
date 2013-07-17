@@ -72,6 +72,8 @@ public class ErrorMessageHelper {
             return Status.BAD_REQUEST;
         case INCOMPATIBLE_VERSION:
             return Status.BAD_REQUEST;
+        case ATTESTATION_SERVER_ERROR:
+            return Status.BAD_REQUEST;
         default:
             return Status.BAD_REQUEST;
         }

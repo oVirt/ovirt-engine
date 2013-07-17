@@ -32,6 +32,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 
 public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         VdsGroupOperationCommandBase<T>  implements RenamedEntityInfoProvider{
@@ -290,6 +292,10 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DISABLE_GLUSTER_WHEN_CLUSTER_CONTAINS_VOLUMES);
                 result = false;
             }
+        }
+        if (result && getVdsGroup().supportsTrustedService() && Config.<String> GetValue(ConfigValues.AttestationServer).equals("")) {
+            addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED);
+            result = false;
         }
         if (result) {
             result = validateClusterPolicy();

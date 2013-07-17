@@ -21,6 +21,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 
 public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         VdsGroupOperationCommandBase<T> {
@@ -144,6 +146,10 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                 addCanDoActionMessage(VdcBllMessages.VDS_GROUP_ENABLING_BOTH_VIRT_AND_GLUSTER_SERVICES_NOT_ALLOWED);
                 result = false;
             }
+        }
+        if (result && getVdsGroup().supportsTrustedService()&& Config.<String> GetValue(ConfigValues.AttestationServer).equals("")) {
+             addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED);
+             result = false;
         }
 
         if (result) {

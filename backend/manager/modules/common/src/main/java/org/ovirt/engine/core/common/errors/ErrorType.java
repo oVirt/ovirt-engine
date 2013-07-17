@@ -47,4 +47,6 @@ public enum ErrorType {
      * had occured.
      */
     DATA_CORRUPTION,
+
+    ATTESTATION_SERVER_ERROR,
 }

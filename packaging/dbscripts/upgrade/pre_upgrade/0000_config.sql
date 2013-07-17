@@ -583,7 +583,7 @@ select fn_db_add_config_value('PollUri','AttestationService/resources/PollHosts'
 select fn_db_add_config_value('AttestationTruststore','TrustStore.jks','general');
 select fn_db_add_config_value('AttestationPort','8443','general');
 select fn_db_add_config_value('AttestationTruststorePass','password','general');
-select fn_db_add_config_value('AttestationServer','oat-server','general');
+select fn_db_add_config_value('AttestationServer','','general');
 select fn_db_add_config_value('AttestationFirstStageSize','10','general');
 
 select fn_db_add_config_value('MaxAverageNetworkQoSValue','1024','general');

@@ -1003,6 +1003,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} Cluster. Cluster name is already in use.")
     String VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE();
 
+    @DefaultStringValue("Attestation server should be configured correctly.")
+    String VDS_GROUP_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED();
+
     @DefaultStringValue("Cannot Cannot add Cluster. CPU type must be specified.")
     String VDS_GROUP_CPU_TYPE_CANNOT_BE_NULL();
 

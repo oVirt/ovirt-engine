@@ -1332,7 +1332,7 @@ public enum ConfigValues {
     AttestationTruststorePass(430),
 
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("oat-server")
+    @DefaultValueAttribute("")
     AttestationServer(431),
 
     @TypeConverterAttribute(Integer.class)
