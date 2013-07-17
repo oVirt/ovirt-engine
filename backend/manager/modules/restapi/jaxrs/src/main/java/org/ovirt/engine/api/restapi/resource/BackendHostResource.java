@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.action.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
+import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
@@ -163,6 +164,12 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         return doAction(VdcActionType.MaintenanceNumberOfVdss,
                         new MaintenanceNumberOfVdssParameters(asList(guid), false),
                         action);
+    }
+
+    @Override
+    public Response forceSelectSPM(Action action) {
+        return doAction(VdcActionType.ForceSelectSPM,
+                new ForceSelectSPMParameters(guid), action);
     }
 
     @Override

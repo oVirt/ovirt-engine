@@ -1883,6 +1883,15 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/hosts/{host:id}/forceselectspm|rel=forceselectspm
+  request:
+    body:
+      parameterType: Action
+      signatures: []
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/approve|rel=approve
   request:
     body:

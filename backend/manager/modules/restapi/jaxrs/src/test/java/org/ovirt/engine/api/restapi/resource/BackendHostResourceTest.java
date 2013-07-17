@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.action.ApproveVdsParameters;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.FenceVdsManualyParameters;
+import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.UpdateVdsActionParameters;
@@ -441,6 +442,16 @@ public class BackendHostResourceTest
     }
 
     @Test
+    public void testForceSelect() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.ForceSelectSPM,
+                                           ForceSelectSPMParameters.class,
+                                           new String[] { "PreferredSPMId" },
+                                           new Object[] { GUIDS[0] }));
+
+        verifyActionResponse(resource.forceSelectSPM(new Action()));
+    }
+
+    @Test
     public void testInstall() throws Exception {
         setUpGetEntityWithNoCertificateInfoExpectations(1);
 
@@ -670,6 +681,7 @@ public class BackendHostResourceTest
         return entity;
     }
 
+    @Override
     protected void verifyModel(Host model, int index) {
         verifyModelSpecific(model, index);
         verifyLinks(model);

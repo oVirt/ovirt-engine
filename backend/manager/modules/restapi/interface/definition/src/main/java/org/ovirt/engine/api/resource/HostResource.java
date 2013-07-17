@@ -31,7 +31,7 @@ import org.ovirt.engine.api.model.Host;
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface HostResource extends UpdatableResource<Host>, MeasurableResource {
 
-    @Path("{action: (approve|install|fence|activate|deactivate|commitnetconfig|iscsidiscover|iscsilogin)}/{oid}")
+    @Path("{action: (approve|install|fence|activate|deactivate|commitnetconfig|iscsidiscover|iscsilogin|forceselectspm)}/{oid}")
     public ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
 
     @POST
@@ -81,6 +81,12 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     @Actionable
     @Path("iscsilogin")
     public Response iscsiLogin(Action action);
+
+    @POST
+    @Formatted
+    @Actionable
+    @Path("forceselectspm")
+    public Response forceSelectSPM(Action action);
 
     @Path("nics")
     public HostNicsResource getHostNicsResource();

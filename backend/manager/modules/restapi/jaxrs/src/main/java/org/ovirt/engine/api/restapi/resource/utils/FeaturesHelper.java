@@ -59,6 +59,7 @@ public class FeaturesHelper {
             addFeatureMemorySnapshot(features);
             addWatchdogFeature(features);
             addSshAuthenticationFeature(features);
+            addForceSelectSpmFeature(features);
         }
         return features;
     }
@@ -67,6 +68,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("SSH Authentication Method");
         feature.setDescription("Ability to authenticate by SSH to host using privileged user password or SSH public key");
+        features.getFeature().add(feature);
+    }
+
+    private void addForceSelectSpmFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Force Select SPM");
+        feature.setDescription("Ability to force select a host as SPM");
         features.getFeature().add(feature);
     }
 
