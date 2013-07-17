@@ -155,6 +155,8 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
                 displayPassPkWindow(false);
             }
         });
+        // TODO: remove setIsChangable when configured ssh username is enabled
+        userNameEditor.setEnabled(false);
     }
 
     private void displayPassPkWindow(boolean isPasswordVisible) {
