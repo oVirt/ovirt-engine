@@ -503,6 +503,9 @@ touch %{buildroot}%{engine_pki}/cacert.template
 touch %{buildroot}%{engine_pki}/cert.template
 touch %{buildroot}%{engine_pki}/database.txt
 touch %{buildroot}%{engine_pki}/serial.txt
+#legacy firewalld
+install -d "%{buildroot}%{_sysconfdir}/firewalld/services"
+touch "%{buildroot}%{_sysconfdir}/firewalld/services/ovirt.xml"
 
 install -d "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d"
 cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf" << __EOF__
@@ -808,6 +811,7 @@ fi
 
 # Firewalld configuration
 %{engine_data}/firewalld/base
+%ghost %config(noreplace) %{_sysconfdir}/firewalld/services/ovirt.xml
 
 # Man pages
 %{_mandir}/man8/engine-setup.*
