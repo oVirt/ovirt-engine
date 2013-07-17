@@ -1111,3 +1111,64 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+----------------------------------------------------------------------
+--  Vnic Profile View
+----------------------------------------------------------------------
+Create or replace FUNCTION GetVnicProfileViewByVnicProfileViewId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
+RETURNS SETOF vnic_profiles_view
+AS $procedure$
+BEGIN
+
+RETURN QUERY SELECT *
+FROM vnic_profiles_view
+WHERE id = v_id
+AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                  FROM   user_vnic_profile_permissions_view
+                                  WHERE  user_id = v_user_id AND entity_id = vnic_profiles_view.id));
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetAllFromVnicProfileViews(v_user_id uuid, v_is_filtered boolean)
+RETURNS SETOF vnic_profiles_view
+AS $procedure$
+BEGIN
+
+RETURN QUERY SELECT *
+FROM vnic_profiles_view
+WHERE NOT v_is_filtered OR EXISTS (SELECT 1
+                                   FROM   user_vnic_profile_permissions_view
+                                   WHERE  user_id = v_user_id AND entity_id = vnic_profiles_view.id);
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetVnicProfileViewsByNetworkId(v_network_id UUID, v_user_id uuid, v_is_filtered boolean)
+RETURNS SETOF vnic_profiles_view
+AS $procedure$
+BEGIN
+
+RETURN QUERY SELECT *
+FROM vnic_profiles_view
+WHERE network_id = v_network_id
+AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                  FROM   user_vnic_profile_permissions_view
+                                  WHERE  user_id = v_user_id AND entity_id = vnic_profiles_view.id));
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetVnicProfileViewsByDataCenterId(v_id UUID)
+RETURNS SETOF vnic_profiles_view
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM   vnic_profiles_view
+    WHERE  data_center_id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;

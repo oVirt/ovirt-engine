@@ -67,6 +67,7 @@
 		<include name="common/businessentities/network/VmNetworkInterface.java" />
 		<include name="common/businessentities/network/VmNetworkStatistics.java" />
 		<include name="common/businessentities/network/VdsNetworkStatistics.java" />
+		<include name="common/businessentities/network/VnicProfileView.java" />
 
 		<include name="common/businessentities/Commented.java" />
 		<include name="common/businessentities/IVdcQueryable.java" />

@@ -1132,6 +1132,24 @@ FROM network
 INNER JOIN storage_pool ON network.storage_pool_id = storage_pool.id
 LEFT JOIN providers ON network.provider_network_provider_id = providers.id;
 
+
+CREATE OR REPLACE VIEW vnic_profiles_view
+AS
+SELECT vnic_profiles.id AS id,
+       vnic_profiles.name AS name,
+       vnic_profiles.network_id as network_id,
+       vnic_profiles.port_mirroring as port_mirroring,
+       vnic_profiles.custom_properties as custom_properties,
+       vnic_profiles.description as description,
+       network.name as network_name,
+       storage_pool.name as data_center_name,
+       storage_pool.compatibility_version as compatibility_version,
+       storage_pool.id as data_center_id
+FROM vnic_profiles
+INNER JOIN network ON vnic_profiles.network_id = network.id
+INNER JOIN storage_pool ON network.storage_pool_id = storage_pool.id;
+
+
 ----------------------------------------------
 -- Query Permissions
 ----------------------------------------------

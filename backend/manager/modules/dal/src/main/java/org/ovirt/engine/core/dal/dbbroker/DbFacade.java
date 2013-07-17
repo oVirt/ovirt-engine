@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
@@ -110,6 +111,7 @@ import org.ovirt.engine.core.dao.network.NetworkViewDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
+import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
@@ -159,6 +161,7 @@ public class DbFacade {
             put(Job.class, JobDao.class);
             put(Step.class, StepDao.class);
             put(VnicProfile.class, VnicProfileDao.class);
+            put(VnicProfileView.class, VnicProfileDao.class);
         }
     };
 
@@ -932,5 +935,14 @@ public class DbFacade {
      */
     public VnicProfileDao getVnicProfileDao() {
         return getDao(VnicProfileDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link VnicProfileViewDao}.
+     *
+     * @return the dao
+     */
+    public VnicProfileViewDao getVnicProfileViewDao() {
+        return getDao(VnicProfileViewDao.class);
     }
 }
