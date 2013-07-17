@@ -19,8 +19,8 @@ public class NetworkQoSDaoFacadeImpl extends DefaultGenericDaoDbFacade<NetworkQo
     }
 
     private static Integer getIntegerOrNull(ResultSet rs, String columnName) throws SQLException {
-        String string = rs.getString(columnName);
-        return string == null ? null : Integer.parseInt(string);
+        int i = rs.getInt(columnName);
+        return rs.wasNull() ? null : i;
     }
 
     @Override
@@ -36,9 +36,9 @@ public class NetworkQoSDaoFacadeImpl extends DefaultGenericDaoDbFacade<NetworkQo
             public NetworkQoS mapRow(ResultSet rs, int rowNum)
                     throws SQLException {
                 NetworkQoS entity = new NetworkQoS();
-                entity.setId(Guid.createGuidFromString(rs.getString("id")));
+                entity.setId(getGuid(rs, "id"));
                 entity.setName(rs.getString("name"));
-                entity.setStoragePoolId(Guid.createGuidFromString(rs.getString("storage_pool_id")));
+                entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
                 entity.setInboundAverage(getIntegerOrNull(rs, "inbound_average"));
                 entity.setInboundPeak(getIntegerOrNull(rs, "inbound_peak"));
                 entity.setInboundBurst(getIntegerOrNull(rs, "inbound_burst"));
