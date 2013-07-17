@@ -43,7 +43,7 @@ class Plugin(plugin.PluginBase):
     Firewall manager selection plugin.
     """
 
-    def _parseFirewalld(self, format):
+    def _parseFirewalld(self, format, portSeparator='-'):
         ret = ''
         for content in [
             content
@@ -61,7 +61,7 @@ class Plugin(plugin.PluginBase):
                 for node in nodes:
                     ret += format.format(
                         protocol=node.prop('protocol'),
-                        port=node.prop('port'),
+                        port=node.prop('port').replace('-', portSeparator),
                     )
             finally:
                 if doc is not None:
@@ -79,7 +79,8 @@ class Plugin(plugin.PluginBase):
                     format=(
                         '-A INPUT -p {protocol} -m state --state NEW '
                         '-m {protocol} --dport {port} -j ACCEPT\n'
-                    )
+                    ),
+                    portSeparator=':',
                 )
             }
         )
