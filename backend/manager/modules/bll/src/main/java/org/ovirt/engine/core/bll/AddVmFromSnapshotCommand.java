@@ -241,8 +241,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         devices.addAll(vmFromConfiguration.getManagedVmDeviceMap().values());
         VmDeviceUtils.copyVmDevices(getVmIdFromSnapshot(),
                 getVmId(),
-                vmFromConfiguration,
-                vmFromConfiguration.getStaticData(),
+                getVm(),
+                getVm().getStaticData(),
                 true,
                 devices,
                 newDiskImages,
