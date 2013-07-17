@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -18,6 +19,8 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameter
 
 @NonTransactiveCommandAttribute
 public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends CommandBase<T> {
+
+    private StoragePool storagePoolForVds;
 
     public ForceSelectSPMCommand(T parameters) {
         super(parameters);
@@ -34,8 +37,7 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
             return failCanDoAction(VdcBllMessages.CANNOT_FORCE_SELECT_SPM_VDS_NOT_UP);
         }
 
-        if (getParameters().getStoragePoolId() == null
-                || !getParameters().getStoragePoolId().equals(getVds().getStoragePoolId())) {
+        if (getStoragePoolForVds() == null) {
             return failCanDoAction(VdcBllMessages.CANNOT_FORCE_SELECT_SPM_VDS_NOT_IN_POOL);
         }
 
@@ -47,7 +49,7 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
             return failCanDoAction(VdcBllMessages.CANNOT_FORCE_SELECT_SPM_VDS_MARKED_AS_NEVER_SPM);
         }
 
-        if (isAsyncTasksRunningOnPool(getParameters().getStoragePoolId())) {
+        if (isAsyncTasksRunningOnPool(getStoragePoolForVds().getId())) {
             return failCanDoAction(VdcBllMessages.CANNOT_FORCE_SELECT_SPM_STORAGE_POOL_HAS_RUNNING_TASKS);
         }
 
@@ -57,7 +59,7 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
     @Override
     protected void executeCommand() {
         SpmStopOnIrsVDSCommandParameters params =
-                new SpmStopOnIrsVDSCommandParameters(getParameters().getStoragePoolId(),
+                new SpmStopOnIrsVDSCommandParameters(getStoragePoolForVds().getId(),
                         getParameters().getPreferredSPMId());
         runVdsCommand(VDSCommandType.SpmStopOnIrs, params);
         setSucceeded(true);
@@ -75,6 +77,12 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
         return !tasks.isEmpty();
     }
 
+    private StoragePool getStoragePoolForVds() {
+        if (storagePoolForVds == null) {
+            storagePoolForVds = getStoragePoolDAO().getForVds(getVds().getId());
+        }
+        return storagePoolForVds;
+    }
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
@@ -89,9 +97,6 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissions = new ArrayList<PermissionSubject>();
-        permissions.add(new PermissionSubject(getParameters().getStoragePoolId(),
-                VdcObjectType.StoragePool,
-                ActionGroup.MANIPUTLATE_HOST));
         permissions.add(new PermissionSubject(getParameters().getPreferredSPMId(),
                 VdcObjectType.VDS,
                 ActionGroup.MANIPUTLATE_HOST));

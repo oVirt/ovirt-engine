@@ -1829,9 +1829,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     private void selectAsSPM() {
-        ForceSelectSPMParameters params =
-                new ForceSelectSPMParameters(((VDS) getSelectedItem()).getStoragePoolId(),
-                        ((VDS) getSelectedItem()).getId());
+        ForceSelectSPMParameters params = new ForceSelectSPMParameters(((VDS) getSelectedItem()).getId());
         Frontend.RunAction(VdcActionType.ForceSelectSPM, params);
 
     }

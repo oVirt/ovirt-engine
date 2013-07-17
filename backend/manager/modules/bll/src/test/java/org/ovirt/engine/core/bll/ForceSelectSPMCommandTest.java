@@ -16,6 +16,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -36,6 +37,7 @@ public class ForceSelectSPMCommandTest {
 
     private ForceSelectSPMCommand<ForceSelectSPMParameters> command;
     private VDS vds;
+    private StoragePool storagePool;
 
     @Mock
     private VdsDAO vdsDAOMock;
@@ -48,7 +50,7 @@ public class ForceSelectSPMCommandTest {
 
     @Before
     public void setup() {
-        createVDS();
+        createVDSandStoragePool();
         mockCommand();
     }
 
@@ -68,7 +70,7 @@ public class ForceSelectSPMCommandTest {
 
     @Test
     public void testCDAStoragePoolValid() {
-        vds.setStoragePoolId(Guid.newGuid());
+        vds.setId(Guid.newGuid());
         assertFalse("canDoAction did not fail on mismatch Storage Pool", command.canDoAction());
         checkMessagesContains(command, VdcBllMessages.CANNOT_FORCE_SELECT_SPM_VDS_NOT_IN_POOL);
     }
@@ -95,7 +97,7 @@ public class ForceSelectSPMCommandTest {
         checkMessagesContains(command, VdcBllMessages.CANNOT_FORCE_SELECT_SPM_STORAGE_POOL_HAS_RUNNING_TASKS);
     }
 
-    private void createVDS() {
+    private void createVDSandStoragePool() {
         vds = new VDS();
         vds.setId(vdsId);
         vds.setVdsName("TestVDS");
@@ -103,14 +105,18 @@ public class ForceSelectSPMCommandTest {
         vds.setStatus(VDSStatus.Up);
         vds.setSpmStatus(VdsSpmStatus.None);
         vds.setVdsSpmPriority(10);
+
+        storagePool = new StoragePool();
+        storagePool.setId(storagePoolId);
     }
 
     private void mockCommand() {
-        ForceSelectSPMParameters params = new ForceSelectSPMParameters(storagePoolId, vdsId);
+        ForceSelectSPMParameters params = new ForceSelectSPMParameters(vdsId);
         command = spy(new ForceSelectSPMCommand<ForceSelectSPMParameters>(params));
         doReturn(vdsDAOMock).when(command).getVdsDAO();
         doReturn(storagePoolDAOMock).when(command).getStoragePoolDAO();
         doReturn(asyncTaskDAOMock).when(command).getAsyncTaskDao();
+        doReturn(storagePool).when(storagePoolDAOMock).getForVds(vdsId);
         doReturn(vds).when(vdsDAOMock).get(vdsId);
     }
 }
