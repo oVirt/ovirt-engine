@@ -292,7 +292,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             for (Map.Entry<Guid, List<DiskImage>> entry : images.entrySet()) {
                 Guid id = entry.getKey();
                 List<DiskImage> diskList = entry.getValue();
-                getVm().getDiskMap().put(id, diskList.get(diskList.size() - 1));
+                getVm().getDiskMap().put(id, getActiveVolumeDisk(diskList));
             }
         }
 
@@ -770,8 +770,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             Guid snapshotId = Guid.newGuid();
             int aliasCounter = 0;
             for (List<DiskImage> diskList : images.values()) {
-                DiskImage disk = diskList.get(diskList.size() - 1);
-
+                DiskImage disk = getActiveVolumeDisk(diskList);
                 disk.setParentId(VmTemplateHandler.BlankVmTemplateId);
                 disk.setImageTemplateId(VmTemplateHandler.BlankVmTemplateId);
                 disk.setVmSnapshotId(snapshotId);
@@ -818,7 +817,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
             int aliasCounter = 0;
             for (List<DiskImage> diskList : images.values()) {
-                DiskImage disk = diskList.get(diskList.size() - 1);
+                DiskImage disk = getActiveVolumeDisk(diskList);
                 diskGuidList.add(disk.getId());
                 imageGuidList.add(disk.getImageId());
                 snapshotId = disk.getVmSnapshotId();
@@ -831,6 +830,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             // Update active snapshot's data, since it was inserted as a regular snapshot.
             updateActiveSnapshot(snapshotId);
         }
+    }
+
+    private static DiskImage getActiveVolumeDisk(List<DiskImage> diskList) {
+        return diskList.get(diskList.size() - 1);
     }
 
     private void setDiskStorageDomainInfo(DiskImage disk) {
