@@ -46,22 +46,32 @@ public class VnicProfileDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<VnicPr
         return VnicProfileRowMapper.INSTANCE;
     }
 
-    static class VnicProfileRowMapper implements RowMapper<VnicProfile> {
-
-        public final static VnicProfileRowMapper INSTANCE = new VnicProfileRowMapper();
+    static abstract class VnicProfileRowMapperBase<T extends VnicProfile> implements RowMapper<T> {
 
         @Override
         @SuppressWarnings("unchecked")
-        public VnicProfile mapRow(ResultSet rs, int rowNum) throws SQLException {
-            VnicProfile entity = new VnicProfile();
-            entity.setId(Guid.createGuidFromString(rs.getString("id")));
+        public T mapRow(ResultSet rs, int rowNum) throws SQLException {
+            T entity = createVnicProfileEntity();
+            entity.setId(getGuid(rs, "id"));
             entity.setName(rs.getString("name"));
-            entity.setNetworkId(Guid.createGuidFromString(rs.getString("network_id")));
+            entity.setNetworkId(getGuid(rs, "network_id"));
             entity.setCustomProperties(SerializationFactory.getDeserializer()
                     .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class));
             entity.setPortMirroring(rs.getBoolean("port_mirroring"));
             entity.setDescription(rs.getString("description"));
             return entity;
+        }
+
+        abstract protected T createVnicProfileEntity();
+    }
+
+    private static class VnicProfileRowMapper extends VnicProfileRowMapperBase<VnicProfile> {
+
+        public static final VnicProfileRowMapper INSTANCE = new VnicProfileRowMapper();
+
+        @Override
+        protected VnicProfile createVnicProfileEntity() {
+            return new VnicProfile();
         }
     }
 }
