@@ -1,10 +1,10 @@
 -- Database FK validation
 SET client_min_messages=ERROR;
 DROP TYPE IF EXISTS fk_info_rs CASCADE;
-DROP FUNCTION IF EXISTS fn_db_validate_fks(boolean);
+DROP FUNCTION IF EXISTS fn_db_validate_fks(boolean,boolean);
 CREATE TYPE fk_info_rs AS
     (table_name varchar, table_col varchar, fk_table_name varchar, fk_col varchar, fk_violation varchar, fk_status integer);
-CREATE OR REPLACE FUNCTION fn_db_validate_fks(v_fix_it boolean)
+CREATE OR REPLACE FUNCTION fn_db_validate_fks(v_fix_it boolean, v_verbose boolean)
 returns SETOF fk_info_rs
 AS $procedure$
 DECLARE
@@ -39,7 +39,7 @@ BEGIN
             v_sql := 'delete from ' || v_record.fk_table_name ||
                       ' where ' || v_record.fk_col || 'IS NOT NULL and '  || v_record.fk_col || ' not in (select ' ||
                       v_record.table_col || ' from ' || v_record.table_name || ');';
-            v_msg := 'Fixing ' ||  v_record.fk_table_name || v_record.fk_col;
+            v_msg := 'Fixing violation/s found in ' ||  v_record.fk_table_name ;
         ELSE
             v_sql := 'select ' || v_record.fk_col || ' from ' || v_record.fk_table_name ||
                       ' where ' || v_record.fk_col || 'IS NOT NULL and ' || v_record.fk_col || ' not in (select ' ||
@@ -49,7 +49,11 @@ BEGIN
         EXECUTE v_sql;
         GET DIAGNOSTICS v_rowcount = ROW_COUNT;
         IF (v_rowcount > 0) THEN
-            v_record.fk_violation := v_msg;
+            IF (v_verbose and not v_fix_it) THEN
+                v_record.fk_violation := v_msg || E'\nPlease run the following SQL to get the ' || v_rowcount || E' violated record/s: \n' || v_sql || E'\n';
+            ELSE
+                v_record.fk_violation := v_msg;
+            END IF;
             v_record.fk_status := 1;
         END IF;
         RETURN NEXT v_record;

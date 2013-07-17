@@ -55,25 +55,34 @@ DEBUG () {
 # if fix_it is true , constriant violations cause is removed from DB
 validate_db_fks() {
    local fix_it=${1}
+   local verbose=${2}
    if [ "${fix_it}" = "true" ]; then
-       CMD="copy (select fk_violation from fn_db_validate_fks(true)) to stdout;"
+       if [ "${verbose}" = "true" ]; then
+           CMD="copy (select fk_violation from fn_db_validate_fks(true,true)) to stdout;"
+       else
+          CMD="copy (select fk_violation from fn_db_validate_fks(true,false)) to stdout;"
+       fi
    else
-       CMD="copy (select fk_violation,fk_status from fn_db_validate_fks(false) where fk_status=1) to stdout with csv;"
+       if [ "${verbose}" = "true" ]; then
+           CMD="copy (select fk_violation,fk_status from fn_db_validate_fks(false,true) where fk_status=1) to stdout with csv;"
+       else
+           CMD="copy (select fk_violation,fk_status from fn_db_validate_fks(false,false) where fk_status=1) to stdout with csv;"
+       fi
    fi
-   res="$(psql -w --pset=tuples_only=on --set ON_ERROR_STOP=1 -U ${USERNAME} -c "${CMD}" -h "${SERVERNAME}" -p "${PORT}" "${DATABASE}")"
+   res="$(psql -w --pset=tuples_only=on --set ON_ERROR_STOP=1 -U ${USERNAME} -c "${CMD}" -h "${SERVERNAME}" -p "${PORT}" -L ${LOGFILE} "${DATABASE}")"
    exit_code=$?
 
    out="$(echo "${res}" | cut -f1 -d,)"
-   if [ "${exit_code}" = "0" ]; then
-       exit_code="$(echo "${res}" | cut -f2 -d, | head -1)"
-   fi
    echo "${out}"
+   if [[ "${exit_code}" = "0" && "${fix_it}" = "false" ]]; then
+       exit_code="$(echo "${res}" | cut -f2 -d, | tail -1)"
+   fi
    exit ${exit_code}
 }
 
 FIXIT=false
 
-while getopts hs:d:u:p:l:fqv option; do
+while getopts hs:d:u:l:p:fqv option; do
     case $option in
         s) SERVERNAME=$OPTARG;;
         p) PORT=$OPTARG;;
@@ -103,7 +112,7 @@ if [[ "${FIXIT}" = "true" && ! "${QUIET}" = "true" ]]; then
     fi
 fi
 
-validate_db_fks ${FIXIT}
+validate_db_fks ${FIXIT} ${VERBOSE}
 
 popd>/dev/null
 exit $?
