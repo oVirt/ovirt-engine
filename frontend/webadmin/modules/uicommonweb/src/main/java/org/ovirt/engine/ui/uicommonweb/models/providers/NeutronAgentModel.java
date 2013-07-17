@@ -129,9 +129,9 @@ public class NeutronAgentModel extends EntityModel {
             getQpidHost().validateEntity(new IValidation[] { new HostAddressValidation(true) });
             getQpidPort().validateEntity(new IValidation[] { new IntegerValidation(BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
                     BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT) });
-            return getInterfaceMappings().getIsValid() && getQpidHost().getIsValid() && getQpidPort().getIsValid();
+            setIsValid(getInterfaceMappings().getIsValid() && getQpidHost().getIsValid() && getQpidPort().getIsValid());
         }
-        return true;
+        return getIsValid();
     }
 
     public void init(AgentConfiguration agentConfiguration) {

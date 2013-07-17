@@ -15,12 +15,16 @@ public class HostAddressValidation extends BaseI18NValidation {
     }
 
     @Override
-    protected String composeRegex() {
-        return start() + (acceptEmptyInput ? hostnameOrIpOrEmpty() : hostnameOrIp()) + end();
+    public ValidationResult validate(Object value) {
+        if (acceptEmptyInput && (value == null || (value instanceof String && value.equals("")))) {
+            return new ValidationResult();
+        }
+        return super.validate(value);
     }
 
-    protected String hostnameOrIpOrEmpty() {
-        return '(' + ip() + '|' + fqdn() + '|' + ')';
+    @Override
+    protected String composeRegex() {
+        return start() + hostnameOrIp() + end();
     }
 
     protected String hostnameOrIp() {
