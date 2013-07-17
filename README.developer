@@ -19,8 +19,8 @@ Install the following system components:
  - python-cheetah / cheetah
  - libxml2-python / libxml2[python]
  - python-daemon
- - otopi >= 1.1.2
- - ovirt-host-deploy
+ - otopi >= 1.1.0
+ - ovirt-host-deploy >= 1.1.0
  - jboss-as (optional)
  - maven-3 (optional)
 
