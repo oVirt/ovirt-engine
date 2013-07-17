@@ -595,8 +595,8 @@ public class CommonModel extends ListModel
                 || model.getType() == SystemTreeItemType.System || model.getType() == SystemTreeItemType.DataCenter
                 || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Host);
 
-        providerList.setIsAvailable(model.getType() == SystemTreeItemType.System
-                || model.getType() == SystemTreeItemType.Providers || model.getType() == SystemTreeItemType.Provider);
+        providerList.setIsAvailable(model.getType() == SystemTreeItemType.Providers
+                || model.getType() == SystemTreeItemType.Provider);
 
         // Select a default item depending on system tree selection.
         ListModel oldSelectedItem = getSelectedItem();
@@ -680,11 +680,7 @@ public class CommonModel extends ListModel
                 break;
             default:
                 // webadmin: redirect to default tab in case no tab is selected.
-                if (getSelectedItem() == null)
-                {
-                    setSelectedItem(getDefaultItem());
-                }
-                break;
+                setSelectedItem(getDefaultItem());
             }
         }
     }
