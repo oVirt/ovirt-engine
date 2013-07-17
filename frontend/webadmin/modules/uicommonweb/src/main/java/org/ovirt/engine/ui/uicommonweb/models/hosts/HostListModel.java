@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -887,6 +888,12 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             parameters.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
             parameters.setRebootAfterInstallation(isVirt) ;
             parameters.setAuthMethod(model.getAuthenticationMethod());
+
+            Provider externalProvider = (Provider) model.getExternalProviders().getSelectedItem();
+            if (externalProvider != null) {
+                parameters.setProvider(externalProvider.getId());
+                parameters.setNetworkMappings((String) model.getNeutronAgentModel().getInterfaceMappings().getEntity());
+            }
 
             Frontend.RunAction(VdcActionType.AddVds, parameters,
                     new IFrontendActionAsyncCallback() {

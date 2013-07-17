@@ -997,6 +997,7 @@ public abstract class HostModel extends Model
         getProviderPluginType().setIsChangable(false);
         getProviderPluginType().setIsAvailable(false);
         neutronAgentModel = new NeutronAgentModel(getProviderType(), getProviderPluginType());
+        neutronAgentModel.setIsChangable(false);
         neutronAgentModel.setIsAvailable(false);
 
         onExternalProviderChanged();

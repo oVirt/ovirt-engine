@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class NeutronAgentModel extends EntityModel {
 
@@ -100,6 +101,21 @@ public class NeutronAgentModel extends EntityModel {
                                 .getConstants()
                                 .interfaceMappingsExplanation());
                     }
+                }
+            }
+        });
+        getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if ("IsChangable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                    boolean changeable = getIsChangable();
+                    getInterfaceMappingsLabel().setIsChangable(changeable);
+                    getInterfaceMappingsExplanation().setIsChangable(changeable);
+                    getInterfaceMappings().setIsChangable(changeable);
+                    getQpidHost().setIsChangable(changeable);
+                    getQpidPort().setIsChangable(changeable);
+                    getQpidUsername().setIsChangable(changeable);
+                    getQpidPassword().setIsChangable(changeable);
                 }
             }
         });
