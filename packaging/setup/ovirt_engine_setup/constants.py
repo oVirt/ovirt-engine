@@ -124,6 +124,13 @@ class FileLocations(object):
         '.pgpass',
     )
 
+    LEGACY_FIREWALLD_SERVICE_FILE = os.path.join(
+        SYSCONFDIR,
+        'firewalld',
+        'services',
+        'ovirt.xml'
+    )
+
     OVIRT_ENGINE_DB_UTILS_DIR = os.path.join(
         OVIRT_ENGINE_DATADIR,
         'setup',

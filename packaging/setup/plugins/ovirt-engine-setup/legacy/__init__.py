@@ -27,6 +27,7 @@ from . import config
 from . import core
 from . import datadomain
 from . import firewall_manager
+from . import firewalld
 from . import isodomain
 from . import database
 from . import ca
@@ -39,6 +40,7 @@ def createPlugins(context):
     core.Plugin(context=context)
     datadomain.Plugin(context=context)
     firewall_manager.Plugin(context=context)
+    firewalld.Plugin(context=context)
     isodomain.Plugin(context=context)
     database.Plugin(context=context)
     ca.Plugin(context=context)
