@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import java.util.MissingResourceException;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.TimeZoneType;
@@ -2888,20 +2889,25 @@ public final class AsyncDataProvider {
      *            string in the form of "[string1]+[string2]+..."
      * @return string in the form of "[string1Translated]+[string2Translated]+..."
      */
-    public static String getComplexValueFromSpiceRedKeysResource(String complexValue)
-    {
-        if (StringHelper.isNullOrEmpty(complexValue))
-        {
+    public static String getComplexValueFromSpiceRedKeysResource(String complexValue) {
+        if (StringHelper.isNullOrEmpty(complexValue)) {
             return ""; //$NON-NLS-1$
         }
         ArrayList<String> values = new ArrayList<String>();
 
-        for (String s : complexValue.split("[+]", -1)) //$NON-NLS-1$
-        {
-            values.add(SpiceConstantsManager.getInstance()
+        for (String s : complexValue.split("[+]", -1)) { //$NON-NLS-1$
+            try {
+                String value =
+                    SpiceConstantsManager.getInstance()
                     .getSpiceRedKeys()
-                    .getString(s.replaceAll("-", "_"))); //$NON-NLS-1$ //$NON-NLS-2$
+                    .getString(s.replaceAll("-", "_")); //$NON-NLS-1$ //$NON-NLS-2$
+                values.add(value);
+            } catch (MissingResourceException e) {
+                values.add(s);
+            }
+
         }
+
         return StringHelper.join("+", values.toArray(new String[] {})); //$NON-NLS-1$
     }
 

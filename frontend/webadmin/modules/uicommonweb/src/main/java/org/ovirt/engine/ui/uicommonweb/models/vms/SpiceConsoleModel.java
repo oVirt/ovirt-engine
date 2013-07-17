@@ -399,9 +399,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
         String toggleFullScreenKeys = (String) returnValues.get(6).getReturnValue();
         String releaseCursorKeys = (String) returnValues.get(7).getReturnValue();
-        String ctrlAltDel = "ctrl+alt+del"; //$NON-NLS-1$
-        String ctrlAltEnd = "ctrl+alt+end"; //$NON-NLS-1$
-
         String releaseCursorKeysTranslated =
                 AsyncDataProvider.getComplexValueFromSpiceRedKeysResource((releaseCursorKeys != null) ? releaseCursorKeys
                         : "shift+f12"); //$NON-NLS-1$
