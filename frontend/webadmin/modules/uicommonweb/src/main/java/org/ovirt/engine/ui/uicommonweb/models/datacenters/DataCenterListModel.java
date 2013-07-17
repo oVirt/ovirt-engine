@@ -625,8 +625,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             confirmModel.getCommands().add(tempVar2);
         }
         else if (getSelectedItem() != null
-                && ((StoragePool) getSelectedItem()).getQuotaEnforcementType() == QuotaEnforcementTypeEnum.DISABLED
-                && model.getQuotaEnforceTypeListModel().getSelectedItem() != QuotaEnforcementTypeEnum.DISABLED)
+                && ((StoragePool) getSelectedItem()).getQuotaEnforcementType() != QuotaEnforcementTypeEnum.HARD_ENFORCEMENT
+                && model.getQuotaEnforceTypeListModel().getSelectedItem() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT)
         {
             checkForQuotaInDC(model.getEntity(), this);
         }
