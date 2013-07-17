@@ -213,11 +213,11 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     protected static boolean canRunPoolVm(Guid vmId, ArrayList<String> messages) {
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
-        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vm.getVdsGroupId());
         if (vm == null) {
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.name());
             return false;
         }
+        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vm.getVdsGroupId());
 
         // TODO: This is done to keep consistency with VmDAO.getById.
         // It can probably be removed, but that requires some more research

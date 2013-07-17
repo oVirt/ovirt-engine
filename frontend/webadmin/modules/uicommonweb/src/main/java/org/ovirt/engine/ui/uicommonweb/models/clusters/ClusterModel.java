@@ -855,7 +855,6 @@ public class ClusterModel extends EntityModel
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        ClusterModel clusterModel = (ClusterModel) model;
                         ArrayList<PolicyUnit> policyUnits =
                                 (ArrayList<PolicyUnit>) ((VdcQueryReturnValue) returnValue).getReturnValue();
                         policyUnitMap = new LinkedHashMap<Guid, PolicyUnit>();
