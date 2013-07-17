@@ -784,4 +784,30 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String VmType___Desktop();
 
     String VmType___Server();
+
+    String AuditLogType___VDS_UNTRUSTED();
+
+    String AuditLogType___USER_UPDATE_VM_FROM_TRUSTED_TO_UNTRUSTED();
+
+    String AuditLogType___USER_UPDATE_VM_FROM_UNTRUSTED_TO_TRUSTED();
+
+    String AuditLogType___IMPORTEXPORT_IMPORT_VM_FROM_TRUSTED_TO_UNTRUSTED();
+
+    String AuditLogType___IMPORTEXPORT_IMPORT_VM_FROM_UNTRUSTED_TO_TRUSTED();
+
+    String AuditLogType___USER_ADD_VM_FROM_TRUSTED_TO_UNTRUSTED();
+
+    String AuditLogType___USER_ADD_VM_FROM_UNTRUSTED_TO_TRUSTED();
+
+    String AuditLogType___IMPORTEXPORT_IMPORT_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED();
+
+    String AuditLogType___IMPORTEXPORT_IMPORT_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED();
+
+    String AuditLogType___USER_ADD_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED();
+
+    String AuditLogType___USER_ADD_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED();
+
+    String AuditLogType___USER_UPDATE_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED();
+
+    String AuditLogType___USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED();
 }

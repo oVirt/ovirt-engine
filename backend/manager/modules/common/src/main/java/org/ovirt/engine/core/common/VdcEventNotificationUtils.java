@@ -102,6 +102,21 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.DWH, AuditLogType.DWH_ERROR);
         AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_ADD_BRICK);
         AddEventNotificationEntry(EventNotificationEntity.GlusterVolume, AuditLogType.GLUSTER_VOLUME_ADD_BRICK_FAILED);
+
+        //Trusted Service
+        AddEventNotificationEntry(EventNotificationEntity.Host, AuditLogType.VDS_UNTRUSTED);
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.USER_UPDATE_VM_FROM_TRUSTED_TO_UNTRUSTED);
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.USER_UPDATE_VM_FROM_UNTRUSTED_TO_TRUSTED);
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_TRUSTED_TO_UNTRUSTED);
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_UNTRUSTED_TO_TRUSTED);
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.USER_ADD_VM_FROM_TRUSTED_TO_UNTRUSTED);
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.USER_ADD_VM_FROM_UNTRUSTED_TO_TRUSTED);
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.USER_ADD_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.USER_ADD_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
     }
 
     /**
