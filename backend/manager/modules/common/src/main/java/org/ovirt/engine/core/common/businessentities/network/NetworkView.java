@@ -22,7 +22,7 @@ public class NetworkView extends Network {
         return compatibilityVersion;
     }
 
-    public void setCompatabilityVersion(Version compatibilityVersion) {
+    public void setCompatibilityVersion(Version compatibilityVersion) {
         this.compatibilityVersion = compatibilityVersion;
     }
 
