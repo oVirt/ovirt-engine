@@ -1099,9 +1099,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         setVm(null);
 
         if (getVm() != null) {
+            removeVmSnapshots(getVm());
             endActionOnAllImageGroups();
             removeVmNetworkInterfaces();
-            removeVmSnapshots(getVm());
             getVmDynamicDAO().remove(getVmId());
             getVmStatisticsDAO().remove(getVmId());
             getVmStaticDAO().remove(getVmId());
@@ -1116,7 +1116,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     private void removeVmSnapshots(VM vm) {
         Set<String> memoriesOfRemovedSnapshots =
                 snapshotsManager.removeSnapshots(vm.getId());
-        new MemoryImageRemoverOnDataDomain(vm, this).removeMemoryVolumes(memoriesOfRemovedSnapshots);
+        if (!memoriesOfRemovedSnapshots.isEmpty()) {
+            new MemoryImageRemoverOnDataDomain(vm, this).removeMemoryVolumes(memoriesOfRemovedSnapshots);
+        }
     }
 
     protected void removeVmNetworkInterfaces() {

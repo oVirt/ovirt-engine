@@ -267,6 +267,7 @@ public class SnapshotsManager {
             memoryVolumes.add(snapshot.getMemoryVolume());
             getSnapshotDao().remove(snapshot.getId());
         }
+        memoryVolumes.remove(StringUtils.EMPTY);
         return memoryVolumes;
     }
 

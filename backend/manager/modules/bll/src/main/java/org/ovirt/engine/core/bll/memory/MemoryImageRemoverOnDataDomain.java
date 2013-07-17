@@ -46,14 +46,10 @@ public class MemoryImageRemoverOnDataDomain extends MemoryImageRemover {
         return cachedPostZero;
     }
 
-    /**
-     * There is a one to many relation between memory volumes and snapshots, so memory
-     * volumes should be removed only if the only snapshot that points to them is removed
-     */
     @Override
     protected boolean isMemoryStateRemovable(String memoryVolume) {
         return !memoryVolume.isEmpty() &&
-                getDbFacade().getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1;
+                getDbFacade().getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 0;
     }
 
     protected DbFacade getDbFacade() {
