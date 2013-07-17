@@ -18,6 +18,7 @@ public enum VdcQueryType implements Serializable {
     IsBalloonEnabled(VdcQueryAuthType.User),
     GetSoundDevices(VdcQueryAuthType.User),
     GetVmsByVnicProfileId,
+    GetTemplatesByVnicProfileId,
 
     // Vds queries
     GetVdsByVdsId,
