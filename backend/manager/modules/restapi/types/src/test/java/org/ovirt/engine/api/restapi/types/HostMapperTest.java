@@ -6,9 +6,9 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Agent;
 import org.ovirt.engine.api.model.Agents;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.SSH;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
@@ -42,6 +42,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         inverse.setSshUsername(to.getSshUsername());
         inverse.setVdsSpmPriority(to.getVdsSpmPriority());
         inverse.setConsoleAddress(to.getConsoleAddress());
+        inverse.setComment(to.getComment());
         return inverse;
     }
 

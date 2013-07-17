@@ -92,7 +92,9 @@ public class HostMapper {
         if (model.isSetDisplay() && model.getDisplay().isSetAddress()) {
             entity.setConsoleAddress("".equals(model.getDisplay().getAddress()) ? null : model.getDisplay().getAddress());
         }
-
+        if (model.isSetComment()) {
+            entity.setComment(model.getComment());
+        }
         return entity;
     }
 
