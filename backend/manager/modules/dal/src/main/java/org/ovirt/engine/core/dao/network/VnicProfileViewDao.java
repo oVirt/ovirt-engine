@@ -44,6 +44,20 @@ public interface VnicProfileViewDao extends ReadDao<VnicProfileView, Guid> {
     List<VnicProfileView> getAllForDataCenter(Guid id);
 
     /**
+     * Retrieves all vnic profiles for the given data center.
+     *
+     * @param id
+     *            the data center's ID
+     * @param userId
+     *            the id of the user performing the query
+     * @param filtered
+     *            does the query should be filtered by the user
+     *
+     * @return the list of vnic profiles
+     */
+    List<VnicProfileView> getAllForDataCenter(Guid id, Guid userId, boolean filter);
+
+    /**
      * Retrieves all vnic profiles associated to the given network.
      *
      * @param networkId

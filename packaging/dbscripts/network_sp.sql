@@ -1162,13 +1162,16 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVnicProfileViewsByDataCenterId(v_id UUID)
+Create or replace FUNCTION GetVnicProfileViewsByDataCenterId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
 RETURNS SETOF vnic_profiles_view
 AS $procedure$
 BEGIN
     RETURN QUERY
     SELECT *
     FROM   vnic_profiles_view
-    WHERE  data_center_id = v_id;
+    WHERE  data_center_id = v_id
+    AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                      FROM   user_vnic_profile_permissions_view
+                                      WHERE  user_id = v_user_id AND entity_id = vnic_profiles_view.id));
 END; $procedure$
 LANGUAGE plpgsql;

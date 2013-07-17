@@ -38,6 +38,31 @@ public class VnicProfileViewDaoTest extends BaseDAOTestCase {
     }
 
     /**
+     * Ensures the right set of vnic profiles is returned for the given data center.
+     */
+    @Test
+    public void testGetAllForDataCenterWithPermissions() {
+        List<VnicProfileView> result = dao.getAllForDataCenter(FixturesTool.DATA_CENTER, PRIVILEGED_USER_ID, true);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
+
+        for (VnicProfileView profile : result) {
+            assertEquals(FixturesTool.DATA_CENTER_NAME, profile.getDataCenterName());
+        }
+    }
+
+    /**
+     * Ensures the right set of vnic profiles is returned for the given data center.
+     */
+    @Test
+    public void testGetAllForDataCenterWithNoPermissions() {
+        List<VnicProfileView> result = dao.getAllForDataCenter(FixturesTool.DATA_CENTER, UNPRIVILEGED_USER_ID, true);
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
      * Ensures that the network interface profile is returned.
      */
     @Test

@@ -58,9 +58,16 @@ public class VnicProfileViewDaoDbFacadeImpl extends DefaultReadDaoDbFacade<VnicP
 
     @Override
     public List<VnicProfileView> getAllForDataCenter(Guid id) {
+        return getAllForDataCenter(id, null, false);
+    }
+
+    @Override
+    public List<VnicProfileView> getAllForDataCenter(Guid id, Guid userId, boolean filtered) {
         return getCallsHandler().executeReadList("GetVnicProfileViewsByDataCenterId",
                 VnicProfileViewRowMapper.INSTANCE,
-                getCustomMapSqlParameterSource().addValue("id", id));
+                getCustomMapSqlParameterSource().addValue("id", id)
+                        .addValue("user_id", userId)
+                        .addValue("is_filtered", filtered));
     }
 
     @Override
