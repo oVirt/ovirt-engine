@@ -29,6 +29,9 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<span style='height:22px; width: 22px; vertical-align: middle; text-align: center; display: table-cell;' title='{1}'>{0}</span>")
     SafeHtml imageWithTitle(SafeHtml image, String title);
 
+    @Template("<span style='height:22px; width: 22px; vertical-align: middle; text-align: center;' title='{1}'>{0}</span>")
+    SafeHtml inlineImageWithTitle(SafeHtml image, String title);
+
     @Template("<table cellspacing='0' cellpadding='0'><tr>" +
             "<td style='background: url({2});width:2px;'></td>" +
             "<td style='text-align:center;'>" +

@@ -31,9 +31,11 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.inject.Inject;
 
 public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportNetworksModel> implements ImportNetworksPopupPresenterWidget.ViewDef {
@@ -90,7 +92,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
                         constants.importedNetworks(),
                         constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        initEntityModelCellTables(constants, templates);
+        initEntityModelCellTables(constants, templates, resources);
         providersEditor.setLabel(constants.networkProvider());
         providersEditor.addWrapperStyleName(style.providersStyle());
         driver.initialize(this);
@@ -107,7 +109,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
         importedNetworks.edit(importedNetworks.flush());
     }
 
-    void initEntityModelCellTables(final ApplicationConstants constants, final ApplicationTemplates templates) {
+    void initEntityModelCellTables(final ApplicationConstants constants, final ApplicationTemplates templates, final ApplicationResources resources) {
         Column<EntityModel, String> nameColumn = new TextColumnWithTooltip<EntityModel>() {
             @Override
             public String getValue(EntityModel model) {
@@ -163,6 +165,14 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
                     @Override
                     public boolean isEnabled() {
                         return true;
+                    }
+
+                    @Override
+                    public void render(Context context, SafeHtmlBuilder sb) {
+                        super.render(context, sb);
+                        sb.append(templates.inlineImageWithTitle(SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.dialogIconHelp())
+                                .getHTML()),
+                                constants.networkPublicUseLabel()));
                     }
                 };
 
