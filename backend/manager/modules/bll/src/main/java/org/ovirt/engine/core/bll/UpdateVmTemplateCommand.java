@@ -126,7 +126,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         if (getParameters().isUpdateWatchdog()) {
             Guid templateId = getParameters().getVmTemplateData().getId();
             VdcQueryReturnValue query =
-                    getBackend().RunQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(templateId));
+                    getBackend().runInternalQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(templateId));
             @SuppressWarnings("unchecked")
             List<VmWatchdog> watchdogs = (List<VmWatchdog>) query.getReturnValue();
             if (watchdogs.isEmpty()) {

@@ -105,7 +105,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // do not update if this flag is not set
         if (getParameters().isUpdateWatchdog()) {
             VdcQueryReturnValue query =
-                    getBackend().RunQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(getParameters().getVmId()));
+                    getBackend().runInternalQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(getParameters().getVmId()));
             @SuppressWarnings("unchecked")
             List<VmWatchdog> watchdogs = (List<VmWatchdog>) query.getReturnValue();
             if (watchdogs.isEmpty()) {
