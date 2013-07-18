@@ -148,6 +148,7 @@ public class DnsSRVLocator {
                 return 1;
             }
             return 0;
+
         }
 
         @Override
@@ -235,7 +236,7 @@ public class DnsSRVLocator {
         }
     }
 
-    private DnsSRVResult getService(String domainName, String dnsUrl) throws NamingException {
+    protected String[] getSrvRecords(String dnsUrl) throws NamingException {
         Context ctx = NamingManager.getURLContext("dns", new Hashtable(0));
 
         if (!(ctx instanceof DirContext)) {
@@ -260,7 +261,11 @@ public class DnsSRVLocator {
         for (int counter = 0; counter < numOfRecords; counter++) {
             records[counter] = (String) attr.get(counter);
         }
+        return records;
+    }
 
+    private DnsSRVResult getService(String domainName, String dnsUrl) throws NamingException {
+        String[] records = getSrvRecords(dnsUrl);
         return getSRVResult(domainName, records);
     }
 
