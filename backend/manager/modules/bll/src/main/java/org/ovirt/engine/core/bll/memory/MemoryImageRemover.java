@@ -8,6 +8,9 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.errors.VDSError;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -56,9 +59,11 @@ public abstract class MemoryImageRemover {
             Guid guid2 = removeConfImage(guids);
 
             if (startPollingTasks) {
-                AsyncTaskManager.getInstance().StartPollingTask(guid1);
+                if (!Guid.Empty.equals(guid1)) {
+                    AsyncTaskManager.getInstance().StartPollingTask(guid1);
+                }
 
-                if (guid2 != null) {
+                if (guid2 != null && !Guid.Empty.equals(guid2)) {
                     AsyncTaskManager.getInstance().StartPollingTask(guid2);
                 }
             }
@@ -84,17 +89,38 @@ public abstract class MemoryImageRemover {
     protected Guid removeImage(String taskKey, DeleteImageGroupVDSCommandParameters parameters) {
         Guid taskId2 = enclosingCommand.persistAsyncTaskPlaceHolder(taskKey);
 
-        VDSReturnValue vdsRetValue = Backend.getInstance().getResourceManager().RunVdsCommand(
-                VDSCommandType.DeleteImageGroup,
-                parameters);
-
-        if (!vdsRetValue.getSucceeded()) {
-            return null;
+        VDSReturnValue vdsRetValue = removeImage(parameters);
+        // if command succeeded, create a task
+        if (vdsRetValue.getSucceeded()) {
+            Guid guid2 = enclosingCommand.createTask(taskId2, vdsRetValue.getCreationInfo(),
+                    enclosingCommand.getActionType());
+            enclosingCommand.getTaskIdList().add(guid2);
+            return guid2;
         }
+        // otherwise, if the command failed because the image already does not exist,
+        // no need to create and monitor task, so we return empty guid to mark this state
+        return vdsRetValue.getVdsError().getCode() == VdcBllErrors.ImageDoesNotExistInDomainError ?
+                Guid.Empty : null;
+    }
 
-        Guid guid2 = enclosingCommand.createTask(taskId2, vdsRetValue.getCreationInfo(),
-                enclosingCommand.getActionType());
-        enclosingCommand.getTaskIdList().add(guid2);
-        return guid2;
+    protected VDSReturnValue removeImage(DeleteImageGroupVDSCommandParameters parameters) {
+        try {
+            return Backend.getInstance().getResourceManager().RunVdsCommand(
+                    VDSCommandType.DeleteImageGroup,
+                    parameters);
+        }
+        catch(VdcBLLException e) {
+            if (e.getErrorCode() == VdcBllErrors.ImageDoesNotExistInDomainError) {
+                return createImageDoesNotExistInDomainReturnValue();
+            }
+            throw e;
+        }
+    }
+
+    protected VDSReturnValue createImageDoesNotExistInDomainReturnValue() {
+        VDSReturnValue vdsRetValue = new VDSReturnValue();
+        vdsRetValue.setSucceeded(false);
+        vdsRetValue.setVdsError(new VDSError(VdcBllErrors.ImageDoesNotExistInDomainError, ""));
+        return vdsRetValue;
     }
 }
