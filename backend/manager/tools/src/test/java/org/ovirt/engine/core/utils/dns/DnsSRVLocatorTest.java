@@ -40,7 +40,7 @@ public class DnsSRVLocatorTest {
 
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testZeroPriorities() throws Exception {
         DnsSRVLocator locator = mockLocator("example.com",
                 "10 100 389 a.example.com.",

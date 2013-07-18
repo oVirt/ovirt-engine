@@ -141,13 +141,8 @@ public class DnsSRVLocator {
             if (priority > other.priority) {
                 return 1;
             }
-            if (weight == 0 && other.weight != 0) {
-                return -1;
-            }
-            if (weight != 0) {
-                return 1;
-            }
-            return 0;
+
+            return weight - other.weight;
 
         }
 
