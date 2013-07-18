@@ -177,7 +177,7 @@ public class ProviderModel extends Model {
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 boolean providerNeutron = isTypeOpenStackNetwork();
                 getApiVersion().setIsAvailable(providerNeutron);
-                getTenantName().setIsAvailable(providerNeutron);
+                getTenantName().setIsAvailable(providerNeutron || isTypeOpenStackImage());
                 if (providerNeutron) {
                     OpenstackNetworkProviderProperties properties =
                             (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
