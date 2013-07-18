@@ -195,6 +195,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                 handleError(lastStatus, vdsReturnValue, FenceAgentOrder.Primary);
             }
         }
+        else {
+            setFenceSucceeded(false);
+            vdsReturnValue.setSucceeded(false);
+        }
     }
 
     /**
@@ -217,6 +221,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             } else {
                 tryOtherSequentialAgent(lastStatus);
             }
+        }
+        else {
+            setFenceSucceeded(false);
+            vdsReturnValue.setSucceeded(false);
         }
     }
 
@@ -255,71 +263,77 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     private void handleMultipleConcurrentAgents(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
         primaryExecutor = new FenceExecutor(getVds(), getParameters().getAction());
         secondaryExecutor = new FenceExecutor(getVds(), getParameters().getAction());
-        primaryResult = new FenceInvocationResult();
-        secondaryResult = new FenceInvocationResult();
-        List<Callable<FenceInvocationResult>> tasks = new ArrayList<Callable<FenceInvocationResult>>();
-        Future<FenceInvocationResult> f1 = null;
-        Future<FenceInvocationResult> f2 = null;
-        tasks.add(new Callable<FenceInvocationResult>() {
-            @Override
-            public FenceInvocationResult call() {
-                return run(primaryExecutor, FenceAgentOrder.Primary);
-            }
-        });
-        tasks.add(new Callable<FenceInvocationResult>() {
-            @Override
-            public FenceInvocationResult call() {
-                return run(secondaryExecutor, FenceAgentOrder.Secondary);
-            }
-        });
-        try {
-            ExecutorCompletionService<FenceInvocationResult> ecs = ThreadPoolUtil.createCompletionService(tasks);
-            switch (getParameters().getAction()) {
-            case Start:
-                try {
-                f1 = ecs.take();
-                setResult(f1);
-                if (primaryResult.isSucceeded() || secondaryResult.isSucceeded()) {
-                    handleSpecificCommandActions();
-                    setFenceSucceeded(true);
-                } else {
-                    tryOtherConcurrentAgent(lastStatus, ecs);
+        if (primaryExecutor.findProxyHost() && secondaryExecutor.findProxyHost()) {
+            primaryResult = new FenceInvocationResult();
+            secondaryResult = new FenceInvocationResult();
+            List<Callable<FenceInvocationResult>> tasks = new ArrayList<Callable<FenceInvocationResult>>();
+            Future<FenceInvocationResult> f1 = null;
+            Future<FenceInvocationResult> f2 = null;
+            tasks.add(new Callable<FenceInvocationResult>() {
+                @Override
+                public FenceInvocationResult call() {
+                    return run(primaryExecutor, FenceAgentOrder.Primary);
                 }
-                } catch (InterruptedException e) {
-                    tryOtherConcurrentAgent(lastStatus, ecs);
-                } catch (ExecutionException e) {
-                    tryOtherConcurrentAgent(lastStatus, ecs);
+            });
+            tasks.add(new Callable<FenceInvocationResult>() {
+                @Override
+                public FenceInvocationResult call() {
+                    return run(secondaryExecutor, FenceAgentOrder.Secondary);
                 }
+            });
+            try {
+                ExecutorCompletionService<FenceInvocationResult> ecs = ThreadPoolUtil.createCompletionService(tasks);
+                switch (getParameters().getAction()) {
+                case Start:
+                    try {
+                        f1 = ecs.take();
+                        setResult(f1);
+                        if (primaryResult.isSucceeded() || secondaryResult.isSucceeded()) {
+                            handleSpecificCommandActions();
+                            setFenceSucceeded(true);
+                        } else {
+                            tryOtherConcurrentAgent(lastStatus, ecs);
+                        }
+                    } catch (InterruptedException e) {
+                        tryOtherConcurrentAgent(lastStatus, ecs);
+                    } catch (ExecutionException e) {
+                        tryOtherConcurrentAgent(lastStatus, ecs);
+                    }
 
-                break;
-            case Stop:
-                f1 = ecs.take();
-                f2 = ecs.take();
+                    break;
+                case Stop:
+                    f1 = ecs.take();
+                    f2 = ecs.take();
 
-                if (f1.get().getOrder() == FenceAgentOrder.Primary) {
-                    primaryResult = f1.get();
-                    secondaryResult = f2.get();
-                } else {
-                    primaryResult = f2.get();
-                    secondaryResult = f1.get();
-                }
-                if (primaryResult.isSucceeded() && secondaryResult.isSucceeded()) {
-                    handleSpecificCommandActions();
+                    if (f1.get().getOrder() == FenceAgentOrder.Primary) {
+                        primaryResult = f1.get();
+                        secondaryResult = f2.get();
+                    } else {
+                        primaryResult = f2.get();
+                        secondaryResult = f1.get();
+                    }
+                    if (primaryResult.isSucceeded() && secondaryResult.isSucceeded()) {
+                        handleSpecificCommandActions();
+                        setFenceSucceeded(true);
+                    } else {
+                        handleError(lastStatus,
+                                !primaryResult.isSucceeded() ? primaryResult.getValue() : secondaryResult.getValue(),
+                                !primaryResult.isSucceeded() ? FenceAgentOrder.Primary : FenceAgentOrder.Secondary);
+                    }
+                    break;
+                default:
                     setFenceSucceeded(true);
-                } else {
-                    handleError(lastStatus,
-                            !primaryResult.isSucceeded() ? primaryResult.getValue() : secondaryResult.getValue(),
-                            !primaryResult.isSucceeded() ? FenceAgentOrder.Primary : FenceAgentOrder.Secondary);
+                    break;
                 }
-                break;
-            default:
-                setFenceSucceeded(true);
-                break;
+            } catch (InterruptedException e) {
+                log.error(e);
+            } catch (ExecutionException e) {
+                log.error(e);
             }
-        } catch (InterruptedException e) {
-            log.error(e);
-        } catch (ExecutionException e) {
-            log.error(e);
+        }
+        else {
+            setFenceSucceeded(false);
+            vdsReturnValue.setSucceeded(false);
         }
     }
 
