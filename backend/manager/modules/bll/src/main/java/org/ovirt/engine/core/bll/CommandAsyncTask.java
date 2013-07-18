@@ -87,7 +87,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
         else if (entityInfo.ShouldEndAction()) {
             log.infoFormat(
-                    "CommandAsyncTask::EndActionIfNecessary: All tasks of entity '{0}' has ended -> executing 'EndAction'",
+                    "CommandAsyncTask::EndActionIfNecessary: All tasks of command '{0}' has ended -> executing 'EndAction'",
                     getCommandId());
 
             log.infoFormat(
