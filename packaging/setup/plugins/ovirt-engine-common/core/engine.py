@@ -64,7 +64,7 @@ class Plugin(plugin.PluginBase):
                     dialog=self.dialog,
                     name='OVESETUP_CORE_ENGINE_STOP',
                     note=_(
-                        'During installation engine service will be stopped '
+                        'During execution engine service will be stopped '
                         '(@VALUES@) [@DEFAULT@]: '
                     ),
                     prompt=True,
