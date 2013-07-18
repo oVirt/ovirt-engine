@@ -41,7 +41,7 @@ public class PolicyUnitDaoImpl extends DefaultGenericDaoDbFacade<PolicyUnit, Gui
             @Override
             public PolicyUnit mapRow(ResultSet rs, int arg1) throws SQLException {
                 PolicyUnit policyUnit = new PolicyUnit();
-                policyUnit.setId(Guid.createGuidFromString(rs.getString("id")));
+                policyUnit.setId(getGuid(rs, "id"));
                 policyUnit.setName(rs.getString("name"));
 
                 policyUnit.setFilterImplemeted(rs.getBoolean("has_filter"));

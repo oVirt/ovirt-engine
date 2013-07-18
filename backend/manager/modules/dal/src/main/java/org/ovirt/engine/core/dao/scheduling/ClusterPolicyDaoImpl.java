@@ -153,8 +153,8 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
             @Override
             public ClusterPolicyUnit mapRow(ResultSet rs, int arg1) throws SQLException {
                 ClusterPolicyUnit unit = new ClusterPolicyUnit();
-                unit.setClusterPolicyId(Guid.createGuidFromString(rs.getString("cluster_policy_id")));
-                unit.setPolicyUnitId(Guid.createGuidFromString(rs.getString("policy_unit_id")));
+                unit.setClusterPolicyId(getGuid(rs, "cluster_policy_id"));
+                unit.setPolicyUnitId(getGuid(rs, "policy_unit_id"));
                 unit.setFilterSelected(rs.getBoolean("is_filter_selected"));
                 unit.setFilterSequence(rs.getInt("filter_sequence"));
                 unit.setFunctionSelected(rs.getBoolean("is_function_selected"));
@@ -199,7 +199,7 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
             @Override
             public ClusterPolicy mapRow(ResultSet rs, int arg1) throws SQLException {
                 ClusterPolicy clusterPolicy = new ClusterPolicy();
-                clusterPolicy.setId(Guid.createGuidFromString(rs.getString("id")));
+                clusterPolicy.setId(getGuid(rs, "id"));
                 clusterPolicy.setName(rs.getString("name"));
                 clusterPolicy.setDescription(rs.getString("description"));
                 clusterPolicy.setLocked(rs.getBoolean("is_locked"));
