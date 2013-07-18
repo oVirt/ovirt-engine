@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.OpenstackImageProviderPrope
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -129,6 +130,11 @@ public class ProviderModel extends Model {
         return (ProviderType) getType().getSelectedItem() == ProviderType.OPENSTACK_IMAGE;
     }
 
+    private boolean isTypeTenantAware() {
+        ProviderType type = (ProviderType) getType().getSelectedItem();
+        return type == ProviderType.OPENSTACK_NETWORK || type == ProviderType.OPENSTACK_IMAGE;
+    }
+
     private String getDefaultUrl(ProviderType type) {
         if (type == null) {
             return new String();
@@ -175,9 +181,10 @@ public class ProviderModel extends Model {
         getType().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
+                getTenantName().setIsAvailable(isTypeTenantAware());
+
                 boolean providerNeutron = isTypeOpenStackNetwork();
                 getApiVersion().setIsAvailable(providerNeutron);
-                getTenantName().setIsAvailable(providerNeutron || isTypeOpenStackImage());
                 if (providerNeutron) {
                     OpenstackNetworkProviderProperties properties =
                             (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
@@ -241,22 +248,30 @@ public class ProviderModel extends Model {
             properties.setAgentConfiguration(getNeutronAgentModel().flush());
             provider.setAdditionalProperties(properties);
         } else if (isTypeOpenStackImage()) {
-            OpenstackImageProviderProperties properties = new OpenstackImageProviderProperties();
-            provider.setAdditionalProperties(properties);
+            provider.setAdditionalProperties(new OpenstackImageProviderProperties());
         }
 
         boolean authenticationRequired = (Boolean) requiresAuthentication.getEntity();
         provider.setRequiringAuthentication(authenticationRequired);
         if (authenticationRequired) {
-            provider.setUsername((String) username.getEntity());
-            provider.setPassword((String) password.getEntity());
-
-            if (isTypeOpenStackNetwork()) {
-                ((OpenstackNetworkProviderProperties) provider.getAdditionalProperties()).setTenantName(
-                        (String) getTenantName().getEntity());
-            } else if (isTypeOpenStackImage()) {
-                ((OpenstackImageProviderProperties) provider.getAdditionalProperties()).setTenantName(
-                        (String) getTenantName().getEntity());
+            provider.setUsername((String) getUsername().getEntity());
+            provider.setPassword((String) getPassword().getEntity());
+            if (getTenantName().getIsAvailable()) {
+                TenantProviderProperties properties = (TenantProviderProperties) provider.getAdditionalProperties();
+                if (properties == null) {
+                    properties = new TenantProviderProperties();
+                    provider.setAdditionalProperties(properties);
+                }
+                properties.setTenantName((String) getTenantName().getEntity());
+            }
+        } else {
+            provider.setUsername(null);
+            provider.setPassword(null);
+            if (getTenantName().getIsAvailable()) {
+                TenantProviderProperties properties = (TenantProviderProperties) provider.getAdditionalProperties();
+                if (properties != null) {
+                    properties.setTenantName(null);
+                }
             }
         }
     }
