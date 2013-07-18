@@ -62,7 +62,7 @@ case "$1" in
 		[ $RETVAL -eq 0 ] && rm -f "${LOCKFILE}"
 		;;
 	status)
-		status -p "${PIDFILE}"
+		status -p "${PIDFILE}" "${NAME}"
 		RETVAL=$?
 		;;
 	restart)
