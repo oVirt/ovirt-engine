@@ -460,7 +460,7 @@ public class SPMAsyncTask {
         if (vdsReturnValue != null && vdsReturnValue.getVdsError() != null
                 && vdsReturnValue.getVdsError().getCode() == VdcBllErrors.TaskStateError) {
             log.infoFormat(
-                    "SPMAsyncTask::ClearAsyncTask: At time of attemp to clear task '{0}' the response code was {2} and message was {3}. Task will not be cleaned",
+                    "SPMAsyncTask::ClearAsyncTask: At time of attempt to clear task '{0}' the response code was {1} and message was {2}. Task will not be cleaned",
                     getVdsmTaskId(),
                     vdsReturnValue.getVdsError().getCode(),
                     vdsReturnValue.getVdsError().getMessage());
