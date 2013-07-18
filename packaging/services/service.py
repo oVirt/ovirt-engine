@@ -51,23 +51,27 @@ def setupLogger():
         logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(logging.INFO)
-    h = logging.handlers.SysLogHandler(
-        address='/dev/log',
-        facility=logging.handlers.SysLogHandler.LOG_DAEMON,
-    )
-    h.setLevel(logging.DEBUG)
-    h.setFormatter(
-        _MyFormatter(
-            fmt=(
-                os.path.splitext(os.path.basename(sys.argv[0]))[0] +
-                '[%(process)s] '
-                '%(levelname)s '
-                '%(funcName)s:%(lineno)d '
-                '%(message)s'
+
+    try:
+        h = logging.handlers.SysLogHandler(
+            address='/dev/log',
+            facility=logging.handlers.SysLogHandler.LOG_DAEMON,
+        )
+        h.setLevel(logging.DEBUG)
+        h.setFormatter(
+            _MyFormatter(
+                fmt=(
+                    os.path.splitext(os.path.basename(sys.argv[0]))[0] +
+                    '[%(process)s] '
+                    '%(levelname)s '
+                    '%(funcName)s:%(lineno)d '
+                    '%(message)s'
+                ),
             ),
-        ),
-    )
-    logger.addHandler(h)
+        )
+        logger.addHandler(h)
+    except IOError:
+        logging.debug('Cannot open syslog logger', exc_info=True)
 
 
 class Base(object):
