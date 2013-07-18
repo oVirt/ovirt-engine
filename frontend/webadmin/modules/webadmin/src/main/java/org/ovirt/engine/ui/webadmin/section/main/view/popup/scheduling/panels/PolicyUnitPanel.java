@@ -5,17 +5,25 @@ import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.NewClusterPolicyModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPolicyPopupView.WidgetStyle;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
+import com.google.gwt.event.dom.client.DragDropEventBase;
+import com.google.gwt.event.dom.client.DragStartEvent;
+import com.google.gwt.event.dom.client.DragStartHandler;
 import com.google.gwt.user.client.Command;
 import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 public class PolicyUnitPanel extends FocusPanel {
+    public static final String FILTER = "Filter"; //$NON-NLS-1$
     private static final ApplicationConstants constants = GWT.create(ApplicationConstants.class);
     static final PopupPanel menuPopup = new PopupPanel(true);
     protected final PolicyUnit policyUnit;
@@ -23,15 +31,20 @@ public class PolicyUnitPanel extends FocusPanel {
     protected boolean locked;
     protected final NewClusterPolicyModel model;
     protected int position;
+    WidgetStyle style;
+
+    protected static String lastDragData = ""; //$NON-NLS-1$
 
     public PolicyUnitPanel(PolicyUnit policyUnit,
             NewClusterPolicyModel model,
-            boolean used,
-            boolean locked) {
+            final boolean used,
+            boolean locked,
+            WidgetStyle style) {
         this.policyUnit = policyUnit;
         this.model = model;
         this.used = used;
         this.locked = locked;
+        this.style = style;
         if (!locked) {
             addDomHandler(new ContextMenuHandler() {
 
@@ -45,24 +58,49 @@ public class PolicyUnitPanel extends FocusPanel {
                 }
 
             }, ContextMenuEvent.getType());
+            // enable d&d
+            getElement().setDraggable(Element.DRAGGABLE_TRUE);
+            // drag start
+            addBitlessDomHandler(new DragStartHandler() {
+                @Override
+                public void onDragStart(DragStartEvent event) {
+                    PolicyUnitPanel sourcePanel = (PolicyUnitPanel) event.getSource();
+                    lastDragData = getType() + " " + sourcePanel.policyUnit.getId() + " " + Boolean.toString(used); //$NON-NLS-1$ //$NON-NLS-2$
+                    event.setData("Text", lastDragData); //$NON-NLS-1$
+                    // show a ghost of the widget under cursor.
+                    NativeEvent nativeEvent = event.getNativeEvent();
+                    int x = nativeEvent.getClientX() - sourcePanel.getAbsoluteLeft();
+                    int y = nativeEvent.getClientY() - sourcePanel.getAbsoluteTop();
+                    event.getDataTransfer().setDragImage(sourcePanel.getElement(), x, y);
+                }
+            }, DragStartEvent.getType());
         }
     }
 
     public void initWidget() {
         HorizontalPanel panel = new HorizontalPanel();
-        Label nameLabel = new Label(policyUnit.getName());
-        nameLabel.setWidth("180px");//$NON-NLS-1$
-        panel.add(nameLabel);
-        if (used && position != 0) {
-            String labelText = null;
-            if (position == -1) {
-                labelText = constants.firstFilter();
-            } else if (position == 1) {
-                labelText = constants.lastFilter();
-            }
-            Label label = new Label(labelText);
-            label.setWidth("50px");//$NON-NLS-1$
+        Label policyUnitLabel = new Label(policyUnit.getName());
+        if (!used) {
+            panel.setStyleName(style.unusedPolicyUnitStyle());
+            panel.add(policyUnitLabel);
+        } else {
+            Panel policyUnitLablePanel = new SimplePanel();
+            policyUnitLablePanel.add(policyUnitLabel);
+            policyUnitLablePanel.setStyleName(style.usedFilterPolicyUnitStyle());
+            Label label = new Label();
+            label.setStyleName(style.positionLabelStyle());
             panel.add(label);
+            if (position != 0) {
+                String labelText = null;
+                if (position == -1) {
+                    labelText = constants.firstFilter();
+                } else if (position == 1) {
+                    labelText = constants.lastFilter();
+                }
+                label.setText(labelText);
+            }
+            panel.setWidth("100%"); //$NON-NLS-1$
+            panel.add(policyUnitLablePanel);
         }
         setWidget(panel);
     }
@@ -138,4 +176,18 @@ public class PolicyUnitPanel extends FocusPanel {
         this.position = position;
     }
 
+    protected String getType() {
+        return FILTER;
+    }
+
+    public static String getDragDropEventData(DragDropEventBase<?> event, boolean isDrop) {
+        if (isDrop) {
+            return event.getData("Text"); //$NON-NLS-1$
+        } else
+        {
+            // On most of the browsers drag, dragenter, dragleave, dragover and dragend don't have access to event's
+            // data
+            return lastDragData;
+        }
+    }
 }

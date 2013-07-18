@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.panels.Po
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
@@ -77,6 +78,9 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
     @UiField(provided = true)
     PolicyUnitListPanel unusedFunctionPanel;
 
+    @UiField
+    WidgetStyle style;
+
     @Inject
     public ClusterPolicyPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
@@ -89,10 +93,17 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
     }
 
     private void initPanels() {
-        usedFilterPanel = new PolicyUnitListPanel();
-        unusedFilterPanel = new PolicyUnitListPanel();
-        usedFunctionPanel = new PolicyUnitListPanel();
-        unusedFunctionPanel = new PolicyUnitListPanel();
+        usedFilterPanel = new PolicyUnitListPanel(PolicyUnitPanel.FILTER, true);
+        unusedFilterPanel = new PolicyUnitListPanel(PolicyUnitPanel.FILTER, false);
+        usedFunctionPanel = new PolicyUnitListPanel(FunctionPolicyUnitPanel.FUNCTION, true);
+        unusedFunctionPanel = new PolicyUnitListPanel(FunctionPolicyUnitPanel.FUNCTION, false);
+    }
+
+    private void setPanelModel(NewClusterPolicyModel model) {
+        usedFilterPanel.setModel(model);
+        unusedFilterPanel.setModel(model);
+        usedFunctionPanel.setModel(model);
+        unusedFunctionPanel.setModel(model);
     }
 
     private void initListBoxEditors() {
@@ -111,6 +122,7 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
 
     public void edit(final NewClusterPolicyModel model) {
         driver.edit(model);
+        setPanelModel(model);
         updateFilters(model);
         model.getFiltersChangedEvent().addListener(new IEventListener() {
 
@@ -151,13 +163,14 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
                             model,
                             true,
                             model.getClusterPolicy().isLocked(),
+                            style,
                             pair.getSecond());
             usedFunctionPanel.add(functionPolicyUnitPanel);
             functionPolicyUnitPanel.initWidget();
         }
         unusedFunctionPanel.clear();
         for (PolicyUnit policyUnit : model.getUnusedFunctions()) {
-            functionPolicyUnitPanel = new FunctionPolicyUnitPanel(policyUnit, model, false, false, null);
+            functionPolicyUnitPanel = new FunctionPolicyUnitPanel(policyUnit, model, false, false, style, null);
             unusedFunctionPanel.add(functionPolicyUnitPanel);
             functionPolicyUnitPanel.initWidget();
         }
@@ -170,7 +183,8 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
         List<PolicyUnitPanel> list = new ArrayList<PolicyUnitPanel>();
         PolicyUnitPanel tempPolicyUnitPanel;
         for (PolicyUnit policyUnit : model.getUsedFilters()) {
-            tempPolicyUnitPanel = new PolicyUnitPanel(policyUnit, model, true, model.getClusterPolicy().isLocked());
+            tempPolicyUnitPanel =
+                    new PolicyUnitPanel(policyUnit, model, true, model.getClusterPolicy().isLocked(), style);
             Integer position = model.getFilterPositionMap().get(policyUnit.getId());
             if (position == null || position == 0) {
                 list.add(tempPolicyUnitPanel);
@@ -196,7 +210,7 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
         unusedFilterPanel.clear();
         for (PolicyUnit policyUnit : model.getUnusedFilters()) {
             PolicyUnitPanel policyUnitPanel =
-                    new PolicyUnitPanel(policyUnit, model, false, model.getClusterPolicy().isLocked());
+                    new PolicyUnitPanel(policyUnit, model, false, model.getClusterPolicy().isLocked(), style);
             unusedFilterPanel.add(policyUnitPanel);
             policyUnitPanel.initWidget();
         }
@@ -207,4 +221,11 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
         return driver.flush();
     }
 
+    public interface WidgetStyle extends CssResource {
+        String unusedPolicyUnitStyle();
+
+        String usedFilterPolicyUnitStyle();
+
+        String positionLabelStyle();
+    }
 }

@@ -2,8 +2,6 @@ package org.ovirt.engine.ui.webadmin;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 
-import com.google.gwt.i18n.client.Constants.DefaultStringValue;
-
 public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("oVirt Engine Web Administration")
@@ -3005,7 +3003,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Filter Modules")
     String clusterPolicyFilterLabel();
 
-    @DefaultStringValue("Function Modules")
+    @DefaultStringValue("Weights Modules")
     String clusterPolicyFunctionLabel();
 
     @DefaultStringValue("Load Balancer")
@@ -3026,13 +3024,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Disabled Filters")
     String disabledFilters();
 
-    @DefaultStringValue("Enabled Functions & Factors")
+    @DefaultStringValue("Enabled Weights & Factors")
     String enabledFunctions();
 
-    @DefaultStringValue("Disabled Functions")
+    @DefaultStringValue("Disabled Weights")
     String disabledFunctions();
 
-    @DefaultStringValue("* Use context menu to move items")
+    @DefaultStringValue("Drag or use context menu to make changes")
     String clusterPolicyExplanationMessage();
 
     @DefaultStringValue("First")
