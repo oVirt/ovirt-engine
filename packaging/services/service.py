@@ -61,11 +61,13 @@ def setupLogger():
         h.setFormatter(
             _MyFormatter(
                 fmt=(
-                    os.path.splitext(os.path.basename(sys.argv[0]))[0] +
-                    '[%(process)s] '
+                    '%(asctime)s '
+                    '{process}: '
                     '%(levelname)s '
                     '%(funcName)s:%(lineno)d '
                     '%(message)s'
+                ).format(
+                    process=os.path.splitext(os.path.basename(sys.argv[0]))[0],
                 ),
             ),
         )
