@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.notifier;
 
 import java.net.InetAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -9,9 +11,12 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import javax.mail.internet.InternetAddress;
+import javax.xml.parsers.FactoryConfigurationError;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 
 import sun.misc.Signal;
@@ -28,10 +33,27 @@ public class Notifier {
     private static ScheduledExecutorService monitorScheduler = Executors.newSingleThreadScheduledExecutor();
 
     /**
+     * Initializes logging configuration
+     */
+    private static void initLogging() {
+        String cfgFile = System.getProperty("log4j.configuration");
+        if (StringUtils.isNotBlank(cfgFile)) {
+            try {
+                URL url = new URL(cfgFile);
+                LogManager.resetConfiguration();
+                DOMConfigurator.configure(url);
+            } catch (FactoryConfigurationError | MalformedURLException ex) {
+                System.out.println("Cannot configure logging: " + ex.getMessage());
+            }
+        }
+    }
+
+    /**
      * @param args
      *            [0] configuration file absolute path
      */
     public static void main(String[] args) {
+        initLogging();
         NotifierSignalHandler handler = new NotifierSignalHandler();
         Signal.handle(new Signal("HUP"), handler);
         handler.addScheduledExecutorService(notifyScheduler);
