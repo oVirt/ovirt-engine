@@ -1014,7 +1014,9 @@ public abstract class HostModel extends Model
                     getExternalProviders().getSelectedItem()).getAdditionalProperties();
             String pluginName = (properties == null) ? new String() : properties.getPluginType();
             getProviderPluginType().setSelectedItem(NeutronPluginTranslator.getDisplayStringForPluginName(pluginName));
-            getNeutronAgentModel().init(properties.getAgentConfiguration());
+            if (properties != null) {
+                getNeutronAgentModel().init(properties.getAgentConfiguration());
+            }
         }
     }
 
