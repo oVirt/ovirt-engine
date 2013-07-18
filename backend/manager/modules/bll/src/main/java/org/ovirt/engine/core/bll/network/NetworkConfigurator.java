@@ -9,8 +9,8 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
-import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -54,8 +54,7 @@ public class NetworkConfigurator {
 
         if (host == null
                 || managementNetwork.equals(host.getActiveNic())
-                || !VersionSupport.isActionSupported(VdcActionType.SetupNetworks,
-                        host.getVdsGroupCompatibilityVersion())) {
+                || !FeatureSupported.setupManagementNetwork(host.getVdsGroupCompatibilityVersion())) {
             return;
         }
 

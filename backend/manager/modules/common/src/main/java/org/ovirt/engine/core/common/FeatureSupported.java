@@ -131,4 +131,13 @@ public class FeatureSupported {
     public static boolean virtIoScsi(Version version) {
         return supportedInConfig(ConfigValues.VirtIoScsiEnabled, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> iff Management Network normalization is supported for the cluster version.
+     */
+    public static boolean setupManagementNetwork(Version version) {
+        return supportedInConfig(ConfigValues.NormalizedMgmgNetworkEnabled, version);
+    }
 }

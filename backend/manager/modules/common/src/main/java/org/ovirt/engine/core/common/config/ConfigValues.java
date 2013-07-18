@@ -1445,6 +1445,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("0.2")
     AverageToBurstRatio(521),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    NormalizedMgmgNetworkEnabled(522),
+
     Invalid(65535);
 
     private int intValue;

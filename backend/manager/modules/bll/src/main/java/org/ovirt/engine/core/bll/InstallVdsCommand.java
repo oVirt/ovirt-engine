@@ -5,10 +5,9 @@ import java.io.File;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
-import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -113,8 +112,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             installer = new VdsDeploy(getVds());
             installer.setCorrelationId(getCorrelationId());
             boolean configureNetworkUsingHostDeploy =
-                    !VersionSupport.isActionSupported(VdcActionType.SetupNetworks,
-                            getVds().getVdsGroupCompatibilityVersion());
+                    !FeatureSupported.setupManagementNetwork(getVds().getVdsGroupCompatibilityVersion());
             installer.setReboot(parameters.isRebootAfterInstallation() && configureNetworkUsingHostDeploy);
             if (configureNetworkUsingHostDeploy) {
                 installer.setManagementNetwork(NetworkUtils.getEngineNetwork());
