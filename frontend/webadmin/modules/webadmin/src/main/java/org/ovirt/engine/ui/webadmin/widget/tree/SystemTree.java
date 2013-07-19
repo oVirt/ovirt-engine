@@ -92,9 +92,6 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
         modelProvider.getModel().getItemsChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                // Reset selection in the model
-                SystemTreeItemModel lastSelectedItem = modelProvider.getSelectionModel().getSelectedObject();
-                modelProvider.getSelectionModel().setSelected(lastSelectedItem, false);
                 expandTree(getDataDisplayWidget().getRootTreeNode(), ITEM_LEVEL);
             }
         });
