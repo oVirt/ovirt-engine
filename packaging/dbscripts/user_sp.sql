@@ -37,12 +37,13 @@ Create or replace FUNCTION InsertUser(v_department VARCHAR(255) ,
 	v_surname VARCHAR(255) ,
 	v_user_id UUID,
 	v_username VARCHAR(255),
-	v_group_ids VARCHAR(2048))
+	v_group_ids VARCHAR(2048),
+	v_external_id BYTEA)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO users(department, domain, email, groups, name, note, role, status, surname, user_id, username, group_ids)
-	VALUES(v_department, v_domain, v_email, v_groups, v_name, v_note, v_role, v_status, v_surname, v_user_id, v_username, v_group_ids);
+INSERT INTO users(department, domain, email, groups, name, note, role, status, surname, user_id, username, group_ids, external_id)
+	VALUES(v_department, v_domain, v_email, v_groups, v_name, v_note, v_role, v_status, v_surname, v_user_id, v_username, v_group_ids, v_external_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -62,7 +63,8 @@ Create or replace FUNCTION UpdateUser(v_department VARCHAR(255) ,
 	v_user_id UUID,
 	v_username VARCHAR(255),
 	v_last_admin_check_status BOOLEAN,
-	v_group_ids VARCHAR(2048))
+	v_group_ids VARCHAR(2048),
+        v_external_id BYTEA)
 RETURNS VOID
 
 	--The [users] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -74,7 +76,8 @@ BEGIN
       role = v_role,status = v_status,surname = v_surname,
       username = v_username,
       last_admin_check_status = v_last_admin_check_status,
-      group_ids = v_group_ids
+      group_ids = v_group_ids,
+      external_id = v_external_id
       WHERE user_id = v_user_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -124,6 +127,19 @@ BEGIN
       RETURN QUERY SELECT users.*
       FROM users
       WHERE user_id = v_user_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
+
+Create or replace FUNCTION GetUserByExternalId(v_domain VARCHAR(255), v_external_id BYTEA) RETURNS SETOF users
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT users.*
+      FROM users
+      WHERE domain = v_domain AND external_id = v_external_id;
 END; $procedure$
 LANGUAGE plpgsql;
 

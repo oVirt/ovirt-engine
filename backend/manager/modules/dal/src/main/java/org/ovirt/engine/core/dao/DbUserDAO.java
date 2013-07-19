@@ -31,6 +31,16 @@ public interface DbUserDAO extends DAO, SearchDAO<DbUser> {
     DbUser getByUsername(String username);
 
     /**
+     * Retrieves a user by domain name and external identifier.
+     *
+     * @param domain the name of the domain
+     * @param externalId the external identifier
+     * @return a reference to the user or <code>null</code> if no such user
+     *   can be found in the database
+     */
+    DbUser getByExternalId(String domain, byte[] externalId);
+
+    /**
      * Retrieves all users associated with the specified virtual machine.
      *
      * @param id

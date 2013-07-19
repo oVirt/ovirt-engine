@@ -37,6 +37,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             entity.setLoginName(rs.getString("username"));
             entity.setLastAdminCheckStatus(rs.getBoolean("last_admin_check_status"));
             entity.setGroupIds(rs.getString("group_ids"));
+            entity.setExternalId(rs.getBytes("external_id"));
             return entity;
         }
     }
@@ -58,6 +59,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             addValue("username", user.getLoginName());
             addValue("last_admin_check_status", user.getLastAdminCheckStatus());
             addValue("group_ids", user.getGroupIds());
+            addValue("external_id", user.getExternalId());
         }
     }
 
@@ -75,6 +77,15 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
                 .addValue("username", username);
 
         return getCallsHandler().executeRead("GetUserByUserName", DbUserRowMapper.instance, parameterSource);
+    }
+
+    @Override
+    public DbUser getByExternalId(String domain, byte[] externalId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("domain", domain)
+                .addValue("external_id", externalId);
+
+        return getCallsHandler().executeRead("GetUserByExternalId", DbUserRowMapper.instance, parameterSource);
     }
 
     @Override

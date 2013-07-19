@@ -2999,6 +2999,7 @@
 
     <table name="users">
       <column>user_id</column>
+      <column>external_id</column>
       <column>name</column>
       <column>surname</column>
       <column>domain</column>
@@ -3013,6 +3014,7 @@
       <column>group_ids</column>
       <row>
           <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+          <value>m/fGQLYgRW+lUANI82ZUSg==</value>
           <value>userportal2</value>
           <null />
           <value>testportal.redhat.com</value>
@@ -3028,6 +3030,7 @@
       </row>
       <row>
           <value>9bf7c640-b620-456f-a550-0348f366544b</value>
+          <value>m/fGQLYgRW+lUANI82ZUSw==</value>
           <value>userportal3</value>
           <null />
           <value>testportal.redhat.com</value>

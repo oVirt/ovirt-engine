@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -35,6 +36,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
 
         newUser = new DbUser();
 
+        newUser.setExternalId(new byte[0]);
         newUser.setFirstName("Bob");
         newUser.setLastName("Milqtoste");
         newUser.setLoginName("newuser");
@@ -62,6 +64,44 @@ public class DbUserDAOTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertEquals(existingUser, result);
+    }
+
+    /**
+     * Ensures that trying to get an user with an invalid external id fails.
+     */
+    @Test
+    public void testGetWithInvalidExternalId() {
+        byte[] externalId = {
+            (byte) 0x00
+        };
+        DbUser result = dao.getByExternalId("testportal.redhat.com", externalId);
+        assertNull(result);
+    }
+
+    /**
+     * Ensures that retrieving an user by external id works as expected.
+     */
+    @Test
+    public void testGetByExternalId() {
+        byte[] externalId = {
+            (byte) 0x9b, (byte) 0xf7, (byte) 0xc6, (byte) 0x40,
+            (byte) 0xb6, (byte) 0x20, (byte) 0x45, (byte) 0x6f,
+            (byte) 0xa5, (byte) 0x50, (byte) 0x03, (byte) 0x48,
+            (byte) 0xf3, (byte) 0x66, (byte) 0x54, (byte) 0x4a
+        };
+        DbUser result = dao.getByExternalId("testportal.redhat.com", externalId);
+        assertNotNull(result);
+    }
+
+    /**
+     * Ensures that update cycle doesn't change the external identifier.
+     */
+    @Test
+    public void testUpdateDoesntChangeExternalId() {
+        DbUser userBefore = dao.get(existingUser.getId());
+        dao.update(userBefore);
+        DbUser userAfter = dao.get(existingUser.getId());
+        assertTrue(Arrays.equals(userBefore.getExternalId(), userAfter.getExternalId()));
     }
 
     /**
@@ -158,6 +198,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
     @Test
     public void testSaveUserWithTooManyGroups() {
         DbUser tooManyGroupsUser = new DbUser();
+        tooManyGroupsUser.setExternalId(new byte[0]);
         tooManyGroupsUser.setFirstName("I");
         tooManyGroupsUser.setLastName("Have");
         tooManyGroupsUser.setLoginName("too");
@@ -187,6 +228,28 @@ public class DbUserDAOTest extends BaseDAOTestCase {
         DbUser result = dao.get(existingUser.getId());
 
         assertEquals(existingUser, result);
+    }
+
+    /**
+     * Ensures that inserting an user with no external id fails, as it has a
+     * not null constraint.
+     */
+    @Test(expected = RuntimeException.class)
+    public void testSaveUserWithoutExternalIdFails() {
+        newUser.setExternalId(null);
+        dao.save(newUser);
+    }
+
+    /**
+     * Ensures that inserting an user with the same external id and domain than
+     * an existing user fails, as there is a unique constraint for that pair
+     * of attributes.
+     */
+    @Test(expected = RuntimeException.class)
+    public void testSaveUserDuplicatedDomainAndExternalId() {
+        newUser.setDomain(existingUser.getDomain());
+        newUser.setExternalId(existingUser.getExternalId());
+        dao.save(newUser);
     }
 
     /**

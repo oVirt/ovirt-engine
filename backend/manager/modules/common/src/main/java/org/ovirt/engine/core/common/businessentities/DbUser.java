@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Arrays;
+
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -8,7 +10,16 @@ import org.ovirt.engine.core.compat.Guid;
 public class DbUser extends IVdcQueryable {
     private static final long serialVersionUID = 7052102138405696755L;
 
+    /**
+     * This is the identifier assigned by the engine to this user for internal
+     * use only.
+     */
     private Guid id = Guid.Empty;
+
+    /**
+     * This is the identifier assigned by the external directory to this user.
+     */
+    private byte[] externalId;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.USER_DOMAIN_SIZE)
     private String domain;
@@ -66,6 +77,7 @@ public class DbUser extends IVdcQueryable {
 
     public DbUser(LdapUser ldapUser) {
         id = ldapUser.getUserId();
+        externalId = ldapUser.getUserId().toByteArray();
         domain = ldapUser.getDomainControler();
         loginName = getFullLoginName(ldapUser);
         firstName = ldapUser.getName();
@@ -83,6 +95,14 @@ public class DbUser extends IVdcQueryable {
 
     public void setId(Guid id) {
         this.id = id;
+    }
+
+    public byte[] getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(byte[] externalId) {
+        this.externalId = externalId;
     }
 
     public String getDomain() {
@@ -216,6 +236,7 @@ public class DbUser extends IVdcQueryable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + Arrays.hashCode(externalId);
         result = prime * result + ((department == null) ? 0 : department.hashCode());
         result = prime * result + ((domain == null) ? 0 : domain.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
@@ -243,6 +264,7 @@ public class DbUser extends IVdcQueryable {
         }
         DbUser other = (DbUser) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
+                && Arrays.equals(externalId, other.externalId)
                 && ObjectUtils.objectsEqual(department, other.department)
                 && ObjectUtils.objectsEqual(domain, other.domain)
                 && ObjectUtils.objectsEqual(email, other.email)

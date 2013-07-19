@@ -733,11 +733,13 @@ AS
 
 SELECT     'user' as user_group, users_1.name as name, users_1.user_id as user_id, users_1.surname as surname, users_1.domain as domain, users_1.username as username, users_1.groups as groups, users_1.department as department,
                       users_1.role as role, users_1.email as email, users_1.note as note, users_1.status as status, 0 as vm_admin,
-                      users_1.last_admin_check_status as last_admin_check_status, users_1.group_ids as group_ids
+                      users_1.last_admin_check_status as last_admin_check_status, users_1.group_ids as group_ids,
+                      users_1.external_id as external_id
 FROM         users AS users_1
 UNION
 SELECT     'group' as user_group, ad_groups.name as name, ad_groups.id as id, '' as surname, ad_groups.domain as domain, '' as username, '' as groups, '' as department, '' as role,
-                      '' as email, '' as note, ad_groups.status as status, 1 as vm_admin, null as last_admin_check_status, '' as group_ids
+                      '' as email, '' as note, ad_groups.status as status, 1 as vm_admin, null as last_admin_check_status, '' as group_ids,
+                      '' as external_id
 FROM         ad_groups;
 
 
