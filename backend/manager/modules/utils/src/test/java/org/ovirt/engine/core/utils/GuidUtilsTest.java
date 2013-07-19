@@ -4,29 +4,11 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GuidUtilsTest {
-    @Test
-    public void toByteArray() {
-        final byte[] byteArray = GuidUtils.toByteArray(UUID.randomUUID());
-        Assert.assertNotNull(byteArray);
-        Assert.assertEquals(16, byteArray.length);
-    }
-
-    @Test
-    public void toByteArrayAllNoll() {
-        final byte[] allNullArray = GuidUtils.toByteArray(UUID.fromString("00000000-0000-0000-0000-000000000000"));
-        Assert.assertNotNull(allNullArray);
-        for (int i = 0; i < 16; i++) {
-            Assert.assertEquals(0, allNullArray[i]);
-        }
-    }
-
     @Test
     public void testGuidListValues() {
         String listValues = "e61f7070-cd52-46ca-88c2-686e1c70fe44,1eaa381a-fbf9-4ef5-bec2-6e4337f85d66";

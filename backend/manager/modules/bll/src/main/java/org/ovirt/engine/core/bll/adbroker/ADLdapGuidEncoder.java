@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.adbroker;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.GuidUtils;
 
 public class ADLdapGuidEncoder implements LdapGuidEncoder {
     private static final ADLdapGuidEncoder instance = new ADLdapGuidEncoder();
@@ -16,7 +15,7 @@ public class ADLdapGuidEncoder implements LdapGuidEncoder {
 
     @Override
     public String encodeGuid(Guid guid) {
-        byte[] ba = GuidUtils.toByteArray(guid.getUuid());
+        byte[] ba = guid.toByteArray();
 
         // AD guid is stored in reversed order than MS-SQL guid -
         // Since it is important for us to work with GUIDs which are MS-SQL
@@ -24,7 +23,7 @@ public class ADLdapGuidEncoder implements LdapGuidEncoder {
         // for each GUID -before using with AD we will change its byte order to
         // support AD
         Guid adGuid = new Guid(ba, false);
-        ba = GuidUtils.toByteArray(adGuid.getUuid());
+        ba = adGuid.toByteArray();
         StringBuilder sb = new StringBuilder();
         for (int idx = 0; idx < ba.length; idx++) {
             sb.append("\\" + String.format("%02X", ba[idx]));

@@ -3,28 +3,11 @@ package org.ovirt.engine.core.utils;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GuidUtils {
-
-    public static byte[] toByteArray(UUID uuid) {
-        byte[] data = new byte[16];
-        long msb = uuid.getMostSignificantBits();
-        for (int i = 7; i >= 0; i--) {
-            data[i] = (byte) (msb & 0xff);
-            msb >>= 8;
-        }
-        long lsb = uuid.getLeastSignificantBits();
-        for (int i = 15; i >= 8; i--) {
-            data[i] = (byte) (lsb & 0xff);
-            lsb >>= 8;
-        }
-        return data;
-    }
-
     private static final String SEPARATOR = ",";
 
     /**

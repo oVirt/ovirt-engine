@@ -123,4 +123,19 @@ public class Guid implements Serializable, Comparable<Guid> {
     public String toString() {
         return uuid.toString();
     }
+
+    public byte[] toByteArray() {
+        byte[] data = new byte[16];
+        long msb = uuid.getMostSignificantBits();
+        for (int i = 7; i >= 0; i--) {
+            data[i] = (byte) (msb & 0xff);
+            msb >>= 8;
+        }
+        long lsb = uuid.getLeastSignificantBits();
+        for (int i = 15; i >= 8; i--) {
+            data[i] = (byte) (lsb & 0xff);
+            lsb >>= 8;
+        }
+        return data;
+    }
 }
