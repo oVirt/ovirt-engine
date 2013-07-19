@@ -87,6 +87,14 @@ public class VnicProfileValidator {
         return new ValidationResult(VdcBllMessages.VNIC_PROFILE_IN_USE, replacements);
     }
 
+    public ValidationResult portMirroringNotChangedIfUsedByVms() {
+        if (vnicProfile.isPortMirroring() == getOldVnicProfile().isPortMirroring()) {
+            return ValidationResult.VALID;
+        }
+
+        return vnicProfileNotUsedByVms();
+    }
+
     protected Network getNetwork() {
         if (network == null) {
             network = getDbFacade().getNetworkDao().get(vnicProfile.getNetworkId());

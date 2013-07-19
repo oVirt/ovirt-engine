@@ -173,6 +173,25 @@ public class VnicProfileValidatorTest {
         assertThat(validator.networkNotChanged(), failsWith(VdcBllMessages.CANNOT_CHANGE_VNIC_PROFILE_NETWORK));
     }
 
+    @Test
+    public void portMirroringNotChanged() {
+        assertThat(validator.portMirroringNotChangedIfUsedByVms(), isValid());
+    }
+
+    @Test
+    public void portMirroringEnableSupported() {
+        mockVnicProfilePortMirroringChange(false);
+        mockVmsUsingVnicProfile(Collections.<VM> emptyList());
+        assertThat(validator.portMirroringNotChangedIfUsedByVms(), isValid());
+    }
+
+    @Test
+    public void portMirroringChangeNotSupported() {
+        mockVnicProfilePortMirroringChange(false);
+        mockVmsUsingVnicProfile(Collections.<VM> singletonList(mock(VM.class)));
+        assertThat(validator.portMirroringNotChangedIfUsedByVms(), failsWithVnicProfileInUse());
+    }
+
     private void mockVnicProfileNetworkChange(Guid vnicProfileId, Guid oldVnicProfileId) {
         VnicProfile vnicProfile = mock(VnicProfile.class);
         when(this.vnicProfile.getNetworkId()).thenReturn(vnicProfileId);
@@ -181,8 +200,19 @@ public class VnicProfileValidatorTest {
     }
 
     private void vnicProfileNotUsedByVmsTest(Matcher<ValidationResult> matcher, List<VM> vms) {
-        when(vmDao.getAllForVnicProfile(any(Guid.class))).thenReturn(vms);
+        mockVmsUsingVnicProfile(vms);
         assertThat(validator.vnicProfileNotUsedByVms(), matcher);
+    }
+
+    private void mockVmsUsingVnicProfile(List<VM> vms) {
+        when(vmDao.getAllForVnicProfile(any(Guid.class))).thenReturn(vms);
+    }
+
+    private void mockVnicProfilePortMirroringChange(boolean portMirroring) {
+        VnicProfile vnicProfile = mock(VnicProfile.class);
+        when(this.vnicProfile.isPortMirroring()).thenReturn(portMirroring);
+        when(vnicProfile.isPortMirroring()).thenReturn(!portMirroring);
+        when(vnicProfileDao.get(any(Guid.class))).thenReturn(vnicProfile);
     }
 
     @Test

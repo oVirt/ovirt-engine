@@ -20,7 +20,8 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters> extends V
         return validate(validator.vnicProfileIsSet())
                 && validate(validator.vnicProfileExists())
                 && validate(validator.vnicProfileNameNotUsed())
-                && validate(validator.networkNotChanged());
+                && validate(validator.networkNotChanged())
+                && validate(validator.portMirroringNotChangedIfUsedByVms());
     }
 
     @Override
