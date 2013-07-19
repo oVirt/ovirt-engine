@@ -103,6 +103,12 @@ class Daemon(service.Daemon):
 
     def __init__(self):
         super(Daemon, self).__init__()
+        self._defaults = os.path.abspath(
+            os.path.join(
+                os.path.dirname(sys.argv[0]),
+                'ovirt-websocket-proxy.conf',
+            )
+        )
 
     def _checkInstallation(
         self,
@@ -126,19 +132,19 @@ class Daemon(service.Daemon):
 
     def daemonSetup(self):
 
-        if not os.path.exists(config.ENGINE_WSPROXY_DEFAULT_FILE):
+        if not os.path.exists(self._defaults):
             raise RuntimeError(
                 _(
                     "The configuration defaults file '{file}' "
                     "required but missing"
                 ).format(
-                    file=config.ENGINE_WSPROXY_DEFAULT_FILE,
+                    file=self._defaults,
                 )
             )
 
         self._config = configfile.ConfigFile(
             (
-                config.ENGINE_WSPROXY_DEFAULT_FILE,
+                self._defaults,
                 config.ENGINE_WSPROXY_VARS,
             ),
         )

@@ -125,12 +125,9 @@ BUILD_TARGET=install
 # Rule to generate files from templates:
 .in:
 	sed \
-	-e "s|@ENGINE_DEFAULTS@|$(DATA_DIR)/conf/engine.conf.defaults|g" \
 	-e "s|@ENGINE_VARS@|$(PKG_SYSCONF_DIR)/engine.conf|g" \
 	-e "s|@ENGINE_SETUP_VARS@|$(SYSCONF_DIR)/ovirt-engine-setup.conf|g" \
-	-e "s|@ENGINE_NOTIFIER_DEFAULTS@|$(DATA_DIR)/conf/notifier.conf.defaults|g" \
 	-e "s|@ENGINE_NOTIFIER_VARS@|$(PKG_SYSCONF_DIR)/notifier/notifier.conf|g" \
-	-e "s|@ENGINE_WSPROXY_DEFAULT_FILE@|$(DATA_DIR)/conf/ovirt-websocket-proxy.conf.defaults|g" \
 	-e "s|@ENGINE_WSPROXY_VARS@|$(PKG_SYSCONF_DIR)/ovirt-websocket-proxy.conf|g" \
 	-e "s|@ENGINE_USER@|$(PKG_USER)|g" \
 	-e "s|@ENGINE_GROUP@|$(PKG_GROUP)|g" \
@@ -157,9 +154,6 @@ BUILD_TARGET=install
 GENERATED = \
 	packaging/bin/engine-prolog.sh \
 	packaging/bin/pki-common.sh \
-	packaging/conf/engine.conf.defaults \
-	packaging/conf/notifier.conf.defaults \
-	packaging/conf/ovirt-websocket-proxy.conf.defaults \
 	packaging/etc/engine-config/log4j.xml \
 	packaging/etc/engine-manage-domains/log4j.xml \
 	packaging/etc/engine-manage-domains/engine-manage-domains.conf \
@@ -167,12 +161,15 @@ GENERATED = \
 	packaging/sys-etc/logrotate.d/ovirt-engine \
 	packaging/sys-etc/logrotate.d/ovirt-engine-notifier \
 	packaging/services/ovirt-engine-notifier/config.py \
+	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.conf \
 	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.systemd \
 	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.sysv \
 	packaging/services/ovirt-engine/config.py \
+	packaging/services/ovirt-engine/ovirt-engine.conf \
 	packaging/services/ovirt-engine/ovirt-engine.systemd \
 	packaging/services/ovirt-engine/ovirt-engine.sysv \
 	packaging/services/ovirt-websocket-proxy/config.py \
+	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.conf \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.systemd \
 	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.sysv \
 	packaging/setup/bin/ovirt-engine-setup.env \

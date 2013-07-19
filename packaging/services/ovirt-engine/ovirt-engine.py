@@ -37,6 +37,12 @@ class Daemon(service.Daemon):
 
     def __init__(self):
         super(Daemon, self).__init__()
+        self._defaults = os.path.abspath(
+            os.path.join(
+                os.path.dirname(sys.argv[0]),
+                'ovirt-engine.conf',
+            )
+        )
 
     def _processTemplate(self, template, dir, mode=None):
         out = os.path.join(
@@ -237,19 +243,19 @@ class Daemon(service.Daemon):
                 _('This service cannot be executed as root')
             )
 
-        if not os.path.exists(config.ENGINE_DEFAULT_FILE):
+        if not os.path.exists(self._defaults):
             raise RuntimeError(
                 _(
                     "The configuration defaults file '{file}' "
                     "required but missing"
                 ).format(
-                    file=config.ENGINE_DEFAULT_FILE,
+                    file=self._defaults,
                 )
             )
 
         self._config = configfile.ConfigFile(
             (
-                config.ENGINE_DEFAULT_FILE,
+                self._defaults,
                 config.ENGINE_VARS,
             ),
         )
@@ -414,7 +420,7 @@ class Daemon(service.Daemon):
             ),
             'LANG': 'en_US.UTF-8',
             'LC_ALL': 'en_US.UTF-8',
-            'ENGINE_DEFAULTS': config.ENGINE_DEFAULT_FILE,
+            'ENGINE_DEFAULTS': self._defaults,
             'ENGINE_VARS': config.ENGINE_VARS,
             'ENGINE_ETC': self._config.get('ENGINE_ETC'),
             'ENGINE_LOG': self._config.get('ENGINE_LOG'),

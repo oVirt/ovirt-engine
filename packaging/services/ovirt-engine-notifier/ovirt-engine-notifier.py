@@ -16,6 +16,7 @@
 
 
 import os
+import sys
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine')
 
@@ -31,6 +32,22 @@ class Daemon(service.Daemon):
 
     def __init__(self):
         super(Daemon, self).__init__()
+        self._engineDefaults = os.path.abspath(
+            os.path.join(
+                os.path.join(
+                    os.path.dirname(sys.argv[0]),
+                    '..',
+                    'ovirt-engine'
+                ),
+                'ovirt-engine-engine.conf',
+            )
+        )
+        self._notifierDefaults = os.path.abspath(
+            os.path.join(
+                os.path.dirname(sys.argv[0]),
+                'ovirt-engine-notifier.conf',
+            )
+        )
 
     def _checkInstallation(
         self,
@@ -98,19 +115,19 @@ class Daemon(service.Daemon):
                 _('This service cannot be executed as root')
             )
 
-        if not os.path.exists(config.ENGINE_NOTIFIER_DEFAULT_FILE):
+        if not os.path.exists(self._notifierDefaults):
             raise RuntimeError(
                 _(
                     "The configuration defaults file '{file}' "
                     "required but missing"
                 ).format(
-                    file=config.ENGINE_NOTIFIER_DEFAULT_FILE,
+                    file=self._notifierDefaults,
                 )
             )
 
         self._config = configfile.ConfigFile(
             (
-                config.ENGINE_NOTIFIER_DEFAULT_FILE,
+                self._notifierDefaults,
                 config.ENGINE_NOTIFIER_VARS,
             ),
         )
@@ -163,9 +180,9 @@ class Daemon(service.Daemon):
                     'modules',
                 ),
             ]),
-            'ENGINE_DEFAULTS': config.ENGINE_DEFAULT_FILE,
+            'ENGINE_DEFAULTS': self._engineDefaults,
             'ENGINE_VARS': config.ENGINE_VARS,
-            'ENGINE_NOTIFIER_DEFAULTS': config.ENGINE_NOTIFIER_DEFAULT_FILE,
+            'ENGINE_NOTIFIER_DEFAULTS': self._notifierDefaults,
             'ENGINE_NOTIFIER_VARS': config.ENGINE_NOTIFIER_VARS,
         })
 

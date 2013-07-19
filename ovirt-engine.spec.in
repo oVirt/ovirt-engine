@@ -742,7 +742,6 @@ fi
 %config(noreplace) %{engine_etc}/sysprep
 
 # Configuration files
-%{engine_data}/conf/engine.conf.defaults
 %{engine_data}/conf/osinfo-defaults.properties
 %dir %{engine_etc}/osinfo.conf.d
 %{engine_etc}/osinfo.conf.d/00-defaults.properties
@@ -883,7 +882,6 @@ fi
 
 %files websocket-proxy
 %dir %{engine_etc}/ovirt-websocket-proxy.conf.d
-%{engine_data}/conf/ovirt-websocket-proxy.conf.defaults
 %{engine_data}/services/ovirt-websocket-proxy
 
 # Files needed by the service:
@@ -933,7 +931,6 @@ fi
 
 # Config files:
 %{engine_data}/conf/jaas.conf
-%{engine_data}/conf/notifier.conf.defaults
 
 # POM files:
 %if %{install_poms}

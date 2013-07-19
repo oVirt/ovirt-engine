@@ -44,9 +44,6 @@ __pycache__
 ###########################
 packaging/bin/engine-prolog.sh
 packaging/bin/pki-common.sh
-packaging/conf/engine.conf.defaults
-packaging/conf/notifier.conf.defaults
-packaging/conf/ovirt-websocket-proxy.conf.defaults
 packaging/etc/engine-config/log4j.xml
 packaging/etc/engine-manage-domains/log4j.xml
 packaging/etc/engine-manage-domains/engine-manage-domains.conf
@@ -56,6 +53,7 @@ packaging/sys-etc/logrotate.d/ovirt-engine-notifier
 packaging/services/*/config.py
 packaging/services/*/*.systemd
 packaging/services/*/*.sysv
+packaging/services/*/*.conf
 packaging/setup/bin/ovirt-engine-setup.env
 packaging/setup/ovirt_engine_setup/config.py
 packaging/bin/ovirt-engine-log-setup-event.sh
