@@ -926,7 +926,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * @return true if all VM network interfaces are valid
      */
     protected boolean validateNetworkInterfaces() {
-        Map<String, VmNetworkInterface> interfaceNetworkMap = Entities.interfacesByNetworkName(getVm().getInterfaces());
+        Map<String, VmNetworkInterface> interfaceNetworkMap = Entities.vmInterfacesByNetworkName(getVm().getInterfaces());
         Set<String> interfaceNetworkNames = interfaceNetworkMap.keySet();
         List<Network> clusterNetworks = getNetworkDAO().getAllForCluster(getVm().getVdsGroupId());
         Set<String> clusterNetworksNames = Entities.objectNames(clusterNetworks);

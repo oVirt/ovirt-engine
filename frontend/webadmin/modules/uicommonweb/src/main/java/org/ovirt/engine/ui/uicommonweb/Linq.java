@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.comparators.NameableCompara
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -332,7 +331,7 @@ public final class Linq
         return false;
     }
 
-    public static NetworkInterface findInterfaceByName(ArrayList<NetworkInterface> items, String name)
+    public static NetworkInterface findInterfaceByName(ArrayList<VdsNetworkInterface> items, String name)
     {
         for (NetworkInterface i : items)
         {
@@ -344,31 +343,9 @@ public final class Linq
         return null;
     }
 
-    public static ArrayList<NetworkInterface> vdsNetworkInterfaceListToBase(ArrayList<VdsNetworkInterface> items)
+    public static VdsNetworkInterface findInterfaceByNetworkName(ArrayList<VdsNetworkInterface> items, String name)
     {
-        ArrayList<NetworkInterface> networkInterfaces = new ArrayList<NetworkInterface>();
-        for (VdsNetworkInterface item : items)
-        {
-            networkInterfaces.add(item);
-        }
-
-        return networkInterfaces;
-    }
-
-    public static ArrayList<NetworkInterface> vmNetworkInterfaceListToBase(ArrayList<VmNetworkInterface> items)
-    {
-        ArrayList<NetworkInterface> networkInterfaces = new ArrayList<NetworkInterface>();
-        for (VmNetworkInterface item : items)
-        {
-            networkInterfaces.add(item);
-        }
-
-        return networkInterfaces;
-    }
-
-    public static NetworkInterface findInterfaceByNetworkName(ArrayList<NetworkInterface> items, String name)
-    {
-        for (NetworkInterface i : items)
+        for (VdsNetworkInterface i : items)
         {
             if (StringHelper.stringsEqual(i.getNetworkName(), name))
             {
@@ -390,9 +367,9 @@ public final class Linq
         return null;
     }
 
-    public static NetworkInterface findInterfaceNetworkNameNotEmpty(ArrayList<NetworkInterface> items)
+    public static VdsNetworkInterface findInterfaceNetworkNameNotEmpty(ArrayList<VdsNetworkInterface> items)
     {
-        for (NetworkInterface i : items)
+        for (VdsNetworkInterface i : items)
         {
             if (!StringHelper.isNullOrEmpty(i.getNetworkName()))
             {
@@ -402,10 +379,10 @@ public final class Linq
         return null;
     }
 
-    public static ArrayList<NetworkInterface> findAllInterfaceNetworkNameNotEmpty(ArrayList<NetworkInterface> items)
+    public static ArrayList<VdsNetworkInterface> findAllInterfaceNetworkNameNotEmpty(ArrayList<VdsNetworkInterface> items)
     {
-        ArrayList<NetworkInterface> ret = new ArrayList<NetworkInterface>();
-        for (NetworkInterface i : items)
+        ArrayList<VdsNetworkInterface> ret = new ArrayList<VdsNetworkInterface>();
+        for (VdsNetworkInterface i : items)
         {
             if (!StringHelper.isNullOrEmpty(i.getNetworkName()))
             {

@@ -6,6 +6,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidNetworkConfiguration;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,6 +22,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private Guid vdsId;
     private String vdsName;
     private NetworkBootProtocol bootProtocol;
+    private String networkName;
 
     @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_STATIC_IP_BAD_FORMAT")
     private String address;
@@ -116,6 +118,25 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
      */
     public NetworkBootProtocol getBootProtocol() {
         return bootProtocol;
+    }
+
+    /**
+     * Sets the name of the network.
+     *
+     * @param networkName
+     *            the network name
+     */
+    public void setNetworkName(String networkName) {
+        this.networkName = networkName;
+    }
+
+    /**
+     * Returns the name of the network.
+     *
+     * @return the network name
+     */
+    public String getNetworkName() {
+        return networkName;
     }
 
     /**
@@ -352,6 +373,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         result = prime * result + ((bondType == null) ? 0 : bondType.hashCode());
         result = prime * result + ((bonded == null) ? 0 : bonded.hashCode());
         result = prime * result + ((bootProtocol == null) ? 0 : bootProtocol.hashCode());
+        result = prime * result + ((networkName == null) ? 0 : networkName.hashCode());
         result = prime * result + (bridged ? 1231 : 1237);
         result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
         result = prime * result + mtu;
@@ -409,6 +431,9 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
             return false;
         }
         if (bootProtocol != other.bootProtocol) {
+            return false;
+        }
+        if (!ObjectUtils.objectsEqual(other.networkName, other.networkName)) {
             return false;
         }
         if (bridged != other.bridged) {

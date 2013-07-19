@@ -10,7 +10,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
 /**
  * General utility class for common entities functions
@@ -47,7 +48,19 @@ public class Entities {
         }
     }
 
-    public static <E extends NetworkInterface<?>> Map<String, E> interfacesByNetworkName(List<E> entityList) {
+    public static <E extends VmNetworkInterface> Map<String, E> vmInterfacesByNetworkName(List<E> entityList) {
+        if (entityList != null) {
+            Map<String, E> map = new HashMap<String, E>();
+            for (E e : entityList) {
+                map.put(e.getNetworkName(), e);
+            }
+            return map;
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
+    public static <E extends VdsNetworkInterface> Map<String, E> hostInterfacesByNetworkName(List<E> entityList) {
         if (entityList != null) {
             Map<String, E> map = new HashMap<String, E>();
             for (E e : entityList) {

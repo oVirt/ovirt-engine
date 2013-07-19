@@ -23,9 +23,6 @@ public abstract class NetworkInterface<T extends NetworkStatistics> extends IVdc
 
     private String macAddress;
 
-    @Size(max = BusinessEntitiesDefinitions.NETWORK_NAME_SIZE)
-    private String networkName;
-
     private Integer type;
 
     private Integer speed;
@@ -100,25 +97,6 @@ public abstract class NetworkInterface<T extends NetworkStatistics> extends IVdc
     }
 
     /**
-     * Sets the name of the network.
-     *
-     * @param networkName
-     *            the network name
-     */
-    public void setNetworkName(String networkName) {
-        this.networkName = networkName;
-    }
-
-    /**
-     * Returns the name of the network.
-     *
-     * @return the network name
-     */
-    public String getNetworkName() {
-        return networkName;
-    }
-
-    /**
      * Sets the speed of the network device in megabits per second.
      *
      * @param speed
@@ -182,7 +160,6 @@ public abstract class NetworkInterface<T extends NetworkStatistics> extends IVdc
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((macAddress == null) ? 0 : macAddress.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((networkName == null) ? 0 : networkName.hashCode());
         result = prime * result + ((speed == null) ? 0 : speed.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
         return result;
@@ -219,13 +196,6 @@ public abstract class NetworkInterface<T extends NetworkStatistics> extends IVdc
                 return false;
             }
         } else if (!name.equals(other.name)) {
-            return false;
-        }
-        if (networkName == null) {
-            if (other.networkName != null) {
-                return false;
-            }
-        } else if (!networkName.equals(other.networkName)) {
             return false;
         }
         if (speed == null) {

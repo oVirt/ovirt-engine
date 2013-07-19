@@ -193,7 +193,8 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<V
     }
 
     private static String getVmNetworksImplementedAsBridgeless(VDS vds, List<Network> clusterNetworks) {
-        Map<String, VdsNetworkInterface> interfacesByNetworkName = Entities.interfacesByNetworkName(vds.getInterfaces());
+        Map<String, VdsNetworkInterface> interfacesByNetworkName =
+                Entities.hostInterfacesByNetworkName(vds.getInterfaces());
         List<String> networkNames = new ArrayList<String>();
 
         for (Network net : clusterNetworks) {

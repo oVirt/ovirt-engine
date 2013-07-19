@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.businessentities.comparators.NameableCompara
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.Vlan;
@@ -1041,8 +1040,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         String defaultInterfaceName = tmpDefaultInterfaceName.toString();
                         managementModel.getInterface().setItems(interfaces);
                         managementModel.getInterface()
-                                .setSelectedItem(Linq.findInterfaceByName(Linq.vdsNetworkInterfaceListToBase(interfaces),
-                                        defaultInterfaceName));
+                                .setSelectedItem(Linq.findInterfaceByName(interfaces, defaultInterfaceName));
                         if (item.getBonded() != null && item.getBonded().equals(true))
                         {
                             managementModel.getInterface().setTitle(ConstantsManager.getInstance()
@@ -1459,10 +1457,9 @@ public class HostInterfaceListModel extends SearchableListModel
             ArrayList<Network> networksToAdd,
             boolean isAnyManagement)
     {
-        ArrayList<NetworkInterface> baseSelectedItems =
-                Linq.vdsNetworkInterfaceListToBase(getSelectedItemsWithVlans());
+
         VdsNetworkInterface interfaceWithNetwork =
-                (VdsNetworkInterface) Linq.findInterfaceNetworkNameNotEmpty(baseSelectedItems);
+                Linq.findInterfaceNetworkNameNotEmpty(getSelectedItemsWithVlans());
 
         innerBondModel.getCheckConnectivity().setIsChangable(interfaceWithNetwork != null);
         innerBondModel.getCheckConnectivity().setIsAvailable(interfaceWithNetwork != null
@@ -1556,8 +1553,7 @@ public class HostInterfaceListModel extends SearchableListModel
         Network net = (Network) model.getNetwork().getSelectedItem();
 
         // Interface interfaceWithNetwork = items.FirstOrDefault(a => !string.IsNullOrEmpty(a.network_name));
-        VdsNetworkInterface interfaceWithNetwork =
-                (VdsNetworkInterface) Linq.findInterfaceNetworkNameNotEmpty(Linq.vdsNetworkInterfaceListToBase(selectedItems));
+        VdsNetworkInterface interfaceWithNetwork = Linq.findInterfaceNetworkNameNotEmpty(selectedItems);
 
         // look for lines with vlans
         ArrayList<HostInterfaceLineModel> itemList =
@@ -1837,8 +1833,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         String nicName = (String) model.getEntity();
         final VdsNetworkInterface nic =
-                (VdsNetworkInterface) Linq.findInterfaceByName(Linq.vdsNetworkInterfaceListToBase(getAllItems()),
-                        nicName);
+                (VdsNetworkInterface) Linq.findInterfaceByName(getAllItems(), nicName);
 
         if (nic == null)
         {
@@ -2111,8 +2106,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
         String nicName = (String) model.getEntity();
         final VdsNetworkInterface nic =
-                (VdsNetworkInterface) Linq.findInterfaceByName(Linq.<NetworkInterface> cast(getInterfaceItems()),
-                        nicName);
+                (VdsNetworkInterface) Linq.findInterfaceByName(getInterfaceItems(), nicName);
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -2206,7 +2200,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 && host.getStatus() != VDSStatus.NonResponsive
                 && selectedItems.size() >= 2
                 && !isAnyBond(selectedItems)
-                && Linq.findAllInterfaceNetworkNameNotEmpty(Linq.vdsNetworkInterfaceListToBase(selectedItems)).size() <= 1
+                && Linq.findAllInterfaceNetworkNameNotEmpty(selectedItems).size() <= 1
                 && Linq.findAllInterfaceBondNameIsEmpty(selectedItems).size() == selectedItems.size()
                 && Linq.findAllInterfaceVlanIdIsEmpty(selectedItems).size() == selectedItems.size());
 

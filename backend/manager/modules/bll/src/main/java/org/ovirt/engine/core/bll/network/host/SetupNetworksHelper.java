@@ -106,7 +106,7 @@ public class SetupNetworksHelper {
      */
     private void validateMTU() {
         Map<String, VdsNetworkInterface> ifacesByNetworkName =
-                Entities.interfacesByNetworkName(params.getInterfaces());
+                Entities.hostInterfacesByNetworkName(params.getInterfaces());
         Set<String> checkedNetworks = new HashSet<String>(getNetworks().size());
 
         for (Network network : getNetworks()) {

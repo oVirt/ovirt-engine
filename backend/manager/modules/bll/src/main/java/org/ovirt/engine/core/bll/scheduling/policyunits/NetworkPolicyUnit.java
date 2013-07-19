@@ -47,7 +47,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                     validateRequiredNetworksAvailable(host, vm, vmNICs, clusterNetworks, networksByName);
             if (VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS == returnValue) {
                 StringBuilder sbBuilder = new StringBuilder();
-                sbBuilder.append(Entities.interfacesByNetworkName(vmNICs).keySet());
+                sbBuilder.append(Entities.vmInterfacesByNetworkName(vmNICs).keySet());
                 log.debugFormat("host {0} is missing networks required by VM nics {1}",
                         host.getName(),
                         sbBuilder.toString());
