@@ -21,7 +21,10 @@ _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine')
 
 
 import config
-import service
+
+
+from ovirt_engine import configfile
+from ovirt_engine import service
 
 
 class Daemon(service.Daemon):
@@ -105,7 +108,7 @@ class Daemon(service.Daemon):
                 )
             )
 
-        self._config = service.ConfigFile(
+        self._config = configfile.ConfigFile(
             (
                 config.ENGINE_NOTIFIER_DEFAULT_FILE,
                 config.ENGINE_NOTIFIER_VARS,

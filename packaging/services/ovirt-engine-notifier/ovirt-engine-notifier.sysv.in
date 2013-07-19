@@ -14,8 +14,8 @@
 # Source function library.
 . /etc/rc.d/init.d/functions
 
-NAME="ovirt-websocket-proxy"
-PROG="oVirt Engine websockets proxy"
+NAME="ovirt-engine-notifier"
+PROG="oVirt Engine Notifier"
 
 [ -f "/etc/sysconfig/${NAME}" ] && . "/etc/sysconfig/${NAME}"
 
@@ -34,11 +34,10 @@ case "$1" in
 		fi
 		echo -n $"Starting $PROG: "
 		ulimit -n ${FILENO:-65535}
-		ulimit -n ${NPROC:-2048}
 		touch "${PIDFILE}"
 		chown "${USER}" "${PIDFILE}"
 		daemon --user "${USER}" --pidfile="${PIDFILE}" \
-			"${ENGINE_USR}/services/${NAME}.py" \
+			"${ENGINE_USR}/services/${NAME}/${NAME}.py" \
 				--pidfile="${PIDFILE}" \
 				--background \
 				--redirect-output \

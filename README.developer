@@ -159,7 +159,7 @@ Most utilities and services are operational, including PKI, host deploy.
 
 To start/stop the engine service use:
 
-$ $HOME/ovirt-engine/share/ovirt-engine/services/ovirt-engine.py start
+$ $HOME/ovirt-engine/share/ovirt-engine/services/ovirt-engine/ovirt-engine.py start
 
 While the service is running, this command will not exit.
 Press <Ctrl>-C to stop service.

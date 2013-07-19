@@ -20,6 +20,7 @@
 
 
 import os
+import logging
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -58,6 +59,7 @@ class Plugin(plugin.PluginBase):
                 )
             )
         )
+        logging.getLogger('ovirt').setLevel(logging.DEBUG)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,

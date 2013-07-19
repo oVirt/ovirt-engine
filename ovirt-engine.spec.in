@@ -196,17 +196,26 @@ Requires: ovirt-log-collector >= 3.3.0
 system that provides advanced capabilities for managing the Open
 virtualization infrastructure for Servers and Desktops.
 
+%package lib
+Summary: %{product_name_short} library
+Group: Virtualization/Management
+Requires: python-daemon
+
+%description lib
+%{product_name_short} library
+
 
 %package backend
 Summary: Engine core of %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
+Requires: %{name}-lib
 Requires: java
-Requires: python-daemon
 Requires: openssl
 Requires: logrotate
 Requires: novnc
 Requires: ovirt-host-deploy-java >= 1.1.0
+Requires: python-cheetah
 
 %if %{install_systemd}
 Requires(post): systemd
@@ -242,6 +251,7 @@ The RESTful API for %{product_name_short}
 Summary: Setup and upgrade scripts for %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name}
+Requires: %{name}-lib
 Requires: libselinux-python
 Requires: libxml2-python
 Requires: lsof
@@ -295,9 +305,9 @@ The web administration interface to %{product_name_short}
 Summary: %{product_name_short} Tools
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
+Requires: %{name}-lib
 Requires: logrotate
 Requires: java
-Requires: python-daemon
 
 %if %{install_systemd}
 Requires(post): systemd
@@ -348,10 +358,9 @@ fi
 %package websocket-proxy
 Summary: %{product_name_short} Websocket Proxy
 Group: Virtualization/Management
-Requires: python-daemon
 Requires: python-websockify
 Requires: m2crypto
-Requires: %{name}
+Requires: %{name}-lib
 
 %if %{install_systemd}
 Requires(post): systemd
@@ -481,17 +490,17 @@ done
 # Install the systemd files:
 %if %{install_systemd}
 install -dm 755 "%{buildroot}%{_unitdir}"
-cp "%{buildroot}%{engine_data}/services/ovirt-engine.systemd" "%{buildroot}%{_unitdir}/ovirt-engine.service"
-cp "%{buildroot}%{engine_data}/services/ovirt-engine-notifier.systemd" "%{buildroot}%{_unitdir}/ovirt-engine-notifier.service"
-cp "%{buildroot}%{engine_data}/services/ovirt-websocket-proxy.systemd" "%{buildroot}%{_unitdir}/ovirt-websocket-proxy.service"
+for service in ovirt-engine ovirt-engine-notifier ovirt-websocket-proxy; do
+  cp "%{buildroot}%{engine_data}/services/${service}/${service}.systemd" "%{buildroot}%{_unitdir}/${service}.service"
+done
 %endif
 
 # Install System V init scripts:
-%if %{install_systemv}
 install -dm 755 "%{buildroot}%{_initddir}"
-cp "%{buildroot}%{engine_data}/services/ovirt-engine.sysv" "%{buildroot}%{_initddir}/ovirt-engine"
-cp "%{buildroot}%{engine_data}/services/ovirt-engine-notifier.sysv" "%{buildroot}%{_initddir}/ovirt-engine-notifier"
-cp "%{buildroot}%{engine_data}/services/ovirt-websocket-proxy.sysv" "%{buildroot}%{_initddir}/ovirt-websocket-proxy"
+%if %{install_systemv}
+for service in ovirt-engine ovirt-engine-notifier ovirt-websocket-proxy; do
+  cp "%{buildroot}%{engine_data}/services/${service}/${service}.sysv" "%{buildroot}%{_initddir}/${service}"
+done
 %endif
 
 # backward compatibly (pre-3.3.0)
@@ -626,11 +635,6 @@ fi
 %config(noreplace) %{engine_etc}/engine.conf
 %dir %{engine_etc}/engine.conf.d
 
-# Services common
-%{engine_data}/services/__init__.py*
-%{engine_data}/services/config.py*
-%{engine_data}/services/service.py*
-
 # branding
 %dir %{engine_etc}/branding
 %dir %{engine_data}/branding
@@ -667,6 +671,11 @@ fi
 %doc LICENSE
 
 
+%files lib
+%dir %{python_sitelib}/ovirt_engine
+%{python_sitelib}/ovirt_engine
+
+
 %files backend
 
 # Directory for binaries and scripts:
@@ -676,8 +685,7 @@ fi
 
 # Files needed by the service:
 %config %{_sysconfdir}/logrotate.d/ovirt-engine
-%{engine_data}/services/ovirt-engine.*
-%{engine_data}/services/ovirt-engine-logging.properties.in
+%{engine_data}/services/ovirt-engine
 %if %{install_systemd}
 %{_unitdir}/ovirt-engine.service
 %endif
@@ -876,7 +884,7 @@ fi
 %files websocket-proxy
 %dir %{engine_etc}/ovirt-websocket-proxy.conf.d
 %{engine_data}/conf/ovirt-websocket-proxy.conf.defaults
-%{engine_data}/services/ovirt-websocket-proxy.*
+%{engine_data}/services/ovirt-websocket-proxy
 
 # Files needed by the service:
 %if %{install_systemd}
@@ -918,7 +926,7 @@ fi
 %ghost %config(noreplace) %{engine_etc}/notifier/notifier.conf
 %dir %{engine_etc}/notifier/notifier.conf.d
 %config %{engine_etc}/notifier/log4j.xml
-%{engine_data}/services/ovirt-engine-notifier.*
+%{engine_data}/services/ovirt-engine-notifier
 
 # Jar files:
 %{engine_java}/tools.jar

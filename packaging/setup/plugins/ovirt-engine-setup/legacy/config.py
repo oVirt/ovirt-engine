@@ -30,7 +30,9 @@ from otopi import constants as otopicons
 from otopi import filetransaction
 
 
-from ovirt_engine_setup import util as osetuputil
+from ovirt_engine import configfile
+
+
 from ovirt_engine_setup import constants as osetupcons
 
 
@@ -61,13 +63,13 @@ class Plugin(plugin.PluginBase):
                 self.environment[
                     osetupcons.ApacheEnv.CONFIGURE_ROOT_REDIRECTION
                 ] = True
-                config = osetuputil.ConfigFile([
+                config = configfile.ConfigFile([
                     filename,
                 ])
                 break
         if config is None:
             self.logger.debug('Upgrading from 3.3.z legacy')
-            config = osetuputil.ConfigFile([
+            config = configfile.ConfigFile([
                 osetupcons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG
             ])
 

@@ -6,7 +6,7 @@ After=network.service postgresql.service
 Type=simple
 User=@ENGINE_USER@
 Group=@ENGINE_GROUP@
-ExecStart=@ENGINE_USR@/services/ovirt-engine-notifier.py --redirect-output $EXTRA_ARGS start
+ExecStart=@ENGINE_USR@/services/ovirt-engine-notifier/ovirt-engine-notifier.py --redirect-output $EXTRA_ARGS start
 EnvironmentFile=-/etc/sysconfig/ovirt-engine-notifier
 
 [Install]

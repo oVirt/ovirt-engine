@@ -17,6 +17,7 @@
 
 import glob
 import os
+import sys
 import re
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine')
@@ -26,7 +27,10 @@ from Cheetah.Template import Template
 
 
 import config
-import service
+
+
+from ovirt_engine import configfile
+from ovirt_engine import service
 
 
 class Daemon(service.Daemon):
@@ -243,7 +247,7 @@ class Daemon(service.Daemon):
                 )
             )
 
-        self._config = service.ConfigFile(
+        self._config = configfile.ConfigFile(
             (
                 config.ENGINE_DEFAULT_FILE,
                 config.ENGINE_VARS,
@@ -294,8 +298,7 @@ class Daemon(service.Daemon):
 
         jbossBootLoggingFile = self._processTemplate(
             template=os.path.join(
-                self._config.get('ENGINE_USR'),
-                'services',
+                os.path.dirname(sys.argv[0]),
                 'ovirt-engine-logging.properties.in'
             ),
             dir=jbossConfigDir,
@@ -303,8 +306,7 @@ class Daemon(service.Daemon):
 
         jbossConfigFile = self._processTemplate(
             template=os.path.join(
-                self._config.get('ENGINE_USR'),
-                'services',
+                os.path.dirname(sys.argv[0]),
                 'ovirt-engine.xml.in',
             ),
             dir=jbossConfigDir,

@@ -26,13 +26,14 @@ _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine')
 
 
 from M2Crypto import X509
+import websockify
 
 
-import service
 import config
 
 
-import websockify
+from ovirt_engine import configfile
+from ovirt_engine import service
 
 
 class OvirtWebSocketProxy(websockify.WebSocketProxy):
@@ -135,7 +136,7 @@ class Daemon(service.Daemon):
                 )
             )
 
-        self._config = service.ConfigFile(
+        self._config = configfile.ConfigFile(
             (
                 config.ENGINE_WSPROXY_DEFAULT_FILE,
                 config.ENGINE_WSPROXY_VARS,

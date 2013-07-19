@@ -1,4 +1,5 @@
-# Copyright 2012 Red Hat
+#
+# Copyright 2013 Red Hat
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -11,14 +12,37 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+#
 
 
-ENGINE_DEFAULT_FILE = '@ENGINE_DEFAULTS@'
-ENGINE_VARS = '@ENGINE_VARS@'
-ENGINE_NOTIFIER_DEFAULT_FILE = '@ENGINE_NOTIFIER_DEFAULTS@'
-ENGINE_NOTIFIER_VARS = '@ENGINE_NOTIFIER_VARS@'
-ENGINE_WSPROXY_DEFAULT_FILE = '@ENGINE_WSPROXY_DEFAULT_FILE@'
-ENGINE_WSPROXY_VARS = '@ENGINE_WSPROXY_VARS@'
+"""Base class for project."""
+
+
+import logging
+
+
+from . import util
+
+
+@util.export
+class Base(object):
+    """Base class for all objects."""
+
+    _LOG_PREFIX = 'ovirt.engine.'
+
+    @property
+    def logger(self):
+        """Logger."""
+        return self._logger
+
+    def __init__(self):
+        """Contructor."""
+
+        prefix = ''
+        if not self.__module__.startswith(self._LOG_PREFIX):
+            prefix = self._LOG_PREFIX
+
+        self._logger = logging.getLogger(prefix + self.__module__)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

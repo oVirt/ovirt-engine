@@ -64,6 +64,7 @@ PKG_STATE_DIR=$(LOCALSTATE_DIR)/lib/$(ENGINE_NAME)
 SPICE_DIR=/usr/share/spice
 JBOSS_HOME=/usr/share/jboss-as
 PYTHON_DIR=$(PYTHON_SYS_DIR)
+DEV_PYTHON_DIR=
 PKG_USER=ovirt
 PKG_GROUP=ovirt
 #
@@ -142,6 +143,7 @@ BUILD_TARGET=install
 	-e "s|@ENGINE_VAR@|$(PKG_STATE_DIR)|g" \
 	-e "s|@ENGINE_CACHE@|$(PKG_CACHE_DIR)|g" \
 	-e "s|@ENGINE_PID@|$(PID_DIR)/$(ENGINE_NAME).pid|g" \
+	-e "s|@DEV_PYTHON_DIR@|$(DEV_PYTHON_DIR)|g" \
 	-e "s|@RPM_VERSION@|$(RPM_VERSION)|g" \
 	-e "s|@RPM_RELEASE@|$(RPM_RELEASE)|g" \
 	-e "s|@PACKAGE_NAME@|$(PACKAGE_NAME)|g" \
@@ -164,13 +166,16 @@ GENERATED = \
 	packaging/etc/notifier/log4j.xml \
 	packaging/sys-etc/logrotate.d/ovirt-engine \
 	packaging/sys-etc/logrotate.d/ovirt-engine-notifier \
-	packaging/services/config.py \
-	packaging/services/ovirt-engine.systemd \
-	packaging/services/ovirt-engine.sysv \
-	packaging/services/ovirt-engine-notifier.systemd \
-	packaging/services/ovirt-engine-notifier.sysv \
-	packaging/services/ovirt-websocket-proxy.systemd \
-	packaging/services/ovirt-websocket-proxy.sysv \
+	packaging/services/ovirt-engine-notifier/config.py \
+	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.systemd \
+	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.sysv \
+	packaging/services/ovirt-engine/config.py \
+	packaging/services/ovirt-engine/ovirt-engine.systemd \
+	packaging/services/ovirt-engine/ovirt-engine.sysv \
+	packaging/services/ovirt-websocket-proxy/config.py \
+	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.systemd \
+	packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.sysv \
+	packaging/setup/bin/ovirt-engine-setup.env \
 	packaging/setup/ovirt_engine_setup/config.py \
 	packaging/bin/ovirt-engine-log-setup-event.sh \
 	ovirt-engine.spec \
@@ -183,9 +188,9 @@ all: \
 	$(NULL)
 
 generated-files:	$(GENERATED)
-	chmod a+x packaging/services/ovirt-engine.sysv
-	chmod a+x packaging/services/ovirt-engine-notifier.sysv
-	chmod a+x packaging/services/ovirt-websocket-proxy.sysv
+	chmod a+x packaging/services/ovirt-engine/ovirt-engine.sysv
+	chmod a+x packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.sysv
+	chmod a+x packaging/services/ovirt-websocket-proxy/ovirt-websocket-proxy.sysv
 	chmod a+x packaging/bin/ovirt-engine-log-setup-event.sh
 
 # support force run of maven
@@ -342,6 +347,7 @@ install-packaging-files: \
 		$(MAKE) copy-recursive SOURCEDIR="packaging/$${d}" TARGETDIR="$(DESTDIR)$(DATA_DIR)/$${d}" EXCLUDE_GEN="$(GENERATED)"; \
 	done
 	$(MAKE) copy-recursive SOURCEDIR=packaging/man TARGETDIR="$(DESTDIR)$(MAN_DIR)" EXCLUDE_GEN="$(GENERATED)"
+	$(MAKE) copy-recursive SOURCEDIR=packaging/pythonlib TARGETDIR="$(DESTDIR)$(PYTHON_DIR)" EXCLUDE_GEN="$(GENERATED)"
 
 	# we should avoid make these directories dirty
 	$(MAKE) copy-recursive SOURCEDIR=packaging/dbscripts TARGETDIR="$(DESTDIR)$(DATA_DIR)/dbscripts" \
@@ -429,6 +435,7 @@ all-dev:
 	$(MAKE) \
 		all \
 		BUILD_DEV=1 \
+		DEV_PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
 		$(NULL)
 
 install-dev:	\

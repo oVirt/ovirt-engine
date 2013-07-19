@@ -28,8 +28,10 @@ from otopi import util
 from otopi import plugin
 
 
+from ovirt_engine import configfile
+
+
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup import database
 
 
@@ -92,7 +94,7 @@ class Plugin(plugin.PluginBase):
         ] != osetupcons.Const.ACTION_SETUP,
     )
     def _setup(self):
-        config = osetuputil.ConfigFile([
+        config = configfile.ConfigFile([
             osetupcons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG
         ])
         if config.get('ENGINE_DB_PASSWORD') is not None:

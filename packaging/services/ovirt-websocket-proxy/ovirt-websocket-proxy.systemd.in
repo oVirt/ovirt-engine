@@ -7,7 +7,8 @@ User=@ENGINE_USER@
 Group=@ENGINE_GROUP@
 LimitNOFILE=65535
 LimitNPROC=2048
-ExecStart=@ENGINE_USR@/services/ovirt-websocket-proxy.py $EXTRA_ARGS start
+ExecStart=@ENGINE_USR@/services/ovirt-websocket-proxy/ovirt-websocket-proxy.py $EXTRA_ARGS start
+EnvironmentFile=-/etc/sysconfig/ovirt-websocket-proxy
 
 [Install]
 WantedBy=multi-user.target
