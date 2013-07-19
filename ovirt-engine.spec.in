@@ -295,6 +295,7 @@ The web administration interface to %{product_name_short}
 Summary: %{product_name_short} Tools
 Group: Virtualization/Management
 Requires: %{name} = %{version}-%{release}
+Requires: logrotate
 Requires: java
 Requires: python-daemon
 
@@ -912,6 +913,7 @@ fi
 %{engine_etc}/engine-manage-domains/log4j.xml
 
 # Configuration files for the notifier:
+%config %{_sysconfdir}/logrotate.d/ovirt-engine-notifier
 %dir %{engine_etc}/notifier
 %ghost %config(noreplace) %{engine_etc}/notifier/notifier.conf
 %dir %{engine_etc}/notifier/notifier.conf.d

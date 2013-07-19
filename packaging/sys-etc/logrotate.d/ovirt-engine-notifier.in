@@ -1,0 +1,8 @@
+"@ENGINE_LOG@/notifier/notifier.log" {
+	daily
+	minsize 10M
+	missingok
+	copytruncate
+	rotate 5
+	compress
+}

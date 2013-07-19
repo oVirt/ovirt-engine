@@ -3,11 +3,9 @@
 <log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/" debug="false">
 
     <!-- Log levels:DEBUG,INFO,WARN,ERROR,FATAL -->
-    <appender name="FILE" class="org.apache.log4j.RollingFileAppender">
+    <appender name="FILE" class="org.apache.log4j.FileAppender">
         <param name="File" value="@ENGINE_LOG@/notifier/notifier.log" />
         <param name="Append" value="true" />
-        <param name="MaxFileSize" value="10000KB" />
-        <param name="MaxBackupIndex" value="5" />
 
         <layout class="org.apache.log4j.PatternLayout">
             <param name="ConversionPattern" value="%d %-5p [%c] %m%n" />
