@@ -655,18 +655,36 @@ class MiniYum(object):
                             try:
                                 self._yb.repos.populateSack(
                                     mdtype='all',
-                                    cacheonly=1
+                                    cacheonly=1,
                                 )
+                            except Exception as e:
+                                self._sink.verbose(
+                                    _(
+                                        'Cannot switch to offline: {error}'
+                                    ).format(
+                                        error=e,
+                                    )
+                                )
+                            try:
                                 del self._yb.tsInfo
                                 del self._yb.ts
                                 if self._yb.history_undo(transactionCurrent):
                                     if self.buildTransaction():
                                         self.processTransaction()
                             finally:
-                                self._yb.repos.populateSack(
-                                    mdtype='all',
-                                    cacheonly=0
-                                )
+                                try:
+                                    self._yb.repos.populateSack(
+                                        mdtype='all',
+                                        cacheonly=0,
+                                    )
+                                except Exception as e:
+                                    self._sink.verbose(
+                                        _(
+                                            'Cannot switch to online: {error}'
+                                        ).format(
+                                            error=e,
+                                        )
+                                    )
 
             except:
                 self._sink.error(
