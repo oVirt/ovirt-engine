@@ -1244,10 +1244,10 @@ public class ClusterModel extends EntityModel
 
     public boolean validate(boolean validateCpu)
     {
-        return validate(true, validateCpu);
+        return validate(true, validateCpu, true);
     }
 
-    public boolean validate(boolean validateStoragePool, boolean validateCpu)
+    public boolean validate(boolean validateStoragePool, boolean validateCpu, boolean validateCustomProperties)
     {
         getName().validateEntity(new IValidation[] {
                 new NotEmptyValidation(),
@@ -1266,6 +1266,10 @@ public class ClusterModel extends EntityModel
         else
         {
             getCPU().validateSelectedItem(new IValidation[] {});
+        }
+
+        if (validateCustomProperties) {
+            getCustomPropertySheet().setIsValid(getCustomPropertySheet().validate());
         }
 
         getVersion().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
@@ -1317,7 +1321,7 @@ public class ClusterModel extends EntityModel
                 && getGlusterHostPassword().getIsValid()
                 && ((Boolean) getIsImportGlusterConfiguration().getEntity() ? (getGlusterHostAddress().getIsValid()
                         && getGlusterHostPassword().getIsValid()
-                        && isFingerprintVerified()) : true) && getCustomPropertySheet().validate();
+                        && isFingerprintVerified()) : true) && getCustomPropertySheet().getIsValid();
     }
 
 }

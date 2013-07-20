@@ -207,7 +207,7 @@ public class ConfigureLocalStorageModel extends Model {
         }
         boolean isClusterValid = true;
         if (getCandidateCluster() == null) {
-            isClusterValid = getCluster().validate(false, true);
+            isClusterValid = getCluster().validate(false, true, false);
         }
 
         setIsGeneralTabValid(isStorageValid && isDataCenterValid && isClusterValid);
