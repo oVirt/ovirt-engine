@@ -91,6 +91,7 @@ public class VdsDeploy implements SSHDialog.Sink {
 
     private VDS _vds;
     private boolean _isNode = false;
+    private boolean _isLegacyNode = false;
     private boolean _reboot = false;
     private String _correlationId = null;
     private Exception _failException = null;
@@ -276,6 +277,17 @@ public class VdsDeploy implements SSHDialog.Sink {
             return null;
         }},
         new Callable<Object>() { public Object call() throws Exception {
+            if (_isNode) {
+                _isLegacyNode = (Boolean)_parser.cliEnvironmentGet(
+                    VdsmEnv.OVIRT_NODE_HAS_OWN_BRIDGES
+                );
+            }
+            else {
+                _parser.cliNoop();
+            }
+            return null;
+        }},
+        new Callable<Object>() { public Object call() throws Exception {
             _messages.post(
                 InstallerMessages.Severity.INFO,
                 String.format(
@@ -375,17 +387,17 @@ public class VdsDeploy implements SSHDialog.Sink {
                     VdsmEnv.MANAGEMENT_BRIDGE_NAME,
                     _managementNetwork
                 );
-             }
-            else if (_isNode) {
+            }
+            else if (_isLegacyNode) {
                 _parser.cliEnvironmentSet(
                     VdsmEnv.MANAGEMENT_BRIDGE_NAME,
                     NetworkUtils.getEngineNetwork()
                 );
             }
             else {
-                 _parser.cliNoop();
-             }
-             return null;
+                _parser.cliNoop();
+            }
+            return null;
         }},
         new Callable<Object>() {
             public Object call() throws Exception {
