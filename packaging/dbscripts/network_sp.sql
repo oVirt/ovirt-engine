@@ -546,21 +546,6 @@ LANGUAGE plpgsql;
 
 
 
-
-
-Create or replace FUNCTION Getvm_interfaceByvm_guidAndByvmt_guid(v_vm_guid UUID,
-	v_vmt_guid UUID) RETURNS SETOF vm_interface
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT *
-   FROM vm_interface
-   WHERE VM_GUID = v_vm_guid AND VMT_GUID = v_vmt_guid;
-
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
 Create or replace FUNCTION GetPluggedVmInterfacesByMac(v_mac_address VARCHAR(20))
 RETURNS SETOF vm_interface_view
    AS $procedure$

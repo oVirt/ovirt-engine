@@ -841,25 +841,29 @@ CREATE OR REPLACE VIEW vds_interface_view AS
 CREATE OR REPLACE VIEW vm_interface_view AS
   SELECT vm_interface_statistics.rx_rate, vm_interface_statistics.tx_rate, vm_interface_statistics.rx_drop,
       vm_interface_statistics.tx_drop, vm_interface_statistics.iface_status, vm_interface.type, vm_interface.speed,
-      vm_interface.mac_addr, vm_interface.network_name, vm_interface.name, vm_interface.vnic_profile_id, vm_static.vm_guid, vm_interface.vmt_guid,
+      vm_interface.mac_addr, network.name AS network_name, vm_interface.name, vm_interface.vnic_profile_id, vm_static.vm_guid, vm_interface.vmt_guid,
       vm_static.vm_name, vm_interface.id, 0 AS boot_protocol, 0 AS is_vds, vm_device.is_plugged,
-      vm_device.custom_properties, vm_interface.port_mirroring, vm_interface.linked,
+      vm_device.custom_properties, vnic_profiles.port_mirroring AS port_mirroring, vm_interface.linked,
       vm_static.vds_group_id AS vds_group_id, vm_static.entity_type AS vm_entity_type
   FROM vm_interface_statistics
   JOIN vm_interface ON vm_interface_statistics.id = vm_interface.id
   JOIN vm_static ON vm_interface.vm_guid = vm_static.vm_guid
   JOIN vm_device ON vm_interface.vm_guid = vm_device.vm_id AND vm_interface.id = vm_device.device_id
+  LEFT JOIN vnic_profiles ON vnic_profiles.id = vm_interface.vnic_profile_id
+  JOIN network ON network.id = vnic_profiles.network_id
   UNION
   SELECT vm_interface_statistics.rx_rate, vm_interface_statistics.tx_rate, vm_interface_statistics.rx_drop,
       vm_interface_statistics.tx_drop, vm_interface_statistics.iface_status, vm_interface.type, vm_interface.speed,
-      vm_interface.mac_addr, vm_interface.network_name, vm_interface.name, vm_interface.vnic_profile_id, NULL::uuid as vm_guid,
+      vm_interface.mac_addr, network.name AS network_name, vm_interface.name, vm_interface.vnic_profile_id, NULL::uuid as vm_guid,
       vm_interface.vmt_guid, vm_templates.vm_name AS vm_name, vm_interface.id, 0 AS boot_protocol, 0 AS is_vds,
-      vm_device.is_plugged as is_plugged, vm_device.custom_properties as custom_properties, vm_interface.port_mirroring,
+      vm_device.is_plugged as is_plugged, vm_device.custom_properties as custom_properties, vnic_profiles.port_mirroring AS port_mirroring,
       vm_interface.linked, vm_templates.vds_group_id AS vds_group_id, vm_templates.entity_type AS vm_entity_type
   FROM vm_interface_statistics
   RIGHT JOIN vm_interface ON vm_interface_statistics.id = vm_interface.id
   JOIN vm_static AS vm_templates ON vm_interface.vmt_guid = vm_templates.vm_guid
-  JOIN vm_device ON vm_interface.vmt_guid = vm_device.vm_id AND vm_interface.id = vm_device.device_id;
+  JOIN vm_device ON vm_interface.vmt_guid = vm_device.vm_id AND vm_interface.id = vm_device.device_id
+  LEFT JOIN vnic_profiles ON vnic_profiles.id = vm_interface.vnic_profile_id
+  JOIN network ON network.id = vnic_profiles.network_id;
 ----------------------------------------------
 -- Event Notification Views
 ----------------------------------------------
@@ -1479,19 +1483,6 @@ AS
 SELECT device_id, vm_id, type, device, address, boot_order, spec_params,
        is_managed, is_plugged, is_readonly, alias, custom_properties
   FROM vm_device;
-
-CREATE OR REPLACE VIEW vm_interface_ext_view
-AS
-SELECT vm_interface_view.*,
-       network.id as network_id,
-       network_cluster.cluster_id as cluster_id,
-       network.storage_pool_id as data_center_id
-FROM vm_interface_view
-INNER JOIN network_cluster
-ON network_cluster.cluster_id = vm_interface_view.vds_group_id
-INNER JOIN network
-ON network.id = network_cluster.network_id
-AND network.name = vm_interface_view.network_name;
 
 -- Permissions on VNIC Profiles
 -- The user has permissions on the Profile directly

@@ -278,22 +278,24 @@ where
 
 CREATE OR REPLACE VIEW dwh_vm_interface_configuration_history_view
 AS
-SELECT     	id AS vm_interface_id,
-			name AS vm_interface_name,
-			vm_guid AS vm_id,
-			cast(type as smallint) as vm_interface_type,
-			speed as vm_interface_speed_bps,
-			mac_addr AS mac_address,
- 			network_name,
-			_create_date AS create_date,
-            _update_date AS update_date
-FROM         vm_interface
+SELECT     	vm_interface.id AS vm_interface_id,
+            vm_interface.name AS vm_interface_name,
+            vm_interface.vm_guid AS vm_id,
+            cast(vm_interface.type as smallint) as vm_interface_type,
+            vm_interface.speed as vm_interface_speed_bps,
+            vm_interface.mac_addr AS mac_address,
+            network.name AS network_name,
+            vm_interface._create_date AS create_date,
+            vm_interface._update_date AS update_date
+FROM        vm_interface
+            LEFT OUTER JOIN (vnic_profiles JOIN network ON network.id = vnic_profiles.network_id)
+            ON vnic_profiles.id = vm_interface.vnic_profile_id
 WHERE     vmt_guid IS NULL AND
-         ((_create_date >
+          ((vm_interface._create_date >
                           (SELECT     var_datetime
                            FROM          dwh_history_timekeeping
                            WHERE      (var_name = 'lastSync'))) OR
-          (_update_date >
+          (vm_interface._update_date >
                           (SELECT     var_datetime
                            FROM          dwh_history_timekeeping AS history_timekeeping_1
                            WHERE      (var_name = 'lastSync'))));
