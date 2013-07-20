@@ -155,7 +155,6 @@ Requires: ntp
 Requires: openssl
 Requires: policycoreutils-python
 Requires: python-cheetah
-Requires: ovirt-host-deploy-java
 Requires: yum-plugin-versionlock
 # We could drop these conflicts when we'll drop Requires: mod_ssl
 Conflicts: ipa-server
@@ -207,6 +206,7 @@ Requires: python-daemon
 Requires: openssl
 Requires: logrotate
 Requires: novnc
+Requires: ovirt-host-deploy-java >= 1.1.0
 
 %if %{install_systemd}
 Requires(post): systemd
