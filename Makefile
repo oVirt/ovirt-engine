@@ -302,9 +302,9 @@ install_artifacts:
 	# won't get artifacts of older branches
 	# we should use search MAVEN_OUTPUT_DIR as it may contain
 	# pre-compiled artifacts at different hierarchy.
-	install -dm 0755 "$(PKG_JBOSS_MODULES)"
+	install -dm 0755 "$(DESTDIR)$(PKG_JBOSS_MODULES)"
 	find "$(MAVEN_OUTPUT_DIR)" -name '*-modules.zip' | grep -v tmp.repos | xargs -n 1 unzip -q -o -d "$(DESTDIR)$(PKG_JBOSS_MODULES)"
-	install -dm 0755 "$(PKG_EAR_DIR)"
+	install -dm 0755 "$(DESTDIR)$(PKG_EAR_DIR)"
 	find "$(MAVEN_OUTPUT_DIR)" -name '*.ear' -type f | grep -v tmp.repos | xargs -n 1 unzip -q -o -d "$(DESTDIR)$(PKG_EAR_DIR)"
 
 	# TODO: remove some day
