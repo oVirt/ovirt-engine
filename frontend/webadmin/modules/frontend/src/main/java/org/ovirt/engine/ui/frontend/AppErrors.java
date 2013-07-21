@@ -2275,6 +2275,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Mount path is illegal, please use [IP:/path or FQDN:/path] convention.")
     String VALIDATION_STORAGE_CONNECTION_INVALID();
 
+    @DefaultStringValue("NFS Retransmissions should be between 0 and 32767")
+    String VALIDATION_STORAGE_CONNECTION_NFS_RETRANS();
+
+    @DefaultStringValue("NFS Timeout should be between 1 and 6000")
+    String VALIDATION_STORAGE_CONNECTION_NFS_TIMEO();
+
     String VMPAYLOAD_INVALID_PAYLOAD_TYPE();
 
     String VMPAYLOAD_SIZE_EXCEEDED();

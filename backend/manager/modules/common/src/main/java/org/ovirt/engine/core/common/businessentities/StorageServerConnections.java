@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 public class StorageServerConnections implements Serializable {
     private static final long serialVersionUID = 5444293590307760809L;
@@ -158,6 +160,8 @@ public class StorageServerConnections implements Serializable {
         this.nfsVersion = nfsVersion;
     }
 
+    @Min(value = 1, message = "VALIDATION_STORAGE_CONNECTION_NFS_TIMEO")
+    @Max(value = 6000, message = "VALIDATION_STORAGE_CONNECTION_NFS_TIMEO")
     private Short nfsTimeo;
 
     public Short getNfsTimeo() {
@@ -168,6 +172,8 @@ public class StorageServerConnections implements Serializable {
         this.nfsTimeo = nfsTimeo;
     }
 
+    @Min(value = 0, message = "VALIDATION_STORAGE_CONNECTION_NFS_RETRANS")
+    @Max(value = Short.MAX_VALUE, message = "VALIDATION_STORAGE_CONNECTION_NFS_RETRANS")
     private Short nfsRetrans;
 
     @Override
