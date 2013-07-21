@@ -87,7 +87,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     }
 
     private void addInterfaceToDb(VmNetworkInterface vmNetworkInterface) {
-        getVmNetworkInterfaceDao().save(vmNetworkInterface);
+        getVmNicDao().save(vmNetworkInterface);
         getCompensationContext().snapshotNewEntity(vmNetworkInterface);
 
         getDbFacade().getVmNetworkStatisticsDao().save(vmNetworkInterface.getStatistics());

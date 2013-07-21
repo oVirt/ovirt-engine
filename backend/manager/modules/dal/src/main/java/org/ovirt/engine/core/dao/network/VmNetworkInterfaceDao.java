@@ -4,9 +4,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.GenericDao;
+import org.ovirt.engine.core.dao.ReadDao;
 
-public interface VmNetworkInterfaceDao extends GenericDao<VmNetworkInterface, Guid> {
+public interface VmNetworkInterfaceDao extends ReadDao<VmNetworkInterface, Guid> {
     /**
      * Retrieves all interfaces for the given VM id.
      *

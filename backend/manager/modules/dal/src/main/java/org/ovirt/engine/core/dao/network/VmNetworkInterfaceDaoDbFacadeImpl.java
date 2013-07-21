@@ -94,63 +94,19 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
     }
 
     @Override
-    public void save(VmNetworkInterface stats) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", stats.getId())
-                .addValue("mac_addr", stats.getMacAddress())
-                .addValue("name", stats.getName())
-                .addValue("network_name", stats.getNetworkName())
-                .addValue("speed", stats.getSpeed())
-                .addValue("vm_guid", stats.getVmId())
-                .addValue("vnic_profile_id", stats.getVnicProfileId())
-                .addValue("vmt_guid", stats.getVmTemplateId())
-                .addValue("type", stats.getType())
-                .addValue("port_mirroring", stats.isPortMirroring())
-                .addValue("linked", stats.isLinked());
-
-        getCallsHandler().executeModification("Insertvm_interface", parameterSource);
-    }
-
-    @Override
-    public void update(VmNetworkInterface iface) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", iface.getId())
-                .addValue("mac_addr", iface.getMacAddress())
-                .addValue("name", iface.getName())
-                .addValue("network_name", iface.getNetworkName())
-                .addValue("speed", iface.getSpeed())
-                .addValue("vm_guid", iface.getVmId())
-                .addValue("vnic_profile_id", iface.getVnicProfileId())
-                .addValue("vmt_guid", iface.getVmTemplateId())
-                .addValue("type", iface.getType())
-                .addValue("port_mirroring", iface.isPortMirroring())
-                .addValue("linked", iface.isLinked());
-
-        getCallsHandler().executeModification("Updatevm_interface", parameterSource);
-    }
-
-    @Override
-    public void remove(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("id", id);
-
-        getCallsHandler().executeModification("Deletevm_interface", parameterSource);
-    }
-
-    @Override
     public List<VmNetworkInterface> getAll() {
         return getCallsHandler().executeReadList("GetAllFromvm_interface", mapper, getCustomMapSqlParameterSource());
     }
 
     @Override
     public List<VmNetworkInterface> getAllForNetwork(Guid networkId) {
-        return getCallsHandler().executeReadList("GetVmInterfacesByNetworkId",
+        return getCallsHandler().executeReadList("GetVmInterfaceViewsByNetworkId",
                 mapper, getCustomMapSqlParameterSource().addValue("network_id", networkId));
     }
 
     @Override
     public List<VmNetworkInterface> getAllForTemplatesByNetwork(Guid networkId) {
-        return getCallsHandler().executeReadList("GetVmTemplateInterfacesByNetworkId",
+        return getCallsHandler().executeReadList("GetVmTemplateInterfaceViewsByNetworkId",
                 mapper, getCustomMapSqlParameterSource().addValue("network_id", networkId));
     }
 

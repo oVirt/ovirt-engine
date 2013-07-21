@@ -409,7 +409,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             iDynamic.setSpeed(iface.getSpeed());
             iDynamic.setType(iface.getType());
 
-            DbFacade.getInstance().getVmNetworkInterfaceDao().save(iDynamic);
+            getVmNicDao().save(iDynamic);
             getCompensationContext().snapshotNewEntity(iDynamic);
             DbFacade.getInstance().getVmNetworkStatisticsDao().save(iStat);
             getCompensationContext().snapshotNewEntity(iStat);
@@ -431,7 +431,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         List<VmNetworkInterface> list =
                 DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForTemplate(getVmTemplateId());
         for (VmNetworkInterface iface : list) {
-            DbFacade.getInstance().getVmNetworkInterfaceDao().remove(iface.getId());
+            DbFacade.getInstance().getVmNicDao().remove(iface.getId());
         }
     }
 

@@ -849,8 +849,7 @@ CREATE OR REPLACE VIEW vm_interface_view AS
   JOIN vm_interface ON vm_interface_statistics.id = vm_interface.id
   JOIN vm_static ON vm_interface.vm_guid = vm_static.vm_guid
   JOIN vm_device ON vm_interface.vm_guid = vm_device.vm_id AND vm_interface.id = vm_device.device_id
-  LEFT JOIN vnic_profiles ON vnic_profiles.id = vm_interface.vnic_profile_id
-  JOIN network ON network.id = vnic_profiles.network_id
+  LEFT JOIN (vnic_profiles JOIN network ON network.id = vnic_profiles.network_id) ON vnic_profiles.id = vm_interface.vnic_profile_id
   UNION
   SELECT vm_interface_statistics.rx_rate, vm_interface_statistics.tx_rate, vm_interface_statistics.rx_drop,
       vm_interface_statistics.tx_drop, vm_interface_statistics.iface_status, vm_interface.type, vm_interface.speed,
@@ -862,8 +861,7 @@ CREATE OR REPLACE VIEW vm_interface_view AS
   RIGHT JOIN vm_interface ON vm_interface_statistics.id = vm_interface.id
   JOIN vm_static AS vm_templates ON vm_interface.vmt_guid = vm_templates.vm_guid
   JOIN vm_device ON vm_interface.vmt_guid = vm_device.vm_id AND vm_interface.id = vm_device.device_id
-  LEFT JOIN vnic_profiles ON vnic_profiles.id = vm_interface.vnic_profile_id
-  JOIN network ON network.id = vnic_profiles.network_id;
+  LEFT JOIN (vnic_profiles JOIN network ON network.id = vnic_profiles.network_id) ON vnic_profiles.id = vm_interface.vnic_profile_id;
 ----------------------------------------------
 -- Event Notification Views
 ----------------------------------------------

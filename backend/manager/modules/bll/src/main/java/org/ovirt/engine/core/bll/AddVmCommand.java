@@ -653,7 +653,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             iface.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());
             iface.setVmTemplateId(null);
             iface.setVmId(getParameters().getVmStaticData().getId());
-            DbFacade.getInstance().getVmNetworkInterfaceDao().save(iface);
+            getVmNicDao().save(iface);
             getCompensationContext().snapshotNewEntity(iface);
             DbFacade.getInstance().getVmNetworkStatisticsDao().save(iface.getStatistics());
             getCompensationContext().snapshotNewEntity(iface.getStatistics());

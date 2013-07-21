@@ -189,8 +189,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 // if network not exists in cluster we remove the network to
                 // interface connection
                 if (net == null) {
-                    iface.setNetworkName(null);
-                    DbFacade.getInstance().getVmNetworkInterfaceDao().update(iface);
+                    iface.setVnicProfileId(null);
+                    getVmNicDao().update(iface);
                 }
 
             }

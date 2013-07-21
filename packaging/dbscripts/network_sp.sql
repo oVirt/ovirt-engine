@@ -445,69 +445,54 @@ LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
 -- [vm_interface] Table
---
-
-
-Create or replace FUNCTION Insertvm_interface(v_id UUID,
-	v_mac_addr VARCHAR(20) ,
-	v_name VARCHAR(50),
-	v_network_name VARCHAR(50) ,
-	v_speed INTEGER ,
-	v_vnic_profile_id UUID ,
-	v_vm_guid UUID ,
-	v_vmt_guid UUID ,
+----------------------------------------------------------------
+Create or replace FUNCTION InsertVmInterface(v_id UUID,
+    v_mac_addr VARCHAR(20) ,
+    v_name VARCHAR(50),
+    v_speed INTEGER ,
+    v_vnic_profile_id UUID ,
+    v_vm_guid UUID ,
+    v_vmt_guid UUID ,
     v_type INTEGER,
-    v_port_mirroring BOOLEAN,
     v_linked BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_interface(id, mac_addr, name, network_name, speed, vnic_profile_id, VM_GUID, VMT_GUID, type, port_mirroring, linked)
-	VALUES(v_id, v_mac_addr, v_name, v_network_name, v_speed, v_vnic_profile_id, v_vm_guid, v_vmt_guid, v_type, v_port_mirroring, v_linked);
+INSERT INTO vm_interface(id, mac_addr, name, speed, vnic_profile_id, vm_guid, vmt_guid, type, linked)
+       VALUES(v_id, v_mac_addr, v_name, v_speed, v_vnic_profile_id, v_vm_guid, v_vmt_guid, v_type, v_linked);
 END; $procedure$
 LANGUAGE plpgsql;
 
 
-
-
-
-Create or replace FUNCTION Updatevm_interface(v_id UUID,
-	v_mac_addr VARCHAR(20) ,
-	v_name VARCHAR(50),
-	v_network_name VARCHAR(50) ,
-	v_speed INTEGER ,
-	v_vnic_profile_id UUID ,
-	v_vm_guid UUID ,
-	v_vmt_guid UUID ,
+Create or replace FUNCTION UpdateVmInterface(v_id UUID,
+    v_mac_addr VARCHAR(20) ,
+    v_name VARCHAR(50),
+    v_speed INTEGER ,
+    v_vnic_profile_id UUID ,
+    v_vm_guid UUID ,
+    v_vmt_guid UUID ,
     v_type INTEGER,
-    v_port_mirroring BOOLEAN,
     v_linked BOOLEAN)
 RETURNS VOID
-
-	--The [vm_interface] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
    AS $procedure$
 BEGIN
       UPDATE vm_interface
-      SET mac_addr = v_mac_addr,name = v_name,network_name = v_network_name,
-      speed = v_speed, vnic_profile_id = v_vnic_profile_id, VM_GUID = v_vm_guid,VMT_GUID = v_vmt_guid,type = v_type,
-      _update_date = LOCALTIMESTAMP, port_mirroring = v_port_mirroring, linked = v_linked
+      SET mac_addr = v_mac_addr,name = v_name, speed = v_speed, vnic_profile_id = v_vnic_profile_id, vm_guid = v_vm_guid,
+      vmt_guid = v_vmt_guid,type = v_type, _update_date = LOCALTIMESTAMP, linked = v_linked
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
 
-
-
-
-Create or replace FUNCTION Deletevm_interface(v_id UUID)
+Create or replace FUNCTION DeleteVmInterface(v_id UUID)
 RETURNS VOID
    AS $procedure$
    DECLARE
    v_val  UUID;
 BEGIN
 
-	-- Get (and keep) a shared lock with "right to upgrade to exclusive"
-	-- in order to force locking parent before children
+   -- Get (and keep) a shared lock with "right to upgrade to exclusive"
+   -- in order to force locking parent before children
    select   id INTO v_val FROM vm_interface  WHERE id = v_id     FOR UPDATE;
 
    DELETE FROM vm_interface
@@ -517,20 +502,85 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-
-
-
-
-Create or replace FUNCTION GetAllFromvm_interface() RETURNS SETOF vm_interface_view
-   AS $procedure$
+Create or replace FUNCTION GetVmInterfaceByVmInterfaceId(v_id UUID) RETURNS SETOF vm_interface
+AS $procedure$
 BEGIN
-RETURN QUERY SELECT *
-   FROM vm_interface_view;
+   RETURN QUERY SELECT *
+   FROM vm_interface
+   WHERE id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetAllFromVmInterfaces() RETURNS SETOF vm_interface
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM vm_interface;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetVmInterfacesByVmId(v_vm_id UUID)
+RETURNS SETOF vm_interface
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM vm_interface
+   WHERE vm_guid = v_vm_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetVmInterfaceByTemplateId(v_template_id UUID)
+RETURNS SETOF vm_interface
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM vm_interface
+   WHERE vmt_guid = v_template_id;
 
 END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetVmInterfacesByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT vm_interface.*
+   FROM vm_interface
+   INNER JOIN vnic_profiles ON vm_interface.vnic_profile_id = vnic_profiles.id
+   INNER JOIN vm_static on vm_interface.vm_guid = vm_static.vm_guid
+   WHERE vnic_profiles.network_id = v_network_id
+   AND vm_static.entity_type = 'VM';
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetVmTemplateInterfacesByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT vm_interface.*
+   FROM vm_interface
+   INNER JOIN vm_static on vm_interface.vmt_guid = vm_static.vm_guid
+   INNER JOIN vnic_profiles ON vm_interface.vnic_profile_id = vnic_profiles.id
+   WHERE vnic_profiles.network_id = v_network_id
+   AND vm_static.entity_type  = 'TEMPLATE';
+END; $procedure$
+LANGUAGE plpgsql;
+
+----------------------------------------------------------------
+-- VM Interface View
+----------------------------------------------------------------
+
+Create or replace FUNCTION GetAllFromvm_interface() RETURNS SETOF vm_interface_view
+AS $procedure$
+BEGIN
+RETURN QUERY SELECT *
+FROM vm_interface_view;
+
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 
@@ -914,7 +964,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmInterfacesByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface_view
+Create or replace FUNCTION GetVmInterfaceViewsByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface_view
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT vm_interface_view.*
@@ -931,7 +981,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmTemplateInterfacesByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface_view
+Create or replace FUNCTION GetVmTemplateInterfaceViewsByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface_view
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT vm_interface_view.*

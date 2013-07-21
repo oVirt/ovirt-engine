@@ -83,7 +83,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 public Void runInTransaction() {
                     getCompensationContext().snapshotEntity(oldIface);
                     getCompensationContext().snapshotEntity(oldVmDevice);
-                    getVmNetworkInterfaceDao().update(getInterface());
+                    getVmNicDao().update(getInterface());
                     oldVmDevice.setCustomProperties(getInterface().getCustomProperties());
                     getDbFacade().getVmDeviceDao().update(oldVmDevice);
                     getCompensationContext().stateChanged();

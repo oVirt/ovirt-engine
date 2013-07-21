@@ -110,6 +110,7 @@ import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.NetworkViewDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
@@ -944,5 +945,14 @@ public class DbFacade {
      */
     public VnicProfileViewDao getVnicProfileViewDao() {
         return getDao(VnicProfileViewDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link VmNicDao}.
+     *
+     * @return the dao
+     */
+    public VmNicDao getVmNicDao() {
+        return getDao(VmNicDao.class);
     }
 }

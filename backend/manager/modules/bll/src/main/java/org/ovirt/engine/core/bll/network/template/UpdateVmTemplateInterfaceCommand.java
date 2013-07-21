@@ -27,7 +27,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
 
     @Override
     protected void executeCommand() {
-        getVmNetworkInterfaceDao().update(getParameters().getInterface());
+        getVmNicDao().update(getParameters().getInterface());
         VmDevice vmDevice = getDbFacade().getVmDeviceDao().get(new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmTemplateId()));
         vmDevice.setCustomProperties(getParameters().getInterface().getCustomProperties());
         getDbFacade().getVmDeviceDao().update(vmDevice);

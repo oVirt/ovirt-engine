@@ -13,7 +13,6 @@ import java.util.Map;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
-import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
@@ -207,63 +206,11 @@ public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
         }
     }
 
-    /**
-     * Ensures that saving an interface works as expected.
-     */
-    @Test
-    public void testSave() {
-        newVmInterface.setVmId(VM_ID);
-        newVmDevice.setId(new VmDeviceId(newVmInterface.getId(), VM_ID));
-
-        dao.save(newVmInterface);
-        vmDevicesDao.save(newVmDevice);
-        StatsDao.save(newVmInterface.getStatistics());
-
-        VmNetworkInterface savedInterface = dao.get(newVmInterface.getId());
-        assertNotNull(savedInterface);
-        assertEquals(newVmInterface.getName(), savedInterface.getName());
-    }
-
-    /**
-     * Ensures updating an interface works.
-     */
-    @Test
-    public void testUpdate() {
-        List<VmNetworkInterface> before = dao.getAllForVm(VM_ID);
-        VmNetworkInterface iface = before.get(0);
-
-        iface.setName(iface.getName().toUpperCase());
-
-        dao.update(iface);
-
-        List<VmNetworkInterface> after = dao.getAllForVm(VM_ID);
-        boolean found = false;
-
-        for (VmNetworkInterface ifaced : after) {
-            found |= ifaced.getName().equals(iface.getName());
-        }
-
-        assertTrue(found);
-    }
-
-    /**
-     * Ensures that the specified VM's interfaces are deleted.
-     */
-    @Test
-    public void testRemove() {
-        assertNotNull(dao.get(FixturesTool.VM_NETWORK_INTERFACE));
-        dao.remove(FixturesTool.VM_NETWORK_INTERFACE);
-        assertNull(dao.get(FixturesTool.VM_NETWORK_INTERFACE));
-
-        dao.save(existingVmInterface);
-        assertNotNull(dao.get(FixturesTool.VM_NETWORK_INTERFACE));
-    }
-
     @Test
     public void testGetAll() throws Exception {
         List<VmNetworkInterface> interfaces = dao.getAll();
         assertNotNull(interfaces);
-        assertEquals(FixturesTool.NUMBER_OF_VM_INTERFACES, interfaces.size());
+        assertEquals(FixturesTool.NUMBER_OF_VM_INTERFACE_VIEWS, interfaces.size());
     }
 
     @Test

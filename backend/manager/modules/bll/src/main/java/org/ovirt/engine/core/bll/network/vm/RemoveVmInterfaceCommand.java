@@ -42,7 +42,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
         }
 
         // remove from db
-        getVmNetworkInterfaceDao().remove(getParameters().getInterfaceId());
+        getVmNicDao().remove(getParameters().getInterfaceId());
         getDbFacade().getVmNetworkStatisticsDao().remove(getParameters().getInterfaceId());
         getDbFacade().getVmDeviceDao().remove(new VmDeviceId(getParameters().getInterfaceId(),
                 getParameters().getVmId()));

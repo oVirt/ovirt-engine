@@ -34,6 +34,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -57,6 +58,9 @@ public class VmInterfaceManagerTest {
     private VmNetworkInterfaceDao vmNetworkInterfaceDAO;
 
     @Mock
+    private VmNicDao vmNicDao;
+
+    @Mock
     private VmDAO vmDAO;
 
     @Spy
@@ -69,6 +73,7 @@ public class VmInterfaceManagerTest {
         doReturn(macPoolManager).when(vmInterfaceManager).getMacPoolManager();
         doReturn(vmNetworkStatisticsDAO).when(vmInterfaceManager).getVmNetworkStatisticsDao();
         doReturn(vmNetworkInterfaceDAO).when(vmInterfaceManager).getVmNetworkInterfaceDao();
+        doReturn(vmNicDao).when(vmInterfaceManager).getVmNicDao();
         doReturn(vmDAO).when(vmInterfaceManager).getVmDAO();
         doNothing().when(vmInterfaceManager).auditLogMacInUseUnplug(any(VmNetworkInterface.class));
 
@@ -182,7 +187,7 @@ public class VmInterfaceManagerTest {
      */
     protected void verifyAddDelegatedCorrectly(VmNetworkInterface iface, VerificationMode addMacVerification) {
         verify(macPoolManager, addMacVerification).forceAddMac(iface.getMacAddress());
-        verify(vmNetworkInterfaceDAO).save(iface);
+        verify(vmNicDao).save(iface);
         verify(vmNetworkStatisticsDAO).save(iface.getStatistics());
     }
 
@@ -194,7 +199,7 @@ public class VmInterfaceManagerTest {
      */
     protected void verifyRemoveAllDelegatedCorrectly(VmNetworkInterface iface) {
         verify(macPoolManager, times(1)).freeMac(iface.getMacAddress());
-        verify(vmNetworkInterfaceDAO).remove(iface.getId());
+        verify(vmNicDao).remove(iface.getId());
         verify(vmNetworkStatisticsDAO).remove(iface.getId());
     }
 

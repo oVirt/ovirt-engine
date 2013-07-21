@@ -158,7 +158,7 @@ public class FixturesTool {
      * <li>Based on template: 1 (1b85420c-b84c-4f29-997e-0eb674b40b79)</li>
      * </ul>
      */
-    protected static final Guid VM_RHEL5_POOL_57 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
+    public static final Guid VM_RHEL5_POOL_57 = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4355");
 
     /**
      * Predefined VM for testing with the following properties :
@@ -186,7 +186,7 @@ public class FixturesTool {
      * <li>Vds group: rhel6.iscsi (b399944a-81ab-4ec5-8266-e19ba7c3c9d1)</li>
      * </ul>
      */
-    protected static final Guid VM_TEMPLATE_RHEL5 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
+    public static final Guid VM_TEMPLATE_RHEL5 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
 
     /**
      * Predefined template for testing with the following properties :
@@ -381,7 +381,9 @@ public class FixturesTool {
 
     public static final String MAC_ADDRESS = "00:1a:4a:16:87:db";
 
-    public static final int NUMBER_OF_VM_INTERFACES = 3;
+    public static final int NUMBER_OF_VM_INTERFACE_VIEWS = 3;
+
+    public static final int NUMBER_OF_VM_INTERFACES = 4;
 
     /**
      * Gluster Hook ID(s)

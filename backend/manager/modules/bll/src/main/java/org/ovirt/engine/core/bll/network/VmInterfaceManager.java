@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.network;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -57,7 +59,7 @@ public class VmInterfaceManager {
             throw new VdcBLLException(VdcBllErrors.MAC_ADDRESS_IS_IN_USE);
         }
 
-        getVmNetworkInterfaceDao().save(iface);
+        getVmNicDao().save(iface);
         getVmNetworkStatisticsDao().save(iface.getStatistics());
         compensationContext.snapshotNewEntity(iface);
         compensationContext.snapshotNewEntity(iface.getStatistics());
@@ -102,7 +104,7 @@ public class VmInterfaceManager {
         if (interfaces != null) {
             for (VmNetworkInterface iface : interfaces) {
                 getMacPoolManager().freeMac(iface.getMacAddress());
-                getVmNetworkInterfaceDao().remove(iface.getId());
+                getVmNicDao().remove(iface.getId());
                 getVmNetworkStatisticsDao().remove(iface.getId());
             }
         }
@@ -182,6 +184,10 @@ public class VmInterfaceManager {
 
     protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
+    }
+
+    protected VmNicDao getVmNicDao() {
+        return DbFacade.getInstance().getVmNicDao();
     }
 
     protected VmDAO getVmDAO() {

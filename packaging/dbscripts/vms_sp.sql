@@ -1048,12 +1048,9 @@ BEGIN
    WHERE EXISTS (
       SELECT 1
       FROM vm_interface
-      INNER JOIN network
-      ON network.name = vm_interface.network_name
-      INNER JOIN network_cluster
-      ON network.id = network_cluster.network_id
-      WHERE network_id = v_network_id
-      AND vms.vds_group_id = network_cluster.cluster_id
+      INNER JOIN vnic_profiles
+      ON vnic_profiles.id = vm_interface.vnic_profile_id
+      WHERE vnic_profiles.network_id = v_network_id
       AND vm_interface.vm_guid = vms.vm_guid);
 END; $procedure$
 LANGUAGE plpgsql;
