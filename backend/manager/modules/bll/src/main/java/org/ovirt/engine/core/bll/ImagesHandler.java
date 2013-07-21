@@ -614,6 +614,10 @@ public final class ImagesHandler {
         return -1;
     }
 
+    public static DiskImage getActiveVolumeDisk(List<DiskImage> diskList) {
+        return diskList.get(diskList.size() - 1);
+    }
+
     public static void removeImage(DiskImage diskImage) {
         DbFacade.getInstance()
                 .getImageStorageDomainMapDao()

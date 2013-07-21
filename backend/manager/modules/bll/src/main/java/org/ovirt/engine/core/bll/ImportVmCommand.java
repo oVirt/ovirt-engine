@@ -296,7 +296,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             for (Map.Entry<Guid, List<DiskImage>> entry : images.entrySet()) {
                 Guid id = entry.getKey();
                 List<DiskImage> diskList = entry.getValue();
-                getVm().getDiskMap().put(id, getActiveVolumeDisk(diskList));
+                getVm().getDiskMap().put(id, ImagesHandler.getActiveVolumeDisk(diskList));
             }
         }
 
@@ -774,7 +774,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             Guid snapshotId = Guid.newGuid();
             int aliasCounter = 0;
             for (List<DiskImage> diskList : images.values()) {
-                DiskImage disk = getActiveVolumeDisk(diskList);
+                DiskImage disk = ImagesHandler.getActiveVolumeDisk(diskList);
                 disk.setParentId(VmTemplateHandler.BlankVmTemplateId);
                 disk.setImageTemplateId(VmTemplateHandler.BlankVmTemplateId);
                 disk.setVmSnapshotId(snapshotId);
@@ -817,7 +817,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
             int aliasCounter = 0;
             for (List<DiskImage> diskList : images.values()) {
-                DiskImage disk = getActiveVolumeDisk(diskList);
+                DiskImage disk = ImagesHandler.getActiveVolumeDisk(diskList);
                 newDiskIdForDisk.put(disk.getId(), disk);
                 snapshotId = disk.getVmSnapshotId();
                 disk.setActive(true);
@@ -851,10 +851,6 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         for (int i = 0; i < diskList.size() - 1; i++) {
              diskList.get(i).setId(disk.getId());
         }
-    }
-
-    private static DiskImage getActiveVolumeDisk(List<DiskImage> diskList) {
-        return diskList.get(diskList.size() - 1);
     }
 
     private void setDiskStorageDomainInfo(DiskImage disk) {

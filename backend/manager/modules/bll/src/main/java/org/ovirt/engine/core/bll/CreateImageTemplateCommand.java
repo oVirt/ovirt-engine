@@ -48,8 +48,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         setDestinationImageId(Guid.newGuid());
         getDiskImage().getSnapshots().addAll(
                 ImagesHandler.getAllImageSnapshots(getDiskImage().getImageId(), getDiskImage().getImageTemplateId()));
-
-        setDiskImage(getDiskImage().getSnapshots().get(getDiskImage().getSnapshots().size() - 1));
+        setDiskImage(ImagesHandler.getActiveVolumeDisk(getDiskImage().getSnapshots()));
         DiskImage newImage = cloneDiskImage(getDestinationImageId());
         fillVolumeInformation(newImage);
 
