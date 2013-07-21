@@ -9,7 +9,6 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.memory.MemoryImageRemoverFromExportDomain;
-import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -132,7 +131,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
     private void removeMemoryImages() {
          new MemoryImageRemoverFromExportDomain(getVm(), this,
                  getParameters().getStoragePoolId(), getParameters().getStorageDomainId())
-         .removeMemoryVolumes(MemoryUtils.getMemoryVolumesFromSnapshots(getVm().getSnapshots()));
+         .remove();
     }
 
     @Override

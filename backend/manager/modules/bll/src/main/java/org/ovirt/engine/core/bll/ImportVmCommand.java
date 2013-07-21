@@ -1114,10 +1114,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
     }
 
     private void removeVmSnapshots(VM vm) {
-        Set<String> memoriesOfRemovedSnapshots =
-                snapshotsManager.removeSnapshots(vm.getId());
-        if (!memoriesOfRemovedSnapshots.isEmpty()) {
-            new MemoryImageRemoverOnDataDomain(vm, this).removeMemoryVolumes(memoriesOfRemovedSnapshots);
+        Set<String> memoryStates = snapshotsManager.removeSnapshots(vm.getId());
+        if (!memoryStates.isEmpty()) {
+            new MemoryImageRemoverOnDataDomain(vm, this).remove(memoryStates);
         }
     }
 

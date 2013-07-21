@@ -34,19 +34,24 @@ public abstract class MemoryImageRemover {
         this.startPollingTasks = startPollingTasks;
     }
 
-    protected abstract boolean isMemoryStateRemovable(String memoryVolume);
-
     protected abstract DeleteImageGroupVDSCommandParameters buildDeleteMemoryImageParams(List<Guid> guids);
 
     protected abstract DeleteImageGroupVDSCommandParameters buildDeleteMemoryConfParams(List<Guid> guids);
 
-    public void removeMemoryVolume(String memoryVolumes) {
+    /**
+     * Default implementation checks whether the memory state representation is not empty
+     */
+    protected boolean isMemoryStateRemovable(String memoryVolume) {
+        return !memoryVolume.isEmpty();
+    }
+
+    protected void removeMemoryVolume(String memoryVolumes) {
         if (isMemoryStateRemovable(memoryVolumes)) {
             removeMemoryVolumes(memoryVolumes);
         }
     }
 
-    public void removeMemoryVolumes(Set<String> memoryVolumes) {
+    protected void removeMemoryVolumes(Set<String> memoryVolumes) {
         for (String memoryVols : memoryVolumes) {
             removeMemoryVolume(memoryVols);
         }

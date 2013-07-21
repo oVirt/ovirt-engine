@@ -23,6 +23,17 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
         this.storageDomainId = storageDomainId;
     }
 
+    public void remove() {
+        removeMemoryVolumes(MemoryUtils.getMemoryVolumesFromSnapshots(vm.getSnapshots()));
+    }
+
+    @Override
+    protected void removeMemoryVolume(String memoryVolumes) {
+        super.removeMemoryVolume(
+                MemoryUtils.changeStorageDomainAndPoolInMemoryState(
+                        memoryVolumes, storageDomainId, storagePoolId));
+    }
+
     @Override
     protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryImageParams(List<Guid> guids) {
         return new DeleteImageGroupVDSCommandParameters(
@@ -54,17 +65,5 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
                     });
         }
         return cachedPostZero;
-    }
-
-    @Override
-    protected boolean isMemoryStateRemovable(String memoryVolume) {
-        return !memoryVolume.isEmpty();
-    }
-
-    @Override
-    public void removeMemoryVolume(String memoryVolumes) {
-        super.removeMemoryVolume(
-                MemoryUtils.changeStorageDomainAndPoolInMemoryState(
-                        memoryVolumes, storageDomainId, storagePoolId));
     }
 }

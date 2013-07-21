@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.memory;
 
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -17,6 +18,10 @@ public class MemoryImageRemoverOnDataDomain extends MemoryImageRemover {
     public MemoryImageRemoverOnDataDomain(VM vm, TaskHandlerCommand<?> enclosingCommand) {
         super(enclosingCommand);
         this.vm = vm;
+    }
+
+    public void remove(Set<String> memoryStates) {
+        removeMemoryVolumes(memoryStates);
     }
 
     @Override
