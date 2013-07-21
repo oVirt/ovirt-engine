@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.VdcEventNotificationUtils;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -2688,6 +2689,26 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(), aQuery);
+    }
+
+    public static void GetAllProvidersByProvidedEntity(AsyncQuery query, final VdcObjectType providedEntity) {
+        query.converterCallback = new IAsyncConverter<List<Provider>>() {
+            @Override
+            public List<Provider> Convert(Object returnValue, AsyncQuery asyncQuery) {
+                if (returnValue == null) {
+                    return new ArrayList<Provider>();
+                }
+                List<Provider> providers =
+                        Linq.toList(Linq.filterProvidersByProvidedType((Iterable<Provider>) returnValue, providedEntity));
+                Collections.sort(providers, new NameableComparator());
+                return providers;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetAllProviders, new GetAllProvidersParameters(), query);
+    }
+
+    public static void GetAllNetworkProviders(AsyncQuery query) {
+        GetAllProvidersByProvidedEntity(query, VdcObjectType.Network);
     }
 
     public static void GetAllProvidersByType(AsyncQuery aQuery, ProviderType providerType) {

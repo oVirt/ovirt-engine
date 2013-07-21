@@ -87,13 +87,13 @@ public class ImportNetworksModel extends Model {
 
     protected void initProviderList() {
         startProgress(null);
-        AsyncDataProvider.GetAllProviders(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.GetAllNetworkProviders(new AsyncQuery(this, new INewAsyncCallback() {
 
             @SuppressWarnings("unchecked")
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 stopProgress();
-                List<Provider> providers = Linq.toList(Linq.filterNetworkProviders((Iterable<Provider>) returnValue));
+                List<Provider> providers = (List<Provider>) returnValue;
                 providers.add(0, null);
                 getProviders().setItems(providers);
             }

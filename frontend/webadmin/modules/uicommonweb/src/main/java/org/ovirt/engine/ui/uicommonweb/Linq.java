@@ -1176,7 +1176,7 @@ public final class Linq
         }
     }
 
-    private final static Iterable<Provider> filterProvidersByProvidedType(Iterable<Provider> source,
+    public final static Iterable<Provider> filterProvidersByProvidedType(Iterable<Provider> source,
             final VdcObjectType type) {
         return where(source, new IPredicate<Provider>() {
 
@@ -1185,10 +1185,6 @@ public final class Linq
                 return provider.getType().getProvidedTypes().contains(type);
             }
         });
-    }
-
-    public final static Iterable<Provider> filterNetworkProviders(Iterable<Provider> source) {
-        return filterProvidersByProvidedType(source, VdcObjectType.Network);
     }
 
     /**

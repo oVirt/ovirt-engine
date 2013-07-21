@@ -1025,13 +1025,13 @@ public abstract class HostModel extends Model
             @Override
             public void onSuccess(Object model, Object result)
             {
-                ArrayList<Provider> providers = Linq.toList(Linq.filterNetworkProviders((ArrayList<Provider>) result));
+                List<Provider> providers = (List<Provider>) result;
                 providers.add(0, null);
                 getExternalProviders().setItems(providers);
                 getExternalProviders().setSelectedItem(null);
             }
         };
-        AsyncDataProvider.GetAllProviders(getProvidersQuery);
+        AsyncDataProvider.GetAllNetworkProviders(getProvidersQuery);
     }
 
     private void proxyUp() {

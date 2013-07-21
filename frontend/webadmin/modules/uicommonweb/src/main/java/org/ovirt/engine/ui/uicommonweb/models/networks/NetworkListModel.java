@@ -162,13 +162,13 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
                 @Override
                 public void onSuccess(Object model, Object result)
                 {
-                    List<Provider> providers = Linq.toList(Linq.filterNetworkProviders((List<Provider>) result));
+                    List<Provider> providers = (List<Provider>) result;
                     networkModel.getExternalProviders().setItems(providers);
                     networkModel.getExternalProviders().setSelectedItem(Linq.firstOrDefault(providers));
                     networkModel.stopProgress();
                 }
             };
-            AsyncDataProvider.GetAllProviders(getProvidersQuery);
+            AsyncDataProvider.GetAllNetworkProviders(getProvidersQuery);
         } else {
             NetworkView network = (NetworkView) getSelectedItem();
             if (network.isExternal()) {
