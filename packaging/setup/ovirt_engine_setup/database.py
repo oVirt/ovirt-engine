@@ -329,9 +329,6 @@ class OvirtUtils(base.Base):
         return ret[0]['count'] == 0
 
     def clearOvirtEngineDatabase(self):
-        self.logger.info(
-            _('Clearing database.')
-        )
         self._plugin.execute(
             (
                 os.path.join(

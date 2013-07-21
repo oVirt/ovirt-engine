@@ -85,11 +85,9 @@ class Plugin(plugin.PluginBase):
             dbovirtutils.tryDatabaseConnect()
             self._bkpfile = dbovirtutils.backup()
             self.logger.info(
-                _("Clearing database '{database}'").format(
-                    database=self.environment[
-                        osetupcons.DBEnv.DATABASE
-                    ],
-                ),
+                _('Clearing database {database}').format(
+                    database=self.environment[osetupcons.DBEnv.DATABASE],
+                )
             )
             dbovirtutils.clearOvirtEngineDatabase()
 
