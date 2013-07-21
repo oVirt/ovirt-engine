@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
@@ -59,10 +58,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
         initLinked();
 
-        initPortMirroring();
         initNetworks();
-
-        initCustomPropertySheet();
 
         // Plug should be the last one updated, cause it controls the changeability of the other editor
         getPlugged().setEntity(getNic().isPlugged());
@@ -112,11 +108,6 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
     }
 
     @Override
-    protected void initPortMirroring() {
-        getPortMirroring().setEntity(getNic().isPortMirroring());
-    }
-
-    @Override
     protected void initLinked() {
         if (hotUpdateSupported) {
             getLinked().setEntity(getNic().isLinked());
@@ -129,11 +120,5 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
     @Override
     protected VdcActionParametersBase createVdcActionParameters(VmNetworkInterface nicToSave) {
         return new AddVmInterfaceParameters(getVm().getId(), nicToSave);
-    }
-
-    @Override
-    protected void setCustomPropertyFromVm() {
-        getCustomPropertySheet().setEntity(KeyValueModel
-                .convertProperties(getNic().getCustomProperties()));
     }
 }

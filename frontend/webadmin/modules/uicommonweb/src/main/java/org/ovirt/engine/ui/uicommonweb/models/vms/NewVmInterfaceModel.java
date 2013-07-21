@@ -63,9 +63,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
         initLinked();
 
-        initPortMirroring();
         initNetworks();
-        initCustomPropertySheet();
         initCommands();
     }
 
@@ -96,12 +94,6 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
     }
 
     @Override
-    protected void initPortMirroring() {
-        getPortMirroring().setIsChangable(isPortMirroringSupported());
-        getPortMirroring().setEntity(false);
-    }
-
-    @Override
     protected void initLinked() {
         if (hotUpdateSupported) {
             getLinked().setEntity(true);
@@ -114,11 +106,6 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
     @Override
     protected VdcActionParametersBase createVdcActionParameters(VmNetworkInterface nicToSave) {
         return new AddVmInterfaceParameters(getVm().getId(), nicToSave);
-    }
-
-    @Override
-    protected void setCustomPropertyFromVm() {
-        // Do nothing
     }
 
     protected VmNetworkInterface getNic() {

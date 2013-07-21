@@ -67,16 +67,6 @@
 			width: 230px;
 		}
 
-		.portMirroringEditor .gwt-CheckBox {
-			padding: 0px !important;
-			border-width: 0px !important;
-		}
-
-		.portMirroringEditor {
-			width: 235px;
-		}
-
-
 	</ui:style>
 
 	<g:FlowPanel>
@@ -101,9 +91,6 @@
 		</g:SimplePanel>
 		<d:AdvancedParametersExpander ui:field="expander" addStyleNames="{style.expander}"/>
 		<g:FlowPanel ui:field="expanderContent" addStyleNames="{style.expandedPanel}">
-			<g:SimplePanel width="100%">
-				<e:EntityModelCheckBoxEditor ui:field="portMirroringEditor" />
-			</g:SimplePanel>
 			<g:HorizontalPanel ui:field="cardStatusSelectionPanel" width="100%">
 				<e:ListModelListBoxEditor ui:field="cardStatusEditor" />
 				<g:SimplePanel addStyleNames="{style.contentWidget}">
@@ -113,9 +100,6 @@
 					</g:HorizontalPanel>
 				</g:SimplePanel>
 			</g:HorizontalPanel>
-			<g:FlowPanel>
-				<k:KeyValueWidget ui:field="customPropertiesSheetEditor"/>
-			</g:FlowPanel>
 		</g:FlowPanel>
 	</g:FlowPanel>
 </ui:UiBinder>

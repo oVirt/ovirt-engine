@@ -46,18 +46,8 @@ public class EditTemplateInterfaceModel extends BaseEditVmInterfaceModel {
     }
 
     @Override
-    protected void initPortMirroring() {
-        getPortMirroring().setIsAvailable(false);
-    }
-
-    @Override
     protected void onSaveMAC(VmNetworkInterface nicToSave) {
         nicToSave.setMacAddress(getNic().getMacAddress());
-    }
-
-    @Override
-    protected void onSavePortMirroring(VmNetworkInterface nicToSave) {
-        nicToSave.setPortMirroring(getNic().isPortMirroring());
     }
 
     @Override

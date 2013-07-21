@@ -2,19 +2,14 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.VmBase;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.common.queries.GetDeviceCustomPropertiesParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -25,7 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.MacAddressValidation;
@@ -48,7 +42,6 @@ public abstract class VmInterfaceModel extends Model
     private EntityModel linked_IsSelected;
     private EntityModel unlinked_IsSelected;
     private ListModel privateNicType;
-    private EntityModel privatePortMirroring;
     private EntityModel privateMAC;
     private EntityModel enableMac;
     private EntityModel plugged;
@@ -64,9 +57,6 @@ public abstract class VmInterfaceModel extends Model
 
     private final EntityModel sourceModel;
     private final Version clusterCompatibilityVersion;
-
-
-    private KeyValueModel customPropertySheet;
 
     private NetworkBehavior networkBehavior;
 
@@ -100,7 +90,6 @@ public abstract class VmInterfaceModel extends Model
             public void setSelectedItem(Object value) {
                 super.setSelectedItem(value);
                 updateLinkChangability();
-                updatePortMirroringChangeability();
             }
         });
         setNicType(new ListModel());
@@ -114,7 +103,6 @@ public abstract class VmInterfaceModel extends Model
             }
         });
         getEnableMac().setEntity(false);
-        setPortMirroring(new EntityModel());
         getMAC().getPropertyChangedEvent().addListener(this);
 
         setLinked(new EntityModel());
@@ -135,7 +123,6 @@ public abstract class VmInterfaceModel extends Model
         setUnplugged_IsSelected(new EntityModel());
         getUnplugged_IsSelected().getEntityChangedEvent().addListener(this);
 
-        setCustomPropertySheet(new KeyValueModel());
     }
 
     protected abstract void init();
@@ -216,16 +203,6 @@ public abstract class VmInterfaceModel extends Model
         privateNicType = value;
     }
 
-    public EntityModel getPortMirroring()
-    {
-        return privatePortMirroring;
-    }
-
-    public void setPortMirroring(EntityModel value)
-    {
-        privatePortMirroring = value;
-    }
-
     public EntityModel getMAC()
     {
         return privateMAC;
@@ -274,14 +251,6 @@ public abstract class VmInterfaceModel extends Model
     public void setUnplugged_IsSelected(EntityModel value)
     {
         unplugged_IsSelected = value;
-    }
-
-    public KeyValueModel getCustomPropertySheet() {
-        return customPropertySheet;
-    }
-
-    public void setCustomPropertySheet(KeyValueModel customPropertySheet) {
-        this.customPropertySheet = customPropertySheet;
     }
 
     @Override
@@ -385,7 +354,7 @@ public abstract class VmInterfaceModel extends Model
         }
 
         return getName().getIsValid() && getNetwork().getIsValid() && getNicType().getIsValid()
-                && getMAC().getIsValid() && getCustomPropertySheet().validate();
+                && getMAC().getIsValid();
     }
 
     protected abstract VmNetworkInterface createBaseNic();
@@ -409,7 +378,6 @@ public abstract class VmInterfaceModel extends Model
         Network network = (Network) getNetwork().getSelectedItem();
         nic.setNetworkName(network != null ? network.getName() : null);
         nic.setLinked((Boolean) getLinked().getEntity());
-        onSavePortMirroring(nic);
         if (getNicType().getSelectedItem() == null)
         {
             nic.setType(null);
@@ -421,9 +389,6 @@ public abstract class VmInterfaceModel extends Model
         onSaveMAC(nic);
 
         nic.setPlugged((Boolean) getPlugged().getEntity());
-
-        nic.setCustomProperties(KeyValueModel
-                .convertProperties(getCustomPropertySheet().getEntity()));
 
         startProgress(null);
 
@@ -512,8 +477,6 @@ public abstract class VmInterfaceModel extends Model
 
     protected abstract void initMAC();
 
-    protected abstract void initPortMirroring();
-
     protected abstract void initLinked();
 
     protected void onSaveMAC(VmNetworkInterface nicToSave) {
@@ -521,18 +484,7 @@ public abstract class VmInterfaceModel extends Model
                 : ((String) (getMAC().getEntity())).toLowerCase()) : getDefaultMacAddress());
     }
 
-    protected void onSavePortMirroring(VmNetworkInterface nicToSave) {
-        nicToSave.setPortMirroring((Boolean) getPortMirroring().getEntity());
-    }
-
     protected abstract VdcActionParametersBase createVdcActionParameters(VmNetworkInterface nicToSave);
-
-    protected boolean isPortMirroringSupported() {
-        Version v31 = new Version(3, 1);
-        boolean isLessThan31 = getClusterCompatibilityVersion().compareTo(v31) < 0;
-
-        return !isLessThan31;
-    }
 
     protected void updateLinkChangability() {
         boolean isNullNetworkSelected = getNetwork().getSelectedItem() == null;
@@ -548,20 +500,6 @@ public abstract class VmInterfaceModel extends Model
         getLinked().setIsChangable(true);
     }
 
-    protected void updatePortMirroringChangeability() {
-        if (isPortMirroringSupported() && !selectedNetworkExternal()) {
-            getPortMirroring().setIsChangable(true);
-            return;
-        }
-
-        if (selectedNetworkExternal()) {
-            getPortMirroring().setChangeProhibitionReason(ConstantsManager.getInstance()
-                    .getConstants()
-                    .portMirroringNotSupportedExternalNetworks());
-        }
-        getPortMirroring().setIsChangable(false);
-    }
-
     protected void updateNetworkChangability() {
         getNetwork().setIsChangable(true);
     }
@@ -570,36 +508,6 @@ public abstract class VmInterfaceModel extends Model
         Network network = (Network) getNetwork().getSelectedItem();
         return network != null && network.isExternal();
     }
-
-    protected void initCustomPropertySheet() {
-        GetDeviceCustomPropertiesParameters params = new GetDeviceCustomPropertiesParameters();
-        params.setVersion(getClusterCompatibilityVersion());
-        params.setDeviceType(VmDeviceGeneralType.INTERFACE);
-        Frontend.RunQuery(VdcQueryType.GetDeviceCustomProperties,
-                params,
-                new AsyncQuery(this,
-                        new INewAsyncCallback() {
-                            @Override
-                            public void onSuccess(Object target, Object returnValue) {
-                                if (returnValue != null) {
-                                    Map<String, String> customPropertiesList =
-                                            ((Map<String, String>) ((VdcQueryReturnValue) returnValue).getReturnValue());
-
-                                    List<String> lines = new ArrayList<String>();
-
-                                    for (Map.Entry<String, String> keyValue : customPropertiesList.entrySet()) {
-                                        lines.add(keyValue.getKey() + '=' + keyValue.getValue());
-                                    }
-                                    getCustomPropertySheet().setKeyValueString(lines);
-                                    getCustomPropertySheet().setIsChangable(!lines.isEmpty());
-
-                                    setCustomPropertyFromVm();
-                                }
-                            }
-                        }));
-    }
-
-    protected abstract void setCustomPropertyFromVm();
 
     public NetworkBehavior getNetworkBehavior() {
         return networkBehavior;

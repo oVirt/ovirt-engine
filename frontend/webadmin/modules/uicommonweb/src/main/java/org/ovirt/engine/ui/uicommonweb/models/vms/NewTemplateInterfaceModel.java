@@ -44,18 +44,8 @@ public class NewTemplateInterfaceModel extends NewVmInterfaceModel {
     }
 
     @Override
-    protected void initPortMirroring() {
-        getPortMirroring().setIsAvailable(false);
-    }
-
-    @Override
     protected void onSaveMAC(VmNetworkInterface nicToSave) {
         nicToSave.setMacAddress(null);
-    }
-
-    @Override
-    protected void onSavePortMirroring(VmNetworkInterface nicToSave) {
-        nicToSave.setPortMirroring(false);
     }
 
     @Override
