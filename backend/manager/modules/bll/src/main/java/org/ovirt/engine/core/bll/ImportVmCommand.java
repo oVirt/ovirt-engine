@@ -99,8 +99,12 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
     private List<DiskImage> imageList;
-    private final List<Guid> diskGuidList = new ArrayList<Guid>();
-    private final List<Guid> imageGuidList = new ArrayList<Guid>();
+
+    /**
+     * Map which contains the disk id (new generated id if the disk is cloned) and the disk parameters from the export
+     * domain.
+     */
+    private final Map<Guid, DiskImage> newDiskIdForDisk = new HashMap<>();
     private final List<String> macsAdded = new ArrayList<String>();
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
 
@@ -720,11 +724,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
     @Override
     protected void moveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
-        int i = 0;
         for (DiskImage disk : disks) {
             VdcReturnValueBase vdcRetValue = Backend.getInstance().runInternalAction(
                     VdcActionType.CopyImageGroup,
-                    buildMoveOrCopyImageGroupParametersForDisk(disk, containerID, i++),
+                    buildMoveOrCopyImageGroupParametersForDisk(disk, containerID),
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
             if (!vdcRetValue.getSucceeded()) {
                 throw new VdcBLLException(vdcRetValue.getFault().getError(),
@@ -735,11 +738,12 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         }
     }
 
-    private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForDisk(DiskImage disk, Guid containerID, int i) {
-        Guid destinationDomain = imageToDestinationDomainMap.get(diskGuidList.get(i));
+    private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForDisk(DiskImage disk, Guid containerID) {
+        Guid originalDiskId = newDiskIdForDisk.get(disk.getId()).getId();
+        Guid destinationDomain = imageToDestinationDomainMap.get(originalDiskId);
         MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID,
-                diskGuidList.get(i),
-                imageGuidList.get(i),
+                originalDiskId,
+                newDiskIdForDisk.get(disk.getId()).getImageId(),
                 disk.getId(),
                 disk.getImageId(),
                 destinationDomain, getMoveOrCopyImageOperation());
@@ -753,9 +757,9 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         params.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
         params.setQuotaId(disk.getQuotaId() != null ? disk.getQuotaId() : getParameters().getQuotaId());
         if (getParameters().getVm().getDiskMap() != null
-                && getParameters().getVm().getDiskMap().containsKey(diskGuidList.get(i))) {
+                && getParameters().getVm().getDiskMap().containsKey(originalDiskId)) {
             DiskImageBase diskImageBase =
-                    (DiskImageBase) getParameters().getVm().getDiskMap().get(diskGuidList.get(i));
+                    (DiskImageBase) getParameters().getVm().getDiskMap().get(originalDiskId);
             params.setVolumeType(diskImageBase.getVolumeType());
             params.setVolumeFormat(diskImageBase.getVolumeFormat());
         }
@@ -785,14 +789,10 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
                 }
                 setDiskStorageDomainInfo(disk);
 
-                diskGuidList.add(disk.getId());
-                imageGuidList.add(disk.getImageId());
                 if (getParameters().isImportAsNewEntity()) {
-                    disk.setId(Guid.newGuid());
-                    disk.setImageId(Guid.newGuid());
-                    for (int i = 0; i < diskList.size() - 1; i++) {
-                         diskList.get(i).setId(disk.getId());
-                    }
+                    generateNewDiskId(diskList, disk);
+                } else {
+                    newDiskIdForDisk.put(disk.getId(), disk);
                 }
                 disk.setCreationDate(new Date());
                 saveImage(disk);
@@ -818,8 +818,7 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
             int aliasCounter = 0;
             for (List<DiskImage> diskList : images.values()) {
                 DiskImage disk = getActiveVolumeDisk(diskList);
-                diskGuidList.add(disk.getId());
-                imageGuidList.add(disk.getImageId());
+                newDiskIdForDisk.put(disk.getId(), disk);
                 snapshotId = disk.getVmSnapshotId();
                 disk.setActive(true);
                 ImagesHandler.setDiskAlias(disk, getVm(), ++aliasCounter);
@@ -829,6 +828,28 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
 
             // Update active snapshot's data, since it was inserted as a regular snapshot.
             updateActiveSnapshot(snapshotId);
+        }
+    }
+
+    /**
+     * Cloning a new disk with a new generated id, with the same volumes and parameters as <code>disk</code>. Also
+     * adding the disk to <code>newDiskGuidForDisk</code> map, so we will be able to link between the new cloned disk
+     * and the old disk id.
+     *
+     * @param diskList
+     *            - All the disk volumes
+     * @param disk
+     *            - The disk which is about to be cloned
+     */
+    private void generateNewDiskId(List<DiskImage> diskList, DiskImage disk) {
+        Guid newGuidForDisk = Guid.newGuid();
+
+        // Copy the disk so it will preserve the old disk id and image id.
+        newDiskIdForDisk.put(newGuidForDisk, DiskImage.copyOf(disk));
+        disk.setId(newGuidForDisk);
+        disk.setImageId(Guid.newGuid());
+        for (int i = 0; i < diskList.size() - 1; i++) {
+             diskList.get(i).setId(disk.getId());
         }
     }
 
