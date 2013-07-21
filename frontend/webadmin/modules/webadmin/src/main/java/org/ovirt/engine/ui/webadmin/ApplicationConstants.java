@@ -193,6 +193,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("External Provider")
     String externalProviderLabel();
 
+    @DefaultStringValue("If you would like this host's networks to be provisioned by an external provider, please choose it from the list.")
+    String externalProviderExplanation();
+
     @DefaultStringValue("Network Label")
     String networkLabel();
 

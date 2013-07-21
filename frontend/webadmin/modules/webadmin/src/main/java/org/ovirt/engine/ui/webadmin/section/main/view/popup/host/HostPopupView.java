@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
@@ -21,6 +22,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.EntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -384,9 +386,16 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     InfoIcon providerSearchInfoIcon;
 
     @UiField(provided = true)
+    @WithElementId("externalProvider")
+    public EntityModelWidgetWithInfo externalProvider;
+
+    @Ignore
+    @WithElementId("externalProviderLabel")
+    public EntityModelLabel externalProviderLabel;
+
     @Path(value = "externalProviders.selectedItem")
-    @WithElementId("externalProviders")
-    public ListModelListBoxEditor<Object> externalProviderEditor;
+    @WithElementId("externalProviderEditor")
+    public ListModelListBoxOnlyEditor<Object> externalProviderEditor;
 
     @UiField(provided = true)
     @Path(value = "providerType.selectedItem")
@@ -526,12 +535,14 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         externalHostProviderEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
-        externalProviderEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        externalProviderLabel = new EntityModelLabel();
+        externalProviderEditor = new ListModelListBoxOnlyEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
                 return ((Provider) object).getName();
             }
         });
+        externalProvider = new EntityModelWidgetWithInfo(externalProviderLabel, externalProviderEditor);
         providerTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
         neutronAgentWidget = new NeutronAgentWidget(constants, resources, applicationTemplates);
         rbPassword = new RadioButton("1"); //$NON-NLS-1$
@@ -596,7 +607,8 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         // Network Provider Tab
         networkProviderTab.setLabel(constants.networkProviderButtonLabel());
-        externalProviderEditor.setLabel(constants.externalProviderLabel());
+        externalProviderLabel.setText(constants.externalProviderLabel());
+        externalProvider.setExplanation(applicationTemplates.italicText(constants.externalProviderExplanation()));
         providerTypeEditor.setLabel(constants.typeProvider());
         providerPluginTypeEditor.setLabel(constants.pluginType());
     }

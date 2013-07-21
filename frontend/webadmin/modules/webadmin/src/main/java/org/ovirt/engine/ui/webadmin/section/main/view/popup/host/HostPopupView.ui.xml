@@ -356,12 +356,12 @@
                     <t:DialogTab ui:field="networkProviderTab">
                         <t:content>
                             <g:FlowPanel>
-                            	<e:ListModelListBoxEditor ui:field="externalProviderEditor"/>
-                            	<e:ListModelListBoxEditor ui:field="providerTypeEditor" />
-                            	<e:ListModelSuggestBoxEditor ui:field = "providerPluginTypeEditor" />
-                            	<g:FlowPanel ui:field="neutronAgentPanel" addStyleNames="{style.sectionStyle}">
-	                            	<p:NeutronAgentWidget ui:field="neutronAgentWidget" />
-	                            </g:FlowPanel>
+                                <w:EntityModelWidgetWithInfo ui:field="externalProvider"/>
+                                <e:ListModelListBoxEditor ui:field="providerTypeEditor" />
+                                <e:ListModelSuggestBoxEditor ui:field = "providerPluginTypeEditor" />
+                                <g:FlowPanel ui:field="neutronAgentPanel" addStyleNames="{style.sectionStyle}">
+                                    <p:NeutronAgentWidget ui:field="neutronAgentWidget" />
+                                </g:FlowPanel>
                             </g:FlowPanel>
                         </t:content>
                     </t:DialogTab>
