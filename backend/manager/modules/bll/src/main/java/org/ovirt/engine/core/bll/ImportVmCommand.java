@@ -848,8 +848,8 @@ public class ImportVmCommand extends MoveOrCopyTemplateCommand<ImportVmParameter
         newDiskIdForDisk.put(newGuidForDisk, DiskImage.copyOf(disk));
         disk.setId(newGuidForDisk);
         disk.setImageId(Guid.newGuid());
-        for (int i = 0; i < diskList.size() - 1; i++) {
-             diskList.get(i).setId(disk.getId());
+        for (DiskImage diskImage : diskList) {
+            diskImage.setId(disk.getId());
         }
     }
 
