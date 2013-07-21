@@ -2,17 +2,12 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
+	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
-	<ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.provider.NeutronAgentWidget.Style">
+	<ui:style>
 		.sectionStyle {
 			margin-top: 20px;
-		}
-
-		.labelStyle {
-			width: 100%;
-			padding: 0 5px;
 		}
 
         .qpidInnerPanel {
@@ -28,17 +23,7 @@
 	</ui:style>
 
 	<g:FlowPanel>
-		<g:HorizontalPanel width="100%">
-			<g:cell verticalAlignment="ALIGN_MIDDLE">
-				<g:HorizontalPanel width="100%">
-					<e:EntityModelLabel ui:field="mappingsLabel" addStyleNames="{style.labelStyle}" />
-					<d:InfoIcon ui:field="mappingsExplanation" />
-				</g:HorizontalPanel>
-			</g:cell>
-			<g:cell width="230px">
-				<e:EntityModelTextBoxOnlyEditor ui:field="interfaceMappings" />
-			</g:cell>
-		</g:HorizontalPanel>
+		<w:EntityModelWidgetWithInfo ui:field="mappings" />
 		<g:FlowPanel addStyleNames="{style.sectionStyle}">
 			<g:Label text="{constants.qpid}" addStyleNames="{style.qpidHeader}"/>
 			<g:FlowPanel addStyleNames="{style.qpidInnerPanel}">

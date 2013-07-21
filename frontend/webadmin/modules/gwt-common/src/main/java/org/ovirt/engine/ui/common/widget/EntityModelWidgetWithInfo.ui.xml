@@ -1,0 +1,25 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
+
+	<ui:style>
+		.labelStyle {
+			width: 100%;
+			padding: 0 5px;
+		}
+	</ui:style>
+
+	<g:HorizontalPanel width="100%">
+		<g:cell verticalAlignment="ALIGN_MIDDLE">
+			<g:HorizontalPanel width="100%">
+				<e:EntityModelLabel ui:field="label" addStyleNames="{style.labelStyle}" />
+				<d:InfoIcon ui:field="infoIcon" />
+			</g:HorizontalPanel>
+		</g:cell>
+		<g:cell width="230px">
+			<w:AbstractValidatedWidget ui:field="contentWidget" />
+		</g:cell>
+	</g:HorizontalPanel>
+
+</ui:UiBinder>

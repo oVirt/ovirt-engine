@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
-import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
+import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -38,21 +37,16 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    interface Style extends CssResource {
-    }
+    @UiField(provided = true)
+    EntityModelWidgetWithInfo mappings;
 
-    @UiField
     @Path(value = "interfaceMappingsLabel.entity")
     @WithElementId("interfaceMappingsLabel")
     EntityModelLabel mappingsLabel;
 
-    @UiField
     @Path(value = "interfaceMappings.entity")
     @WithElementId("interfaceMappings")
     EntityModelTextBoxOnlyEditor interfaceMappings;
-
-    @UiField(provided = true)
-    InfoIcon mappingsExplanation;
 
     @UiField
     @Path(value = "qpidHost.entity")
@@ -74,9 +68,6 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
     @WithElementId("qpidPassword")
     EntityModelPasswordBoxEditor qpidPassword;
 
-    @UiField
-    Style style;
-
     private final CommonApplicationTemplates templates;
 
     @Inject
@@ -86,7 +77,9 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
 
         this.templates = templates;
 
-        mappingsExplanation = new InfoIcon(templates.italicText(new String()), resources);
+        mappingsLabel = new EntityModelLabel();
+        interfaceMappings = new EntityModelTextBoxOnlyEditor();
+        mappings = new EntityModelWidgetWithInfo(mappingsLabel, interfaceMappings);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
 
@@ -101,12 +94,12 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
     @Override
     public void edit(final NeutronAgentModel model) {
         driver.edit(model);
-        mappingsExplanation.setText(templates.italicText((String) model.getInterfaceMappingsExplanation().getEntity()));
+        mappings.setExplanation(templates.italicText((String) model.getInterfaceMappingsExplanation().getEntity()));
         model.getInterfaceMappingsExplanation().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                mappingsExplanation.setText(templates.italicText((String) model.getInterfaceMappingsExplanation()
+                mappings.setExplanation(templates.italicText((String) model.getInterfaceMappingsExplanation()
                         .getEntity()));
             }
         });
