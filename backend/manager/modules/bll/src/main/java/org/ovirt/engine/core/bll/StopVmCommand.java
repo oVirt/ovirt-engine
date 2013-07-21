@@ -41,13 +41,8 @@ public class StopVmCommand<T extends StopVmParameters> extends StopVmCommandBase
     }
 
     @Override
-    protected boolean canDoAction() {
-        boolean ret = super.canDoAction();
-        if (!ret) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__STOP);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-        }
-
-        return ret;
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__STOP);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
     }
 }

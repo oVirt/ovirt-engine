@@ -17,6 +17,11 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 @NonTransactiveCommandAttribute(forceCompensation=true)
 public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCommandBase<T> {
+
+    protected ShutdownVmCommand(Guid commandId) {
+        super(commandId);
+    }
+
     public ShutdownVmCommand(T shutdownVmParamsData) {
         super(shutdownVmParamsData);
     }
@@ -30,19 +35,10 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
         }
     }
 
-    protected ShutdownVmCommand(Guid commandId) {
-        super(commandId);
-    }
-
     @Override
-    protected boolean canDoAction() {
-        boolean ret = super.canDoAction();
-        if (!ret) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__SHUTDOWN);
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-        }
-
-        return ret;
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__SHUTDOWN);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
     }
 
     @Override
@@ -50,15 +46,11 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
         log.infoFormat("Entered (VM {0}).", getVm().getName());
 
         VmHandler.UpdateVmGuestAgentVersion(getVm());
-        boolean CanShutDown = (getVm().getStatus() == VMStatus.Up)
-                && ((getVm().getAcpiEnable() == null ? false : getVm().getAcpiEnable()) || getVm().getHasAgent());
 
-        if (CanShutDown)
-        // shutting down desktop and waiting for it in a separate thread to
-        // become 'down':
-        {
-            log.infoFormat("Sending shutdown command for VM {0}.", getVm()
-                    .getName());
+        if (canShutdownVm()) {
+            // shutting down desktop and waiting for it in a separate thread to
+            // become 'down':
+            log.infoFormat("Sending shutdown command for VM {0}.", getVmName());
 
             int secondsToWait = getParameters().getWaitBeforeShutdown() ? Config
                     .<Integer> GetValue(ConfigValues.VmGracefulShutdownTimeout) : 0;
@@ -70,15 +62,13 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
                     .RunVdsCommand(VDSCommandType.DestroyVm,
                             new DestroyVmVDSCommandParameters(getVdsId(), getVmId(), false, true, secondsToWait))
                     .getReturnValue());
-        } else // cannot shutdown -> send a StopVm command instead ('destroy'):
-        {
-            // don't log -> log will appear for the
-            // StopVmCommand we are about to run:
+        }
+        else {
+            // cannot shutdown -> send a StopVm command instead ('destroy'):
+            // don't log -> log will appear for the StopVmCommand we are about to run:
             setCommandShouldBeLogged(false);
 
-            log.infoFormat(
-                    "Cannot shutdown VM {0}, status is not up. Stopping instead.",
-                    getVm().getName());
+            log.infoFormat("Cannot shutdown VM {0}, status is not up. Stopping instead.", getVmName());
 
             StopVmParameters stopVmParams = new StopVmParameters(getVmId(), StopVmTypeEnum.CANNOT_SHUTDOWN);
             // stopVmParams.ParametersCurrentUser = CurrentUser;
@@ -87,6 +77,11 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
         }
 
         setSucceeded(true);
+    }
+
+    private boolean canShutdownVm() {
+        return getVm().getStatus() == VMStatus.Up &&
+                (Boolean.TRUE.equals(getVm().getAcpiEnable()) || getVm().getHasAgent());
     }
 
     private static Log log = LogFactory.getLog(ShutdownVmCommand.class);
