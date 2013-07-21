@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.DiskValidator;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachDettachVmDiskParameters;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -24,8 +26,8 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -96,7 +98,14 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
                 ((DiskImage) disk).getStorageIds().get(0), getVm().getStoragePoolId())) == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_MATCH);
         }
-
+        if (isImageDisk) {
+            StorageDomain storageDomain = getStorageDomainDAO().getForStoragePool(
+                    ((DiskImage) disk).getStorageIds().get(0), ((DiskImage) disk).getStoragePoolId());
+            StorageDomainValidator storageDomainValidator = new StorageDomainValidator(storageDomain);
+            if (!validate(storageDomainValidator.isDomainExistAndActive())) {
+                return false;
+            }
+        }
         DiskValidator diskValidator = new DiskValidator(disk);
         if (!validate(diskValidator.isVirtIoScsiValid(getVm()))) {
             return false;
@@ -119,6 +128,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
         getVmStaticDAO().incrementDbGeneration(getVm().getId());
         final VmDevice vmDevice = createVmDevice();
         getVmDeviceDao().save(vmDevice);
+
         // update cached image
         List<Disk> imageList = new ArrayList<Disk>();
         imageList.add(disk);

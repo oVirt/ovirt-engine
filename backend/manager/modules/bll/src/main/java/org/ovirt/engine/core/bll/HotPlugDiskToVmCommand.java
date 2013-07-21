@@ -5,13 +5,17 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -43,7 +47,27 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
                 isVmInUpPausedDownStatus() &&
                 isDiskExist(disk) &&
                 checkCanPerformPlugUnPlugDisk() &&
-                isVmNotInPreviewSnapshot();
+                isVmNotInPreviewSnapshot() &&
+                imageStorageValidation();
+    }
+
+    private boolean imageStorageValidation() {
+        // If the VM is not an image then it does not use the storage domain.
+        // If the VM is not in UP or PAUSED status, then we know that there is no running qemu process,
+        // so we don't need to check the storage domain activity.
+        if (disk.getDiskStorageType() != DiskStorageType.IMAGE || !getVm().getStatus().isRunningOrPaused()) {
+            return true;
+        }
+        DiskImage diskImage = (DiskImage) disk;
+        StorageDomain storageDomain = getStorageDomainDAO().getForStoragePool(
+                diskImage.getStorageIds().get(0), diskImage.getStoragePoolId());
+        StorageDomainValidator storageDomainValidator = getStorageDomainValidator(storageDomain);
+        return validate(storageDomainValidator.isDomainExistAndActive());
+    }
+
+    protected StorageDomainValidator getStorageDomainValidator(StorageDomain storageDomain) {
+        StorageDomainValidator storageDomainValidator = new StorageDomainValidator(storageDomain);
+        return storageDomainValidator;
     }
 
     private boolean checkCanPerformPlugUnPlugDisk() {

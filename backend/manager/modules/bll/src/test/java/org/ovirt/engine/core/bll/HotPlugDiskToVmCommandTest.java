@@ -21,11 +21,13 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -40,6 +42,7 @@ import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
+import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -51,6 +54,8 @@ public class HotPlugDiskToVmCommandTest {
 
     protected Guid diskImageGuid = Guid.newGuid();
     protected Guid vmId = Guid.newGuid();
+    private final Guid storagePoolId = Guid.newGuid();
+    private final Guid storageDomainId = Guid.newGuid();
 
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
@@ -65,6 +70,8 @@ public class HotPlugDiskToVmCommandTest {
     protected DiskDao diskDao;
     @Mock
     private VmDeviceDAO vmDeviceDAO;
+    @Mock
+    private StorageDomainDAO storageDomainDao;
 
     @Mock
     OsRepository osRepository;
@@ -162,6 +169,7 @@ public class HotPlugDiskToVmCommandTest {
     public void canDoActionSuccess() {
         mockVmStatusUp();
         cretaeVirtIODisk();
+        initStorageDomain();
         assertTrue(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().isEmpty());
     }
@@ -177,6 +185,19 @@ public class HotPlugDiskToVmCommandTest {
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
+        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
+        doReturn(storageDomainValidator).when(command).getStorageDomainValidator(any(StorageDomain.class));
+        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainExistAndActive();
+    }
+
+    private void initStorageDomain() {
+        StorageDomain storageDomain = new StorageDomain();
+        storageDomain.setId(storageDomainId);
+        storageDomain.setStoragePoolId(storagePoolId);
+
+        doReturn(storageDomainDao).when(command).getStorageDomainDAO();
+        when(storageDomainDao.get(any(Guid.class))).thenReturn(storageDomain);
+        when(storageDomainDao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
     }
 
     protected HotPlugDiskToVmCommand<HotPlugDiskToVmParameters> createCommand() {
@@ -241,10 +262,9 @@ public class HotPlugDiskToVmCommandTest {
      * @return
      */
     private DiskImage createNotVirtIODisk() {
-        DiskImage disk = new DiskImage();
-        disk.setImageId(diskImageGuid);
-        disk.setDiskInterface(DiskInterface.IDE);
+        DiskImage disk = getDiskImage();
         disk.setActive(true);
+        disk.setDiskInterface(DiskInterface.IDE);
         doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         return disk;
@@ -255,13 +275,22 @@ public class HotPlugDiskToVmCommandTest {
      * @return
      */
     protected void cretaeVirtIODisk() {
-        DiskImage disk = new DiskImage();
-        disk.setImageId(diskImageGuid);
+        DiskImage disk = getDiskImage();
         disk.setDiskInterface(DiskInterface.VirtIO);
         disk.setActive(true);
         doReturn(diskDao).when(command).getDiskDao();
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         mockVmDevice(false);
+    }
+
+    protected DiskImage getDiskImage() {
+        DiskImage disk = new DiskImage();
+        disk.setImageId(diskImageGuid);
+        ArrayList<Guid> storageIdList = new ArrayList<>();
+        storageIdList.add(storageDomainId);
+        disk.setStorageIds(storageIdList);
+        disk.setStoragePoolId(storagePoolId);
+        return disk;
     }
 
     /**
