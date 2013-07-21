@@ -9,6 +9,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.LogicalUnit;
@@ -74,17 +75,17 @@ public class BackendStorageDomainsResource
         return inject(new BackendStorageDomainResource(id, this));
     }
 
-    private Response addDomain(VdcActionType action, StorageDomain model, StorageDomainStatic entity, Guid hostId) {
-        StorageServerConnections cnx = mapToCnx(model);
-
-        entity.setStorage(addStorageServerConnection(cnx, hostId));
-
+    private Response addDomain(VdcActionType action, StorageDomain model, StorageDomainStatic entity, Guid hostId, StorageServerConnections connection) {
+        if (connection.getstorage_type().isFileDomain() && StringUtils.isEmpty(connection.getid())) {
+                connection.setid(addStorageServerConnection(connection, hostId));
+        }
+        entity.setStorage(connection.getid());
         if (action == VdcActionType.AddNFSStorageDomain) {
             org.ovirt.engine.core.common.businessentities.StorageDomain existing =
                 getExistingStorageDomain(hostId,
                                          entity.getStorageType(),
                                          entity.getStorageDomainType(),
-                                         cnx);
+                                         connection);
             if (existing != null) {
                 entity = existing.getStorageStaticData();
                 action = VdcActionType.AddExistingFileStorageDomain;
@@ -97,6 +98,7 @@ public class BackendStorageDomainsResource
 
         return performCreate(action, getAddParams(entity, hostId), ID_RESOLVER);
     }
+
 
     private Response addSAN(StorageDomain model, StorageType storageType, StorageDomainStatic entity, Guid hostId) {
         boolean overrideLuns = model.getStorage().isSetOverrideLuns() ? model.getStorage().isOverrideLuns() : false;
@@ -161,12 +163,24 @@ public class BackendStorageDomainsResource
 
     @Override
     public Response add(StorageDomain storageDomain) {
-        validateParameters(storageDomain, "host.id|name", "type", "storage.type");
+        validateParameters(storageDomain, "host.id|name", "type", "storage");
+        Storage storageConnectionFromUser = storageDomain.getStorage();
         validateEnums(StorageDomain.class, storageDomain);
-
-        StorageDomainStatic entity = mapToStatic(storageDomain);
         Guid hostId = getHostId(storageDomain);
+        StorageServerConnections cnx = null;
 
+        if (!storageConnectionFromUser.isSetId()) {
+             validateParameters(storageDomain, "storage.type");
+             cnx = mapToCnx(storageDomain);
+             if(cnx.getstorage_type().isFileDomain()) {
+                 validateParameters(storageConnectionFromUser, "path");
+             }
+        }
+        else {
+             cnx = getStorageServerConnection(storageConnectionFromUser.getId());
+             storageDomain.getStorage().setType(mapType(cnx.getstorage_type()));
+        }
+        StorageDomainStatic entity = mapToStatic(storageDomain);
         Response resp = null;
         switch (entity.getStorageType()) {
         case ISCSI:
@@ -174,20 +188,25 @@ public class BackendStorageDomainsResource
             resp = addSAN(storageDomain, entity.getStorageType(), entity, hostId);
             break;
         case NFS:
-            validateParameters(storageDomain.getStorage(), "address", "path");
-            resp = addDomain(VdcActionType.AddNFSStorageDomain, storageDomain, entity, hostId);
+            if (!storageConnectionFromUser.isSetId()) {
+               validateParameters(storageDomain.getStorage(), "address");
+            }
+            resp = addDomain(VdcActionType.AddNFSStorageDomain, storageDomain, entity, hostId, cnx);
             break;
         case LOCALFS:
-            validateParameters(storageDomain.getStorage(), "path");
-            resp = addDomain(VdcActionType.AddLocalStorageDomain, storageDomain, entity, hostId);
+            resp = addDomain(VdcActionType.AddLocalStorageDomain, storageDomain, entity, hostId, cnx);
             break;
         case POSIXFS:
-            validateParameters(storageDomain.getStorage(), "path", "vfsType");
-            resp = addDomain(VdcActionType.AddPosixFsStorageDomain, storageDomain, entity, hostId);
+            if (!storageConnectionFromUser.isSetId()) {
+                validateParameters(storageDomain.getStorage(), "vfsType");
+            }
+            resp = addDomain(VdcActionType.AddPosixFsStorageDomain, storageDomain, entity, hostId, cnx);
             break;
         case GLUSTERFS:
-            validateParameters(storageDomain.getStorage(), "path", "vfsType");
-            resp = addDomain(VdcActionType.AddGlusterFsStorageDomain, storageDomain, entity, hostId);
+            if (!storageConnectionFromUser.isSetId()) {
+                validateParameters(storageDomain.getStorage(), "vfsType");
+            }
+            resp = addDomain(VdcActionType.AddGlusterFsStorageDomain, storageDomain, entity, hostId, cnx);
             break;
 
         default:
@@ -214,6 +233,10 @@ public class BackendStorageDomainsResource
 
     protected StorageDomainStatic mapToStatic(StorageDomain model) {
         return getMapper(modelType, StorageDomainStatic.class).map(model, null);
+    }
+
+    protected String mapType(StorageType type) {
+        return getMapper(StorageType.class,String.class).map(type,null);
     }
 
     @Override
@@ -318,7 +341,7 @@ public class BackendStorageDomainsResource
 
     protected StorageServerConnections mapToCnx(StorageDomain model) {
         return getMapper(StorageDomain.class,
-                         StorageServerConnections.class).map(model, null);
+                StorageServerConnections.class).map(model, null);
     }
 
     private Guid getHostId(StorageDomain storageDomain) {

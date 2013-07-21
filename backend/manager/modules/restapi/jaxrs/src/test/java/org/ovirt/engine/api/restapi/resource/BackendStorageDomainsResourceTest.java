@@ -220,6 +220,71 @@ public class BackendStorageDomainsResourceTest
     }
 
     @Test
+    public void testAddStorageDomainWithExistingConnectionId() throws Exception {
+        Host host = new Host();
+        host.setId(GUIDS[0].toString());
+        setUriInfo(setUpBasicUriExpectations());
+        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
+                                   StorageServerConnectionQueryParametersBase.class,
+                                   new String[] { "ServerConnectionId" },
+                                   new Object[] { GUIDS[POSIX_IDX].toString() },
+                                   setUpPosixStorageServerConnection(POSIX_IDX));
+        setUpGetEntityExpectations(VdcQueryType.GetStorageServerConnectionById,
+                                   StorageServerConnectionQueryParametersBase.class,
+                                   new String[] { "ServerConnectionId" },
+                                   new Object[] { GUIDS[POSIX_IDX].toString() },
+                                   setUpPosixStorageServerConnection(POSIX_IDX));
+
+        setUpCreationExpectations(VdcActionType.AddPosixFsStorageDomain,
+                                  StorageDomainManagementParameter.class,
+                                  new String[] { "VdsId" },
+                                  new Object[] { GUIDS[0] },
+                                  true,
+                                  true,
+                                  GUIDS[POSIX_IDX],
+                                  VdcQueryType.GetStorageDomainById,
+                                  IdQueryParameters.class,
+                                  new String[] { "Id" },
+                                  new Object[] { GUIDS[POSIX_IDX] },
+                                  getEntity(POSIX_IDX));
+
+        StorageDomain model = new StorageDomain();
+        model.setName(getSafeEntry(POSIX_IDX,NAMES));
+        model.setDescription(getSafeEntry(POSIX_IDX,DESCRIPTIONS));
+        model.setType(getSafeEntry(POSIX_IDX, TYPES).value());
+        model.setStorage(new Storage());
+        model.setHost(new Host());
+        model.getHost().setId(GUIDS[0].toString());
+        model.getStorage().setId(GUIDS[POSIX_IDX].toString());
+
+        Response response = collection.add(model);
+        assertEquals(201, response.getStatus());
+        assertTrue(response.getEntity() instanceof StorageDomain);
+        verifyModel((StorageDomain) response.getEntity(), POSIX_IDX);
+    }
+
+    @Test
+    public void testAddStorageDomainWithNoStorageObject() throws Exception {
+        Host host = new Host();
+        host.setId(GUIDS[0].toString());
+        setUriInfo(setUpBasicUriExpectations());
+        control.replay();
+        StorageDomain model = new StorageDomain();
+        model.setName(getSafeEntry(POSIX_IDX,NAMES));
+        model.setDescription(getSafeEntry(POSIX_IDX,DESCRIPTIONS));
+        model.setType(getSafeEntry(POSIX_IDX, TYPES).value());
+        model.setHost(new Host());
+        model.getHost().setId(GUIDS[0].toString());
+
+        try {
+            collection.add(model);
+            fail("expected WebApplicationException on incomplete parameters");
+        } catch (WebApplicationException wae) {
+             verifyIncompleteException(wae, "StorageDomain", "add", "storage");
+        }
+    }
+
+    @Test
     public void testAddStorageDomainWithHostName() throws Exception {
         Host host = new Host();
         host.setName(NAMES[0]);
@@ -626,6 +691,7 @@ public class BackendStorageDomainsResourceTest
         } else {
             cnx.setconnection(ADDRESSES[index] + ":" + PATHS[index]);
         }
+        cnx.setstorage_type(STORAGE_TYPES_MAPPED[index]);
         return cnx;
     }
 
