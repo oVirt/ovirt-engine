@@ -893,7 +893,7 @@ public class HostGeneralModel extends EntityModel
             command.setIsDefault(true);
             model.getCommands().add(command);
         }
-
+        model.getUserName().setEntity(getEntity().getSshUsername());
         UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
         command.setTitle(isOnlyClose ? constants.close()
                 : constants.cancel());
