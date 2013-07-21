@@ -2,12 +2,21 @@
 
 KEYTOOL="${JAVA_HOME:-/usr}/bin/keytool"
 
-enroll() {
-	local subject="$1"
-
+config() {
+	common_backup "${PKIDIR}/cacert.conf" "${PKIDIR}/cert.conf"
 	cp "${PKIDIR}/cacert.template" "${PKIDIR}/cacert.conf" || die "Cannot create cacert.conf"
 	cp "${PKIDIR}/cert.template" "${PKIDIR}/cert.conf" | die "Cannot create cert.conf"
 	chmod a+r "${PKIDIR}/cacert.conf" "${PKIDIR}/cert.conf" || die "Cannot set config files permissions"
+}
+
+enroll() {
+	local subject="$1"
+
+	common_backup \
+		"${PKIDIR}/serial.txt" \
+		"${PKIDIR}"/database.txt* \
+		"${PKIDIR}/private/ca.pem" \
+		"${PKIDIR}/ca.pem"
 
 	#
 	# openssl ca directory must
@@ -126,5 +135,6 @@ done
 [ -n "${SUBJECT}" ] || die "Please specify subject"
 [ -n "${KEYSTORE_PASSWORD}" ] || die "Please specify keystore password"
 
+config
 enroll "${SUBJECT}"
 keystore "${KEYSTORE_PASSWORD}"
