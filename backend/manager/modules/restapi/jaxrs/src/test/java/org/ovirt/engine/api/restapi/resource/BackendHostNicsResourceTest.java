@@ -41,6 +41,7 @@ public class BackendHostNicsResourceTest
     public static final Guid PARENT_GUID = GUIDS[0];
     public static final Guid NETWORK_GUID = new Guid("33333333-3333-3333-3333-333333333333");
     public static final String NETWORK_NAME = "skynet";
+    public static final NetworkBootProtocol BOOT_PROTOCOL = NetworkBootProtocol.STATIC_IP;
     private static final Guid MASTER_GUID = new Guid("99999999-9999-9999-9999-999999999999");
     private static final String MASTER_NAME = "master";
     private static final Guid SLAVE_GUID = new Guid("66666666-6666-6666-6666-666666666666");
@@ -48,7 +49,6 @@ public class BackendHostNicsResourceTest
     private static final int SINGLE_NIC_IDX = GUIDS.length - 2;
     private static final Integer NIC_SPEED = 100;
     private static final InterfaceStatus NIC_STATUS = InterfaceStatus.UP;
-    private static final NetworkBootProtocol BOOT_PROTOCOL = NetworkBootProtocol.STATIC_IP;
     private static final String SETUPNETWORKS_ACTION_BASE_URL = "/hosts/00000000-0000-0000-0000-000000000000/nics";
     private static final String SETUPNETWORKS_ACTION_URL = "/api/hosts/00000000-0000-0000-0000-000000000000/nics/setupnetworks";
     private static final String SETUPNETWORKS_ACTION_REL = "setupnetworks";

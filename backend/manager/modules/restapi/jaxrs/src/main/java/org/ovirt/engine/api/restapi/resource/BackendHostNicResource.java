@@ -51,13 +51,19 @@ public class BackendHostNicResource
 
     protected Response doAttachAction(Action action, VdcActionType actionType) {
         VdsNetworkInterface hostInterface = parent.lookupInterface(id);
+        org.ovirt.engine.core.common.businessentities.network.Network network =
+                action.getNetwork() == null ? null : parent.lookupNetwork(action.getNetwork());
         AttachNetworkToVdsParameters params = new AttachNetworkToVdsParameters(asGuid(parent.getHostId()),
-                                                                               action.getNetwork()==null ? null : parent.lookupNetwork(action.getNetwork()),
+                                                                               network,
                                                                                hostInterface);
         params.setBondingOptions(hostInterface.getBondOptions());
-        params.setBootProtocol(hostInterface.getBootProtocol());
-        params.setAddress(hostInterface.getAddress());
-        params.setSubnet(hostInterface.getSubnet());
+
+        // TODO: Delete the next block since it misuses the nic parameters
+        if (network == null || network.getVlanId() == null) {
+            params.setBootProtocol(hostInterface.getBootProtocol());
+            params.setAddress(hostInterface.getAddress());
+            params.setSubnet(hostInterface.getSubnet());
+        }
 
         return doAction(actionType, params, action);
     }

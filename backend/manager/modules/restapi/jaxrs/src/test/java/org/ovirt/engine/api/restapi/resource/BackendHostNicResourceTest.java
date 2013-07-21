@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.BOOT_PROTOCOL;
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.NETWORK_GUID;
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.NETWORK_NAME;
 import static org.ovirt.engine.api.restapi.resource.BackendHostNicsResourceTest.PARENT_GUID;
@@ -144,6 +145,14 @@ public class BackendHostNicResourceTest
     @Test
     public void testAttachNotFound() throws Exception {
         testActionNotFound(VdcActionType.AttachNetworkToVdsInterface);
+    }
+
+    @Test
+    public void testAttachVlan() throws Exception {
+        testAction(VdcActionType.AttachNetworkToVdsInterface,
+                null,
+                NETWORK_NAME,
+                100);
     }
 
     @Test
@@ -361,6 +370,13 @@ public class BackendHostNicResourceTest
 
 
     protected void testAction(VdcActionType actionType, String networkId, String networkName) throws Exception {
+        testAction(actionType, networkId, networkName, null);
+    }
+
+    protected void testAction(VdcActionType actionType,
+            String networkId,
+            String networkName,
+            Integer vlanId) throws Exception {
         Action action = new Action();
         action.setNetwork(new Network());
         if (networkId != null) {
@@ -369,18 +385,29 @@ public class BackendHostNicResourceTest
             action.getNetwork().setName(networkName);
         }
 
+        org.ovirt.engine.core.common.businessentities.network.Network network = getNetwork();
+        network.setVlanId(vlanId);
         setUpEntityQueryExpectations(VdcQueryType.GetAllNetworks,
                                      IdQueryParameters.class,
                                      new String[] { "Id" },
                                      new Object[] { Guid.Empty },
-                                     asList(getNetwork()));
+                                     asList(network));
 
         setUpEntityQueryExpectations();
 
+        List<String> parameterNames = new ArrayList<>();
+        parameterNames.add("VdsId");
+        List<Object> parameterValues = new ArrayList<>();
+        parameterValues.add(PARENT_GUID);
+        if (vlanId == null) {
+            parameterNames.add("BootProtocol");
+            parameterValues.add(BOOT_PROTOCOL);
+        }
+
         setUriInfo(setUpActionExpectations(actionType,
                                            AttachNetworkToVdsParameters.class,
-                                           new String[] { "VdsId" },
-                                           new Object[] { PARENT_GUID },
+                                           parameterNames.toArray(new String [0]),
+                                           parameterValues.toArray(),
                                            true,
                                            true,
                                            null,
