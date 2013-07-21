@@ -54,6 +54,10 @@ CONF_DIR="${ENGINE_ETC}/engine-manage-domains"
 CONF_FILE="${CONF_DIR}/engine-manage-domains.conf"
 
 parseArgs() {
+	if [ "$#" -eq 0 ] ; then
+		usage
+		exit 1
+	fi
 	while [ -n "$1" ]; do
 		local x="$1"
 		local v="${x#*=}"
