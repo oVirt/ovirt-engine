@@ -40,6 +40,27 @@ from ovirt_engine_setup import util as osetuputil
 class Plugin(plugin.PluginBase):
     """CA plugin."""
 
+    class CATransaction(transaction.TransactionElement):
+        """yum transaction element."""
+
+        def __init__(self, parent, uninstall_files):
+            self._parent = parent
+            self._uninstall_files = uninstall_files
+
+        def __str__(self):
+            return _("CA Transaction")
+
+        def prepare(self):
+            pass
+
+        def abort(self):
+            for f in self._uninstall_files:
+                if os.path.exists(f):
+                    os.unlink(f)
+
+        def commit(self):
+            pass
+
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._enabled = False
@@ -119,6 +140,14 @@ class Plugin(plugin.PluginBase):
         # this implementaiton is not transactional
         # too many issues with legacy ca implementation
         # need to work this out to allow transactional
+        # for now just delete files if we fail
+        uninstall_files = []
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            self.CATransaction(
+                parent=self,
+                uninstall_files=uninstall_files,
+            )
+        )
 
         # LEGACY NOTE
         # This is needed for avoiding error in create_ca when supporting
@@ -126,7 +155,6 @@ class Plugin(plugin.PluginBase):
         # please DON'T increase this size, any value over 55 will fail the
         # setup. the truncated host-fqdn is concatenated with a random string
         # to create a unique CN value.
-        uninstall_files = []
         self.environment[
             osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
         ].createGroup(
