@@ -344,29 +344,6 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-
-
-
-
-
-Create or replace FUNCTION Getvm_interfaceByvm_id(v_vm_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
-RETURNS SETOF vm_interface_view
-   AS $procedure$
-BEGIN
-RETURN QUERY SELECT *
-   FROM vm_interface_view
-   WHERE vm_guid = v_vm_id
-   AND (NOT v_is_filtered OR EXISTS (SELECT 1
-                                     FROM   user_vm_permissions_view
-                                     WHERE  user_id = v_user_id AND entity_id = v_vm_id));
-
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-
-
 Create or replace FUNCTION Getinterface_viewByvds_id(v_vds_id UUID, v_user_id UUID, v_is_filtered boolean)
 RETURNS SETOF vds_interface_view
    AS $procedure$
@@ -569,11 +546,25 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION GetMacsByDataCenterId(v_data_center_id UUID) RETURNS SETOF varchar
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT mac_addr
+   FROM vm_interface
+   WHERE EXISTS (SELECT 1
+                 FROM vm_static
+                 JOIN vds_groups ON vm_static.vds_group_id = vds_groups.vds_group_id
+                 WHERE vds_groups.storage_pool_id = v_data_center_id
+                 AND vm_static.vm_guid = vm_interface.vm_guid);
+END; $procedure$
+LANGUAGE plpgsql;
+
 ----------------------------------------------------------------
 -- VM Interface View
 ----------------------------------------------------------------
 
-Create or replace FUNCTION GetAllFromvm_interface() RETURNS SETOF vm_interface_view
+Create or replace FUNCTION GetAllFromVmNetworkInterfaceViews() RETURNS SETOF vm_interface_view
 AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
@@ -583,8 +574,8 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-
-Create or replace FUNCTION Getvm_interfaceByid(v_id UUID) RETURNS SETOF vm_interface_view
+Create or replace FUNCTION GetVmNetworkInterfaceViewByVmNetworkInterfaceViewId(v_id UUID)
+RETURNS SETOF vm_interface_view
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -593,7 +584,6 @@ BEGIN
 
 END; $procedure$
 LANGUAGE plpgsql;
-
 
 
 Create or replace FUNCTION GetPluggedVmInterfacesByMac(v_mac_address VARCHAR(20))
@@ -607,6 +597,57 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION GetVmNetworkInterfaceViewByVmId(v_vm_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
+RETURNS SETOF vm_interface_view
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM vm_interface_view
+   WHERE vm_guid = v_vm_id
+   AND (NOT v_is_filtered OR EXISTS (SELECT 1
+   FROM   user_vm_permissions_view
+   WHERE  user_id = v_user_id AND entity_id = v_vm_id));
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetVmNetworkInterfaceViewByTemplateId(v_template_id UUID, v_user_id UUID, v_is_filtered boolean)
+RETURNS SETOF vm_interface_view
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT *
+   FROM vm_interface_view
+   WHERE vmt_guid = v_template_id
+   AND (NOT v_is_filtered OR EXISTS (SELECT 1
+   FROM   user_vm_template_permissions_view
+   WHERE  user_id = v_user_id AND entity_id = v_template_id));
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetVmInterfaceViewsByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface_view
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT vm_interface_view.*
+   FROM vm_interface_view
+   INNER JOIN vnic_profiles ON vnic_profiles.id = vm_interface_view.vnic_profile_id
+   WHERE vnic_profiles.network_id = v_network_id
+   AND vm_interface_view.vm_entity_type = 'VM';
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetVmTemplateInterfaceViewsByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface_view
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT vm_interface_view.*
+   FROM vm_interface_view
+   INNER JOIN vnic_profiles ON vnic_profiles.id = vm_interface_view.vnic_profile_id
+   WHERE vnic_profiles.network_id = v_network_id
+   AND vm_interface_view.vm_entity_type = 'TEMPLATE';
+END; $procedure$
+LANGUAGE plpgsql;
 
 ----------------------------------------------------------------
 -- [vm_interface_statistics] Table
@@ -924,11 +965,6 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-
-
-
-
-
 Create or replace FUNCTION GetvmStaticByGroupIdAndNetwork(v_groupId UUID,
      v_networkName VARCHAR(50)) RETURNS SETOF vm_static
    AS $procedure$
@@ -943,73 +979,6 @@ BEGIN
 
 END; $procedure$
 LANGUAGE plpgsql;
-
-
-
-
-
-Create or replace FUNCTION Getvm_interfaceBytemplate_id(v_template_id UUID, v_user_id UUID, v_is_filtered boolean)
-RETURNS SETOF vm_interface_view
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT *
-   FROM vm_interface_view
-   WHERE vmt_guid = v_template_id
-   AND (NOT v_is_filtered OR EXISTS (SELECT 1
-                                     FROM   user_vm_template_permissions_view
-                                     WHERE  user_id = v_user_id AND entity_id = v_template_id));
-
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-Create or replace FUNCTION GetVmInterfaceViewsByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface_view
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT vm_interface_view.*
-   FROM vm_interface_view
-   INNER JOIN network_cluster
-   ON network_cluster.cluster_id = vm_interface_view.vds_group_id
-   INNER JOIN network
-   ON network.id = network_cluster.network_id
-   AND network.name = vm_interface_view.network_name
-   WHERE network.id = v_network_id
-   AND vm_interface_view.vm_entity_type = 'VM';
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
-Create or replace FUNCTION GetVmTemplateInterfaceViewsByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface_view
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT vm_interface_view.*
-   FROM vm_interface_view
-   INNER JOIN network_cluster
-   ON network_cluster.cluster_id = vm_interface_view.vds_group_id
-   INNER JOIN network
-   ON network.id = network_cluster.network_id
-   AND network.name = vm_interface_view.network_name
-   WHERE network.id = v_network_id
-   AND vm_interface_view.vm_entity_type = 'TEMPLATE';
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-Create or replace FUNCTION GetMacsByDataCenterId(v_data_center_id UUID) RETURNS SETOF varchar
-   AS $procedure$
-BEGIN
-   RETURN QUERY SELECT mac_addr
-   FROM vm_interface_view
-   WHERE EXISTS (
-      SELECT 1 FROM vm_static
-      JOIN vds_groups ON vm_static.vds_group_id = vds_groups.vds_group_id
-      WHERE vds_groups.storage_pool_id = v_data_center_id
-      AND vm_static.vm_guid = vm_interface_view.vm_guid);
-END; $procedure$
-LANGUAGE plpgsql;
-
 
 
 Create or replace FUNCTION set_network_exclusively_as_display(v_cluster_id UUID, v_network_id UUID)

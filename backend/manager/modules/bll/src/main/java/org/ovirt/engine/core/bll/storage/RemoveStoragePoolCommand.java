@@ -59,7 +59,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     @Override
     protected void executeCommand() {
-        List<String> macsToRemove = getVmNetworkInterfaceDao().getAllMacsByDataCenter(getStoragePool().getId());
+        List<String> macsToRemove = getVmNicDao().getAllMacsByDataCenter(getStoragePool().getId());
         removeNetworks();
         /**
          * Detach master storage domain last.

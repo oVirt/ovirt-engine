@@ -10,7 +10,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -72,9 +72,9 @@ public class MacPoolManager {
                 }
             }
 
-            List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao().getAll();
+            List<VmNic> interfaces = DbFacade.getInstance().getVmNicDao().getAll();
 
-            for (VmNetworkInterface iface: interfaces) {
+            for (VmNic iface : interfaces) {
                 forceAddMac(iface.getMacAddress());
             }
             initialized = true;

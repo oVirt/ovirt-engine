@@ -69,22 +69,4 @@ public interface VmNetworkInterfaceDao extends ReadDao<VmNetworkInterface, Guid>
      * @return the list of VmNetworkInterfaces
      */
     List<VmNetworkInterface> getAllForTemplatesByNetwork(Guid networkId);
-
-    /**
-     * Retrieves the MAC addresses of the Vms in the given Data Center.
-     *
-     * @param dataCenterId
-     *            the Data Center
-     * @return the list of MAC addresses
-     */
-    List<String> getAllMacsByDataCenter(Guid dataCenterId);
-
-    /***
-     * Retrieves the plugged VmNetworkInterfaces that have the given MAC address
-     *
-     * @param macAddress
-     *            the MAC address
-     * @return the list of plugged VmNetworkInterfaces
-     */
-    List<VmNetworkInterface> getPluggedForMac(String macAddress);
 }

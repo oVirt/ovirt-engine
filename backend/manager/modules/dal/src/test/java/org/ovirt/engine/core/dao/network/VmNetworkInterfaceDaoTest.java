@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAOTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
-import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
     private static final Guid TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
@@ -28,8 +27,6 @@ public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
     protected static final Guid UNPRIVILEGED_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544a");
 
     private VmNetworkInterfaceDao dao;
-    private VmDeviceDAO vmDevicesDao;
-    private VmNetworkStatisticsDao StatsDao;
 
     private VmNetworkInterface existingVmInterface;
     private VmNetworkInterface existingTemplateInterface;
@@ -41,8 +38,6 @@ public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
         super.setUp();
 
         dao = dbFacade.getVmNetworkInterfaceDao();
-        vmDevicesDao = dbFacade.getVmDeviceDao();
-        StatsDao = dbFacade.getVmNetworkStatisticsDao();
         existingVmInterface = dao.get(FixturesTool.VM_NETWORK_INTERFACE);
         existingTemplateInterface = dao.get(FixturesTool.TEMPLATE_NETWORK_INTERFACE);
 
@@ -223,20 +218,6 @@ public class VmNetworkInterfaceDaoTest extends BaseDAOTestCase {
     public void testGetAllForNetwork() throws Exception {
         List<VmNetworkInterface> result = dao.getAllForNetwork(FixturesTool.NETWORK_ENGINE);
         assertEquals(existingVmInterface, result.get(0));
-    }
-
-    @Test
-    public void testGetAllMacsByStoragePool() throws Exception {
-        List<String> result = dao.getAllMacsByDataCenter(FixturesTool.STORAGE_POOL_NFS_2);
-        assertEquals(FixturesTool.MAC_ADDRESS, result.get(0));
-    }
-
-    @Test
-    public void testGetPluggedForMac() throws Exception {
-        List<VmNetworkInterface> result = dao.getPluggedForMac(FixturesTool.MAC_ADDRESS);
-        for (VmNetworkInterface vmNetworkInterface : result) {
-            assertEquals(FixturesTool.MAC_ADDRESS, vmNetworkInterface.getMacAddress());
-        }
     }
 
     private void assertCorrectResultForTemplate(List<VmNetworkInterface> result) {

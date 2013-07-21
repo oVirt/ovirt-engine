@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,7 +36,7 @@ public class VmInterfaceManager {
 
     /**
      * Add a {@link VmNetworkInterface} to the VM. Allocates a MAC from the {@link MacPoolManager} if necessary,
-     * otherwise, if {@link ConfigValues#HotPlugEnabled} is true, forces adding the MAC address to the
+     * otherwise, if {@code ConfigValues.HotPlugEnabled} is true, forces adding the MAC address to the
      * {@link MacPoolManager}. If HotPlug is not enabled tries to add the {@link VmNetworkInterface}'s MAC address to
      * the {@link MacPoolManager}, and throws a {@link VdcBllException} if it fails.
      *
@@ -154,9 +155,8 @@ public class VmInterfaceManager {
      * @return <code>true</code> if the MAC is used by another plugged network interface, <code>false</code> otherwise.
      */
     public boolean existsPluggedInterfaceWithSameMac(VmNetworkInterface interfaceToPlug) {
-        List<VmNetworkInterface> vmNetworkIntrefaces =
-                getVmNetworkInterfaceDao().getPluggedForMac(interfaceToPlug.getMacAddress());
-        for (VmNetworkInterface vmNetworkInterface : vmNetworkIntrefaces) {
+        List<VmNic> vmNetworkIntrefaces = getVmNicDao().getPluggedForMac(interfaceToPlug.getMacAddress());
+        for (VmNic vmNetworkInterface : vmNetworkIntrefaces) {
             if (!interfaceToPlug.getId().equals(vmNetworkInterface.getId())) {
                 return true;
             }

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao.network;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
@@ -9,59 +10,16 @@ import org.ovirt.engine.core.common.businessentities.comparators.InterfaceCompar
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.BaseDAODbFacade;
+import org.ovirt.engine.core.dao.DefaultReadDaoDbFacade;
+import org.ovirt.engine.core.dao.network.VmNicDaoDbFacadeImpl.VmNicRowMapperBase;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements VmNetworkInterfaceDao {
+public class VmNetworkInterfaceDaoDbFacadeImpl extends DefaultReadDaoDbFacade<VmNetworkInterface, Guid> implements VmNetworkInterfaceDao {
 
-    private static final int MAC_COLUMN_POSITION = 1;
-
-    @SuppressWarnings("unchecked")
-    protected final RowMapper<VmNetworkInterface> mapper =
-            new RowMapper<VmNetworkInterface>() {
-                @Override
-                public VmNetworkInterface mapRow(ResultSet rs, int rowNum)
-                        throws SQLException {
-                    VmNetworkInterface entity = new VmNetworkInterface();
-                    entity.getStatistics().setId(getGuidDefaultEmpty(rs, "id"));
-                    entity.getStatistics().setReceiveRate(rs.getDouble("rx_rate"));
-                    entity.getStatistics().setTransmitRate(rs.getDouble("tx_rate"));
-                    entity.getStatistics().setReceiveDropRate(rs.getDouble("rx_drop"));
-                    entity.getStatistics().setTransmitDropRate(rs.getDouble("tx_drop"));
-                    entity.getStatistics().setStatus(InterfaceStatus.forValue(rs.getInt("iface_status")));
-                    entity.setType((Integer) rs.getObject("type"));
-                    entity.setMacAddress(rs.getString("mac_addr"));
-                    entity.setNetworkName(rs.getString("network_name"));
-                    entity.setName(rs.getString("name"));
-                    entity.setVmId(getGuid(rs, "vm_guid"));
-                    entity.setVnicProfileId(getGuid(rs, "vnic_profile_id"));
-                    entity.setVmTemplateId(getGuid(rs, "vmt_guid"));
-                    entity.setVmName(rs.getString("vm_name"));
-                    entity.setId(getGuidDefaultEmpty(rs, "id"));
-                    entity.setSpeed((Integer) rs.getObject("speed"));
-                    entity.setPlugged(rs.getBoolean("is_plugged"));
-                    entity.setCustomProperties(SerializationFactory.getDeserializer()
-                            .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class));
-                    entity.setPortMirroring(rs.getBoolean("port_mirroring"));
-                    entity.setLinked(rs.getBoolean("linked"));
-                    return entity;
-                }
-            };
-
-    protected final RowMapper<String> macMapper = new RowMapper<String>() {
-
-        @Override
-        public String mapRow(ResultSet rs, int rowNum) throws SQLException {
-            return rs.getString(MAC_COLUMN_POSITION);
-        }
-    };
-
-    @Override
-    public VmNetworkInterface get(Guid id) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("id", id);
-        return getCallsHandler().executeRead("Getvm_interfaceById", mapper, parameterSource);
+    public VmNetworkInterfaceDaoDbFacadeImpl() {
+        super("VmNetworkInterfaceView");
     }
 
     @Override
@@ -70,13 +28,15 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
     }
 
     @Override
-    public List<VmNetworkInterface> getAllForVm(Guid id, Guid userID, boolean isFiltered) {
+    public List<VmNetworkInterface> getAllForVm(Guid id, Guid userId, boolean filtered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
+                .addValue("vm_id", id).addValue("user_id", userId).addValue("is_filtered", filtered);
 
         List<VmNetworkInterface> results =
-                getCallsHandler().executeReadList("Getvm_interfaceByvm_id", mapper, parameterSource);
-        java.util.Collections.sort(results, new InterfaceComparerByMAC());
+                getCallsHandler().executeReadList("GetVmNetworkInterfaceViewByVmId",
+                        VmNetworkInterfaceRowMapper.INSTANCE,
+                        parameterSource);
+        Collections.sort(results, new InterfaceComparerByMAC());
         return results;
     }
 
@@ -86,39 +46,65 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends BaseDAODbFacade implement
     }
 
     @Override
-    public List<VmNetworkInterface> getAllForTemplate(Guid id, Guid userID, boolean isFiltered) {
+    public List<VmNetworkInterface> getAllForTemplate(Guid id, Guid userId, boolean filtered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("template_id", id).addValue("user_id", userID).addValue("is_filtered", isFiltered);
+                .addValue("template_id", id).addValue("user_id", userId).addValue("is_filtered", filtered);
 
-        return getCallsHandler().executeReadList("Getvm_interfaceBytemplate_id", mapper, parameterSource);
-    }
-
-    @Override
-    public List<VmNetworkInterface> getAll() {
-        return getCallsHandler().executeReadList("GetAllFromvm_interface", mapper, getCustomMapSqlParameterSource());
+        return getCallsHandler().executeReadList("GetVmNetworkInterfaceViewByTemplateId",
+                VmNetworkInterfaceRowMapper.INSTANCE,
+                parameterSource);
     }
 
     @Override
     public List<VmNetworkInterface> getAllForNetwork(Guid networkId) {
         return getCallsHandler().executeReadList("GetVmInterfaceViewsByNetworkId",
-                mapper, getCustomMapSqlParameterSource().addValue("network_id", networkId));
+                VmNetworkInterfaceRowMapper.INSTANCE,
+                getCustomMapSqlParameterSource().addValue("network_id", networkId));
     }
 
     @Override
     public List<VmNetworkInterface> getAllForTemplatesByNetwork(Guid networkId) {
         return getCallsHandler().executeReadList("GetVmTemplateInterfaceViewsByNetworkId",
-                mapper, getCustomMapSqlParameterSource().addValue("network_id", networkId));
+                VmNetworkInterfaceRowMapper.INSTANCE,
+                getCustomMapSqlParameterSource().addValue("network_id", networkId));
     }
 
     @Override
-    public List<String> getAllMacsByDataCenter(Guid dataCenterId) {
-        return getCallsHandler().executeReadList("GetMacsByDataCenterId",
-                macMapper, getCustomMapSqlParameterSource().addValue("data_center_id", dataCenterId));
+    protected MapSqlParameterSource createIdParameterMapper(Guid id) {
+        return getCustomMapSqlParameterSource().addValue("id", id);
     }
 
     @Override
-    public List<VmNetworkInterface> getPluggedForMac(String macAddress) {
-        return getCallsHandler().executeReadList("GetPluggedVmInterfacesByMac",
-                mapper, getCustomMapSqlParameterSource().addValue("mac_address", macAddress));
+    protected RowMapper<VmNetworkInterface> createEntityRowMapper() {
+        return VmNetworkInterfaceRowMapper.INSTANCE;
+    }
+
+    private static class VmNetworkInterfaceRowMapper extends VmNicRowMapperBase<VmNetworkInterface> {
+
+        public static VmNetworkInterfaceRowMapper INSTANCE = new VmNetworkInterfaceRowMapper();
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public VmNetworkInterface mapRow(ResultSet rs, int rowNum) throws SQLException {
+            VmNetworkInterface entity = super.mapRow(rs, rowNum);
+            entity.getStatistics().setId(getGuidDefaultEmpty(rs, "id"));
+            entity.getStatistics().setReceiveRate(rs.getDouble("rx_rate"));
+            entity.getStatistics().setTransmitRate(rs.getDouble("tx_rate"));
+            entity.getStatistics().setReceiveDropRate(rs.getDouble("rx_drop"));
+            entity.getStatistics().setTransmitDropRate(rs.getDouble("tx_drop"));
+            entity.getStatistics().setStatus(InterfaceStatus.forValue(rs.getInt("iface_status")));
+            entity.setNetworkName(rs.getString("network_name"));
+            entity.setPlugged(rs.getBoolean("is_plugged"));
+            entity.setCustomProperties(SerializationFactory.getDeserializer()
+                    .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class));
+            entity.setPortMirroring(rs.getBoolean("port_mirroring"));
+            return entity;
+
+        }
+        @Override
+        protected VmNetworkInterface createVmNicEntity() {
+            return new VmNetworkInterface();
+        }
+
     }
 }
