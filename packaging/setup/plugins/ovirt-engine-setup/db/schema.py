@@ -27,6 +27,7 @@ _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 from otopi import constants as otopicons
 from otopi import util
 from otopi import plugin
+from otopi import transaction
 
 
 from ovirt_engine_setup import constants as osetupcons
@@ -36,6 +37,54 @@ from ovirt_engine_setup import database
 @util.export
 class Plugin(plugin.PluginBase):
     """Schema plugin."""
+
+    class SchemaTransaction(transaction.TransactionElement):
+        """yum transaction element."""
+
+        def __init__(self, parent, backup=None):
+            self._parent = parent
+            self._backup = backup
+
+        def __str__(self):
+            return _("Schema Transaction")
+
+        def prepare(self):
+            pass
+
+        def abort(self):
+            self._parent.logger.warning(_('Rolling back upgrade'))
+            try:
+                dbovirtutils = database.OvirtUtils(plugin=self._parent)
+                self._parent.logger.info(
+                    _('Clearing database {database}').format(
+                        database=self._parent.environment[
+                            osetupcons.DBEnv.DATABASE
+                        ],
+                    )
+                )
+                dbovirtutils.clearOvirtEngineDatabase()
+                if self._backup is not None and os.path.exists(self._backup):
+                    self._parent.logger.info(
+                        _('Restoring database {database}').format(
+                            database=self._parent.environment[
+                                osetupcons.DBEnv.DATABASE
+                            ],
+                        )
+                    )
+                    dbovirtutils.restore(backupFile=self._backup)
+            except Exception as e:
+                self._parent.logger.debug(
+                    'Exception during database restore',
+                    exc_info=True,
+                )
+                self._parent.logger.error(
+                    _('Database rollback failed: {error}').format(
+                        error=e,
+                    )
+                )
+
+        def commit(self):
+            pass
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -90,6 +139,12 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _miscInstall(self):
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            self.SchemaTransaction(
+                parent=self,
+            )
+        )
+
         self.logger.info(_('Creating database schema'))
         args = [
             os.path.join(
@@ -148,6 +203,13 @@ class Plugin(plugin.PluginBase):
         dbovirtutils = database.OvirtUtils(plugin=self)
         backupFile = dbovirtutils.backup()
 
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            self.SchemaTransaction(
+                parent=self,
+                backup=backupFile,
+            )
+        )
+
         #
         # TODO
         # rename database
@@ -155,71 +217,48 @@ class Plugin(plugin.PluginBase):
         # consider doing that via python
         #
 
-        try:
-            self.logger.info(_('Updating database schema'))
-            args = [
-                osetupcons.FileLocations.OVIRT_ENGINE_DB_UPGRADE,
-                '-s', self.environment[osetupcons.DBEnv.HOST],
-                '-p', str(self.environment[osetupcons.DBEnv.PORT]),
-                '-u', self.environment[osetupcons.DBEnv.USER],
-                '-d', self.environment[osetupcons.DBEnv.DATABASE],
-                '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
-            ]
-            if self.environment[
-                osetupcons.CoreEnv.DEVELOPER_MODE
-            ]:
-                if not os.path.exists(
+        self.logger.info(_('Updating database schema'))
+        args = [
+            osetupcons.FileLocations.OVIRT_ENGINE_DB_UPGRADE,
+            '-s', self.environment[osetupcons.DBEnv.HOST],
+            '-p', str(self.environment[osetupcons.DBEnv.PORT]),
+            '-u', self.environment[osetupcons.DBEnv.USER],
+            '-d', self.environment[osetupcons.DBEnv.DATABASE],
+            '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
+        ]
+        if self.environment[
+            osetupcons.CoreEnv.DEVELOPER_MODE
+        ]:
+            if not os.path.exists(
+                osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR
+            ):
+                os.makedirs(
                     osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR
-                ):
-                    os.makedirs(
-                        osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR
-                    )
-                args.extend(
-                    [
-                        '-m',
-                        osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR,
-                    ]
                 )
-            else:
-                args.extend(
-                    [
-                        '-g',   # do not generate md5
-                    ]
-                )
-            self.execute(
-                args=args,
-                envAppend={
-                    'ENGINE_CERTIFICATE': (
-                        osetupcons.FileLocations.
-                        OVIRT_ENGINE_PKI_ENGINE_CA_CERT
-                    ),
-                    'ENGINE_PGPASS': self.environment[
-                        osetupcons.DBEnv.PGPASS_FILE
-                    ]
-                },
+            args.extend(
+                [
+                    '-m',
+                    osetupcons.FileLocations.OVIRT_ENGINE_DB_MD5_DIR,
+                ]
             )
-        except:
-            self.logger.debug(
-                'Exception during database upgrade',
-                exc_info=True
+        else:
+            args.extend(
+                [
+                    '-g',   # do not generate md5
+                ]
             )
-            self.logger.warning(_('Rolling back upgrade'))
-
-            try:
-                dbovirtutils.clearOvirtEngineDatabase()
-                dbovirtutils.restore(backupFile=backupFile)
-            except Exception as e:
-                self.logger.debug(
-                    'Exception during database restore',
-                    exc_info=True,
-                )
-                self.logger.error(
-                    _('Database rollback failed: {error}').format(
-                        error=e,
-                    )
-                )
-
-            raise
+        self.execute(
+            args=args,
+            envAppend={
+                'ENGINE_CERTIFICATE': (
+                    osetupcons.FileLocations.
+                    OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+                ),
+                'ENGINE_PGPASS': self.environment[
+                    osetupcons.DBEnv.PGPASS_FILE
+                ]
+            },
+        )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
