@@ -321,7 +321,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: self._enabled,
         after=[
-            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE,
+            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
         ],
     )
     def _validateZombies(self):

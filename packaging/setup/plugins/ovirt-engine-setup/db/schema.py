@@ -197,6 +197,9 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: not self.environment[
             osetupcons.DBEnv.NEW_DATABASE
         ],
+        after=[
+            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
+        ],
     )
     def _miscUpgrade(self):
         self._checkSupportedVersionsPresent()

@@ -38,23 +38,21 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
 
-    @plugin.event(
-        stage=plugin.Stages.STAGE_INIT,
-    )
-    def _init(self):
-        self.environment[osetupcons.DBEnv.PGPASS_FILE] = None
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_VALIDATION,
-        name=osetupcons.Stages.DB_CREDENTIALS_AVAILABLE,
-    )
-    def _misc(self):
-        fd, pgpass = tempfile.mkstemp(
-            prefix='pgpass',
-            suffix='.tmp',
-        )
-        os.close(fd)
-        os.chmod(pgpass, 0o600)
+    def _createTempPgPass(self):
+        pgpass = None
+        if self.environment[
+            osetupcons.DBEnv.PGPASS_FILE
+        ] is not None:
+            pgpass = self.environment[
+                osetupcons.DBEnv.PGPASS_FILE
+            ]
+        else:
+            fd, pgpass = tempfile.mkstemp(
+                prefix='pgpass',
+                suffix='.tmp',
+            )
+            os.close(fd)
+            os.chmod(pgpass, 0o600)
         with open(pgpass, 'w') as f:
             f.write(
                 (
@@ -68,9 +66,30 @@ class Plugin(plugin.PluginBase):
                     password=self.environment[osetupcons.DBEnv.PASSWORD],
                 ),
             )
+
         self.environment[
             osetupcons.DBEnv.PGPASS_FILE
         ] = pgpass
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+    )
+    def _init(self):
+        self.environment[osetupcons.DBEnv.PGPASS_FILE] = None
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+        name=osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
+    )
+    def _validation(self):
+        self._createTempPgPass()
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        name=osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
+    )
+    def _misc(self):
+        self._createTempPgPass()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLEANUP,

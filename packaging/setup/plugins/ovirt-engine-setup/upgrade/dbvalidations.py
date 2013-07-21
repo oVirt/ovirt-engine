@@ -113,7 +113,7 @@ class Plugin(plugin.PluginBase):
         priority=plugin.Stages.PRIORITY_LOW,
         after=[
             osetupcons.Stages.DB_CONNECTION_CUSTOMIZATION,
-            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE,
+            osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
         ],
         condition=lambda self: self._enabled,
     )
