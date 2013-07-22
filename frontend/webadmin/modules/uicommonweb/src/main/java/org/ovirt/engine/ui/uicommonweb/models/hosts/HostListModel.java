@@ -841,8 +841,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         host.setHostName((String) model.getHost().getEntity());
         host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
         host.setSshPort(Integer.parseInt(model.getHostPort().getEntity().toString()));
-        host.setSshUsername(model.getUserName().getEntity().toString());
-        boolean sshFpSet = (Boolean) (model.getFetchSshFingerprint().getEntity() != null);
+        boolean sshUsernameSet = model.getUserName().getEntity() != null;
+        host.setSshUsername(sshUsernameSet ? model.getUserName().getEntity().toString() : null);
+        boolean sshFpSet = model.getFetchSshFingerprint().getEntity() != null;
         host.setSshKeyFingerprint(!sshFpSet ? null : (String) model.getFetchSshFingerprint().getEntity());
         host.setVdsSpmPriority(model.getSpmPriorityValue());
         boolean consoleAddressSet = (Boolean) model.getConsoleAddressEnabled().getEntity();
