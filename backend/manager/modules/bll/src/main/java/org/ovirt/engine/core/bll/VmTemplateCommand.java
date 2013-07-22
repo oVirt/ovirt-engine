@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -167,9 +167,8 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
     }
 
     protected void RemoveNetwork() {
-        List<VmNetworkInterface> list = DbFacade.getInstance().getVmNetworkInterfaceDao()
-                .getAllForTemplate(getVmTemplateId());
-        for (VmNetworkInterface iface : list) {
+        List<VmNic> list = getVmNicDao().getAllForTemplate(getVmTemplateId());
+        for (VmNic iface : list) {
             DbFacade.getInstance().getVmDeviceDao().remove(new VmDeviceId(iface.getId(), getVmTemplateId()));
             getVmNicDao().remove(iface.getId());
         }

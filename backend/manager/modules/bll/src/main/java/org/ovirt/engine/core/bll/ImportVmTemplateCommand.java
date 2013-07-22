@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -428,10 +429,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     protected void removeNetwork() {
-        List<VmNetworkInterface> list =
-                DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForTemplate(getVmTemplateId());
-        for (VmNetworkInterface iface : list) {
-            DbFacade.getInstance().getVmNicDao().remove(iface.getId());
+        List<VmNic> list = getVmNicDao().getAllForTemplate(getVmTemplateId());
+        for (VmNic iface : list) {
+            getVmNicDao().remove(iface.getId());
         }
     }
 
