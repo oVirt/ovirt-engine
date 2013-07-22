@@ -20,6 +20,7 @@
 
 
 import os
+import glob
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -108,29 +109,28 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _misc(self):
-        if os.path.exists(
-            osetupcons.FileLocations.LEGACY_OVIRT_ENGINE_SYSCONFIG
-        ):
-            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-                filetransaction.FileTransaction(
-                    name=(
-                        osetupcons.FileLocations.LEGACY_OVIRT_ENGINE_SYSCONFIG
-                    ),
-                    content='',
-                )
-            )
+        legacy = osetupcons.FileLocations.LEGACY_OVIRT_ENGINE_SYSCONFIG
+        legacy_rpmsave = legacy + '.rpmsave'
+        legacy_confd = legacy + '.d'
 
-    @plugin.event(
-        stage=plugin.Stages.STAGE_CLOSEUP,
-        condition=lambda self: self.environment[
-            osetupcons.CoreEnv.UPGRADE_FROM_LEGACY
-        ],
-    )
-    def _closeup(self):
-        if os.path.exists(
-            osetupcons.FileLocations.LEGACY_OVIRT_ENGINE_SYSCONFIG
-        ):
-            os.remove(osetupcons.FileLocations.LEGACY_OVIRT_ENGINE_SYSCONFIG)
+        if os.path.exists(legacy_rpmsave) and not os.path.exists(legacy):
+            os.rename(legacy_rpmsave, legacy)
+
+        if os.path.exists(legacy_confd):
+            for n in glob.glob(os.path.join(legacy_confd, '*.conf')):
+                with open(n, 'r') as f:
+                    self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                        filetransaction.FileTransaction(
+                            name=os.path.join(
+                                (
+                                    osetupcons.FileLocations.
+                                    OVIRT_ENGINE_SERVICE_CONFIGD
+                                ),
+                                os.path.basename(n),
+                            ),
+                            content=f.read().splitlines(),
+                        )
+                    )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
