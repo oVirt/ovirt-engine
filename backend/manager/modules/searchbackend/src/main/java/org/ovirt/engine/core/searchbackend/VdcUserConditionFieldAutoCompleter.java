@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
 import org.ovirt.engine.core.common.businessentities.LdapRefStatus;
-import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.StringHelper;
 
 public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
@@ -75,17 +75,17 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
     }
 
     @Override
-    public void formatValue(String fieldName, RefObject<String> relations, RefObject<String> value, boolean caseSensitive) {
+    public void formatValue(String fieldName, Pair<String, String> pair, boolean caseSensitive) {
         if ("STATUS".equals(fieldName)) {
-            String tmp = StringHelper.trim(value.argvalue, '\'');
-            if ("=".equals(relations.argvalue) && "1".equals(tmp)) {
-                relations.argvalue = ">=";
+            String tmp = StringHelper.trim(pair.getSecond(), '\'');
+            if ("=".equals(pair.getFirst()) && "1".equals(tmp)) {
+                pair.setSecond(">=");
             }
-            if ("!=".equals(relations.argvalue) && "1".equals(tmp)) {
-                relations.argvalue = "<";
+            if ("!=".equals(pair.getFirst()) && "1".equals(tmp)) {
+                pair.setFirst("<");
             }
         } else {
-            super.formatValue(fieldName, relations, value, caseSensitive);
+            super.formatValue(fieldName, pair, caseSensitive);
         }
     }
 }

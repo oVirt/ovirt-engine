@@ -5,8 +5,8 @@ import java.util.UUID;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.TimeSpan;
@@ -117,9 +117,9 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
 
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
-         if ("OS".equals(fieldName)) {
-             return SimpleDependecyInjector.getInstance().get(OsValueAutoCompleter.class);
-         } else if ("STATUS".equals(fieldName)) {
+        if ("OS".equals(fieldName)) {
+            return SimpleDependecyInjector.getInstance().get(OsValueAutoCompleter.class);
+        } else if ("STATUS".equals(fieldName)) {
             return new EnumValueAutoCompleter(VMStatus.class);
         } else if ("TYPE".equals(fieldName)) {
             return new EnumValueAutoCompleter(VmType.class);
@@ -130,31 +130,28 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     }
 
     @Override
-    public void formatValue(String fieldName,
-            RefObject<String> relations,
-            RefObject<String> value,
-            boolean caseSensitive) {
+    public void formatValue(String fieldName, Pair<String, String> pair, boolean caseSensitive) {
         if ("APPS".equals(fieldName)) {
-            value.argvalue =
+            pair.setSecond(
                     StringFormat.format(BaseConditionFieldAutoCompleter.getI18NPrefix() + "'%%%1$s%%'",
-                            StringHelper.trim(value.argvalue, '\'').replace("N'",
-                                    ""));
-            if ("=".equals(relations.argvalue)) {
-                relations.argvalue = BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
-            } else if ("!=".equals(relations.argvalue)) {
-                relations.argvalue = "NOT " + BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
+                            StringHelper.trim(pair.getSecond(), '\'').replace("N'",
+                                    "")));
+            if ("=".equals(pair.getFirst())) {
+                pair.setFirst(BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive));
+            } else if ("!=".equals(pair.getFirst())) {
+                pair.setFirst("NOT " + BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive));
             }
         }
         else if ("UPTIME".equals(fieldName)) {
-            value.argvalue = StringHelper.trim(value.argvalue, '\'');
-            TimeSpan ts = TimeSpan.Parse(value.argvalue);
-            value.argvalue = StringFormat.format("'%1$s'", ts.TotalSeconds);
+            pair.setSecond(StringHelper.trim(pair.getSecond(), '\''));
+            TimeSpan ts = TimeSpan.Parse(pair.getSecond());
+            pair.setSecond(StringFormat.format("'%1$s'", ts.TotalSeconds));
         }
         else if ("CREATIONDATE".equals(fieldName)) {
-            Date tmp = new Date(Date.parse(StringHelper.trim(value.argvalue, '\'')));
-            value.argvalue = StringFormat.format("'%1$s'", tmp);
+            Date tmp = new Date(Date.parse(StringHelper.trim(pair.getSecond(), '\'')));
+            pair.setSecond(StringFormat.format("'%1$s'", tmp));
         } else {
-            super.formatValue(fieldName, relations, value, caseSensitive);
+            super.formatValue(fieldName, pair, caseSensitive);
         }
     }
 }

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
-import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.common.utils.Pair;
 
 /**
  * An interface to be implemented by all Condition fields auto completers
@@ -26,5 +26,5 @@ public interface IConditionFieldAutoCompleter extends IAutoCompleter {
             String tableName,
             boolean caseSensitive);
 
-    void formatValue(String fieldName, RefObject<String> relations, RefObject<String> value, boolean caseSensitive);
+    void formatValue(String fieldName, Pair<String, String> pair, boolean caseSensitive);
 }

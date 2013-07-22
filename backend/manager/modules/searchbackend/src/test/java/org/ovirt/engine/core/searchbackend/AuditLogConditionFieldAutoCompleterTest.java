@@ -11,8 +11,8 @@ import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.DateTime;
-import org.ovirt.engine.core.compat.RefObject;
 
 public class AuditLogConditionFieldAutoCompleterTest {
 
@@ -38,40 +38,39 @@ public class AuditLogConditionFieldAutoCompleterTest {
 
     @Test
     public void testformatValueWithTime() {
-        RefObject<String> rels = new RefObject<String>();
-        RefObject<String> value = new RefObject<String>();
+        Pair<String, String> pair = new Pair<String, String>();
         IConditionFieldAutoCompleter comp = new AuditLogConditionFieldAutoCompleter();
         Date date = new Date(72, 0, 12);
         String dateString = DateFormat.getDateInstance(DateFormat.SHORT).format(date);
-        value.argvalue = dateString;
-        comp.formatValue("TIME", rels, value, false);
+        pair.setSecond(dateString);
+        comp.formatValue("TIME", pair, false);
         DateFormat fmt = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.SHORT);
-        assertEquals(quote(fmt.format(date)), value.argvalue);
-        value.argvalue = "1";
-        comp.formatValue("TIME", rels, value, false);
+        assertEquals(quote(fmt.format(date)), pair.getSecond());
+        pair.setSecond("1");
+        comp.formatValue("TIME", pair, false);
         // Try today
         // SimpleDateFormat fmt = new SimpleDateFormat("MM/dd/yyyy" +
         // " 23:59:59 ");
-        //Today begins at 00:00 - this is why we reset the DateTime object to midnight.
+        // Today begins at 00:00 - this is why we reset the DateTime object to midnight.
         DateTime dt = new DateTime(new Date());
         dt = dt.resetToMidnight();
-        assertEquals(quote(fmt.format(dt)), value.argvalue);
+        assertEquals(quote(fmt.format(dt)), pair.getSecond());
         // Try Yesterday
         Calendar cal = Calendar.getInstance();
         cal.setTime(new Date());
         cal.add(Calendar.DATE, -1);
-        value.argvalue = "2";
-        comp.formatValue("TIME", rels, value, false);
-        //Yesterday (as any other day) begins at 00:00 - this is why we reset the DateTime object to midnight.
+        pair.setSecond("2");
+        comp.formatValue("TIME", pair, false);
+        // Yesterday (as any other day) begins at 00:00 - this is why we reset the DateTime object to midnight.
 
         dt = new DateTime(cal.getTime());
         dt = dt.resetToMidnight();
-        assertEquals(quote(fmt.format(dt)), value.argvalue);
+        assertEquals(quote(fmt.format(dt)), pair.getSecond());
 
         // Just going to test that this works
-        value.argvalue = "Wednesday";
-        comp.formatValue("TIME", rels, value, false);
-        assertFalse("Day should be transformed to a date", value.argvalue.equals("Wednesday"));
+        pair.setSecond("Wednesday");
+        comp.formatValue("TIME", pair, false);
+        assertFalse("Day should be transformed to a date", pair.getSecond().equals("Wednesday"));
     }
 
     private String quote(String s) {

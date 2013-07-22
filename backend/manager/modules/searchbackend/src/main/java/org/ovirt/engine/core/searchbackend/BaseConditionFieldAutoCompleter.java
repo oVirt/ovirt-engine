@@ -13,11 +13,11 @@ import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.ITagsHandler;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.DayOfWeek;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IntegerCompat;
-import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -283,58 +283,55 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     }
 
     @Override
-    public void formatValue(String fieldName,
-            RefObject<String> relations,
-            RefObject<String> value,
-            boolean caseSensitive) {
+    public void formatValue(String fieldName, Pair<String, String> pair, boolean caseSensitive) {
         if (fieldName == null) {
             return;
         }
 
         if ("TIME".equals(fieldName) || "CREATIONDATE".equals(fieldName)) {
-            Date temp = DateUtils.parse(StringHelper.trim(value.argvalue, '\''));
+            Date temp = DateUtils.parse(StringHelper.trim(pair.getSecond(), '\''));
 
             DateTime result;
             if (temp == null) {
-                result = DealWithDateEnum(value.argvalue);
+                result = DealWithDateEnum(pair.getSecond());
             } else {
                 result = new DateTime(temp);
             }
 
-            if (relations.argvalue != null && relations.argvalue.equals("=")) {
-                relations.argvalue = "between";
+            if (pair.getFirst() != null && pair.getFirst().equals("=")) {
+                pair.setFirst("between");
                 DateTime nextDay = result.AddDays(1);
-                value.argvalue = StringFormat.format("'%1$s' and '%2$s'",
+                pair.setSecond(StringFormat.format("'%1$s' and '%2$s'",
                         result.toString(DateUtils.getFormat(DateFormat.DEFAULT, DateFormat.SHORT)),
-                        nextDay.toString(DateUtils.getFormat(DateFormat.DEFAULT, DateFormat.SHORT)));
+                        nextDay.toString(DateUtils.getFormat(DateFormat.DEFAULT, DateFormat.SHORT))));
             } else { // ">" or "<"
                      // value.argvalue = String.format("'%1$s'", result);
-                value.argvalue = StringFormat.format("'%1$s'",
-                        result.toString(DateUtils.getFormat(DateFormat.DEFAULT, DateFormat.SHORT)));
+                pair.setSecond(StringFormat.format("'%1$s'",
+                        result.toString(DateUtils.getFormat(DateFormat.DEFAULT, DateFormat.SHORT))));
             }
 
         }
         else if ("TAG".equals(fieldName)) {
-            value.argvalue = value.argvalue.startsWith("N'") ? value.argvalue.substring(2) : value.argvalue;
-            if (relations.argvalue != null && relations.argvalue.equals("=")) {
-                relations.argvalue = "IN";
-                value.argvalue = StringHelper.trim(value.argvalue, '\'');
-                tags tag = TagsHandler.GetTagByTagName(value.argvalue);
+            pair.setSecond(pair.getSecond().startsWith("N'") ? pair.getSecond().substring(2) : pair.getSecond());
+            if (pair.getFirst() != null && pair.getFirst().equals("=")) {
+                pair.setFirst("IN");
+                pair.setSecond(StringHelper.trim(pair.getSecond(), '\''));
+                tags tag = TagsHandler.GetTagByTagName(pair.getSecond());
                 if (tag != null) {
-                    value.argvalue =
-                            StringFormat.format("(%1$s)", TagsHandler.GetTagNameAndChildrenNames(tag.gettag_id()));
+                    pair.setSecond(
+                            StringFormat.format("(%1$s)", TagsHandler.GetTagNameAndChildrenNames(tag.gettag_id())));
                 } else {
-                    value.argvalue = StringFormat.format("('%1$s')", Guid.Empty);
+                    pair.setSecond(StringFormat.format("('%1$s')", Guid.Empty));
                 }
-            } else if (relations.argvalue != null && relations.argvalue.equals("LIKE")) {
-                relations.argvalue = "IN";
-                value.argvalue = StringHelper.trim(value.argvalue, '\'').replace("%", "*");
+            } else if (pair.getFirst() != null && pair.getFirst().equals("LIKE")) {
+                pair.setFirst("IN");
+                pair.setSecond(StringHelper.trim(pair.getSecond(), '\'').replace("%", "*"));
 
-                String IDs = TagsHandler.GetTagNamesAndChildrenNamesByRegExp(value.argvalue);
+                String IDs = TagsHandler.GetTagNamesAndChildrenNamesByRegExp(pair.getSecond());
                 if (StringHelper.isNullOrEmpty(IDs)) {
-                    value.argvalue = StringFormat.format("('%1$s')", Guid.Empty);
+                    pair.setSecond(StringFormat.format("('%1$s')", Guid.Empty));
                 } else {
-                    value.argvalue = StringFormat.format("(%1$s)", IDs);
+                    pair.setSecond(StringFormat.format("(%1$s)", IDs));
                 }
             }
         }
@@ -371,19 +368,18 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     @Override
     public final String buildConditionSql(String fieldName, String customizedValue, String customizedRelation,
             String tableName, boolean caseSensitive) {
-        RefObject<String> tempRefObject = new RefObject<String>(customizedRelation);
-        RefObject<String> tempRefObject2 = new RefObject<String>(customizedValue);
-        formatValue(fieldName, tempRefObject, tempRefObject2, caseSensitive);
-        customizedRelation = tempRefObject.argvalue;
-        customizedValue = tempRefObject2.argvalue;
-        if (("''".equals(customizedValue) || "'null'".equalsIgnoreCase(customizedValue))
-                && (("=".equals(customizedRelation)) || ("!=".equals(customizedRelation)))) {
-            String nullRelation = ("=".equals(customizedRelation)) ? "IS" : "IS NOT";
+        Pair<String, String> pair = new Pair<String, String>();
+        pair.setFirst(customizedRelation);
+        pair.setSecond(customizedValue);
+        formatValue(fieldName, pair, caseSensitive);
+        if (("''".equals(pair.getSecond()) || "'null'".equalsIgnoreCase(pair.getSecond()))
+                && (("=".equals(pair.getFirst())) || ("!=".equals(pair.getFirst())))) {
+            String nullRelation = ("=".equals(pair.getFirst())) ? "IS" : "IS NOT";
             return StringFormat.format("(%1$s.%2$s %3$s  NULL)", tableName,
                     getDbFieldName(fieldName), nullRelation);
         } else {
             return StringFormat.format(" %1$s.%2$s %3$s %4$s ", tableName, getDbFieldName(fieldName),
-                    customizedRelation, customizedValue);
+                    pair.getFirst(), pair.getSecond());
         }
     }
 }

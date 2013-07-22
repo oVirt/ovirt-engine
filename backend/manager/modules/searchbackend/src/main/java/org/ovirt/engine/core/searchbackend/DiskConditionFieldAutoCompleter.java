@@ -5,7 +5,7 @@ import java.util.UUID;
 
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.compat.RefObject;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 
@@ -87,22 +87,19 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
         } else if ("DISK_TYPE".equals(fieldName)) {
             return new EnumValueAutoCompleter(DiskStorageType.class);
         } else if ("BOOTABLE".equals(fieldName) ||
-                   "SHAREABLE".equals(fieldName) ) {
+                "SHAREABLE".equals(fieldName)) {
             return new BitValueAutoCompleter();
         }
         return null;
     }
 
     @Override
-    public void formatValue(String fieldName,
-            RefObject<String> relations,
-            RefObject<String> value,
-            boolean caseSensitive) {
+    public void formatValue(String fieldName, Pair<String, String> pair, boolean caseSensitive) {
         if ("CREATIONDATE".equals(fieldName)) {
-            Date tmp = new Date(Date.parse(StringHelper.trim(value.argvalue, '\'')));
-            value.argvalue = StringFormat.format("'%1$s'", tmp);
+            Date tmp = new Date(Date.parse(StringHelper.trim(pair.getSecond(), '\'')));
+            pair.setSecond(StringFormat.format("'%1$s'", tmp));
         } else {
-            super.formatValue(fieldName, relations, value, caseSensitive);
+            super.formatValue(fieldName, pair, caseSensitive);
         }
     }
 }
