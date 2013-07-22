@@ -1,2 +1,0 @@
-#!/bin/sh
-exec /usr/share/ovirt-engine/scripts/engine-upgrade.py --check-update

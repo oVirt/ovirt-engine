@@ -151,10 +151,7 @@ Requires: java-1.7.0-openjdk >= 1:1.7.0.9-2.3.3.2
 Requires: java
 Requires: jpackage-utils
 Requires: mod_ssl
-Requires: ntp
-Requires: openssl
 Requires: policycoreutils-python
-Requires: python-cheetah
 Requires: yum-plugin-versionlock
 # We could drop these conflicts when we'll drop Requires: mod_ssl
 Conflicts: ipa-server
@@ -255,9 +252,7 @@ Requires: %{name}-lib
 Requires: logrotate
 Requires: libselinux-python
 Requires: libxml2-python
-Requires: lsof
 Requires: nfs-utils
-Requires: python-cheetah
 Requires: yum
 Requires: python-psycopg2
 Requires: iproute
@@ -402,7 +397,6 @@ Requires: %{name}-sdk >= 3.1.0.6
 Requires: openssh-server
 Requires: ovirt-host-deploy >= 1.1.0
 Requires: ovirt-host-deploy-offline >= 1.1.0
-Requires: vdsm
 
 %description setup-plugin-allinone
 All-in-one plugin for %{product_name_short}'s setup
@@ -633,13 +627,11 @@ fi
 
 # The main package owns most of the directories:
 %dir %{engine_data}
-%dir %{engine_data}/scripts
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/dump
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_cache}
 
 %dir %{engine_data}/conf
-%{engine_data}/conf/version
 
 # Engine configuration files:
 %dir %{engine_etc}
@@ -672,11 +664,6 @@ fi
 %{_mavenpomdir}/JPP.%{name}-utils.pom
 %endif
 
-# should be actually be
-# at setup package, but as we use
-# versionlock we cannot move these until
-# 3.4
-%{engine_data}/conf/engine-config-install.properties
 
 # Documentation:
 %doc LICENSE
@@ -797,26 +784,13 @@ fi
 
 # Links to the main programs:
 %{_bindir}/engine-setup
-%{_bindir}/engine-upgrade
 %{_bindir}/engine-cleanup
 %{_bindir}/engine-backup
 %{_bindir}/engine-upgrade-check
 
-# Python scripts:
-%{engine_data}/scripts/basedefs.py*
-%{engine_data}/scripts/engine_validators.py*
-%{engine_data}/scripts/engine_firewalld.py*
-%{engine_data}/scripts/setup_params.py*
-%{engine_data}/scripts/setup_sequences.py*
-%{engine_data}/scripts/setup_controller.py*
-%{engine_data}/scripts/common_utils.py*
-%{engine_data}/scripts/miniyum.py*
-%{engine_data}/scripts/output_messages.py*
-%{engine_data}/scripts/nfsutils.py*
-%{engine_data}/scripts/engine-setup.py*
-%{engine_data}/scripts/engine-cleanup.py*
-%{engine_data}/scripts/engine-upgrade.py*
-%{engine_data}/scripts/post_upgrade.py*
+# Legacy
+%{_bindir}/engine-upgrade
+%{_bindir}/engine-check-upgrade
 
 # Log setup event script
 %{engine_data}/bin/ovirt-engine-log-setup-event.sh
@@ -833,7 +807,6 @@ fi
 
 # Man pages
 %{_mandir}/man8/engine-setup.*
-%{_mandir}/man8/engine-upgrade.*
 %{_mandir}/man8/engine-config.*
 
 # Configuration files
@@ -842,15 +815,10 @@ fi
 %{engine_data}/conf/iptables.default.in
 %{engine_data}/conf/nfs.sysconfig.in
 
-# Plugins directory:
-%dir %{engine_data}/scripts/plugins
-%{engine_data}/scripts/plugins/example_plugin_000.py*
-
 # Backups directory
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/backups
 
 %files setup-plugin-allinone
-%{engine_data}/scripts/plugins/all_in_one_100.py*
 %{engine_data}/firewalld/aio
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-aio.conf
 %config %{_sysconfdir}/ovirt-host-deploy.conf.d/10-packaging-aio.conf
@@ -910,6 +878,10 @@ fi
 %{engine_data}/bin/engine-config.sh
 %{engine_data}/bin/engine-manage-domains.sh
 %{engine_data}/bin/engine-prolog.sh
+
+# Legacy
+%{engine_data}/bin/engine-check-upgrade.sh
+%{engine_data}/bin/engine-upgrade.sh
 
 # Links to the scripts:
 %{_bindir}/engine-config
