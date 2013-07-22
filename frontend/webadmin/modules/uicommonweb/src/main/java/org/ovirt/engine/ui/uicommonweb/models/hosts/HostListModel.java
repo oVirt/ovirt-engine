@@ -899,7 +899,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             parameters.setRebootAfterInstallation(isVirt) ;
             parameters.setAuthMethod(model.getAuthenticationMethod());
 
-            Provider externalProvider = (Provider) model.getExternalProviders().getSelectedItem();
+            Provider externalProvider = (Provider) model.getNetworkProviders().getSelectedItem();
             if (externalProvider != null) {
                 parameters.setProvider(externalProvider.getId());
                 parameters.setNetworkMappings((String) model.getNeutronAgentModel().getInterfaceMappings().getEntity());

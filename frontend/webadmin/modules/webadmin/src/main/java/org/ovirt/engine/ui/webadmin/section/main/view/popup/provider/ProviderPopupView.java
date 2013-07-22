@@ -115,7 +115,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     @Ignore
     DialogTab agentConfigurationTab;
 
-    @UiField(provided = true)
+    @UiField
     @Ignore
     NeutronAgentWidget neutronAgentWidget;
 
@@ -134,7 +134,6 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
         typeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
         requiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        neutronAgentWidget = new NeutronAgentWidget(constants, resources, templates);
 
         this.resources = resources;
         this.constants = constants;
@@ -166,7 +165,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
 
     @Override
     public void edit(ProviderModel model) {
-        setAgentTabVisibility(model.getNeutronAgentModel().getIsAvailable());
+        setAgentTabVisibility((Boolean) model.getNeutronAgentModel().isPluginConfigurationAvailable().getEntity());
         driver.edit(model);
         neutronAgentWidget.edit(model.getNeutronAgentModel());
     }

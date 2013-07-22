@@ -9,7 +9,6 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
-import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -35,8 +34,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.providers.HostNeutronAgentModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel;
-import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronPluginTranslator;
 import org.ovirt.engine.ui.uicommonweb.validation.HostAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.HostnameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -774,34 +773,28 @@ public abstract class HostModel extends Model
         privateProviders = value;
     }
 
-    private ListModel externalProviders;
+    private ListModel networkProviders;
 
-    public void setExternalProviders(ListModel externalProviders) {
-        this.externalProviders = externalProviders;
+    public void setNetworkProviders(ListModel value) {
+        this.networkProviders = value;
     }
 
-    public ListModel getExternalProviders() {
-        return externalProviders;
+    public ListModel getNetworkProviders() {
+        return networkProviders;
     }
 
-    private ListModel providerType;
+    private ListModel networkProviderType;
 
-    public ListModel getProviderType() {
-        return providerType;
+    public ListModel getNetworkProviderType() {
+        return networkProviderType;
     }
 
-    protected void setProviderType(ListModel value) {
-        providerType = value;
+    protected void setNetworkProviderType(ListModel value) {
+        networkProviderType = value;
     }
-
-    private ListModel providerPluginType;
 
     public ListModel getProviderPluginType() {
-        return providerPluginType;
-    }
-
-    protected void setProviderPluginType(ListModel value) {
-        providerPluginType = value;
+        return getNeutronAgentModel().getPluginType();
     }
 
     private NeutronAgentModel neutronAgentModel;
@@ -981,45 +974,35 @@ public abstract class HostModel extends Model
         initSpmPriorities();
         fetchPublicKey();
 
-        setExternalProviders(new ListModel());
-        getExternalProviders().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        setNetworkProviders(new ListModel());
+        getNetworkProviders().getSelectedItemChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                onExternalProviderChanged();
+                onNetworkProviderChanged();
             }
         });
-        setProviderType(new ListModel());
-        getProviderType().setIsChangable(false);
-        getProviderType().setIsAvailable(false);
-        setProviderPluginType(new ListModel());
-        getProviderPluginType().setIsChangable(false);
-        getProviderPluginType().setIsAvailable(false);
-        neutronAgentModel = new NeutronAgentModel(getProviderType(), getProviderPluginType());
-        neutronAgentModel.setIsChangable(false);
+        setNetworkProviderType(new ListModel());
+        getNetworkProviderType().setIsChangable(false);
+        getNetworkProviderType().setIsAvailable(false);
+        neutronAgentModel = new HostNeutronAgentModel();
         neutronAgentModel.setIsAvailable(false);
 
-        onExternalProviderChanged();
-        initExternalProvidersList();
+        onNetworkProviderChanged();
+        initNetworkProvidersList();
     }
 
     @SuppressWarnings("unchecked")
-    private void onExternalProviderChanged() {
-        Provider provider = (Provider) getExternalProviders().getSelectedItem();
-        getProviderType().setIsAvailable(provider != null);
-        getProviderType().setSelectedItem(provider == null ? null : provider.getType());
-        if (getProviderType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK) {
-            OpenstackNetworkProviderProperties properties = ((Provider<OpenstackNetworkProviderProperties>)
-                    getExternalProviders().getSelectedItem()).getAdditionalProperties();
-            String pluginName = (properties == null) ? new String() : properties.getPluginType();
-            getProviderPluginType().setSelectedItem(NeutronPluginTranslator.getDisplayStringForPluginName(pluginName));
-            if (properties != null) {
-                getNeutronAgentModel().init(properties.getAgentConfiguration());
-            }
-        }
+    private void onNetworkProviderChanged() {
+        Provider provider = (Provider) getNetworkProviders().getSelectedItem();
+        getNetworkProviderType().setIsAvailable(provider != null);
+        getNetworkProviderType().setSelectedItem(provider == null ? null : provider.getType());
+        boolean isNeutron = (getNetworkProviderType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK);
+        getNeutronAgentModel().init(isNeutron ? provider : new Provider());
+        getNeutronAgentModel().setIsAvailable(isNeutron);
     }
 
-    private void initExternalProvidersList() {
+    private void initNetworkProvidersList() {
         AsyncQuery getProvidersQuery = new AsyncQuery();
         getProvidersQuery.asyncCallback = new INewAsyncCallback() {
             @Override
@@ -1027,8 +1010,8 @@ public abstract class HostModel extends Model
             {
                 List<Provider> providers = (List<Provider>) result;
                 providers.add(0, null);
-                getExternalProviders().setItems(providers);
-                getExternalProviders().setSelectedItem(null);
+                getNetworkProviders().setItems(providers);
+                getNetworkProviders().setSelectedItem(null);
             }
         };
         AsyncDataProvider.GetAllNetworkProviders(getProvidersQuery);

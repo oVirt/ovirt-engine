@@ -529,6 +529,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network Provider")
     String networkProviderButtonLabel();
 
+    @DefaultStringValue("External Network Provider")
+    String externalNetworkProviderLabel();
+
     @DefaultStringValue("Override display address")
     String enableConsoleAddressOverride();
 

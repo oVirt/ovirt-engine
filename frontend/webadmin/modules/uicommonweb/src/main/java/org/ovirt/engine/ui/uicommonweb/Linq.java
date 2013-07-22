@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Provider;
+import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -53,6 +54,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.DataCenterWithCluster;
 import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TimeZoneModel;
 import org.ovirt.engine.ui.uicompat.DateTimeUtils;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.IEqualityComparer;
 
 @SuppressWarnings("unused")
@@ -1144,6 +1146,7 @@ public final class Linq
     }
 
     public final static class ExternalNetworkComparator implements Comparator<ExternalNetwork>, Serializable {
+        private static final long serialVersionUID = 4987035011384708563L;
         private NameableComparator comparator = new NameableComparator();
 
         @Override
@@ -1153,6 +1156,7 @@ public final class Linq
     }
 
     public final static class ProviderComparator implements Comparator<Provider>, Serializable {
+        private static final long serialVersionUID = 627759940118704128L;
 
         @Override
         public int compare(Provider p1, Provider p2) {
@@ -1185,6 +1189,16 @@ public final class Linq
                 return provider.getType().getProvidedTypes().contains(type);
             }
         });
+    }
+
+    public final static class ProviderTypeComparator implements Comparator<ProviderType>, Serializable {
+        private static final long serialVersionUID = -7917198421355959306L;
+
+        @Override
+        public int compare(ProviderType type1, ProviderType type2) {
+            return LexoNumericComparator.comp(EnumTranslator.createAndTranslate(type1),
+                    EnumTranslator.createAndTranslate(type2));
+        }
     }
 
     /**

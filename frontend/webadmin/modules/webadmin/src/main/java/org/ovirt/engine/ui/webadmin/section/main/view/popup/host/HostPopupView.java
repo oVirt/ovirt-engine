@@ -386,21 +386,21 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     InfoIcon providerSearchInfoIcon;
 
     @UiField(provided = true)
-    @WithElementId("externalProvider")
-    public EntityModelWidgetWithInfo externalProvider;
+    @WithElementId("networkProvider")
+    public EntityModelWidgetWithInfo networkProvider;
 
     @Ignore
-    @WithElementId("externalProviderLabel")
-    public EntityModelLabel externalProviderLabel;
+    @WithElementId("networkProviderLabel")
+    public EntityModelLabel networkProviderLabel;
 
-    @Path(value = "externalProviders.selectedItem")
-    @WithElementId("externalProviderEditor")
-    public ListModelListBoxOnlyEditor<Object> externalProviderEditor;
+    @Path(value = "networkProviders.selectedItem")
+    @WithElementId("networkProviderEditor")
+    public ListModelListBoxOnlyEditor<Object> networkProviderEditor;
 
     @UiField(provided = true)
-    @Path(value = "providerType.selectedItem")
-    @WithElementId("providerType")
-    public ListModelListBoxEditor<Object> providerTypeEditor;
+    @Path(value = "networkProviderType.selectedItem")
+    @WithElementId("networkProviderType")
+    public ListModelListBoxEditor<Object> networkProviderTypeEditor;
 
     @UiField
     @Path(value = "providerPluginType.selectedItem")
@@ -410,7 +410,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField
     FlowPanel neutronAgentPanel;
 
-    @UiField(provided = true)
+    @UiField
     @Ignore
     NeutronAgentWidget neutronAgentWidget;
 
@@ -535,16 +535,15 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         externalHostProviderEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
-        externalProviderLabel = new EntityModelLabel();
-        externalProviderEditor = new ListModelListBoxOnlyEditor<Object>(new NullSafeRenderer<Object>() {
+        networkProviderLabel = new EntityModelLabel();
+        networkProviderEditor = new ListModelListBoxOnlyEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
                 return ((Provider) object).getName();
             }
         });
-        externalProvider = new EntityModelWidgetWithInfo(externalProviderLabel, externalProviderEditor);
-        providerTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
-        neutronAgentWidget = new NeutronAgentWidget(constants, resources, applicationTemplates);
+        networkProvider = new EntityModelWidgetWithInfo(networkProviderLabel, networkProviderEditor);
+        networkProviderTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
         rbPassword = new RadioButton("1"); //$NON-NLS-1$
         rbPublicKey = new RadioButton("1"); //$NON-NLS-1$
     }
@@ -607,9 +606,9 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         // Network Provider Tab
         networkProviderTab.setLabel(constants.networkProviderButtonLabel());
-        externalProviderLabel.setText(constants.externalProviderLabel());
-        externalProvider.setExplanation(applicationTemplates.italicText(constants.externalProviderExplanation()));
-        providerTypeEditor.setLabel(constants.typeProvider());
+        networkProviderLabel.setText(constants.externalNetworkProviderLabel());
+        networkProvider.setExplanation(applicationTemplates.italicText(constants.externalProviderExplanation()));
+        networkProviderTypeEditor.setLabel(constants.typeProvider());
         providerPluginTypeEditor.setLabel(constants.pluginType());
     }
 
@@ -795,16 +794,15 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         networkProviderTab.setVisible(object.showNetworkProviderTab());
         final NeutronAgentModel model = object.getNeutronAgentModel();
         neutronAgentWidget.edit(model);
-        neutronAgentPanel.setVisible(model.getIsAvailable());
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
+        neutronAgentPanel.setVisible((Boolean) model.isPluginConfigurationAvailable().getEntity());
+        model.isPluginConfigurationAvailable().getEntityChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
-                    neutronAgentPanel.setVisible(model.getIsAvailable());
-                }
+                neutronAgentPanel.setVisible((Boolean) model.isPluginConfigurationAvailable().getEntity());
             }
         });
+
         addTextAndLinkAlert(fetchPanel, appConstants.fetchingHostFingerprint(), object.getSSHFingerPrint());
         nameEditor.setFocus(true);
     }

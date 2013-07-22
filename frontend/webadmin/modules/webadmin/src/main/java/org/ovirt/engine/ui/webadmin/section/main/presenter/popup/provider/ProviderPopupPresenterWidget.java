@@ -6,8 +6,6 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
-
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -45,13 +43,16 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
                 getView().setTestResultImage((String) model.getTestResult().getEntity());
             }
         });
-        model.getNeutronAgentModel().getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getNeutronAgentModel()
+                .isPluginConfigurationAvailable()
+                .getEntityChangedEvent()
+                .addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
-                    getView().setAgentTabVisibility(model.getNeutronAgentModel().getIsAvailable());
-                }
+                getView().setAgentTabVisibility((Boolean) model.getNeutronAgentModel()
+                        .isPluginConfigurationAvailable()
+                        .getEntity());
             }
         });
     }

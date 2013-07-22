@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class AddProviderModel extends ProviderModel {
 
-    @SuppressWarnings("unchecked")
     public AddProviderModel(ProviderListModel sourceListModel) {
         super(sourceListModel, VdcActionType.AddProvider, new Provider());
         setTitle(ConstantsManager.getInstance().getConstants().addProviderTitle());
@@ -16,6 +15,8 @@ public class AddProviderModel extends ProviderModel {
 
         getType().setSelectedItem(Linq.firstOrDefault((Iterable<ProviderType>) getType().getItems()));
         getRequiresAuthentication().setEntity(false);
+
+        getNeutronAgentModel().init(provider); // this is okay because AdditionalProperties == null at this point
     }
 
 }

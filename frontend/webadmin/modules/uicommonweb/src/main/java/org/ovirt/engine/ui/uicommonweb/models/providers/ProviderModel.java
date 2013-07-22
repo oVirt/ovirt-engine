@@ -1,11 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
-import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
@@ -15,6 +18,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.Uri;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -56,11 +60,10 @@ public class ProviderModel extends Model {
     private EntityModel password = new EntityModel();
     private EntityModel tenantName = new EntityModel();
     private ListModel type;
-    private ListModel pluginType = new ListModel();
     private UICommand testCommand;
     private EntityModel testResult = new EntityModel();
 
-    private NeutronAgentModel neutronAgentModel;
+    private NeutronAgentModel neutronAgentModel = new NeutronAgentModel();
 
     public EntityModel getName() {
         return name;
@@ -72,6 +75,10 @@ public class ProviderModel extends Model {
 
     private void setType(ListModel value) {
         type = value;
+    }
+
+    public ListModel getPluginType() {
+        return getNeutronAgentModel().getPluginType();
     }
 
     public EntityModel getDescription() {
@@ -100,10 +107,6 @@ public class ProviderModel extends Model {
 
     public EntityModel getTenantName() {
         return tenantName;
-    }
-
-    public ListModel getPluginType() {
-        return pluginType;
     }
 
     public UICommand getTestCommand() {
@@ -181,27 +184,26 @@ public class ProviderModel extends Model {
         getType().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                getTenantName().setIsAvailable(isTypeTenantAware());
-
-                boolean providerNeutron = isTypeOpenStackNetwork();
-                getApiVersion().setIsAvailable(providerNeutron);
-                if (providerNeutron) {
-                    OpenstackNetworkProviderProperties properties =
-                            (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
-                    String pluginName = (properties == null) ? new String() : properties.getPluginType();
-                    getPluginType().setSelectedItem(NeutronPluginTranslator.getDisplayStringForPluginName(pluginName));
+                boolean isTenant = isTypeTenantAware();
+                getTenantName().setIsAvailable(isTenant);
+                if (isTenant) {
+                    TenantProviderProperties properties = (TenantProviderProperties) provider.getAdditionalProperties();
+                    getTenantName().setEntity(properties == null ? null : properties.getTenantName());
                 }
+
+                boolean isNeutron = isTypeOpenStackNetwork();
+                getApiVersion().setIsAvailable(isNeutron);
+                getNeutronAgentModel().setIsAvailable(isNeutron);
             }
         });
 
-        neutronAgentModel = new NeutronAgentModel(getType(), getPluginType());
-
-        getPluginType().setIsAvailable(false);
+        getNeutronAgentModel().setIsAvailable(false);
         getApiVersion().setIsAvailable(false);
         getTenantName().setIsAvailable(false);
 
-        getType().setItems(Arrays.asList(ProviderType.values()));
-        getPluginType().setItems(NeutronPluginTranslator.getPresetDisplayStrings());
+        List<ProviderType> providerTypes = new ArrayList<ProviderType>(Arrays.asList(ProviderType.values()));
+        Collections.sort(providerTypes, new Linq.ProviderTypeComparator());
+        getType().setItems(providerTypes);
         getApiVersion().setItems(Arrays.asList("v2.0")); //$NON-NLS-1$
 
         UICommand tempVar = new UICommand(CMD_SAVE, this);
@@ -218,7 +220,6 @@ public class ProviderModel extends Model {
     private boolean validate() {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-        getPluginType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getUsername().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getTenantName().validateEntity(new IValidation[] { new NotEmptyValidation()} );
@@ -226,9 +227,8 @@ public class ProviderModel extends Model {
                 new UrlValidation(Uri.SCHEME_HTTP, Uri.SCHEME_HTTPS) });
         getNeutronAgentModel().validate();
 
-        return getName().getIsValid() && getType().getIsValid() && getPluginType().getIsValid()
-                && getUrl().getIsValid() && getUsername().getIsValid() && getPassword().getIsValid()
-                && getTenantName().getIsValid() && getNeutronAgentModel().getIsValid();
+        return getName().getIsValid() && getType().getIsValid() && getUrl().getIsValid() && getUsername().getIsValid()
+                && getPassword().getIsValid() && getTenantName().getIsValid() && getNeutronAgentModel().getIsValid();
     }
 
     private void cancel() {
@@ -242,11 +242,7 @@ public class ProviderModel extends Model {
         provider.setUrl((String) url.getEntity());
 
         if (isTypeOpenStackNetwork()) {
-            OpenstackNetworkProviderProperties properties = new OpenstackNetworkProviderProperties();
-            properties.setPluginType(NeutronPluginTranslator.
-                    getPluginNameForDisplayString((String) getPluginType().getSelectedItem()));
-            properties.setAgentConfiguration(getNeutronAgentModel().flush());
-            provider.setAdditionalProperties(properties);
+            getNeutronAgentModel().flush(provider);
         } else if (isTypeOpenStackImage()) {
             provider.setAdditionalProperties(new OpenStackImageProviderProperties());
         }

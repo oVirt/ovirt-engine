@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.provider;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -37,6 +36,9 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
+    private static CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+    private static CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+
     @UiField(provided = true)
     EntityModelWidgetWithInfo mappings;
 
@@ -68,14 +70,8 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
     @WithElementId("qpidPassword")
     EntityModelPasswordBoxEditor qpidPassword;
 
-    private final CommonApplicationTemplates templates;
-
     @Inject
-    public NeutronAgentWidget(CommonApplicationConstants constants,
-            CommonApplicationResources resources,
-            CommonApplicationTemplates templates) {
-
-        this.templates = templates;
+    public NeutronAgentWidget() {
 
         mappingsLabel = new EntityModelLabel();
         interfaceMappings = new EntityModelTextBoxOnlyEditor();
