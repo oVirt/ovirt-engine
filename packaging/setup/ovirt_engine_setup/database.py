@@ -31,7 +31,6 @@ from M2Crypto import X509
 from M2Crypto import RSA
 
 
-from otopi import constants as otopicons
 from otopi import base
 from otopi import util
 
@@ -329,24 +328,131 @@ class OvirtUtils(base.Base):
         return ret[0]['count'] == 0
 
     def clearOvirtEngineDatabase(self):
-        self._plugin.execute(
-            (
-                os.path.join(
-                    osetupcons.FileLocations.OVIRT_ENGINE_DB_DIR,
-                    'cleandb.sh',
-                ),
-                '-u', self.environment[osetupcons.DBEnv.USER],
-                '-s', self.environment[osetupcons.DBEnv.HOST],
-                '-p', str(self.environment[osetupcons.DBEnv.PORT]),
-                '-d', self.environment[osetupcons.DBEnv.DATABASE],
-                '-l', self.environment[otopicons.CoreEnv.LOG_FILE_NAME],
-            ),
-            envAppend={
-                'ENGINE_PGPASS': self.environment[
-                    osetupcons.DBEnv.PGPASS_FILE
-                ]
-            },
+        statement = Statement(
+            environment=self.environment,
         )
+
+        statement.execute(
+            statement="""
+                create or replace
+                function
+                    generate_drop_all_functions_syntax()
+                    returns setof text
+                AS $procedure$ begin
+                    return query
+                        select
+                            'drop function if exists ' ||
+                            ns.nspname ||
+                            '.' ||
+                            proname ||
+                            '(' ||
+                                oidvectortypes(proargtypes) ||
+                            ') cascade;'
+                        from
+                            pg_proc inner join pg_namespace ns on (
+                                pg_proc.pronamespace=ns.oid
+                            )
+                        where
+                            ns.nspname = 'public' and
+                            proname not ilike 'uuid%%'
+                        order by proname;
+                end; $procedure$
+                language plpgsql;
+            """,
+            args=dict(),
+            ownConnection=True,
+            transaction=False,
+        )
+
+        spdrops = statement.execute(
+            statement="""
+                select generate_drop_all_functions_syntax as drop
+                from generate_drop_all_functions_syntax()
+            """,
+            ownConnection=True,
+            transaction=False,
+        )
+        for spdrop in [t['drop'] for t in spdrops]:
+            statement.execute(
+                statement=spdrop,
+                ownConnection=True,
+                transaction=False,
+            )
+
+        tables = statement.execute(
+            statement="""
+                select table_name
+                from information_schema.views
+                where table_schema = %(schemaname)s
+            """,
+            args=dict(
+                schemaname='public',
+            ),
+            ownConnection=True,
+            transaction=False,
+        )
+        for view in [t['table_name'] for t in tables]:
+            statement.execute(
+                statement=(
+                    """
+                        drop view if exists {view} cascade
+                    """
+                ).format(
+                    view=view,
+                ),
+                ownConnection=True,
+                transaction=False,
+            )
+
+        seqs = statement.execute(
+            statement="""
+                select relname as seqname
+                from pg_class
+                where relkind=%(relkind)s
+            """,
+            args=dict(
+                relkind='S',
+            ),
+            ownConnection=True,
+            transaction=False,
+        )
+        for seq in [t['seqname'] for t in seqs]:
+            statement.execute(
+                statement=(
+                    """
+                        drop sequence if exists {sequence} cascade
+                    """
+                ).format(
+                    sequence=seq,
+                ),
+                ownConnection=True,
+                transaction=False,
+            )
+
+        tables = statement.execute(
+            statement="""
+                select tablename
+                from pg_tables
+                where schemaname = %(schemaname)s
+            """,
+            args=dict(
+                schemaname='public',
+            ),
+            ownConnection=True,
+            transaction=False,
+        )
+        for table in [t['tablename'] for t in tables]:
+            statement.execute(
+                statement=(
+                    """
+                        drop table if exists {table} cascade
+                    """
+                ).format(
+                    table=table,
+                ),
+                ownConnection=True,
+                transaction=False,
+            )
 
     def backup(
         self,
