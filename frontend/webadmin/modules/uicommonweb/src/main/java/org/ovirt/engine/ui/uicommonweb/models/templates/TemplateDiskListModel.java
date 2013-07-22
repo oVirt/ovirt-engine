@@ -139,19 +139,12 @@ public class TemplateDiskListModel extends SearchableListModel
     }
 
     @Override
-    public void setItems(Iterable value)
+    public void setItems(final Iterable value)
     {
-        if (!getStorageDomains().isEmpty() || ignoreStorageDomains)
-        {
-            ArrayList<DiskImage> disks =
-                    value != null ? Linq.<DiskImage> cast(value) : new ArrayList<DiskImage>();
-
-            Collections.sort(disks, new DiskByAliasComparer());
-            super.setItems(disks);
+        if (ignoreStorageDomains) {
+            setDisks(value);
         }
-        else
-        {
-            this.value = value;
+        else {
             AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
@@ -161,12 +154,20 @@ public class TemplateDiskListModel extends SearchableListModel
 
                             Collections.sort(storageDomains, new NameableComparator());
                             setStorageDomains(storageDomains);
-                            setItems(model.value);
+                            setDisks(value);
                         }
                     }));
         }
 
         updateActionAvailability();
+    }
+
+    private void setDisks(Iterable value) {
+        ArrayList<DiskImage> disks =
+                value != null ? Linq.<DiskImage> cast(value) : new ArrayList<DiskImage>();
+
+        Collections.sort(disks, new DiskByAliasComparer());
+        super.setItems(disks);
     }
 
     @Override
