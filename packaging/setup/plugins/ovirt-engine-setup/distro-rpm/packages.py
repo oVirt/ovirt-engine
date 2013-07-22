@@ -313,7 +313,9 @@ class Plugin(plugin.PluginBase):
                 haveRollback,
             ) = self._checkForProductUpdate()
 
-            if upgradeAvailable:
+            if not upgradeAvailable:
+                self.logger.info(_('No product update'))
+            else:
                 self.environment[
                     osetupcons.RPMDistroEnv.ENABLE_UPGRADE
                 ] = dialog.queryBoolean(
