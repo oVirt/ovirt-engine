@@ -396,7 +396,6 @@ class OvirtUtils(base.Base):
         self,
         backupFile,
     ):
-        self.clearOvirtEngineDatabase()
         self._plugin.execute(
             (
                 self.command.get('psql'),
