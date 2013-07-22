@@ -536,6 +536,8 @@ class Stages(object):
 @util.export
 @util.codegen
 class Const(object):
+    PACKAGE_NAME = config.PACKAGE_NAME
+    PACKAGE_VERSION = config.PACKAGE_VERSION
     DISPLAY_VERSION = config.DISPLAY_VERSION
     RPM_VERSION = config.RPM_VERSION
     RPM_RELEASE = config.RPM_RELEASE

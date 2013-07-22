@@ -75,6 +75,13 @@ class Plugin(plugin.PluginBase):
             '3.0,3.1,3.2,3.3'
         )
 
+        self.logger.debug(
+            'Package: %s-%s (%s)',
+            osetupcons.Const.PACKAGE_NAME,
+            osetupcons.Const.PACKAGE_VERSION,
+            osetupcons.Const.DISPLAY_VERSION,
+        )
+
         if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] is None:
             self.environment[osetupcons.CoreEnv.DEVELOPER_MODE] = False
             if os.geteuid() != 0:
