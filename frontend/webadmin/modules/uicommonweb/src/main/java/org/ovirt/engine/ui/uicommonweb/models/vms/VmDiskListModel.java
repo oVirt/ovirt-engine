@@ -191,6 +191,22 @@ public class VmDiskListModel extends VmDiskListModelBase
         }
     }
 
+    private boolean isScanAlignmentEnabled;
+
+    public boolean getIsScanAlignmentEnabled()
+    {
+        return isScanAlignmentEnabled;
+    }
+
+    private void setIsScanAlignmentEnabled(boolean value)
+    {
+        if (isScanAlignmentEnabled != value)
+        {
+            isScanAlignmentEnabled = value;
+            onPropertyChanged(new PropertyChangedEventArgs("IsScanAlignmentEnabled")); //$NON-NLS-1$
+        }
+    }
+
     public boolean isExtendImageSizeEnabled() {
         return (getEntity() != null) ?
                 VdcActionUtils.CanExecute(Arrays.asList(getEntity()), VM.class, VdcActionType.ExtendImageSize) : false;
@@ -236,6 +252,7 @@ public class VmDiskListModel extends VmDiskListModelBase
             getSearchCommand().execute();
             updateIsDiskHotPlugAvailable();
             updateLiveStorageMigrationEnabled();
+            updateScanAlignmentEnabled();
         }
 
         updateActionAvailability();
@@ -670,6 +687,10 @@ public class VmDiskListModel extends VmDiskListModelBase
     private void updateGetAlignmentCommandAvailability() {
         getScanAlignmentCommand().setIsExecutionAllowed(false);
 
+        if (!getIsScanAlignmentEnabled()) {
+            return;
+        }
+
         if (getSelectedItems() == null || getSelectedItems().size() != 1) {
             return; // leave the command disabled
         }
@@ -689,24 +710,7 @@ public class VmDiskListModel extends VmDiskListModelBase
             return; // leave the command disabled
         }
 
-        AsyncDataProvider.getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object target, Object returnValue) {
-                VmDiskListModel model = (VmDiskListModel) target;
-                StoragePool dataCenter = (StoragePool) returnValue;
-
-                Version minClusterVersion = vm.getVdsGroupCompatibilityVersion();
-                Version minDcVersion = dataCenter.getcompatibility_version();
-
-                AsyncDataProvider.isCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        VmDiskListModel model = (VmDiskListModel) target;
-                        model.getScanAlignmentCommand().setIsExecutionAllowed((Boolean) returnValue);
-                    }
-                }), VdcActionType.GetDiskAlignment, minClusterVersion, minDcVersion);
-            }
-        }), vm.getStoragePoolId());
+        getScanAlignmentCommand().setIsExecutionAllowed(true);
     }
 
     @Override
@@ -792,6 +796,29 @@ public class VmDiskListModel extends VmDiskListModelBase
                         VdcActionType.LiveMigrateVmDisks,
                         vm.getVdsGroupCompatibilityVersion(),
                         dcCompatibilityVersion);
+            }
+        }), vm.getStoragePoolId());
+    }
+
+    private void updateScanAlignmentEnabled() {
+        final VM vm = getEntity();
+
+        AsyncDataProvider.getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                VmDiskListModel model = (VmDiskListModel) target;
+                StoragePool dataCenter = (StoragePool) returnValue;
+
+                Version minClusterVersion = vm.getVdsGroupCompatibilityVersion();
+                Version minDcVersion = dataCenter.getcompatibility_version();
+
+                AsyncDataProvider.isCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        VmDiskListModel model = (VmDiskListModel) target;
+                        model.setIsScanAlignmentEnabled((Boolean) returnValue);
+                    }
+                }), VdcActionType.GetDiskAlignment, minClusterVersion, minDcVersion);
             }
         }), vm.getStoragePoolId());
     }
