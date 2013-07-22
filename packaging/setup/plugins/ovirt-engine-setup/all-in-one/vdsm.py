@@ -248,9 +248,9 @@ class Plugin(plugin.PluginBase):
         else:
             self.logger.debug('Adding local storage domain')
             storage = self._ovirtsdk_xml.params.Storage(
-                self.environment[
+                path=self.environment[
                     osetupcons.AIOEnv.STORAGE_DOMAIN_DIR
-                ].rstrip('/')
+                ].rstrip('/'),
             )
             storage.set_type('localfs')
 
