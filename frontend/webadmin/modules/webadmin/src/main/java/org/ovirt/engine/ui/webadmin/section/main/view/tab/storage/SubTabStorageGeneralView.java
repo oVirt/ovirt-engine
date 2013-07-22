@@ -7,7 +7,7 @@ import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
-import org.ovirt.engine.ui.common.widget.label.DiskSizeLabel;
+import org.ovirt.engine.ui.common.widget.label.StorageSizeLabel;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
@@ -33,16 +33,16 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     }
 
     @Ignore
-    DiskSizeLabel<Integer> totalSize = new DiskSizeLabel<Integer>();
+    StorageSizeLabel<Integer> totalSize = new StorageSizeLabel<Integer>();
 
     @Ignore
-    DiskSizeLabel<Integer> availableSize = new DiskSizeLabel<Integer>();
+    StorageSizeLabel<Integer> availableSize = new StorageSizeLabel<Integer>();
 
     @Ignore
-    DiskSizeLabel<Integer> usedSize = new DiskSizeLabel<Integer>();
+    StorageSizeLabel<Integer> usedSize = new StorageSizeLabel<Integer>();
 
     @Ignore
-    DiskSizeLabel<Integer> allocatedSize = new DiskSizeLabel<Integer>();
+    StorageSizeLabel<Integer> allocatedSize = new StorageSizeLabel<Integer>();
 
     @Ignore
     PercentLabel<Integer> overAllocationRatio = new PercentLabel<Integer>();

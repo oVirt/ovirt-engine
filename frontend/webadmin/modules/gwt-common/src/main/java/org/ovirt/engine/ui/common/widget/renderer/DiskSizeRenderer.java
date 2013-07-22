@@ -23,9 +23,13 @@ public class DiskSizeRenderer<T extends Number> extends AbstractRenderer<T> {
         this.unit = unit;
     }
 
+    protected boolean isUnavailable(T size) {
+        return size == null;
+    }
+
     @Override
     public String render(T size) {
-        if (size == null || size.longValue() == 0) {
+        if (isUnavailable(size)) {
             return CONSTANTS.unAvailablePropertyLabel();
         }
 
