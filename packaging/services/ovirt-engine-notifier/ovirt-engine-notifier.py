@@ -32,17 +32,7 @@ class Daemon(service.Daemon):
 
     def __init__(self):
         super(Daemon, self).__init__()
-        self._engineDefaults = os.path.abspath(
-            os.path.join(
-                os.path.join(
-                    os.path.dirname(sys.argv[0]),
-                    '..',
-                    'ovirt-engine'
-                ),
-                'ovirt-engine-engine.conf',
-            )
-        )
-        self._notifierDefaults = os.path.abspath(
+        self._defaults = os.path.abspath(
             os.path.join(
                 os.path.dirname(sys.argv[0]),
                 'ovirt-engine-notifier.conf',
@@ -115,19 +105,19 @@ class Daemon(service.Daemon):
                 _('This service cannot be executed as root')
             )
 
-        if not os.path.exists(self._notifierDefaults):
+        if not os.path.exists(self._defaults):
             raise RuntimeError(
                 _(
                     "The configuration defaults file '{file}' "
                     "required but missing"
                 ).format(
-                    file=self._notifierDefaults,
+                    file=self._defaults,
                 )
             )
 
         self._config = configfile.ConfigFile(
             (
-                self._notifierDefaults,
+                self._defaults,
                 config.ENGINE_NOTIFIER_VARS,
             ),
         )
@@ -180,9 +170,9 @@ class Daemon(service.Daemon):
                     'modules',
                 ),
             ]),
-            'ENGINE_DEFAULTS': self._engineDefaults,
+            'ENGINE_DEFAULTS': config.ENGINE_DEFAULTS,
             'ENGINE_VARS': config.ENGINE_VARS,
-            'ENGINE_NOTIFIER_DEFAULTS': self._notifierDefaults,
+            'ENGINE_NOTIFIER_DEFAULTS': self._defaults,
             'ENGINE_NOTIFIER_VARS': config.ENGINE_NOTIFIER_VARS,
         })
 
