@@ -57,6 +57,17 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         return permissions;
     }
 
+    String getConsoleUserName() {
+        VdcUser user = getCurrentUser();
+        String domain = user.getDomainControler();
+        String name = user.getUserName();
+        if (StringUtils.isEmpty(name) || name.contains("@") || StringUtils.isEmpty(domain)) {
+            return name;
+        } else {
+            return name + "@" + domain;
+        }
+    }
+
     /**
      * Checks if the user needs additional permissions in order to connect
      * to the console.
@@ -125,7 +136,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         final VM vm = getVm();
         final VdcUser user = getCurrentUser();
         vm.setConsoleUserId(user.getUserId());
-        vm.setConsoleCurrentUserName(user.getFQN());
+        vm.setConsoleCurrentUserName(getConsoleUserName());
 
         // If the virtual machine has the allow reconnect flag or the user
         // needed additional permissions to connect to the console then we just

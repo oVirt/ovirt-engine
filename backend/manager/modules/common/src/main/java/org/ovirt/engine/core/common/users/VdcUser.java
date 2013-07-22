@@ -106,19 +106,4 @@ public class VdcUser implements Serializable {
     public void setAdmin(boolean isAdmin) {
         this.mIsAdmin = isAdmin;
     }
-
-    /**
-     * return the FQDN of a user in a form of user@domain. if the domain is empty then only return the username
-     */
-    public String getFQN() {
-        String domain = getDomainControler();
-        String username = getUserName();
-
-        // empty username or a user with empty domain will be returned as is
-        if ( (username == null || username.length() == 0) || username.contains("@") || (domain == null || domain.length() == 0)) {
-            return username;
-        } else {
-            return username + "@" + domain;
-        }
-    }
 }
