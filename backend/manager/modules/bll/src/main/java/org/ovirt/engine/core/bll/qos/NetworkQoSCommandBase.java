@@ -64,7 +64,18 @@ public abstract class NetworkQoSCommandBase extends CommandBase<NetworkQoSParame
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES);
         }
 
+        if (peakLowerThanAverage()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE);
+        }
+
         return true;
+    }
+
+    protected  boolean peakLowerThanAverage() {
+        return (getNetworkQoS().getInboundPeak() != null
+                && getNetworkQoS().getInboundPeak() < getNetworkQoS().getInboundAverage())
+                || (getNetworkQoS().getOutboundPeak() != null
+                && getNetworkQoS().getOutboundPeak() < getNetworkQoS().getOutboundAverage());
     }
 
     protected boolean missingValues() {

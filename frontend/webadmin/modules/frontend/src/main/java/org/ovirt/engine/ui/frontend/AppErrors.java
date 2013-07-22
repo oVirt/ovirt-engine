@@ -2501,6 +2501,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Data Center does not contain the specific QoS entity.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_INVALID_DC_ID();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Peak cannot be set lower than Average.")
+    String ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE();
+
     @DefaultStringValue("QoS name cannot be empty.")
     String QOS_NAME_NOT_NULL();
 
