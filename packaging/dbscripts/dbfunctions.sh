@@ -115,7 +115,7 @@ execute_file "common_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
     #
     CMD="select count(*) from pg_proc where proname = 'uuid_nil';"
     if [ "$(execute_command "$CMD" ${DATABASE} ${SERVERNAME} ${PORT} | sed -e 's/ //g' -e '/^$/d')" != 0 ]; then
-        psql -U postgres -h ${SERVERNAME} -p ${PORT} -f drop_old_uuid_functions.sql ${DATABASE} > /dev/null
+        psql -w -U postgres -h ${SERVERNAME} -p ${PORT} -f drop_old_uuid_functions.sql ${DATABASE} > /dev/null
     fi
     # recreate generic functions
     execute_file "create_functions.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
