@@ -835,7 +835,7 @@ public class BackendStorageDomainsResourceTest
         assertEquals(TARGET, model.getStorage().getVolumeGroup().getLogicalUnits().get(0).getTarget());
         assertEquals(ADDRESSES[0], model.getStorage().getVolumeGroup().getLogicalUnits().get(0).getAddress());
         assertEquals(PORT, model.getStorage().getVolumeGroup().getLogicalUnits().get(0).getPort());
-        assertEquals(2, model.getLinks().size());
+        assertEquals(3, model.getLinks().size());
         assertEquals("permissions", model.getLinks().get(0).getRel());
         assertNotNull(model.getLinks().get(0).getHref());
         verifyLinks(model);

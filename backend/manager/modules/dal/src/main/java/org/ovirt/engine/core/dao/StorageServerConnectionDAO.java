@@ -84,6 +84,13 @@ public interface StorageServerConnectionDAO extends DAO {
             StorageServerConnections connection);
 
     /**
+     * Retrieves all connections used by the specified storage domain
+     * @param domainId
+     * @return the list of connections
+     */
+    List<StorageServerConnections> getAllForDomain(Guid domainId);
+
+    /**
      * Saves the specified connection.
      *
      * @param connection

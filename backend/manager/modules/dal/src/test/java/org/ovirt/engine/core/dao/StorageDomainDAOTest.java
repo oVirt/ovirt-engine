@@ -22,8 +22,8 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     private static final int NUMBER_OF_STORAGE_DOMAINS_FOR_PRIVELEGED_USER = 1;
 
     private static final Guid EXISTING_DOMAIN_ID = FixturesTool.STORAGE_DOAMIN_SCALE_SD5;
-    private static final Guid EXISTING_STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
-    private static final String EXISTING_CONNECTION = "10.35.64.25";
+    private static final Guid EXISTING_STORAGE_POOL_ID = new Guid("72b9e200-f48b-4687-83f2-62828f249a47");
+    private static final String EXISTING_CONNECTION = "10.35.64.25:/export/share";
     private static final Guid EXISTING_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
 
     private StorageDomainDAO dao;
@@ -46,7 +46,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetMasterStorageDomainIdForPool() {
-        Guid result = dao.getMasterStorageDomainIdForPool(EXISTING_STORAGE_POOL_ID);
+        Guid result = dao.getMasterStorageDomainIdForPool(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
 
         assertNotNull(result);
         assertEquals(EXISTING_DOMAIN_ID, result);
@@ -54,7 +54,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetstorage_domain_by_type_for_storagePoolId() {
-        StorageDomain result = dao.getStorageDomainByTypeAndPool(EXISTING_STORAGE_POOL_ID, StorageDomainType.Master);
+        StorageDomain result = dao.getStorageDomainByTypeAndPool(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"), StorageDomainType.Master);
 
         assertNotNull(result);
         assertGetResult(result);
@@ -167,7 +167,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetForStoragePool() {
-        StorageDomain result = dao.getForStoragePool(existingDomain.getId(), EXISTING_STORAGE_POOL_ID);
+        StorageDomain result = dao.getForStoragePool(existingDomain.getId(),new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
 
         assertGetResult(result);
     }
@@ -258,7 +258,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     public void testGetAllForConnection() {
         List<StorageDomain> result = dao.getAllForConnection(EXISTING_CONNECTION);
 
-        assertGetAllForStoragePoolResult(result);
+        assertGetAllForStoragePoolResult(result, EXISTING_STORAGE_POOL_ID);
     }
 
     /**
@@ -305,7 +305,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         List<StorageDomain> result =
                 dao.getAllByStoragePoolAndConnection(EXISTING_STORAGE_POOL_ID, EXISTING_CONNECTION);
 
-        assertGetAllForStoragePoolResult(result);
+        assertGetAllForStoragePoolResult(result, EXISTING_STORAGE_POOL_ID);
     }
 
     /**
@@ -326,7 +326,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     public void testGetAllForStoragePool() {
         List<StorageDomain> result = dao.getAllForStoragePool(EXISTING_STORAGE_POOL_ID);
 
-        assertGetAllForStoragePoolResult(result);
+        assertGetAllForStoragePoolResult(result, EXISTING_STORAGE_POOL_ID);
     }
 
     /**
@@ -334,9 +334,10 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForStoragePoolWithPermissionsPrivilegedUser() {
-        List<StorageDomain> result = dao.getAllForStoragePool(EXISTING_STORAGE_POOL_ID, PRIVILEGED_USER_ID, true);
+        Guid storagePoolId = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
+        List<StorageDomain> result = dao.getAllForStoragePool(storagePoolId, PRIVILEGED_USER_ID, true);
 
-        assertGetAllForStoragePoolResult(result);
+        assertGetAllForStoragePoolResult(result, storagePoolId);
     }
 
     /**
@@ -346,7 +347,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     public void testGetAllForStoragePoolWithPermissionsDisabledUnprivilegedUser() {
         List<StorageDomain> result = dao.getAllForStoragePool(EXISTING_STORAGE_POOL_ID, UNPRIVILEGED_USER_ID, false);
 
-        assertGetAllForStoragePoolResult(result);
+        assertGetAllForStoragePoolResult(result, EXISTING_STORAGE_POOL_ID);
     }
 
     /**
@@ -364,11 +365,11 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
      * Asserts the result returned from {@link StorageDomainDAO#getAllForStoragePool(Guid)} is correct
      * @param result The result to check
      */
-    private static void assertGetAllForStoragePoolResult(List<StorageDomain> result) {
+    private static void assertGetAllForStoragePoolResult(List<StorageDomain> result, Guid expectedStoragePoolId) {
         assertNotNull(result);
         assertFalse(result.isEmpty());
         for (StorageDomain domain : result) {
-            assertEquals(EXISTING_STORAGE_POOL_ID, domain.getStoragePoolId());
+            assertEquals(expectedStoragePoolId, domain.getStoragePoolId());
         }
     }
 
@@ -377,7 +378,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         List<StorageDomain> result =
                 dao.getPermittedStorageDomainsByStoragePool(EXISTING_USER_ID,
                         ActionGroup.CONFIGURE_VM_STORAGE,
-                        EXISTING_STORAGE_POOL_ID);
+                        new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(result.get(0).getId(), existingDomain.getId());
@@ -388,7 +389,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         List<StorageDomain> result =
                 dao.getPermittedStorageDomainsByStoragePool(EXISTING_USER_ID,
                         ActionGroup.CONSUME_QUOTA,
-                        EXISTING_STORAGE_POOL_ID);
+                        new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
         assertNotNull(result);
         assertTrue(result.isEmpty());
     }
@@ -422,11 +423,11 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testAllByConnectionId() {
-        List<StorageDomain> domains = dao.getAllByConnectionId(FixturesTool.EXISTING_STORAGE_CONNECTION_ID);
+        List<StorageDomain> domains = dao.getAllByConnectionId(new Guid("0cc146e8-e5ed-482c-8814-270bc48c297f"));
         assertEquals("Unexpected number of storage domains by connection id", domains.size(), 1);
         assertEquals("Wrong storage domain id for search by connection id",
                 domains.get(0).getId(),
-                FixturesTool.EXISTING_DOMAIN_ID_FOR_CONNECTION_ID);
+                new Guid("c2211b56-8869-41cd-84e1-78d7cb96f31d"));
     }
     /**
      * Asserts the result from {@link StorageDomainDAO#getAll()} is correct without filtering

@@ -1167,6 +1167,21 @@ actions:
     urlparams: {}
     headers:
       Filter: {value: true|false, required: false}
+- name: /api/storagedomains/{storagedomain:id}/storageconnections|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /api/storagedomains/{storagedomain:id}/storageconnections/{storageconnection:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
 - name: /api/clusters/{cluster:id}|rel=delete
   request:
     body:

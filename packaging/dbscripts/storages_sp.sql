@@ -687,3 +687,27 @@ BEGIN
               (v_supports_gluster_service = TRUE AND vg.gluster_service = TRUE)) AND vg.storage_pool_id = sp.id);
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION GetStorageServerConnectionsForDomain(v_storage_domain_id UUID)
+ RETURNS SETOF storage_server_connections
+ AS $procedure$
+ BEGIN
+RETURN QUERY SELECT *
+FROM storage_server_connections
+WHERE EXISTS  ( SELECT 1
+		FROM    storage_domain_static
+		WHERE   storage_domain_static.id = v_storage_domain_id
+		AND     storage_domain_static.storage_type in (1,4,6) -- file storage domains - nfs,posix,local
+		AND     storage_server_connections.id  = storage_domain_static.storage
+		UNION ALL
+		SELECT 1
+		FROM   storage_domain_static
+		JOIN   luns ON storage_domain_static.storage  = luns.volume_group_id
+		JOIN   lun_storage_server_connection_map ON  luns.lun_id = lun_storage_server_connection_map.lun_id
+							 AND storage_server_connections.id  = lun_storage_server_connection_map.storage_server_connection
+		WHERE  storage_domain_static.id = v_storage_domain_id
+		AND    storage_domain_static.storage_type = 3  -- storage type = iscsi
+		);
+END; $procedure$
+LANGUAGE plpgsql;

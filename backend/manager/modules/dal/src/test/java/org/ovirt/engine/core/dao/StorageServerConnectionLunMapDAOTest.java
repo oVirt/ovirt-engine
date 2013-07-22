@@ -29,7 +29,7 @@ public class StorageServerConnectionLunMapDAOTest extends BaseDAOTestCase {
         dao = dbFacade.getStorageServerConnectionLunMapDao();
         storageServerConnectionDao = dbFacade.getStorageServerConnectionDao();
 
-        existingConnection = storageServerConnectionDao.get("0cc146e8-e5ed-482c-8814-270bc48c297f");
+        existingConnection = storageServerConnectionDao.get("0cc146e8-e5ed-482c-8814-270bc48c297e");
 
         newServerConnection = new StorageServerConnections();
         newServerConnection.setid("0cc146e8-e5ed-482c-8814-270bc48c2980");

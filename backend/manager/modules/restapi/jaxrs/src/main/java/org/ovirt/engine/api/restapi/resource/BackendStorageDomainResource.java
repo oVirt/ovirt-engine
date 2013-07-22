@@ -19,6 +19,7 @@ import org.ovirt.engine.api.resource.DisksResource;
 import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
 import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
+import org.ovirt.engine.api.resource.StorageDomainServerConnectionsResource;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
@@ -109,9 +110,9 @@ public class BackendStorageDomainResource extends
     }
 
     public static synchronized String[] getLinksToExclude(StorageDomain storageDomain) {
-        return isIsoDomain(storageDomain) ? new String[] { "templates", "vms", "disks" }
+        return isIsoDomain(storageDomain) ? new String[] { "templates", "vms", "disks", "storageconnections" }
                                             :
-                                            isExportDomain(storageDomain) ? new String[]{"files"}
+                                            isExportDomain(storageDomain) ? new String[]{"files", "storageconnections"}
                                                                             :
                                                                             new String[]{"templates", "vms", "files"};
     }
@@ -266,5 +267,10 @@ public class BackendStorageDomainResource extends
     @Override
     public DisksResource getDisksResource() {
         return inject(new BackendStorageDomainDisksResource(guid));
+    }
+
+    @Override
+    public StorageDomainServerConnectionsResource getStorageConnectionsResource() {
+        return inject(new BackendStorageDomainServerConnectionsResource(guid));
     }
 }

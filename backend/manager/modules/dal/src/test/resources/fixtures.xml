@@ -255,7 +255,7 @@
         <row>
             <value></value>
             <value>1IET_00180001</value>
-            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+            <value>G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ</value>
             <value>VIRTUAL-DISK-1</value>
             <value>1</value>
             <value>IET</value>
@@ -264,7 +264,7 @@
         <row>
             <value></value>
             <value>1IET_00180002</value>
-            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+            <value>G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ</value>
             <value>VIRTUAL-DISK-1</value>
             <value>1</value>
             <value>IET</value>
@@ -273,7 +273,7 @@
         <row>
             <value></value>
             <value>1IET_00180003</value>
-            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+            <value>G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ</value>
             <value>DETACHED-LUN-1</value>
             <value>1</value>
             <value>IET</value>
@@ -282,7 +282,7 @@
         <row>
             <value></value>
             <value>1IET_00180004</value>
-            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+            <value>G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ</value>
             <value>SOME-LUN-DISK</value>
             <value>1</value>
             <value>IET</value>
@@ -295,8 +295,14 @@
         <column>storage_server_connection</column>
         <row>
             <value>1IET_00180001</value>
-            <value>0cc146e8-e5ed-482c-8814-270bc48c297f</value>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c297e</value>
         </row>
+        <row>
+            <value>1IET_00180002</value>
+            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+        </row>
+
+        0cc146e8-e5ed-482c-8814-270bc48c2979
     </table>
 
     <table name="tags">
@@ -2543,7 +2549,7 @@
         <column>storage_description</column>
         <row>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
-            <value>fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk</value>
+            <value>G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ</value>
             <value>scale_sd5</value>
             <value>0</value>
             <value>3</value>
@@ -2565,7 +2571,7 @@
         </row>
         <row>
             <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
-            <value>7fe9a439-a68e-4c15-8885-29d34eb6cabf</value>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c297f</value>
             <value>nfs_master</value>
             <value>0</value>
             <value>1</value>
@@ -2576,7 +2582,7 @@
         </row>
         <row>
             <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
-            <value>c6d12efe-f0c5-4ce8-b755-21c7aac09c5b</value>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c2981</value>
             <value>nfs_master2</value>
             <value>0</value>
             <value>1</value>

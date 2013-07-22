@@ -61,6 +61,7 @@ public class FeaturesHelper {
             addForceSelectSpmFeature(features);
             addConsoleFeature(features);
             addFeatureStorageServerConnections(features);
+            addFeatureStorageServerConnectionsForDomain(features);
             addSingleQxlPciFeature(features);
             addFeatureAddVmFromOvf(features);
         }
@@ -316,6 +317,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Add VM from OVF configuration");
         feature.setDescription("Ability to add VM from provided OVF configuration.");
+        features.getFeature().add(feature);
+    }
+
+    private void addFeatureStorageServerConnectionsForDomain(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Storage server connections of a storage domain");
+        feature.setDescription("Ability to view storage server connections of a specific storage domain (GET .../storagedomains/{storagedomain:id}/storageconnections)");
         features.getFeature().add(feature);
     }
 }

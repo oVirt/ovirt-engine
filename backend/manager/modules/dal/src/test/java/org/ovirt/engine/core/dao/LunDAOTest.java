@@ -12,7 +12,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 
 public class LunDAOTest extends BaseDAOTestCase {
-    private static final String STORAGE_SERVER_CONNECTION_ID = "0cc146e8-e5ed-482c-8814-270bc48c297f";
+    private static final String STORAGE_SERVER_CONNECTION_ID = "0cc146e8-e5ed-482c-8814-270bc48c297e";
     private LunDAO dao;
     private LUNs existingLUN;
     private LUNs newLUN;

@@ -42,4 +42,7 @@ public interface StorageDomainResource extends UpdatableResource<StorageDomain> 
 
     @Path("disks")
     public DisksResource getDisksResource();
+
+    @Path("storageconnections")
+    public StorageDomainServerConnectionsResource getStorageConnectionsResource();
 }

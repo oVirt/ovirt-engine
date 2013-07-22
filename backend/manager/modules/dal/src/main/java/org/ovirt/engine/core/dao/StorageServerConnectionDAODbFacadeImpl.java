@@ -84,6 +84,12 @@ public class StorageServerConnectionDAODbFacadeImpl extends BaseDAODbFacade impl
     }
 
     @Override
+    public List<StorageServerConnections> getAllForDomain(Guid domainId) {
+        return getCallsHandler().executeReadList("GetStorageServerConnectionsForDomain",mapper,
+                        getCustomMapSqlParameterSource().addValue("storage_domain_id", domainId));
+    }
+
+    @Override
     public void save(StorageServerConnections connection) {
         getCallsHandler().executeModification("Insertstorage_server_connections", getFullParameterSource(connection));
     }

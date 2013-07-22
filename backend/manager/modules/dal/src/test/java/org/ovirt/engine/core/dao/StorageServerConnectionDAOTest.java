@@ -17,7 +17,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
     private static final int SERVER_CONNECTION_COUNT_FOR_SPECIFIC_STORAGE = 7;
-    private static final String EXISTING_DOMAIN_STORAGE_NAME = "fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk";
+    private static final String EXISTING_DOMAIN_STORAGE_NAME = "G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ";
     private static final Guid EXISTING_STORAGE_POOL_ID = new Guid("6d849ebf-755f-4552-ad09-9a090cda105d");
 
     private StorageServerConnectionDAO dao;
@@ -219,4 +219,17 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
         assertNull(result.getNfsTimeo());
     }
 
+    @Test
+    public void testGetAllConnectionsOfNfsDomain() {
+      List<StorageServerConnections> connections = dao.getAllForDomain(Guid.createGuidFromString("d9ede37f-e6c3-4bf9-a984-19174070aa31"));
+      assertEquals(connections.size(),1);
+      assertEquals(connections.get(0).getid(),"0cc146e8-e5ed-482c-8814-270bc48c2981");
+    }
+
+    @Test
+    public void testGetAllConnectionsOfIscsiDomain() {
+      List<StorageServerConnections> connections = dao.getAllForDomain(Guid.createGuidFromString("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
+      assertEquals(connections.size(),2);
+      assertTrue((connections.get(0).getid().equals("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk")) || (connections.get(0).getid().equals("0cc146e8-e5ed-482c-8814-270bc48c297e")));
+    }
 }
