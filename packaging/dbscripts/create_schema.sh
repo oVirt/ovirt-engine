@@ -45,7 +45,7 @@ while getopts :hs:d:u:p:l:m:gv option; do
     esac
 done
 
-createlang --host=${SERVERNAME} --port=${PORT} --dbname=${DATABASE} --echo --username=${USERNAME} plpgsql >& /dev/null
+createlang -w --host=${SERVERNAME} --port=${PORT} --dbname=${DATABASE} --echo --username=${USERNAME} plpgsql >& /dev/null
 #set database min error level
 CMD="ALTER DATABASE \"${DATABASE}\" SET client_min_messages=ERROR;"
 execute_command "${CMD}"  ${DATABASE} ${SERVERNAME} ${PORT}> /dev/null
