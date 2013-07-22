@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -286,7 +287,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // if number of monitors has increased, check PCI and IDE limits are ok
         if (vmFromDB.getNumOfMonitors() < vmFromParams.getNumOfMonitors()) {
             List<Disk> allDisks = DbFacade.getInstance().getDiskDao().getAllForVm(getVmId());
-            List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(getVmId());
+            List<VmNic> interfaces = getVmNicDao().getAllForVm(getVmId());
             if (!checkPciAndIdeLimit(vmFromParams.getNumOfMonitors(),
                     interfaces,
                     allDisks,

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
@@ -169,7 +171,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         allInterfaces.add(getInterface());
         VmStatic vm = getVmStaticDAO().get(getVmId());
 
-        if (!pciAndIdeWithinLimit(vm, allInterfaces)) {
+        if (!pciAndIdeWithinLimit(vm, Entities.<VmNic, VmNetworkInterface> upcast(allInterfaces))) {
             return false;
         }
 

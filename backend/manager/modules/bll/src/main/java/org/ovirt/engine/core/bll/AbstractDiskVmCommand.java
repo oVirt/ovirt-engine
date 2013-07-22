@@ -21,7 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -97,7 +97,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected boolean isDiskPassPciAndIdeLimit(Disk diskInfo) {
-        List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(getVmId());
+        List<VmNic> vmInterfaces = getVmNicDao().getAllForVm(getVmId());
         List<Disk> allVmDisks = new ArrayList<Disk>(getVm().getDiskMap().values());
         allVmDisks.add(diskInfo);
 

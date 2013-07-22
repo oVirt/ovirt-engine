@@ -53,7 +53,7 @@ import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VmDAO;
-import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -83,7 +83,7 @@ public class AddDiskToVmCommandTest {
     private StoragePoolIsoMapDAO storagePoolIsoMapDAO;
 
     @Mock
-    private VmNetworkInterfaceDao vmNetworkInterfaceDAO;
+    private VmNicDao vmNicDAO;
 
     @Mock
     private DiskLunMapDao diskLunMapDAO;
@@ -332,7 +332,7 @@ public class AddDiskToVmCommandTest {
         doReturn(storagePoolIsoMapDAO).when(command).getStoragePoolIsoMapDao();
         doReturn(storageDomainStaticDAO).when(command).getStorageDomainStaticDao();
         doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
-        doReturn(vmNetworkInterfaceDAO).when(command).getVmNetworkInterfaceDao();
+        doReturn(vmNicDAO).when(command).getVmNicDao();
         doReturn(diskLunMapDAO).when(command).getDiskLunMapDao();
         doReturn(vmDAO).when(command).getVmDAO();
         doNothing().when(command).updateDisksFromDb();

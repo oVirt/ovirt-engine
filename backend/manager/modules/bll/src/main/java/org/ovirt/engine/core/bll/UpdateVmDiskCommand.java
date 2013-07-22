@@ -34,7 +34,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -152,7 +152,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private boolean validatePciAndIdeLimit(List<VM> vmsDiskPluggedTo) {
         for (VM vm : vmsDiskPluggedTo) {
-            List<VmNetworkInterface> allVmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
+            List<VmNic> allVmInterfaces = getVmNicDao().getAllForVm(vm.getId());
             List<Disk> allVmDisks = new LinkedList<Disk>(getOtherVmDisks(vm.getId()));
             allVmDisks.add(getNewDisk());
 

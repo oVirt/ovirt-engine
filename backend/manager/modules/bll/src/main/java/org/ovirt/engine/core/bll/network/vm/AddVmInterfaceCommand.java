@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.network.vm;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -123,10 +124,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         }
 
         // check that not exceeded PCI and IDE limit
-        List<VmNetworkInterface> allInterfaces = new ArrayList<VmNetworkInterface>(interfaces);
-        allInterfaces.add(getInterface());
-
-        if (!pciAndIdeWithinLimit(vm, allInterfaces)) {
+        if (!pciAndIdeWithinLimit(vm, Collections.<VmNic> singletonList(getInterface()))) {
             return false;
         }
 

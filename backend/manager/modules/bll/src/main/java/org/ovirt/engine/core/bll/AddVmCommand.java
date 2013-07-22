@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -49,6 +50,7 @@ import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -254,7 +256,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         returnValue =
                 returnValue
                         && checkPciAndIdeLimit(getParameters().getVmStaticData().getNumOfMonitors(),
-                                getVmInterfaces(),
+                                Entities.<VmNic, VmNetworkInterface> upcast(getVmInterfaces()),
                                 getVmDisks(), getReturnValue().getCanDoActionMessages())
                         && canAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
                         && hostToRunExist();

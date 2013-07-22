@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -89,7 +90,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
                 getReturnValue().getCanDoActionMessages());
     }
 
-    protected boolean pciAndIdeWithinLimit(VmStatic vm, List<VmNetworkInterface> allInterfaces) {
+    protected boolean pciAndIdeWithinLimit(VmStatic vm, List<VmNic> allInterfaces) {
         List<Disk> allDisks = getDiskDao().getAllForVm(getVmId());
 
         return checkPciAndIdeLimit(vm.getNumOfMonitors(), allInterfaces, allDisks,

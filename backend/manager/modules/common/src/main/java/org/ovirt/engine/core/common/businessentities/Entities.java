@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -132,4 +133,12 @@ public class Entities {
         return sb.toString();
     }
 
+    public static <B, G extends B> List<B> upcast(List<G> entities) {
+        List<B> baseEntities = new ArrayList<B>(entities.size());
+        for (G entity : entities) {
+            baseEntities.add(entity);
+        }
+
+        return baseEntities;
+    }
 }

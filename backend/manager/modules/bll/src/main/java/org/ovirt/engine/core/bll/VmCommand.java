@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -38,6 +39,7 @@ import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.customprop.ValidationError;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
@@ -114,14 +116,14 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @param disks
      * @return
      */
-    public static <T extends Disk> boolean checkPciAndIdeLimit(int monitorsNumber, List<VmNetworkInterface> interfaces,
+    public static <T extends Disk> boolean checkPciAndIdeLimit(int monitorsNumber, List<VmNic> interfaces,
             List<T> disks, ArrayList<String> messages) {
         boolean result = true;
         // this adds: monitors + 2 * (interfaces with type rtl_pv) + (all other
         // interfaces) + (all disks that are not IDE)
         int pciInUse = monitorsNumber;
 
-        for (VmNetworkInterface a : interfaces) {
+        for (VmNic a : interfaces) {
             if (a.getType() != null && VmInterfaceType.forValue(a.getType()) == VmInterfaceType.rtl8139_pv) {
                 pciInUse += 2;
             } else {
@@ -423,6 +425,12 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     @Override
     protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return super.getVmNetworkInterfaceDao();
+    }
+
+    /** Overriding to allow spying from this package */
+    @Override
+    protected VmNicDao getVmNicDao() {
+        return super.getVmNicDao();
     }
 
     protected VmDynamicDAO getVmDynamicDao() {
