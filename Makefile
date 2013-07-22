@@ -219,7 +219,6 @@ install: \
 	install-layout \
 	install_artifacts \
 	install_poms \
-	install_setup \
 	$(NULL)
 
 ovirt-engine.spec: version.mak
@@ -356,7 +355,6 @@ install-layout: \
 
 	install -d -m 755 "$(DESTDIR)$(BIN_DIR)"
 	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-setup" "$(DESTDIR)$(BIN_DIR)/engine-setup"
-	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-setup" "$(DESTDIR)$(BIN_DIR)/engine-upgrade"
 	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-remove" "$(DESTDIR)$(BIN_DIR)/engine-cleanup"
 	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-upgrade-check" "$(DESTDIR)$(BIN_DIR)/engine-upgrade-check"
 	ln -sf "$(DATA_DIR)/bin/engine-config.sh" "$(DESTDIR)$(BIN_DIR)/engine-config"
@@ -380,40 +378,10 @@ install-layout: \
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d"
 	ln -sf "$(DATA_DIR)/conf/osinfo-defaults.properties" "$(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d/00-defaults.properties"
 
-#
-# TODO
-# to remove once new setup is ready
-# also remvove the conf/iptables*
-#
-install_setup:
-	install -dm 755 "$(DESTDIR)$(BIN_DIR)"
-	install -dm 755 "$(DESTDIR)$(DATA_DIR)/conf"
-	install -dm 755 "$(DESTDIR)$(DATA_DIR)/scripts"
-	install -dm 755 "$(DESTDIR)$(DATA_DIR)/scripts/plugins"
-
-	install -m 644 packaging/fedora/setup/nfsutils.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	install -m 644 packaging/fedora/setup/basedefs.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	install -m 644 packaging/fedora/setup/engine_validators.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	install -m 644 packaging/fedora/setup/engine_firewalld.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	install -m 644 packaging/fedora/setup/setup_params.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	install -m 644 packaging/fedora/setup/setup_sequences.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	install -m 644 packaging/fedora/setup/setup_controller.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	install -m 644 packaging/fedora/setup/common_utils.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	install -m 644 packaging/fedora/setup/miniyum.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	install -m 644 packaging/fedora/setup/output_messages.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	install -m 644 packaging/fedora/setup/post_upgrade.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	install -m 644 packaging/fedora/setup/plugins/all_in_one_100.py "$(DESTDIR)$(DATA_DIR)/scripts/plugins"
-
-	# Example Plugin:
-	install -m 644 packaging/fedora/setup/plugins/example_plugin_000.py "$(DESTDIR)$(DATA_DIR)/scripts/plugins"
-
-	# Main programs and links:
-	install -m 755 packaging/fedora/setup/engine-setup.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	install -m 755 packaging/fedora/setup/engine-cleanup.py "$(DESTDIR)$(DATA_DIR)/scripts"
-	install -m 755 packaging/fedora/setup/engine-upgrade.py "$(DESTDIR)$(DATA_DIR)/scripts"
-
-	# Create a version file
-	echo "$(DISPLAY_VERSION)" > "$(DESTDIR)$(DATA_DIR)/conf/version"
+	# legacy-begin
+	ln -sf "$(DATA_DIR)/bin/engine-upgrade.sh" "$(DESTDIR)$(BIN_DIR)/engine-upgrade"
+	ln -sf "$(DATA_DIR)/bin/engine-check-upgrade.sh" "$(DESTDIR)$(BIN_DIR)/engine-check-upgrade"
+	# legacy-end
 
 gwt-debug:
 	[ -n "$(DEBUG_MODULE)" ] || ( echo "Please specify DEBUG_MODULE" && false )
