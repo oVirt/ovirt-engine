@@ -43,8 +43,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
         getVmNicDao().save(getParameters().getInterface());
         VmDeviceUtils.addNetworkInterfaceDevice(
                 new VmDeviceId(getParameters().getInterface().getId(), getParameters().getVmTemplateId()),
-                getParameters().getInterface().isPlugged(),
-                getParameters().getInterface().getCustomProperties());
+                getParameters().getInterface().isPlugged());
 
         setSucceeded(true);
     }
@@ -69,7 +68,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
         Version clusterCompatibilityVersion = getVdsGroup().getcompatibility_version();
         VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), clusterCompatibilityVersion);
 
-        if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.networkNameValid())) {
+        if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.emptyNetworkValid())) {
             return false;
         }
 
@@ -85,10 +84,6 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
                 addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
                 return false;
             }
-        }
-
-        if (!nicValidator.validateCustomProperties(getReturnValue().getCanDoActionMessages())) {
-            return false;
         }
 
         return true;

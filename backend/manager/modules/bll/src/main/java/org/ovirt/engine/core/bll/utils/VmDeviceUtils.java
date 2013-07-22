@@ -436,18 +436,16 @@ public class VmDeviceUtils {
      *            The NIC id (must correspond with the ID of the NIC in the VM).
      * @param plugged
      *            Is the NIC plugged to the VM or not.
-     * @param customProp
-     *            device custom properties
      * @return The device that was added.
      */
-    public static VmDevice addNetworkInterfaceDevice(VmDeviceId id, boolean plugged, Map<String, String> customProp) {
+    public static VmDevice addNetworkInterfaceDevice(VmDeviceId id, boolean plugged) {
         return addManagedDevice(id,
                 VmDeviceGeneralType.INTERFACE,
                 VmDeviceType.BRIDGE,
                 Collections.<String, Object> emptyMap(),
                 plugged,
                 false,
-                customProp);
+                null);
     }
 
     /**
@@ -772,7 +770,7 @@ public class VmDeviceUtils {
                             true,
                             false,
                             getAddress(entity, id),
-                            iface.getCustomProperties());
+                            null);
 
             VmDevice exportedDevice = entity.getManagedDeviceMap().get(deviceId);
             if (exportedDevice == null) {

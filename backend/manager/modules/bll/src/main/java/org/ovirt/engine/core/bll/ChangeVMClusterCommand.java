@@ -99,7 +99,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             Version clusterCompatibilityVersion) {
         for (VmNetworkInterface iface : interfaces) {
             VmNicValidator nicValidator = new VmNicValidator(iface, clusterCompatibilityVersion);
-            if (!validate(nicValidator.networkNameValid()) || !validate(nicValidator.linkedCorrectly())) {
+            if (!validate(nicValidator.emptyNetworkValid()) || !validate(nicValidator.linkedCorrectly())) {
                 return false;
             }
         }

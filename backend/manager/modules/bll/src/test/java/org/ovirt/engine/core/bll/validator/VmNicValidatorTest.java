@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.validator;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.both;
 import static org.junit.matchers.JUnitMatchers.hasItem;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
@@ -17,16 +16,17 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class VmNicValidatorTest {
 
+    private static final Guid VNIC_PROFILE_ID = Guid.newGuid();
     private static final String CLUSTER_VERSION = "7";
 
     private static final String CLUSTER_VERSION_REPLACEMENT =
@@ -36,7 +36,7 @@ public class VmNicValidatorTest {
     public MockConfigRule mockConfigRule = new MockConfigRule();
 
     @Mock
-    private VmNetworkInterface nic;
+    private VmNic nic;
 
     @Mock
     private Version version;
@@ -74,79 +74,26 @@ public class VmNicValidatorTest {
     }
 
     @Test
-    public void nullNetworkNameWhenUnlinkingNotSupported() throws Exception {
-        networkNameTest(both(failsWith(VdcBllMessages.NULL_NETWORK_IS_NOT_SUPPORTED))
+    public void nullVnicProfileWhenUnlinkingNotSupported() throws Exception {
+        vnicProfileTest(both(failsWith(VdcBllMessages.NULL_NETWORK_IS_NOT_SUPPORTED))
                 .and(replacements(hasItem(CLUSTER_VERSION_REPLACEMENT))),
                 false,
                 null);
     }
 
     @Test
-    public void validNetworkNameWhenUnlinkingNotSupported() throws Exception {
-        networkNameTest(isValid(), false, "net");
+    public void validVnicProfileWhenUnlinkingNotSupported() throws Exception {
+        vnicProfileTest(isValid(), false, VNIC_PROFILE_ID);
     }
 
     @Test
-    public void nullNetworkNameWhenUnlinkingSupported() throws Exception {
-        networkNameTest(isValid(), true, null);
+    public void nullVnicProfileWhenUnlinkingSupported() throws Exception {
+        vnicProfileTest(isValid(), true, null);
     }
 
     @Test
-    public void validNetworkNameWhenUnlinkingSupported() throws Exception {
-        networkNameTest(isValid(), true, "net");
-    }
-
-    @Test
-    public void validNetworkWhenPortMirroring() throws Exception {
-        portMirroringTest(isValid(), "net", true);
-    }
-
-    @Test
-    public void nullNetworkWhenPortMirroring() throws Exception {
-        portMirroringTest(failsWith(VdcBllMessages.PORT_MIRRORING_REQUIRES_NETWORK), null, true);
-    }
-
-    @Test
-    public void validNetworkWhenNoPortMirroring() throws Exception {
-        portMirroringTest(isValid(), "net", false);
-    }
-
-    @Test
-    public void nullNetworkWhenNoPortMirroring() throws Exception {
-        portMirroringTest(isValid(), null, false);
-    }
-
-    @Test
-    public void externalNetworkPortMirroring() throws Exception {
-        externalNetworkPortMirroringTest(true,
-                true,
-                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED));
-    }
-
-    @Test
-    public void externalNetworkNotPortMirroring() throws Exception {
-        externalNetworkPortMirroringTest(true, false, isValid());
-    }
-
-    @Test
-    public void internalNetworkPortMirroring() throws Exception {
-        externalNetworkPortMirroringTest(false, true, isValid());
-    }
-
-    @Test
-    public void internalNetworkNotPortMirroring() throws Exception {
-        externalNetworkPortMirroringTest(false, false, isValid());
-    }
-
-    private void externalNetworkPortMirroringTest(boolean externalNetwork,
-            boolean portMirroring,
-            Matcher<ValidationResult> matcher) {
-        Network network = mock(Network.class);
-        when(network.isExternal()).thenReturn(externalNetwork);
-
-        when(nic.isPortMirroring()).thenReturn(portMirroring);
-
-        assertThat(validator.portMirroringNotSetIfExternalNetwork(network), matcher);
+    public void validVnicProfileWhenUnlinkingSupported() throws Exception {
+        vnicProfileTest(isValid(), true, VNIC_PROFILE_ID);
     }
 
     private void unlinkingTest(Matcher<ValidationResult> matcher, boolean networkLinkingSupported, boolean nicLinked) {
@@ -156,17 +103,11 @@ public class VmNicValidatorTest {
         assertThat(validator.linkedCorrectly(), matcher);
     }
 
-    private void networkNameTest(Matcher<ValidationResult> matcher, boolean networkLinkingSupported, String networkName) {
+    private void vnicProfileTest(Matcher<ValidationResult> matcher, boolean networkLinkingSupported, Guid vnicProfileId) {
         mockConfigRule.mockConfigValue(ConfigValues.NetworkLinkingSupported, version, networkLinkingSupported);
-        when(nic.getNetworkName()).thenReturn(networkName);
+        when(nic.getVnicProfileId()).thenReturn(vnicProfileId);
 
-        assertThat(validator.networkNameValid(), matcher);
+        assertThat(validator.emptyNetworkValid(), matcher);
     }
 
-    private void portMirroringTest(Matcher<ValidationResult> matcher, String networkName, boolean portMirroring) {
-        when(nic.getNetworkName()).thenReturn(networkName);
-        when(nic.isPortMirroring()).thenReturn(portMirroring);
-
-        assertThat(validator.networkProvidedForPortMirroring(), matcher);
-    }
 }

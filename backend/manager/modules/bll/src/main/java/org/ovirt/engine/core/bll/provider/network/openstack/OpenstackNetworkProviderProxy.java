@@ -13,7 +13,7 @@ import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderPro
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -149,7 +149,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     }
 
     @Override
-    public Map<String, String> allocate(Network network, VmNetworkInterface nic) {
+    public Map<String, String> allocate(Network network, VmNic nic) {
         deallocate(nic);
         try {
             com.woorea.openstack.quantum.model.Network externalNetwork =
@@ -177,7 +177,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     }
 
     @Override
-    public void deallocate(VmNetworkInterface nic) {
+    public void deallocate(VmNic nic) {
         try {
             List<Port> ports = getClient().ports().list().execute().getList();
             for (Port port : ports) {

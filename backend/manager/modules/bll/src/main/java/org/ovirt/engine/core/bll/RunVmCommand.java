@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -59,6 +60,7 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -513,15 +515,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected void initParametersForExternalNetworks() {
-        Map<String, Network> clusterNetworks =
-                Entities.entitiesByName(getDbFacade().getNetworkDao().getAllForCluster(getVm().getVdsGroupId()));
         Map<VmDeviceId, VmDevice> nicDevices =
                 Entities.businessEntitiesById(getDbFacade().getVmDeviceDao().getVmDeviceByVmIdAndType(getVmId(),
                         VmDeviceGeneralType.INTERFACE));
 
-        for (VmNetworkInterface iface : getVm().getInterfaces()) {
-            String networkName = iface.getNetworkName();
-            Network network = (networkName == null) ? null : clusterNetworks.get(networkName);
+        for (VmNic iface : getVm().getInterfaces()) {
+            Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
             VmDevice vmDevice = nicDevices.get(new VmDeviceId(iface.getId(), getVmId()));
             if (network != null && network.isExternal() && vmDevice.getIsPlugged()) {
                 Provider<?> provider = getDbFacade().getProviderDao().get(network.getProvidedBy().getProviderId());
@@ -945,7 +944,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      */
     private boolean isVmInterfacesConfigured() {
         for (VmNetworkInterface nic : getVm().getInterfaces()) {
-            if (nic.getNetworkName() == null) {
+            if (nic.getVnicProfileId() == null) {
                 if (!FeatureSupported.networkLinking(getVm().getVdsGroupCompatibilityVersion())) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED);
                     return false;

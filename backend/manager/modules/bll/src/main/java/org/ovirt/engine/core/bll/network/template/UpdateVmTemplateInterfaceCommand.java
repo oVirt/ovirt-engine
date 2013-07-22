@@ -60,15 +60,11 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
         Version clusterCompatibilityVersion = getVdsGroup().getcompatibility_version();
         VmNicValidator nicValidator = new VmNicValidator(getParameters().getInterface(), clusterCompatibilityVersion);
 
-        if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.networkNameValid())) {
+        if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.emptyNetworkValid())) {
             return false;
         }
 
         if (!StringUtils.equals(oldIface.getName(), getInterfaceName()) && !interfaceNameUnique(interfaces)) {
-            return false;
-        }
-
-        if (!nicValidator.validateCustomProperties(getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 

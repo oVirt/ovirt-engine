@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -537,17 +538,36 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             struct.put(VdsProperties.PORT_MIRRORING, networks);
         }
 
-        addCustomPropertiesForDevice(struct, vm, vmDevice, clusterVersion);
+        addCustomPropertiesForDevice(struct,
+                vm,
+                vmDevice,
+                clusterVersion,
+                getVnicCustomProperties(vmInterface.getVnicProfileId()));
         addNetworkFiltersToNic(struct, clusterVersion);
+    }
+
+    private Map<String, String> getVnicCustomProperties(Guid vnicProfileId) {
+        Map<String, String> customProperties = null;
+
+        if (vnicProfileId != null) {
+            VnicProfile profile = DbFacade.getInstance().getVnicProfileDao().get(vnicProfileId);
+            customProperties = profile == null ? null : profile.getCustomProperties();
+        }
+
+        return customProperties == null ? new HashMap<String, String>() : customProperties;
     }
 
     public static void addCustomPropertiesForDevice(Map<String, Object> struct,
             VM vm,
             VmDevice vmDevice,
-            Version clusterVersion) {
+            Version clusterVersion,
+            Map<String, String> customProperties) {
         if (FeatureSupported.deviceCustomProperties(clusterVersion)) {
-            Map<String, String> customProperties = new HashMap<>(vmDevice.getCustomProperties());
+            if (customProperties == null) {
+                customProperties = new HashMap<>();
+            }
 
+            customProperties.putAll(vmDevice.getCustomProperties());
             Map<String, String> runtimeCustomProperties = vm.getRuntimeDeviceCustomProperties().get(vmDevice);
             if (runtimeCustomProperties != null) {
                 customProperties.putAll(runtimeCustomProperties);

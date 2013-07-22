@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
@@ -13,13 +14,11 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -82,12 +81,11 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     private void addInterfaceDeviceToDb() {
         VmDevice vmDevice = VmDeviceUtils.addNetworkInterfaceDevice(
                 new VmDeviceId(getInterface().getId(), getParameters().getVmId()),
-                getInterface().isPlugged(),
-                getInterface().getCustomProperties());
+                getInterface().isPlugged());
         getCompensationContext().snapshotNewEntity(vmDevice);
     }
 
-    private void addInterfaceToDb(VmNetworkInterface vmNetworkInterface) {
+    private void addInterfaceToDb(VmNic vmNetworkInterface) {
         getVmNicDao().save(vmNetworkInterface);
         getCompensationContext().snapshotNewEntity(vmNetworkInterface);
 
@@ -131,23 +129,20 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
         Version compatibilityVersion = getVm().getVdsGroupCompatibilityVersion();
         VmNicValidator nicValidator = new VmNicValidator(getInterface(), compatibilityVersion);
 
-        if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.networkNameValid())
-                || !validate(nicValidator.networkProvidedForPortMirroring())) {
+        if (!validate(nicValidator.linkedCorrectly()) || !validate(nicValidator.emptyNetworkValid())) {
             return false;
         }
 
-        if (getNetworkName() != null) {
+        if (getInterface().getVnicProfileId() != null) {
             // check that the network exists in current cluster
-            Network interfaceNetwork = getNetworkFromDb(vm.getVdsGroupId(), getNetworkName());
+            Network network = NetworkHelper.getNetworkByVnicProfileId(getInterface().getVnicProfileId());
 
-            if (interfaceNetwork == null) {
+            if (network == null || !NetworkHelper.isNetworkInCluster(network, getVm().getVdsGroupId())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
                 return false;
-            } else if (!interfaceNetwork.isVmNetwork()) {
+            } else if (!network.isVmNetwork()) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK);
-                addCanDoActionMessage(String.format("$networks %1$s", interfaceNetwork.getName()));
-                return false;
-            } else if (!validate(nicValidator.portMirroringNotSetIfExternalNetwork(interfaceNetwork))) {
+                addCanDoActionMessage(String.format("$networks %1$s", network.getName()));
                 return false;
             }
         }
@@ -158,10 +153,6 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             }
         } else if (MacPoolManager.getInstance().getAvailableMacsCount() <= 0) {
             addCanDoActionMessage(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
-            return false;
-        }
-
-        if (!nicValidator.validateCustomProperties(getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 
@@ -189,28 +180,18 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     }
 
     /**
-     * If the network is set for the interface, it requires permissions on it.<br>
-     * If port-mirroring was set for the network, a permissions for the network with port-mirroring is required, else a
-     * permission for using the network. The assumption is that port-mirroring already includes the network usage.
+     * The permissions list contains the vm and the vnic profile id used by the vnic.<br>
      */
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
 
-        if (getInterface() != null && StringUtils.isNotEmpty(getNetworkName()) && getVm() != null) {
-
-            Network network = getNetworkDAO().getByNameAndCluster(getNetworkName(), getVm().getVdsGroupId());
-
-            if (getInterface().isPortMirroring()) {
-                permissionList.add(new PermissionSubject(network == null ? null : network.getId(),
-                        VdcObjectType.Network,
-                        ActionGroup.PORT_MIRRORING));
-            } else {
-                permissionList.add(new PermissionSubject(network == null ? null : network.getId(),
-                        VdcObjectType.Network,
-                        getActionType().getActionGroup()));
-            }
+        if (getInterface() != null && getInterface().getVnicProfileId() != null && getVm() != null) {
+            permissionList.add(new PermissionSubject(getInterface().getVnicProfileId(),
+                    VdcObjectType.VnicProfile,
+                    getActionType().getActionGroup()));
         }
+
         return permissionList;
     }
 }

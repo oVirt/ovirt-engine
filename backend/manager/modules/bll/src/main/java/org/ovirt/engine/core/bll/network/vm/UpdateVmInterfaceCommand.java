@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.bll.network.vm;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -13,18 +16,15 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
@@ -38,8 +38,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extends AbstractVmInterfaceCommand<T> {
 
-    private VmNetworkInterface oldIface;
+    private VmNic oldIface;
     private VmDevice oldVmDevice;
+    private VnicProfile vnicProfile;
     private boolean macShouldBeChanged;
     private RequiredAction requiredAction = null;
 
@@ -50,9 +51,9 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
     private RequiredAction getRequiredAction() {
         if (requiredAction == null) {
-            if (!oldIface.isPlugged() && getInterface().isPlugged()) {
+            if (!oldVmDevice.getIsPlugged() && getInterface().isPlugged()) {
                 requiredAction = RequiredAction.PLUG;
-            } else if (oldIface.isPlugged() && !getInterface().isPlugged()) {
+            } else if (oldVmDevice.getIsPlugged() && !getInterface().isPlugged()) {
                 requiredAction = RequiredAction.UNPLUG;
             } else if (liveActionRequired() && propertiesRequiringVmUpdateDeviceWereUpdated()) {
                 requiredAction = RequiredAction.UPDATE_VM_DEVICE;
@@ -63,7 +64,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     }
 
     private boolean liveActionRequired() {
-        return oldIface.isPlugged() && getInterface().isPlugged() && getVm().getStatus() == VMStatus.Up;
+        return oldVmDevice.getIsPlugged() && getInterface().isPlugged() && getVm().getStatus() == VMStatus.Up;
     }
 
     @Override
@@ -84,10 +85,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 @Override
                 public Void runInTransaction() {
                     getCompensationContext().snapshotEntity(oldIface);
-                    getCompensationContext().snapshotEntity(oldVmDevice);
                     getVmNicDao().update(getInterface());
-                    oldVmDevice.setCustomProperties(getInterface().getCustomProperties());
-                    getDbFacade().getVmDeviceDao().update(oldVmDevice);
                     getCompensationContext().stateChanged();
                     return null;
                 }
@@ -133,9 +131,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     }
 
     private boolean propertiesRequiringVmUpdateDeviceWereUpdated() {
-        return (!StringUtils.equals(oldIface.getNetworkName(), getNetworkName()))
-                || oldIface.isLinked() != getInterface().isLinked()
-                || !ObjectUtils.objectsEqual(oldIface.getCustomProperties(), getInterface().getCustomProperties());
+        return !ObjectUtils.equals(oldIface.getVnicProfileId(), getInterface().getVnicProfileId())
+                || oldIface.isLinked() != getInterface().isLinked();
     }
 
     @Override
@@ -146,12 +143,11 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        oldVmDevice =
-                getVmDeviceDao().get(new VmDeviceId(getInterface().getId(), getVmId()));
-        List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(getVmId());
-        oldIface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
+        oldVmDevice = getVmDeviceDao().get(new VmDeviceId(getInterface().getId(), getVmId()));
+        List<VmNic> interfaces = getVmNicDao().getAllForVm(getVmId());
+        oldIface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNic>() {
             @Override
-            public boolean eval(VmNetworkInterface i) {
+            public boolean eval(VmNic i) {
                 return i.getId().equals(getInterface().getId());
             }
         });
@@ -161,18 +157,17 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        if (!StringUtils.equals(oldIface.getName(), getInterfaceName())
-                && !uniqueInterfaceName(Entities.<VmNic, VmNetworkInterface> upcast(interfaces))) {
+        if (!StringUtils.equals(oldIface.getName(), getInterfaceName()) && !uniqueInterfaceName(interfaces)) {
                 return false;
         }
 
         // check that not exceeded PCI and IDE limit
-        java.util.ArrayList<VmNetworkInterface> allInterfaces = new java.util.ArrayList<VmNetworkInterface>(interfaces);
+        List<VmNic> allInterfaces = new ArrayList<>(interfaces);
         allInterfaces.remove(oldIface);
         allInterfaces.add(getInterface());
         VmStatic vm = getVmStaticDAO().get(getVmId());
 
-        if (!pciAndIdeWithinLimit(vm, Entities.<VmNic, VmNetworkInterface> upcast(allInterfaces))) {
+        if (!pciAndIdeWithinLimit(vm, allInterfaces)) {
             return false;
         }
 
@@ -184,26 +179,24 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 new UpdateVmNicValidator(getInterface(), getVm().getVdsGroupCompatibilityVersion());
         if (!validate(nicValidator.unplugPlugNotRequired())
                 || !validate(nicValidator.linkedCorrectly())
-                || !validate(nicValidator.networkNameValid())
-                || !validate(nicValidator.hotUpdatePossible())
-                || !validate(nicValidator.networkProvidedForPortMirroring())) {
+                || !validate(nicValidator.emptyNetworkValid())
+                || !validate(nicValidator.hotUpdatePossible())) {
             return false;
         }
 
-        Network network = getNetworkFromDb(vm.getVdsGroupId(), getNetworkName());
-        if (getNetworkName() != null) {
+        Network network = null;
+        if (getInterface().getVnicProfileId() != null) {
 
+            network = NetworkHelper.getNetworkByVnicProfileId(getInterface().getVnicProfileId());
             // check that the network exists in current cluster
-            if (network == null) {
+            if (network == null || !NetworkHelper.isNetworkInCluster(network, getVm().getVdsGroupId())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
-                return false;
-            } else if (!validate(nicValidator.portMirroringNotSetIfExternalNetwork(network))) {
                 return false;
             }
         }
 
         if (getRequiredAction() == RequiredAction.UPDATE_VM_DEVICE) {
-            Network oldNetwork = getNetworkFromDb(vm.getVdsGroupId(), oldIface.getNetworkName());
+            Network oldNetwork = NetworkHelper.getNetworkByVnicProfileId(oldIface.getVnicProfileId());
             if (!validate(nicValidator.hotUpdateDoneWithInternalNetwork(oldNetwork, network))) {
                 return false;
             }
@@ -211,10 +204,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         macShouldBeChanged = !StringUtils.equals(oldIface.getMacAddress(), getMacAddress());
         if (macShouldBeChanged && (!validate(macAddressValid()) || !validate(macAvailable()))) {
-            return false;
-        }
-
-        if (!nicValidator.validateCustomProperties(getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 
@@ -257,32 +246,31 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
 
-        if (getInterface() != null && StringUtils.isNotEmpty(getNetworkName()) && getVm() != null) {
-
-            VmNetworkInterface iface = getVmNetworkInterfaceDao().get(getInterface().getId());
-            if (iface != null) {
-                Network network = getNetworkDAO().getByNameAndCluster(getNetworkName(), getVm().getVdsGroupId());
-
-                if (getInterface().isPortMirroring()
-                        && (isNetworkChanged(iface) || !iface.isPortMirroring())) {
-                    permissionList.add(new PermissionSubject(network == null ? null : network.getId(),
-                            VdcObjectType.Network,
-                            ActionGroup.PORT_MIRRORING));
-                } else {
-                    // If the vNic's network is changed, the user should have permission for using the new network
-                    if (isNetworkChanged(iface)) {
-                        permissionList.add(new PermissionSubject(network == null ? null : network.getId(),
-                                VdcObjectType.Network,
-                                getActionType().getActionGroup()));
-                    }
-                }
+        if (getInterface() != null && getInterface().getVnicProfileId() != null && getVm() != null) {
+            VmNic oldNic = getVmNicDao().get(getInterface().getId());
+            if (oldNic == null || isVnicProfileChanged(oldNic, getInterface())) {
+                permissionList.add(new PermissionSubject(getInterface().getVnicProfileId(),
+                        VdcObjectType.VnicProfile,
+                        getActionType().getActionGroup()));
             }
         }
+
         return permissionList;
     }
 
-    private boolean isNetworkChanged(VmNetworkInterface iface) {
-        return !getNetworkName().equals(iface.getNetworkName());
+    private VnicProfile getVnicProfile() {
+        if (getInterface().getVnicProfileId() == null) {
+            return null;
+        }
+
+        if (vnicProfile == null) {
+            vnicProfile = getVnicProfileDao().get(getInterface().getVnicProfileId());
+        }
+        return vnicProfile;
+    }
+
+    private boolean isVnicProfileChanged(VmNic oldNic, VmNic newNic) {
+        return !ObjectUtils.equals(oldNic.getVnicProfileId(), newNic.getVnicProfileId());
     }
 
     private boolean updateVmNicAllowed(VMStatus vmStatus) {
@@ -300,7 +288,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
      */
     private class UpdateVmNicValidator extends VmNicValidator {
 
-        public UpdateVmNicValidator(VmNetworkInterface nic, Version version) {
+        public UpdateVmNicValidator(VmNic nic, Version version) {
             super(nic, version);
         }
 
@@ -313,7 +301,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 if (!FeatureSupported.networkLinking(version)) {
                     return new ValidationResult(VdcBllMessages.HOT_VM_INTERFACE_UPDATE_IS_NOT_SUPPORTED,
                             clusterVersion());
-                } else if (nic.isPortMirroring()) {
+                } else if (getVnicProfile().isPortMirroring()) {
                     return new ValidationResult(VdcBllMessages.CANNOT_PERFOM_HOT_UPDATE_WITH_PORT_MIRRORING);
                 }
             }
@@ -332,8 +320,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
         private boolean propertiesRequiringUnplugPlugWereUpdated() {
             return (!oldIface.getType().equals(getInterface().getType()))
-                    || (!oldIface.getMacAddress().equals(getMacAddress()))
-                    || (oldIface.isPortMirroring() != getInterface().isPortMirroring());
+                    || (!oldIface.getMacAddress().equals(getMacAddress()));
         }
 
         /**

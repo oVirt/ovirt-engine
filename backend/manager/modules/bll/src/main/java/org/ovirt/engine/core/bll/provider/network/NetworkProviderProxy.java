@@ -5,7 +5,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.provider.ProviderProxy;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 
 public interface NetworkProviderProxy extends ProviderProxy {
 
@@ -36,7 +36,7 @@ public interface NetworkProviderProxy extends ProviderProxy {
      * @return A map of custom properties to forward for the vNIC device. The correct driver will know how to handle
      *         these properties, and connect the vNIC correctly.
      */
-    Map<String, String> allocate(Network network, VmNetworkInterface nic);
+    Map<String, String> allocate(Network network, VmNic nic);
 
     /**
      * Deallocate the vNIC from the provider. If the vNIC is not on the provider anymore, don't throw an exception.
@@ -44,5 +44,5 @@ public interface NetworkProviderProxy extends ProviderProxy {
      * @param nic
      *            The vNIC to deallocate.
      */
-    void deallocate(VmNetworkInterface nic);
+    void deallocate(VmNic nic);
 }

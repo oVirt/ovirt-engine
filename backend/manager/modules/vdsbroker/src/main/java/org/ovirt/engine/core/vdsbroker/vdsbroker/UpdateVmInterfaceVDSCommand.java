@@ -4,9 +4,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 
 public class UpdateVmInterfaceVDSCommand extends VdsBrokerCommand<VmNicDeviceVDSParameters> {
@@ -26,12 +27,19 @@ public class UpdateVmInterfaceVDSCommand extends VdsBrokerCommand<VmNicDeviceVDS
         deviceStruct.put(VdsProperties.DeviceType, getParameters().getVmDevice().getType().getValue());
         deviceStruct.put(VdsProperties.Alias, getParameters().getVmDevice().getAlias());
 
-        VmNetworkInterface nic = getParameters().getNic();
-        deviceStruct.put(VdsProperties.NETWORK, StringUtils.defaultString(nic.getNetworkName()));
+        VmNic nic = getParameters().getNic();
+        VnicProfile vnicProfile = null;
+        Network network = null;
+        if (nic.getVnicProfileId() != null) {
+            vnicProfile = getDbFacade().getVnicProfileDao().get(nic.getVnicProfileId());
+            if (vnicProfile != null) {
+                network = getDbFacade().getNetworkDao().get(vnicProfile.getNetworkId());
+            }
+        }
+        deviceStruct.put(VdsProperties.NETWORK, network == null ? "" : network.getName());
         deviceStruct.put(VdsProperties.LINK_ACTIVE, String.valueOf(nic.isLinked()));
-        deviceStruct.put(VdsProperties.PORT_MIRRORING,
-                nic.isPortMirroring() && nic.getNetworkName() != null
-                        ? Collections.singletonList(nic.getNetworkName()) : Collections.<String> emptyList());
+        deviceStruct.put(VdsProperties.PORT_MIRRORING, vnicProfile != null && vnicProfile.isPortMirroring()
+                && network != null ? Collections.singletonList(network.getName()) : Collections.<String> emptyList());
 
         if (FeatureSupported.deviceCustomProperties(getParameters().getVm().getVdsGroupCompatibilityVersion())) {
             deviceStruct.put(VdsProperties.Custom, getParameters().getVmDevice().getCustomProperties());

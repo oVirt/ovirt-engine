@@ -4,11 +4,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VmNicDeviceVDSParameters;
 import org.ovirt.engine.core.compat.Version;
@@ -36,13 +37,20 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
 
     private Map<String, Object> initNicStructure() {
         Map<String, Object> map = new HashMap<String, Object>();
-        VmNetworkInterface nic = getParameters().getNic();
+        VmNic nic = getParameters().getNic();
         VmDevice vmDevice = getParameters().getVmDevice();
-
+        VnicProfile vnicProfile = null;
+        Network network = null;
+        if (nic.getVnicProfileId() != null) {
+            vnicProfile = getDbFacade().getVnicProfileDao().get(nic.getVnicProfileId());
+            if (vnicProfile != null) {
+                network = getDbFacade().getNetworkDao().get(vnicProfile.getNetworkId());
+            }
+        }
         map.put(VdsProperties.Type, vmDevice.getType().getValue());
         map.put(VdsProperties.Device, VmDeviceType.BRIDGE.getName());
         map.put(VdsProperties.MAC_ADDR, nic.getMacAddress());
-        map.put(VdsProperties.NETWORK, StringUtils.defaultString(nic.getNetworkName()));
+        map.put(VdsProperties.NETWORK, network == null ? "" : network.getName());
 
         Version clusterVersion = getParameters().getVm().getVdsGroupCompatibilityVersion();
         if (FeatureSupported.networkLinking(clusterVersion)) {
@@ -57,12 +65,17 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
             map.put(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
         }
 
-        if (nic.isPortMirroring()) {
-            map.put(VdsProperties.PORT_MIRRORING, nic.getNetworkName() == null
-                    ? Collections.<String> emptyList() : Collections.singletonList(nic.getNetworkName()));
+        if (vnicProfile != null && vnicProfile.isPortMirroring()) {
+            map.put(VdsProperties.PORT_MIRRORING, network == null
+                    ? Collections.<String> emptyList() : Collections.singletonList(network.getName()));
         }
 
-        VmInfoBuilder.addCustomPropertiesForDevice(map, getParameters().getVm(), vmDevice, clusterVersion);
+        Map<String, String> customProperties = vnicProfile == null ? null : vnicProfile.getCustomProperties();
+        VmInfoBuilder.addCustomPropertiesForDevice(map,
+                getParameters().getVm(),
+                vmDevice,
+                clusterVersion,
+                customProperties);
         VmInfoBuilder.addNetworkFiltersToNic(map, clusterVersion);
         return map;
     }

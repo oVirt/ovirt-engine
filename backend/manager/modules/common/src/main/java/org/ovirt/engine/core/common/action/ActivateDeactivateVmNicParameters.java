@@ -1,23 +1,24 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 
 public class ActivateDeactivateVmNicParameters extends VmOperationParameterBase {
 
-    private VmNetworkInterface nic;
+    private static final long serialVersionUID = 8972183222927384462L;
+    private VmNic nic;
     private PlugAction action;
 
-    public ActivateDeactivateVmNicParameters(VmNetworkInterface nic, PlugAction action) {
+    public ActivateDeactivateVmNicParameters(VmNic nic, PlugAction action) {
         super();
         this.nic = nic;
         this.action = action;
     }
 
-    public VmNetworkInterface getNic() {
+    public VmNic getNic() {
         return nic;
     }
 
-    public void setNic(VmNetworkInterface nic) {
+    public void setNic(VmNic nic) {
         this.nic = nic;
     }
 

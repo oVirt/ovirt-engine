@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -62,7 +63,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
             // External networks are handled by their provider, so only check if exists on host for internal networks.
             if (getNetwork() != null
                     && !getNetwork().isExternal()
-                    && !networkAttachedToVds(getNetworkName(), getVdsId())) {
+                    && !networkAttachedToVds(getNetwork().getName(), getVdsId())) {
                 addCanDoActionMessage(VdcBllMessages.ACTIVATE_DEACTIVATE_NETWORK_NOT_IN_VDS);
                 return false;
             }
@@ -82,15 +83,11 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     public Network getNetwork() {
-        if (getNetworkName() != null && network == null) {
-            network = getNetworkDAO().getByNameAndCluster(getNetworkName(), getVm().getVdsGroupId());
+        if (getParameters().getNic().getVnicProfileId() != null && network == null) {
+            network = NetworkHelper.getNetworkByVnicProfileId(getParameters().getNic().getVnicProfileId());
         }
 
         return network;
-    }
-
-    private String getNetworkName() {
-        return getParameters().getNic().getNetworkName();
     }
 
     public String getInterfaceName() {

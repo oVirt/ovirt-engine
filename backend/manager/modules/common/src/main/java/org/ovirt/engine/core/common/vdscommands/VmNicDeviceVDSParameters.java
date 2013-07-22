@@ -2,16 +2,16 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmNicDeviceVDSParameters extends VdsIdVDSCommandParametersBase {
 
     private VM vm;
-    private VmNetworkInterface nic;
+    private VmNic nic;
     private VmDevice vmDevice;
 
-    public VmNicDeviceVDSParameters(Guid vdsId, VM vm, VmNetworkInterface nic, VmDevice vmDevice) {
+    public VmNicDeviceVDSParameters(Guid vdsId, VM vm, VmNic nic, VmDevice vmDevice) {
         super(vdsId);
         this.vm = vm;
         this.nic = nic;
@@ -22,7 +22,7 @@ public class VmNicDeviceVDSParameters extends VdsIdVDSCommandParametersBase {
         return vm;
     }
 
-    public VmNetworkInterface getNic() {
+    public VmNic getNic() {
         return nic;
     }
 

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
@@ -23,7 +22,6 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
-import org.ovirt.engine.core.compat.Guid;
 
 public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParameters> extends VmCommand<T> {
 
@@ -31,7 +29,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         super(parameters);
     }
 
-    protected boolean activateOrDeactivateNic(VmNetworkInterface nic, PlugAction plugAction) {
+    protected boolean activateOrDeactivateNic(VmNic nic, PlugAction plugAction) {
         VdcReturnValueBase returnValue =
                 getBackend().runInternalAction(VdcActionType.ActivateDeactivateVmNic,
                         createActivateDeactivateParameters(nic, plugAction));
@@ -48,10 +46,8 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__INTERFACE);
     }
 
-    private ActivateDeactivateVmNicParameters createActivateDeactivateParameters(VmNetworkInterface nic,
-            PlugAction plugAction) {
-        ActivateDeactivateVmNicParameters parameters =
-                new ActivateDeactivateVmNicParameters(nic, plugAction);
+    private ActivateDeactivateVmNicParameters createActivateDeactivateParameters(VmNic nic, PlugAction plugAction) {
+        ActivateDeactivateVmNicParameters parameters = new ActivateDeactivateVmNicParameters(nic, plugAction);
         parameters.setVmId(getParameters().getVmId());
 
         return parameters;
@@ -103,19 +99,6 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
                 : ValidationResult.VALID;
     }
 
-    protected Network getNetworkFromDb(Guid vdsGroupId, String networkName) {
-        if (networkName == null) {
-            return null;
-        }
-
-        for (Network network : getNetworkDAO().getAllForCluster(vdsGroupId)) {
-            if (network.getName().equals(networkName)) {
-                return network;
-            }
-        }
-        return null;
-    }
-
     protected String getMacAddress() {
         return getInterface().getMacAddress();
     }
@@ -126,9 +109,5 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
 
     public String getInterfaceName() {
         return getInterface().getName();
-    }
-
-    public String getNetworkName() {
-        return getInterface().getNetworkName();
     }
 }
