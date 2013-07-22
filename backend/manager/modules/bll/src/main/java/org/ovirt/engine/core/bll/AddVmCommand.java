@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -49,7 +48,6 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -168,15 +166,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return _vmSnapshotId;
     }
 
-    protected List<VmNetworkInterface> _vmInterfaces;
+    protected List<VmNic> _vmInterfaces;
 
-    protected List<VmNetworkInterface> getVmInterfaces() {
+    protected List<VmNic> getVmInterfaces() {
         if (_vmInterfaces == null) {
-            List<VmNetworkInterface> vmNetworkInterfaces =
-                    DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForTemplate(getVmTemplate().getId());
-            _vmInterfaces =
-                    (vmNetworkInterfaces != null) ? vmNetworkInterfaces
-                            : new ArrayList<VmNetworkInterface>();
+            List<VmNic> vmNetworkInterfaces = getVmNicDao().getAllForTemplate(getVmTemplate().getId());
+            _vmInterfaces = vmNetworkInterfaces == null ? new ArrayList<VmNic>() : vmNetworkInterfaces;
         }
         return _vmInterfaces;
     }
@@ -256,7 +251,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         returnValue =
                 returnValue
                         && checkPciAndIdeLimit(getParameters().getVmStaticData().getNumOfMonitors(),
-                                Entities.<VmNic, VmNetworkInterface> upcast(getVmInterfaces()),
+                                getVmInterfaces(),
                                 getVmDisks(), getReturnValue().getCanDoActionMessages())
                         && canAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
                         && hostToRunExist();
@@ -649,7 +644,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     protected void addVmNetwork() {
         // Add interfaces from template
-        for (VmNetworkInterface iface : getVmInterfaces()) {
+        for (VmNic iface : getVmInterfaces()) {
             iface.setId(Guid.newGuid());
             iface.setMacAddress(MacPoolManager.getInstance().allocateNewMac());
             iface.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());

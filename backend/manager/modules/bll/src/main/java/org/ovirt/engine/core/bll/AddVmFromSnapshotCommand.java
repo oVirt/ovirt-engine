@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -23,8 +24,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -111,9 +113,9 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     }
 
     @Override
-    protected List<VmNetworkInterface> getVmInterfaces() {
+    protected List<VmNic> getVmInterfaces() {
         if (_vmInterfaces == null) {
-            _vmInterfaces = vmFromConfiguration.getInterfaces();
+            _vmInterfaces = Entities.<VmNic, VmNetworkInterface> upcast(vmFromConfiguration.getInterfaces());
         }
         return _vmInterfaces;
     }

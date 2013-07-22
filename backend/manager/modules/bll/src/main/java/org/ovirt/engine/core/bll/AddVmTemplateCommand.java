@@ -45,7 +45,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -212,9 +212,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             public Void runInTransaction() {
                 addPermission();
                 AddVmTemplateImages();
-                List<VmNetworkInterface> vmInterfaces = addVmInterfaces();
+                List<VmNic> vmInterfaces = addVmInterfaces();
                 if (isVmInDb) {
-                    VmDeviceUtils.copyVmDevices(getVmId(), getVmTemplateId(), newDiskImages, vmInterfaces, getParameters().isSoundDeviceEnabled(), getParameters().isConsoleEnabled());
+                    VmDeviceUtils.copyVmDevices(getVmId(),
+                            getVmTemplateId(),
+                            newDiskImages,
+                            vmInterfaces,
+                            getParameters().isSoundDeviceEnabled(),
+                            getParameters().isConsoleEnabled());
                 } else {
                     // sending true for isVm in order to create basic devices needed
                     VmDeviceUtils.copyVmDevices(getVmId(),
@@ -428,15 +433,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         setActionReturnValue(getVmTemplate().getId());
     }
 
-    protected List<VmNetworkInterface> addVmInterfaces() {
-        List<VmNetworkInterface> templateInterfaces = new ArrayList<VmNetworkInterface>();
-        List<VmNetworkInterface> interfaces = DbFacade
-                .getInstance()
-                .getVmNetworkInterfaceDao()
-                .getAllForVm(
-                        getParameters().getMasterVm().getId());
-        for (VmNetworkInterface iface : interfaces) {
-            VmNetworkInterface iDynamic = new VmNetworkInterface();
+    protected List<VmNic> addVmInterfaces() {
+        List<VmNic> templateInterfaces = new ArrayList<>();
+        List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getMasterVm().getId());
+        for (VmNic iface : interfaces) {
+            VmNic iDynamic = new VmNic();
             iDynamic.setId(Guid.newGuid());
             iDynamic.setVmTemplateId(getVmTemplateId());
             iDynamic.setName(iface.getName());

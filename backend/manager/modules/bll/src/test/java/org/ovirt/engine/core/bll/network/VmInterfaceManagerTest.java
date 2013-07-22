@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -75,7 +76,7 @@ public class VmInterfaceManagerTest {
         doReturn(vmNetworkInterfaceDAO).when(vmInterfaceManager).getVmNetworkInterfaceDao();
         doReturn(vmNicDao).when(vmInterfaceManager).getVmNicDao();
         doReturn(vmDAO).when(vmInterfaceManager).getVmDAO();
-        doNothing().when(vmInterfaceManager).auditLogMacInUseUnplug(any(VmNetworkInterface.class));
+        doNothing().when(vmInterfaceManager).auditLogMacInUseUnplug(any(VmNic.class));
 
         doNothing().when(vmInterfaceManager).log(any(AuditLogableBase.class), any(AuditLogType.class));
     }

@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
@@ -223,7 +224,16 @@ public class VmDeviceUtils {
     /**
      * Copy related data from the given VM/VmBase/VmDevice list to the destination VM/VmTemplate.
      */
-    public static void copyVmDevices(Guid srcId, Guid dstId, VM vm, VmBase vmBase, boolean isVm, List<VmDevice> devicesDataToUse, List<DiskImage> disks, List<VmNetworkInterface> ifaces, boolean soundDeviceEnabled, boolean isConsoleEnabled) {
+    public static void copyVmDevices(Guid srcId,
+            Guid dstId,
+            VM vm,
+            VmBase vmBase,
+            boolean isVm,
+            List<VmDevice> devicesDataToUse,
+            List<DiskImage> disks,
+            List<VmNic> ifaces,
+            boolean soundDeviceEnabled,
+            boolean isConsoleEnabled) {
         Guid id;
         int diskCount = 0;
         int ifaceCount = 0;
@@ -381,7 +391,12 @@ public class VmDeviceUtils {
      * @param disks
      *            The disks which were saved for the destination VM.
      */
-    public static void copyVmDevices(Guid srcId, Guid dstId, List<DiskImage> disks, List<VmNetworkInterface> ifaces, boolean soundDeviceEnabled, boolean isConsoleEnabled) {
+    public static void copyVmDevices(Guid srcId,
+            Guid dstId,
+            List<DiskImage> disks,
+            List<VmNic> ifaces,
+            boolean soundDeviceEnabled,
+            boolean isConsoleEnabled) {
         VM vm = DbFacade.getInstance().getVmDao().get(dstId);
         VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
         boolean isVm = (vmBase != null);
@@ -731,7 +746,7 @@ public class VmDeviceUtils {
      * @param iface
      *            the network interface to check if can be plugged
      */
-    private static boolean canPlugInterface(VmNetworkInterface iface) {
+    private static boolean canPlugInterface(VmNic iface) {
         VmInterfaceManager vmIfaceManager = new VmInterfaceManager();
         if (vmIfaceManager.existsPluggedInterfaceWithSameMac(iface)) {
             vmIfaceManager.auditLogMacInUseUnplug(iface);

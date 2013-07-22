@@ -80,7 +80,7 @@ public class VmInterfaceManager {
         });
     }
 
-    public void auditLogMacInUseUnplug(final VmNetworkInterface iface) {
+    public void auditLogMacInUseUnplug(final VmNic iface) {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
@@ -154,7 +154,7 @@ public class VmInterfaceManager {
      *            the network interface that needs to be plugged
      * @return <code>true</code> if the MAC is used by another plugged network interface, <code>false</code> otherwise.
      */
-    public boolean existsPluggedInterfaceWithSameMac(VmNetworkInterface interfaceToPlug) {
+    public boolean existsPluggedInterfaceWithSameMac(VmNic interfaceToPlug) {
         List<VmNic> vmNetworkIntrefaces = getVmNicDao().getPluggedForMac(interfaceToPlug.getMacAddress());
         for (VmNic vmNetworkInterface : vmNetworkIntrefaces) {
             if (!interfaceToPlug.getId().equals(vmNetworkInterface.getId())) {
@@ -194,7 +194,7 @@ public class VmInterfaceManager {
         return DbFacade.getInstance().getVmDao();
     }
 
-    private AuditLogableBase createAuditLog(final VmNetworkInterface iface) {
+    private AuditLogableBase createAuditLog(final VmNic iface) {
         AuditLogableBase logable = new AuditLogableBase();
         logable.setVmId(iface.getVmId());
         logable.addCustomValue("MACAddr", iface.getMacAddress());
