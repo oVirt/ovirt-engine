@@ -113,7 +113,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
-        List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(getParameters().getVmId());
+        List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getVmId());
 
         if (!uniqueInterfaceName(interfaces)) {
             return false;

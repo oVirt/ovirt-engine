@@ -7,7 +7,7 @@ import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateCommand;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -39,7 +39,7 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
         return getParameters().getInterface().getNetworkName();
     }
 
-    protected boolean interfaceNameUnique(List<VmNetworkInterface> interfaces) {
+    protected boolean interfaceNameUnique(List<VmNic> interfaces) {
         return VmHandler.IsNotDuplicateInterfaceName(interfaces,
                 getInterfaceName(),
                 getReturnValue().getCanDoActionMessages());

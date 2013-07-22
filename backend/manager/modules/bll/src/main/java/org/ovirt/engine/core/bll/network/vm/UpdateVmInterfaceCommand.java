@@ -161,7 +161,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        if (!StringUtils.equals(oldIface.getName(), getInterfaceName()) && !uniqueInterfaceName(interfaces)) {
+        if (!StringUtils.equals(oldIface.getName(), getInterfaceName())
+                && !uniqueInterfaceName(Entities.<VmNic, VmNetworkInterface> upcast(interfaces))) {
                 return false;
         }
 

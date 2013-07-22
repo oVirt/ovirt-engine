@@ -85,7 +85,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
                 : ValidationResult.VALID;
     }
 
-    protected boolean uniqueInterfaceName(List<VmNetworkInterface> interfaces) {
+    protected boolean uniqueInterfaceName(List<VmNic> interfaces) {
         return VmHandler.IsNotDuplicateInterfaceName(interfaces, getInterfaceName(),
                 getReturnValue().getCanDoActionMessages());
     }

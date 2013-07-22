@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -52,8 +51,7 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
 
     @Override
     protected boolean canDoAction() {
-        List<VmNetworkInterface> interfaces =
-                getVmNetworkInterfaceDao().getAllForTemplate(getParameters().getVmTemplateId());
+        List<VmNic> interfaces = getVmNicDao().getAllForTemplate(getParameters().getVmTemplateId());
         if (!interfaceNameUnique(interfaces)
                 || !validate(templateExists())
                 || !validate(linkedToTemplate())) {

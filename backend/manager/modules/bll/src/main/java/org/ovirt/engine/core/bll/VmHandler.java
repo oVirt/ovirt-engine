@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -344,15 +345,15 @@ public class VmHandler {
      *            - Messages for CanDoAction().
      * @return - True , if name is valid, false, if name already exist.
      */
-    public static boolean IsNotDuplicateInterfaceName(List<VmNetworkInterface> interfaces,
+    public static boolean IsNotDuplicateInterfaceName(List<VmNic> interfaces,
             final String interfaceName,
             List<String> messages) {
 
         // Interface iface = interfaces.FirstOrDefault(i => i.name ==
         // AddVmInterfaceParameters.Interface.name);
-        VmNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
+        VmNic iface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNic>() {
             @Override
-            public boolean eval(VmNetworkInterface i) {
+            public boolean eval(VmNic i) {
                 return i.getName().equals(interfaceName);
             }
         });

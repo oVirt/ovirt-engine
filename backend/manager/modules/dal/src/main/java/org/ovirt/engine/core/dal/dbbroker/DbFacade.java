@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.job.Job;
@@ -150,7 +151,8 @@ public class DbFacade {
             put(BaseDisk.class, BaseDiskDao.class);
             put(DiskImage.class, BaseDiskDao.class);
             put(DiskImageDynamic.class, DiskImageDynamicDAO.class);
-            put(VmNetworkInterface.class, VmNetworkInterfaceDao.class);
+            put(VmNic.class, VmNicDao.class);
+            put(VmNetworkInterface.class, VmNicDao.class);
             put(VmNetworkStatistics.class, VmNetworkStatisticsDao.class);
             put(Network.class, NetworkDao.class);
             put(Provider.class, ProviderDao.class);

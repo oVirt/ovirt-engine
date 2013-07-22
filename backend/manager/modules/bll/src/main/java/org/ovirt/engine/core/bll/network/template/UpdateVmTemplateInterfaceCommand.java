@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Version;
@@ -40,8 +41,7 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
             return false;
         }
 
-        List<VmNetworkInterface> interfaces =
-                getVmNetworkInterfaceDao().getAllForTemplate(getParameters().getVmTemplateId());
+        List<VmNic> interfaces = getVmNicDao().getAllForTemplate(getParameters().getVmTemplateId());
 
         if (!validate(templateExists())) {
             return false;
@@ -49,9 +49,9 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
 
         // Interface oldIface = interfaces.First(i => i.id ==
         // AddVmInterfaceParameters.Interface.id);
-        VmNetworkInterface oldIface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNetworkInterface>() {
+        VmNic oldIface = LinqUtils.firstOrNull(interfaces, new Predicate<VmNic>() {
             @Override
-            public boolean eval(VmNetworkInterface i) {
+            public boolean eval(VmNic i) {
                 return i.getId().equals(getParameters().getInterface().getId());
             }
         });
