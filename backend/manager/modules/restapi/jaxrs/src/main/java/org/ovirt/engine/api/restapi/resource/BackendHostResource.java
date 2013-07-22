@@ -347,10 +347,12 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
         public VdcActionParametersBase getParameters(Host incoming, VDS entity) {
             VdsStatic updated = getMapper(modelType, VdsStatic.class).map(incoming,
                     entity.getStaticData());
-            UpdateVdsActionParameters updateParams = new UpdateVdsActionParameters(updated, "", false);
+            UpdateVdsActionParameters updateParams = new UpdateVdsActionParameters(updated, incoming.getRootPassword(), false);
             if (incoming.isSetOverrideIptables()) {
                 updateParams.setOverrideFirewall(incoming.isOverrideIptables());
             }
+            updateParams = (UpdateVdsActionParameters) getMapper
+                    (Host.class, VdsOperationActionParameters.class).map(incoming, (VdsOperationActionParameters) updateParams);
             return updateParams;
         }
     }

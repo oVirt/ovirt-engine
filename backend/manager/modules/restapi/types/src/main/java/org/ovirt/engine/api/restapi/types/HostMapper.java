@@ -101,11 +101,9 @@ public class HostMapper {
     @Mapping(from = SSH.class, to = VdsStatic.class)
     public static VdsStatic map(SSH model, VdsStatic template) {
         VdsStatic entity = template != null ? template : new VdsStatic();
-        /* TODO: add when configured ssh username is enabled
         if (model.isSetUser() && model.getUser().isSetUserName()) {
             entity.setSshUsername(model.getUser().getUserName());
         }
-        */
         if (model.isSetPort() && model.getPort() > 0) {
             entity.setSshPort(model.getPort());
         }
@@ -554,12 +552,14 @@ public class HostMapper {
         if (action.isSetSsh()) {
             if (action.getSsh().isSetUser()) {
                 if (action.getSsh().getUser().isSetPassword()) {
-                    params.setRootPassword(action.getSsh().getUser().getPassword());
+                    // For backward compatibility giving priority to rootPassword field
+                    if (params.getPassword() == null) {
+                        params.setPassword(action.getSsh().getUser().getPassword());
+                    }
                 }
-                // TODO: uncomment when non-root username support is available
-                //if (action.getSsh().getUser().isSetUserName()) {
-                //      params.getvds().setSshUsername(action.getSsh().getUser().getUserName());
-                //}
+                if (action.getSsh().getUser().isSetUserName()) {
+                      params.getvds().setSshUsername(action.getSsh().getUser().getUserName());
+                }
             }
             if (action.getSsh().isSetPort()) {
                 params.getvds().setSshPort(action.getSsh().getPort());
@@ -569,6 +569,34 @@ public class HostMapper {
             }
             if (action.getSsh().isSetAuthenticationMethod()) {
                 params.setAuthMethod(map(AuthenticationMethod.fromValue(action.getSsh().getAuthenticationMethod()), null));
+            }
+        }
+        return params;
+    }
+
+    @Mapping(from = Host.class, to = VdsOperationActionParameters.class)
+    public static VdsOperationActionParameters map(Host host, VdsOperationActionParameters params) {
+        params.setPassword(host.getRootPassword());
+        if (host.isSetSsh()) {
+            if (host.getSsh().isSetUser()) {
+                if (host.getSsh().getUser().isSetPassword()) {
+                    // For backward compatibility giving priority to rootPassword field
+                    if (params.getPassword() == null) {
+                        params.setPassword(host.getSsh().getUser().getPassword());
+                    }
+                }
+                if (host.getSsh().getUser().isSetUserName()) {
+                      params.getvds().setSshUsername(host.getSsh().getUser().getUserName());
+                }
+            }
+            if (host.getSsh().isSetPort()) {
+                params.getvds().setSshPort(host.getSsh().getPort());
+            }
+            if (host.getSsh().isSetFingerprint()) {
+                params.getvds().setSshKeyFingerprint(host.getSsh().getFingerprint());
+            }
+            if (host.getSsh().isSetAuthenticationMethod()) {
+                params.setAuthMethod(map(AuthenticationMethod.fromValue(host.getSsh().getAuthenticationMethod()), null));
             }
         }
         return params;
