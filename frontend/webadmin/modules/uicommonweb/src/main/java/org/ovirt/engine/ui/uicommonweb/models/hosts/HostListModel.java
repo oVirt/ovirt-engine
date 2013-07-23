@@ -901,7 +901,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
             Provider externalProvider = (Provider) model.getNetworkProviders().getSelectedItem();
             if (externalProvider != null) {
-                parameters.setProvider(externalProvider.getId());
+                parameters.setProviderId(externalProvider.getId());
                 parameters.setNetworkMappings((String) model.getNeutronAgentModel().getInterfaceMappings().getEntity());
             }
 

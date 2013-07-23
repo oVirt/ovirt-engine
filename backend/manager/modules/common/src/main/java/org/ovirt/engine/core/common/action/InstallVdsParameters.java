@@ -8,8 +8,6 @@ public class InstallVdsParameters extends VdsOperationActionParameters {
 
     private boolean reinstallOrUpgrade;
     private String oVirtIsoFile;
-    private Guid providerId;
-    private String networkMappings;
 
     public InstallVdsParameters() {
     }
@@ -39,21 +37,5 @@ public class InstallVdsParameters extends VdsOperationActionParameters {
 
     public void setoVirtIsoFile(String value) {
         oVirtIsoFile = value;
-    }
-
-    public Guid getProviderId() {
-        return providerId;
-    }
-
-    public void setProviderId(Guid providerId) {
-        this.providerId = providerId;
-    }
-
-    public String getNetworkMappings() {
-        return networkMappings;
-    }
-
-    public void setNetworkMappings(String networkMappings) {
-        this.networkMappings = networkMappings;
     }
 }
