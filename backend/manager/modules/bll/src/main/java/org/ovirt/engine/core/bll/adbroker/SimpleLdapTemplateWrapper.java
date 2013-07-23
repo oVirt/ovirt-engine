@@ -43,7 +43,7 @@ public class SimpleLdapTemplateWrapper extends LDAPTemplateWrapper {
 
         if ( ldapProviderType.equals(LdapProviderType.activeDirectory) ) {
             userDNSb.append("CN=").append(userName).append(",CN=Users");
-        } else if (ldapProviderType.equals(LdapProviderType.rhds)) {
+        } else if (ldapProviderType.equals(LdapProviderType.rhds) || ldapProviderType.equals(LdapProviderType.openLdap)) {
             userDNSb.append("uid=").append(userName).append(",ou=People");
         } else {
             userDNSb.append("uid=").append(userName).append(",cn=Users").append(",cn=Accounts");
