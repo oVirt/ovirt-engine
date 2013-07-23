@@ -575,6 +575,10 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
         activeDirectorySearchSyntaxMap.put(SearchLangageLDAPTokens.$LDAP_GROUP_CATEGORY, "ObjectCategory=Group");
         activeDirectorySearchSyntaxMap.put(SearchLangageLDAPTokens.$CN, "name");
         activeDirectorySearchSyntaxMap.put(SearchLangageLDAPTokens.$USER_ACCOUNT_NAME, "samaccountname");
+        activeDirectorySearchSyntaxMap.put(SearchLangageLDAPTokens.$SN, "SN");
+        activeDirectorySearchSyntaxMap.put(SearchLangageLDAPTokens.$SAMACCOUNTNAME, "SAMACCOUNTNAME");
+        activeDirectorySearchSyntaxMap.put(SearchLangageLDAPTokens.$DEPARTMENT, "DEPARTMENT");
+        activeDirectorySearchSyntaxMap.put(SearchLangageLDAPTokens.$TITLE, "TITLE");
 
         ipaSearchSyntaxMap = new EnumMap<SearchLangageLDAPTokens, String>(SearchLangageLDAPTokens.class);
         ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$GIVENNAME, "givenname");
