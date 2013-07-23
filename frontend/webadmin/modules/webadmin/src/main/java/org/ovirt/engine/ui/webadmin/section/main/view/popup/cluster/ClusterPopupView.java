@@ -382,6 +382,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         enableTrustedServiceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         enableBallooning = new EntityModelCheckBoxEditor(Align.RIGHT);
+        enableBallooning.getContentWidgetContainer().setWidth("350px"); //$NON-NLS-1$
     }
 
     private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates)
