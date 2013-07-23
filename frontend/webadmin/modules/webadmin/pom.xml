@@ -205,6 +205,7 @@
             <artifactId>gwt-maven-plugin</artifactId>
             <configuration>
               <runTarget>/webadmin/webadmin/WebAdmin.html</runTarget>
+              <module>org.ovirt.engine.ui.webadmin.WebAdmin</module>
             </configuration>
             <executions>
               <execution>

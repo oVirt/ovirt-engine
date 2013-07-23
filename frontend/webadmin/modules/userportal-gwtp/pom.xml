@@ -205,6 +205,7 @@
             <artifactId>gwt-maven-plugin</artifactId>
             <configuration>
               <runTarget>/UserPortal/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html</runTarget>
+              <module>org.ovirt.engine.ui.userportal.UserPortal</module>
             </configuration>
             <executions>
               <execution>
