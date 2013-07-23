@@ -273,7 +273,7 @@
         <groupId>com.google.gwt</groupId>
         <artifactId>gwt-dev</artifactId>
         <version>${gwt.version}</version>
-        <!-- gwt-dev needs to be on runtime classpath due to GWT direct-eval RPC (deRPC) usage -->
+        <scope>provided</scope>
       </dependency>
       <dependency>
         <groupId>com.google.gwt</groupId>
