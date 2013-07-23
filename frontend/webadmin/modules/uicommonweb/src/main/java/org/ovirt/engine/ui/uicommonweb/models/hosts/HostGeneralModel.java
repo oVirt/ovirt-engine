@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -926,6 +927,12 @@ public class HostGeneralModel extends EntityModel
         param.setoVirtIsoFile(isOVirt ? ((RpmVersion) model.getOVirtISO().getSelectedItem()).getRpmName() : null);
         param.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
         param.setAuthMethod(model.getAuthenticationMethod());
+
+        Provider networkProvider = (Provider) model.getNetworkProviders().getSelectedItem();
+        if (networkProvider != null) {
+            param.setProviderId(networkProvider.getId());
+            param.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
+        }
 
         AsyncDataProvider.getClusterById(new AsyncQuery(param, new INewAsyncCallback() {
 

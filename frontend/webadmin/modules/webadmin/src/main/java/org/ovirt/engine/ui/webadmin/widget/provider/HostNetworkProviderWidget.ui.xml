@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget" xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.provider">
+
+	<ui:style>
+		.sectionStyle {
+			margin-top: 20px;
+		}
+	</ui:style>
+
+	<g:FlowPanel>
+		<w:EntityModelWidgetWithInfo ui:field="networkProvider"/>
+		<e:ListModelListBoxEditor ui:field="networkProviderTypeEditor" />
+		<e:ListModelSuggestBoxEditor ui:field = "providerPluginTypeEditor" />
+		<g:FlowPanel ui:field="neutronAgentPanel" addStyleNames="{style.sectionStyle}">
+			<p:NeutronAgentWidget ui:field="neutronAgentWidget" />
+		</g:FlowPanel>
+	</g:FlowPanel>
+
+</ui:UiBinder>

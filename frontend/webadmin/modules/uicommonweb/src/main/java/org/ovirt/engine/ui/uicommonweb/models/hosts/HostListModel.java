@@ -899,10 +899,10 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             parameters.setRebootAfterInstallation(isVirt) ;
             parameters.setAuthMethod(model.getAuthenticationMethod());
 
-            Provider externalProvider = (Provider) model.getNetworkProviders().getSelectedItem();
-            if (externalProvider != null) {
-                parameters.setProviderId(externalProvider.getId());
-                parameters.setNetworkMappings((String) model.getNeutronAgentModel().getInterfaceMappings().getEntity());
+            Provider networkProvider = (Provider) model.getNetworkProviders().getSelectedItem();
+            if (networkProvider != null) {
+                parameters.setProviderId(networkProvider.getId());
+                parameters.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
             }
 
             Frontend.RunAction(VdcActionType.AddVds, parameters,

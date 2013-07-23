@@ -16,12 +16,11 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.InstallModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInstallPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostPopupView.Style;
+import org.ovirt.engine.ui.webadmin.widget.provider.HostNetworkProviderWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Visibility;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.editor.client.Editor.Path;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
@@ -95,6 +94,11 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @WithElementId("publicKey")
     EntityModelTextAreaLabelEditor publicKeyEditor;
 
+    @UiField
+    @Ignore
+    @WithElementId("networkProviderWidget")
+    HostNetworkProviderWidget networkProviderWidget;
+
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
@@ -158,6 +162,8 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         });
         // TODO: remove setIsChangable when configured ssh username is enabled
         userNameEditor.setEnabled(false);
+
+        networkProviderWidget.edit(model.getNetworkProviderModel());
     }
 
     private void displayPassPkWindow(boolean isPasswordVisible) {
@@ -169,8 +175,10 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
             publicKeyEditor.getElement().getStyle().setVisibility(Visibility.VISIBLE);
         }
     }
+
     @Override
     public InstallModel flush() {
+        networkProviderWidget.flush();
         return driver.flush();
     }
 

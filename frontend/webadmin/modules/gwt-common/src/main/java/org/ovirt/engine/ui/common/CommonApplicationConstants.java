@@ -334,6 +334,15 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Force Remove")
     String forceRemove();
 
+    @DefaultStringValue("▼")
+    String horizontalSplitTableDown();
+
+    @DefaultStringValue("▲")
+    String horizontalSplitTableUp();
+
+    @DefaultStringValue("QPID")
+    String qpid();
+
     @DefaultStringValue("Host")
     String hostQpid();
 
@@ -1485,15 +1494,6 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Optimized for")
     String optimizedFor();
-
-    @DefaultStringValue("▼")
-    String horizontalSplitTableDown();
-
-    @DefaultStringValue("▲")
-    String horizontalSplitTableUp();
-
-    @DefaultStringValue("QPID")
-    String qpid();
 
     @DefaultStringValue("Copy VM permissions")
     String copyVmPermissions();

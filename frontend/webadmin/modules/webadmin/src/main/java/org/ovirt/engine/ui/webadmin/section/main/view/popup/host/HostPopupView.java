@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
@@ -22,22 +21,17 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelLabel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelSuggestBoxEditor;
-import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.common.widget.uicommon.popup.provider.NeutronAgentWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
-import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -45,6 +39,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.widget.provider.HostNetworkProviderWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.TextDecoration;
@@ -385,34 +380,9 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField(provided = true)
     InfoIcon providerSearchInfoIcon;
 
-    @UiField(provided = true)
-    @WithElementId("networkProvider")
-    public EntityModelWidgetWithInfo networkProvider;
-
-    @Ignore
-    @WithElementId("networkProviderLabel")
-    public EntityModelLabel networkProviderLabel;
-
-    @Path(value = "networkProviders.selectedItem")
-    @WithElementId("networkProviderEditor")
-    public ListModelListBoxOnlyEditor<Object> networkProviderEditor;
-
-    @UiField(provided = true)
-    @Path(value = "networkProviderType.selectedItem")
-    @WithElementId("networkProviderType")
-    public ListModelListBoxEditor<Object> networkProviderTypeEditor;
-
-    @UiField
-    @Path(value = "providerPluginType.selectedItem")
-    @WithElementId("providerPluginType")
-    public ListModelSuggestBoxEditor providerPluginTypeEditor;
-
-    @UiField
-    FlowPanel neutronAgentPanel;
-
     @UiField
     @Ignore
-    NeutronAgentWidget neutronAgentWidget;
+    HostNetworkProviderWidget networkProviderWidget;
 
     @UiField
     @Ignore
@@ -535,15 +505,6 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         externalHostProviderEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
 
-        networkProviderLabel = new EntityModelLabel();
-        networkProviderEditor = new ListModelListBoxOnlyEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((Provider) object).getName();
-            }
-        });
-        networkProvider = new EntityModelWidgetWithInfo(networkProviderLabel, networkProviderEditor);
-        networkProviderTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
         rbPassword = new RadioButton("1"); //$NON-NLS-1$
         rbPublicKey = new RadioButton("1"); //$NON-NLS-1$
     }
@@ -606,10 +567,6 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         // Network Provider Tab
         networkProviderTab.setLabel(constants.networkProviderButtonLabel());
-        networkProviderLabel.setText(constants.externalNetworkProviderLabel());
-        networkProvider.setExplanation(applicationTemplates.italicText(constants.externalProviderExplanation()));
-        networkProviderTypeEditor.setLabel(constants.typeProvider());
-        providerPluginTypeEditor.setLabel(constants.pluginType());
     }
 
     private void applyModeCustomizations() {
@@ -792,16 +749,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         userNameEditor.setEnabled(false);
 
         networkProviderTab.setVisible(object.showNetworkProviderTab());
-        final NeutronAgentModel model = object.getNeutronAgentModel();
-        neutronAgentWidget.edit(model);
-        neutronAgentPanel.setVisible((Boolean) model.isPluginConfigurationAvailable().getEntity());
-        model.isPluginConfigurationAvailable().getEntityChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                neutronAgentPanel.setVisible((Boolean) model.isPluginConfigurationAvailable().getEntity());
-            }
-        });
+        networkProviderWidget.edit(object.getNetworkProviderModel());
 
         addTextAndLinkAlert(fetchPanel, appConstants.fetchingHostFingerprint(), object.getSSHFingerPrint());
         nameEditor.setFocus(true);
@@ -868,6 +816,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
     @Override
     public HostModel flush() {
+        networkProviderWidget.flush();
         return driver.flush();
     }
 

@@ -7,12 +7,12 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.providers.HostNetworkProviderModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-@SuppressWarnings("unused")
 public class InstallModel extends Model {
 
     private static final UIConstants constants = ConstantsManager.getInstance().getConstants();
@@ -91,6 +91,24 @@ public class InstallModel extends Model {
         return hostAuthenticationMethod;
     }
 
+    private HostNetworkProviderModel networkProviderModel;
+
+    public HostNetworkProviderModel getNetworkProviderModel() {
+        return networkProviderModel;
+    }
+
+    private void setNetworkProviderModel(HostNetworkProviderModel value) {
+        networkProviderModel = value;
+    }
+
+    public ListModel getNetworkProviders() {
+        return getNetworkProviderModel().getNetworkProviders();
+    }
+
+    public EntityModel getInterfaceMappings() {
+        return getNetworkProviderModel().getInterfaceMappings();
+    }
+
     public InstallModel() {
         setUserPassword(new EntityModel());
         setOVirtISO(new ListModel());
@@ -105,6 +123,8 @@ public class InstallModel extends Model {
         setPublicKey(new EntityModel());
         getPublicKey().setEntity(constants.empty());
         fetchPublicKey();
+
+        setNetworkProviderModel(new HostNetworkProviderModel());
     }
 
     public boolean validate(boolean isOVirt) {
@@ -119,7 +139,9 @@ public class InstallModel extends Model {
             }
         }
 
-        return getUserPassword().getIsValid() && getOVirtISO().getIsValid();
+        getNetworkProviderModel().validate();
+
+        return getUserPassword().getIsValid() && getOVirtISO().getIsValid() && getNetworkProviderModel().getIsValid();
     }
 
     public void fetchPublicKey() {
