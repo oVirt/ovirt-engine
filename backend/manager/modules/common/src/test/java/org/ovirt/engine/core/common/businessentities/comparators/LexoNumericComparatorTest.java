@@ -76,7 +76,12 @@ public class LexoNumericComparatorTest {
                 { false, "Abc123def", "abc123def", 0 },
                 { true, "Abc123def", "abc123def", -1 },
                 { false, "abc123def", "abc123ghi", -1 },
-                { false, "abc123de", "abc123def", -1 }
+                { false, "abc123de", "abc123def", -1 },
+                { false, "abc123456789123de", "abc123456789123de", 0 },
+                { false, "Abc123456789123de", "abc123456789123de", 0 },
+                { true, "Abc123456789123de", "abc123456789123de", -1 },
+                { false, "abc123456789123de", "abc123456789123fg", -1 },
+                { false, "abc123456789123de", "abc123456789123def", -1 }
         });
     }
 }

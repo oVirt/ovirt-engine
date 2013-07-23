@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.comparators;
 
 import java.io.Serializable;
+import java.math.BigInteger;
 import java.util.Comparator;
 
 /**
@@ -86,7 +87,7 @@ public class LexoNumericComparator implements Comparator<String>, Serializable {
     }
 
     private static int compDigitSequence(String seq1, String seq2, boolean caseSensitive) {
-        int compRes = ((Integer) Integer.parseInt(seq1)).compareTo(Integer.parseInt(seq2));
+        int compRes = new BigInteger(seq1).compareTo(new BigInteger(seq2));
         return compRes == 0 ? compNonDigitSequence(seq1, seq2, caseSensitive) : compRes;
     }
 
