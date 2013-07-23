@@ -41,8 +41,9 @@ public class UpdateVmInterfaceVDSCommand extends VdsBrokerCommand<VmNicDeviceVDS
         deviceStruct.put(VdsProperties.PORT_MIRRORING, vnicProfile != null && vnicProfile.isPortMirroring()
                 && network != null ? Collections.singletonList(network.getName()) : Collections.<String> emptyList());
 
-        if (FeatureSupported.deviceCustomProperties(getParameters().getVm().getVdsGroupCompatibilityVersion())) {
-            deviceStruct.put(VdsProperties.Custom, getParameters().getVmDevice().getCustomProperties());
+        if (vnicProfile != null
+                && FeatureSupported.deviceCustomProperties(getParameters().getVm().getVdsGroupCompatibilityVersion())) {
+            deviceStruct.put(VdsProperties.Custom, vnicProfile.getCustomProperties());
         }
 
         return deviceStruct;

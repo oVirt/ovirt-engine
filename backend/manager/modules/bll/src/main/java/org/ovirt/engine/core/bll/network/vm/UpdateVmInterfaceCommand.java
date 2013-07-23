@@ -121,7 +121,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 runVdsCommand(VDSCommandType.UpdateVmInterface,
                         new VmNicDeviceVDSParameters(getVdsId(),
                                 getVm(),
-                                getVmNetworkInterfaceDao().get(getInterface().getId()),
+                                getVmNicDao().get(getInterface().getId()),
                                 oldVmDevice));
                 break;
             }

@@ -29,11 +29,11 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
@@ -44,7 +44,6 @@ import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
-import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -78,9 +77,6 @@ public class RestoreAllSnapshotCommandTest {
 
     @Mock
     protected SnapshotDao snapshotDao;
-
-    @Mock
-    private VmNetworkInterfaceDao vmNetworkInterfaceDAO;
 
     @Mock
     private MultipleStorageDomainsValidator storageValidator;
@@ -165,7 +161,6 @@ public class RestoreAllSnapshotCommandTest {
         mockStoragePoolDao();
         mockDynamicVmDao();
         doReturn(snapshotDao).when(spyCommand).getSnapshotDao();
-        doReturn(vmNetworkInterfaceDAO).when(spyCommand).getVmNetworkInterfaceDao();
     }
 
     private void mockDynamicVmDao() {

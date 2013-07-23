@@ -28,17 +28,17 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
- * Helper class to use for adding/removing {@link VmNetworkInterface}s.
+ * Helper class to use for adding/removing {@link VmNic}s.
  */
 public class VmInterfaceManager {
 
     private Log log = LogFactory.getLog(getClass());
 
     /**
-     * Add a {@link VmNetworkInterface} to the VM. Allocates a MAC from the {@link MacPoolManager} if necessary,
-     * otherwise, if {@code ConfigValues.HotPlugEnabled} is true, forces adding the MAC address to the
-     * {@link MacPoolManager}. If HotPlug is not enabled tries to add the {@link VmNetworkInterface}'s MAC address to
-     * the {@link MacPoolManager}, and throws a {@link VdcBllException} if it fails.
+     * Add a {@link VmNic} to the VM. Allocates a MAC from the {@link MacPoolManager} if necessary, otherwise, if
+     * {@code ConfigValues.HotPlugEnabled} is true, forces adding the MAC address to the {@link MacPoolManager}. If
+     * HotPlug is not enabled tries to add the {@link VmNic}'s MAC address to the {@link MacPoolManager}, and throws a
+     * {@link VdcBllException} if it fails.
      *
      * @param iface
      *            The interface to save.
@@ -48,7 +48,7 @@ public class VmInterfaceManager {
      *            the compatibility version of the cluster
      * @return <code>true</code> if the MAC wasn't used, <code>false</code> if it was.
      */
-    public void add(final VmNetworkInterface iface, CompensationContext compensationContext, boolean allocateMac,
+    public void add(final VmNic iface, CompensationContext compensationContext, boolean allocateMac,
             Version clusterCompatibilityVersion) {
 
         if (allocateMac) {
@@ -66,7 +66,7 @@ public class VmInterfaceManager {
         compensationContext.snapshotNewEntity(iface.getStatistics());
     }
 
-    public void auditLogMacInUse(final VmNetworkInterface iface) {
+    public void auditLogMacInUse(final VmNic iface) {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
@@ -95,15 +95,15 @@ public class VmInterfaceManager {
     }
 
     /**
-     * Remove all {@link VmNetworkInterface}s from the VM, and remove the Mac addresses from {@link MacPoolManager}.
+     * Remove all {@link VmNic}s from the VM, and remove the Mac addresses from {@link MacPoolManager}.
      *
      * @param vmId
      *            The ID of the VM to remove from.
      */
     public void removeAll(Guid vmId) {
-        List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(vmId);
+        List<VmNic> interfaces = getVmNicDao().getAllForVm(vmId);
         if (interfaces != null) {
-            for (VmNetworkInterface iface : interfaces) {
+            for (VmNic iface : interfaces) {
                 getMacPoolManager().freeMac(iface.getMacAddress());
                 getVmNicDao().remove(iface.getId());
                 getVmNetworkStatisticsDao().remove(iface.getId());
@@ -113,11 +113,13 @@ public class VmInterfaceManager {
 
     /**
      * Checks if a Network is in the given list and is a VM Network
+     *
      * @param iface
      * @param networksByName
+     * @param version
      * @return
      */
-    public boolean isValidVmNetwork(VmNetworkInterface iface, Map<String, Network> networksByName) {
+    public boolean isValidVmNetwork(VmNetworkInterface iface, Map<String, Network> networksByName, Version version) {
         String networkName = iface.getNetworkName();
         return networkName == null
                 || ((networksByName.containsKey(networkName) && networksByName.get(networkName).isVmNetwork()));

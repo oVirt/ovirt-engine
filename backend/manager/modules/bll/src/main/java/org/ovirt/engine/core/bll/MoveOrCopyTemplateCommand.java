@@ -32,7 +32,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.GetImageDomainsListVDSCommandParameters;
@@ -54,7 +54,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     private List<DiskImage> _templateDisks;
     private StorageDomain sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
-    private final static Pattern VALIDATE_MAC_ADDRESS = Pattern.compile(VmNetworkInterface.VALID_MAC_ADDRESS_FORMAT);
+    private final static Pattern VALIDATE_MAC_ADDRESS = Pattern.compile(VmNic.VALID_MAC_ADDRESS_FORMAT);
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -338,16 +338,16 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         return permissionCheckSubject;
     }
 
-    protected void fillMacAddressIfMissing(VmNetworkInterface iface) {
+    protected void fillMacAddressIfMissing(VmNic iface) {
         if (StringUtils.isEmpty(iface.getMacAddress())
                 && (MacPoolManager.getInstance().getAvailableMacsCount() >= 1)) {
             iface.setMacAddress(MacPoolManager.getInstance().allocateNewMac());
         }
     }
 
-    protected boolean validateMacAddress(List<VmNetworkInterface> ifaces) {
+    protected boolean validateMacAddress(List<VmNic> ifaces) {
         int freeMacs = 0;
-        for (VmNetworkInterface iface : ifaces) {
+        for (VmNic iface : ifaces) {
             if (!StringUtils.isEmpty(iface.getMacAddress())) {
                 if(!VALIDATE_MAC_ADDRESS.matcher(iface.getMacAddress()).matches()) {
                     addCanDoActionMessage("$IfaceName " + iface.getName());

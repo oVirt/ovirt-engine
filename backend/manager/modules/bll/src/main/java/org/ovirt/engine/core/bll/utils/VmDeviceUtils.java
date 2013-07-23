@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -760,7 +759,7 @@ public class VmDeviceUtils {
      */
     private static <T extends VmBase> void addImportedInterfaces(T entity, List<VmDevice> vmDeviceToUpdate) {
         final Guid id = entity.getId();
-        for (VmNetworkInterface iface : entity.getInterfaces()) {
+        for (VmNic iface : entity.getInterfaces()) {
             Guid deviceId = iface.getId();
             VmDevice vmDevice =
                     addManagedDevice(new VmDeviceId(deviceId, id),

@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -38,7 +37,6 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
-import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.customprop.ValidationError;
@@ -167,9 +165,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
     }
 
     protected void removeVmNetwork() {
-        List<VmNetworkInterface> interfaces = getVmNetworkInterfaceDao().getAllForVm(getVmId());
+        List<VmNic> interfaces = getVmNicDao().getAllForVm(getVmId());
         if (interfaces != null) {
-            for (VmNetworkInterface iface : interfaces) {
+            for (VmNic iface : interfaces) {
                 MacPoolManager.getInstance().freeMac(iface.getMacAddress());
             }
         }
@@ -419,12 +417,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected VmDeviceDAO getVmDeviceDao() {
         return getDbFacade().getVmDeviceDao();
-    }
-
-    /** Overriding to allow spying from this package */
-    @Override
-    protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
-        return super.getVmNetworkInterfaceDao();
     }
 
     /** Overriding to allow spying from this package */

@@ -49,11 +49,11 @@ import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -193,7 +193,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             }
         }
         if (retVal) {
-            retVal = validateMacAddress( getVmTemplate().getInterfaces());
+            retVal = validateMacAddress(Entities.<VmNic, VmNetworkInterface> upcast(getVmTemplate().getInterfaces()));
         }
         if (!retVal) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__IMPORT);
@@ -384,35 +384,39 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         List<String> invalidIfaceNames = new ArrayList<String>();
         Map<String, Network> networksInVdsByName =
                 Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVmTemplate().getVdsGroupId()));
-        String networkName;
+
         for (VmNetworkInterface iface : interfaces) {
             if (iface.getId() == null) {
                 iface.setId(Guid.newGuid());
             }
-            networkName = iface.getNetworkName();
+
             iface.setVmId(getVmTemplateId());
-            VmNetworkInterface iDynamic = new VmNetworkInterface();
-            VmNetworkStatistics iStat = new VmNetworkStatistics();
-            iDynamic.setStatistics(iStat);
+            VmNic iDynamic = new VmNic();
             iDynamic.setId(iface.getId());
-            iStat.setId(iface.getId());
-            iStat.setVmId(getVmTemplateId());
             iDynamic.setVmTemplateId(getVmTemplateId());
             iDynamic.setName(iface.getName());
-            if (vmInterfaceManager.isValidVmNetwork(iface, networksInVdsByName)) {
-                iDynamic.setNetworkName(networkName);
+            if (vmInterfaceManager.isValidVmNetwork(iface,
+                    networksInVdsByName,
+                    getVdsGroup().getcompatibility_version())) {
+                iDynamic.setVnicProfileId(iface.getVnicProfileId());
             } else {
                 invalidNetworkNames.add(iface.getNetworkName());
                 invalidIfaceNames.add(iface.getName());
-                iDynamic.setNetworkName(null);
+                iDynamic.setVnicProfileId(null);
             }
+
             iDynamic.setLinked(iface.isLinked());
             iDynamic.setSpeed(iface.getSpeed());
             iDynamic.setType(iface.getType());
 
             getVmNicDao().save(iDynamic);
             getCompensationContext().snapshotNewEntity(iDynamic);
-            DbFacade.getInstance().getVmNetworkStatisticsDao().save(iStat);
+
+            VmNetworkStatistics iStat = new VmNetworkStatistics();
+            iDynamic.setStatistics(iStat);
+            iStat.setId(iface.getId());
+            iStat.setVmId(getVmTemplateId());
+            getDbFacade().getVmNetworkStatisticsDao().save(iStat);
             getCompensationContext().snapshotNewEntity(iStat);
         }
 

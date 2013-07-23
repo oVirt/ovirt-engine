@@ -67,6 +67,9 @@ public class VmInterfaceManagerTest {
     @Spy
     private VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
 
+    @Mock
+    private Version version;
+
     @Before
     public void setupMocks() {
         MockitoAnnotations.initMocks(this);
@@ -88,11 +91,11 @@ public class VmInterfaceManagerTest {
 
     @Test
     public void addWithExistingMacAddressSucceed() {
-        VmNetworkInterface iface = createNewInterface();
+        VmNic iface = createNewInterface();
         runAddAndVerify(iface, true, times(1), VERSION_3_2);
     }
 
-    protected void runAddAndVerify(VmNetworkInterface iface,
+    protected void runAddAndVerify(VmNic iface,
             boolean addMacResult,
             VerificationMode addMacVerification,
             Version version) {
@@ -103,7 +106,7 @@ public class VmInterfaceManagerTest {
 
     @Test
     public void addAllocateNewMacAddress() {
-        VmNetworkInterface iface = createNewInterface();
+        VmNic iface = createNewInterface();
         String newMac = RandomUtils.instance().nextString(10);
         when(macPoolManager.allocateNewMac()).thenReturn(newMac);
         vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), true, VERSION_3_2);
@@ -113,31 +116,37 @@ public class VmInterfaceManagerTest {
     @Test
     public void isValidVmNetworkForNullNetwork() {
         Network network = createNewNetwork(true, NETWORK_NAME);
-        VmNetworkInterface iface = createNewInterface();
-        assertTrue(vmInterfaceManager.isValidVmNetwork(iface, Collections.singletonMap(network.getName(), network)));
+        VmNetworkInterface iface = createNewViewableInterface();
+        assertTrue(vmInterfaceManager.isValidVmNetwork(iface,
+                Collections.singletonMap(network.getName(), network),
+                version));
     }
 
     @Test
     public void isValidVmNetworkForValidNetwork() {
         Network network = createNewNetwork(true, NETWORK_NAME);
-        VmNetworkInterface iface = createNewInterface();
+        VmNetworkInterface iface = createNewViewableInterface();
         iface.setNetworkName(network.getName());
-        assertTrue(vmInterfaceManager.isValidVmNetwork(iface, Collections.singletonMap(network.getName(), network)));
+        assertTrue(vmInterfaceManager.isValidVmNetwork(iface,
+                Collections.singletonMap(network.getName(), network),
+                version));
     }
 
     @Test
     public void isValidVmNetworkForNonVmNetwork() {
         Network network = createNewNetwork(false, NETWORK_NAME);
-        VmNetworkInterface iface = createNewInterface();
+        VmNetworkInterface iface = createNewViewableInterface();
         iface.setNetworkName(network.getName());
-        assertFalse(vmInterfaceManager.isValidVmNetwork(iface, Collections.singletonMap(network.getName(), network)));
+        assertFalse(vmInterfaceManager.isValidVmNetwork(iface,
+                Collections.singletonMap(network.getName(), network),
+                version));
     }
 
     @Test
     public void isValidVmNetworkForNetworkNotInVds() {
-        VmNetworkInterface iface = createNewInterface();
+        VmNetworkInterface iface = createNewViewableInterface();
         iface.setNetworkName(NETWORK_NAME);
-        assertFalse(vmInterfaceManager.isValidVmNetwork(iface, Collections.<String, Network> emptyMap()));
+        assertFalse(vmInterfaceManager.isValidVmNetwork(iface, Collections.<String, Network> emptyMap(), version));
     }
 
     @Test
@@ -161,13 +170,13 @@ public class VmInterfaceManagerTest {
 
     @Test
     public void removeAll() {
-        List<VmNetworkInterface> interfaces = Arrays.asList(createNewInterface(), createNewInterface());
+        List<VmNic> interfaces = Arrays.asList(createNewInterface(), createNewInterface());
 
-        when(vmNetworkInterfaceDAO.getAllForVm(any(Guid.class))).thenReturn(interfaces);
+        when(vmNicDao.getAllForVm(any(Guid.class))).thenReturn(interfaces);
 
         vmInterfaceManager.removeAll(Guid.newGuid());
 
-        for (VmNetworkInterface iface : interfaces) {
+        for (VmNic iface : interfaces) {
             verifyRemoveAllDelegatedCorrectly(iface);
         }
     }
@@ -186,7 +195,7 @@ public class VmInterfaceManagerTest {
      * @param addMacVerification
      *            Mode to check (times(1), never(), etc) for {@link MacPoolManager#addMac(String)}.
      */
-    protected void verifyAddDelegatedCorrectly(VmNetworkInterface iface, VerificationMode addMacVerification) {
+    protected void verifyAddDelegatedCorrectly(VmNic iface, VerificationMode addMacVerification) {
         verify(macPoolManager, addMacVerification).forceAddMac(iface.getMacAddress());
         verify(vmNicDao).save(iface);
         verify(vmNetworkStatisticsDAO).save(iface.getStatistics());
@@ -198,7 +207,7 @@ public class VmInterfaceManagerTest {
      * @param iface
      *            The interface to check for.
      */
-    protected void verifyRemoveAllDelegatedCorrectly(VmNetworkInterface iface) {
+    protected void verifyRemoveAllDelegatedCorrectly(VmNic iface) {
         verify(macPoolManager, times(1)).freeMac(iface.getMacAddress());
         verify(vmNicDao).remove(iface.getId());
         verify(vmNetworkStatisticsDAO).remove(iface.getId());
@@ -207,7 +216,14 @@ public class VmInterfaceManagerTest {
     /**
      * @return A new interface that can be used in tests.
      */
-    protected VmNetworkInterface createNewInterface() {
+    protected VmNic createNewInterface() {
+        VmNic iface = new VmNic();
+        iface.setId(Guid.newGuid());
+        iface.setMacAddress(RandomUtils.instance().nextString(10));
+        return iface;
+    }
+
+    protected VmNetworkInterface createNewViewableInterface() {
         VmNetworkInterface iface = new VmNetworkInterface();
         iface.setId(Guid.newGuid());
         iface.setMacAddress(RandomUtils.instance().nextString(10));
@@ -234,7 +250,7 @@ public class VmInterfaceManagerTest {
         VM vm = new VM();
         vm.setId(Guid.newGuid());
         vm.setName(vmName);
-        VmNetworkInterface vmIface = createNewInterface();
+        VmNetworkInterface vmIface = createNewViewableInterface();
         vmIface.setVmId(vm.getId());
         vmIface.setNetworkName(networkName);
         vm.getInterfaces().add(vmIface);

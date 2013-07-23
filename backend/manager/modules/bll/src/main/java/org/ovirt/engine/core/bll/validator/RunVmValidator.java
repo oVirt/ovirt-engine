@@ -42,7 +42,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
-import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.customprop.ValidationError;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 
@@ -83,7 +83,7 @@ public class RunVmValidator {
                 // vm has network,
                 // otherwise the vm cannot be run in vdsm
                 if (boot_sequence == BootSequence.N
-                        && getVmNetworkInterfaceDao().getAllForVm(vm.getId()).size() == 0) {
+                        && getVmNicDao().getAllForVm(vm.getId()).size() == 0) {
                     return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK);
                 }
             }
@@ -301,8 +301,8 @@ public class RunVmValidator {
         return Backend.getInstance();
     }
 
-    protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
-        return DbFacade.getInstance().getVmNetworkInterfaceDao();
+    protected VmNicDao getVmNicDao() {
+        return DbFacade.getInstance().getVmNicDao();
     }
 
     protected StorageDomainDAO getStorageDomainDAO() {

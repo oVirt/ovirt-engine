@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> extends VmCommand<T> {
@@ -28,7 +28,7 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
         this.setVmName(getVmStaticDAO().get(getParameters().getVmId()).getName());
 
         // return mac to pool
-        VmNetworkInterface iface = getVmNetworkInterfaceDao().get(getParameters().getInterfaceId());
+        VmNic iface = getVmNicDao().get(getParameters().getInterfaceId());
 
         if (iface != null) {
             MacPoolManager.getInstance().freeMac(iface.getMacAddress());

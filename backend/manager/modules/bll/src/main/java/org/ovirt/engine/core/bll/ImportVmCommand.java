@@ -62,6 +62,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -203,7 +204,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         getVm().setName(getParameters().getVm().getName());
         getVm().setStoragePoolId(getParameters().getStoragePoolId());
         getParameters().setVm(getVm());
-        for (VmNetworkInterface iface : getVm().getInterfaces()) {
+        for (VmNic iface : getVm().getInterfaces()) {
             iface.setId(Guid.newGuid());
         }
     }
@@ -403,7 +404,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             return false;
         }
 
-        if (!validateMacAddress(getVm().getInterfaces())) {
+        if (!validateMacAddress(Entities.<VmNic, VmNetworkInterface> upcast(getVm().getInterfaces()))) {
             return false;
         }
 
@@ -1039,10 +1040,12 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             initInterface(iface);
-            if (!vmInterfaceManager.isValidVmNetwork(iface, networksInClusterByName)) {
+            if (!vmInterfaceManager.isValidVmNetwork(iface,
+                    networksInClusterByName,
+                    getVdsGroup().getcompatibility_version())) {
                 invalidNetworkNames.add(iface.getNetworkName());
                 invalidIfaceNames.add(iface.getName());
-                iface.setNetworkName(null);
+                iface.setVnicProfileId(null);
             }
 
             vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity(),
@@ -1053,14 +1056,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         auditInvalidInterfaces(invalidNetworkNames, invalidIfaceNames);
     }
 
-    private void initInterface(VmNetworkInterface iface) {
+    private void initInterface(VmNic iface) {
         if (iface.getId() == null) {
             iface.setId(Guid.newGuid());
         }
         fillMacAddressIfMissing(iface);
         iface.setVmTemplateId(null);
         iface.setVmId(getVmId());
-        iface.setVmName(getVm().getName());
     }
 
     private void addVmDynamic() {

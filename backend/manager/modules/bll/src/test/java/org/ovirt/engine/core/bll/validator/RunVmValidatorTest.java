@@ -29,12 +29,12 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.exceptions.InitializationException;
@@ -132,9 +132,9 @@ public class RunVmValidatorTest {
 
     @Test
     public void testBootFromNetworkNoNetwork() {
-        VmNetworkInterfaceDao dao = mock(VmNetworkInterfaceDao.class);
-        doReturn(new ArrayList<VmNetworkInterface>()).when(dao).getAllForVm(any(Guid.class));
-        doReturn(dao).when(runVmValidator).getVmNetworkInterfaceDao();
+        VmNicDao dao = mock(VmNicDao.class);
+        doReturn(new ArrayList<VmNic>()).when(dao).getAllForVm(any(Guid.class));
+        doReturn(dao).when(runVmValidator).getVmNicDao();
         validateResult(runVmValidator.validateBootSequence(new VM(), BootSequence.N, new ArrayList<Disk>()),
                 false,
                 VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK);

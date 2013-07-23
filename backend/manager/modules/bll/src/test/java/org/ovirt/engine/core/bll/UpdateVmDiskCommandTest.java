@@ -57,7 +57,6 @@ import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
-import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
@@ -81,8 +80,6 @@ public class UpdateVmDiskCommandTest {
     private BaseDiskDao baseDiskDao;
     @Mock
     private ImageDao imageDao;
-    @Mock
-    private VmNetworkInterfaceDao vmNetworkInterfaceDAO;
     @Mock
     private SnapshotDao snapshotDao;
     @Mock
@@ -296,7 +293,6 @@ public class UpdateVmDiskCommandTest {
 
         });
         doReturn(true).when(command).acquireLockInternal();
-        doReturn(vmNetworkInterfaceDAO).when(command).getVmNetworkInterfaceDao();
         doReturn(snapshotDao).when(command).getSnapshotDao();
         doReturn(diskImageDao).when(command).getDiskImageDao();
         doReturn(storagePoolDao).when(command).getStoragePoolDAO();
