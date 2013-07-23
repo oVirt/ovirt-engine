@@ -633,7 +633,7 @@ class MiniYum(object):
         with self._disableOutput:
             try:
                 if rollback:
-                    self._sink.verbose('Performing rollback')
+                    self._sink.info('Performing yum transaction rollback')
                     transactionCurrent = self._yb.history.last(
                         complete_transactions_only=False
                     )
