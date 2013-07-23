@@ -585,6 +585,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_CREATE_SNAPSHOT_FINISHED_FAILURE, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_CREATE_LIVE_SNAPSHOT_FINISHED_FAILURE, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.USER_FAILED_CREATE_SNAPSHOT, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.USER_CREATE_LIVE_SNAPSHOT_NO_MEMORY_FAILURE, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_REMOVE_SNAPSHOT, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_SUCCESS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE, AuditLogSeverity.ERROR);

@@ -239,9 +239,12 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     else {
                         // If the created snapshot contains memory, remove the memory volumes as
                         // they are not in use since no live snapshot was created
-                        if (!removeMemoryFromSnapshot(createdSnapshot, true)) {
-                            log.errorFormat("Failed to remove unused memory {0} of snapshot {1}",
-                                    createdSnapshot.getMemoryVolume(), createdSnapshot.getId());
+                        if (!createdSnapshot.getMemoryVolume().isEmpty()) {
+                            logMemorySavingFailed();
+                            if (!removeMemoryFromSnapshot(createdSnapshot, true)) {
+                                log.errorFormat("Failed to remove unused memory {0} of snapshot {1}",
+                                        createdSnapshot.getMemoryVolume(), createdSnapshot.getId());
+                            }
                         }
                     }
                 } else {
@@ -275,6 +278,12 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     new RunVmParams(getVmId()),
                     ExecutionHandler.createInternalJobContext());
         }
+    }
+
+    private void logMemorySavingFailed() {
+        addCustomValue("SnapshotName", getSnapshotName());
+        addCustomValue("VmName", getVmName());
+        AuditLogDirector.log(this, AuditLogType.USER_CREATE_LIVE_SNAPSHOT_NO_MEMORY_FAILURE);
     }
 
     private boolean removeMemoryFromSnapshot(Snapshot snapshot, boolean clearFromDB) {
