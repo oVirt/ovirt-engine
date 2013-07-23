@@ -229,13 +229,11 @@
                                 <g:FlowPanel addStyleNames="{style.generalTabTopDecorator}">
                                     <e:ListModelListBoxEditor ui:field="dataCenterEditor"/>
                                     <e:ListModelListBoxEditor ui:field="clusterEditor"/>
-                                </g:FlowPanel>
-                                <g:FlowPanel ui:field="externalProviderPanel" addStyleNames="{style.generalTabTopDecorator}">
                                     <g:HorizontalPanel width="100%">
                                       <e:EntityModelCheckBoxEditor ui:field="externalHostProviderEnabledEditor"/>
                                       <e:ListModelListBoxEditor ui:field="providersEditor"/>
                                     </g:HorizontalPanel>
-                                    <g:FlowPanel width="100%">
+                                    <g:FlowPanel ui:field="searchProviderPanel" width="100%">
                                         <g:FlowPanel addStyleNames="{style.filterIcon}">
                                           <e:EntityModelTextBoxEditor ui:field="providerSearchFilterLabel"/>
                                           <d:InfoIcon ui:field="providerSearchInfoIcon" addStyleNames="{style.filterIcon}"/>

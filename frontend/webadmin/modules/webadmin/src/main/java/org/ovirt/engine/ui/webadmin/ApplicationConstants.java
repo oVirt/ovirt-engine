@@ -451,7 +451,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Automatically configure host firewall")
     String hostPopupOverrideIpTablesLabel();
 
-    @DefaultStringValue("Show External Providers")
+    @DefaultStringValue("Use External Providers")
     String hostPopupEnableExternalHostProvider();
 
     @DefaultStringValue("External Hosts")

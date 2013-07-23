@@ -383,9 +383,6 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField(provided = true)
     InfoIcon providerSearchInfoIcon;
 
-    @UiField
-    FlowPanel externalProviderPanel;
-
     @UiField(provided = true)
     @Path(value = "externalProviders.selectedItem")
     @WithElementId("externalProviders")
@@ -415,6 +412,9 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField
     @Ignore
     FlowPanel expanderContent;
+
+    @UiField
+    FlowPanel searchProviderPanel;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -775,9 +775,9 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         });
 
         updatePmPanelsVisibility(true);
+        initExternalHostProviderWidgets(object.showExternalProviderPanel());
         // TODO: remove setIsChangable when configured ssh username is enabled
         userNameEditor.setEnabled(false);
-        externalProviderPanel.setVisible(object.showExternalProviderPanel());
 
         networkProviderTab.setVisible(object.showNetworkProviderTab());
         final NeutronAgentModel model = object.getNeutronAgentModel();
@@ -794,6 +794,15 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         });
         addTextAndLinkAlert(fetchPanel, appConstants.fetchingHostFingerprint(), object.getSSHFingerPrint());
         nameEditor.setFocus(true);
+    }
+
+    private void initExternalHostProviderWidgets(boolean isAvailable) {
+        // When the widgets should be enabled, only the "enable/disable" one should appear.
+        // All the rest shouldn't be visible
+        externalHostProviderEnabledEditor.setVisible(isAvailable);
+        externalHostNameEditor.setVisible(false);
+        providersEditor.setVisible(false);
+        searchProviderPanel.setVisible(false);
     }
 
     private void displayPassPkWindow(boolean isPasswordVisible) {
@@ -969,5 +978,10 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         passwordEditor.setTabIndex(nextTabIndex++);
         fetchSshFingerprint.setTabIndex(nextTabIndex++);
         return nextTabIndex;
+    }
+
+    @Override
+    public void setHostProviderVisibility(boolean visible) {
+        searchProviderPanel.setVisible(visible);
     }
 }

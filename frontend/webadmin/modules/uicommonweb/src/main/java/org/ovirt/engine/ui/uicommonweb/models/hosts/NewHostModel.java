@@ -94,16 +94,13 @@ public class NewHostModel extends HostModel {
                 {
                     ArrayList<Provider> providers = (ArrayList<Provider>) result;
                     ListModel providersListModel = getProviders();
-                    providers.add(0, null);
                     providersListModel.setItems(providers);
                     providersListModel.setIsChangable(true);
                 }
             };
             AsyncDataProvider.GetAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
-        } else {
-            getProviders().setIsChangable(enabled);
-            getProviders().setSelectedItem(null);
         }
+        setHostProviderWidgetsAvailability(enabled);
     }
 
     @Override
@@ -168,6 +165,14 @@ public class NewHostModel extends HostModel {
         getProviderSearchFilter().setIsChangable(value);
         getProviderSearchFilterLabel().setIsChangable(value);
         getUpdateHostsCommand().setIsExecutionAllowed(value);
+    }
+
+    private void setHostProviderWidgetsAvailability(boolean enabled) {
+        getProviders().setIsAvailable(enabled);
+        getProviderSearchFilter().setIsAvailable(enabled);
+        getProviderSearchFilterLabel().setIsAvailable(enabled);
+        getExternalHostName().setIsAvailable(enabled);
+        getExternalHostName().setSelectedItem(null);
     }
 
     @Override

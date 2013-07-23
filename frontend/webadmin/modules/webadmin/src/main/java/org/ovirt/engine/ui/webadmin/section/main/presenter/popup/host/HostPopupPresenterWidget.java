@@ -25,7 +25,7 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
          * Switch to the power management tab.
          */
         void showPowerManagement();
-
+        void setHostProviderVisibility(boolean visible);
     }
 
     @Inject
@@ -40,7 +40,7 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
         addTestButtonListener();
         addUpdateHostsListener(model);
         addPowerManagementListener(model);
-
+        addHostProviderListener(model);
     }
 
     private void addPowerManagementListener(final HostModel model) {
@@ -77,5 +77,15 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
             }
         }));
     }
+    private void addHostProviderListener(final HostModel model) {
+        model.getProviderSearchFilter().getPropertyChangedEvent().addListener(new IEventListener() {
 
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).PropertyName)) { //$NON-NLS-1$
+                    getView().setHostProviderVisibility(model.getProviderSearchFilter().getIsAvailable());
+                }
+            }
+        });
+    }
 }
