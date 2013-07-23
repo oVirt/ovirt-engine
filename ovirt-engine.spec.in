@@ -784,10 +784,7 @@ fi
 
 # Links to the main programs:
 %{_bindir}/engine-setup
-%{_bindir}/engine-setup-2
-%{_bindir}/engine-cleanup-2
 %{_bindir}/engine-upgrade
-%{_bindir}/engine-check-update
 %{_bindir}/engine-cleanup
 
 # Python scripts:
