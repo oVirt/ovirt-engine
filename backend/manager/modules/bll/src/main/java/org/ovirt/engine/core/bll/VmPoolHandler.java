@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
@@ -18,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
@@ -61,19 +62,16 @@ public class VmPoolHandler {
     }
 
     private static void handleProviderNetworks(Guid vmId) {
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao().getAllForVm(vmId);
+        List<VmNic> interfaces = DbFacade.getInstance().getVmNicDao().getAllForVm(vmId);
         VmStatic vm = DbFacade.getInstance().getVmStaticDao().get(vmId);
         Map<String, Network> clusterNetworks =
                 Entities.entitiesByName(DbFacade.getInstance().getNetworkDao().getAllForCluster(vm.getVdsGroupId()));
 
-        for (VmNetworkInterface iface : interfaces) {
-            String networkName = iface.getNetworkName();
-
-            if (networkName != null
-                    && clusterNetworks.get(networkName).isExternal()) {
+        for (VmNic iface : interfaces) {
+            Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
+            if (network != null && network.isExternal() && clusterNetworks.containsKey(network.getName())) {
                 NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(
-                        DbFacade.getInstance().getProviderDao().get(
-                                clusterNetworks.get(networkName).getProvidedBy().getProviderId()));
+                        DbFacade.getInstance().getProviderDao().get(network.getProvidedBy().getProviderId()));
                 providerProxy.deallocate(iface);
             }
         }
