@@ -218,6 +218,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         if (StringUtils.isEmpty(vmFromParams.getName())) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_MAY_NOT_BE_EMPTY);
             return false;

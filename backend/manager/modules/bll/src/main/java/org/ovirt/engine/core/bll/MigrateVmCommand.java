@@ -243,6 +243,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         if (vm == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
+
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         // If VM is pinned to host, no migration can occur
         if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_PINNED_TO_HOST);

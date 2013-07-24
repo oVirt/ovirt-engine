@@ -29,6 +29,10 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
             return false;
         }
 
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         // Everything is OK:
         return true;
     }

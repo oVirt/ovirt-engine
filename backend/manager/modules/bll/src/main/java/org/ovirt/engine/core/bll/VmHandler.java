@@ -2,8 +2,10 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -11,12 +13,14 @@ import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidationUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.EditableField;
 import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -61,6 +65,7 @@ public class VmHandler {
     private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
     private static final Log log = LogFactory.getLog(VmHandler.class);
 
+    private static Set<VdcActionType> COMMANDS_ALLOWED_ON_NON_MANAGED_VMS = new HashSet<>();
     /**
      * Initialize static list containers, for identity and permission check. The initialization should be executed
      * before calling ObjectIdentityChecker.
@@ -86,7 +91,10 @@ public class VmHandler {
                 inspectedClassNames)) {
             mUpdateVmsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond());
         }
-
+        COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.MigrateVm);
+        COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.SetVmTicket);
+        COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.VmLogon);
+        COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.CancelMigrateVm);
     }
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status) {
@@ -560,4 +568,28 @@ public class VmHandler {
         // not calling validate in order not to add the messages per domain
         return (new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested)).isValid();
     }
+
+    public static ValidationResult canRunActionOnNonManagedVm(VM vm, VdcActionType actionType) {
+        ValidationResult validationResult = ValidationResult.VALID;
+
+        if (!isManagedVm(vm)) {
+            if (!COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.contains(actionType)) {
+                validationResult = new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_RUN_ACTION_ON_NON_MANAGED_VM);
+            }
+        }
+        return validationResult;
+    }
+
+    public static boolean isHostedEngine(VM vm) {
+        return OriginType.HOSTED_ENGINE.equals(vm.getOrigin());
+    }
+
+    public static boolean isExternalVm(VM vm) {
+        return OriginType.EXTERNAL.equals(vm.getOrigin());
+    }
+
+    public static boolean isManagedVm(VM vm) {
+        return !isHostedEngine(vm) && !isExternalVm(vm);
+    }
+
 }

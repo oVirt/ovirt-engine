@@ -122,6 +122,10 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         if (getVm().isDeleteProtected()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DELETE_PROTECTION_ENABLED);
         }

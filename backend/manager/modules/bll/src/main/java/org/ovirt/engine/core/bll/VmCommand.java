@@ -460,4 +460,13 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
         return returnValue;
     }
+
+    protected boolean canRunActionOnNonManagedVm() {
+        ValidationResult nonManagedVmValidationResult = VmHandler.canRunActionOnNonManagedVm(getVm(), this.getActionType());
+        if (!nonManagedVmValidationResult.isValid()) {
+            return failCanDoAction(nonManagedVmValidationResult.getMessage());
+        }
+        return true;
+    }
+
 }

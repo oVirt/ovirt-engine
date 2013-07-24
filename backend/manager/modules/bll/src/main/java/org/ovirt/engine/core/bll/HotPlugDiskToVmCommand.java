@@ -45,6 +45,7 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         return
                 isVmExist() &&
                 isVmInUpPausedDownStatus() &&
+                canRunActionOnNonManagedVm() &&
                 isDiskExist(disk) &&
                 checkCanPerformPlugUnPlugDisk() &&
                 isVmNotInPreviewSnapshot() &&

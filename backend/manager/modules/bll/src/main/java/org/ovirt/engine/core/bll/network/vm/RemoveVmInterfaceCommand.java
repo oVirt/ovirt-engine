@@ -51,6 +51,14 @@ public class RemoveVmInterfaceCommand<T extends RemoveVmInterfaceParameters> ext
 
     @Override
     protected boolean canDoAction() {
+        if (getVm() == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
+
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         VmDynamic vm = getVmDynamicDao().get(getParameters().getVmId());
         if (vm.getStatus() != VMStatus.Down
                 && getDbFacade().getVmDeviceDao()

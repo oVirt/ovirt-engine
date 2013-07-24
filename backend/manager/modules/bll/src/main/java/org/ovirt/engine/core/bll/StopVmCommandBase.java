@@ -52,6 +52,10 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         if (!getVm().isRunning() && getVm().getStatus() != VMStatus.Paused
                 && getVm().getStatus() != VMStatus.NotResponding && getVm().getStatus() != VMStatus.Suspended) {
             return failCanDoAction(

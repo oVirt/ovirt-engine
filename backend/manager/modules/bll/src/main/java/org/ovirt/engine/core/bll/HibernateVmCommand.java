@@ -234,6 +234,11 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         if (getVm() == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
+
+        if (!canRunActionOnNonManagedVm()) {
+           return false;
+        }
+
         VMStatus vmStatus = getVm().getStatus();
         if (vmStatus == VMStatus.WaitForLaunch || vmStatus == VMStatus.NotResponding) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);

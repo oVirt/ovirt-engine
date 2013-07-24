@@ -95,6 +95,10 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
             return false;
         }
 
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         // Check that the virtual machine is in state that allows connections
         // to the console:
         final VMStatus status = vm.getStatus();

@@ -24,7 +24,16 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
     @Override
     protected boolean canDoAction() {
         boolean retValue = true;
-        if (!getVm().isRunningOrPaused()) {
+        if (getVm() == null) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
+            retValue = false;
+        }
+
+        if (retValue && !canRunActionOnNonManagedVm()) {
+            retValue = false;
+        }
+
+        if (retValue && !getVm().isRunningOrPaused()) {
             setSucceeded(false);
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);

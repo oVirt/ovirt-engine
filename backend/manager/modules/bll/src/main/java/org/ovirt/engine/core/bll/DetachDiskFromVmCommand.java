@@ -24,6 +24,10 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
     @Override
     protected boolean canDoAction() {
         boolean retValue = isVmExist();
+        if (retValue) {
+            retValue = canRunActionOnNonManagedVm();
+        }
+
         if (retValue && getVm().getStatus() != VMStatus.Up && getVm().getStatus() != VMStatus.Down) {
             retValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);

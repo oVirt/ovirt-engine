@@ -118,6 +118,10 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             return false;
         }
 
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         List<VM> vmsDiskPluggedTo = getVmsDiskPluggedTo();
         if (vmsDiskPluggedTo != null && !vmsDiskPluggedTo.isEmpty()) {
             // only virtual drive size can be updated when VMs is running

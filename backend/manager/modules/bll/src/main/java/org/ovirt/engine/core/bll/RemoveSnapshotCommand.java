@@ -198,6 +198,14 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     protected boolean canDoAction() {
         initializeObjectState();
 
+        if (getVm() == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
+
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         if (!validate(new StoragePoolValidator(getStoragePool()).isUp()) ||
                 !validateVmNotDuringSnapshot() ||
                 !validateVmNotInPreview() ||

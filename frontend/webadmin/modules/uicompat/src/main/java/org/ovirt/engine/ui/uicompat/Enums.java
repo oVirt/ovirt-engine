@@ -191,6 +191,9 @@ public interface Enums extends LocalizedEnums {
 
     String OriginType___OVIRT();
 
+    String OriginType___HOSTED_ENGINE();
+
+    String OriginType___EXTERNAL();
     /**
      * This needs to cleaned up. We are leaving it in place to support import of
      * VMs created using previous versions.

@@ -411,6 +411,16 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected boolean canDoAction() {
+
+        if (getVm() == null) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
+            return false;
+        }
+
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         // Initialize validators.
         VmValidator vmValidator = createVmValidator();
         SnapshotsValidator snapshotValidator = createSnapshotValidator();

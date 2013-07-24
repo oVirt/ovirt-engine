@@ -101,6 +101,10 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         if (!updateVnicForBackwardCompatibility()) {
             return false;
         }

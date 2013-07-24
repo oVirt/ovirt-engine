@@ -763,6 +763,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         if (vm.getStatus() == VMStatus.Paused) {
             // if VM is paused, it was already checked before that it is capable to run
             return true;

@@ -48,6 +48,16 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
 
     @Override
     protected boolean canDoAction() {
+
+        if (getVm() == null) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
+            return false;
+        }
+
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         if (!activateDeactivateVmNicAllowed(getVm().getStatus())) {
             addCanDoActionMessage(VdcBllMessages.ACTIVATE_DEACTIVATE_NIC_VM_STATUS_ILLEGAL);
             return false;

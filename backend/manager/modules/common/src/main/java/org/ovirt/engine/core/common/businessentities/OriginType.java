@@ -7,7 +7,11 @@ public enum OriginType {
     RHEV(0),
     VMWARE(1),
     XEN(2),
-    OVIRT(3);
+    OVIRT(3),
+    // VMs that externally run on the host (not created by the engine)
+    EXTERNAL(4),
+    // VMs that were created by the hosted engine setup
+    HOSTED_ENGINE(5);
 
     private int intValue;
     private static Map<Integer, OriginType> mappings;

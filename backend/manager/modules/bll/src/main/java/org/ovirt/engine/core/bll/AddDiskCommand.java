@@ -88,6 +88,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         VM vm = getVm();
 
         if (vm != null) {
+            if (!canRunActionOnNonManagedVm()) {
+                return false;
+            }
+
             updateDisksFromDb();
             // if user sent drive check that its not in use
             if (!isDiskCanBeAddedToVm(getParameters().getDiskInfo(), vm) ||

@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -108,6 +110,7 @@ public class VdsUpdateRunTimeInfo {
     private final List<Guid> _succededToRunVms = new ArrayList<Guid>();
     private static final Map<Guid,Integer> vmsWithBalloonDriverProblem = new HashMap<>();
     private static final Map<Guid,Integer> vmsWithUncontrolledBalloon = new HashMap<>();
+    private final List<VmStatic> _externalVmsToAdd = new ArrayList();
     private boolean _saveVdsDynamic;
     private VDSStatus _firstStatus = VDSStatus.forValue(0);
     private boolean _saveVdsStatistics;
@@ -123,6 +126,8 @@ public class VdsUpdateRunTimeInfo {
     private static final Log log = LogFactory.getLog(VdsUpdateRunTimeInfo.class);
 
     private static final int TO_MEGA_BYTES = 1024;
+    private static final String HOSTED_ENGINE_VM_NAME = "oVirtHostedEngine";
+    private static final String EXTERNAL_VM_NAME_FORMAT = "external-%1$s";
 
     private void saveDataToDb() {
         if (_saveVdsDynamic) {
@@ -168,6 +173,7 @@ public class VdsUpdateRunTimeInfo {
         updateAllInTransaction(_vmDiskImageDynamicToSave.values(), getDbFacade().getDiskImageDynamicDao());
         saveVmDevicesToDb();
         saveVmGuestAgentNetworkDevices();
+        ResourceManager.getInstance().getEventListener().addExternallyManagedVms(_externalVmsToAdd);
     }
 
     private void saveVmGuestAgentNetworkDevices() {
@@ -972,6 +978,8 @@ public class VdsUpdateRunTimeInfo {
             proceedDownVms();
 
             proceedGuaranteedMemoryCheck();
+
+            processExternallyManagedVms();
             // update repository and check if there are any vm in cache that not
             // in vdsm
             updateRepository(running);
@@ -1580,6 +1588,48 @@ public class VdsUpdateRunTimeInfo {
             auditLog(logable, type);
         }
     }
+
+    private void processExternallyManagedVms() {
+        List<String> vmsToQuery = new ArrayList<String>();
+        // Searching for External VMs that run on the host
+        for (VmInternalData vmInternalData : _runningVms.values()) {
+            VM currentVmData = _vmDict.get(vmInternalData.getVmDynamic().getId());
+            if (currentVmData == null) {
+                if (getDbFacade().getVmStaticDao().get(vmInternalData.getVmDynamic().getId()) == null) {
+                    Guid vmId = vmInternalData.getVmDynamic().getId();
+                    vmsToQuery.add(vmId.toString());
+                }
+            }
+        }
+        // Fetching for details from the host
+        // and marking the VMs for addition
+        if (!vmsToQuery.isEmpty()) {
+            // Query VDSM for VMs info, and creating a proper VMStatic to be used when importing them
+            Map[] vmsInfo = getVmInfo(vmsToQuery);
+            for (Map vmInfo : vmsInfo) {
+                Guid vmId = Guid.createGuidFromString((String) vmInfo.get(VdsProperties.vm_guid));
+                VmStatic vmStatic = new VmStatic();
+                vmStatic.setId(vmId);
+                vmStatic.setCreationDate(new Date());
+                vmStatic.setVdsGroupId(_vds.getVdsGroupId());
+                String vmNameOnHost = (String) vmInfo.get(VdsProperties.vm_name);
+
+                if (StringUtils.equals(HOSTED_ENGINE_VM_NAME, vmNameOnHost)) {
+                    vmStatic.setName(vmNameOnHost);
+                    vmStatic.setOrigin(OriginType.HOSTED_ENGINE);
+                } else {
+                    vmStatic.setName(String.format(EXTERNAL_VM_NAME_FORMAT, vmNameOnHost));
+                    vmStatic.setOrigin(OriginType.EXTERNAL);
+                }
+
+                vmStatic.setNumOfSockets(Integer.parseInt((String) vmInfo.get(VdsProperties.num_of_cpus)));
+                vmStatic.setMemSizeMb(Integer.parseInt((String) vmInfo.get(VdsProperties.mem_size_mb)));
+                _externalVmsToAdd.add(vmStatic);
+                log.infoFormat("Importing VM {0} as {1}, as it is running on the on Host, but does not exist in the engine.", vmNameOnHost, vmStatic.getName());
+            }
+        }
+    }
+
 
     private void updateRepository(List<VM> running) {
         for (VmInternalData vmInternalData : _runningVms.values()) {

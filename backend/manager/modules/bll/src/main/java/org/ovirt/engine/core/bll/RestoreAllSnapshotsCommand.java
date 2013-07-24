@@ -312,6 +312,14 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     @Override
     protected boolean canDoAction() {
+        if (getVm() == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+        }
+
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         if (Guid.Empty.equals(getParameters().getDstSnapshotId())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);
         }

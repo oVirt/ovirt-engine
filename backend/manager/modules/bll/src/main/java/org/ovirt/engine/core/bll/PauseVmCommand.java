@@ -33,15 +33,22 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
         return getSucceeded() ? AuditLogType.USER_PAUSE_VM : AuditLogType.USER_FAILED_PAUSE_VM;
     }
 
-    public static boolean CanPauseVm(Guid vmId, java.util.ArrayList<String> message) {
+    public boolean CanPauseVm(Guid vmId, java.util.ArrayList<String> message) {
         boolean retValue = true;
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         if (vm == null) {
             retValue = false;
             message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());
         } else {
-            if (vm.getStatus() == VMStatus.WaitForLaunch || vm.getStatus() == VMStatus.MigratingFrom
-                    || vm.getStatus() == VMStatus.NotResponding) {
+
+            ValidationResult nonManagedVmValidationResult = VmHandler.canRunActionOnNonManagedVm(getVm(), this.getActionType());
+            if (!nonManagedVmValidationResult.isValid()) {
+                message.add(nonManagedVmValidationResult.getMessage().toString());
+                retValue = false;
+            }
+
+            if (retValue && (vm.getStatus() == VMStatus.WaitForLaunch || vm.getStatus() == VMStatus.MigratingFrom
+                    || vm.getStatus() == VMStatus.NotResponding)) {
                 retValue = false;
                 message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL.toString());
             } else if (!vm.isRunning()) {

@@ -42,6 +42,11 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
             return false;
         } else {
+
+            if (!canRunActionOnNonManagedVm()) {
+                return false;
+            }
+
             if (ObjectIdentityChecker.CanUpdateField(vm, "vdsGroupId", vm.getStatus())) {
                 targetCluster = DbFacade.getInstance().getVdsGroupDao().get(getParameters().getClusterId());
                 if (targetCluster == null) {

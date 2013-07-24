@@ -74,6 +74,10 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             return false;
         }
 
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
+        }
+
         updateDisksFromDb();
         if (!isDiskCanBeAddedToVm(disk, getVm()) || !isDiskPassPciAndIdeLimit(disk)) {
             return false;

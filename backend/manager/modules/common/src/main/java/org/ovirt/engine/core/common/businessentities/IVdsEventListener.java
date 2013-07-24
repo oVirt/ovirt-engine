@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.List;
 import java.util.Map;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -57,4 +58,6 @@ public interface IVdsEventListener {
     void runFailedAutoStartVM(Guid vmId);
 
     boolean restartVds(Guid vdsId);
+
+    void addExternallyManagedVms(List<VmStatic> externalVmList);
 }

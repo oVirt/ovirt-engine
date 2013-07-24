@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -44,6 +45,9 @@ public class CreateAllSnapshotsFromVmCommandTest {
     private SnapshotsValidator snapshotsValidator;
 
     @Mock
+    private VM vm;
+
+    @Mock
     private DiskImagesValidator diskImagesValidator;
 
     @Mock
@@ -57,6 +61,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
     public void setUp() {
         CreateAllSnapshotsFromVmParameters params = new CreateAllSnapshotsFromVmParameters(Guid.newGuid(), "");
         cmd = spy(new CreateAllSnapshotsFromVmCommand<CreateAllSnapshotsFromVmParameters>(params));
+        doReturn(vm).when(cmd).getVm();
         doReturn(vmValidator).when(cmd).createVmValidator();
         doReturn(snapshotsValidator).when(cmd).createSnapshotValidator();
         doReturn(storagePoolValidator).when(cmd).createStoragePoolValidator();

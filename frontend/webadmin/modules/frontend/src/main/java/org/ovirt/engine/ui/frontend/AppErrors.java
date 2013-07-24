@@ -58,6 +58,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The snapshot is broken, and no further work can be done on it. Please remove this snapshot from the VM.")
     String ACTION_TYPE_FAILED_VM_SNAPSHOT_IS_BROKEN();
 
+    @DefaultStringValue("Cannot ${action} ${type}. This VM is not managed by the engine.")
+    String ACTION_TYPE_FAILED_CANNOT_RUN_ACTION_ON_NON_MANAGED_VM();
+
     @DefaultStringValue("Storage Domain cannot be accessed.\nPossible reasons:\nNo operational Host in Data Center or Data Center state is not Up.")
     String IMAGE_REPOSITORY_NOT_FOUND();
 
