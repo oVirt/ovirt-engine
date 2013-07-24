@@ -7,15 +7,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.memory.MemoryImageRemoverFromExportDomain;
-import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -32,12 +28,11 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.RemoveVMVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @NonTransactiveCommandAttribute
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
-public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportParameters> extends RemoveVmCommand<T> implements TaskHandlerCommand<RemoveVmFromImportExportParameters>{
+public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportParameters> extends RemoveVmCommand<T>{
 
     // this is needed since overriding getVmTemplate()
     private VM exportVm;
@@ -179,59 +174,5 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
             jobProperties.put(VdcObjectType.Storage.name().toLowerCase(), getStorageDomainName());
         }
         return jobProperties;
-    }
-
-    ///////////////////////////////////////
-    // TaskHandlerCommand Implementation //
-    ///////////////////////////////////////
-
-    public T getParameters() {
-        return super.getParameters();
-    }
-
-    public VdcActionType getActionType() {
-        return super.getActionType();
-    }
-
-    public VdcReturnValueBase getReturnValue() {
-        return super.getReturnValue();
-    }
-
-    public ExecutionContext getExecutionContext() {
-        return super.getExecutionContext();
-    }
-
-    public void setExecutionContext(ExecutionContext executionContext) {
-        super.setExecutionContext(executionContext);
-    }
-
-    public Guid createTask(Guid taskId,
-            AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand,
-            VdcObjectType entityType,
-            Guid... entityIds) {
-        return super.createTaskInCurrentTransaction(taskId, asyncTaskCreationInfo, parentCommand, entityType, entityIds);
-    }
-
-    public Guid createTask(Guid taskId,
-            AsyncTaskCreationInfo asyncTaskCreationInfo,
-            VdcActionType parentCommand) {
-        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
-    }
-
-    public ArrayList<Guid> getTaskIdList() {
-        return super.getTaskIdList();
-    }
-
-    public void preventRollback() {
-        throw new NotImplementedException();
-    }
-
-    public Guid persistAsyncTaskPlaceHolder() {
-        return super.persistAsyncTaskPlaceHolder(getActionType());
-    }
-
-    public Guid persistAsyncTaskPlaceHolder(String taskKey) {
-        return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }
 }

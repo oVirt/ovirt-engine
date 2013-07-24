@@ -760,6 +760,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected void removeVmRelatedEntitiesFromDb() {
         removeVmUsers();
         removeVmNetwork();
+        // Note that currently newly added vm never have memory state
+        // In case it will be changed (clone vm from snapshot will clone the memory state),
+        // we'll need to remove the memory state images here as well.
         removeVmSnapshots();
         removeVmStatic();
     }

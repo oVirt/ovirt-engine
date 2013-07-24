@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
@@ -19,9 +19,9 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -173,14 +173,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
     }
 
-    protected void removeVmSnapshots() {
-        Collection<String> memoriesOfRemovedSnapshots =
-                new SnapshotsManager().removeSnapshots(getVmId());
-        for (String memoryVolumes : memoriesOfRemovedSnapshots) {
-            if (shouldRemoveMemorySnapshotVolumes(memoryVolumes)) {
-                removeMemoryVolumes(memoryVolumes, getActionType(), false);
-            }
-        }
+    protected Set<String> removeVmSnapshots() {
+        return new SnapshotsManager().removeSnapshots(getVmId());
     }
 
     /**

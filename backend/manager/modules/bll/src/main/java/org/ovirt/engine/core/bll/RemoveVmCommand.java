@@ -8,12 +8,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.memory.MemoryImageRemoverOnDataDomain;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
@@ -24,6 +27,7 @@ import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -35,6 +39,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -42,7 +47,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @DisableInPrepareMode
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> implements QuotaStorageDependent{
+public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> implements QuotaStorageDependent, TaskHandlerCommand<RemoveVmParameters> {
+
+    private Set<String> memoryStates;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -103,6 +110,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                 return false;
             }
         }
+
+        new MemoryImageRemoverOnDataDomain(getVm(), this).remove(memoryStates);
 
         return true;
     }
@@ -253,7 +262,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         removeLunDisks();
         removeVmUsers();
         removeVmNetwork();
-        removeVmSnapshots();
+        memoryStates = removeVmSnapshots();
         removeVmStatic();
     }
 
@@ -304,5 +313,59 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
         }
         return list;
+    }
+
+    ///////////////////////////////////////
+    // TaskHandlerCommand Implementation //
+    ///////////////////////////////////////
+
+    public T getParameters() {
+        return super.getParameters();
+    }
+
+    public VdcActionType getActionType() {
+        return super.getActionType();
+    }
+
+    public VdcReturnValueBase getReturnValue() {
+        return super.getReturnValue();
+    }
+
+    public ExecutionContext getExecutionContext() {
+        return super.getExecutionContext();
+    }
+
+    public void setExecutionContext(ExecutionContext executionContext) {
+        super.setExecutionContext(executionContext);
+    }
+
+    public Guid createTask(Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand,
+            VdcObjectType entityType,
+            Guid... entityIds) {
+        return super.createTaskInCurrentTransaction(taskId, asyncTaskCreationInfo, parentCommand, entityType, entityIds);
+    }
+
+    public Guid createTask(Guid taskId,
+            AsyncTaskCreationInfo asyncTaskCreationInfo,
+            VdcActionType parentCommand) {
+        return super.createTask(taskId, asyncTaskCreationInfo, parentCommand);
+    }
+
+    public ArrayList<Guid> getTaskIdList() {
+        return super.getTaskIdList();
+    }
+
+    public void preventRollback() {
+        throw new NotImplementedException();
+    }
+
+    public Guid persistAsyncTaskPlaceHolder() {
+        return super.persistAsyncTaskPlaceHolder(getActionType());
+    }
+
+    public Guid persistAsyncTaskPlaceHolder(String taskKey) {
+        return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }
 }
