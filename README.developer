@@ -131,7 +131,7 @@ SETUP
 
 To setup the product use the following command:
 
-$ $HOME/ovirt-engine/bin/engine-setup-2
+$ $HOME/ovirt-engine/bin/engine-setup
 
 If Jboss is installed not via distribution package management,
 add the following parameter, provided JBOSS_HOME environment contains
@@ -149,7 +149,7 @@ Do remember to restart the engine service.
 If there is a significant change, safest path is to stop service, remove
 $HOME/ovirt-engine directory, build and setup.
 
-The $HOME/ovirt-engine/bin/engine-cleanup-2 is also available to cleanup
+The $HOME/ovirt-engine/bin/engine-cleanup is also available to cleanup
 the environment, it is useful for application changes, less for packaging
 changes.
 
