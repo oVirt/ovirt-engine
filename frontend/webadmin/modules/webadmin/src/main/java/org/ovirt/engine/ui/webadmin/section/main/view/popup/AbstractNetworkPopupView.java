@@ -32,6 +32,8 @@ import org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfilesEditor;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -166,6 +168,16 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             }
         });
         exportEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        exportEditor.asCheckBox().addValueChangeHandler(new ValueChangeHandler<Boolean>() {
+
+            @Override
+            public void onValueChange(ValueChangeEvent<Boolean> event) {
+                for (NetworkClusterModel networkClusterModel : getClustersTableItems()) {
+                    networkClusterModel.setRequired(!event.getValue());
+                    refreshClustersTable();
+                }
+            }
+        });
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         hasMtuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -219,10 +231,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     }
 
     @SuppressWarnings("unchecked")
-    Iterable<EntityModel> getClustersTableItems() {
+    Iterable<NetworkClusterModel> getClustersTableItems() {
         ListModel tableModel = clustersTable.asEditor().flush();
         return tableModel != null && tableModel.getItems() != null ? tableModel.getItems()
-                : new ArrayList<EntityModel>();
+                : new ArrayList<NetworkClusterModel>();
     }
 
     void refreshClustersTable() {
@@ -233,8 +245,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         CheckboxHeader assignAllHeader = new CheckboxHeader(templates.textForCheckBoxHeader(constants.attachAll())) {
             @Override
             protected void selectionChanged(Boolean value) {
-                for (EntityModel model : getClustersTableItems()) {
-                    NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
+                for (NetworkClusterModel networkClusterModel : getClustersTableItems()) {
                     if (networkClusterModel.getIsChangable()) {
                         networkClusterModel.setAttached(value);
                     }
@@ -244,12 +255,9 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
             @Override
             public Boolean getValue() {
-                for (EntityModel model : getClustersTableItems()) {
-                    NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
-                    if (networkClusterModel.getIsChangable()) {
-                        if (!networkClusterModel.isAttached()) {
-                            return false;
-                        }
+                for (NetworkClusterModel networkClusterModel : getClustersTableItems()) {
+                    if (networkClusterModel.getIsChangable() && !networkClusterModel.isAttached()) {
+                        return false;
                     }
                 }
                 return true;
@@ -257,13 +265,38 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
             @Override
             public boolean isEnabled() {
-                for (EntityModel model : getClustersTableItems()) {
-                    NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
+                for (NetworkClusterModel networkClusterModel : getClustersTableItems()) {
                     if (networkClusterModel.getIsChangable()) {
                         return true;
                     }
                 }
                 return false;
+            }
+        };
+        CheckboxHeader requiredAllHeader = new CheckboxHeader(templates.textForCheckBoxHeader(constants.requiredAll())) {
+            @Override
+            protected void selectionChanged(Boolean value) {
+                for (NetworkClusterModel networkClusterModel : getClustersTableItems()) {
+                    if (networkClusterModel.getIsChangable()) {
+                        networkClusterModel.setRequired(value);
+                    }
+                }
+                refreshClustersTable();
+            }
+
+            @Override
+            public Boolean getValue() {
+                for (NetworkClusterModel networkClusterModel : getClustersTableItems()) {
+                    if (networkClusterModel.getIsChangable() && !networkClusterModel.isRequired()) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            @Override
+            public boolean isEnabled() {
+                return isRequiredChangeable();
             }
         };
 
@@ -299,6 +332,35 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
             }
 
         }, assignAllHeader, "80px"); //$NON-NLS-1$
+        clustersTable.addColumn(new CheckboxColumn<EntityModel>(new FieldUpdater<EntityModel, Boolean>() {
+            @Override
+            public void update(int index, EntityModel model, Boolean value) {
+                NetworkClusterModel networkClusterModel = (NetworkClusterModel) model;
+                networkClusterModel.setRequired(value);
+                refreshClustersTable();
+            }
+        }) {
+            @Override
+            public Boolean getValue(EntityModel model) {
+                return ((NetworkClusterModel) model).isRequired();
+            }
+
+            @Override
+            protected boolean canEdit(EntityModel model) {
+                return isRequiredChangeable();
+            }
+
+            @Override
+            public void render(Context context, EntityModel object, SafeHtmlBuilder sb) {
+                super.render(context, object, sb);
+                sb.append(templates.textForCheckBox(constants.required()));
+            }
+
+        }, requiredAllHeader, "80px"); //$NON-NLS-1$
+    }
+
+    private boolean isRequiredChangeable() {
+        return !exportEditor.asCheckBox().getValue();
     }
 
     @Override

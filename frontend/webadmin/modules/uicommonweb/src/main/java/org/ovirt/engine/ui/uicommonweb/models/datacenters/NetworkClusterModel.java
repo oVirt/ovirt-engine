@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 public class NetworkClusterModel extends EntityModel {
 
     private boolean attached;
+    private boolean required;
 
     public NetworkClusterModel(VDSGroup cluster) {
         setEntity(cluster);
@@ -26,5 +27,13 @@ public class NetworkClusterModel extends EntityModel {
 
     public void setAttached(boolean attached) {
         this.attached = attached;
+    }
+
+    public boolean isRequired() {
+        return required;
+    }
+
+    public void setRequired(boolean required) {
+        this.required = required;
     }
 }

@@ -86,6 +86,7 @@ public class NewNetworkModel extends NetworkModel {
     protected NetworkClusterModel createNetworkClusterModel(VDSGroup cluster) {
         NetworkClusterModel networkClusterModel = new NetworkClusterModel(cluster);
         networkClusterModel.setAttached(true);
+        networkClusterModel.setRequired(!(Boolean) getExport().getEntity());
 
         return networkClusterModel;
     }
@@ -184,7 +185,7 @@ public class NewNetworkModel extends NetworkModel {
         ArrayList<VdcActionParametersBase> actionParameters1 =
                 new ArrayList<VdcActionParametersBase>();
 
-        for (VDSGroup attachNetworkToCluster : getClustersToAttach())
+        for (NetworkClusterModel networkClusterModel : getClustersToAttach())
         {
             Network tempVar = new Network();
             tempVar.setId(networkId);
@@ -192,25 +193,25 @@ public class NewNetworkModel extends NetworkModel {
 
             // Init default NetworkCluster values (required, display, status)
             NetworkCluster networkCluster = new NetworkCluster();
-            networkCluster.setRequired(!((Boolean) getExport().getEntity()));
+            networkCluster.setRequired(networkClusterModel.isRequired());
             tempVar.setCluster(networkCluster);
 
-            actionParameters1.add(new AttachNetworkToVdsGroupParameter(attachNetworkToCluster, tempVar));
+            actionParameters1.add(new AttachNetworkToVdsGroupParameter(networkClusterModel.getEntity(), tempVar));
         }
 
         Frontend.RunMultipleAction(VdcActionType.AttachNetworkToVdsGroup, actionParameters1);
     }
 
-    public ArrayList<VDSGroup> getClustersToAttach()
+    public ArrayList<NetworkClusterModel> getClustersToAttach()
     {
-        ArrayList<VDSGroup> clusterToAttach = new ArrayList<VDSGroup>();
+        ArrayList<NetworkClusterModel> clusterToAttach = new ArrayList<NetworkClusterModel>();
 
         for (Object item : getNetworkClusterList().getItems())
         {
             NetworkClusterModel networkClusterModel = (NetworkClusterModel) item;
             if (networkClusterModel.isAttached())
             {
-                clusterToAttach.add(networkClusterModel.getEntity());
+                clusterToAttach.add(networkClusterModel);
             }
         }
         return clusterToAttach;
