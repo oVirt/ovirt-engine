@@ -357,12 +357,12 @@ public class SSHClient {
             if (!afuture.isSuccess()) {
                 throw new AuthenticationException(
                     String.format(
-                        "SSH authentication to '%1$s' failed%2$s",
+                        "SSH authentication to '%1$s' failed. Please verify provided credentials. %2$s",
                         this.getDisplayHost(),
                         (
                             _keyPair == null ?
-                            " make sure host is configured for password authentication" :
-                            " make sure key is authorized at host"
+                            "Make sure host is configured for password authentication" :
+                            "Make sure key is authorized at host"
                         )
                     )
                 );
