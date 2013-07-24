@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.ObjectUtils;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -12,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -53,8 +55,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                     return false;
                 }
 
-                List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
-                .getAllForVm(getParameters().getVmId());
+                List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getVmId());
 
                 Version clusterCompatibilityVersion = targetCluster.getcompatibility_version();
                 if (!validateDestinationClusterContainsNetworks(interfaces)
@@ -95,9 +96,9 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
      * @return Whether the NICs are linked correctly and network name is valid (with regards to the destination
      *         cluster).
      */
-    private boolean validateNics(List<VmNetworkInterface> interfaces,
+    private boolean validateNics(List<VmNic> interfaces,
             Version clusterCompatibilityVersion) {
-        for (VmNetworkInterface iface : interfaces) {
+        for (VmNic iface : interfaces) {
             VmNicValidator nicValidator = new VmNicValidator(iface, clusterCompatibilityVersion);
             if (!validate(nicValidator.emptyNetworkValid()) || !validate(nicValidator.linkedCorrectly())) {
                 return false;
@@ -115,16 +116,16 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
      *            The NICs to check networks on.
      * @return Whether the destination cluster has all networks configured or not.
      */
-    private boolean validateDestinationClusterContainsNetworks(List<VmNetworkInterface> interfaces) {
+    private boolean validateDestinationClusterContainsNetworks(List<VmNic> interfaces) {
         List<Network> networks =
                 DbFacade.getInstance().getNetworkDao().getAllForCluster(getParameters().getClusterId());
         StringBuilder missingNets = new StringBuilder();
-        for (VmNetworkInterface iface : interfaces) {
-            String netName = iface.getNetworkName();
-            if (netName != null) {
+        for (VmNic iface : interfaces) {
+            Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
+            if (network != null) {
                 boolean exists = false;
                 for (Network net : networks) {
-                    if (net.getName().equals(netName)) {
+                    if (net.getName().equals(network.getName())) {
                         exists = true;
                         break;
                     }
@@ -133,7 +134,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                     if (missingNets.length() > 0) {
                         missingNets.append(", ");
                     }
-                    missingNets.append(netName);
+                    missingNets.append(network.getName());
                 }
             }
         }
@@ -156,19 +157,19 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
         }
 
         // update vm interfaces
-        List<Network> networks = DbFacade.getInstance().getNetworkDao()
-                .getAllForCluster(getParameters().getClusterId());
-        List<VmNetworkInterface> interfaces = DbFacade.getInstance().getVmNetworkInterfaceDao()
-                .getAllForVm(getParameters().getVmId());
+        List<Network> networks = getNetworkDAO().getAllForCluster(getParameters().getClusterId());
+        List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getVmId());
 
-        for (final VmNetworkInterface iface : interfaces) {
-            if (iface.getNetworkName() != null) {
+        for (final VmNic iface : interfaces) {
+            if (iface.getVnicProfileId() != null) {
+                final Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
                 Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                     @Override
                     public boolean eval(Network n) {
-                        return iface.getNetworkName().equals(n.getName());
+                        return ObjectUtils.equals(n.getId(), network.getId());
                     }
                 });
+
                 // if network not exists in cluster we remove the network to
                 // interface connection
                 if (net == null) {
