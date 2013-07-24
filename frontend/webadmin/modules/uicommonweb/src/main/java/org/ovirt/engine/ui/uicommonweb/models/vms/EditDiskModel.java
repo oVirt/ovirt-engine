@@ -146,7 +146,7 @@ public class EditDiskModel extends AbstractDiskModel
         getVolumeType().setIsChangable(false);
         getSize().setIsChangable(false);
 
-        if (getVm() == null || !getVm().isDown()) {
+        if (!isEditEnabled()) {
             getDescription().setIsChangable(false);
             getAlias().setIsChangable(false);
             getIsShareable().setIsChangable(false);

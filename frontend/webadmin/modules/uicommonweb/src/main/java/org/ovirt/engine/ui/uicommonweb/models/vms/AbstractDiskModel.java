@@ -287,6 +287,10 @@ public abstract class AbstractDiskModel extends DiskModel
 
     public abstract boolean getIsNew();
 
+    public boolean getIsFloating() {
+        return getVm() == null;
+    }
+
     protected abstract boolean isDatacenterAvailable(StoragePool dataCenter);
 
     protected abstract void updateWipeAfterDelete(StorageType storageType);
@@ -294,6 +298,10 @@ public abstract class AbstractDiskModel extends DiskModel
     protected abstract DiskImage getDiskImage();
 
     protected abstract LunDisk getLunDisk();
+
+    protected boolean isEditEnabled() {
+        return getIsFloating() || getIsNew() || getVm().isDown() || !getDisk().getPlugged();
+    }
 
     @Override
     public void initialize() {
@@ -458,7 +466,7 @@ public abstract class AbstractDiskModel extends DiskModel
                 ConfigurationValues.ShareableDiskEnabled, datacenter.getcompatibility_version().getValue());
 
         getIsShareable().setChangeProhibitionReason(CONSTANTS.shareableDiskNotSupported());
-        getIsShareable().setIsChangable(isShareableDiskEnabled && getVm() != null && getVm().isDown());
+        getIsShareable().setIsChangable(isShareableDiskEnabled && isEditEnabled());
     }
 
     private void updateDirectLunDiskEnabled(StoragePool datacenter) {

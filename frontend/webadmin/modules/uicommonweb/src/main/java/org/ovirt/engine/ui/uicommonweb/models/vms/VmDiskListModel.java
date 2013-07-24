@@ -564,20 +564,15 @@ public class VmDiskListModel extends VmDiskListModelBase
     private void updateActionAvailability()
     {
         Disk disk = (Disk) getSelectedItem();
-        boolean isDiskLocked = disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE &&
-                ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
 
         getNewCommand().setIsExecutionAllowed(true);
 
-        boolean isExtendImageSizeSupportedAndEnabled = isExtendImageSizeSupported() && isExtendImageSizeEnabled();
-        getEditCommand().setIsExecutionAllowed(getSelectedItem() != null && getSelectedItems() != null
-                && getSelectedItems().size() == 1 && disk.getPlugged() && !isDiskLocked &&
-                (isVmDown() || isExtendImageSizeSupportedAndEnabled));
+        getEditCommand().setIsExecutionAllowed(disk != null && isSingleDiskSelected() && !isDiskLocked(disk) &&
+                (isVmDown() || !disk.getPlugged() || (isExtendImageSizeSupported() && isExtendImageSizeEnabled())));
 
-        getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
-                && isRemoveCommandAvailable());
+        getRemoveCommand().setIsExecutionAllowed(atLeastOneDiskSelected() && isRemoveCommandAvailable());
 
-        getMoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
+        getMoveCommand().setIsExecutionAllowed(atLeastOneDiskSelected()
                 && (isMoveCommandAvailable() || isLiveMoveCommandAvailable()));
 
         updateGetAlignmentCommandAvailability();
@@ -595,6 +590,19 @@ public class VmDiskListModel extends VmDiskListModelBase
     public boolean isVmDown() {
         VM vm = getEntity();
         return vm != null && vm.getStatus() == VMStatus.Down;
+    }
+
+    private boolean isDiskLocked(Disk disk) {
+        return disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE &&
+                ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
+    }
+
+    private boolean isSingleDiskSelected() {
+        return getSelectedItems() != null && getSelectedItems().size() == 1;
+    }
+
+    private boolean atLeastOneDiskSelected() {
+        return getSelectedItems() != null && getSelectedItems().size() > 0;
     }
 
     public boolean isHotPlugAvailable() {
