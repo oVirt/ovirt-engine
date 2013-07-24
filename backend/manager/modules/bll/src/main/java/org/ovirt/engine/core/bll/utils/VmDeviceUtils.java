@@ -837,7 +837,7 @@ public class VmDeviceUtils {
     private static void addUsbSlots(VmBase vm, int numOfSlots) {
         for (int index = 1; index <= numOfSlots; index++) {
             VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
-                    VmDeviceGeneralType.CHANNEL,
+                    VmDeviceGeneralType.REDIR,
                     VmDeviceType.SPICEVMC,
                     getUsbSlotSpecParams(),
                     true,
@@ -891,7 +891,7 @@ public class VmDeviceUtils {
     }
 
     private static List<VmDevice> getUsbRedirectDevices(VmBase vm) {
-        List<VmDevice> list = dao.getVmDeviceByVmIdTypeAndDevice(vm.getId(),VmDeviceGeneralType.CHANNEL, VmDeviceType.SPICEVMC.getName());
+        List<VmDevice> list = dao.getVmDeviceByVmIdTypeAndDevice(vm.getId(),VmDeviceGeneralType.REDIR, VmDeviceType.SPICEVMC.getName());
 
         return list;
     }

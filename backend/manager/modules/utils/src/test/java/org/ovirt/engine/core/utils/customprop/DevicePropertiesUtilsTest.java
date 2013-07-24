@@ -188,8 +188,9 @@ public class DevicePropertiesUtilsTest {
                 + "{type=video;prop={turned_on=^(true|false)$}};"
                 + "{type=sound;prop={volume=[0-9]{1,2}}};"
                 + "{type=controller;prop={hotplug=^(true|false)$}};"
-                + "{type=balloon;prop={max_size=[0-9]{1,15})}};"
-                + "{type=channel;prop={auth_type=^(plain|md5|kerberos)$)}};"
+                + "{type=balloon;prop={max_size=[0-9]{1,15}}};"
+                + "{type=channel;prop={auth_type=^(plain|md5|kerberos)$}};"
+                + "{type=redir;prop={max_len=[0-9]{1,15}}};"
                 + "{type=console;prop={type=^(text|vnc)$}};"
                 + "{type=smartcard;prop={version=([1-9]{1}).([0-9]{1})}}";
         DevicePropertiesUtils utils = DevicePropertiesUtils.getInstance();
@@ -300,6 +301,7 @@ public class DevicePropertiesUtilsTest {
                 + "{type=controller;prop={hotplug=^(true|false)$}};"
                 + "{type=balloon;prop={max_size=[0-9]{1,15}}};"
                 + "{type=channel;prop={auth_type=^(plain|md5|kerberos)$}};"
+                + "{type=redir;prop={max_len=[0-9]{1,15}}};"
                 + "{type=console;prop={type=^(text|vnc)$;prop=\\{\\}}};"
                 + "{type=smartcard;prop={spec_chars=[\\@\\#\\$\\%\\^\\&\\*\\(\\)\\{\\}\\:\\<\\>\\,\\.\\?\\[\\]]?}}";
 
@@ -310,7 +312,7 @@ public class DevicePropertiesUtilsTest {
         assertTrue(utils.isDevicePropertiesDefinitionValid(customDevPropSpec));
 
         // test parsed properties
-        assertEquals(9, utils.getDeviceTypesWithProperties(Version.v3_3).size());
+        assertEquals(10, utils.getDeviceTypesWithProperties(Version.v3_3).size());
 
         // test disk properties
         devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.DISK);
@@ -347,6 +349,11 @@ public class DevicePropertiesUtilsTest {
         devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.CHANNEL);
         validatePropertyMap(devProp, 1);
         validatePropertyPattern(devProp, "auth_type", "^(plain|md5|kerberos)$");
+
+        // test redir properties
+        devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.REDIR);
+        validatePropertyMap(devProp, 1);
+        validatePropertyPattern(devProp, "max_len", "[0-9]{1,15}");
 
         // test console properties
         devProp = utils.getDeviceProperties(Version.v3_3, VmDeviceGeneralType.CONSOLE);

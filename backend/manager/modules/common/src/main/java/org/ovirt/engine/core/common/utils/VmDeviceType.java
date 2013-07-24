@@ -18,6 +18,7 @@ public enum VmDeviceType {
     ICH6("ich6"),
     AC97("ac97"),
     MEMBALLOON("memballoon"),
+    CHANNEL("channel"),
     SMARTCARD("smartcard"),
     BALLOON("balloon"),
     CONSOLE("console"),

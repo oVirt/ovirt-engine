@@ -42,6 +42,11 @@ public enum VmDeviceGeneralType {
     CHANNEL,
 
     /**
+     * USB device redirection
+     */
+    REDIR,
+
+    /**
      * A console device
      */
     CONSOLE,
@@ -142,6 +147,10 @@ public enum VmDeviceGeneralType {
 
             case REDIR:
             case SPICEVMC:
+                type = REDIR;
+                break;
+
+            case CHANNEL:
                 type = CHANNEL;
                 break;
 
