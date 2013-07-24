@@ -7,7 +7,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
@@ -30,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -42,6 +43,7 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.customprop.ValidationError;
@@ -49,7 +51,6 @@ import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils.VMCustomProperties;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 @LockIdNameAttribute
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
@@ -172,23 +173,20 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private void UpdateVmNetworks() {
         // check if the cluster has changed
         if (!getVm().getVdsGroupId().equals(getParameters().getVmStaticData().getVdsGroupId())) {
-            List<Network> networks = DbFacade
-                    .getInstance()
-                    .getNetworkDao()
-                    .getAllForCluster(
-                            getParameters().getVmStaticData().getVdsGroupId());
-            List<VmNetworkInterface> interfaces = DbFacade.getInstance()
-                    .getVmNetworkInterfaceDao()
-                    .getAllForVm(getParameters().getVmStaticData().getId());
-            for (final VmNetworkInterface iface : interfaces) {
+            List<Network> networks =
+                    getNetworkDAO().getAllForCluster(getParameters().getVmStaticData().getVdsGroupId());
+            List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getVmStaticData().getId());
+
+            for (final VmNic iface : interfaces) {
+                final Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
                 Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                     @Override
                     public boolean eval(Network n) {
-                        return n.getName().equals(iface.getNetworkName());
+                        return ObjectUtils.equals(n.getId(), network.getId());
                     }
                 });
-                // if network not exists in cluster we remove the network to
-                // interface connection
+
+                // if network not exists in cluster we remove the network from the interface
                 if (net == null) {
                     iface.setVnicProfileId(null);
                     getVmNicDao().update(iface);
