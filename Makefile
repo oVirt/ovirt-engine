@@ -161,6 +161,7 @@ GENERATED = \
 	packaging/etc/notifier/log4j.xml \
 	packaging/sys-etc/logrotate.d/ovirt-engine \
 	packaging/sys-etc/logrotate.d/ovirt-engine-notifier \
+	packaging/sys-etc/logrotate.d/ovirt-engine-setup \
 	packaging/services/ovirt-engine-notifier/config.py \
 	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.conf \
 	packaging/services/ovirt-engine-notifier/ovirt-engine-notifier.systemd \
@@ -448,5 +449,6 @@ install-dev:	\
 	install -d "$(DESTDIR)$(PKG_STATE_DIR)/deployments"
 	install -d "$(DESTDIR)$(PKG_STATE_DIR)/content"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/host-deploy"
+	install -d "$(DESTDIR)$(PKG_LOG_DIR)/setup"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/notifier"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/engine-manage-domains"

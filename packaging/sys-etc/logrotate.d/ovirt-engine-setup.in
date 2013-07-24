@@ -1,0 +1,7 @@
+"@ENGINE_LOG@/setup/*.log {
+	monthly
+	missingok
+	compress
+	nocreate
+	rotate 1
+}

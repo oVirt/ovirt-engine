@@ -252,6 +252,7 @@ Summary: Setup and upgrade scripts for %{product_name_short}
 Group: Virtualization/Management
 Requires: %{name}
 Requires: %{name}-lib
+Requires: logrotate
 Requires: libselinux-python
 Requires: libxml2-python
 Requires: lsof
@@ -426,7 +427,7 @@ make %{make_common_opts} install DESTDIR=%{buildroot}
 
 install -dm 755 %{buildroot}/%{engine_state}/deployments
 install -dm 755 %{buildroot}/%{engine_state}/content
-install -dm 755 %{buildroot}/%{engine_log}/{host-deploy,notifier,engine-manage-domains}
+install -dm 755 %{buildroot}/%{engine_log}/{host-deploy,setup,notifier,engine-manage-domains}
 install -dm 755 %{buildroot}/%{engine_cache}
 install -dm 755 %{buildroot}/%{engine_run}/notifier
 
@@ -784,7 +785,9 @@ fi
 
 %files setup
 
+%config %{_sysconfdir}/logrotate.d/ovirt-engine-setup
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf
+%dir %{engine_log}/setup
 
 # Links to the main programs:
 %{_bindir}/engine-setup

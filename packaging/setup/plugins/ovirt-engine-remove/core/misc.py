@@ -47,6 +47,10 @@ class Plugin(plugin.PluginBase):
     )
     def _preinit(self):
         self.environment.setdefault(
+            otopicons.CoreEnv.LOG_DIR,
+            osetupcons.FileLocations.OVIRT_SETUP_LOGDIR
+        )
+        self.environment.setdefault(
             otopicons.CoreEnv.LOG_FILE_NAME_PREFIX,
             osetupcons.FileLocations.OVIRT_OVIRT_REMOVE_LOG_PREFIX
         )
