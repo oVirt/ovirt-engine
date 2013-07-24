@@ -171,7 +171,7 @@ public class RepoFileMetaDataDAOTest extends BaseDAOTestCase {
                         .getRepoListForStorageDomain(FixturesTool.SHARED_ISO_STORAGE_DOAMIN_FOR_SP2_AND_SP3,
                                 ImageFileType.Floppy);
 
-        long minLastRefreshed = new Long("9999999999999").longValue();
+        long minLastRefreshed = 9999999999999L;
         for (RepoImage fileMD : listOfFloppyFiles) {
             long fileLastRefreshed = fileMD.getLastRefreshed();
             if (fileLastRefreshed < minLastRefreshed) {

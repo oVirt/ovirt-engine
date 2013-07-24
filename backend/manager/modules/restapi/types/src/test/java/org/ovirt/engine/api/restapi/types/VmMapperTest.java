@@ -42,8 +42,8 @@ public class VmMapperTest extends
     @Override
     protected org.ovirt.engine.core.common.businessentities.VM getInverse(VmStatic to) {
         VmStatistics statistics = new VmStatistics();
-        statistics.setcpu_user(new Double(10L));
-        statistics.setcpu_sys(new Double(20L));
+        statistics.setcpu_user(10.0);
+        statistics.setcpu_sys(20.0);
         VmDynamic dynamic = new VmDynamic();
         dynamic.setStatus(VMStatus.Up);
         dynamic.setBootSequence(to.getDefaultBootSequence());
@@ -52,7 +52,7 @@ public class VmMapperTest extends
                 new org.ovirt.engine.core.common.businessentities.VM(to,
                         dynamic,
                         statistics);
-        ret.setUsageMemPercent(Integer.valueOf(50));
+        ret.setUsageMemPercent(50);
         return ret;
     }
 

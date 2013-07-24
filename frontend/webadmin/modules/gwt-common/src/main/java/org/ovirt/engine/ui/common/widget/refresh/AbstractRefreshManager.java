@@ -174,7 +174,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
         String refreshRate = clientStorage.getLocalItem(getRefreshRateItemKey());
 
         try {
-            return new Integer(refreshRate).intValue();
+            return Integer.parseInt(refreshRate);
         } catch (NumberFormatException e) {
             return getDefaultRefreshRate();
         }

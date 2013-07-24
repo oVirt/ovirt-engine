@@ -542,7 +542,7 @@ public final class Cloner
         if (clusterPolicy.getFilterPositionMap() != null) {
             obj.setFilterPositionMap(new HashMap<Guid, Integer>());
             for (Entry<Guid, Integer> entry : clusterPolicy.getFilterPositionMap().entrySet()) {
-                obj.getFilterPositionMap().put(entry.getKey(), new Integer(entry.getValue()));
+                obj.getFilterPositionMap().put(entry.getKey(), entry.getValue());
             }
         }
         if (clusterPolicy.getFunctions() != null) {

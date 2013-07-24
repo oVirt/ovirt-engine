@@ -123,8 +123,8 @@ public class ManageGlusterServiceCommandTest {
                                 status);
                 GlusterServerService srvc3 = new GlusterServerService();
                 srvc3.setMessage("test-msg3");
-                srvc3.setPid(new Integer("10000"));
-                srvc3.setPort(new Integer("20000"));
+                srvc3.setPid(10000);
+                srvc3.setPort(20000);
                 srvc3.setServerId(serverId);
                 srvc3.setServiceId(Guid.newGuid());
                 srvc3.setServiceName("srvc3");
@@ -157,8 +157,8 @@ public class ManageGlusterServiceCommandTest {
         GlusterServerService srvc1 = new GlusterServerService();
 
         srvc1.setMessage("test-msg1");
-        srvc1.setPid(new Integer("10000"));
-        srvc1.setPort(new Integer("20000"));
+        srvc1.setPid(10000);
+        srvc1.setPort(20000);
         srvc1.setServerId(serverId);
         srvc1.setServiceId((status == GlusterServiceStatus.RUNNING) ? startedServiceId1 : stoppedServiceId1);
         srvc1.setServiceName("srvc1");
@@ -168,8 +168,8 @@ public class ManageGlusterServiceCommandTest {
 
         GlusterServerService srvc2 = new GlusterServerService();
         srvc2.setMessage("test-msg2");
-        srvc2.setPid(new Integer("30000"));
-        srvc2.setPort(new Integer("40000"));
+        srvc2.setPid(30000);
+        srvc2.setPort(40000);
         srvc2.setServerId(serverId);
         srvc2.setServiceId((status == GlusterServiceStatus.RUNNING) ? startedServiceId2 : stoppedServiceId2);
         srvc2.setServiceName("srvc2");

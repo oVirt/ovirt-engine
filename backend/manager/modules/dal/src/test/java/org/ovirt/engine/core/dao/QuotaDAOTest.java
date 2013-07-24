@@ -233,12 +233,12 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         for (QuotaVdsGroup quotaVdsGroup : quotaVdsGroupList) {
             if (quotaVdsGroup.getQuotaVdsGroupId()
                     .equals(new Guid("68c96e11-0aad-4e3a-9091-12897b7f2388"))) {
-                assertEquals(quotaVdsGroup.getVirtualCpu(), new Integer("10"));
+                assertEquals(quotaVdsGroup.getVirtualCpu(), Integer.valueOf(10));
                 assertEquals(quotaVdsGroup.getMemSizeMB(), unlimited);
             }
             else if (quotaVdsGroup.getQuotaVdsGroupId()
                     .equals(new Guid("68c96e11-0aad-4e3a-9091-12897b7f2389"))) {
-                assertEquals(quotaVdsGroup.getVirtualCpu(), new Integer("1000"));
+                assertEquals(quotaVdsGroup.getVirtualCpu(), Integer.valueOf(1000));
                 assertEquals(quotaVdsGroup.getMemSizeMB(), unlimited);
             }
         }
@@ -355,7 +355,7 @@ public class QuotaDAOTest extends BaseDAOTestCase {
         String quotaName = "New Temporary name";
         List<QuotaVdsGroup> quotaVdsGroupList =
                 getQuotaVdsGroup(getSpecificQuotaVdsGroup(quotaGeneralToSpecific.getId()));
-        Long newStorageLimit = new Long("2345");
+        Long newStorageLimit = 2345L;
 
         // Check before the update, that the fields are not equal.
         assertEquals(quotaName.equals(quotaGeneralToSpecific.getQuotaName()), false);
