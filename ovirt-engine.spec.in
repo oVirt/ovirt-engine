@@ -595,6 +595,10 @@ fi
 %create_engine_user
 
 
+%pre websocket-proxy
+%create_engine_user
+
+
 %post backend
 
 # ovirt-engine<=3.2 created files at /usr among
