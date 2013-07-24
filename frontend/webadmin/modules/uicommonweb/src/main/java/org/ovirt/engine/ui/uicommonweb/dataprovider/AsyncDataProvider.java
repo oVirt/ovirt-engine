@@ -2645,8 +2645,12 @@ public final class AsyncDataProvider {
                 return source;
             }
         };
+        GetHostListFromExternalProviderParameters params = new GetHostListFromExternalProviderParameters();
+        params.setFilterOutExistingHosts(filterOutExistingHosts);
+        params.setProviderId(providerId);
+        params.setSearchFilter(searchFilter);
         Frontend.RunQuery(VdcQueryType.GetHostListFromExternalProvider,
-                new GetHostListFromExternalProviderParameters(providerId, filterOutExistingHosts, searchFilter),
+                params,
                 aQuery);
     }
 

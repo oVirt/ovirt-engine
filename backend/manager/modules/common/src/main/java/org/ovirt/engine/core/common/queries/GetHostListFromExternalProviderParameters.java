@@ -9,6 +9,10 @@ public class GetHostListFromExternalProviderParameters extends VdcQueryParameter
     private boolean filterOutExistingHosts;
     private String searchFilter;
 
+    public GetHostListFromExternalProviderParameters() {
+        super();
+    }
+
     public GetHostListFromExternalProviderParameters(Guid providerId, boolean filterOutExistingHosts, String searchFilter) {
         super();
         this.providerId = providerId;
