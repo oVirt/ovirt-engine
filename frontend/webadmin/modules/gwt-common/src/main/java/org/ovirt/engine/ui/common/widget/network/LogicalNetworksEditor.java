@@ -78,9 +78,16 @@ public class LogicalNetworksEditor extends Composite implements IsEditor<TakesVa
             contentPanel.add(networkEditor);
         }
 
-        if (values.size() > 0) {
-            headerLabel.setText(messages.assignNicsToNetworks(values.size()));
+        if (values.size() == 0) {
+            return;
         }
+
+        if (values.size() == 1) {
+            headerLabel.setText(messages.assignNicsToNetworksSingular());
+        } else {
+            headerLabel.setText(messages.assignNicsToNetworksPlural(values.size()));
+        }
+
     }
 
     public void flush() {
