@@ -2072,22 +2072,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                             param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
                             param.setBalloonEnabled(balloonEnabled(model));
+                            param.setCopyTemplatePermissions((Boolean) model.getCopyPermissions().getEntity());
 
                             Frontend.RunAction(VdcActionType.AddVmFromTemplate, param, new NetworkCreateOrUpdateFrontendActionAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
-                            param.setCopyTemplatePermissions((Boolean) model.getCopyPermissions().getEntity());
-                            ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-                            parameters.add(param);
-
-                            Frontend.RunMultipleAction(VdcActionType.AddVmFromTemplate, parameters,
-                                    new IFrontendMultipleActionAsyncCallback() {
-                                        @Override
-                                        public void executed(FrontendMultipleActionAsyncResult result) {
-                                            VmListModel vmListModel1 = (VmListModel) result.getState();
-                                            vmListModel1.getWindow().stopProgress();
-                                            vmListModel1.cancel();
-                                        }
-                                    },
-                                    vmListModel);
                         }
                     };
                     AsyncDataProvider.getTemplateDiskList(_asyncQuery, template.getId());
