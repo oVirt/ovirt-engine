@@ -269,7 +269,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     "Network error during communication with the host", e);
         } catch (Exception e) {
             throw new VdsInstallException(VDSStatus.NonOperational,
-                    "Failed to configure manamgent network on the host", e);
+                    "Failed to configure management network on the host", e);
         }
     }
 
