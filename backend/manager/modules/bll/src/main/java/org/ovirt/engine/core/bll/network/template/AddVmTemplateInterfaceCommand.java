@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -13,11 +12,11 @@ import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -113,20 +112,12 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         List<PermissionSubject> subjects = super.getPermissionCheckSubjects();
+        VmNetworkInterface nic = getParameters().getInterface();
 
-        if (getParameters().getInterface() != null && StringUtils.isNotEmpty(getNetworkName())
-                && getVmTemplate() != null) {
-
-            Network network = getNetworkDAO().getByNameAndCluster(getNetworkName(), getVmTemplate().getVdsGroupId());
-            if (getParameters().getInterface().isPortMirroring()) {
-                subjects.add(new PermissionSubject(network == null ? null : network.getId(),
-                        VdcObjectType.Network,
-                        ActionGroup.PORT_MIRRORING));
-            } else {
-                subjects.add(new PermissionSubject(network == null ? null : network.getId(),
-                        VdcObjectType.Network,
-                        getActionType().getActionGroup()));
-            }
+        if (nic != null && nic.getVnicProfileId() != null && getVmTemplate() != null) {
+            subjects.add(new PermissionSubject(nic.getVnicProfileId(),
+                    VdcObjectType.VnicProfile,
+                    getActionType().getActionGroup()));
         }
 
         return subjects;
