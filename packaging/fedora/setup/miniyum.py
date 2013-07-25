@@ -105,6 +105,18 @@ class MiniYumSinkBase(object):
 class MiniYum(object):
     """Minimalist yum API interaction."""
 
+    TRANSACTION_STATE = {
+        yum.constants.TS_UPDATE: _('update'),
+        yum.constants.TS_INSTALL: _('install'),
+        yum.constants.TS_TRUEINSTALL: _('trueinstall'),
+        yum.constants.TS_ERASE: _('erase'),
+        yum.constants.TS_OBSOLETED: _('obsoleted'),
+        yum.constants.TS_OBSOLETING: _('obsoleting'),
+        yum.constants.TS_AVAILABLE: _('available'),
+        yum.constants.TS_UPDATED: _('updated'),
+        'repackaging': _('repackaging'),
+    }
+
     class _LogHandler(logging.Handler):
         """Required for extracting yum log output."""
 
@@ -176,12 +188,20 @@ class MiniYum(object):
             if self._lastaction != action or package != self._lastpackage:
                 self._lastaction = action
                 self._lastpackage = package
+
+                #
+                # NOTE:
+                # do not use self.action as it is encoded
+                # using invalid encoding, some unicode proprietary
+                # for yum.
+                # test using LC_ALL=cs_CZ.utf8, LANG=cs_CZ
+                #
                 self._sink.info(
                     _('{action}: {count}/{total}: {package}').format(
-                        action=self.action[action],
+                        action=MiniYum.TRANSACTION_STATE.get(action, action),
                         count=ts_current,
                         total=ts_total,
-                        package=package
+                        package=package.name,
                     )
                 )
 
@@ -811,19 +831,12 @@ class MiniYum(object):
         try:
             with self._disableOutput:
                 ret = []
-                state = {
-                    yum.constants.TS_UPDATE: "update",
-                    yum.constants.TS_INSTALL: "install",
-                    yum.constants.TS_TRUEINSTALL: "trueinstall",
-                    yum.constants.TS_ERASE: "erase",
-                    yum.constants.TS_OBSOLETED: "obsoleted",
-                    yum.constants.TS_OBSOLETING: "obsoleting",
-                    yum.constants.TS_AVAILABLE: "available",
-                    yum.constants.TS_UPDATED: "updated",
-                }
                 for txmbr in sorted(self._yb.tsInfo):
                     info = self._get_package_info(txmbr)
-                    info['operation'] = state[txmbr.output_state]
+                    info['operation'] = self.TRANSACTION_STATE.get(
+                        txmbr.output_state,
+                        txmbr.output_state
+                    )
                     ret.append(info)
                 return ret
 
