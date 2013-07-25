@@ -527,6 +527,11 @@ cat > "%{buildroot}%{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-aio.con
 [environment:default]
 OVESETUP_AIO/enable=bool:True
 __EOF__
+install -d "%{buildroot}%{_sysconfdir}/ovirt-host-deploy.conf.d"
+cat > "%{buildroot}%{_sysconfdir}/ovirt-host-deploy.conf.d/10-packaging-aio.conf" << __EOF__
+[environment:default]
+VDSM/disableNetworkManager=bool:False
+__EOF__
 
 
 %preun
@@ -847,6 +852,7 @@ fi
 %{engine_data}/scripts/plugins/all_in_one_100.py*
 %{engine_data}/firewalld/aio
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging-aio.conf
+%config %{_sysconfdir}/ovirt-host-deploy.conf.d/10-packaging-aio.conf
 
 
 %files dbscripts
