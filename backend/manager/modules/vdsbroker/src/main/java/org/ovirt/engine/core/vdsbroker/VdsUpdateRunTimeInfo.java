@@ -1309,8 +1309,12 @@ public class VdsUpdateRunTimeInfo {
     private void proceedGuaranteedMemoryCheck() {
         for (VmInternalData vmInternalData : _runningVms.values()) {
             VM savedVm = _vmDict.get(vmInternalData.getVmDynamic().getId());
+            if (savedVm == null) {
+                continue;
+            }
             VmStatistics vmStatistics = vmInternalData.getVmStatistics();
-            if (vmStatistics.getCurrentMemory() != null && vmStatistics.getCurrentMemory() > 0 &&
+            if (vmStatistics != null && vmStatistics.getCurrentMemory() != null &&
+                    vmStatistics.getCurrentMemory() > 0 &&
                     savedVm.getMinAllocatedMem() > vmStatistics.getCurrentMemory() / TO_MEGA_BYTES) {
                 AuditLogableBase auditLogable = new AuditLogableBase();
                 auditLogable.addCustomValue("VmName", savedVm.getName());
