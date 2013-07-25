@@ -145,7 +145,7 @@ public class ProviderModel extends Model {
 
     private String getDefaultUrl(ProviderType type) {
         if (type == null) {
-            return new String();
+            return ""; //$NON-NLS-1$
         }
         switch (type) {
             case OPENSTACK_NETWORK:
@@ -178,7 +178,7 @@ public class ProviderModel extends Model {
                 super.onSelectedItemChanging(newValue, oldValue);
                 String url = (String) getUrl().getEntity();
                 if (url == null) {
-                    url = new String();
+                    url = ""; //$NON-NLS-1$
                 }
                 url = url.trim();
                 if (url.equals("") || url.equalsIgnoreCase(getDefaultUrl((ProviderType) oldValue))) { //$NON-NLS-1$

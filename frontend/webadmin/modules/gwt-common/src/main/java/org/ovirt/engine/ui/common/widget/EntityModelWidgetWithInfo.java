@@ -35,7 +35,7 @@ public class EntityModelWidgetWithInfo extends Composite {
 
         this.label = label;
         this.contentWidget = contentWidget;
-        infoIcon = new InfoIcon(SafeHtmlUtils.fromString(new String()), resources);
+        infoIcon = new InfoIcon(SafeHtmlUtils.EMPTY_SAFE_HTML, resources);
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 

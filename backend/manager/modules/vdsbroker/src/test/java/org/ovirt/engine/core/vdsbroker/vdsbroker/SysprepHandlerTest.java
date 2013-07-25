@@ -27,7 +27,7 @@ public class SysprepHandlerTest {
 
     @Test
     public void replace_emptyBuilder() {
-        runAndCheck(new String(), "a", "b", "");
+        runAndCheck("", "a", "b", "");
     }
 
     @Test

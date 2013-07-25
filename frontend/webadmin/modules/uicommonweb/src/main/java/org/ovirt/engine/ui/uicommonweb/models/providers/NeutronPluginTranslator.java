@@ -43,7 +43,7 @@ public class NeutronPluginTranslator {
             return EnumTranslator.createAndTranslate(OpenstackNetworkPluginType.valueOf(pluginName));
         }
         catch (Exception e) {
-            return pluginName == null ? new String() : pluginName;
+            return pluginName == null ? "" : pluginName; //$NON-NLS-1$
         }
     }
 

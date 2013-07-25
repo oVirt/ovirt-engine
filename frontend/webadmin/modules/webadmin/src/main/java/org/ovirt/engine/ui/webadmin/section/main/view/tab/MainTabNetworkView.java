@@ -145,7 +145,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
         providerColumn = new LinkColumnWithTooltip<NetworkView>() {
             @Override
             public String getValue(NetworkView object) {
-                return object.getProvidedBy() == null ? new String() : object.getProviderName();
+                return object.getProvidedBy() == null ? "" : object.getProviderName(); //$NON-NLS-1$
             }
         };
         getTable().addColumn(providerColumn, constants.providerNetwork(), "200px"); //$NON-NLS-1$
