@@ -10,15 +10,15 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class RepoImage extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = 566928138057530047L;
-    private Guid storagePoolId = Guid.Empty;
+    private Guid storagePoolId;
     private StoragePoolStatus storagePoolStatus;
     private VDSStatus vdsStatus;
-    private Guid repoDomainId = Guid.Empty;
+    private Guid repoDomainId;
     private StorageDomainStatus storageDomainStatus;
     private String repoImageId;
     private String repoImageName;
-    private long size = 0;
-    private Date dateCreated = new Date();
+    private long size;
+    private Date dateCreated;
     private long lastRefreshed;
     private ImageFileType fileType;
 
@@ -26,6 +26,10 @@ public class RepoImage extends IVdcQueryable implements Serializable {
      * Empty constructor for retrieving new clean entity
      */
     public RepoImage() {
+        storagePoolId = Guid.Empty;
+        repoDomainId = Guid.Empty;
+        size = 0;
+        dateCreated = new Date();
     }
 
     /**
