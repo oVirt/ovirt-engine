@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
@@ -22,8 +23,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParameters>
         extends VmTemplateInterfaceCommandBase<T> {
@@ -71,15 +70,13 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
             return false;
         }
 
-        if (getNetworkName() != null) {
+        if (getParameters().getInterface().getVnicProfileId() != null) {
             // check that the network exists in current cluster
-            List<Network> networks = getNetworkDAO().getAllForCluster(getVmTemplate().getVdsGroupId());
-            if (null == LinqUtils.firstOrNull(networks, new Predicate<Network>() {
-                @Override
-                public boolean eval(Network network) {
-                    return network.getName().equals(getNetworkName());
-                }
-            })) {
+            Network interfaceNetwork =
+                    NetworkHelper.getNetworkByVnicProfileId(getParameters().getInterface().getVnicProfileId());
+
+            if (interfaceNetwork == null
+                    || !NetworkHelper.isNetworkInCluster(interfaceNetwork, getVmTemplate().getVdsGroupId())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
                 return false;
             }

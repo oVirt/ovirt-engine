@@ -9,17 +9,17 @@ public class AddVmTemplateInterfaceParameters extends VmTemplateParametersBase {
     private static final long serialVersionUID = 5177618608953713542L;
 
     @Valid
-    private VmNetworkInterface _interface;
+    private VmNetworkInterface nic;
 
-    public AddVmTemplateInterfaceParameters(Guid vmtId, VmNetworkInterface iface) {
-        super(vmtId);
-        _interface = iface;
+    public AddVmTemplateInterfaceParameters() {
+    }
+
+    public AddVmTemplateInterfaceParameters(Guid templateId, VmNetworkInterface nic) {
+        super(templateId);
+        this.nic = nic;
     }
 
     public VmNetworkInterface getInterface() {
-        return _interface;
-    }
-
-    public AddVmTemplateInterfaceParameters() {
+        return nic;
     }
 }

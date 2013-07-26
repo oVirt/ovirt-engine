@@ -35,10 +35,6 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
         return VmInterfaceType.forValue(getParameters().getInterface().getType()).getDescription();
     }
 
-    public String getNetworkName() {
-        return getParameters().getInterface().getNetworkName();
-    }
-
     protected boolean interfaceNameUnique(List<VmNic> interfaces) {
         return VmHandler.IsNotDuplicateInterfaceName(interfaces,
                 getInterfaceName(),
