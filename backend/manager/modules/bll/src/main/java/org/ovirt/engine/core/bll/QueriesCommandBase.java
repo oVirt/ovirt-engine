@@ -73,20 +73,14 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
                         } else {
                             returnValue.setExceptionString(vdcExc.getMessage());
                         }
-                        log.errorFormat("Query {0} failed. Exception message is {1}",
+                        log.errorFormat("Query {0} failed. Exception message is {1} : {2}",
                                 getClass().getSimpleName(),
-                                vdcExc.getMessage());
-                        if (log.isDebugEnabled()) {
-                            log.debugFormat("Detailed stacktrace:", vdcExc);
-                        }
+                                vdcExc.getMessage(), vdcExc);
                     } else {
                         returnValue.setExceptionString(ex.getMessage());
-                        log.errorFormat("Query {0} failed. Exception message is {1}",
+                        log.errorFormat("Query {0} failed. Exception message is {1} : {2}",
                                 getClass().getSimpleName(),
-                                ex.getMessage());
-                        if (log.isDebugEnabled()) {
-                            log.debugFormat("Detailed stacktrace:", ex);
-                        }
+                                ex.getMessage(), ex);
                     }
                 }
             } else {
