@@ -8,6 +8,9 @@ public class ExportRepoImageParameters extends ImagesActionsParametersBase {
 
     private Guid destinationDomainId;
 
+    public ExportRepoImageParameters() {
+    }
+
     public ExportRepoImageParameters(Guid imageId) {
         super(imageId);
     }
