@@ -5,7 +5,7 @@ import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.OpenstackImageProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -42,8 +42,8 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
                 agentConfiguration = networkProperties.getAgentConfiguration();
                 break;
             case OPENSTACK_IMAGE:
-                OpenstackImageProviderProperties imageProperties =
-                        (OpenstackImageProviderProperties) entity.getAdditionalProperties();
+                OpenStackImageProviderProperties imageProperties =
+                        (OpenStackImageProviderProperties) entity.getAdditionalProperties();
                 tenantName = imageProperties.getTenantName();
                 break;
             default:
@@ -124,7 +124,7 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
                         .deserialize(rs.getString("agent_configuration"), AgentConfiguration.class));
                 return networkProperties;
             case OPENSTACK_IMAGE:
-                OpenstackImageProviderProperties imageProperties = new OpenstackImageProviderProperties();
+                OpenStackImageProviderProperties imageProperties = new OpenStackImageProviderProperties();
                 imageProperties.setTenantName(rs.getString("tenant_name"));
                 return imageProperties;
             default:

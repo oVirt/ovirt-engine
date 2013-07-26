@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.provider.OpenstackImageProviderProxy;
+import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class ImportRepoImageCopyTaskHandler
         extends AbstractSPMAsyncTaskHandler<TaskHandlerCommand<? extends ImportRepoImageParameters>> {
 
-    private OpenstackImageProviderProxy providerProxy;
+    private OpenStackImageProviderProxy providerProxy;
 
     public ImportRepoImageCopyTaskHandler(TaskHandlerCommand<? extends ImportRepoImageParameters> cmd) {
         super(cmd);
@@ -36,9 +36,9 @@ public class ImportRepoImageCopyTaskHandler
         return AsyncTaskType.copyImage;
     }
 
-    protected OpenstackImageProviderProxy getProviderProxy() {
+    protected OpenStackImageProviderProxy getProviderProxy() {
         if (providerProxy == null) {
-            providerProxy = OpenstackImageProviderProxy
+            providerProxy = OpenStackImageProviderProxy
                     .getFromStorageDomainId(getEnclosingCommand().getParameters().getSourceStorageDomainId());
         }
         return providerProxy;

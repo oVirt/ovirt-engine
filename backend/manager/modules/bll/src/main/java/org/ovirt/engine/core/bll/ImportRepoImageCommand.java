@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.provider.OpenstackImageProviderProxy;
+import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -28,7 +28,7 @@ import java.util.Map;
 public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends CommandBase<T>
         implements TaskHandlerCommand<ImportRepoImageParameters>, QuotaStorageDependent {
 
-    private OpenstackImageProviderProxy providerProxy;
+    private OpenStackImageProviderProxy providerProxy;
 
     public ImportRepoImageCommand(T parameters) {
         super(parameters);
@@ -40,9 +40,9 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         return ProviderProxyFactory.getInstance();
     }
 
-    protected OpenstackImageProviderProxy getProviderProxy() {
+    protected OpenStackImageProviderProxy getProviderProxy() {
         if (providerProxy == null) {
-            providerProxy = OpenstackImageProviderProxy
+            providerProxy = OpenStackImageProviderProxy
                     .getFromStorageDomainId(getParameters().getSourceStorageDomainId());
         }
         return providerProxy;

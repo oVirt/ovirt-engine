@@ -44,7 +44,7 @@
 		<include name="common/businessentities/OpenstackNetworkProviderProperties.java" />
 		<include name="common/businessentities/OpenstackNetworkPluginType.java" />
 		<include name="common/businessentities/DiskAlignment.java" />
-		<include name="common/businessentities/OpenstackImageProviderProperties.java" />
+		<include name="common/businessentities/OpenStackImageProviderProperties.java" />
 
 		<!-- Network business entities -->
 		<include name="common/businessentities/network/VdsNetworkInterface.java" />

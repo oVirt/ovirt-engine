@@ -4,7 +4,7 @@ import java.util.Arrays;
 import org.ovirt.engine.core.common.action.ProviderParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.OpenstackImageProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -248,7 +248,7 @@ public class ProviderModel extends Model {
             properties.setAgentConfiguration(getNeutronAgentModel().flush());
             provider.setAdditionalProperties(properties);
         } else if (isTypeOpenStackImage()) {
-            provider.setAdditionalProperties(new OpenstackImageProviderProperties());
+            provider.setAdditionalProperties(new OpenStackImageProviderProperties());
         }
 
         boolean authenticationRequired = (Boolean) requiresAuthentication.getEntity();

@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.ovirt.engine.core.bll.provider.OpenstackImageProviderProxy;
+import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
@@ -171,7 +171,7 @@ public class IsoDomainListSyncronizer {
             boolean forceRefresh) {
         // The result list we send back.
         List<RepoImage> repoList = null;
-        if (! isStorageDomainValid(storageDomainId, imageType, forceRefresh)){
+        if (!isStorageDomainValid(storageDomainId, imageType, forceRefresh)) {
             return null;
         }
         // At any case, if refreshed or not, get Iso list from the cache.
@@ -212,7 +212,7 @@ public class IsoDomainListSyncronizer {
         final RepoFileMetaDataDAO repoFileMetaDataDao = repoStorageDom;
 
         Provider provider = providerDao.get(new Guid(storageDomain.getStorage()));
-        final OpenstackImageProviderProxy client = ProviderProxyFactory.getInstance().create(provider);
+        final OpenStackImageProviderProxy client = ProviderProxyFactory.getInstance().create(provider);
 
         Lock syncObject = getSyncObject(storageDomain.getId(), imageType);
         try {

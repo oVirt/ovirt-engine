@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
-import org.ovirt.engine.core.bll.provider.OpenstackImageProviderProxy;
+import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -41,7 +41,7 @@ public class ImportExportRepoImageCommandTest {
     private DiskImageDAO diskImageDao;
 
     @Mock
-    private OpenstackImageProviderProxy providerProxy;
+    private OpenStackImageProviderProxy providerProxy;
 
     private Guid providerId;
 
@@ -85,7 +85,7 @@ public class ImportExportRepoImageCommandTest {
         return storagePoolDao;
     }
 
-    public OpenstackImageProviderProxy getProviderProxy() {
+    public OpenStackImageProviderProxy getProviderProxy() {
         return providerProxy;
     }
 

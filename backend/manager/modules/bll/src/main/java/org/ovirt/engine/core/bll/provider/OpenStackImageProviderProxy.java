@@ -9,7 +9,7 @@ import com.woorea.openstack.glance.model.ImageDownload;
 import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
-import org.ovirt.engine.core.common.businessentities.OpenstackImageProviderProperties;
+import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -35,7 +35,7 @@ import java.util.List;
 import java.util.Map;
 
 
-public class OpenstackImageProviderProxy implements ProviderProxy {
+public class OpenStackImageProviderProxy implements ProviderProxy {
 
     enum GlanceImageFormat {
         RAW("raw"),
@@ -75,13 +75,13 @@ public class OpenstackImageProviderProxy implements ProviderProxy {
 
     private static final int QCOW2_SIZE_OFFSET = 24;
 
-    private Provider<OpenstackImageProviderProperties> provider;
+    private Provider<OpenStackImageProviderProperties> provider;
 
     private OpenStackTokenProvider tokenProvider;
 
     private Glance client;
 
-    public OpenstackImageProviderProxy(Provider<OpenstackImageProviderProperties> provider) {
+    public OpenStackImageProviderProxy(Provider<OpenStackImageProviderProperties> provider) {
         this.provider = provider;
     }
 
@@ -139,7 +139,7 @@ public class OpenstackImageProviderProxy implements ProviderProxy {
         return provider;
     }
 
-    public static OpenstackImageProviderProxy getFromStorageDomainId(Guid storageDomainId) {
+    public static OpenStackImageProviderProxy getFromStorageDomainId(Guid storageDomainId) {
         StorageDomainStatic storageDomainStatic = getDbFacade().getStorageDomainStaticDao().get(storageDomainId);
         if (storageDomainStatic != null) {
             Provider provider = getDbFacade().getProviderDao().get(new Guid(storageDomainStatic.getStorage()));

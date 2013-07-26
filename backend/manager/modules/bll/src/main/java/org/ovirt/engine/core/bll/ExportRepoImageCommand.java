@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.provider.OpenstackImageProviderProxy;
+import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -34,7 +34,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
 
     private DiskImage diskImage;
 
-    private OpenstackImageProviderProxy providerProxy;
+    private OpenStackImageProviderProxy providerProxy;
 
     public ExportRepoImageCommand(T parameters) {
         super(parameters);
@@ -45,9 +45,9 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
         return ProviderProxyFactory.getInstance();
     }
 
-    protected OpenstackImageProviderProxy getProviderProxy() {
+    protected OpenStackImageProviderProxy getProviderProxy() {
         if (providerProxy == null) {
-            providerProxy = OpenstackImageProviderProxy
+            providerProxy = OpenStackImageProviderProxy
                     .getFromStorageDomainId(getParameters().getDestinationDomainId());
         }
         return providerProxy;
@@ -85,7 +85,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
     @Override
     protected void executeCommand() {
         DiskImage diskImage = getDiskImage();
-        OpenstackImageProviderProxy proxy = getProviderProxy();
+        OpenStackImageProviderProxy proxy = getProviderProxy();
 
         acquireImageDbLock();
 
