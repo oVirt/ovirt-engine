@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.asynctasks.EndedTasksInfo;
+import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -130,7 +131,9 @@ public class CommandMultiAsyncTasks {
             java.util.ArrayList<CommandAsyncTask> CurrentActionTypeTasks = getCurrentTasks();
 
             for (CommandAsyncTask task : CurrentActionTypeTasks) {
-                task.clearAsyncTask();
+                if (task.getLastTaskStatus().getStatus() == AsyncTaskStatusEnum.finished) {
+                    task.clearAsyncTask();
+                }
             }
         }
     }
