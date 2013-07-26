@@ -16,6 +16,7 @@ import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.DisksResource;
+import org.ovirt.engine.api.resource.ImagesResource;
 import org.ovirt.engine.api.resource.RemovableStorageDomainContentsResource;
 import org.ovirt.engine.api.resource.FilesResource;
 import org.ovirt.engine.api.resource.StorageDomainResource;
@@ -109,12 +110,16 @@ public class BackendStorageDomainResource extends
         return type != null && type == StorageDomainType.EXPORT ? true : false;
     }
 
+    public static synchronized boolean isImageDomain(StorageDomain storageDomain) {
+        StorageDomainType type = StorageDomainType.fromValue(storageDomain.getType());
+        return type != null && type == StorageDomainType.IMAGE;
+    }
+
     public static synchronized String[] getLinksToExclude(StorageDomain storageDomain) {
-        return isIsoDomain(storageDomain) ? new String[] { "templates", "vms", "disks", "storageconnections" }
-                                            :
-                                            isExportDomain(storageDomain) ? new String[]{"files", "storageconnections"}
-                                                                            :
-                                                                            new String[]{"templates", "vms", "files"};
+        return isIsoDomain(storageDomain) ? new String[] { "templates", "vms", "disks", "storageconnections", "images" }
+                : isExportDomain(storageDomain) ? new String[] { "files", "storageconnections", "images" }
+                    : isImageDomain(storageDomain) ? new String[] { "templates", "vms", "files", "disks", "storageconnections" }
+                        : new String[] { "templates", "vms", "files", "images" };
     }
 
     /**
@@ -272,5 +277,9 @@ public class BackendStorageDomainResource extends
     @Override
     public StorageDomainServerConnectionsResource getStorageConnectionsResource() {
         return inject(new BackendStorageDomainServerConnectionsResource(guid));
+    }
+
+    public ImagesResource getImagesResource() {
+        return inject(new BackendStorageDomainImagesResource(guid));
     }
 }

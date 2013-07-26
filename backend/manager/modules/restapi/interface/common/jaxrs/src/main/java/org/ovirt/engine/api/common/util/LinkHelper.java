@@ -45,6 +45,7 @@ import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Hook;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostNIC;
+import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.LinkCapabilities;
@@ -110,6 +111,8 @@ import org.ovirt.engine.api.resource.HostNicsResource;
 import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostStorageResource;
 import org.ovirt.engine.api.resource.HostsResource;
+import org.ovirt.engine.api.resource.ImageResource;
+import org.ovirt.engine.api.resource.ImagesResource;
 import org.ovirt.engine.api.resource.JobResource;
 import org.ovirt.engine.api.resource.JobsResource;
 import org.ovirt.engine.api.resource.NetworkResource;
@@ -239,6 +242,10 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(FileResource.class, FilesResource.class, StorageDomain.class);
         TYPES.put(File.class, map);
+
+        map = new ParentToCollectionMap(ImageResource.class, ImagesResource.class);
+        map.add(ImageResource.class, ImagesResource.class, StorageDomain.class);
+        TYPES.put(Image.class, map);
 
         map = new ParentToCollectionMap(GroupResource.class, GroupsResource.class);
         map.add(DomainGroupResource.class, DomainGroupsResource.class, Domain.class);

@@ -65,6 +65,7 @@ public class FeaturesHelper {
             addSingleQxlPciFeature(features);
             addFeatureAddVmFromOvf(features);
             addVnicProfilesFeature(features);
+            addStorageDomainImageFeature(features);
         }
         return features;
     }
@@ -332,6 +333,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Vnic Profiles");
         feature.setDescription("Configuring VM network interface by a profile (for network QoS, custom properties and port mirroring)");
+        features.getFeature().add(feature);
+    }
+
+    private void addStorageDomainImageFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Image Storage Domains (Tech Preview)");
+        feature.setDescription("Importing and exporting images from and to image storage domain (as for example OpenStack glance)");
         features.getFeature().add(feature);
     }
 }

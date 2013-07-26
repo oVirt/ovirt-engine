@@ -49,7 +49,7 @@ public class BackendStorageDomainsResource
     extends AbstractBackendCollectionResource<StorageDomain, org.ovirt.engine.core.common.businessentities.StorageDomain>
     implements StorageDomainsResource {
 
-    static final String[] SUB_COLLECTIONS = { "permissions", "files", "templates", "vms", "disks" , "storageconnections"};
+    static final String[] SUB_COLLECTIONS = { "permissions", "files", "templates", "vms", "disks" , "storageconnections", "images" };
 
     private StorageDomain storageDomain = null; //utility variable; used in the context of a single activation of remove()
 

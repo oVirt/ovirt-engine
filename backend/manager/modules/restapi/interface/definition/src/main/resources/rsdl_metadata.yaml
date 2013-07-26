@@ -1020,6 +1020,32 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
+- name: /api/storagedomains/{storagedomain:id}/images|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /api/storagedomains/{storagedomain:id}/images/{images:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/storagedomains/{storagedomain:id}/images/{images:id}/import|rel=import
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /api/storagedomains/{storagedomain:id}/permissions|rel=get
   request:
     body:

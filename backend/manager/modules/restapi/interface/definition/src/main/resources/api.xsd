@@ -1778,6 +1778,36 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <!-- Images -->
+
+  <xs:element name="image" type="Image"/>
+
+  <xs:element name="images" type="Images"/>
+
+  <xs:complexType name="Image">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Images">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="Images"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="image" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- Hooks -->
+
   <xs:element name="hook" type="Hook"/>
 
   <xs:element name="hooks" type="Hooks"/>

@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.BackendDataCenterResource.getStoragePools;
+
 import java.net.URI;
 import java.util.List;
 
@@ -17,6 +19,7 @@ import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -217,5 +220,10 @@ public abstract class AbstractBackendActionableResource <R extends BaseResource,
             }
             return null;
         }
+    }
+
+    public Guid getDataCenterId(Guid storageDomainId) {
+        List<StoragePool> storagepools = getStoragePools(storageDomainId, this);
+        return storagepools.size() > 0 ? storagepools.get(0).getId() : null;
     }
 }
