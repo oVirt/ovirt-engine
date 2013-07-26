@@ -88,7 +88,7 @@ public class VmMapper {
         staticVm.setAutoStartup(entity.isAutoStartup());
         staticVm.setDefaultBootSequence(entity.getDefaultBootSequence());
         staticVm.setVmType(entity.getVmType());
-        entity.setDefaultDisplayType(entity.getDefaultDisplayType());
+        staticVm.setDefaultDisplayType(entity.getDefaultDisplayType());
         staticVm.setIsoPath(entity.getIsoPath());
         staticVm.setNumOfSockets(entity.getNumOfSockets());
         staticVm.setCpuPerSocket(entity.getCpuPerSocket());
