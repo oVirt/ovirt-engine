@@ -119,7 +119,9 @@ class Plugin(plugin.PluginBase):
         if os.path.exists(legacy_confd):
             for n in glob.glob(os.path.join(legacy_confd, '*.conf')):
                 with open(n, 'r') as f:
-                    self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                    self.environment[
+                        otopicons.CoreEnv.MAIN_TRANSACTION
+                    ].append(
                         filetransaction.FileTransaction(
                             name=os.path.join(
                                 (
