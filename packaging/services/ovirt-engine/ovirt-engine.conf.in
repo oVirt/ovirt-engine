@@ -15,7 +15,7 @@ SENSITIVE_KEYS=""
 #
 # The location of the Java virtual machine used by the engine:
 #
-JAVA_HOME=/usr/lib/jvm/jre-1.7.0-openjdk.x86_64
+JAVA_HOME=/bin/false
 
 #
 # The location of the application server used by the engine:
@@ -115,25 +115,17 @@ ENGINE_APPS=engine.ear
 # Flags to enable or disable the web server (the proxy) and the
 # connectors of the application server:
 #
-ENGINE_PROXY_ENABLED=true
 ENGINE_HTTP_ENABLED=false
 ENGINE_HTTPS_ENABLED=false
-ENGINE_AJP_ENABLED=true
-
-#
-# Engine host fully qualified domain name:
-#
-ENGINE_FQDN=localhost.localdomain
-
-#
-# Ports used by the web server (the proxy) and by the connectors
-# of the application server:
-#
-ENGINE_PROXY_HTTP_PORT=80
-ENGINE_PROXY_HTTPS_PORT=443
 ENGINE_HTTP_PORT=8700
 ENGINE_HTTPS_PORT=8701
+
+ENGINE_AJP_ENABLED=false
 ENGINE_AJP_PORT=8702
+
+ENGINE_PROXY_ENABLED=false
+ENGINE_PROXY_HTTP_PORT=80
+ENGINE_PROXY_HTTPS_PORT=443
 
 #
 # A comma separated list of the SSL protocols supported by the engine
@@ -146,6 +138,11 @@ ENGINE_AJP_PORT=8702
 #   TLSv1.2
 #
 ENGINE_HTTPS_PROTOCOLS=SSLv3,TLSv1,TLSv1.1,TLSv1.2
+
+#
+# Engine host fully qualified domain name:
+#
+ENGINE_FQDN=localhost.localdomain
 
 #
 # Database connection details (note that the password is

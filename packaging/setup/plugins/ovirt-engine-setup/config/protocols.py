@@ -88,19 +88,13 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
     )
     def _misc(self):
-        #
-        # TODO
-        # Defaults of engine should be HTTP[s]_ENABLED=false
-        #
         if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
             content = (
                 'ENGINE_FQDN={fqdn}\n'
-                'ENGINE_PROXY_ENABLED=false\n'
                 'ENGINE_HTTP_ENABLED=true\n'
                 'ENGINE_HTTPS_ENABLED=true\n'
                 'ENGINE_HTTP_PORT={httpPort}\n'
                 'ENGINE_HTTPS_PORT={httpsPort}\n'
-                'ENGINE_AJP_ENABLED=false\n'
                 'ENGINE_DEBUG_ADDRESS={debugAddress}\n'
             ).format(
                 fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
@@ -120,8 +114,6 @@ class Plugin(plugin.PluginBase):
                 'ENGINE_PROXY_ENABLED=true\n'
                 'ENGINE_PROXY_HTTP_PORT={httpPort}\n'
                 'ENGINE_PROXY_HTTPS_PORT={httpsPort}\n'
-                'ENGINE_HTTP_ENABLED=false\n'
-                'ENGINE_HTTPS_ENABLED=false\n'
                 'ENGINE_AJP_ENABLED=true\n'
                 'ENGINE_AJP_PORT={ajpPort}\n'
             ).format(
