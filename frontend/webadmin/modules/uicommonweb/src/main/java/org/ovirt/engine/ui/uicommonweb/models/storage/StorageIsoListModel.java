@@ -59,6 +59,7 @@ public class StorageIsoListModel extends SearchableListModel
     {
         if (value == null || !value.equals(getEntity())) {
             super.setEntity(value);
+            updateActionAvailability();
         }
     }
 
@@ -170,8 +171,12 @@ public class StorageIsoListModel extends SearchableListModel
         @SuppressWarnings("unchecked")
         ArrayList<RepoImage> selectedImages =
                 getSelectedItems() != null ? (ArrayList<RepoImage>) getSelectedItems() : new ArrayList<RepoImage>();
-        getImportImagesCommand().setIsExecutionAllowed(storageDomain != null &&
-                storageDomain.getStorageType() == StorageType.GLANCE && selectedImages.size() > 0);
+        if (storageDomain != null && storageDomain.getStorageType() == StorageType.GLANCE) {
+            getImportImagesCommand().setIsAvailable(true);
+            getImportImagesCommand().setIsExecutionAllowed(selectedImages.size() > 0);
+        } else {
+            getImportImagesCommand().setIsAvailable(false);
+        }
     }
 
     @Override
