@@ -16,6 +16,7 @@ import com.google.gwt.user.client.ui.SuggestBox.DefaultSuggestionDisplay;
 import com.google.gwt.user.client.ui.SuggestOracle.Suggestion;
 import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.TextBoxBase;
+import com.google.gwt.user.client.ui.Widget;
 
 /**
  * Base SuggestBox widget that adapts to UiCommon list model items.
@@ -50,6 +51,10 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
 
     protected void hideSuggestions() {
         suggestionDisplay.hide();
+    }
+
+    protected boolean isSuggestionListShowing() {
+        return suggestionDisplay.isSuggestionListShowing();
     }
 
     @Override
@@ -95,7 +100,7 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
 
     @Override
     public void setFocus(boolean focused) {
-        asSuggestBox().setFocus(focused);
+        asSuggestBox().getValueBox().setFocus(focused);
     }
 
     @Override
@@ -113,6 +118,10 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
         asTextBox().setEnabled(enabled);
     }
 
+    public Widget getSuggestionMenu() {
+        return suggestionDisplay.getSuggestionMenu();
+    }
+
     public void setValue(T value) {
         setValue(value, false);
     }
@@ -120,6 +129,10 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
     public void setValue(T value, boolean fireEvents) {
         this.value = value;
         render(value, fireEvents);
+    }
+
+    public void setAutoHideEnabled(boolean enabled) {
+        suggestionDisplay.setAutoHideEnabled(enabled);
     }
 
     /**
@@ -157,6 +170,8 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
 
     class ListModelSuggestionDisplay extends DefaultSuggestionDisplay {
 
+        private Widget suggestionMenu;
+
         public ListModelSuggestionDisplay() {
             // not be hidden under the panel
             getPopupPanel().getElement().getStyle().setZIndex(1);
@@ -170,6 +185,20 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
 
         public void hide() {
             getPopupPanel().hide();
+        }
+
+        public void setAutoHideEnabled(boolean enabled) {
+            getPopupPanel().setAutoHideEnabled(enabled);
+        }
+
+        public Widget getSuggestionMenu() {
+            return suggestionMenu;
+        }
+
+        @Override
+        protected Widget decorateSuggestionList(Widget suggestionList) {
+            this.suggestionMenu = suggestionList;
+            return super.decorateSuggestionList(suggestionList);
         }
     }
 }

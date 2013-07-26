@@ -1,5 +1,13 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.MouseDownEvent;
+import com.google.gwt.event.dom.client.MouseDownHandler;
+import com.google.gwt.event.dom.client.MouseUpEvent;
+import com.google.gwt.event.dom.client.MouseUpHandler;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -13,7 +21,6 @@ import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
-import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
@@ -70,64 +77,75 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         this.renderer = renderer;
 
         suggestBox = asSuggestBox();
+
+        // this needs to be handled by focus on text box and clicks on drop down image
+        setAutoHideEnabled(false);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         registerListeners();
     }
 
     private void registerListeners() {
-        dropDownImage.addClickHandler(new ClickHandler() {
-
-            @Override
-            public void onClick(ClickEvent event) {
-                showAllSuggestions();
-            }
-        });
+        SuggestBoxFocusHandler handlers = new SuggestBoxFocusHandler();
+        suggestBox.getValueBox().addBlurHandler(handlers);
+        suggestBox.getValueBox().addFocusHandler(handlers);
 
         // not listening to focus because it would show the suggestions also after the whole browser
         // gets the focus back (after loosing it) if this was the last element with focus
-        suggestBox.getTextBox().addClickHandler(new ClickHandler() {
+        suggestBox.getValueBox().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                showAllSuggestions();
+                switchSuggestions();
             }
         });
 
-        // make sure that after leaving the text box a valid value or empty value will be rendered in the text box
-        suggestBox.getTextBox().addBlurHandler(new BlurHandler() {
-
+        dropDownImage.addMouseDownHandler(new FocusHandlerEnablingMouseHandlers(handlers));
+        dropDownImage.addMouseUpHandler(new FocusHandlerEnablingMouseHandlers(handlers) {
             @Override
-            public void onBlur(BlurEvent event) {
-                if (eventHandler != null) {
-                    eventHandler.removeHandler();
+            public void onMouseUp(MouseUpEvent event) {
+                super.onMouseUp(event);
+                switchSuggestions();
+            }
+        });
+
+        getSuggestionMenu().addDomHandler(new FocusHandlerEnablingMouseHandlers(handlers), MouseDownEvent.getType());
+
+        // no need to do additional switchSuggestions() - it is processed by MenuBar itself
+        getSuggestionMenu().addDomHandler(new FocusHandlerEnablingMouseHandlers(handlers), MouseUpEvent.getType());
+
+        asSuggestBox().addValueChangeHandler(new ValueChangeHandler<String>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<String> event) {
+                // in case of other way changed the value (like clicking somewhere else when there is a correct value)
+                // hide the suggest box
+                if(isSuggestionListShowing()) {
+                    hideSuggestions();
                 }
-
-                adjustSelectedValue();
-            }
-
-        });
-
-        suggestBox.getTextBox().addFocusHandler(new FocusHandler() {
-
-            @Override
-            public void onFocus(FocusEvent event) {
-                eventHandler =
-                        Event.addNativePreviewHandler(new EnterIgnoringNativePreviewHandler<T>(ListModelTypeAheadListBox.this));
             }
         });
 
     }
 
-    private void showAllSuggestions() {
+    private void switchSuggestions() {
         if (!isEnabled()) {
             return;
         }
 
-        // show all the suggestions even if there is already something filled
-        // otherwise it is not obvious that there are more options
-        suggestBox.setText(null);
-        suggestBox.showSuggestionList();
-        setFocus(true);
+        if (isSuggestionListShowing()) {
+            hideSuggestions();
+            adjustSelectedValue();
+        } else {
+            // show all the suggestions even if there is already something filled
+            // otherwise it is not obvious that there are more options
+            suggestBox.setText(null);
+            suggestBox.showSuggestionList();
+
+            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                public void execute () {
+                    setFocus(true);
+                }
+            });
+        }
     }
 
     private void adjustSelectedValue() {
@@ -236,6 +254,55 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             mainPanel.getElement().replaceClassName(style.enabledMainPanel(), style.disabledMainPanel());
         }
     }
+
+    class SuggestBoxFocusHandler implements FocusHandler, BlurHandler {
+
+        private boolean enabled = true;
+
+        @Override
+        public void onBlur(BlurEvent blurEvent) {
+            if (eventHandler != null) {
+                eventHandler.removeHandler();
+            }
+
+            // process only if it will not be processed by other handlers
+            if (enabled) {
+                // first give the opportunity to the click handler on the menu to process the event, than we can hide it
+                hideSuggestions();
+                adjustSelectedValue();
+            }
+        }
+
+        public void setEnabled(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        @Override
+        public void onFocus(FocusEvent event) {
+            eventHandler =
+                    Event.addNativePreviewHandler(new EnterIgnoringNativePreviewHandler<T>(ListModelTypeAheadListBox.this));
+        }
+    }
+
+    class FocusHandlerEnablingMouseHandlers implements MouseDownHandler, MouseUpHandler {
+
+        private SuggestBoxFocusHandler focusHandler;
+
+        public FocusHandlerEnablingMouseHandlers(SuggestBoxFocusHandler focusHandler) {
+            this.focusHandler = focusHandler;
+        }
+
+        @Override
+        public void onMouseDown(MouseDownEvent event) {
+            focusHandler.setEnabled(false);
+        }
+
+        @Override
+        public void onMouseUp(MouseUpEvent event) {
+            focusHandler.setEnabled(true);
+        }
+    }
+
 }
 
 class RenderableSuggestion<T> extends MultiWordSuggestion {
@@ -308,7 +375,7 @@ class EnterIgnoringNativePreviewHandler<T> implements NativePreviewHandler {
     @Override
     public void onPreviewNativeEvent(NativePreviewEvent event) {
         NativeEvent nativeEvent = event.getNativeEvent();
-        if (nativeEvent.getKeyCode() == KeyCodes.KEY_ENTER) {
+        if (nativeEvent.getKeyCode() == KeyCodes.KEY_ENTER && event.getTypeInt() == Event.ONKEYPRESS && !event.isCanceled()) {
             // swallow the enter key otherwise the whole dialog would get submitted
             nativeEvent.preventDefault();
             nativeEvent.stopPropagation();
