@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
+import java.util.List;
+
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.PredefinedRoles;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -7,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * Class to hold common static methods that are used in several different places.
@@ -63,5 +66,29 @@ public class NetworkHelper {
         perms.setObjectId(entityId);
         perms.setrole_id(role.getId());
         MultiLevelAdministrationHandler.addPermission(perms);
+    }
+
+    public static Network getNetworkByVnicProfileId(Guid vnicProfileId) {
+        if (vnicProfileId == null) {
+            return null;
+        }
+
+        Network retVal = null;
+        VnicProfile vnicProfile = DbFacade.getInstance().getVnicProfileDao().get(vnicProfileId);
+        if (vnicProfile.getNetworkId() != null) {
+            retVal = DbFacade.getInstance().getNetworkDao().get(vnicProfile.getNetworkId());
+        }
+        return retVal;
+    }
+
+    public static boolean isNetworkInCluster(Network network, Guid clusterId) {
+        List<Network> networks = DbFacade.getInstance().getNetworkDao().getAllForCluster(clusterId);
+        for (Network clusterNetwork : networks) {
+            if (clusterNetwork.getId().equals(network.getId())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
