@@ -780,13 +780,17 @@ class ConfigEnv(object):
     JAVA_HOME = 'OVESETUP_CONFIG/javaHome'
     JBOSS_HOME = 'OVESETUP_CONFIG/jbossHome'
 
+    PUBLIC_HTTP_PORT = 'OVESETUP_CONFIG/publicHttpPort'  # internal use
+    PUBLIC_HTTPS_PORT = 'OVESETUP_CONFIG/publicHttpsPort'  # internal use
     HTTP_PORT = 'OVESETUP_CONFIG/httpPort'
     HTTPS_PORT = 'OVESETUP_CONFIG/httpsPort'
     JBOSS_HTTP_PORT = 'OVESETUP_CONFIG/jbossHttpPort'
     JBOSS_HTTPS_PORT = 'OVESETUP_CONFIG/jbossHttpsPort'
     JBOSS_AJP_PORT = 'OVESETUP_CONFIG/jbossAjpPort'
-    JBOSS_DEBUG_ADDRESS = 'OVESETUP_CONFIG/jbossDebugAddress'
+    JBOSS_DIRECT_HTTP_PORT = 'OVESETUP_CONFIG/jbossDirectHttpPort'
+    JBOSS_DIRECT_HTTPS_PORT = 'OVESETUP_CONFIG/jbossDirectHttpsPort'
     WEBSOCKET_PROXY_PORT = 'OVESETUP_CONFIG/websocketProxyPort'
+    JBOSS_DEBUG_ADDRESS = 'OVESETUP_CONFIG/jbossDebugAddress'
 
     MAC_RANGE_POOL = 'OVESETUP_CONFIG/macRangePool'
 

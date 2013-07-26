@@ -67,6 +67,14 @@ class Plugin(plugin.PluginBase):
             osetupcons.ConfigEnv.JBOSS_DEBUG_ADDRESS,
             osetupcons.Defaults.DEFAULT_NETWORK_JBOSS_DEBUG_ADDRESS
         )
+        self.environment.setdefault(
+            osetupcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT,
+            None
+        )
+        self.environment.setdefault(
+            osetupcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT,
+            None
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
@@ -74,58 +82,91 @@ class Plugin(plugin.PluginBase):
     def _setup(self):
         if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
             self.environment[
-                osetupcons.ConfigEnv.HTTP_PORT
+                osetupcons.ConfigEnv.JBOSS_AJP_PORT
+            ] = None
+            self.environment[
+                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
             ] = self.environment[
                 osetupcons.ConfigEnv.JBOSS_HTTP_PORT
             ]
             self.environment[
-                osetupcons.ConfigEnv.HTTPS_PORT
+                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT
             ] = self.environment[
                 osetupcons.ConfigEnv.JBOSS_HTTPS_PORT
+            ]
+        if self.environment[
+            osetupcons.ConfigEnv.JBOSS_AJP_PORT
+        ] is None:
+            self.environment[
+                osetupcons.ConfigEnv.PUBLIC_HTTP_PORT
+            ] = self.environment[
+                osetupcons.ConfigEnv.JBOSS_HTTP_PORT
+            ]
+            self.environment[
+                osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT
+            ] = self.environment[
+                osetupcons.ConfigEnv.JBOSS_HTTPS_PORT
+            ]
+        else:
+            self.environment[
+                osetupcons.ConfigEnv.PUBLIC_HTTP_PORT
+            ] = self.environment[
+                osetupcons.ConfigEnv.HTTP_PORT
+            ]
+            self.environment[
+                osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT
+            ] = self.environment[
+                osetupcons.ConfigEnv.HTTPS_PORT
             ]
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
     )
     def _misc(self):
+        def flag(o):
+            return 'true' if o else 'false'
+        content = (
+            'ENGINE_FQDN={fqdn}\n'
+            'ENGINE_PROXY_ENABLED={proxyFlag}\n'
+            'ENGINE_PROXY_HTTP_PORT={proxyHttpPort}\n'
+            'ENGINE_PROXY_HTTPS_PORT={proxyHttpsPort}\n'
+            'ENGINE_AJP_ENABLED={proxyFlag}\n'
+            'ENGINE_AJP_PORT={ajpPort}\n'
+            'ENGINE_HTTP_ENABLED={directFlag}\n'
+            'ENGINE_HTTPS_ENABLED={directFlag}\n'
+            'ENGINE_HTTP_PORT={directHttpPort}\n'
+            'ENGINE_HTTPS_PORT={directHttpsPort}\n'
+        ).format(
+            fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
+            proxyFlag=flag(self.environment[
+                osetupcons.ConfigEnv.JBOSS_AJP_PORT
+            ]),
+            directFlag=flag(self.environment[
+                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
+            ]),
+            proxyHttpPort=self.environment[
+                osetupcons.ConfigEnv.HTTP_PORT
+            ],
+            proxyHttpsPort=self.environment[
+                osetupcons.ConfigEnv.HTTPS_PORT
+            ],
+            directHttpPort=self.environment[
+                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
+            ],
+            directHttpsPort=self.environment[
+                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT
+            ],
+            ajpPort=self.environment[
+                osetupcons.ConfigEnv.JBOSS_AJP_PORT
+            ],
+        )
+
         if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
-            content = (
-                'ENGINE_FQDN={fqdn}\n'
-                'ENGINE_HTTP_ENABLED=true\n'
-                'ENGINE_HTTPS_ENABLED=true\n'
-                'ENGINE_HTTP_PORT={httpPort}\n'
-                'ENGINE_HTTPS_PORT={httpsPort}\n'
+            content += (
                 'ENGINE_DEBUG_ADDRESS={debugAddress}\n'
             ).format(
-                fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
-                httpPort=self.environment[
-                    osetupcons.ConfigEnv.HTTP_PORT
-                ],
-                httpsPort=self.environment[
-                    osetupcons.ConfigEnv.HTTPS_PORT
-                ],
                 debugAddress=self.environment[
                     osetupcons.ConfigEnv.JBOSS_DEBUG_ADDRESS
-                ],
-            )
-        else:
-            content = (
-                'ENGINE_FQDN={fqdn}\n'
-                'ENGINE_PROXY_ENABLED=true\n'
-                'ENGINE_PROXY_HTTP_PORT={httpPort}\n'
-                'ENGINE_PROXY_HTTPS_PORT={httpsPort}\n'
-                'ENGINE_AJP_ENABLED=true\n'
-                'ENGINE_AJP_PORT={ajpPort}\n'
-            ).format(
-                fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
-                httpPort=self.environment[
-                    osetupcons.ConfigEnv.HTTP_PORT
-                ],
-                httpsPort=self.environment[
-                    osetupcons.ConfigEnv.HTTPS_PORT
-                ],
-                ajpPort=self.environment[
-                    osetupcons.ConfigEnv.JBOSS_AJP_PORT
                 ],
             )
 
@@ -152,6 +193,13 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _closeup(self):
+        # TODO
+        # layout of jboss and proxy should be the same
+        if self.environment[osetupcons.ConfigEnv.JBOSS_AJP_PORT]:
+            engineURI = osetupcons.Const.ENGINE_URI
+        else:
+            engineURI = '/'
+
         self.dialog.note(
             text=_(
                 'Web access is enabled at:\n'
@@ -160,19 +208,19 @@ class Plugin(plugin.PluginBase):
             ).format(
                 fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
                 httpPort=self.environment[
-                    osetupcons.ConfigEnv.HTTP_PORT
+                    osetupcons.ConfigEnv.PUBLIC_HTTP_PORT
                 ],
                 httpsPort=self.environment[
-                    osetupcons.ConfigEnv.HTTPS_PORT
+                    osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT
                 ],
-                engineURI=osetupcons.Const.ENGINE_URI,
+                engineURI=engineURI,
             )
         )
 
         if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
             self.dialog.note(
                 text=_(
-                    'JBoss is listending for debug connection at: {address}'
+                    'JBoss is listening for debug connection at: {address}'
                 ).format(
                     address=self.environment[
                         osetupcons.ConfigEnv.JBOSS_DEBUG_ADDRESS

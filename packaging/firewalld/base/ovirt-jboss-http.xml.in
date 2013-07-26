@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>ovirt-jboss-http</short>
+  <description>oVirt configured http service</description>
+  <port protocol="tcp" port="@JBOSS_HTTP_PORT@"/>
+</service>

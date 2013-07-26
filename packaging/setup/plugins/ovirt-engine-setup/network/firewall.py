@@ -51,16 +51,6 @@ class Plugin(plugin.PluginBase):
         ],
     )
     def _configuration(self):
-        self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
-            {
-                'name': 'ovirt-http',
-                'directory': 'base'
-            },
-            {
-                'name': 'ovirt-https',
-                'directory': 'base'
-            },
-        ])
         self.environment[
             osetupcons.NetEnv.FIREWALLD_SUBST
         ].update({
@@ -69,8 +59,40 @@ class Plugin(plugin.PluginBase):
             ],
             '@HTTPS_PORT@': self.environment[
                 osetupcons.ConfigEnv.HTTPS_PORT
-            ]
+            ],
+            '@JBOSS_HTTP_PORT@': self.environment[
+                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
+            ],
+            '@JBOSS_HTTPS_PORT@': self.environment[
+                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT
+            ],
         })
+        if self.environment[
+            osetupcons.ConfigEnv.JBOSS_AJP_PORT
+        ] is not None:
+            self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
+                {
+                    'name': 'ovirt-http',
+                    'directory': 'base'
+                },
+                {
+                    'name': 'ovirt-https',
+                    'directory': 'base'
+                },
+            ])
+        if self.environment[
+            osetupcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
+        ] is not None:
+            self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES].extend([
+                {
+                    'name': 'ovirt-jboss-http',
+                    'directory': 'base'
+                },
+                {
+                    'name': 'ovirt-jboss-https',
+                    'directory': 'base'
+                },
+            ])
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

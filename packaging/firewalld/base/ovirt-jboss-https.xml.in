@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+  <short>ovirt-jboss-https</short>
+  <description>oVirt configured https service</description>
+  <port protocol="tcp" port="@JBOSS_HTTPS_PORT@"/>
+</service>

@@ -106,7 +106,7 @@ class Plugin(plugin.PluginBase):
         self.logger.debug('Waiting for Engine health status')
         health_url = 'http://{fqdn}:{port}/OvirtEngineWeb/HealthStatus'.format(
             fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
-            port=self.environment[osetupcons.ConfigEnv.HTTP_PORT],
+            port=self.environment[osetupcons.ConfigEnv.PUBLIC_HTTP_PORT],
         )
         tries = self.ENGINE_RETRIES
         isUp = False
@@ -184,7 +184,7 @@ class Plugin(plugin.PluginBase):
         engine_api = self._ovirtsdk_api.API(
             url='https://{fqdn}:{port}/api'.format(
                 fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
-                port=self.environment[osetupcons.ConfigEnv.HTTPS_PORT],
+                port=self.environment[osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT],
             ),
             username='{user}@{domain}'.format(
                 user=osetupcons.Const.USER_ADMIN,

@@ -74,6 +74,17 @@ class Plugin(plugin.PluginBase):
                 osetupcons.FileLocations.OVIRT_ENGINE_SERVICE_CONFIG
             ])
 
+        #preserve engine http and https ports.
+        if config.getboolean('ENGINE_HTTP_ENABLED'):
+            self.environment[
+                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
+            ] = config.get('ENGINE_HTTP_PORT')
+
+        if config.getboolean('ENGINE_HTTPS_ENABLED'):
+            self.environment[
+                osetupcons.ConfigEnv.JBOSS_DIRECT_HTTPS_PORT
+            ] = config.get('ENGINE_HTTPS_PORT')
+
         self.environment[osetupcons.ConfigEnv.FQDN] = config.get('ENGINE_FQDN')
         if not config.getboolean('ENGINE_PROXY_ENABLED'):
             self.environment[osetupcons.ApacheEnv.CONFIGURE_SSL] = True
