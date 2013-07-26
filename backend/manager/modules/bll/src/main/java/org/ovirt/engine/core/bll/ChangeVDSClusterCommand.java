@@ -158,6 +158,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
         if (getSourceCluster().supportsGlusterService() && getClusterUtils().hasServers(getSourceCluster().getId())) {
             if (!glusterHostRemove(getSourceCluster().getId())) {
+                setSucceeded(false);
                 return;
             }
         }
@@ -165,6 +166,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         if (getTargetCluster().supportsGlusterService()
                 && getClusterUtils().hasMultipleServers(getTargetCluster().getId())) {
             if (!glusterHostAdd(getTargetCluster().getId())) {
+                setSucceeded(false);
                 return;
             }
         }
@@ -201,10 +203,17 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         String hostName =
                 (getVds().getHostName().isEmpty()) ? getVds().getManagementIp()
                         : getVds().getHostName();
+        VDS runningHostInSourceCluster = getClusterUtils().getUpServer(sourceClusterId);
+        if (runningHostInSourceCluster == null) {
+            log.error("Cannot remove host from source cluster, no host in Up status found in source cluster");
+            handleError(-1, "No host in Up status found in source cluster");
+            errorType = AuditLogType.GLUSTER_SERVER_REMOVE_FAILED;
+            return false;
+        }
         VDSReturnValue returnValue =
                 runVdsCommand(
                         VDSCommandType.RemoveGlusterServer,
-                        new RemoveGlusterServerVDSParameters((getClusterUtils().getUpServer(sourceClusterId)).getId(),
+                        new RemoveGlusterServerVDSParameters(runningHostInSourceCluster.getId(),
                                 hostName,
                                 false));
 
@@ -220,10 +229,17 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         String hostName =
                 (getVds().getHostName().isEmpty()) ? getVds().getManagementIp()
                         : getVds().getHostName();
+        VDS runningHostInTargetCluster = getClusterUtils().getUpServer(targetClusterId);
+        if (runningHostInTargetCluster == null) {
+            log.error("Cannot add host to target cluster, no host in Up status found in target cluster");
+            handleError(-1, "No host in Up status found in target cluster");
+            errorType = AuditLogType.GLUSTER_SERVER_ADD_FAILED;
+            return false;
+        }
         VDSReturnValue returnValue =
                 runVdsCommand(
                         VDSCommandType.AddGlusterServer,
-                        new AddGlusterServerVDSParameters(getClusterUtils().getUpServer(targetClusterId).getId(),
+                        new AddGlusterServerVDSParameters(runningHostInTargetCluster.getId(),
                                 hostName));
         if (!returnValue.getSucceeded()) {
             handleVdsError(returnValue);
@@ -231,6 +247,12 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             return false;
         }
         return true;
+    }
+
+    private void handleError(int errorCode, String errorMsg) {
+        getReturnValue().getFault().setError(errorCode);
+        getReturnValue().getFault().setMessage(errorMsg);
+        getReturnValue().getExecuteFailedMessages().add(errorMsg);
     }
 
     private ClusterUtils getClusterUtils() {
