@@ -1373,7 +1373,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         Guid taskId = Guid.Empty;
         try {
             AsyncTaskCreationInfo creationInfo = new AsyncTaskCreationInfo();
-            creationInfo.setTaskType(getTaskType());
+            if (!hasTaskHandlers()) {
+                creationInfo.setTaskType(getTaskType());
+            } else {
+                creationInfo.setTaskType(getCurrentTaskHandler().getTaskType());
+            }
             AsyncTasks task = createAsyncTask(creationInfo, parentCommand);
             taskId = task.getTaskId();
             getAsyncTaskDao().save(task);
