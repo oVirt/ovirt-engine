@@ -1202,7 +1202,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Show Report")
     String showReportHost();
 
-    @DefaultStringValue("Resfresh Capabilities")
+    @DefaultStringValue("Refresh Capabilities")
     String refreshHostCapabilities();
 
     // host- general
