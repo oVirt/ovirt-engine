@@ -2,7 +2,14 @@
 
 BASE="$(dirname "$0")"
 
-for d in setup services pythonlib; do
-	find "${BASE}/${d}" -name '*.py' -not -name config.py | xargs pyflakes
-	find "${BASE}/${d}" -name '*.py' -not -name config.py | xargs pep8
-done
+FILES="$(
+	find "${BASE}" -name '*.py' | grep -v fedora | while read f; do
+		[ -e "${f}.in" ] || echo "${f}"
+	done
+)"
+
+ret=0
+pyflakes ${FILES} || ret=1
+pep8 ${FILES} || ret=1
+
+exit "${ret}"
