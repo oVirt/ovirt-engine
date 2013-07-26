@@ -139,7 +139,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
         List<PermissionSubject> permissionSubjects = new ArrayList<>();
         permissionSubjects.add(new PermissionSubject(getDiskImage().getId(),
                 VdcObjectType.Disk, ActionGroup.ATTACH_DISK));
-        permissionSubjects.add(new PermissionSubject(getParameters().getStorageDomainId(),
+        permissionSubjects.add(new PermissionSubject(getParameters().getDestinationDomainId(),
                 VdcObjectType.Storage, ActionGroup.CREATE_DISK));
         return permissionSubjects;
     }

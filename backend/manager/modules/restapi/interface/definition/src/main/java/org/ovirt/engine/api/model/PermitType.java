@@ -95,6 +95,7 @@ public enum PermitType {
     CONFIGURE_DISK_STORAGE,
     DELETE_DISK,
     CONFIGURE_SCSI_GENERIC_IO,
+    ACCESS_IMAGE_STORAGE,
 
     // Vm Interface action groups
     CONFIGURE_NETWORK_VNIC_PROFILE,

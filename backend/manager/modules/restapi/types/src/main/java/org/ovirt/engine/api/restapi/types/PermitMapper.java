@@ -176,6 +176,8 @@ public class PermitMapper {
             return PermitType.CONFIGURE_SCSI_GENERIC_IO;
         case INJECT_EXTERNAL_TASKS:
             return PermitType.INJECT_EXTERNAL_TASKS;
+        case ACCESS_IMAGE_STORAGE:
+            return PermitType.ACCESS_IMAGE_STORAGE;
         default:
             return null;
         }
@@ -316,6 +318,8 @@ public class PermitMapper {
             return ActionGroup.CONFIGURE_SCSI_GENERIC_IO;
         case INJECT_EXTERNAL_TASKS:
             return ActionGroup.INJECT_EXTERNAL_TASKS;
+        case ACCESS_IMAGE_STORAGE:
+            return ActionGroup.ACCESS_IMAGE_STORAGE;
         default:
             return null;
         }

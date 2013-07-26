@@ -106,6 +106,8 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         // NOTE: there's no read-permission from a storage domain
         permissionSubjects.add(new PermissionSubject(getParameters().getStorageDomainId(),
                 VdcObjectType.Storage, ActionGroup.CREATE_DISK));
+        permissionSubjects.add(new PermissionSubject(getParameters().getSourceStorageDomainId(),
+                VdcObjectType.Storage, ActionGroup.ACCESS_IMAGE_STORAGE));
         return permissionSubjects;
     }
 

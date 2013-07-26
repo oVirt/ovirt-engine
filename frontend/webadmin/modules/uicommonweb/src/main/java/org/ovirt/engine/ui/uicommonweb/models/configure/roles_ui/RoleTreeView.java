@@ -402,7 +402,11 @@ public class RoleTreeView
                                                                 new RoleNode(ActionGroup.CONFIGURE_SCSI_GENERIC_IO,
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
-                                                                                .allowToChangeSGIORoleTreeTooltip()) }) }) });
+                                                                                .allowToChangeSGIORoleTreeTooltip()),
+                                                                new RoleNode(ActionGroup.ACCESS_IMAGE_STORAGE,
+                                                                        ConstantsManager.getInstance()
+                                                                                .getConstants()
+                                                                                .allowAccessImageDomainRoleTreeTooltip()) }) }) });
 
         // nothing to filter
         if (!ApplicationModeHelper.getUiMode().equals(ApplicationMode.AllModes)) {

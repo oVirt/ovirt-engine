@@ -1276,6 +1276,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allow to change SCSI I/O privileges")
     String allowToChangeSGIORoleTreeTooltip();
 
+    @DefaultStringValue("Allow to access image domain")
+    String allowAccessImageDomainRoleTreeTooltip();
+
     @DefaultStringValue("No")
     String noAlerts();
 

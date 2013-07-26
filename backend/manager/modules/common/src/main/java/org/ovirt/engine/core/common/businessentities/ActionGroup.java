@@ -97,12 +97,13 @@ public enum ActionGroup {
     MANIPULATE_GLUSTER_SERVICE(1004, RoleType.ADMIN, VdcObjectType.GlusterService, true, ApplicationMode.GlusterOnly),
 
     // Disks action groups
-    CREATE_DISK(1100, RoleType.USER, VdcObjectType.Disk, false, ApplicationMode.VirtOnly),
+    CREATE_DISK(1100, RoleType.USER, VdcObjectType.Storage, false, ApplicationMode.VirtOnly),
     ATTACH_DISK(1101, RoleType.USER, VdcObjectType.Disk, true, ApplicationMode.VirtOnly),
     EDIT_DISK_PROPERTIES(1102, RoleType.USER, VdcObjectType.Disk, true, ApplicationMode.VirtOnly),
     CONFIGURE_DISK_STORAGE(1103, RoleType.USER, VdcObjectType.Disk, true, ApplicationMode.VirtOnly),
     DELETE_DISK(1104, RoleType.USER, VdcObjectType.Disk, true, ApplicationMode.VirtOnly),
     CONFIGURE_SCSI_GENERIC_IO(1105, RoleType.ADMIN, VdcObjectType.Disk, true, ApplicationMode.VirtOnly),
+    ACCESS_IMAGE_STORAGE(1106, RoleType.USER, VdcObjectType.Storage, false, ApplicationMode.VirtOnly),
 
     // VNIC Profiles
     CONFIGURE_NETWORK_VNIC_PROFILE(1203, RoleType.ADMIN, VdcObjectType.VnicProfile, true, ApplicationMode.VirtOnly),

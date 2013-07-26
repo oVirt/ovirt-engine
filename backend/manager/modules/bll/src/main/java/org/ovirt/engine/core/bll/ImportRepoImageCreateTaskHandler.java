@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
-import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
@@ -18,17 +17,18 @@ import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 
 public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
 
-    private final TaskHandlerCommand<? extends ImportRepoImageParameters> enclosingCommand;
+    private final CommandBase<? extends ImportRepoImageParameters> enclosingCommand;
 
     private StorageDomain destinationStorageDomain;
 
-    public ImportRepoImageCreateTaskHandler(TaskHandlerCommand<? extends ImportRepoImageParameters> enclosingCommand) {
+    public ImportRepoImageCreateTaskHandler(CommandBase<? extends ImportRepoImageParameters> enclosingCommand) {
         this.enclosingCommand = enclosingCommand;
     }
 
@@ -66,6 +66,9 @@ public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
                 DiskImage newDiskImage = (DiskImage) vdcReturnValue.getActionReturnValue();
                 enclosingCommand.getParameters().setDestinationImageId(newDiskImage.getImageId());
                 enclosingCommand.getParameters().getDiskImage().setImageId(newDiskImage.getImageId());
+                MultiLevelAdministrationHandler.addPermission(new permissions(
+                        enclosingCommand.getCurrentUser().getUserId(), PredefinedRoles.DISK_OPERATOR.getId(),
+                        newDiskImage.getId(), VdcObjectType.Disk));
             }
 
             ExecutionHandler.setAsyncJob(enclosingCommand.getExecutionContext(), true);
