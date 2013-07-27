@@ -28,7 +28,9 @@ public class UpdateVnicProfileCommand<T extends VnicProfileParameters>
                 && validate(validator.vnicProfileExists())
                 && validate(validator.vnicProfileNameNotUsed())
                 && validate(validator.networkNotChanged())
-                && validate(validator.portMirroringNotChangedIfUsedByVms());
+                && validate(validator.portMirroringNotChangedIfUsedByVms())
+                && validate(validator.portMirroringNotSetIfExternalNetwork())
+                && validator.validateCustomProperties(getReturnValue().getCanDoActionMessages());
     }
 
     @Override

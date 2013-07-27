@@ -6,12 +6,16 @@ import java.util.List;
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ReplacementUtils;
+import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
+import org.ovirt.engine.core.utils.customprop.ValidationError;
 
 public class VnicProfileValidator {
 
@@ -93,6 +97,26 @@ public class VnicProfileValidator {
         }
 
         return vnicProfileNotUsedByVms();
+    }
+
+    public boolean validateCustomProperties(List<String> messages) {
+        StoragePool dataCenter = getDbFacade().getStoragePoolDao().get(getNetwork().getDataCenterId());
+        List<ValidationError> errors =
+                DevicePropertiesUtils.getInstance().validateProperties(dataCenter.getcompatibility_version(),
+                        VmDeviceGeneralType.INTERFACE,
+                        vnicProfile.getCustomProperties());
+        if (!errors.isEmpty()) {
+            DevicePropertiesUtils.getInstance().handleCustomPropertiesError(errors, messages);
+            return false;
+        }
+
+        return true;
+    }
+
+    public ValidationResult portMirroringNotSetIfExternalNetwork() {
+        return !vnicProfile.isPortMirroring() || !getNetwork().isExternal()
+                ? ValidationResult.VALID
+                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED);
     }
 
     protected Network getNetwork() {

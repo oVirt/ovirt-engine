@@ -262,4 +262,35 @@ public class VnicProfileValidatorTest {
         when(networkDao.get(any(Guid.class))).thenReturn(network);
         assertThat(validator.vnicProfileForVmNetworkOnly(), matcher);
     }
+
+    @Test
+    public void externalNetworkPortMirroring() throws Exception {
+        externalNetworkPortMirroringTest(true,
+                true,
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED));
+    }
+
+    @Test
+    public void externalNetworkNotPortMirroring() throws Exception {
+        externalNetworkPortMirroringTest(true, false, isValid());
+    }
+
+    @Test
+    public void internalNetworkPortMirroring() throws Exception {
+        externalNetworkPortMirroringTest(false, true, isValid());
+    }
+
+    @Test
+    public void internalNetworkNotPortMirroring() throws Exception {
+        externalNetworkPortMirroringTest(false, false, isValid());
+    }
+
+    private void externalNetworkPortMirroringTest(boolean externalNetwork,
+            boolean portMirroring,
+            Matcher<ValidationResult> matcher) {
+        when(networkDao.get(any(Guid.class))).thenReturn(network);
+        when(network.isExternal()).thenReturn(externalNetwork);
+        when(vnicProfile.isPortMirroring()).thenReturn(portMirroring);
+        assertThat(validator.portMirroringNotSetIfExternalNetwork(), matcher);
+    }
 }
