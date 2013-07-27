@@ -89,15 +89,16 @@ class Plugin(plugin.PluginBase):
                         osetupcons.ApacheEnv.HTTPD_CONF_SSL
                     ]
                 )
-        self.environment[osetupcons.DBEnv.SECURED] = config.get(
+        self.environment[osetupcons.DBEnv.SECURED] = config.getboolean(
             name='ENGINE_DB_SECURED',
-            default=(
-                'ssl=true' in config.get('ENGINE_DB_URL')
-            ),
+            default='ssl=true' in config.get(
+                'ENGINE_DB_URL',
+                '',
+            )
         )
         self.environment[
             osetupcons.DBEnv.SECURED_HOST_VALIDATION
-        ] = config.get(
+        ] = config.getboolean(
             name='ENGINE_DB_SECURED_VALIDATION',
             default=False,
         )
