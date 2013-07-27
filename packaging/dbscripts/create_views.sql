@@ -844,7 +844,7 @@ CREATE OR REPLACE VIEW vm_interface_view AS
       vm_interface.mac_addr, network.name AS network_name, vm_interface.name, vm_interface.vnic_profile_id, vm_static.vm_guid, vm_interface.vmt_guid,
       vm_static.vm_name, vm_interface.id, 0 AS boot_protocol, 0 AS is_vds, vm_device.is_plugged,
       vm_device.custom_properties, vnic_profiles.port_mirroring AS port_mirroring, vm_interface.linked,
-      vm_static.vds_group_id AS vds_group_id, vm_static.entity_type AS vm_entity_type
+      vm_static.vds_group_id AS vds_group_id, vm_static.entity_type AS vm_entity_type, vnic_profiles.name AS vnic_profile_name
   FROM vm_interface_statistics
   JOIN vm_interface ON vm_interface_statistics.id = vm_interface.id
   JOIN vm_static ON vm_interface.vm_guid = vm_static.vm_guid
@@ -856,7 +856,7 @@ CREATE OR REPLACE VIEW vm_interface_view AS
       vm_interface.mac_addr, network.name AS network_name, vm_interface.name, vm_interface.vnic_profile_id, NULL::uuid as vm_guid,
       vm_interface.vmt_guid, vm_templates.vm_name AS vm_name, vm_interface.id, 0 AS boot_protocol, 0 AS is_vds,
       vm_device.is_plugged as is_plugged, vm_device.custom_properties as custom_properties, vnic_profiles.port_mirroring AS port_mirroring,
-      vm_interface.linked, vm_templates.vds_group_id AS vds_group_id, vm_templates.entity_type AS vm_entity_type
+      vm_interface.linked, vm_templates.vds_group_id AS vds_group_id, vm_templates.entity_type AS vm_entity_type, vnic_profiles.name AS vnic_profile_name
   FROM vm_interface_statistics
   RIGHT JOIN vm_interface ON vm_interface_statistics.id = vm_interface.id
   JOIN vm_static AS vm_templates ON vm_interface.vmt_guid = vm_templates.vm_guid

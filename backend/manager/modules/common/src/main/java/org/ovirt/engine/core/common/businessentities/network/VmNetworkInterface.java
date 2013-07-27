@@ -11,6 +11,7 @@ public class VmNetworkInterface extends VmNic {
 
     private static final long serialVersionUID = -6110269859408208756L;
     private String networkName;
+    private String vnicProfileName;
     private boolean portMirroring;
     private String vmName;
     private boolean plugged = true;
@@ -41,6 +42,14 @@ public class VmNetworkInterface extends VmNic {
 
     public String getNetworkName() {
         return networkName;
+    }
+
+    public String getVnicProfileName() {
+        return vnicProfileName;
+    }
+
+    public void setVnicProfileName(String vnicProfileName) {
+        this.vnicProfileName = vnicProfileName;
     }
 
     public void setVmName(String vmName) {
@@ -83,6 +92,8 @@ public class VmNetworkInterface extends VmNic {
                 .append(getId())
                 .append(", networkName=")
                 .append(getNetworkName())
+                .append(", vnicProfileName=")
+                .append(getVnicProfileName())
                 .append(", vnicProfileId=")
                 .append(getVnicProfileId())
                 .append(", speed=")
@@ -114,6 +125,7 @@ public class VmNetworkInterface extends VmNic {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((getNetworkName() == null) ? 0 : getNetworkName().hashCode());
+        result = prime * result + ((getVnicProfileName() == null) ? 0 : getVnicProfileName().hashCode());
         result = prime * result + (isPortMirroring() ? 1231 : 1237);
         result = prime * result + ((getVmName() == null) ? 0 : getVmName().hashCode());
         result = prime * result + (isPlugged() ? 1231 : 1237);
@@ -134,6 +146,9 @@ public class VmNetworkInterface extends VmNic {
         }
         VmNetworkInterface other = (VmNetworkInterface) obj;
         if (!ObjectUtils.objectsEqual(other.getNetworkName(), other.getNetworkName())) {
+            return false;
+        }
+        if (!ObjectUtils.objectsEqual(other.getVnicProfileName(), other.getVnicProfileName())) {
             return false;
         }
         if (isPortMirroring() != other.isPortMirroring()) {
