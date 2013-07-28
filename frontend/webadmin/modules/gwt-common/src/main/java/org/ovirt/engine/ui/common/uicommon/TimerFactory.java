@@ -22,17 +22,17 @@ public abstract class TimerFactory {
     }
 
     public static void cancelAllTimers() {
-        for (String name : timerList.keySet()) {
-            logger.fine("Cancelling the timer '" + name + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-            timerList.get(name).cancel();
+        for (Map.Entry<String, Timer> stringTimerEntry : timerList.entrySet()) {
+            logger.fine("Cancelling the timer '" + stringTimerEntry.getKey() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+            stringTimerEntry.getValue().cancel();
         }
     }
 
     public static void cancelTimer(String timerName) {
-        for (String name : timerList.keySet()) {
-            if (name.equals(timerName)) {
-                logger.fine("Cancelling the timer '" + name + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-                timerList.get(name).cancel();
+        for (Map.Entry<String, Timer> timerEntry : timerList.entrySet()) {
+            if (timerEntry.getKey().equals(timerName)) {
+                logger.fine("Cancelling the timer '" + timerEntry.getKey() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
+                timerEntry.getValue().cancel();
             }
         }
     }

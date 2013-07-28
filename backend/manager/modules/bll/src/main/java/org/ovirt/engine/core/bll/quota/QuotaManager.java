@@ -209,16 +209,16 @@ public class QuotaManager {
             }
             quota.getGlobalQuotaStorage().setStorageSizeGBUsage(value);
         }
-        for (Guid quotaId : newUsedSpecificStorageSize.keySet()) {
-            Quota quota = quotaMap.get(quotaId);
+        for (Map.Entry<Guid, Map<Guid, Double>> quotaStorageEntry : newUsedSpecificStorageSize.entrySet()) {
+            Quota quota = quotaMap.get(quotaStorageEntry.getKey());
             for (QuotaStorage quotaStorage : quota.getQuotaStorages()) {
-                if (newUsedSpecificStorageSize.get(quotaId).containsKey(quotaStorage.getStorageId())) {
-                    double value = newUsedSpecificStorageSize.get(quotaId)
+                if (quotaStorageEntry.getValue().containsKey(quotaStorage.getStorageId())) {
+                    double value = quotaStorageEntry.getValue()
                             .get(quotaStorage.getStorageId());
                     if (value < 0) {
                         log.errorFormat("Quota id {0} cached storage size is negative, removing from cache",
-                                quotaId);
-                        quotaMap.remove(quotaId);
+                                quotaStorageEntry.getKey());
+                        quotaMap.remove(quotaStorageEntry.getKey());
                         continue;
                     }
                     quotaStorage.setStorageSizeGBUsage(value);

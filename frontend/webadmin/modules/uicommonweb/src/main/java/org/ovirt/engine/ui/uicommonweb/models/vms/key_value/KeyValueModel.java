@@ -116,17 +116,17 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
                 }
             }
 
-            for (String key : keyValueMap_used.keySet()) {
+            for (Map.Entry<String, String> entry : keyValueMap_used.entrySet()) {
                 lineModel = new KeyValueLineModel(this);
-                lineModel.getKeys().setItems(getAvailbleKeys(key));
-                lineModel.getKeys().setSelectedItem(key);
-                if (allRegExKeys.containsKey(key)) {
+                lineModel.getKeys().setItems(getAvailbleKeys(entry.getKey()));
+                lineModel.getKeys().setSelectedItem(entry.getKey());
+                if (allRegExKeys.containsKey(entry.getKey())) {
                     lineModel.getValue().setIsAvailable(false);
                     lineModel.getValues().setIsAvailable(true);
-                    lineModel.getValues().setItems(allRegExKeys.get(key));
-                    lineModel.getValues().setSelectedItem(keyValueMap_used.get(key));
+                    lineModel.getValues().setItems(allRegExKeys.get(entry.getKey()));
+                    lineModel.getValues().setSelectedItem(entry.getValue());
                 } else {
-                    lineModel.getValue().setEntity(keyValueMap_used.get(key));
+                    lineModel.getValue().setEntity(entry.getValue());
                 }
                 list.add(lineModel);
             }

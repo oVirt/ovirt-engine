@@ -27,9 +27,10 @@ public class XmlNamespaceManager implements NamespaceContext {
 
     @Override
     public String getPrefix(String namespaceURI) {
-        for (String prefix : prefixToUri.keySet()) {
-            if (prefixToUri.get(prefix).equals(namespaceURI))
-                return prefix;
+        for (Map.Entry<String, String> prexiToUriEntry : prefixToUri.entrySet()) {
+            if (prexiToUriEntry.getValue().equals(namespaceURI)) {
+                return prexiToUriEntry.getKey();
+            }
         }
 
         return null;
@@ -39,9 +40,10 @@ public class XmlNamespaceManager implements NamespaceContext {
     public Iterator getPrefixes(String namespaceURI) {
         List<String> prefixes = new LinkedList<String>();
 
-        for (String prefix : prefixToUri.keySet()) {
-            if (prefixToUri.get(prefix).equals(namespaceURI))
-                prefixes.add(prefix);
+        for (Map.Entry<String, String> prefixToUriEntry : prefixToUri.entrySet()) {
+            if (prefixToUriEntry.getValue().equals(namespaceURI)) {
+                prefixes.add(prefixToUriEntry.getKey());
+            }
         }
 
         return prefixes.iterator();

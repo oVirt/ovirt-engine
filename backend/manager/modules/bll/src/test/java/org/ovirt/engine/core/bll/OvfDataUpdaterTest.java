@@ -345,18 +345,16 @@ public class OvfDataUpdaterTest {
                     entry.getValue().getKey());
         }
 
-        for (Guid id : storagePoolUpdateOvfGenerationsInDb.keySet()) {
+        for (Map.Entry<Guid, Long> storagePoolGenerationEntry : storagePoolUpdateOvfGenerationsInDb.entrySet()) {
             boolean isCorrectVersion = false;
-            if (vms.get(id) != null) {
+            if (vms.get(storagePoolGenerationEntry.getKey()) != null) {
                 isCorrectVersion =
-                        storagePoolUpdateOvfGenerationsInDb
-                                .get(id)
-                                .equals(vms.get(id).getDbGeneration());
-            } else if (templates.get(id) != null) {
+                        storagePoolGenerationEntry.getValue()
+                                .equals(vms.get(storagePoolGenerationEntry.getKey()).getDbGeneration());
+            } else if (templates.get(storagePoolGenerationEntry.getKey()) != null) {
                 isCorrectVersion =
-                        storagePoolUpdateOvfGenerationsInDb
-                                .get(id)
-                                .equals(templates.get(id).getDbGeneration());
+                        storagePoolGenerationEntry.getValue()
+                                .equals(templates.get(storagePoolGenerationEntry.getKey()).getDbGeneration());
             }
             assertTrue("wrong new ovf version persisted for vm/template", isCorrectVersion);
         }

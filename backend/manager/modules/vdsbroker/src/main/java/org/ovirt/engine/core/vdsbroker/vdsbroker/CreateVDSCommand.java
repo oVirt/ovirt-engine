@@ -39,11 +39,11 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         final String SEP = ",";
         StringBuilder info = new StringBuilder();
         String sep = "";
-        for (String o : createInfo.keySet()) {
+        for (Map.Entry<String, Object> createInfoEntry : createInfo.entrySet()) {
             info.append(sep);
-            info.append(o);
+            info.append(createInfoEntry.getKey());
             info.append(EQUAL);
-            info.append(createInfo.get(o));
+            info.append(createInfoEntry.getValue());
             sep = SEP;
         }
         log.infoFormat("{0} {1}", getClass().getName(), info.toString());

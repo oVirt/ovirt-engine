@@ -265,9 +265,9 @@ public final class SysprepHandler {
     // the "Afghanistan Standard Time" is the vm Key that we get from the method getTimezoneKey()
     // "175" is the timezone keys that xp/2003 excpect to get, vista/7/2008 gets "Afghanistan Standard Time"
     public static String getTimezoneIndexByKey(String key) {
-        for (String s : timeZoneIndex.keySet()) {
-            if (getTimezoneKey(s).equals(key)) {
-                return timeZoneIndex.get(s).toString();
+        for (Map.Entry<String, Integer> timeZoneEntry : timeZoneIndex.entrySet()) {
+            if (getTimezoneKey(timeZoneEntry.getKey()).equals(key)) {
+                return timeZoneEntry.getValue().toString();
             }
         }
         log.errorFormat("getTimezoneIndexByKey: cannot find timezone key '{0}'", key);

@@ -263,9 +263,7 @@ public class ImportVmModel extends ListWithDetailsModel {
     private void checkIfDefaultStorageApplicableForAllDisks() {
         boolean isDefaultStorageApplicableForAllDisks = true;
         StorageDomain defaultStorage = (StorageDomain) getStorage().getSelectedItem();
-        for (Guid diskGuid : diskImportDataMap.keySet()) {
-            ImportDiskData importData = diskImportDataMap.get(diskGuid);
-
+        for (ImportDiskData importData : diskImportDataMap.values()) {
             if (defaultStorage != null && !importData.getStorageDomains().contains(defaultStorage)) {
                 isDefaultStorageApplicableForAllDisks = false;
                 break;
@@ -344,14 +342,14 @@ public class ImportVmModel extends ListWithDetailsModel {
                         }
                     }
 
-                    for (Guid templateId : templateDiskMap.keySet()) {
-                        for (Disk disk : templateDiskMap.get(templateId)) {
+                    for (Entry<Guid, List<Disk>> guidListEntry : templateDiskMap.entrySet()) {
+                        for (Disk disk : guidListEntry.getValue()) {
                             DiskImage diskImage = (DiskImage) disk;
                             if (diskImage.getParentId() != null && !Guid.Empty.equals(diskImage.getParentId())) {
                                 ArrayList<StorageDomain> storageDomains =
                                         templateDisksStorageDomains.get(diskImage.getParentId());
                                 if (storageDomains == null) {
-                                    missingTemplateDiskMap.put(templateId, templateDiskMap.get(templateId));
+                                    missingTemplateDiskMap.put(guidListEntry.getKey(), guidListEntry.getValue());
                                 }
                             }
                         }
@@ -384,9 +382,9 @@ public class ImportVmModel extends ListWithDetailsModel {
                         for (Entry<VmTemplate, List<DiskImage>> entry : dictionary.entrySet()) {
                             tempMap.put(entry.getKey().getId(), null);
                         }
-                        for (Guid templateId : missingTemplateDiskMap.keySet()) {
-                            if (tempMap.containsKey(templateId)) {
-                                for (Disk disk : missingTemplateDiskMap.get(templateId)) {
+                        for (Entry<Guid, List<Disk>> missingTemplateEntry : missingTemplateDiskMap.entrySet()) {
+                            if (tempMap.containsKey(missingTemplateEntry.getKey())) {
+                                for (Disk disk : missingTemplateEntry.getValue()) {
                                     addDiskImportData(disk.getId(),
                                             filteredStorageDomains,
                                             ((DiskImage) disk).getVolumeType(),

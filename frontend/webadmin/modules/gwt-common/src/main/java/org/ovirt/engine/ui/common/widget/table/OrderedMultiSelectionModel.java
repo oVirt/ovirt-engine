@@ -122,9 +122,10 @@ public class OrderedMultiSelectionModel<T> extends AbstractSelectionModel<T> {
         }
 
         if (!visibleKeys.containsAll(selectedKeys)) {
-            for (Object selectedKey : selectedKeys) {
-                if (!visibleKeys.contains(selectedKey))
-                    selectionChanges.put(selectedSet.get(selectedKey), false);
+            for (Map.Entry<Object, T> selectedEntry : selectedSet.entrySet()) {
+                if (!visibleKeys.contains(selectedEntry.getKey())) {
+                    selectionChanges.put(selectedEntry.getValue(), false);
+                }
             }
         }
 

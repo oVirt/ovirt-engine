@@ -156,8 +156,8 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         } else if ("!=".equals(relations)) {
             relations = "NOT " + getLikeSyntax(caseSensitive);
         }
-        for (String field : columnNameDict.keySet()) {
-            if (typeDict.get(field) == String.class && !notFreeTextSearchableFieldsList.contains(field)) {
+        for (Map.Entry<String, String> columnNameEntry : columnNameDict.entrySet()) {
+            if (typeDict.get(columnNameEntry.getKey()) == String.class && !notFreeTextSearchableFieldsList.contains(columnNameEntry.getKey())) {
                 if (firstTime) {
                     firstTime = false;
                 } else {
@@ -165,7 +165,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
                 }
                 sb.append(StringFormat.format(" %1$s.%2$s %3$s %4$s",
                         tableName,
-                        columnNameDict.get(field),
+                        columnNameEntry.getValue(),
                         relations,
                         value));
             }

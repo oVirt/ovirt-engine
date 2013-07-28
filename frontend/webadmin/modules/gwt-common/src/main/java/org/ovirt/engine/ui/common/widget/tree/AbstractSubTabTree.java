@@ -157,9 +157,9 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
     }
 
     private boolean getItemOldState(Object userObject) {
-        for (Object oldUserObject : oldItemStatesMap.keySet()) {
-            if (oldUserObject != null && userObject != null && oldUserObject.equals(userObject)) {
-                return oldItemStatesMap.get(oldUserObject);
+        for (Map.Entry<Object, Boolean> oldItemStatesEntry : oldItemStatesMap.entrySet()) {
+            if (oldItemStatesEntry.getKey() != null && userObject != null && oldItemStatesEntry.getKey().equals(userObject)) {
+                return oldItemStatesEntry.getValue();
             }
         }
         return false;
