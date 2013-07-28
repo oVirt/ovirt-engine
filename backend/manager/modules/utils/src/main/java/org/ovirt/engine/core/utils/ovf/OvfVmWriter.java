@@ -251,6 +251,13 @@ public class OvfVmWriter extends OvfWriter {
             _writer.WriteStartElement(RASD_URI, "ResourceType");
             _writer.WriteRaw(OvfHardware.Network);
             _writer.WriteEndElement();
+
+            _writer.WriteStartElement(RASD_URI, "OtherResourceType");
+            if (StringUtils.isNotEmpty(iface.getVnicProfileName())) {
+                _writer.WriteRaw(iface.getVnicProfileName());
+            }
+            _writer.WriteEndElement();
+
             _writer.WriteStartElement(RASD_URI, "ResourceSubType");
             if (iface.getType() != null) {
                 _writer.WriteRaw(iface.getType().toString());
