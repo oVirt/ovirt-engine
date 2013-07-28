@@ -40,12 +40,6 @@ public class VdcOption implements Serializable {
                 && ObjectUtils.objectsEqual(value, other.value));
     }
 
-    public VdcOption(String option_name, String option_value, int option_id) {
-        this.setoption_name(option_name);
-        this.setoption_value(option_value);
-        this.setoption_id(option_id);
-    }
-
     public String getoption_name() {
         return this.name;
     }
