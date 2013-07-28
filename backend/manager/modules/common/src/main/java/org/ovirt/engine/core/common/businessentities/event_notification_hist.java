@@ -11,17 +11,6 @@ public class event_notification_hist implements Serializable {
     public event_notification_hist() {
     }
 
-    public event_notification_hist(long audit_log_id, String event_name, String method_type, String reason,
-            java.util.Date sent_at, boolean status, Guid subscriber_id) {
-        this.auditLogId = audit_log_id;
-        this.eventName = event_name;
-        this.methodType = method_type;
-        this.reason = reason;
-        this.sentAt = sent_at;
-        this.status = status;
-        this.subscriberId = subscriber_id;
-    }
-
     private long auditLogId;
 
     public long getaudit_log_id() {
