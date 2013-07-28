@@ -243,6 +243,8 @@ class Plugin(plugin.PluginBase):
                 osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_STORE,
                 osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_TRUST_STORE,
                 osetupcons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_STORE,
+                osetupcons.FileLocations.OVIRT_ENGINE_PKI_CA_CERT_CONF,
+                osetupcons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF,
             )
         )
 
