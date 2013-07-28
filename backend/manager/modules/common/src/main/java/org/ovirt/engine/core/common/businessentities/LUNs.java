@@ -11,12 +11,7 @@ public class LUNs implements Serializable {
     private static final long serialVersionUID = 3026455643639610091L;
 
     public LUNs() {
-    }
-
-    public LUNs(String lUN_id, String physical_volume_id, String volume_group_id) {
-        this.id = lUN_id;
-        this.physicalVolumeId = physical_volume_id;
-        this.volumeGroupId = volume_group_id;
+        lunType = StorageType.UNKNOWN;
     }
 
     @Override
@@ -205,7 +200,7 @@ public class LUNs implements Serializable {
         pathsDictionary = value;
     }
 
-    private StorageType lunType = StorageType.forValue(0);
+    private StorageType lunType;
 
     public StorageType getLunType() {
         return lunType;

@@ -111,7 +111,8 @@ public class BackendHostStorageResourceTest
 
     @Override
     protected LUNs getEntity(int index) {
-        LUNs entity = new LUNs(GUIDS[index].toString(), null, null);
+        LUNs entity = new LUNs();
+        entity.setLUN_id(GUIDS[index].toString());
         entity.setLunType(org.ovirt.engine.core.common.businessentities.StorageType.ISCSI);
         return entity;
     }
