@@ -17,7 +17,7 @@ public class StopVmCommand<T extends StopVmParameters> extends StopVmCommandBase
 
     @Override
     protected void Perform() {
-        Destroy();
+        destroyVm();
         setSucceeded(true);
     }
 

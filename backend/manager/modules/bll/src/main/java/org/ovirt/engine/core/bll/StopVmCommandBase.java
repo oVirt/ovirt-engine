@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -64,7 +63,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         return true;
     }
 
-    protected void Destroy() {
+    protected void destroyVm() {
         if (getVm().getStatus() == VMStatus.MigratingFrom && getVm().getMigratingToVds() != null) {
             Backend.getInstance()
                     .getResourceManager()
@@ -101,24 +100,24 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
      *         False - Operation failed.
      */
     private boolean stopSuspendedVm() {
-        boolean returnVal = false;
-
         // Set the Vm to null, for getting the recent VM from the DB, instead from the cache.
         setVm(null);
-        VMStatus vmStatus = getVm().getStatus();
+        final VMStatus vmStatus = getVm().getStatus();
 
         // Check whether stop VM procedure didn't started yet (Status is not imageLocked), by another transaction.
-        if (getVm().getStatus() != VMStatus.ImageLocked) {
-            // Set the VM to image locked to decrease race condition.
-            updateVmStatus(VMStatus.ImageLocked);
-
-            if (removeVmHibernationVolumes()) {
-                returnVal = true;
-            } else {
-                updateVmStatus(vmStatus);
-            }
+        if (vmStatus == VMStatus.ImageLocked) {
+            return false;
         }
-        return returnVal;
+
+        // Set the VM to image locked to decrease race condition.
+        updateVmStatus(VMStatus.ImageLocked);
+
+        if (!removeVmHibernationVolumes()) {
+            updateVmStatus(vmStatus);
+            return false;
+        }
+
+        return true;
     }
 
     private boolean removeVmHibernationVolumes() {
@@ -168,7 +167,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
                             new UpdateVmDynamicDataVDSCommandParameters(getVm().getRunOnVds(),
                                     vmDynamicData));
         } else {
-            DbFacade.getInstance().getVmDynamicDao().update(vmDynamicData);
+            getVmDynamicDao().update(vmDynamicData);
         }
     }
 
@@ -180,7 +179,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
             getVm().setStatus(VMStatus.Down);
             getVm().setHibernationVolHandle(null);
 
-            DbFacade.getInstance().getVmDynamicDao().update(getVm().getDynamicData());
+            getVmDynamicDao().update(getVm().getDynamicData());
         }
 
         else {
