@@ -508,6 +508,10 @@ public abstract class OvfReader implements IOvfBuilder {
         String networkName = node.SelectSingleNode(OvfProperties.VMD_CONNECTION, _xmlNS).InnerText;
         iface.setNetworkName(StringUtils.defaultIfEmpty(networkName, null));
 
+        XmlNode vnicProfileNameNode = node.SelectSingleNode(OvfProperties.VMD_VNIC_PROFILE_NAME, _xmlNS);
+        iface.setVnicProfileName(vnicProfileNameNode == null ? null
+                : StringUtils.defaultIfEmpty(vnicProfileNameNode.InnerText, null));
+
         XmlNode linkedNode = node.SelectSingleNode(OvfProperties.VMD_LINKED, _xmlNS);
         iface.setLinked(linkedNode == null ? true : Boolean.valueOf(linkedNode.InnerText));
 
