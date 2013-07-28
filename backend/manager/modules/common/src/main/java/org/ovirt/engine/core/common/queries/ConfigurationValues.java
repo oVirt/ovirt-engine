@@ -94,6 +94,9 @@ public enum ConfigurationValues {
     VirtIoScsiEnabled(ConfigAuthType.User),
     SshSoftFencingCommand,
     MemorySnapshotSupported(ConfigAuthType.User),
+    MaxAverageNetworkQoSValue,
+    MaxPeakNetworkQoSValue,
+    MaxBurstNetworkQoSValue,
     AverageToPeakRatio,
     AverageToBurstRatio
     ;

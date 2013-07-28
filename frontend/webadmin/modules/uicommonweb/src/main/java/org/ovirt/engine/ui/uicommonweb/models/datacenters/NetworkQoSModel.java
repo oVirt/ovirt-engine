@@ -68,13 +68,19 @@ public abstract class NetworkQoSModel extends Model {
     }
 
     public boolean validate() {
-        getName().validateEntity(new IValidation[]{new NotEmptyValidation(), new AsciiNameValidation()});
-        getInboundAverage().validateEntity(new IValidation[]{new NotEmptyValidation(), new IntegerValidation()});
-        getInboundPeak().validateEntity(new IValidation[]{new NotEmptyValidation(), new IntegerValidation()});
-        getInboundBurst().validateEntity(new IValidation[]{new NotEmptyValidation(), new IntegerValidation()});
-        getOutboundAverage().validateEntity(new IValidation[]{new NotEmptyValidation(), new IntegerValidation()});
-        getOutboundPeak().validateEntity(new IValidation[]{new NotEmptyValidation(), new IntegerValidation()});
-        getOutboundBurst().validateEntity(new IValidation[]{new NotEmptyValidation(), new IntegerValidation()});
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() });
+        getInboundAverage().validateEntity(new IValidation[] { new NotEmptyValidation(), new IntegerValidation(0,
+                (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxAverageNetworkQoSValue))});
+        getInboundPeak().validateEntity(new IValidation[] { new NotEmptyValidation(), new IntegerValidation(0,
+                (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxPeakNetworkQoSValue))});
+        getInboundBurst().validateEntity(new IValidation[] { new NotEmptyValidation(), new IntegerValidation(0,
+                (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxBurstNetworkQoSValue))});
+        getOutboundAverage().validateEntity(new IValidation[] { new NotEmptyValidation(), new IntegerValidation(0,
+                (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxAverageNetworkQoSValue))});
+        getOutboundPeak().validateEntity(new IValidation[] { new NotEmptyValidation(), new IntegerValidation(0,
+                (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxPeakNetworkQoSValue))});
+        getOutboundBurst().validateEntity(new IValidation[] { new NotEmptyValidation(), new IntegerValidation(0,
+                (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxBurstNetworkQoSValue))});
 
         boolean inboundDisabled = Boolean.FALSE.equals(getInboundEnabled().getEntity());
         boolean outboundDisabled = Boolean.FALSE.equals(getOutboundEnabled().getEntity());
