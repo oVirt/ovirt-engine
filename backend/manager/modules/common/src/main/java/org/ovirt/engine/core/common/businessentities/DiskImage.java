@@ -52,45 +52,6 @@ public class DiskImage extends DiskImageBase implements IImage {
         setIsQuotaDefault(diskImageBase.isQuotaDefault());
     }
 
-    public DiskImage(Boolean active,
-            Date creation_date,
-            Date last_modified_date,
-            long actual_size,
-            String description,
-            Guid image_guid,
-            String internal_drive_mapping,
-            Guid it_guid,
-            long size,
-            Guid parentId,
-            ImageStatus imageStatus,
-            Date lastModified,
-            String appList,
-            VmEntityType vmEntityType,
-            int numberOfVms,
-            Guid quotaId,
-            String quotaName,
-            QuotaEnforcementTypeEnum quotaEnforcementType,
-            boolean isQuotaDefault) {
-        setActive(active);
-        setCreationDate(creation_date);
-        setLastModifiedDate(last_modified_date);
-        actualSizeInBytes = actual_size;
-        setDescription(description);
-        setImageId(image_guid);
-        setImageTemplateId(it_guid);
-        setSize(size);
-        setParentId(parentId);
-        setImageStatus(imageStatus);
-        setLastModified(lastModified);
-        setAppList(appList);
-        setVmEntityType(vmEntityType);
-        setNumberOfVms(numberOfVms);
-        setQuotaId(quotaId);
-        setQuotaName(quotaName);
-        setQuotaEnforcementType(quotaEnforcementType);
-        setIsQuotaDefault(isQuotaDefault);
-    }
-
     public Guid getImageId() {
         return getImage().getId();
     }

@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.junit.Before;
@@ -16,18 +15,15 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.utils.RandomUtils;
 
 /**
  * A test case for {@link GetAllDisksByVmIdQuery}.
@@ -108,37 +104,23 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
     }
 
     private DiskImage createDiskImage() {
-        return new DiskImage(
-                true,
-                new Date(),
-                new Date(),
-                1L,
-                "1",
-                Guid.newGuid(),
-                "2",
-                Guid.newGuid(),
-                1L,
-                Guid.newGuid(),
-                ImageStatus.OK,
-                new Date(),
-                "", VmEntityType.VM, 1, null, null, QuotaEnforcementTypeEnum.DISABLED, false);
+        DiskImage di = new DiskImage();
+        di.setActive(true);
+        di.setId(Guid.newGuid());
+        di.setImageId(Guid.newGuid());
+        di.setParentId(Guid.newGuid());
+        di.setImageStatus(ImageStatus.OK);
+        return di;
     }
 
     private DiskImage createDiskSnapshot(Guid diskId) {
-        return new DiskImage(
-                RandomUtils.instance().nextBoolean(),
-                new Date(),
-                new Date(),
-                1L,
-                "1",
-                Guid.newGuid(),
-                "2",
-                Guid.newGuid(),
-                1L,
-                diskId,
-                ImageStatus.OK,
-                new Date(),
-                "", VmEntityType.VM, 1, null, null, QuotaEnforcementTypeEnum.DISABLED, false);
+        DiskImage di = new DiskImage();
+        di.setActive(false);
+        di.setId(diskId);
+        di.setImageId(Guid.newGuid());
+        di.setParentId(Guid.newGuid());
+        di.setImageStatus(ImageStatus.OK);
+        return di;
     }
 
     @Test
