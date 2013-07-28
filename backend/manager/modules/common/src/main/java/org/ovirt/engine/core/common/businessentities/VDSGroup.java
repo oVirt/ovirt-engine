@@ -80,13 +80,6 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         migrateOnError = MigrateOnErrorOptions.YES;
     }
 
-    public VDSGroup(String name, String description, String cpu_name) {
-        this();
-        this.name = name;
-        this.description = description;
-        this.cpu_name = cpu_name;
-    }
-
     @Override
     public Guid getId() {
         return id;
