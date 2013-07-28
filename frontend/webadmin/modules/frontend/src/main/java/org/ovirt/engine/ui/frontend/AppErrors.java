@@ -460,7 +460,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is pinned to a specific host. The host's cluster must be the same as the selected VM cluster.")
     String ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The selected disk configuration is not supported.")
+    @DefaultStringValue("Cannot ${action} ${type}. Disk configuration (${volumeFormat} ${volumeType}) is incompatible with the storage domain type.")
     String ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM migration is in progress")

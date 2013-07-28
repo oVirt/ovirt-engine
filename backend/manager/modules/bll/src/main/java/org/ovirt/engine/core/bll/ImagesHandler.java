@@ -424,6 +424,8 @@ public final class ImagesHandler {
         if (!checkImageConfiguration(storageDomain, diskInfo.getVolumeType(), diskInfo.getVolumeFormat())) {
             // not supported
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED.toString());
+            messages.add(String.format("$%1$s %2$s", "volumeFormat", diskInfo.getVolumeFormat()));
+            messages.add(String.format("$%1$s %2$s", "volumeType", diskInfo.getVolumeType()));
             return false;
         }
         return true;
