@@ -15,11 +15,6 @@ public class TagsVmPoolMap implements Serializable {
     public TagsVmPoolMap() {
     }
 
-    public TagsVmPoolMap(Guid tag_id, Guid vm_pool_id) {
-        this.id.tagId = tag_id;
-        this.id.vmPoolId = vm_pool_id;
-    }
-
     public Guid gettag_id() {
         return this.id.tagId;
     }
