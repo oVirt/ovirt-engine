@@ -768,8 +768,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         List<String> messages = getReturnValue().getCanDoActionMessages();
         List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
         VDS destVds = getDestinationVds();
-        boolean canDoAction =
-                getRunVmValidator().canRunVm(vm,
+        if (!getRunVmValidator().canRunVm(vm,
                         messages,
                         vmDisks,
                         getParameters().getBootSequence(),
@@ -781,24 +780,23 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                         getRunVdssList(),
                         destVds == null ? null : destVds.getId(),
                         getVdsGroup()) &&
-                        validateNetworkInterfaces();
-
-        // check for Vm Payload
-        if (canDoAction && getParameters().getVmPayload() != null) {
-            canDoAction = checkPayload(getParameters().getVmPayload(),
-                    getParameters().getDiskPath());
-
-            if (canDoAction && !StringUtils.isEmpty(getParameters().getFloppyPath()) &&
-                    getParameters().getVmPayload().getType() == VmDeviceType.FLOPPY) {
-                addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_FLOPPY_EXCEEDED);
-                canDoAction = false;
-            }
-            else {
-                getVm().setVmPayload(getParameters().getVmPayload());
-            }
+                        validateNetworkInterfaces()) {
+            return false;
         }
 
-        return canDoAction;
+        // check for Vm Payload
+        if (getParameters().getVmPayload() != null) {
+
+            if (checkPayload(getParameters().getVmPayload(), getParameters().getDiskPath()) &&
+                    !StringUtils.isEmpty(getParameters().getFloppyPath()) &&
+                    getParameters().getVmPayload().getType() == VmDeviceType.FLOPPY) {
+                return failCanDoAction(VdcBllMessages.VMPAYLOAD_FLOPPY_EXCEEDED);
+            }
+
+            getVm().setVmPayload(getParameters().getVmPayload());
+        }
+
+        return true;
     }
 
     protected VmValidator getVmValidator(VM vm) {

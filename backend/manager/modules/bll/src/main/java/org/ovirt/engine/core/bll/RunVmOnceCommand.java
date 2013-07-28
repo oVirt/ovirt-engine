@@ -24,17 +24,17 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = super.canDoAction();
+        if (!super.canDoAction()) {
+            return false;
+        }
 
         // the condition allows to get only user and password which are both set (even with empty string) or both aren't
         // set (null), the action will fail if only one of those parameters is null.
-        if (returnValue
-                && (getParameters().getSysPrepUserName() == null ^ getParameters().getSysPrepPassword() == null)) {
-            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_RUN_ONCE_WITH_ILLEGAL_SYSPREP_PARAM);
-            returnValue = false;
+        if (getParameters().getSysPrepUserName() == null ^ getParameters().getSysPrepPassword() == null) {
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_RUN_ONCE_WITH_ILLEGAL_SYSPREP_PARAM);
         }
 
-        return returnValue;
+        return true;
     }
 
     /**
