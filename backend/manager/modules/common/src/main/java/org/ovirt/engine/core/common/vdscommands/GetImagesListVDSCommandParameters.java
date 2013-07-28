@@ -3,11 +3,6 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetImagesListVDSCommandParameters extends IrsBaseVDSCommandParameters {
-    public GetImagesListVDSCommandParameters(Guid sdUUID) {
-        super();
-        setStorageDomainId(sdUUID);
-    }
-
     public GetImagesListVDSCommandParameters(Guid sdUUID, Guid spUUID) {
         super(spUUID);
         setStorageDomainId(sdUUID);
