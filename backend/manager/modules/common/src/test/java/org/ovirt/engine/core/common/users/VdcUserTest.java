@@ -16,7 +16,11 @@ public class VdcUserTest {
 
     @Before
     public void setUp() {
-        adUser = new LdapUser("UserName", "password", Guid.newGuid(), "DomainController");
+        adUser = new LdapUser();
+        adUser.setUserName("UserName");
+        adUser.setPassword("password");
+        adUser.setUserId(Guid.newGuid());
+        adUser.setDomainControler("DomainController");
     }
 
     /** Tests {@link VdcUser#VdcUser(LdapUser)) */

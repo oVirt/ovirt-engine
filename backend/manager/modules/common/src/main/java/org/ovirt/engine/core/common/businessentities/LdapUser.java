@@ -46,14 +46,6 @@ public class LdapUser extends IVdcQueryable implements Serializable {
         mGroups = new HashMap<String, LdapGroup>();
     }
 
-    public LdapUser(String userName, String password, Guid userId, String domainControler) {
-        mUserName = userName;
-        mPassword = password;
-        mUserId = userId;
-        mDomainControler = domainControler;
-        mGroups = new HashMap<String, LdapGroup>();
-    }
-
     public String getUserName() {
         return mUserName;
     }

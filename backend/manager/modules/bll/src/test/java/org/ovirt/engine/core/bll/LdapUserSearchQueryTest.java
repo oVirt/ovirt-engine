@@ -31,7 +31,12 @@ public class LdapUserSearchQueryTest extends LdapSearchQueryTestBase {
 
     @Override
     protected LdapUser getExpectedResult() {
-        return new LdapUser(NAME_TO_SEARCH, "melon!", Guid.newGuid(), DOMAIN);
+        LdapUser user = new LdapUser();
+        user.setUserName(NAME_TO_SEARCH);
+        user.setPassword("melon!");
+        user.setUserId(Guid.newGuid());
+        user.setDomainControler(DOMAIN);
+        return user;
     }
 
     @Override
