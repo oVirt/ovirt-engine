@@ -37,21 +37,6 @@ public class DiskImage extends DiskImageBase implements IImage {
         setLastModifiedDate(getCreationDate());
     }
 
-    public DiskImage(DiskImageBase diskImageBase) {
-        setParentId(Guid.Empty);
-        setVolumeType(diskImageBase.getVolumeType());
-        setvolumeFormat(diskImageBase.getVolumeFormat());
-        setSize(diskImageBase.getSize());
-        setDiskInterface(diskImageBase.getDiskInterface());
-        setBoot(diskImageBase.isBoot());
-        setWipeAfterDelete(diskImageBase.isWipeAfterDelete());
-        setPropagateErrors(diskImageBase.getPropagateErrors());
-        setQuotaId(diskImageBase.getQuotaId());
-        setQuotaName(diskImageBase.getQuotaName());
-        setQuotaEnforcementType(diskImageBase.getQuotaEnforcementType());
-        setIsQuotaDefault(diskImageBase.isQuotaDefault());
-    }
-
     public Guid getImageId() {
         return getImage().getId();
     }
@@ -317,10 +302,17 @@ public class DiskImage extends DiskImageBase implements IImage {
     }
 
     public static DiskImage copyOf(DiskImage diskImage) {
-        // set DiskImageBase properties
-        DiskImage di = new DiskImage(diskImage);
+        DiskImage di = new DiskImage();
 
         // set all private fields (imitate clone - deep copy)
+        di.setVolumeType(diskImage.getVolumeType());
+        di.setvolumeFormat(diskImage.getVolumeFormat());
+        di.setSize(diskImage.getSize());
+        di.setBoot(diskImage.isBoot());
+        di.setQuotaId(diskImage.getQuotaId());
+        di.setQuotaName(diskImage.getQuotaName());
+        di.setQuotaEnforcementType(diskImage.getQuotaEnforcementType());
+        di.setIsQuotaDefault(diskImage.isQuotaDefault());
         di.setActive(diskImage.getActive());
         di.setCreationDate(new Date(diskImage.getCreationDate().getTime()));
         di.setLastModifiedDate(new Date(diskImage.getLastModifiedDate().getTime()));
