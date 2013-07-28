@@ -8,6 +8,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SysPrepParams;
@@ -32,6 +33,11 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         // set (null), the action will fail if only one of those parameters is null.
         if (getParameters().getSysPrepUserName() == null ^ getParameters().getSysPrepPassword() == null) {
             return failCanDoAction(VdcBllMessages.VM_CANNOT_RUN_ONCE_WITH_ILLEGAL_SYSPREP_PARAM);
+        }
+
+        if (getParameters().getCloudInitParameters() != null
+                && !FeatureSupported.cloudInit(getVm().getVdsGroupCompatibilityVersion())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED);
         }
 
         return true;

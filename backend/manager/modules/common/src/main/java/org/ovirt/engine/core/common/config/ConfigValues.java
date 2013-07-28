@@ -1505,6 +1505,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     NetworkQosSupported(536),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    CloudInitSupported(537),
+
     Invalid(65535);
 
     private int intValue;

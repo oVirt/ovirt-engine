@@ -168,4 +168,13 @@ public class FeatureSupported {
     public static boolean networkQoS(Version version) {
         return supportedInConfig(ConfigValues.NetworkQosSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if cloud-init is supported for the cluster version.
+     */
+    public static boolean cloudInit(Version version) {
+        return supportedInConfig(ConfigValues.CloudInitSupported, version);
+    }
 }

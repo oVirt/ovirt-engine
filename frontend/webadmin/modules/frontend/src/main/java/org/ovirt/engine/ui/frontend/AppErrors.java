@@ -2620,4 +2620,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Function factor cannot be negative.")
     String ACTION_TYPE_FAILED_CLUSTER_POLICY_FUNCTION_FACTOR_NEGATIVE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Cloud-Init is only supported on cluster compatibility version 3.3 and higher.")
+    String ACTION_TYPE_FAILED_CLOUD_INIT_IS_NOT_SUPPORTED();
 }
