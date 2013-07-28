@@ -136,24 +136,8 @@ install_common_func() {
     execute_file "common_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 }
 
-install_materialized_views_func() {
-    execute_file "materialized_views_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
-}
-
 delete_async_tasks_and_compensation_data() {
     execute_file "delete_async_tasks_and_compensation_data.sql" ${DATABASE} ${SERVERNAME} ${PORT}> /dev/null
-}
-
-drop_materialized_views() {
-    echo "Dropping materialized views..."
-    CMD="select DropAllMaterializedViews();"
-    execute_command "${CMD}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
-}
-
-refresh_materialized_views() {
-    echo "Refreshing materialized views..."
-    CMD="select RefreshAllMaterializedViews(true);"
-    execute_command "${CMD}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 }
 
 run_pre_upgrade() {

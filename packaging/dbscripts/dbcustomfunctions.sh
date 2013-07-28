@@ -60,3 +60,22 @@ fn_db_set_dbobjects_ownership() {
         fi
     fi
 }
+
+# Materilized views functions, override with empty implementation on DBs that not supporting that
+
+install_materialized_views_func() {
+    execute_file "materialized_views_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+}
+
+drop_materialized_views() {
+    echo "Dropping materialized views..."
+    CMD="select DropAllMaterializedViews();"
+    execute_command "${CMD}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+}
+
+refresh_materialized_views() {
+    echo "Refreshing materialized views..."
+    CMD="select RefreshAllMaterializedViews(true);"
+    execute_command "${CMD}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
+}
+
