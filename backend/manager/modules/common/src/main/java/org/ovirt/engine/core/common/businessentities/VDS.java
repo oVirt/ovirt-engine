@@ -100,166 +100,70 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
                 && ObjectUtils.objectsEqual(vdsGroupGlusterService, other.vdsGroupGlusterService));
     }
 
-    public VDS(Guid vds_group_id, String vds_group_name, String vds_group_description, Guid vds_id, String vds_name,
-            String ip,
-            String host_name,
-            String comment,
-            int port,
-            int ssh_port,
-            String ssh_username,
-            int status,
-            Integer cpu_cores,
-            Integer cpuThreads,
-            String cpu_model,
-            String hwManufacturer, String hwProductName,
-            String hwVersion, String hwSerialNumber, String hwUUID, String hwFamily,
-            Double cpu_speed_mh, String if_total_speed, Boolean kvm_enabled, Integer physical_mem_mb,
-            Double cpu_idle, Double cpu_load, Double cpu_sys,
-            Double cpu_user, Integer mem_commited, Integer vm_active, int vm_count,
-            Integer vm_migrating, Integer usage_mem_percent, Integer usage_cpu_percent, Integer usage_network_percent,
-            Integer reserved_mem, Integer guest_overhead, VDSStatus previous_status, String software_version,
-            String version_name, String build_name, Long mem_available, Long mem_shared, boolean server_SSL_enabled,
-            String vds_group_cpu_name, String cpu_name, Boolean net_config_dirty, String pm_type, String pm_user,
-            String pm_password, Integer pm_port, String pm_options, boolean pm_enabled, String pmSecondaryIp,
-            String pmSecondaryType, String pmSecondaryUser, String pmSecondaryPassword, Integer pmSecondaryPort,
-            String pmSecondaryOptions, boolean pmSecondaryConcurrent, String consoleAddress, Map<String, List<Map<String, String>>> HBAs)
-    {
-        mVdsStatic = new VdsStatic();
-        mVdsDynamic = new VdsDynamic();
-        mVdsStatistics = new VdsStatistics();
-        mInterfaceList = new java.util.ArrayList<VdsNetworkInterface>();
-        mNetworkList = new java.util.ArrayList<Network>();
-        this.setVdsGroupId(vds_group_id);
-        this.vdsGroupName = vds_group_name;
-        this.vdsGroupDescription = vds_group_description;
-        this.setId(vds_id);
-        this.setVdsName(vds_name);
-        this.setManagementIp(ip);
-        this.setHostName(host_name);
-        setComment(comment);
-        this.setPort(port);
-        this.setSshPort(ssh_port);
-        this.setSshUsername(ssh_username);
-        this.setStatus(VDSStatus.forValue(status));
-        this.setHardwareManufacturer(hwManufacturer);
-        this.setHardwareProductName(hwProductName);
-        this.setHardwareVersion(hwVersion);
-        this.setHardwareSerialNumber(hwSerialNumber);
-        this.setHardwareUUID(hwUUID);
-        this.setHardwareFamily(hwFamily);
-        this.setCpuCores(cpu_cores);
-        this.setCpuThreads(cpuThreads);
-        this.setCpuModel(cpu_model);
-        this.setCpuSpeedMh(cpu_speed_mh);
-        this.setIfTotalSpeed(if_total_speed);
-        this.setKvmEnabled(kvm_enabled);
-        this.setPhysicalMemMb(physical_mem_mb);
-        this.setCpuIdle(cpu_idle);
-        this.setCpuLoad(cpu_load);
-        this.setCpuSys(cpu_sys);
-        this.setCpuUser(cpu_user);
-        this.setMemCommited(mem_commited);
-        this.setVmActive(vm_active);
-        this.setVmCount(vm_count);
-        this.setVmMigrating(vm_migrating);
-        this.setUsageMemPercent(usage_mem_percent);
-        this.setUsageCpuPercent(usage_cpu_percent);
-        this.setUsageNetworkPercent(usage_network_percent);
-        this.setReservedMem(reserved_mem);
-        this.setGuestOverhead(guest_overhead);
-        this.setPreviousStatus(previous_status);
-        this.setMemAvailable(mem_available);
-        this.setMemShared(mem_shared);
-        this.setSoftwareVersion(software_version);
-        this.setVersionName(version_name);
-        this.setServerSslEnabled(server_SSL_enabled);
-        this.vdsGroupCpuName = vds_group_cpu_name;
-        this.setCpuFlags(getCpuFlags());
-        this.setNetConfigDirty(net_config_dirty);
-        // Power Management
-        this.setpm_enabled(pm_enabled);
-        this.setPmPassword(pm_password);
-        this.setPmPort(pm_port);
-        this.setPmOptions(pm_options);
-        this.setPmType(pm_type);
-        this.setPmUser(pm_user);
-        this.setPmSecondaryIp(pmSecondaryIp);
-        this.setPmSecondaryType(pmSecondaryType);
-        this.setPmSecondaryPort(pmSecondaryPort);
-        this.setPmSecondaryUser(pmSecondaryUser);
-        this.setPmSecondaryPassword(pmSecondaryPassword);
-        this.setPmSecondaryConcurrent(pmSecondaryConcurrent);
-        this.setConsoleAddress(consoleAddress);
-        this.setHBAs(HBAs);
-    }
-
     public VDS clone() {
-        VDS vds =
-                new VDS(getVdsGroupId(),
-                        getVdsGroupName(),
-                        getVdsGroupDescription(),
-                        getId(),
-                        getName(),
-                        getManagementIp(),
-                        getHostName(),
-                        getComment(),
-                        getPort(),
-                        getSshPort(),
-                        getSshUsername(),
-                        getStatus().getValue(),
-                        getCpuCores(),
-                        getCpuThreads(),
-                        getCpuModel(),
-                        getHardwareManufacturer(),
-                        getHardwareProductName(),
-                        getHardwareVersion(),
-                        getHardwareSerialNumber(),
-                        getHardwareUUID(),
-                        getHardwareFamily(),
-                        getCpuSpeedMh(),
-                        getIfTotalSpeed(),
-                        getKvmEnabled(),
-                        getPhysicalMemMb(),
-                        getCpuIdle(),
-                        getCpuLoad(),
-                        getCpuSys(),
-                        getCpuUser(),
-                        getMemCommited(),
-                        getVmActive(),
-                        getVmCount(),
-                        getVmMigrating(),
-                        getUsageMemPercent(),
-                        getUsageCpuPercent(),
-                        getUsageNetworkPercent(),
-                        getReservedMem(),
-                        getGuestOverhead(),
-                        getPreviousStatus(),
-                        getSoftwareVersion(),
-                        getVersionName(),
-                        getBuildName(),
-                        getMemAvailable(),
-                        getMemShared(),
-                        isServerSslEnabled(),
-                        getVdsGroupCpuName(),
-                        "",
-                        getNetConfigDirty(),
-                        getPmType(),
-                        getPmUser(),
-                        getPmPassword(),
-                        getPmPort(),
-                        getPmOptions(),
-                        getpm_enabled(),
-                        getPmSecondaryIp(),
-                        getPmSecondaryType(),
-                        getPmSecondaryUser(),
-                        getPmSecondaryPassword(),
-                        getPmSecondaryPort(),
-                        getPmSecondaryOptions(),
-                        isPmSecondaryConcurrent(),
-                        getConsoleAddress(),
-                        getHBAs());
-
+        VDS vds = new VDS();
+        vds.setVdsGroupId(getVdsGroupId());
+        vds.setVdsGroupCpuName(getVdsGroupCpuName());
+        vds.setCpuName(getCpuName());
+        vds.setVdsGroupDescription(getVdsGroupDescription());
+        vds.setId(getId());
+        vds.setVdsName(getName());
+        vds.setManagementIp(getManagementIp());
+        vds.setHostName(getHostName());
+        setComment(getComment());
+        vds.setPort(getPort());
+        vds.setSshPort(getSshPort());
+        vds.setSshUsername(getSshUsername());
+        vds.setStatus(getStatus());
+        vds.setHardwareManufacturer(getHardwareManufacturer());
+        vds.setHardwareProductName(getHardwareProductName());
+        vds.setHardwareVersion(getHardwareVersion());
+        vds.setHardwareSerialNumber(getHardwareSerialNumber());
+        vds.setHardwareUUID(getHardwareUUID());
+        vds.setHardwareFamily(getHardwareFamily());
+        vds.setCpuCores(getCpuCores());
+        vds.setCpuThreads(getCpuThreads());
+        vds.setCpuModel(getCpuModel());
+        vds.setCpuSpeedMh(getCpuSpeedMh());
+        vds.setIfTotalSpeed(getIfTotalSpeed());
+        vds.setKvmEnabled(getKvmEnabled());
+        vds.setPhysicalMemMb(getPhysicalMemMb());
+        vds.setCpuIdle(getCpuIdle());
+        vds.setCpuLoad(getCpuLoad());
+        vds.setCpuSys(getCpuSys());
+        vds.setCpuUser(getCpuUser());
+        vds.setMemCommited(getMemCommited());
+        vds.setVmActive(getVmActive());
+        vds.setVmCount(getVmCount());
+        vds.setVmMigrating(getVmMigrating());
+        vds.setUsageMemPercent(getUsageMemPercent());
+        vds.setUsageCpuPercent(getUsageCpuPercent());
+        vds.setUsageNetworkPercent(getUsageNetworkPercent());
+        vds.setReservedMem(getReservedMem());
+        vds.setGuestOverhead(getGuestOverhead());
+        vds.setPreviousStatus(getPreviousStatus());
+        vds.setMemAvailable(getMemAvailable());
+        vds.setMemShared(getMemShared());
+        vds.setSoftwareVersion(getSoftwareVersion());
+        vds.setVersionName(getVersionName());
+        vds.setServerSslEnabled(isServerSslEnabled());
         vds.setCpuFlags(getCpuFlags());
+        vds.setNetConfigDirty(getNetConfigDirty());
+        vds.setpm_enabled(getpm_enabled());
+        vds.setPmPassword(getPmPassword());
+        vds.setPmPort(getPort());
+        vds.setPmOptions(getPmOptions());
+        vds.setPmType(getPmType());
+        vds.setPmUser(getPmUser());
+        vds.setPmSecondaryIp(getPmSecondaryIp());
+        vds.setPmSecondaryType(getPmSecondaryType());
+        vds.setPmSecondaryPort(getPmSecondaryPort());
+        vds.setPmSecondaryUser(getPmSecondaryUser());
+        vds.setPmSecondaryPassword(getPmSecondaryPassword());
+        vds.setPmSecondaryConcurrent(isPmSecondaryConcurrent());
+        vds.setPmPort(getPmPort());
+        vds.setConsoleAddress(getConsoleAddress());
+        vds.setHBAs(getHBAs());
         vds.setVdsSpmPriority(getVdsSpmPriority());
         vds.setOtpValidity(getOtpValidity());
         vds.setKernelVersion(getKernelVersion());
