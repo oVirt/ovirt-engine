@@ -24,17 +24,6 @@ public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
         this.id = Guid.newGuid();
     }
 
-    /**
-     * @param adElementId
-     * @param id
-     * @param roleId
-     */
-    public permissions(Guid adElementId, Guid id, Guid roleId) {
-        this.adElementId = adElementId;
-        this.id = id;
-        this.roleId = roleId;
-    }
-
     public permissions(Guid adElementId, Guid roleId, Guid objectId, VdcObjectType objectType) {
         this.id = Guid.newGuid();
         this.adElementId = adElementId;
