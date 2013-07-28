@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+
 public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, Nameable, Commented {
     private static final long serialVersionUID = 6162262095329980112L;
 
@@ -53,16 +54,6 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, 
         description = "";
         comment = "";
         masterDomainVersion = 0;
-    }
-
-    public StoragePool(String description, String comment, Guid id, String name, int storage_pool_type, int status) {
-        this();
-        this.description = description;
-        this.comment = comment;
-        this.id = id;
-        this.name = name;
-        setStorageType(StorageType.forValue(storage_pool_type));
-        this.status = StoragePoolStatus.forValue(status);
     }
 
     public String getdescription() {

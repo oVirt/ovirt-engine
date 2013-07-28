@@ -110,12 +110,7 @@ public class JsonObjectSerializationEntitiesTest {
                                 random.nextInt(StorageDomainType.values().length),
                                 random.nextString(10), random.nextString(10)) },
                         { new StorageDomainDynamic(random.nextInt(), Guid.newGuid(), random.nextInt()) },
-                        { new StoragePool(random.nextString(10),
-                                "",
-                                Guid.newGuid(),
-                                random.nextString(10),
-                                random.nextEnum(StorageType.class).getValue(),
-                                random.nextInt(StoragePoolStatus.values().length)) },
+                        { randomStoragePool() },
                         { new StoragePoolIsoMap(Guid.newGuid(),
                                 Guid.newGuid(),
                                 random.nextEnum(StorageDomainStatus.class)) },
@@ -126,6 +121,18 @@ public class JsonObjectSerializationEntitiesTest {
                         { new IdContainerClass<Guid>(Guid.newGuid()) }
                 };
         return Arrays.asList(data);
+    }
+
+    private static StoragePool randomStoragePool() {
+        RandomUtils random = RandomUtils.instance();
+        StoragePool sp = new StoragePool();
+        sp.setdescription(random.nextString(10));
+        sp.setComment(random.nextString(10));
+        sp.setName(random.nextString(10));
+        sp.setId(Guid.newGuid());
+        sp.setStorageType(random.nextEnum(StorageType.class));
+        sp.setstatus(random.nextEnum(StoragePoolStatus.class));
+        return sp;
     }
 
     @Test

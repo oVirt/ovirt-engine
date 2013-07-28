@@ -134,20 +134,15 @@ public class OvfDataUpdaterTest {
         executedUpdatedOvfGenerationIdsInDb = new HashMap<Guid, Map<Guid, Long>>();
         vms = new HashMap<Guid, VM>();
         templates = new HashMap<Guid, VmTemplate>();
-        pool1 =
-                new StoragePool("first sp",
-                        "",
-                        Guid.newGuid(),
-                        "storage_pool1",
-                        StorageType.NFS.getValue(),
-                        StoragePoolStatus.Up.getValue());
-        pool2 =
-                new StoragePool("second sp",
-                        "",
-                        Guid.newGuid(),
-                        "storage_pool2",
-                        StorageType.NFS.getValue(),
-                        StoragePoolStatus.Up.getValue());
+        pool1 = new StoragePool();
+        pool1.setId(Guid.newGuid());
+        pool1.setStorageType(StorageType.NFS);
+        pool1.setstatus(StoragePoolStatus.Up);
+
+        pool2 = new StoragePool();
+        pool2.setId(Guid.newGuid());
+        pool2.setStorageType(StorageType.NFS);
+        pool2.setstatus(StoragePoolStatus.Up);
 
         performStoragePoolInitOps(pool1);
         performStoragePoolInitOps(pool2);

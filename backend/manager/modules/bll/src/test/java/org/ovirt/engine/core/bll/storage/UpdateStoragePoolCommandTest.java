@@ -20,7 +20,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -146,8 +145,7 @@ public class UpdateStoragePoolCommandTest {
     }
 
     private void newPoolNameIsAlreadyTaken() {
-        when(spDao.get(any(Guid.class))).thenReturn(new StoragePool("foo", "", Guid.Empty, "foo",
-                StorageType.NFS.getValue(), StoragePoolStatus.Up.getValue()));
+        when(spDao.get(any(Guid.class))).thenReturn(new StoragePool());
         when(spDao.getByName(anyString())).thenReturn(createDefaultStoragePool());
     }
 
