@@ -819,12 +819,7 @@ fi
 %{engine_data}/bin/ovirt-engine-log-setup-event.sh
 
 # Setup
-%{engine_data}/setup/bin/ovirt-engine-setup
-%{engine_data}/setup/bin/ovirt-engine-remove
-%{engine_data}/setup/bin/ovirt-engine-setup.env
-%{engine_data}/setup/ovirt_engine_setup/*.py*
-%{engine_data}/setup/plugins/*/*/*.py*
-%{engine_data}/setup/dbutils
+%{engine_data}/setup
 
 # Firewalld configuration
 %{engine_data}/firewalld/base
