@@ -7,9 +7,6 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.businessentities.vds_spm_id_map;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -63,36 +61,7 @@ public class JsonObjectSerializationEntitiesTest {
         Object[][] data =
                 new Object[][] {
                         { vdsStatic },
-                        { new VdsDynamic(random.nextInt(),
-                                random.nextInt(),
-                                random.nextString(10),
-                                random.nextDouble(),
-                                random.nextString(10),
-                                random.nextBoolean(),
-                                random.nextInt(),
-                                random.nextInt(),
-                                random.nextInt(),
-                                Guid.newGuid(),
-                                random.nextInt(),
-                                random.nextInt(),
-                                random.nextInt(),
-                                random.nextInt(),
-                                random.nextInt(),
-                                random.nextEnum(VDSStatus.class),
-                                random.nextNumericString(5) + "." + random.nextNumericString(5),
-                                random.nextString(10),
-                                random.nextString(10),
-                                new Date(random.nextLong()),
-                                random.nextInt(),
-                                random.nextInt(),
-                                random.nextBoolean(),
-                                random.nextString(10),
-                                random.nextString(10),
-                                random.nextString(10),
-                                random.nextString(10),
-                                random.nextString(10),
-                                random.nextString(10),
-                                new HashMap<String, List<Map<String,String>>>()) },
+                        { randomVdsDynamic() },
                         { new VdsStatistics(random.nextDouble(),
                                 random.nextDouble(),
                                 random.nextDouble(),
@@ -133,6 +102,42 @@ public class JsonObjectSerializationEntitiesTest {
         sp.setStorageType(random.nextEnum(StorageType.class));
         sp.setstatus(random.nextEnum(StoragePoolStatus.class));
         return sp;
+    }
+
+    private static VdsDynamic randomVdsDynamic() {
+        RandomUtils random = RandomUtils.instance();
+        VdsDynamic vdsDynamic = new VdsDynamic();
+        vdsDynamic.setcpu_cores(random.nextInt());
+        vdsDynamic.setCpuThreads(random.nextInt());
+        vdsDynamic.setcpu_model(random.nextString(10));
+        vdsDynamic.setcpu_speed_mh(random.nextDouble());
+        vdsDynamic.setif_total_speed(random.nextString(10));
+        vdsDynamic.setkvm_enabled(random.nextBoolean());
+        vdsDynamic.setmem_commited(random.nextInt());
+        vdsDynamic.setphysical_mem_mb(random.nextInt());
+        vdsDynamic.setstatus(random.nextEnum(VDSStatus.class));
+        vdsDynamic.setId(Guid.newGuid());
+        vdsDynamic.setvm_active(random.nextInt());
+        vdsDynamic.setvm_count(random.nextInt());
+        vdsDynamic.setvm_migrating(random.nextInt());
+        vdsDynamic.setreserved_mem(random.nextInt());
+        vdsDynamic.setguest_overhead(random.nextInt());
+        vdsDynamic.setprevious_status(random.nextEnum(VDSStatus.class));
+        vdsDynamic.setsoftware_version(random.nextNumericString(5) + '.' + random.nextNumericString(5));
+        vdsDynamic.setversion_name(random.nextString(10));
+        vdsDynamic.setcpu_over_commit_time_stamp(new Date(random.nextLong()));
+        vdsDynamic.setpending_vcpus_count(random.nextInt());
+        vdsDynamic.setpending_vmem_size(random.nextInt());
+        vdsDynamic.setnet_config_dirty(random.nextBoolean());
+        vdsDynamic.setTransparentHugePagesState(random.nextEnum(VdsTransparentHugePagesState.class));
+        vdsDynamic.setHardwareUUID(Guid.newGuid().toString());
+        vdsDynamic.setHardwareFamily(random.nextString(10));
+        vdsDynamic.setHardwareSerialNumber(random.nextString(10));
+        vdsDynamic.setHardwareVersion(random.nextString(10));
+        vdsDynamic.setHardwareProductName(random.nextString(10));
+        vdsDynamic.setHardwareManufacturer(random.nextString(10));
+
+        return vdsDynamic;
     }
 
     @Test

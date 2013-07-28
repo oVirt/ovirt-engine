@@ -162,48 +162,6 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         guest_overhead = 0;
     }
 
-    public VdsDynamic(Integer cpu_cores, Integer cpuThreads, String cpu_model, Double cpu_speed_mh, String if_total_speed,
-                      Boolean kvm_enabled, Integer mem_commited, Integer physical_mem_mb, int status, Guid vds_id,
-                      Integer vm_active, int vm_count, Integer vm_migrating, Integer reserved_mem, Integer guest_overhead,
-                      VDSStatus previous_status, String software_version, String version_name, String build_name,
-                      Date cpu_over_commit_time_stamp, Integer pending_vcpus_count,
-                      Integer pending_vmem_sizeField, Boolean net_config_dirty, String hwManufacturer,
-                      String hwProductName, String hwVersion, String hwSerialNumber,
-                      String hwUUID, String hwFamily, Map<String, List<Map<String, String>>> HBAs) {
-        libvirt_version = new RpmVersion();
-        rpmVersion = new RpmVersion();
-        this.cpu_cores = cpu_cores;
-        this.cpuThreads = cpuThreads;
-        this.cpu_model = cpu_model;
-        this.cpu_speed_mh = BigDecimal.valueOf(cpu_speed_mh);
-        this.if_total_speed = if_total_speed;
-        this.kvm_enabled = kvm_enabled;
-        this.mem_commited = mem_commited;
-        this.physical_mem_mb = physical_mem_mb;
-        this.status = VDSStatus.forValue(status);
-        this.id = vds_id;
-        this.vm_active = vm_active;
-        this.vm_count = vm_count;
-        this.vm_migrating = vm_migrating;
-        this.reserved_mem = reserved_mem;
-        this.guest_overhead = guest_overhead;
-        this.previous_status = previous_status;
-        this.setsoftware_version(software_version);
-        this.setversion_name(version_name);
-        this.setcpu_over_commit_time_stamp(cpu_over_commit_time_stamp);
-        this.pending_vcpus_count = pending_vcpus_count;
-        this.pending_vmem_size = pending_vmem_sizeField;
-        this.net_config_dirty = net_config_dirty;
-        this.transparentHugePagesState = VdsTransparentHugePagesState.Never;
-        this.hwUUID = hwUUID;
-        this.hwFamily = hwFamily;
-        this.hwSerialNumber = hwSerialNumber;
-        this.hwVersion = hwVersion;
-        this.hwProductName = hwProductName;
-        this.hwManufacturer = hwManufacturer;
-        this.HBAs = HBAs;
-    }
-
     public Integer getcpu_cores() {
         return this.cpu_cores;
     }
