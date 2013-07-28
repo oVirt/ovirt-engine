@@ -27,12 +27,6 @@ public class LdapGroup extends IVdcQueryable {
         distinguishedName = "";
     }
 
-    public LdapGroup(Guid id, String name, int status) {
-        this.id = id;
-        this.name = name;
-        this.status = LdapRefStatus.forValue(status);
-    }
-
     public Guid getid() {
         return this.id;
     }
