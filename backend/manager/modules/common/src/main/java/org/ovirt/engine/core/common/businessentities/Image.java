@@ -47,35 +47,6 @@ public class Image implements BusinessEntity<Guid> {
     public Image() {
     }
 
-    public Image(Guid id,
-            boolean active,
-            boolean boot,
-            Date creationDate,
-            Date lastModified,
-            Guid parentId,
-            Guid templateImageId,
-            Guid snapshotId,
-            Guid diskId,
-            ImageStatus status,
-            VolumeType volumeType,
-            long size,
-            VolumeFormat volumeFormat,
-            Guid quotaId) {
-        this.id = id;
-        this.active = active;
-        this.creationDate = creationDate;
-        this.lastModified = lastModified;
-        this.parentId = parentId;
-        this.templateImageId = templateImageId;
-        this.snapshotId = snapshotId;
-        this.diskId = diskId;
-        this.status = status;
-        this.volumeType = volumeType;
-        this.size = size;
-        this.volumeFormat = volumeFormat;
-        this.quotaId = quotaId;
-    }
-
     @Override
     public Guid getId() {
         return id;
