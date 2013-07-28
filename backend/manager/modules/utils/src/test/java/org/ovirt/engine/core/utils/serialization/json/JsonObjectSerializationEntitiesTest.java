@@ -61,17 +61,7 @@ public class JsonObjectSerializationEntitiesTest {
                 new Object[][] {
                         { vdsStatic },
                         { randomVdsDynamic() },
-                        { new VdsStatistics(random.nextDouble(),
-                                random.nextDouble(),
-                                random.nextDouble(),
-                                random.nextDouble(),
-                                random.nextLong(),
-                                random.nextLong(),
-                                random.nextLong(),
-                                random.nextInt(),
-                                random.nextInt(),
-                                random.nextInt(),
-                                Guid.newGuid()) },
+                        { randomVdsStatistics() },
                         { new vds_spm_id_map(Guid.newGuid(), Guid.newGuid(), random.nextInt()) },
                         { randomStorageDomainStatic() },
                         { new StorageDomainDynamic(random.nextInt(), Guid.newGuid(), random.nextInt()) },
@@ -145,6 +135,22 @@ public class JsonObjectSerializationEntitiesTest {
         vdsDynamic.setHardwareManufacturer(random.nextString(10));
 
         return vdsDynamic;
+    }
+
+    private static VdsStatistics randomVdsStatistics() {
+        RandomUtils random = RandomUtils.instance();
+        VdsStatistics vdsStatistics = new VdsStatistics();
+        vdsStatistics.setcpu_idle(random.nextDouble());
+        vdsStatistics.setcpu_load(random.nextDouble());
+        vdsStatistics.setcpu_sys(random.nextDouble());
+        vdsStatistics.setcpu_user(random.nextDouble());
+        vdsStatistics.setmem_available(random.nextLong());
+        vdsStatistics.setMemFree(random.nextLong());
+        vdsStatistics.setmem_shared(random.nextLong());
+        vdsStatistics.setusage_cpu_percent(random.nextInt());
+        vdsStatistics.setusage_mem_percent(random.nextInt());
+        vdsStatistics.setusage_network_percent(random.nextInt());
+        return vdsStatistics;
     }
 
     @Test

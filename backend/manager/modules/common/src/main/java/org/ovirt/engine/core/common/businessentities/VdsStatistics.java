@@ -32,22 +32,6 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.cpu_user = BigDecimal.ZERO;
     }
 
-    public VdsStatistics(Double cpu_idle, Double cpu_load, Double cpu_sys,
-            Double cpu_user, Long mem_available, Long memFree, Long mem_shared, Integer usage_cpu_percent,
-            Integer usage_mem_percent, Integer usage_network_percent, Guid vds_id) {
-        this.cpu_idle = BigDecimal.valueOf(cpu_idle);
-        this.cpu_load = BigDecimal.valueOf(cpu_load);
-        this.cpu_sys = BigDecimal.valueOf(cpu_sys);
-        this.cpu_user = BigDecimal.valueOf(cpu_user);
-        this.mem_available = mem_available;
-        this.memFree = memFree;
-        this.mem_shared = mem_shared;
-        this.usage_cpu_percent = usage_cpu_percent;
-        this.usage_mem_percent = usage_mem_percent;
-        this.usage_network_percent = usage_network_percent;
-        // this.vds_id = vds_id;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;
