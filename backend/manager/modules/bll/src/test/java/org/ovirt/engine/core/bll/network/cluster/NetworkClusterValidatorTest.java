@@ -18,9 +18,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -102,5 +102,24 @@ public class NetworkClusterValidatorTest {
         when(networkCluster.isMigration()).thenReturn(migration);
 
         assertThat(validator.migrationPropertySupported(NETWORK_NAME), matcher);
+    }
+
+    @Test
+    public void externalNetworkNotSupported() throws Exception {
+        externalNetworkSupportTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_NOT_SUPPORTED),
+                false);
+    }
+
+    @Test
+    public void externalNetworkSupported() throws Exception {
+        externalNetworkSupportTest(isValid(),
+                true);
+    }
+
+    private void externalNetworkSupportTest(Matcher<ValidationResult> matcher,
+            boolean externalNetworkSupported) {
+        mockConfigRule.mockConfigValue(ConfigValues.SupportCustomDeviceProperties, version, externalNetworkSupported);
+
+        assertThat(validator.externalNetworkSupported(), matcher);
     }
 }

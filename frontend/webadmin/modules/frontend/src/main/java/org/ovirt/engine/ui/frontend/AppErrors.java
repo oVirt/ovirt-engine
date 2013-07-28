@@ -1345,6 +1345,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. External network details (except name and description) cannot be changed.")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_DETAILS_CANNOT_BE_EDITED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. External networks are not supported for this cluster's compatibility version.")
+    String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. External network cannot be used as a display network.")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_DISPLAY();
 

@@ -81,7 +81,8 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     private boolean validateExternalNetwork(NetworkClusterValidator validator) {
-        return validate(validator.externalNetworkNotDisplay(getNetworkName()))
+        return validate(validator.externalNetworkSupported())
+                && validate(validator.externalNetworkNotDisplay(getNetworkName()))
                 && validate(validator.externalNetworkNotRequired(getNetworkName()));
     }
 

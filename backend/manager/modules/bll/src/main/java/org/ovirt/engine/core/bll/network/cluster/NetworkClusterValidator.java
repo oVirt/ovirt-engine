@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll.network.cluster;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.compat.Version;
 
 /**
  * Validator class for {@link NetworkCluster} instances.
@@ -43,6 +43,17 @@ public class NetworkClusterValidator {
     public ValidationResult migrationPropertySupported(String networkName) {
         return !networkCluster.isMigration() || FeatureSupported.migrationNetwork(version) ? ValidationResult.VALID
                 : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_NETWORK_IS_NOT_SUPPORTED);
+    }
+
+    /**
+     * Make sure the external network attachment is supported for the version.
+     *
+     * @return Error iff the external network attachment is not supported.
+     */
+    public ValidationResult externalNetworkSupported() {
+        return FeatureSupported.deviceCustomProperties(version)
+                ? ValidationResult.VALID
+                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_NOT_SUPPORTED);
     }
 
     /**
