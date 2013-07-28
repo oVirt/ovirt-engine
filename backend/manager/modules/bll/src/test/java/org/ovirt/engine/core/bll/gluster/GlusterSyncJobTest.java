@@ -31,9 +31,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsDynamic;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
@@ -160,7 +157,7 @@ public class GlusterSyncJobTest {
         existingServer2 = createServer(SERVER_ID_2, SERVER_NAME_2, version);
         existingServers.add(existingServer1);
         existingServers.add(existingServer2);
-        existingServers.add(createServer(SERVER_ID_3, SERVER_NAME_3,version));
+        existingServers.add(createServer(SERVER_ID_3, SERVER_NAME_3, version));
 
         existingDistVol = createDistVol(DIST_VOL_NAME, EXISTING_VOL_DIST_ID);
         existingReplVol = createReplVol();
@@ -177,12 +174,10 @@ public class GlusterSyncJobTest {
     }
 
     private VDS createServer(Guid serverId, String hostname, Version version) {
-        VdsStatic vdsStatic = new VdsStatic();
-        vdsStatic.setId(serverId);
-        vdsStatic.setHostName(hostname);
-        VdsDynamic vdsDynamic = new VdsDynamic();
-        vdsDynamic.setstatus(VDSStatus.Up);
-        VDS vds = new VDS(vdsStatic, vdsDynamic, new VdsStatistics());
+        VDS vds = new VDS();
+        vds.setId(serverId);
+        vds.setHostName(hostname);
+        vds.setStatus(VDSStatus.Up);
         vds.setVdsGroupCompatibilityVersion(version);
         return vds;
     }

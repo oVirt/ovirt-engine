@@ -193,12 +193,6 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.setHBAs(HBAs);
     }
 
-    public VDS(VdsStatic vdsStatic, VdsDynamic vdsDynamic, VdsStatistics vdsStatistics) {
-        this.mVdsStatic = vdsStatic;
-        this.mVdsDynamic = vdsDynamic;
-        this.mVdsStatistics = vdsStatistics;
-    }
-
     public VDS clone() {
         VDS vds =
                 new VDS(getVdsGroupId(),

@@ -27,9 +27,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsDynamic;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
-import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookConflictFlags;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
@@ -192,12 +189,11 @@ public class GlusterHookSyncJobTest {
     }
 
     private VDS createServer(Guid serverId, String hostname) {
-        VdsStatic vdsStatic = new VdsStatic();
-        vdsStatic.setId(serverId);
-        vdsStatic.setHostName(hostname);
-        VdsDynamic vdsDynamic = new VdsDynamic();
-        vdsDynamic.setstatus(VDSStatus.Up);
-        return new VDS(vdsStatic, vdsDynamic, new VdsStatistics());
+        VDS vds = new VDS();
+        vds.setId(serverId);
+        vds.setHostName(hostname);
+        vds.setStatus(VDSStatus.Up);
+        return vds;
     }
 
     private VDSGroup createCluster(int index) {
