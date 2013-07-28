@@ -48,14 +48,6 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
     public StorageDomainStatic() {
     }
 
-    public StorageDomainStatic(Guid id, String storage, int storageDomainType, String storageName, String description) {
-        this.id = id;
-        this.storage = storage;
-        this.storageType = StorageDomainType.forValue(storageDomainType);
-        this.name = storageName;
-        this.description = description;
-    }
-
     @Override
     public Guid getId() {
         return this.id;

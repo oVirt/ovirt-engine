@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -74,10 +73,7 @@ public class JsonObjectSerializationEntitiesTest {
                                 random.nextInt(),
                                 Guid.newGuid()) },
                         { new vds_spm_id_map(Guid.newGuid(), Guid.newGuid(), random.nextInt()) },
-                        { new StorageDomainStatic(Guid.newGuid(),
-                                random.nextString(10),
-                                random.nextInt(StorageDomainType.values().length),
-                                random.nextString(10), random.nextString(10)) },
+                        { randomStorageDomainStatic() },
                         { new StorageDomainDynamic(random.nextInt(), Guid.newGuid(), random.nextInt()) },
                         { randomStoragePool() },
                         { new StoragePoolIsoMap(Guid.newGuid(),
@@ -102,6 +98,17 @@ public class JsonObjectSerializationEntitiesTest {
         sp.setStorageType(random.nextEnum(StorageType.class));
         sp.setstatus(random.nextEnum(StoragePoolStatus.class));
         return sp;
+    }
+
+    private static StorageDomainStatic randomStorageDomainStatic() {
+        RandomUtils random = RandomUtils.instance();
+        StorageDomainStatic sds = new StorageDomainStatic();
+        sds.setId(Guid.newGuid());
+        sds.setStorage(random.nextString(10));
+        sds.setStorageType(random.nextEnum(StorageType.class));
+        sds.setStorageName(random.nextString(10));
+        sds.setDescription(random.nextString(10));
+        return sds;
     }
 
     private static VdsDynamic randomVdsDynamic() {
