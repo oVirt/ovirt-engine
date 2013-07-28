@@ -192,57 +192,6 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
-    public void save(VM vm) {
-        getCallsHandler().executeModification("InsertVm", getCustomMapSqlParameterSource()
-                .addValue("description", vm.getDescription())
-                .addValue("free_text_comment", vm.getComment())
-                .addValue("mem_size_mb", vm.getMemSizeMb())
-                .addValue("os", vm.getOs())
-                .addValue("vds_group_id", vm.getVdsGroupId())
-                .addValue("vm_guid", vm.getId())
-                .addValue("vm_name", vm.getName())
-                .addValue("vmt_guid", vm.getVmtGuid())
-                .addValue("num_of_monitors", vm.getNumOfMonitors())
-                .addValue("single_qxl_pci", vm.getSingleQxlPci())
-                .addValue("allow_console_reconnect", vm.getAllowConsoleReconnect())
-                .addValue("is_initialized", vm.isInitialized())
-                .addValue("num_of_sockets", vm.getNumOfSockets())
-                .addValue("cpu_per_socket", vm.getCpuPerSocket())
-                .addValue("usb_policy", vm.getUsbPolicy())
-                .addValue("time_zone", vm.getTimeZone())
-                .addValue("auto_startup", vm.isAutoStartup())
-                .addValue("is_stateless", vm.isStateless())
-                .addValue("is_smartcard_enabled", vm.isSmartcardEnabled())
-                .addValue("is_delete_protected", vm.isDeleteProtected())
-                .addValue("dedicated_vm_for_vds", vm.getDedicatedVmForVds())
-                .addValue("fail_back", vm.isFailBack())
-                .addValue("vm_type", vm.getVmType())
-                .addValue("nice_level", vm.getNiceLevel())
-                .addValue("default_boot_sequence",
-                        vm.getDefaultBootSequence())
-                .addValue("default_display_type", vm.getDefaultDisplayType())
-                .addValue("priority", vm.getPriority())
-                .addValue("iso_path", vm.getIsoPath())
-                .addValue("origin", vm.getOrigin())
-                .addValue("initrd_url", vm.getInitrdUrl())
-                .addValue("kernel_url", vm.getKernelUrl())
-                .addValue("kernel_params", vm.getKernelParams())
-                .addValue("migration_support",
-                        vm.getMigrationSupport().getValue())
-                .addValue("predefined_properties", vm.getPredefinedProperties())
-                .addValue("userdefined_properties",
-                        vm.getUserDefinedProperties())
-                .addValue("min_allocated_mem", vm.getMinAllocatedMem())
-                .addValue("cpu_pinning", vm.getCpuPinning())
-                .addValue("host_cpu_flags", vm.isUseHostCpuFlags())
-                .addValue("guest_agent_nics_hash", vm.getGuestAgentNicsHash())
-                .addValue("tunnel_migration", vm.getTunnelMigration())
-                .addValue("vnc_keyboard_layout", vm.getVncKeyboardLayout())
-                .addValue("is_run_and_pause", vm.isRunAndPause())
-                .addValue("created_by_user_id", vm.getCreatedByUserId()));
-    }
-
-    @Override
     public void saveIsInitialized(Guid vmid, boolean isInitialized) {
         getCallsHandler().executeModification("UpdateIsInitialized",
                 getCustomMapSqlParameterSource()

@@ -201,14 +201,6 @@ public interface VmDAO extends DAO {
     List<VM> getAll();
 
     /**
-     * Saves the supplied VM.
-     *
-     * @param vm
-     *            the VM
-     */
-    void save(VM vm);
-
-    /**
      * Saves the is_initialized property of the VM.
      *
      * @param vmid
