@@ -37,11 +37,15 @@ public class GetCommandsCompatibilityVersionsQueryTest extends AbstractUserQuery
     @Test
     public void testExecuteQueryCommand() {
         GetCommandsCompatibilityVersionsQuery<VdcQueryParametersBase> queryToRun = getQuery();
-        List<ActionVersionMap> entriesFromDb =
-                Arrays.asList(new ActionVersionMap(VdcActionType.RunVm, RUN_VM_VERSION, RUN_VM_VERSION),
-                        new ActionVersionMap(VdcActionType.AddVmFromSnapshot,
-                                ADD_VM_FROM_SNAPSHOT_VERSION,
-                                ADD_VM_FROM_SNAPSHOT_VERSION));
+        ActionVersionMap runVm = new ActionVersionMap();
+        runVm.setaction_type(VdcActionType.RunVm);
+        runVm.setcluster_minimal_version(RUN_VM_VERSION.toString());
+        runVm.setstorage_pool_minimal_version(RUN_VM_VERSION.toString());
+        ActionVersionMap addVmFromSnapshot = new ActionVersionMap();
+        addVmFromSnapshot.setaction_type(VdcActionType.AddVmFromSnapshot);
+        addVmFromSnapshot.setcluster_minimal_version(ADD_VM_FROM_SNAPSHOT_VERSION.toString());
+        addVmFromSnapshot.setstorage_pool_minimal_version(ADD_VM_FROM_SNAPSHOT_VERSION.toString());
+        List<ActionVersionMap> entriesFromDb = Arrays.asList(runVm, addVmFromSnapshot);
         doReturn(entriesFromDb).when(actionGroupDaoMock).getAllActionVersionMap();
         queryToRun.execute();
         VdcQueryReturnValue returnValue = queryToRun.getQueryReturnValue();

@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.compat.Version;
 
 public class ActionVersionMap implements Serializable {
     private static final long serialVersionUID = -212222175662336097L;
@@ -14,16 +13,6 @@ public class ActionVersionMap implements Serializable {
 
     public ActionVersionMap(boolean nullValue) {
         this.nullValue = nullValue;
-    }
-
-    public ActionVersionMap(VdcActionType actionType, String clusterMinimalVersion, String storagePoolMinimalVersion) {
-        setaction_type(actionType);
-        setcluster_minimal_version(clusterMinimalVersion);
-        setstorage_pool_minimal_version(storagePoolMinimalVersion);
-    }
-
-    public ActionVersionMap(VdcActionType actionType, Version clusterMinimalVersion, Version storagePoolMinimalVersion) {
-        this(actionType, clusterMinimalVersion.toString(), storagePoolMinimalVersion.toString());
     }
 
     private int actionType = VdcActionType.Unknown.getValue();

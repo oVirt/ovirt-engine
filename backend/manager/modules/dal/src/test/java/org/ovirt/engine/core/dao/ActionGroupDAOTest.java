@@ -27,7 +27,10 @@ public class ActionGroupDAOTest extends BaseDAOTestCase {
 
         dao = dbFacade.getActionGroupDao();
         existingActionMap = dao.getActionVersionMapByActionType(VdcActionType.AddVm);
-        newActionMap = new ActionVersionMap(VdcActionType.ActivateStorageDomain, "3.0", "3.0");
+        newActionMap = new ActionVersionMap();
+        newActionMap.setaction_type(VdcActionType.ActivateStorageDomain);
+        newActionMap.setcluster_minimal_version("3.0");
+        newActionMap.setstorage_pool_minimal_version("3.0");
     }
 
     @Test
