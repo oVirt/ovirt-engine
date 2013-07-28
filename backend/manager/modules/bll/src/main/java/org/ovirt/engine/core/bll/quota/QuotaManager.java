@@ -286,7 +286,9 @@ public class QuotaManager {
                     storageRequestPercentage);
             requestIsApproved = true;
         } else {
-            log.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT);
+            log.setFirst(quotaEnforcementTypeEnum == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT ?
+                    AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT :
+                    AuditLogType.USER_EXCEEDED_QUOTA_STORAGE_GRACE_LIMIT_PERMISSIVE_MODE);
             quotaManagerAuditLogger.addCustomValuesStorage(log.getSecond(),
                     quota.getQuotaName(),
                     quota.getId(),
@@ -367,7 +369,9 @@ public class QuotaManager {
                     newMemoryPercent > 100);
             requestIsApproved = true;
         } else {
-            auditLogPair.setFirst(AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_GRACE_LIMIT); // passed the grace
+            auditLogPair.setFirst(quotaEnforcementTypeEnum == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT ?
+                    AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_GRACE_LIMIT:
+                    AuditLogType.USER_EXCEEDED_QUOTA_VDS_GROUP_GRACE_LIMIT_PERMISSIVE_MODE); // passed the grace
             quotaManagerAuditLogger.addCustomValuesVdsGroup(auditLogPair.getSecond(),
                     quota.getQuotaName(),
                     quota.getId(),
