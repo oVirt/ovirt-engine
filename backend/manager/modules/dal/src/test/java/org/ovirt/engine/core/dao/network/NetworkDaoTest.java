@@ -256,7 +256,8 @@ public class NetworkDaoTest extends BaseDAOTestCase {
     }
 
     private void verifyDataCenterNetworks(List<Network> result) {
-        assertGetAllForClusterResult(result);
+        assertNotNull(result);
+        assertFalse(result.isEmpty());
         for (Network net : result) {
             assertEquals(datacenter, net.getDataCenterId());
         }
