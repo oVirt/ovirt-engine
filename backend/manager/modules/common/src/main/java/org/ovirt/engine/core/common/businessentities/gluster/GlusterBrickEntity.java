@@ -4,7 +4,6 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.AddBrick;
@@ -44,14 +43,6 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntity<
     private BrickDetails brickDetails;
 
     public GlusterBrickEntity() {
-    }
-
-    public GlusterBrickEntity(Guid volumeId, VdsStatic server, String brickDirectory, GlusterStatus brickStatus) {
-        setVolumeId(volumeId);
-        setServerId(server.getId());
-        setServerName(server.getHostName());
-        setBrickDirectory(brickDirectory);
-        setStatus(brickStatus);
     }
 
     public Guid getVolumeId() {

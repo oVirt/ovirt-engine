@@ -15,7 +15,6 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -93,11 +92,10 @@ public class StartRebalanceGlusterVolumeCommandTest {
         List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
         GlusterBrickEntity brick;
         for (Integer i = 0; i < n; i++) {
-            brick =
-                    new GlusterBrickEntity(volumeId,
-                            new VdsStatic(),
-                            "/tmp/test-vol" + i.toString(),
-                            GlusterStatus.UP);
+            brick = new GlusterBrickEntity();
+            brick.setVolumeId(volumeId);
+            brick.setBrickDirectory("/tmp/test-vol" + i.toString());
+            brick.setStatus(GlusterStatus.UP);
             bricks.add(brick);
         }
         return bricks;

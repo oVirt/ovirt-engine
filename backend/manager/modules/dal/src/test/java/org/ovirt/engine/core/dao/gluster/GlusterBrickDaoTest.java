@@ -35,10 +35,12 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testSaveAndGetById() {
-        GlusterBrickEntity brickToAdd = new GlusterBrickEntity(EXISTING_VOL_ID,
-                server,
-                "/export/test-vol-distribute-1/dir3",
-                GlusterStatus.UP);
+        GlusterBrickEntity brickToAdd = new GlusterBrickEntity();
+        brickToAdd.setVolumeId(EXISTING_VOL_ID);
+        brickToAdd.setServerId(server.getId());
+        brickToAdd.setServerName(server.getHostName());
+        brickToAdd.setBrickDirectory("/export/test-vol-distribute-1/dir3");
+        brickToAdd.setStatus(GlusterStatus.UP);
         brickToAdd.setBrickOrder(0);
 
         dao.save(brickToAdd);
@@ -91,11 +93,12 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
         GlusterBrickEntity firstBrick = dao.getById(EXISTING_BRICK_ID);
         assertNotNull(firstBrick);
 
-        GlusterBrickEntity newBrick =
-                new GlusterBrickEntity(EXISTING_VOL_ID,
-                        server,
-                        "/export/test-vol-distribute-1/dir3",
-                        GlusterStatus.UP);
+        GlusterBrickEntity newBrick = new GlusterBrickEntity();
+        newBrick.setVolumeId(EXISTING_VOL_ID);
+        newBrick.setServerId(server.getId());
+        newBrick.setServerName(server.getHostName());
+        newBrick.setBrickDirectory("/export/test-vol-distribute-1/dir3");
+        newBrick.setStatus(GlusterStatus.UP);
         newBrick.setBrickOrder(0);
 
         assertNull(dao.getById(newBrick.getId()));

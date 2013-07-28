@@ -212,7 +212,13 @@ public class GlusterSyncJobTest {
     }
 
     private GlusterBrickEntity createBrick(Guid existingVolDistId, VDS server, String brickDir) {
-        return new GlusterBrickEntity(existingVolDistId, server.getStaticData(), brickDir, GlusterStatus.UP);
+        GlusterBrickEntity brick = new GlusterBrickEntity();
+        brick.setVolumeId(existingVolDistId);
+        brick.setServerId(server.getId());
+        brick.setServerName(server.getHostName());
+        brick.setBrickDirectory(brickDir);
+        brick.setStatus(GlusterStatus.UP);
+        return brick;
     }
 
     private GlusterServer getGlusterServer() {
@@ -684,11 +690,12 @@ public class GlusterSyncJobTest {
         volume.addAccessProtocol(AccessProtocol.GLUSTER);
         volume.addAccessProtocol(AccessProtocol.NFS);
 
-        GlusterBrickEntity brick =
-                new GlusterBrickEntity(NEW_VOL_ID,
-                        existingServer1.getStaticData(),
-                        "/export/testVol1",
-                        GlusterStatus.UP);
+        GlusterBrickEntity brick = new GlusterBrickEntity();
+        brick.setVolumeId(NEW_VOL_ID);
+        brick.setServerId(existingServer1.getId());
+        brick.setServerName(existingServer1.getHostName());
+        brick.setBrickDirectory("/export/testvol1");
+        brick.setStatus(GlusterStatus.UP);
         brick.setBrickOrder(0);
         volume.addBrick(brick);
 

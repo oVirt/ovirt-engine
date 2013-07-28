@@ -386,8 +386,12 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         volume.addAccessProtocol(AccessProtocol.GLUSTER);
         volume.addAccessProtocol(AccessProtocol.NFS);
 
-        GlusterBrickEntity brick =
-                new GlusterBrickEntity(volumeId, server, "/export/testVol1", GlusterStatus.UP);
+        GlusterBrickEntity brick = new GlusterBrickEntity();
+        brick.setVolumeId(volumeId);
+        brick.setServerId(server.getId());
+        brick.setServerName(server.getHostName());
+        brick.setBrickDirectory("/export/testVol1");
+        brick.setStatus(GlusterStatus.UP);
         brick.setBrickOrder(0);
         volume.addBrick(brick);
 

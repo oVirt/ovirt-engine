@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeBricksActionPara
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -81,21 +80,12 @@ public class AddBricksToGlusterVolumeCommandTest {
         List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
         GlusterBrickEntity brick = null;
         for (Integer i = 0; i < max; i++) {
-            brick =
-                    new GlusterBrickEntity(volumeId,
-                            new VdsStatic(serverName,
-                                    "127.0.0.1",
-                                    "0934390834",
-                                    20,
-                                    22,
-                                    "root",
-                                    Guid.newGuid(),
-                                    serverId,
-                                    serverName,
-                                    true,
-                                    VDSType.oVirtNode),
-                            "/tmp/s" + i.toString(),
-                            GlusterStatus.UP);
+            brick = new GlusterBrickEntity();
+            brick.setVolumeId(volumeId);
+            brick.setServerId(serverId);
+            brick.setServerName(serverName);
+            brick.setBrickDirectory("/tmp/s" + i.toString());
+            brick.setStatus(GlusterStatus.UP);
             bricks.add(brick);
         }
 
@@ -106,21 +96,12 @@ public class AddBricksToGlusterVolumeCommandTest {
     }
 
     private GlusterBrickEntity getBrick(Guid volumeId) {
-        GlusterBrickEntity brick =
-                new GlusterBrickEntity(volumeId,
-                        new VdsStatic(serverName,
-                                "127.0.0.1",
-                                "0934390834",
-                                20,
-                                22,
-                                "root",
-                                Guid.newGuid(),
-                                serverId,
-                                serverName,
-                                true,
-                                VDSType.oVirtNode),
-                        BRICK_DIRECTORY,
-                        GlusterStatus.UP);
+        GlusterBrickEntity brick = new GlusterBrickEntity();
+        brick.setVolumeId(volumeId);
+        brick.setServerId(serverId);
+        brick.setServerName(serverName);
+        brick.setBrickDirectory(BRICK_DIRECTORY);
+        brick.setStatus(GlusterStatus.UP);
         return brick;
     }
 
