@@ -17,6 +17,9 @@ public class GlusterHookContentQueryParameters extends VdcQueryParametersBase {
 
     private Guid glusterServerId = null;
 
+    public GlusterHookContentQueryParameters() {
+    }
+
     public GlusterHookContentQueryParameters(Guid glusterHookId) {
         setGlusterHookId(glusterHookId);
     }

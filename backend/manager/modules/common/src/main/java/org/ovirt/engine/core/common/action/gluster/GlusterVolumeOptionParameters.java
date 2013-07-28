@@ -15,6 +15,9 @@ public class GlusterVolumeOptionParameters extends GlusterVolumeParameters {
     @Valid
     private GlusterVolumeOptionEntity volumeOption;
 
+    public GlusterVolumeOptionParameters() {
+    }
+
     public GlusterVolumeOptionParameters(GlusterVolumeOptionEntity option) {
         super(option.getVolumeId());
         setVolumeOption(option);

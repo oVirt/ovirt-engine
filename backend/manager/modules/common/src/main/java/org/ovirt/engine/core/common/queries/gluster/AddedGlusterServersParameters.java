@@ -10,6 +10,9 @@ public class AddedGlusterServersParameters extends GlusterParameters {
 
     private boolean isServerKeyFingerprintRequired;
 
+    public AddedGlusterServersParameters() {
+    }
+
     public AddedGlusterServersParameters(Guid clusterId, boolean isServerKeyFingerprintRequired) {
         super(clusterId);
         setServerKeyFingerprintRequired(isServerKeyFingerprintRequired);

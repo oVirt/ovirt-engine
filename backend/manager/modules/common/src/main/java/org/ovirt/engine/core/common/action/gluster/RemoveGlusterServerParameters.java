@@ -14,6 +14,9 @@ public class RemoveGlusterServerParameters extends VdcActionParametersBase {
     private String hostnameOrIp;
     private boolean forceAction;
 
+    public RemoveGlusterServerParameters() {
+    }
+
     public RemoveGlusterServerParameters(Guid clusterId, String hostnameOrIp, boolean forceAction) {
         setClusterId(clusterId);
         setHostnameOrIp(hostnameOrIp);

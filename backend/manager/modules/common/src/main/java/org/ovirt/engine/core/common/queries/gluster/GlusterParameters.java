@@ -14,6 +14,9 @@ public class GlusterParameters extends VdcQueryParametersBase {
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.CLUSTER_ID.NOT_NULL")
     private Guid clusterId;
 
+    public GlusterParameters() {
+    }
+
     public GlusterParameters(Guid clusterId) {
         setClusterId(clusterId);
     }

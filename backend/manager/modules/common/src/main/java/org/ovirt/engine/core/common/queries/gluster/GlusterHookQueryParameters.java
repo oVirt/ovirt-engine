@@ -11,6 +11,9 @@ public class GlusterHookQueryParameters extends VdcQueryParametersBase {
 
     private boolean includeServerHooks = false;
 
+    public GlusterHookQueryParameters() {
+    }
+
     public GlusterHookQueryParameters(Guid hookId) {
         this.hookId = hookId;
     }

@@ -11,6 +11,9 @@ public class GlusterVolumeActionParameters extends GlusterVolumeParameters {
 
     private boolean forceAction;
 
+    public GlusterVolumeActionParameters() {
+    }
+
     public GlusterVolumeActionParameters(Guid volumeId, boolean forceAction) {
         super(volumeId);
         setForceAction(forceAction);

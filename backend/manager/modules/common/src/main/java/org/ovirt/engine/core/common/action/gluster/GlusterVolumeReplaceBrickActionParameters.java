@@ -17,6 +17,9 @@ public class GlusterVolumeReplaceBrickActionParameters extends GlusterVolumeActi
 
     private GlusterBrickEntity newBrick;
 
+    public GlusterVolumeReplaceBrickActionParameters() {
+    }
+
     public GlusterVolumeReplaceBrickActionParameters(Guid volumeId,
             GlusterTaskOperation action,
             GlusterBrickEntity existingBrick,

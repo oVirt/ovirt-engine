@@ -15,6 +15,9 @@ public class GlusterServersQueryParameters extends VdcQueryParametersBase {
 
     private String fingerprint;
 
+    public GlusterServersQueryParameters() {
+    }
+
     public GlusterServersQueryParameters(String serverName, String password) {
         setServerName(serverName);
         setPassword(password);

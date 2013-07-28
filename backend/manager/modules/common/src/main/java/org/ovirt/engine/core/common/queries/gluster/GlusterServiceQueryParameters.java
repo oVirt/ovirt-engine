@@ -10,6 +10,9 @@ public class GlusterServiceQueryParameters extends IdQueryParameters {
 
     private ServiceType serviceType;
 
+    public GlusterServiceQueryParameters() {
+    }
+
     public GlusterServiceQueryParameters(Guid groupId) {
         super(groupId);
     }

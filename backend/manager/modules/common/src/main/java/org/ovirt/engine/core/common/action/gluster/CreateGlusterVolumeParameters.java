@@ -16,6 +16,9 @@ public class CreateGlusterVolumeParameters extends VdcActionParametersBase {
     @Valid
     private GlusterVolumeEntity volume;
 
+    public CreateGlusterVolumeParameters() {
+    }
+
     public CreateGlusterVolumeParameters(GlusterVolumeEntity volume) {
         setVolume(volume);
     }

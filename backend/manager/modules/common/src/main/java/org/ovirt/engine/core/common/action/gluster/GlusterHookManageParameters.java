@@ -12,6 +12,9 @@ public class GlusterHookManageParameters extends GlusterHookParameters {
 
     private Guid sourceServerId;
 
+    public GlusterHookManageParameters() {
+    }
+
     public GlusterHookManageParameters(Guid hookId) {
         super(hookId);
     }

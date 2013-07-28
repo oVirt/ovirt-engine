@@ -21,6 +21,9 @@ public class GlusterVolumeRemoveBricksParameters extends GlusterVolumeParameters
 
     private int replicaCount = 0;
 
+    public GlusterVolumeRemoveBricksParameters() {
+    }
+
     public GlusterVolumeRemoveBricksParameters(Guid volumeId, List<GlusterBrickEntity> bricks) {
         super(volumeId);
         setBricks(bricks);

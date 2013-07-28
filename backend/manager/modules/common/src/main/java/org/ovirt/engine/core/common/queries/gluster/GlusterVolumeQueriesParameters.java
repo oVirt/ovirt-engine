@@ -11,6 +11,9 @@ public class GlusterVolumeQueriesParameters extends GlusterParameters {
     private static final long serialVersionUID = 199106704417008718L;
     private Guid volumeId;
 
+    public GlusterVolumeQueriesParameters() {
+    }
+
     public GlusterVolumeQueriesParameters(Guid clusterId, Guid volumeId) {
         super(clusterId);
         setVolumeId(volumeId);

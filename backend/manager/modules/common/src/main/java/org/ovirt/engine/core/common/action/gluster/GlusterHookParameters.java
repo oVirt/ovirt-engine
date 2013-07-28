@@ -12,6 +12,9 @@ public class GlusterHookParameters extends VdcActionParametersBase {
     @NotNull(message = "VALIDATION.GLUSTER.GLUSTER_HOOK_ID.NOT_NULL")
     private Guid hookId;
 
+    public GlusterHookParameters() {
+    }
+
     public GlusterHookParameters(Guid hookId) {
         setHookId(hookId);
     }

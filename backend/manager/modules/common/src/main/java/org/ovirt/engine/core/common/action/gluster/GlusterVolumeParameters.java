@@ -16,6 +16,9 @@ public class GlusterVolumeParameters extends VdcActionParametersBase {
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL")
     private Guid volumeId;
 
+    public GlusterVolumeParameters() {
+    }
+
     public GlusterVolumeParameters(Guid volumeId) {
         setVolumeId(volumeId);
     }

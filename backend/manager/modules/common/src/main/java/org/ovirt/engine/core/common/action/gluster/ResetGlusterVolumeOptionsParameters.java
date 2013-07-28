@@ -14,6 +14,9 @@ public class ResetGlusterVolumeOptionsParameters extends GlusterVolumeParameters
 
     private boolean forceAction = false;
 
+    public ResetGlusterVolumeOptionsParameters() {
+    }
+
     public ResetGlusterVolumeOptionsParameters(Guid volumeId, GlusterVolumeOptionEntity volumeOption, boolean forceAction) {
         super(volumeId);
         setVolumeOption(volumeOption);

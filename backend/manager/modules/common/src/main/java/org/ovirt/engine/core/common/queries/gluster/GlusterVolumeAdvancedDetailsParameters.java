@@ -13,6 +13,9 @@ public class GlusterVolumeAdvancedDetailsParameters extends GlusterParameters {
     private Guid brickId;
     private boolean detailRequired;
 
+    public GlusterVolumeAdvancedDetailsParameters() {
+    }
+
     public GlusterVolumeAdvancedDetailsParameters(Guid clusterId,
             Guid volumeId,
             Guid brickId,

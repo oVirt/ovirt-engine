@@ -16,6 +16,9 @@ public class GlusterVolumeBricksParameters extends GlusterVolumeParameters {
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICKS.NOT_NULL")
     private List<GlusterBrickEntity> bricks;
 
+    public GlusterVolumeBricksParameters() {
+    }
+
     public GlusterVolumeBricksParameters(Guid volumeId, List<GlusterBrickEntity> bricks) {
         super(volumeId);
         setBricks(bricks);

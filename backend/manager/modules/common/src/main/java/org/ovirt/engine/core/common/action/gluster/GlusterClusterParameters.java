@@ -12,6 +12,9 @@ public class GlusterClusterParameters extends VdcActionParametersBase {
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.CLUSTER_ID.NOT_NULL")
     private Guid clusterId;
 
+    public GlusterClusterParameters() {
+    }
+
     public GlusterClusterParameters(Guid clusterId) {
         super();
         this.clusterId = clusterId;
@@ -20,7 +23,4 @@ public class GlusterClusterParameters extends VdcActionParametersBase {
     public Guid getClusterId() {
         return clusterId;
     }
-
-
-
 }

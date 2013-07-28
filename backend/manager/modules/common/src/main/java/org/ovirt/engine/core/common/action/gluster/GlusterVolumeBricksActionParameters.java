@@ -11,6 +11,9 @@ public class GlusterVolumeBricksActionParameters extends GlusterVolumeBricksPara
     private int replicaCount = 0;
     private int stripeCount = 0;
 
+    public GlusterVolumeBricksActionParameters() {
+    }
+
     public GlusterVolumeBricksActionParameters(Guid volumeId, List<GlusterBrickEntity> bricks, int replicaCount, int stripeCount) {
         super(volumeId, bricks);
         setReplicaCount(replicaCount);
