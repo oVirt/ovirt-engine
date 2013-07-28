@@ -11,7 +11,6 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -45,30 +44,11 @@ public class GetStorageDomainsByImageIdQueryTest extends AbstractQueryTest<IdQue
         Guid imageId = Guid.newGuid();
         when(params.getId()).thenReturn(imageId);
 
-        StorageDomain firstStorageDomain =
-                new StorageDomain(Guid.newGuid(),
-                        Guid.newGuid().toString(),
-                        "FirstStorage",
-                        Guid.newGuid(),
-                        0,
-                        0,
-                        StorageDomainStatus.Active,
-                        "StoragePoolName",
-                        0,
-                        0,
-                        "First Storage Description");
-        StorageDomain secondStorageDomain =
-                new StorageDomain(Guid.newGuid(),
-                        Guid.newGuid().toString(),
-                        "SecondStorage",
-                        Guid.newGuid(),
-                        0,
-                        0,
-                        StorageDomainStatus.Active,
-                        "StoragePoolName",
-                        0,
-                        0,
-                        "Second Storage Description");
+        StorageDomain firstStorageDomain = new StorageDomain();
+        firstStorageDomain.setId(Guid.newGuid());
+        StorageDomain secondStorageDomain = new StorageDomain();
+        secondStorageDomain.setId(Guid.newGuid());
+
         List<StorageDomain> expected = new ArrayList<StorageDomain>();
         expected.add(firstStorageDomain);
         expected.add(secondStorageDomain);

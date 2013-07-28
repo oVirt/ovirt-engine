@@ -16,33 +16,6 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
         setStoragePoolIsoMapData(new StoragePoolIsoMap());
     }
 
-    public StorageDomain(Guid id,
-            String storage,
-            String storageName,
-            Guid storagePoolId,
-            Integer availableDiskSize,
-            Integer usedDiskSize,
-            StorageDomainStatus status,
-            String storagePoolName,
-            int storagePoolType,
-            int storageType,
-            String description) {
-        staticData = new StorageDomainStatic();
-        dynamicData = new StorageDomainDynamic();
-        setStoragePoolIsoMapData(new StoragePoolIsoMap());
-        this.setId(id);
-        this.setStorage(storage);
-        this.setStorageName(storageName);
-        this.setStoragePoolId(storagePoolId);
-        this.setAvailableDiskSize(availableDiskSize);
-        this.setUsedDiskSize(usedDiskSize);
-        this.setStatus(status);
-        this.setStoragePoolName(storagePoolName);
-        this.setStorageType(StorageType.forValue(storagePoolType));
-        this.setStorageDomainType(StorageDomainType.forValue(storageType));
-        setDescription(description);
-    }
-
     //this member is in use only by the Frontend project
     private String vdcQueryableId;
 
