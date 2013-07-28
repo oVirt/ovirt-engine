@@ -30,13 +30,14 @@ public class BaseDiskDaoTest extends BaseGenericDaoTestCase<Guid, BaseDisk, Base
 
     @Override
     protected BaseDisk generateNewEntity() {
-        return new BaseDisk(Guid.newGuid(),
-                DiskInterface.IDE,
-                true,
-                PropagateErrors.Off,
-                "DiskName",
-                "",
-                false, false, ScsiGenericIO.FILTERED);
+        BaseDisk d = new BaseDisk();
+        d.setId(Guid.newGuid());
+        d.setDiskInterface(DiskInterface.IDE);
+        d.setWipeAfterDelete(true);
+        d.setPropagateErrors(PropagateErrors.Off);
+        d.setDiskAlias("DiskName");
+        d.setSgio(ScsiGenericIO.FILTERED);
+        return d;
     }
 
     @Override

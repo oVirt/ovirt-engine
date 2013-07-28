@@ -82,27 +82,6 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
     public BaseDisk() {
     }
 
-    public BaseDisk(Guid id,
-            DiskInterface diskInterface,
-            boolean wipeAfterDelete,
-            PropagateErrors propagateErrors,
-            String diskAlias,
-            String diskDescription,
-            boolean shareable,
-            boolean boot,
-            ScsiGenericIO sgio) {
-        super();
-        this.id = id;
-        this.diskInterface = diskInterface;
-        this.wipeAfterDelete = wipeAfterDelete;
-        this.propagateErrors = propagateErrors;
-        this.diskAlias = diskAlias;
-        this.diskDescription = diskDescription;
-        this.shareable = shareable;
-        this.boot = boot;
-        this.sgio = sgio;
-    }
-
     @Override
     public Object getQueryableId() {
         return getId();
