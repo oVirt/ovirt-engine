@@ -33,14 +33,6 @@ public class Role extends IVdcQueryable implements BusinessEntity<Guid> {
     public Role() {
     }
 
-    // TODO add type to the constructor? - depends on future code changes by
-    // Omer
-    public Role(String description, Guid id, String name) {
-        this.description = description;
-        this.id = id;
-        this.name = name;
-    }
-
     @Override
     public int hashCode() {
         final int prime = 31;

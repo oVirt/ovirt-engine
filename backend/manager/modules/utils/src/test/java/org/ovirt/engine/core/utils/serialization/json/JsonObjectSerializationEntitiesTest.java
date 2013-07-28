@@ -69,7 +69,7 @@ public class JsonObjectSerializationEntitiesTest {
                         { new StoragePoolIsoMap(Guid.newGuid(),
                                 Guid.newGuid(),
                                 random.nextEnum(StorageDomainStatus.class)) },
-                        { new Role(random.nextString(10), Guid.newGuid(), random.nextString(10)) },
+                        { randomRole() },
                         { new IdContainerClass<vds_spm_id_map>(new vds_spm_id_map(Guid.newGuid(),
                                 Guid.newGuid(),
                                 random.nextInt())) },
@@ -151,6 +151,15 @@ public class JsonObjectSerializationEntitiesTest {
         vdsStatistics.setusage_mem_percent(random.nextInt());
         vdsStatistics.setusage_network_percent(random.nextInt());
         return vdsStatistics;
+    }
+
+    private static Role randomRole() {
+        RandomUtils random = RandomUtils.instance();
+        Role role = new Role();
+        role.setdescription(random.nextString(10));
+        role.setId(Guid.newGuid());
+        role.setname(random.nextString(10));
+        return role;
     }
 
     @Test
