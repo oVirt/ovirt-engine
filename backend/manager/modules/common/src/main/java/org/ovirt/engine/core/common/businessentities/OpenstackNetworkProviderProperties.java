@@ -92,7 +92,7 @@ public class OpenstackNetworkProviderProperties extends TenantProviderProperties
     public static class QpidConfiguration implements Serializable {
         private static final long serialVersionUID = -8072430559946539586L;
         private String address;
-        private int port;
+        private Integer port;
         private String username;
         private String password;
 
