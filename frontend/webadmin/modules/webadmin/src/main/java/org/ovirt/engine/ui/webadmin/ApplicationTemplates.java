@@ -132,4 +132,14 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
 
     @Template("{0}<br><span style=\"padding-left: 25px;\">{1}</span>")
     SafeHtml twoLinesRadioButtonLabel(String firstLine, String secondLine);
+
+    @Template("<div title=\"{2}\"><table cellspacing='0' cellpadding='0' style='line-height: 5px;'>" +
+            "<tr>" +
+            "<td>{0} (</td>" +
+            "<td><div style='font-size: 10px; text-align: center;'>{1}</div><div>{3}</div></td>" +
+            "<td>)</td>" +
+            "</tr>" +
+            "</table>" +
+            "</div>")
+    SafeHtml vmCountWithMigrating(String vmCountStr, String vmMigratingStr, String title, SafeHtml image);
 }

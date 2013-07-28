@@ -362,4 +362,7 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/vmStatus/vm_freeze.png")
     ImageResource frozenImage();
+
+    @Source("images/double_arrow.png")
+    ImageResource doubleArrowImage();
 }

@@ -81,4 +81,7 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("Some new hosts are detected in the cluster. You can <a>Import</a> them to engine or <a>Detach</a> them from the cluster.")
     String clusterHasNewGlusterHosts();
+
+    @DefaultMessage("{0} VMs running, out of which {1} migrating")
+    String migratingVmsOutOfTotal(String vmCount, String vmMigrating);
 }

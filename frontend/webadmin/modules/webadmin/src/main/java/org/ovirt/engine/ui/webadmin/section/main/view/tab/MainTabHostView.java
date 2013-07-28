@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinitio
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VmCountColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -134,13 +135,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         getTable().addColumn(statusColumn, constants.statusHost(), "100px"); //$NON-NLS-1$
 
         if (ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly) {
-            TextColumnWithTooltip<VDS> vmCountColumn = new TextColumnWithTooltip<VDS>() {
-                @Override
-                public String getValue(VDS object) {
-                    return String.valueOf(object.getVmCount());
-                }
-            };
-            getTable().addColumn(vmCountColumn, constants.vmsCount(), "110px"); //$NON-NLS-1$
+            getTable().addColumn(new VmCountColumn(), constants.vmsCount(), "110px"); //$NON-NLS-1$
         }
 
         PercentColumn<VDS> memColumn = new PercentColumn<VDS>() {
