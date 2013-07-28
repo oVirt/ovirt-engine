@@ -16,30 +16,32 @@
 #
 
 
-"""ovirt-host-remove core plugin."""
+"""ovirt-host-rename core plugin."""
 
 
 from otopi import util
 
 
-from . import offlinepackager
-from . import misc
+from . import database
 from . import engine
-from . import websocket_proxy
-from . import answerfile
-from . import uninstall
+from . import misc
+from . import pki
+from . import postinstall
 from . import protocols
+from . import tools
+from . import uninstall
 
 
 @util.export
 def createPlugins(context):
-    offlinepackager.Plugin(context=context)
-    misc.Plugin(context=context)
+    database.Plugin(context=context)
     engine.Plugin(context=context)
-    websocket_proxy.Plugin(context=context)
-    answerfile.Plugin(context=context)
-    uninstall.Plugin(context=context)
+    misc.Plugin(context=context)
+    pki.Plugin(context=context)
+    postinstall.Plugin(context=context)
     protocols.Plugin(context=context)
+    tools.Plugin(context=context)
+    uninstall.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

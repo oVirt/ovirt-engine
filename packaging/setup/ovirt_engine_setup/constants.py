@@ -90,6 +90,7 @@ class FileLocations(object):
     )
     OVIRT_OVIRT_SETUP_LOG_PREFIX = 'ovirt-engine-setup'
     OVIRT_OVIRT_REMOVE_LOG_PREFIX = 'ovirt-engine-remove'
+    OVIRT_OVIRT_RENAME_LOG_PREFIX = 'ovirt-engine-rename'
 
     OVIRT_IPTABLES_EXAMPLE = os.path.join(
         OVIRT_ENGINE_SYSCONFDIR,
@@ -550,6 +551,8 @@ class Stages(object):
 
     UPGRADE_FROM_LEGACY_CONFIG = 'osetup.legacy.upgrade'
 
+    RENAME_PKI_CONF_MISC = 'osetup.rename.pki.conf.misc'
+
 
 @util.export
 @util.codegen
@@ -597,6 +600,7 @@ class Const(object):
     ACTION_SETUP = 'setup'
     ACTION_REMOVE = 'cleanup'
     ACTION_UPGRADE = 'upgrade'
+    ACTION_RENAME = 'rename'
 
 
 @util.export
@@ -962,6 +966,23 @@ class RPMDistroEnv(object):
     )
     def REQUIRE_ROLLBACK(self):
         return 'OSETUP_RPMDISTRO/requireRollback'
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
+class RenameEnv(object):
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('New FQDN'),
+    )
+    def FQDN(self):
+        return 'OSETUP_RENAME/fqdn'
+
+    FORCE_OVERWRITE = 'OSETUP_RENAME/forceOverwrite'
+    FORCE_IGNORE_AIA_IN_CA = 'OSETUP_RENAME/forceIgnoreAIAInCA'
+    FILES_TO_BE_MODIFIED = 'OVESETUP_CORE/filesToBeModified'
 
 
 @util.export
