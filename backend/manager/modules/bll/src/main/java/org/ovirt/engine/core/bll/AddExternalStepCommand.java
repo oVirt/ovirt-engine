@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
-import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.StepDao;
@@ -68,14 +67,14 @@ public class AddExternalStepCommand <T extends AddExternalStepParameters> extend
         if (parentStep == null) { // A step that is directly under a job
                 context.setJob(job);
                 context.setExecutionMethod(ExecutionMethod.AsJob);
-                Step step = ExecutionHandler.addStep(context,StepEnum.EXECUTING, getParameters().getDescription(), true);
+                Step step = ExecutionHandler.addStep(context, getParameters().getStepType(), getParameters().getDescription(), true);
                 setActionReturnValue(step.getId());
                 setSucceeded(true);
         }
         else {// this is a sub-step
                 context.setStep(parentStep);
                 context.setExecutionMethod(ExecutionMethod.AsStep);
-                Step step = ExecutionHandler.addSubStep(context, parentStep, StepEnum.EXECUTING, getParameters().getDescription(), true);
+                Step step = ExecutionHandler.addSubStep(context, parentStep, getParameters().getStepType(), getParameters().getDescription(), true);
                 setActionReturnValue(step.getId());
                 setSucceeded(true);
         }
