@@ -47,6 +47,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -246,17 +247,19 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         return result;
     }
 
-    private EventResult runUpdateMomPolicy(final VDSGroup cluster, final VDS vds) {
-        EventResult result = new EventResult(true, EventType.VDSCONNECTTOPOOL);
-        try {
-            runVdsCommand(VDSCommandType.SetMOMPolicyParameters,
-                    new MomPolicyVDSParameters(vds, cluster.isEnableBallooning()));
-        } catch (VdcBLLException e) {
-            log.errorFormat("Could not update MoM policy on host {0}", vds.getName());
-            result.setSuccess(false);
+    private VDSReturnValue runUpdateMomPolicy(final VDSGroup cluster, final VDS vds) {
+        VDSReturnValue returnValue = new VDSReturnValue();
+        if (cluster.getcompatibility_version().compareTo(Version.v3_3) >= 0) {
+            try {
+                returnValue = runVdsCommand(VDSCommandType.SetMOMPolicyParameters,
+                        new MomPolicyVDSParameters(vds, cluster.isEnableBallooning()));
+            } catch (VdcBLLException e) {
+                log.errorFormat("Could not update MoM policy on host {0}", vds.getName());
+                returnValue.setSucceeded(false);
+            }
         }
 
-        return result;
+        return returnValue;
     }
 
     protected boolean proceedVdsStats() {
