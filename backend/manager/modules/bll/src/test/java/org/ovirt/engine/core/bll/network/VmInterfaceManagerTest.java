@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.network;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
@@ -111,42 +110,6 @@ public class VmInterfaceManagerTest {
         when(macPoolManager.allocateNewMac()).thenReturn(newMac);
         vmInterfaceManager.add(iface, NoOpCompensationContext.getInstance(), true, VERSION_3_2);
         assertEquals(newMac, iface.getMacAddress());
-    }
-
-    @Test
-    public void isValidVmNetworkForNullNetwork() {
-        Network network = createNewNetwork(true, NETWORK_NAME);
-        VmNetworkInterface iface = createNewViewableInterface();
-        assertTrue(vmInterfaceManager.isValidVmNetwork(iface,
-                Collections.singletonMap(network.getName(), network),
-                version));
-    }
-
-    @Test
-    public void isValidVmNetworkForValidNetwork() {
-        Network network = createNewNetwork(true, NETWORK_NAME);
-        VmNetworkInterface iface = createNewViewableInterface();
-        iface.setNetworkName(network.getName());
-        assertTrue(vmInterfaceManager.isValidVmNetwork(iface,
-                Collections.singletonMap(network.getName(), network),
-                version));
-    }
-
-    @Test
-    public void isValidVmNetworkForNonVmNetwork() {
-        Network network = createNewNetwork(false, NETWORK_NAME);
-        VmNetworkInterface iface = createNewViewableInterface();
-        iface.setNetworkName(network.getName());
-        assertFalse(vmInterfaceManager.isValidVmNetwork(iface,
-                Collections.singletonMap(network.getName(), network),
-                version));
-    }
-
-    @Test
-    public void isValidVmNetworkForNetworkNotInVds() {
-        VmNetworkInterface iface = createNewViewableInterface();
-        iface.setNetworkName(NETWORK_NAME);
-        assertFalse(vmInterfaceManager.isValidVmNetwork(iface, Collections.<String, Network> emptyMap(), version));
     }
 
     @Test

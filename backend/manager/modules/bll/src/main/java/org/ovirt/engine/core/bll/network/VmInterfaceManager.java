@@ -119,20 +119,6 @@ public class VmInterfaceManager {
     }
 
     /**
-     * Checks if a Network is in the given list and is a VM Network
-     *
-     * @param iface
-     * @param networksByName
-     * @param version
-     * @return
-     */
-    public boolean isValidVmNetwork(VmNetworkInterface iface, Map<String, Network> networksByName, Version version) {
-        String networkName = iface.getNetworkName();
-        return networkName == null
-                || ((networksByName.containsKey(networkName) && networksByName.get(networkName).isVmNetwork()));
-    }
-
-    /**
      * Finds active VMs which uses a network from a given networks list
      *
      * @param vdsId
