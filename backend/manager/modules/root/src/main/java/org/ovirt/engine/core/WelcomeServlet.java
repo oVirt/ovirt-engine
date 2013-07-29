@@ -71,6 +71,8 @@ public class WelcomeServlet extends HttpServlet {
      */
     private BackendLocal backend;
 
+    private BrandingManager brandingManager;
+
     /**
      * Setter for the {@code BackendLocal} bean.
      * @param backendLocal The bean
@@ -82,12 +84,21 @@ public class WelcomeServlet extends HttpServlet {
     }
 
     @Override
+    public void init() {
+        init(BrandingManager.getInstance());
+    }
+
+    void init(BrandingManager brandingManager) {
+        this.brandingManager = brandingManager;
+    }
+
+    @Override
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
         ServletException {
         Locale userLocale = (Locale) request.getAttribute(LocaleFilter.LOCALE);
         log.info("Detected Locale: " + userLocale.toLanguageTag());
         request.setAttribute(LOCALE_KEYS, LocaleFilter.getLocaleKeys());
-        List<BrandingTheme> brandingThemes = BrandingManager.getInstance().getBrandingThemes();
+        List<BrandingTheme> brandingThemes = brandingManager.getBrandingThemes();
         request.setAttribute(THEMES_KEY, brandingThemes);
         request.setAttribute(APPLICATION_TYPE, BrandingTheme.ApplicationType.WELCOME);
         String oVirtVersion = (String) backend.RunQuery(VdcQueryType.GetConfigurationValue,
@@ -101,7 +112,7 @@ public class WelcomeServlet extends HttpServlet {
                 BrandingWelcomeResourceBundle.getBrandingControl());
         // Pass the loaded resource bundle to the jsp.
         Config.set(request, Config.FMT_LOCALIZATION_CONTEXT, new LocalizationContext(bundle, userLocale));
-        request.setAttribute(SECTIONS, BrandingManager.getInstance().getWelcomeSections(userLocale));
+        request.setAttribute(SECTIONS, brandingManager.getWelcomeSections(userLocale));
         if (dispatcher != null) {
             dispatcher.include(request, response);
         }

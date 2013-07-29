@@ -25,6 +25,8 @@ import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.utils.branding.BrandingManager;
+import org.ovirt.engine.core.utils.branding.BrandingTheme;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -43,6 +45,9 @@ public class WelcomeServletTest {
     @Mock
     BackendLocal mockBackend;
 
+    @Mock
+    BrandingManager mockBrandingManager;
+
     final List<String> localeKeys = createLocaleKeys();
 
     private void mockBackendQuery(VdcQueryType queryType, Object returnValue) {
@@ -56,7 +61,10 @@ public class WelcomeServletTest {
     public void setUp() throws Exception {
         testServlet = new WelcomeServlet();
         testServlet.setBackend(mockBackend);
+        testServlet.init(mockBrandingManager);
         mockBackendQuery(VdcQueryType.GetConfigurationValue, "oVirtVersion");
+        when(mockBrandingManager.getBrandingThemes()).thenReturn(new ArrayList<BrandingTheme>());
+        when(mockBrandingManager.getWelcomeSections(any(Locale.class))).thenReturn("Welcome Section HTML");
     }
 
     @Test
