@@ -184,7 +184,7 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
     public String getSearchString()
     {
-        return searchString;
+        return searchString + (pagingSearchString == null ? "" : pagingSearchString);
     }
 
     public void setSearchString(String value)
@@ -196,6 +196,8 @@ public abstract class SearchableListModel extends ListModel implements GridContr
             onPropertyChanged(new PropertyChangedEventArgs("SearchString")); //$NON-NLS-1$
         }
     }
+
+    private String pagingSearchString;
 
     public int getSearchPageNumber()
     {
@@ -566,18 +568,8 @@ public abstract class SearchableListModel extends ListModel implements GridContr
                 && getPreviousSearchPageAllowed());
     }
 
-    private void setSearchStringPage(int newSearchPageNumber)
-    {
-        if (Regex.IsMatch(getSearchString(), PAGE_STRING_REGEX, RegexOptions.IgnoreCase))
-        {
-            setSearchString(Regex.replace(getSearchString(),
-                    PAGE_STRING_REGEX,
-                    " page " + newSearchPageNumber)); //$NON-NLS-1$
-        }
-        else
-        {
-            setSearchString(getSearchString() + " page " + newSearchPageNumber); //$NON-NLS-1$
-        }
+    private void setSearchStringPage(int newSearchPageNumber) {
+       this.pagingSearchString = " page " + newSearchPageNumber; //$NON-NLS-1$
     }
 
     protected void searchNextPage()

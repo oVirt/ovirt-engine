@@ -30,6 +30,8 @@ public class SubTabPoolVmView extends AbstractSubTabTableView<VmPool, VM, PoolLi
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().showPagingButtons();
+
         getTable().enableColumnResizing();
 
         getTable().addColumn(new VmStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
