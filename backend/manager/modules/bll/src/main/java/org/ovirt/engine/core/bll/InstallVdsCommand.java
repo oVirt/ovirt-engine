@@ -68,8 +68,10 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
     }
 
     private boolean isIsoFileValid(String isoFile) {
-        return StringUtils.isNotBlank(isoFile)
-                && new File(Config.resolveOVirtISOsRepositoryPath() + File.separator + isoFile).exists();
+        return (
+            StringUtils.isNotBlank(isoFile) &&
+            new File(Config.resolveOVirtISOsRepositoryPath() + File.separator + isoFile).exists()
+        );
     }
 
     @Override
@@ -103,17 +105,22 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         VdsDeploy installer = null;
         try {
             log.infoFormat(
-                    "Before Installation host {0}, {1}",
-                    getVds().getId(),
-                    getVds().getName()
-                    );
+                "Before Installation host {0}, {1}",
+                getVds().getId(),
+                getVds().getName()
+            );
 
             T parameters = getParameters();
             installer = new VdsDeploy(getVds());
             installer.setCorrelationId(getCorrelationId());
-            boolean configureNetworkUsingHostDeploy =
-                    !FeatureSupported.setupManagementNetwork(getVds().getVdsGroupCompatibilityVersion());
-            installer.setReboot(parameters.isRebootAfterInstallation() && configureNetworkUsingHostDeploy);
+            boolean configureNetworkUsingHostDeploy = !FeatureSupported.setupManagementNetwork(
+                getVds().getVdsGroupCompatibilityVersion()
+            );
+            installer.setReboot(
+                parameters.isRebootAfterInstallation() &&
+                configureNetworkUsingHostDeploy
+            );
+
             if (configureNetworkUsingHostDeploy) {
                 installer.setManagementNetwork(NetworkUtils.getEngineNetwork());
             }
@@ -124,7 +131,9 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     OpenstackNetworkProviderProperties agentProperties =
                             (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();
                     if (parameters.getNetworkMappings() != null) {
-                        agentProperties.getAgentConfiguration().setNetworkMappings(parameters.getNetworkMappings());
+                        agentProperties.getAgentConfiguration().setNetworkMappings(
+                            parameters.getNetworkMappings()
+                        );
                     }
                     installer.setOpenStackAgentProperties(agentProperties);
                 }
@@ -133,7 +142,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
             switch (getVds().getVdsType()) {
                 case VDS:
                     installer.setFirewall(parameters.getOverrideFirewall());
-                    break;
+                break;
                 case oVirtNode:
                     if (parameters.getOverrideFirewall()) {
                         log.warnFormat(
@@ -142,7 +151,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                             getVds().getVdsType().name()
                         );
                     }
-                    break;
+                break;
                 default:
                     throw new IllegalArgumentException(
                         String.format(
@@ -150,44 +159,45 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                             getVds().getVdsType()
                         )
                     );
-                }
+            }
 
-                switch (getParameters().getAuthMethod()) {
-                    case Password:
-                        installer.setPassword(parameters.getPassword());
-                        break;
-                    case PublicKey:
-                        installer.useDefaultKeyPair();
-                        break;
-                    default:
-                        throw new Exception("Invalid authentication method value was sent to InstallVdsCommand");
-                }
+            switch (getParameters().getAuthMethod()) {
+                case Password:
+                    installer.setPassword(parameters.getPassword());
+                break;
+                case PublicKey:
+                    installer.useDefaultKeyPair();
+                break;
+                default:
+                    throw new Exception("Invalid authentication method value was sent to InstallVdsCommand");
+            }
 
-                setVdsStatus(VDSStatus.Installing);
-                installer.execute();
+            setVdsStatus(VDSStatus.Installing);
+            installer.execute();
 
             switch (installer.getDeployStatus()) {
-            case Failed:
-                throw new VdsInstallException(VDSStatus.InstallFailed, StringUtils.EMPTY);
-            case Incomplete:
-                throw new VdsInstallException(VDSStatus.InstallFailed, "Partial installation");
-            case Reboot:
-                setVdsStatus(VDSStatus.Reboot);
-                RunSleepOnReboot();
+                case Failed:
+                    throw new VdsInstallException(VDSStatus.InstallFailed, StringUtils.EMPTY);
+                case Incomplete:
+                    throw new VdsInstallException(VDSStatus.InstallFailed, "Partial installation");
+                case Reboot:
+                    setVdsStatus(VDSStatus.Reboot);
+                    RunSleepOnReboot();
                 break;
-            case Complete:
-                if (!configureNetworkUsingHostDeploy) {
-                    configureManagementNetwork();
-                }
-            default:
-                setVdsStatus(VDSStatus.Initializing);
+                case Complete:
+                    if (!configureNetworkUsingHostDeploy) {
+                        configureManagementNetwork();
+                    }
+                default:
+                    setVdsStatus(VDSStatus.Initializing);
                 break;
             }
+
             log.infoFormat(
-                    "After Installation host {0}, {1}",
-                    getVds().getName(),
-                    getVds().getVdsType().name()
-                    );
+                "After Installation host {0}, {1}",
+                getVds().getName(),
+                getVds().getVdsType().name()
+            );
             setSucceeded(true);
         } catch (VdsInstallException e) {
             handleError(e, e.getStatus());
@@ -205,37 +215,35 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         try {
             T parameters = getParameters();
             upgrade = new OVirtNodeUpgrade(
-                    getVds(),
-                    parameters.getoVirtIsoFile()
-                    );
+                getVds(),
+                parameters.getoVirtIsoFile()
+            );
             upgrade.setCorrelationId(getCorrelationId());
             log.infoFormat(
-                    "Execute upgrade host {0}, {1}",
-                    getVds().getId(),
-                    getVds().getName()
-                    );
+                "Execute upgrade host {0}, {1}",
+                getVds().getId(),
+                getVds().getName()
+            );
             upgrade.execute();
             log.infoFormat(
-                    "After upgrade host {0}, {1}: success",
-                    getVds().getId(),
-                    getVds().getName()
-                    );
+                "After upgrade host {0}, {1}: success",
+                getVds().getId(),
+                getVds().getName()
+            );
             setSucceeded(true);
             if (getVds().getStatus() == VDSStatus.Reboot) {
                 RunSleepOnReboot();
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             log.errorFormat(
-                    "Host installation failed for host {0}, {1}.",
-                    getVds().getId(),
-                    getVds().getName(),
-                    e
-                    );
+                "Host installation failed for host {0}, {1}.",
+                getVds().getId(),
+                getVds().getName(),
+                e
+            );
             setSucceeded(false);
             _failureMessage = e.getMessage();
-        }
-        finally {
+        } finally {
             if (upgrade != null) {
                 upgrade.close();
             }
@@ -257,19 +265,27 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
     private void configureManagementNetwork() {
         final NetworkConfigurator networkConfigurator = new NetworkConfigurator(getVds());
         if (!networkConfigurator.awaitVdsmResponse()) {
-            throw new VdsInstallException(VDSStatus.NonResponsive,
-                    "Network error during communication with the host");
+            throw new VdsInstallException(
+                VDSStatus.NonResponsive,
+                "Network error during communication with the host"
+            );
         }
 
         try {
             networkConfigurator.refreshNetworkConfiguration();
             networkConfigurator.createManagementNetworkIfRequired();
         } catch (VDSNetworkException e) {
-            throw new VdsInstallException(VDSStatus.NonResponsive,
-                    "Network error during communication with the host", e);
+            throw new VdsInstallException(
+                VDSStatus.NonResponsive,
+                "Network error during communication with the host",
+                e
+            );
         } catch (Exception e) {
-            throw new VdsInstallException(VDSStatus.NonOperational,
-                    "Failed to configure management network on the host", e);
+            throw new VdsInstallException(
+                VDSStatus.NonOperational,
+                "Failed to configure management network on the host",
+                e
+            );
         }
     }
 
@@ -287,16 +303,21 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         boolean retValue = true;
         if (ovirtOsVersion != null) {
             try {
-                RpmVersion isoVersion =
-                        new RpmVersion(isoFile, Config.<String> GetValue(ConfigValues.OvirtIsoPrefix), true);
+                RpmVersion isoVersion = new RpmVersion(
+                    isoFile,
+                    Config.<String> GetValue(ConfigValues.OvirtIsoPrefix),
+                    true
+                );
 
                 if (!VdsHandler.isIsoVersionCompatibleForUpgrade(ovirtOsVersion, isoVersion)) {
                     retValue = false;
                 }
             } catch (RuntimeException e) {
-                log.warnFormat("Failed to parse ISO file version {0} with error {1}",
-                        isoFile,
-                        ExceptionUtils.getMessage(e));
+                log.warnFormat(
+                    "Failed to parse ISO file version {0} with error {1}",
+                    isoFile,
+                    ExceptionUtils.getMessage(e)
+                );
             }
         }
         return retValue;
@@ -309,15 +330,21 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
      *            new status.
      */
     private void setVdsStatus(VDSStatus status) {
-        runVdsCommand(VDSCommandType.SetVdsStatus, new SetVdsStatusVDSCommandParameters(getVdsId(), status));
+        runVdsCommand(
+            VDSCommandType.SetVdsStatus,
+            new SetVdsStatusVDSCommandParameters(getVdsId(), status)
+        );
     }
 
     private boolean isOvirtReInstallOrUpgrade() {
-        return getParameters().getIsReinstallOrUpgrade() && getVds().getVdsType() == VDSType.oVirtNode;
+        return (
+            getParameters().getIsReinstallOrUpgrade() &&
+            getVds().getVdsType() == VDSType.oVirtNode
+        );
     }
 
     protected String getErrorMessage(String msg) {
-        return (StringUtils.isEmpty(msg) ? GENERIC_ERROR : msg);
+        return StringUtils.isEmpty(msg) ? GENERIC_ERROR : msg;
     }
 
     @SuppressWarnings("serial")
