@@ -665,6 +665,20 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
+    public boolean shouldAlertUpgrade(ArrayList<RpmVersion> isos, Version hostOs)
+    {
+        boolean alert = false;
+
+        for (RpmVersion iso: isos) {
+            if (iso.getMajor() == hostOs.getMajor() &&
+                    iso.compareTo(hostOs) > 0) {
+                alert = true;
+                break;
+            }
+        }
+        return alert;
+    }
+
     private boolean hasManualFenceAlert;
 
     public boolean getHasManualFenceAlert()
@@ -1027,11 +1041,7 @@ public class HostGeneralModel extends EntityModel
     private void updateAlerts()
     {
         setHasAnyAlert(false);
-
-        if (updateUpgradeAlert) {
-            setHasUpgradeAlert(false);
-        }
-
+        setHasUpgradeAlert(false);
         setHasManualFenceAlert(false);
         setHasNoPowerManagementAlert(false);
         setHasReinstallAlertNonResponsive(false);
@@ -1071,10 +1081,7 @@ public class HostGeneralModel extends EntityModel
             setHasReinstallAlertMaintenance(true);
         }
 
-        // TODO: Need to come up with a logic to show the Upgrade action-item.
-        // Currently, this action-item will be shown for all oVirts assuming there are
-        // available oVirt ISOs that are returned by the backend's GetoVirtISOs query.
-        else if (getEntity().getVdsType() == VDSType.oVirtNode && updateUpgradeAlert)
+        else if (getEntity().getVdsType() == VDSType.oVirtNode)
         {
             AsyncDataProvider.getoVirtISOsList(new AsyncQuery(this,
                     new INewAsyncCallback() {
@@ -1086,7 +1093,19 @@ public class HostGeneralModel extends EntityModel
                             if (isos.size() > 0)
                             {
                                 VDS vds = hostGeneralModel.getEntity();
-                                hostGeneralModel.setHasUpgradeAlert(true);
+                                String [] host = vds.getHostOs().split("-"); //$NON-NLS-1$ //$NON-NLS-2$
+                                hostGeneralModel.setHasUpgradeAlert(
+                                    shouldAlertUpgrade(
+                                        isos,
+                                        new Version(
+                                             new StringBuilder().append(
+                                                 host[1].trim()
+                                             ).append(".").append( //$NON-NLS-1$ //$NON-NLS-2$
+                                                 host[2].split("\\.")[0].trim() //$NON-NLS-1$ //$NON-NLS-2$
+                                             ).toString()
+                                        )
+                                    )
+                                );
 
                                 boolean executionAllowed = vds.getStatus() != VDSStatus.Up
                                     && vds.getStatus() != VDSStatus.Installing
