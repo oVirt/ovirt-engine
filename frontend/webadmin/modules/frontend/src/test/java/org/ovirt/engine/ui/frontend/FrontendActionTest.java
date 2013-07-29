@@ -438,8 +438,11 @@ public class FrontendActionTest {
      */
     @Test
     public void testHandleActionResult_isRaiseErrorModalPanel_withActionMessageSize1() {
+        ArrayList<String> messageResult = new ArrayList<String>();
+        messageResult.add("Translated Message"); //$NON-NLS-1$
         VdcFault testFault = new VdcFault();
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);
+        when(mockCanDoActionErrorsTranslator.translateErrorText((ArrayList<String>) any())).thenReturn(messageResult);
         Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
@@ -460,7 +463,7 @@ public class FrontendActionTest {
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), failureCaptor.capture());
         assertEquals("Descriptions should match", "This is a description", //$NON-NLS-1$ //$NON-NLS-2$
                 failureCaptor.getValue().getMessage().getDescription());
-        assertEquals("Text should match", "Message 1", //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("Text should match translation", "Translated Message", //$NON-NLS-1$ //$NON-NLS-2$
                 failureCaptor.getValue().getMessage().getText());
     }
 
@@ -475,10 +478,15 @@ public class FrontendActionTest {
      * </ol>
      * Test just the handler method.
      */
+    @SuppressWarnings("unchecked")
     @Test
     public void testHandleActionResult_isRaiseErrorModalPanel_withActionMessageSizeGreaterThan1() {
         VdcFault testFault = new VdcFault();
+        ArrayList<String> messageResult = new ArrayList<String>();
+        messageResult.add("Translated Message 1"); //$NON-NLS-1$
+        messageResult.add("Translated Message 2"); //$NON-NLS-1$
         when(mockEventsHandler.isRaiseErrorModalPanel(VdcActionType.AddDisk, testFault)).thenReturn(true);
+        when(mockCanDoActionErrorsTranslator.translateErrorText((ArrayList<String>) any())).thenReturn(messageResult);
         Object testState = new Object();
         VdcActionParametersBase testParameters = new VdcActionParametersBase();
         VdcReturnValueBase returnValue = new VdcReturnValueBase();
@@ -499,9 +507,9 @@ public class FrontendActionTest {
                 ArgumentCaptor.forClass(FrontendFailureEventArgs.class);
         verify(mockFrontendFailureEvent).raise(eq(Frontend.class), failureCaptor.capture());
         assertNull("Message should be null", failureCaptor.getValue().getMessage()); //$NON-NLS-1$
-        assertEquals("Text should match", "Message 1", //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("Translated text should match", "Translated Message 1", //$NON-NLS-1$ //$NON-NLS-2$
                 failureCaptor.getValue().getMessages().get(0).getText());
-        assertEquals("Text should match", "Message 2", //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("Translated text should match", "Translated Message 2", //$NON-NLS-1$ //$NON-NLS-2$
                 failureCaptor.getValue().getMessages().get(1).getText());
     }
 

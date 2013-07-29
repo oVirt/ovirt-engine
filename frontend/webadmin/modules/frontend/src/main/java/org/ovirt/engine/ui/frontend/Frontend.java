@@ -143,8 +143,12 @@ public class Frontend {
 
     private static void translateErrors(List<VdcReturnValueBase> errors) {
         for (VdcReturnValueBase retVal : errors) {
-            retVal.setCanDoActionMessages(getAppErrorsTranslator().translateErrorText(retVal.getCanDoActionMessages()));
+            retVal.setCanDoActionMessages((ArrayList<String>) translateError(retVal));
         }
+    }
+
+    private static List<String> translateError(VdcReturnValueBase error) {
+        return getAppErrorsTranslator().translateErrorText(error.getCanDoActionMessages());
     }
 
     private static void failureEventHandler(String errorMessage) {
@@ -890,6 +894,7 @@ public class Frontend {
         FrontendActionAsyncResult f = new FrontendActionAsyncResult(actionType, parameters, result, state);
         boolean success = false;
         if (!result.getCanDoAction()) {
+            result.setCanDoActionMessages((ArrayList<String>) translateError(result));
             callback.executed(f);
         } else if (showErrorDialog && result.getIsSyncronious() && !result.getSucceeded()) {
             runActionExecutionFailed(actionType, result.getFault());
