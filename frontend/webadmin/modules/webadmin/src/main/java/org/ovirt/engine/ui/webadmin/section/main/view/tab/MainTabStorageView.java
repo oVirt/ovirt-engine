@@ -10,9 +10,8 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
-import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer.DiskSizeUnit;
-import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
+import org.ovirt.engine.ui.common.widget.table.column.StorageSizeColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -95,7 +94,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 };
         getTable().addColumn(crossDataCenterStatusColumn, constants.crossDcStatusStorage(), "210px"); //$NON-NLS-1$
 
-        DiskSizeColumn<StorageDomain> totalSpaceColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
+        StorageSizeColumn<StorageDomain> totalSpaceColumn = new StorageSizeColumn<StorageDomain>() {
             @Override
             public Long getRawValue(StorageDomain object) {
                 long totalSpace = object.getTotalDiskSize() != null ? object.getTotalDiskSize() : 0;
@@ -104,7 +103,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         };
         getTable().addColumn(totalSpaceColumn, constants.totalSpaceStorage(), "130px"); //$NON-NLS-1$
 
-        DiskSizeColumn<StorageDomain> freeSpaceColumn = new DiskSizeColumn<StorageDomain>(DiskSizeUnit.GIGABYTE) {
+        StorageSizeColumn<StorageDomain> freeSpaceColumn = new StorageSizeColumn<StorageDomain>() {
             @Override
             public Long getRawValue(StorageDomain object) {
                 long availableDiskSize = object.getAvailableDiskSize() != null ? object.getAvailableDiskSize() : 0;
