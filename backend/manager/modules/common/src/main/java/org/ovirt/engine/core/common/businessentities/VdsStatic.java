@@ -60,7 +60,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @Size(max = BusinessEntitiesDefinitions.HOST_HOSTNAME_SIZE)
     private String hostname;
 
-    @EditableOnVdsStatus
+    @EditableField
     @Range(min = BusinessEntitiesDefinitions.NETWORK_MIN_LEGAL_PORT,
             max = BusinessEntitiesDefinitions.NETWORK_MAX_LEGAL_PORT,
             message = "VALIDATION.VDS.PORT.RANGE")
