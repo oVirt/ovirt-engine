@@ -109,7 +109,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("hash", vm.getHash())
                 .addValue("guest_agent_nics_hash", vm.getGuestAgentNicsHash())
                 .addValue("last_watchdog_event", vm.getLastWatchdogEvent())
-                .addValue("last_watchdog_action", vm.getLastWatchdogAction());
+                .addValue("last_watchdog_action", vm.getLastWatchdogAction())
+                .addValue("is_run_once", vm.isRunOnce());
     }
 
     @Override
@@ -168,6 +169,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 entity.setGuestAgentNicsHash(rs.getInt("guest_agent_nics_hash"));
                 entity.setLastWatchdogEvent(getLong(rs, "last_watchdog_event"));
                 entity.setLastWatchdogAction(rs.getString("last_watchdog_action"));
+                entity.setRunOnce(rs.getBoolean("is_run_once"));
                 return entity;
             }
         };

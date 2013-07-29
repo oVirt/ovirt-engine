@@ -1441,11 +1441,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     }
 
     public void setRunOnce(boolean value) {
-        runOnce = value;
+        vmDynamic.setRunOnce(value);
     }
 
     public boolean isRunOnce() {
-        return runOnce;
+        return vmDynamic.isRunOnce();
     }
 
     public void setVmPayload(VmPayload vmPayload) {

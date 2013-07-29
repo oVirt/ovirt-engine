@@ -565,7 +565,7 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_static.default_display_type as default_display_type, vm_static.priority as priority,vm_static.iso_path as iso_path, vm_static.origin as origin, vds_groups.compatibility_version as vds_group_compatibility_version,
                       vm_static.initrd_url as initrd_url, vm_static.kernel_url as kernel_url, vm_static.kernel_params as kernel_params, vm_dynamic.pause_status as pause_status, vm_dynamic.exit_message as exit_message, vm_dynamic.exit_status as exit_status,vm_static.migration_support as migration_support,vm_static.predefined_properties as predefined_properties,vm_static.userdefined_properties as userdefined_properties,vm_static.min_allocated_mem as min_allocated_mem,  vm_dynamic.hash as hash, vm_static.cpu_pinning as cpu_pinning, vm_static.db_generation as db_generation, vm_static.host_cpu_flags as host_cpu_flags,
                       vm_static.tunnel_migration as tunnel_migration, vm_static.vnc_keyboard_layout as vnc_keyboard_layout, vm_static.is_run_and_pause as is_run_and_pause, vm_static.created_by_user_id as created_by_user_id,
-                      vm_dynamic.last_watchdog_event as last_watchdog_event, vm_dynamic.last_watchdog_action as last_watchdog_action
+                      vm_dynamic.last_watchdog_event as last_watchdog_event, vm_dynamic.last_watchdog_action as last_watchdog_action, vm_dynamic.is_run_once as is_run_once
 FROM         vm_static INNER JOIN
 vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid INNER JOIN
 vm_static AS vm_templates ON vm_static.vmt_guid = vm_templates.vm_guid INNER JOIN

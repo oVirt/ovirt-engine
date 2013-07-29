@@ -355,6 +355,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setRunAndPause(rs.getBoolean("is_run_and_pause"));
             entity.setLastWatchdogEvent(getLong(rs, "last_watchdog_event"));
             entity.setTrustedService(rs.getBoolean("trusted_service"));
+            entity.setRunOnce(rs.getBoolean("is_run_once"));
             entity.setCreatedByUserId(getGuid(rs,"created_by_user_id"));
             return entity;
         }

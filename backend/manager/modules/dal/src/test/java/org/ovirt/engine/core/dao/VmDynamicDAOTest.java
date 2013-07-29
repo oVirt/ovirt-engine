@@ -106,6 +106,7 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
         VmDynamic before = dao.get(existingVm.getId());
 
         before.setVmHost("farkle.redhat.com");
+        before.setRunOnce(!before.isRunOnce());
         dao.update(before);
 
         VmDynamic after = dao.get(existingVm.getId());

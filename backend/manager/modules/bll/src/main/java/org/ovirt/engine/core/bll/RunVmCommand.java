@@ -487,6 +487,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      */
     protected CreateVmVDSCommandParameters initCreateVmParams() {
         VM vmToBeCreated = getVm();
+        vmToBeCreated.setRunOnce(false);
 
         if (!vmToBeCreated.getInterfaces().isEmpty()) {
             initParametersForExternalNetworks();

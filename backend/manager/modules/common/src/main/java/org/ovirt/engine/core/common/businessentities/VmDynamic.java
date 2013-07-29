@@ -47,6 +47,7 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     private boolean win2kHackEnabled = false;
     private Long lastWatchdogEvent = null;
     private String lastWatchdogAction = null;
+    private boolean runOnce;
 
     @Override
     public int hashCode() {
@@ -87,6 +88,7 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         result = prime * result + ((vmPid == null) ? 0 : vmPid.hashCode());
         result = prime * result + (lastWatchdogEvent == null ? 0 : lastWatchdogEvent.hashCode());
         result = prime * result + (lastWatchdogAction == null ? 0 : lastWatchdogAction.hashCode());
+        result = prime * result + (runOnce ? 1231 : 1237);
         return result;
     }
 
@@ -136,7 +138,8 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
                 && ObjectUtils.objectsEqual(lastStartTime, other.lastStartTime)
                 && ObjectUtils.objectsEqual(vmPid, other.vmPid)
                 && ObjectUtils.objectsEqual(lastWatchdogEvent, other.lastWatchdogEvent)
-                && ObjectUtils.objectsEqual(lastWatchdogAction, other.lastWatchdogAction));
+                && ObjectUtils.objectsEqual(lastWatchdogAction, other.lastWatchdogAction)
+                && runOnce == other.runOnce);
     }
 
     public String getExitMessage() {
@@ -452,4 +455,11 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         this.lastWatchdogAction = lastWatchdogAction;
     }
 
+    public boolean isRunOnce() {
+        return runOnce;
+    }
+
+    public void setRunOnce(boolean runOnce) {
+        this.runOnce = runOnce;
+    }
 }
