@@ -202,11 +202,6 @@
             display: none;
         }
 
-        .pkEditor {
-            border-width: 1px;
-            border-color: black;
-        }
-
         .fetchLink {
             margin: 3px;
             font-size: 10pt;
@@ -215,11 +210,12 @@
 
         .pkStyle {
             resize: none;
+            background-color: gray;
         }
 
     </ui:style>
 
-    <d:SimpleDialogPanel width="700px" height="685px">
+    <d:SimpleDialogPanel width="700px" height="715px">
         <d:content>
             <t:DialogTabPanel ui:field="tabPanel" height="100%">
                 <t:tab>
@@ -263,7 +259,7 @@
                                         <g:HorizontalPanel ui:field="pkSection" width="100%" verticalAlignment="middle">
                                             <g:RadioButton ui:field="rbPublicKey" addStyleNames="{style.radioButton}" />
                                             <g:Label text="{constants.hostPublicKeyLable}" />
-                                            <e:EntityModelTextAreaLabelEditor ui:field="publicKeyEditor" addStyleNames="{style.pkStyle}" />
+                                            <e:EntityModelTextAreaLabelEditor ui:field="publicKeyEditor" />
                                         </g:HorizontalPanel>
                                         <d:AdvancedParametersExpander ui:field="expander"/>
                                         <g:FlowPanel ui:field="expanderContent">
