@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -63,6 +64,8 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -1031,29 +1034,112 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         AuditLogDirector.log(logable, AuditLogType.VM_IMPORT_INFO);
     }
 
+    private VnicProfile getVnicProfileForNetwork(List<VnicProfileView> vnicProfiles,
+            Network network,
+            String vnicProfileName) {
+
+        if (vnicProfileName == null) {
+            return null;
+        }
+
+        for (VnicProfileView vnicProfile : vnicProfiles) {
+            if (ObjectUtils.equals(vnicProfile.getNetworkId(), network.getId())
+                    && vnicProfileName.equals(vnicProfile.getName())) {
+                return vnicProfile;
+            }
+        }
+
+        return null;
+    }
+
     protected void addVmInterfaces() {
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
-        List<String> invalidNetworkNames = new ArrayList<String>();
-        List<String> invalidIfaceNames = new ArrayList<String>();
+        List<String> invalidNetworkNames = new ArrayList<>();
+        List<String> invalidIfaceNames = new ArrayList<>();
         Map<String, Network> networksInClusterByName =
                 Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVm().getVdsGroupId()));
+        List<VnicProfileView> vnicProfilesInDc =
+                getDbFacade().getVnicProfileViewDao().getAllForDataCenter(getStoragePoolId());
 
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             initInterface(iface);
-            if (!vmInterfaceManager.isValidVmNetwork(iface,
-                    networksInClusterByName,
-                    getVdsGroup().getcompatibility_version())) {
-                invalidNetworkNames.add(iface.getNetworkName());
-                invalidIfaceNames.add(iface.getName());
-                iface.setVnicProfileId(null);
+
+            if (iface.getNetworkName() == null) {
+                if (FeatureSupported.networkLinking(getVdsGroup().getcompatibility_version())) {
+                    iface.setVnicProfileId(null);
+                } else {
+                    markNicHasNoProfile(invalidNetworkNames, invalidIfaceNames, iface);
+                }
+
+                addVnic(vmInterfaceManager, iface);
+                continue;
             }
 
-            vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity(),
-                    getVdsGroup().getcompatibility_version());
-            macsAdded.add(iface.getMacAddress());
+            Network network = networksInClusterByName.get(iface.getNetworkName());
+            if (network == null || !network.isVmNetwork()) {
+                markNicHasNoProfile(invalidNetworkNames, invalidIfaceNames, iface);
+                addVnic(vmInterfaceManager, iface);
+                continue;
+            }
+
+            VnicProfile vnicProfile = getVnicProfileForNetwork(vnicProfilesInDc, network, iface.getVnicProfileName());
+            if (vnicProfile == null) {
+                vnicProfile = findVnicProfileForUser(getCurrentUser().getUserId(), network);
+                if (vnicProfile == null) {
+                    markNicHasNoProfile(invalidNetworkNames, invalidIfaceNames, iface);
+                } else {
+                    iface.setVnicProfileId(vnicProfile.getId());
+                }
+
+                addVnic(vmInterfaceManager, iface);
+                continue;
+            }
+
+            iface.setVnicProfileId(vnicProfile.getId());
+            addVnic(vmInterfaceManager, iface);
+            continue;
         }
 
         auditInvalidInterfaces(invalidNetworkNames, invalidIfaceNames);
+    }
+
+    private VnicProfile findVnicProfileForUser(Guid userId, Network network) {
+        List<VnicProfile> networkProfiles = getVnicProfileDao().getAllForNetwork(network.getId());
+
+        for (VnicProfile profile : networkProfiles) {
+            if (profile.isPortMirroring()) {
+                if (isVnicProfilePermitted(userId, profile, ActionGroup.PORT_MIRRORING)) {
+                    return profile;
+                }
+            } else {
+                if (isVnicProfilePermitted(userId, profile, ActionGroup.CONFIGURE_VM_NETWORK)) {
+                    return profile;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    private boolean isVnicProfilePermitted(Guid userId, VnicProfile profile, ActionGroup actionGroup) {
+        return getPermissionDAO().getEntityPermissions(userId,
+                actionGroup,
+                profile.getId(),
+                VdcObjectType.VnicProfile) != null;
+    }
+
+    private void addVnic(VmInterfaceManager vmInterfaceManager, VmNetworkInterface iface) {
+        vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity(),
+                getVdsGroup().getcompatibility_version());
+        macsAdded.add(iface.getMacAddress());
+    }
+
+    private void markNicHasNoProfile(List<String> invalidNetworkNames,
+            List<String> invalidIfaceNames,
+            VmNetworkInterface iface) {
+        invalidNetworkNames.add(iface.getNetworkName());
+        invalidIfaceNames.add(iface.getName());
+        iface.setVnicProfileId(null);
     }
 
     private void initInterface(VmNic iface) {
