@@ -188,7 +188,6 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                     if (!configureNetworkUsingHostDeploy) {
                         configureManagementNetwork();
                     }
-                default:
                     setVdsStatus(VDSStatus.Initializing);
                 break;
             }
