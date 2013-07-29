@@ -178,10 +178,6 @@ public class VmInterfaceManager {
      *
      * @param iface
      *            The vm network interface to be updated
-     * @param networkName
-     *            The network name which the vnic profile is associated with
-     * @param vnicProfileName
-     *            The vnic profile name
      * @param compatibilityVersion
      *            The compatibility version of the cluster in which the VM exists
      * @param networksInClusterByName
@@ -192,15 +188,13 @@ public class VmInterfaceManager {
      *            The id of the user which performs the action
      * @return {@code true} if the vnic profile id is updated, else {@code false}
      */
-    public boolean updateNicWithVnicProfile(VmNic iface,
-            String networkName,
-            String vnicProfileName,
+    public boolean updateNicWithVnicProfile(VmNetworkInterface iface,
             Version compatibilityVersion,
             Map<String, Network> networksInClusterByName,
             List<VnicProfileView> vnicProfilesInDc,
             Guid userId) {
 
-        if (networkName == null) {
+        if (iface.getNetworkName() == null) {
             if (FeatureSupported.networkLinking(compatibilityVersion)) {
                 iface.setVnicProfileId(null);
                 return true;
@@ -209,12 +203,12 @@ public class VmInterfaceManager {
             }
         }
 
-        Network network = networksInClusterByName.get(networkName);
+        Network network = networksInClusterByName.get(iface.getNetworkName());
         if (network == null || !network.isVmNetwork()) {
             return false;
         }
 
-        VnicProfile vnicProfile = getVnicProfileForNetwork(vnicProfilesInDc, network, vnicProfileName);
+        VnicProfile vnicProfile = getVnicProfileForNetwork(vnicProfilesInDc, network, iface.getVnicProfileName());
         if (vnicProfile == null) {
             vnicProfile = findVnicProfileForUser(userId, network);
             if (vnicProfile == null) {

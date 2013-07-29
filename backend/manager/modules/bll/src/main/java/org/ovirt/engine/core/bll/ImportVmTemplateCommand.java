@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -384,6 +385,8 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         List<String> invalidIfaceNames = new ArrayList<String>();
         Map<String, Network> networksInVdsByName =
                 Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVmTemplate().getVdsGroupId()));
+        List<VnicProfileView> vnicProfilesInDc =
+                getDbFacade().getVnicProfileViewDao().getAllForDataCenter(getStoragePoolId());
 
         for (VmNetworkInterface iface : interfaces) {
             if (iface.getId() == null) {
@@ -399,16 +402,16 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             nic.setSpeed(iface.getSpeed());
             nic.setType(iface.getType());
 
-            if (vmInterfaceManager.isValidVmNetwork(iface,
+            if (!vmInterfaceManager.updateNicWithVnicProfile(iface,
+                    getVdsGroup().getcompatibility_version(),
                     networksInVdsByName,
-                    getVdsGroup().getcompatibility_version())) {
-                nic.setVnicProfileId(iface.getVnicProfileId());
-            } else {
+                    vnicProfilesInDc,
+                    getCurrentUser().getUserId())) {
                 invalidNetworkNames.add(iface.getNetworkName());
                 invalidIfaceNames.add(iface.getName());
-                nic.setVnicProfileId(null);
             }
 
+            nic.setVnicProfileId(iface.getVnicProfileId());
             getVmNicDao().save(nic);
             getCompensationContext().snapshotNewEntity(nic);
 
