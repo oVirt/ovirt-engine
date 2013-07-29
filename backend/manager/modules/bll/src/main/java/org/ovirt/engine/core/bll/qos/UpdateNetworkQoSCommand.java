@@ -38,6 +38,7 @@ public class UpdateNetworkQoSCommand extends NetworkQoSCommandBase {
 
     @Override
     protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
     }
 

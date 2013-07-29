@@ -23,7 +23,6 @@ public abstract class NetworkQoSCommandBase extends CommandBase<NetworkQoSParame
             addCustomValue("NetworkQoSName", getNetworkQoS().getName());
         }
         getParameters().setShouldBeLogged(true);
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
     }
 
     public NetworkQoS getNetworkQoS() {
@@ -100,5 +99,10 @@ public abstract class NetworkQoSCommandBase extends CommandBase<NetworkQoSParame
 
     protected NetworkQoSDao getNetworkQoSDao() {
         return getDbFacade().getQosDao();
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK_QOS);
     }
 }

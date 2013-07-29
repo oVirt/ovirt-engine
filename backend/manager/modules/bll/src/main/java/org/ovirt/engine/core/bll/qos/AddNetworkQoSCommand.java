@@ -28,12 +28,13 @@ public class AddNetworkQoSCommand extends NetworkQoSCommandBase {
     }
 
     @Override
-    protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__NETWORK_QOS);
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.USER_ADDED_NETWORK_QOS : AuditLogType.USER_FAILED_TO_ADD_NETWORK_QOS;
     }
 
     @Override
-    public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_ADDED_NETWORK_QOS : AuditLogType.USER_FAILED_TO_ADD_NETWORK_QOS;
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
     }
 }
