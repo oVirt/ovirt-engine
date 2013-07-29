@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -64,7 +63,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -81,7 +79,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.GuidUtils;
@@ -1035,24 +1032,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         AuditLogDirector.log(logable, AuditLogType.VM_IMPORT_INFO);
     }
 
-    private VnicProfile getVnicProfileForNetwork(List<VnicProfileView> vnicProfiles,
-            Network network,
-            String vnicProfileName) {
-
-        if (vnicProfileName == null) {
-            return null;
-        }
-
-        for (VnicProfileView vnicProfile : vnicProfiles) {
-            if (ObjectUtils.equals(vnicProfile.getNetworkId(), network.getId())
-                    && vnicProfileName.equals(vnicProfile.getName())) {
-                return vnicProfile;
-            }
-        }
-
-        return null;
-    }
-
     protected void addVmInterfaces() {
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
         List<String> invalidNetworkNames = new ArrayList<>();
@@ -1064,12 +1043,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             initInterface(iface);
-            if (!updateNicWithVnicProfile(iface,
+            if (!vmInterfaceManager.updateNicWithVnicProfile(iface,
                     iface.getNetworkName(),
                     iface.getVnicProfileName(),
                     getVdsGroup().getcompatibility_version(),
                     networksInClusterByName,
-                    vnicProfilesInDc)) {
+                    vnicProfilesInDc,
+                    getCurrentUser().getUserId())) {
                 markNicHasNoProfile(invalidNetworkNames, invalidIfaceNames, iface);
             }
 
@@ -1081,80 +1061,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         auditInvalidInterfaces(invalidNetworkNames, invalidIfaceNames);
     }
 
-    /**
-     * Updates the vnic profile id of a given {@link VmNic} by a network name and vnic profile name.
-     *
-     * @param iface
-     *            The vm network interface to be updated
-     * @param networkName
-     *            The network name which the vnic profile is associated with
-     * @param vnicProfileName
-     *            The vnic profile name
-     * @param compatibilityVersion
-     *            The compatibility version of the cluster in which the VM exists
-     * @param networksInClusterByName
-     *            The networks which are assigned to the cluster
-     * @param vnicProfilesInDc
-     *            The vnic profiles for the data-center in which the VM exists
-     * @return {@code true} if the vnic profile id is updated, else {@code false}
-     */
-    public boolean updateNicWithVnicProfile(VmNic iface,
-            String networkName,
-            String vnicProfileName,
-            Version compatibilityVersion,
-            Map<String, Network> networksInClusterByName,
-            List<VnicProfileView> vnicProfilesInDc) {
-
-        if (networkName == null) {
-            if (FeatureSupported.networkLinking(getVdsGroup().getcompatibility_version())) {
-                iface.setVnicProfileId(null);
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        Network network = networksInClusterByName.get(networkName);
-        if (network == null || !network.isVmNetwork()) {
-            return false;
-        }
-
-        VnicProfile vnicProfile = getVnicProfileForNetwork(vnicProfilesInDc, network, vnicProfileName);
-        if (vnicProfile == null) {
-            vnicProfile = findVnicProfileForUser(getCurrentUser().getUserId(), network);
-            if (vnicProfile == null) {
-                return false;
-            }
-        }
-
-        iface.setVnicProfileId(vnicProfile.getId());
-        return true;
-    }
-
-    private VnicProfile findVnicProfileForUser(Guid userId, Network network) {
-        List<VnicProfile> networkProfiles = getVnicProfileDao().getAllForNetwork(network.getId());
-
-        for (VnicProfile profile : networkProfiles) {
-            if (profile.isPortMirroring()) {
-                if (isVnicProfilePermitted(userId, profile, ActionGroup.PORT_MIRRORING)) {
-                    return profile;
-                }
-            } else {
-                if (isVnicProfilePermitted(userId, profile, ActionGroup.CONFIGURE_VM_NETWORK)) {
-                    return profile;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    private boolean isVnicProfilePermitted(Guid userId, VnicProfile profile, ActionGroup actionGroup) {
-        return getPermissionDAO().getEntityPermissions(userId,
-                actionGroup,
-                profile.getId(),
-                VdcObjectType.VnicProfile) != null;
-    }
 
     private void markNicHasNoProfile(List<String> invalidNetworkNames,
             List<String> invalidIfaceNames,
