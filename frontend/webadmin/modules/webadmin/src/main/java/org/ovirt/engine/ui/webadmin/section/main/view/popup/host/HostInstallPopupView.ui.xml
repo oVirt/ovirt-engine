@@ -28,6 +28,7 @@
 
         .pkStyle {
             resize: none;
+            background-color: gray;
         }
 
         .radioButton {
@@ -63,7 +64,7 @@
                 <g:HorizontalPanel width="100%" verticalAlignment="middle">
                     <g:RadioButton ui:field="rbPublicKey" addStyleNames="{style.radioButton}" />
                     <g:Label text="{constants.hostPublicKeyLable}" />
-                    <e:EntityModelTextAreaLabelEditor ui:field="publicKeyEditor" addStyleNames="{style.pkStyle}" />
+                    <e:EntityModelTextAreaLabelEditor ui:field="publicKeyEditor" />
                 </g:HorizontalPanel>
                 <e:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor"/>
                 <e:EntityModelLabelEditor ui:field="hostVersionEditor"/>

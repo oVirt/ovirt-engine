@@ -121,7 +121,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
 
         rbPassword = new RadioButton("1"); //$NON-NLS-1$
         rbPublicKey = new RadioButton("1"); //$NON-NLS-1$
-        publicKeyEditor = new EntityModelTextAreaLabelEditor(true, true);
+        publicKeyEditor = new EntityModelTextAreaLabelEditor();
     }
 
     void localize(ApplicationConstants constants) {
@@ -130,6 +130,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         overrideIpTablesEditor.setLabel(constants.hostInstallOverrideIpTablesLabel());
         authLabel.setText(constants.hostPopupAuthLabel());
         userNameEditor.setLabel(constants.hostPopupUsernameLabel());
+        publicKeyEditor.setTitle(constants.publicKeyUsage());
     }
 
     @Override
@@ -187,9 +188,12 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
 
     interface Style extends CssResource {
         String overrideIpStyle();
+
+        String pkStyle();
     }
 
     private void addStyles() {
         overrideIpTablesEditor.addContentWidgetStyleName(style.overrideIpStyle());
+        publicKeyEditor.setCustomStyle(style.pkStyle());
     }
 }

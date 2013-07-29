@@ -465,11 +465,13 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         providerSearchFilterLabel.addContentWidgetStyleName(style.emptyEditor());
         providerSearchFilterLabel.setStyleName(style.searchFilterLabel());
         fetchSshFingerprint.addContentWidgetStyleName(style.fingerprintEditor());
-        publicKeyEditor.addContentWidgetStyleName(style.pkEditor());
         expanderContent.setStyleName(style.expanderContent());
+        publicKeyEditor.setCustomStyle(style.pkStyle());
     }
 
     private void initEditors() {
+        publicKeyEditor = new EntityModelTextAreaLabelEditor();
+
         // List boxes
         dataCenterEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
@@ -520,8 +522,6 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
             }
         });
 
-        publicKeyEditor = new EntityModelTextAreaLabelEditor(true, true);
-
         // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         externalHostProviderEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -555,6 +555,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         externalHostProviderEnabledEditor.setLabel(constants.hostPopupEnableExternalHostProvider());
         externalHostNameEditor.setLabel(constants.hostPopupExternalHostName());
         providerSearchFilterLabel.setLabel(constants.hostPopupProviderSearchFilter());
+        publicKeyEditor.setTitle(constants.publicKeyUsage());
 
         // Power Management tab
         powerManagementTab.setLabel(constants.hostPopupPowerManagementTabLabel());
@@ -955,7 +956,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         String expanderContent();
 
-        String pkEditor();
+        String pkStyle();
     }
 
     public void setPkPasswordSectionVisiblity(boolean visible) {
