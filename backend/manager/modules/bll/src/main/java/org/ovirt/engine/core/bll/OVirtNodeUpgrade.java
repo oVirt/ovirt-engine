@@ -11,20 +11,18 @@ import javax.naming.TimeLimitExceededException;
 
 import org.ovirt.engine.core.bll.utils.EngineSSHDialog;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ssh.SSHDialog;
-import org.ovirt.engine.core.utils.transaction.TransactionMethod;
-import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 /**
  * ovirt-node upgrade.
  */
 public class OVirtNodeUpgrade implements SSHDialog.Sink {
+
+    public static enum DeployStatus {Complete, Failed, Reboot};
 
     private static final int BUFFER_SIZE = 10 * 1024;
     private static final int THREAD_JOIN_TIMEOUT = 20 * 1000;
@@ -42,23 +40,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
     private String _iso;
 
     private Exception _failException = null;
-
-    /**
-     * Set vds object status.
-     * For this simple task, no need to go via command mechanism.
-     * @param status new status.
-     */
-    private void _setVdsStatus(VDSStatus status) {
-        _vds.setStatus(status);
-
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                DbFacade.getInstance().getVdsDynamicDao().update(_vds.getDynamicData());
-                return null;
-            }
-        });
-    }
+    private DeployStatus _deployStatus = DeployStatus.Failed;
 
     /**
      * Dialog implementation.
@@ -135,12 +117,20 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
     }
 
     /**
+     * Returns the installation status
+     *
+     * @return the installation status
+     */
+    public DeployStatus getDeployStatus() {
+        return _deployStatus;
+    }
+
+    /**
      * Main method.
      * Execute the command and initiate the dialog.
      */
     public void execute() throws Exception {
         try {
-            _setVdsStatus(VDSStatus.Installing);
             _dialog.setVds(_vds);
             _dialog.connect();
             _dialog.useDefaultKeyPair();
@@ -220,7 +210,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
                 throw _failException;
             }
 
-            _setVdsStatus(VDSStatus.Reboot);
+            _deployStatus = DeployStatus.Reboot;
         }
         catch (TimeLimitExceededException e){
             log.errorFormat(
@@ -232,12 +222,10 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink {
                 InstallerMessages.Severity.ERROR,
                 "Processing stopped due to timeout"
             );
-            _setVdsStatus(VDSStatus.InstallFailed);
             throw e;
         }
         catch (Exception e) {
             log.errorFormat("Error during node {0} upgrade", _vds.getHostName(), e);
-            _setVdsStatus(VDSStatus.InstallFailed);
 
             if (_failException == null) {
                 throw e;

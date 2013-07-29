@@ -95,7 +95,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         }
 
         if (isOvirtReInstallOrUpgrade()) {
-            reinstallOrUpgradeHost();
+            upgradeNode();
         } else {
             installHost();
         }
@@ -209,7 +209,7 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         }
     }
 
-    private void reinstallOrUpgradeHost() {
+    private void upgradeNode() {
         OVirtNodeUpgrade upgrade = null;
         try {
             T parameters = getParameters();
@@ -223,26 +223,33 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
                 getVds().getId(),
                 getVds().getName()
             );
+            setVdsStatus(VDSStatus.Installing);
             upgrade.execute();
+
+            switch (upgrade.getDeployStatus()) {
+                case Failed:
+                    throw new VdsInstallException(VDSStatus.InstallFailed, StringUtils.EMPTY);
+                case Reboot:
+                    setVdsStatus(VDSStatus.Reboot);
+                    RunSleepOnReboot();
+                break;
+                case Complete:
+                    setVdsStatus(VDSStatus.Initializing);
+                break;
+            }
+
             log.infoFormat(
                 "After upgrade host {0}, {1}: success",
                 getVds().getId(),
                 getVds().getName()
             );
             setSucceeded(true);
-            if (getVds().getStatus() == VDSStatus.Reboot) {
-                RunSleepOnReboot();
-            }
+        } catch (VdsInstallException e) {
+            handleError(e, e.getStatus());
         } catch (Exception e) {
-            log.errorFormat(
-                "Host installation failed for host {0}, {1}.",
-                getVds().getId(),
-                getVds().getName(),
-                e
-            );
-            setSucceeded(false);
-            _failureMessage = e.getMessage();
-        } finally {
+            handleError(e, VDSStatus.InstallFailed);
+        }
+        finally {
             if (upgrade != null) {
                 upgrade.close();
             }
