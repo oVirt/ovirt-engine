@@ -391,29 +391,29 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             }
 
             iface.setVmId(getVmTemplateId());
-            VmNic iDynamic = new VmNic();
-            iDynamic.setId(iface.getId());
-            iDynamic.setVmTemplateId(getVmTemplateId());
-            iDynamic.setName(iface.getName());
+            VmNic nic = new VmNic();
+            nic.setId(iface.getId());
+            nic.setVmTemplateId(getVmTemplateId());
+            nic.setName(iface.getName());
+            nic.setLinked(iface.isLinked());
+            nic.setSpeed(iface.getSpeed());
+            nic.setType(iface.getType());
+
             if (vmInterfaceManager.isValidVmNetwork(iface,
                     networksInVdsByName,
                     getVdsGroup().getcompatibility_version())) {
-                iDynamic.setVnicProfileId(iface.getVnicProfileId());
+                nic.setVnicProfileId(iface.getVnicProfileId());
             } else {
                 invalidNetworkNames.add(iface.getNetworkName());
                 invalidIfaceNames.add(iface.getName());
-                iDynamic.setVnicProfileId(null);
+                nic.setVnicProfileId(null);
             }
 
-            iDynamic.setLinked(iface.isLinked());
-            iDynamic.setSpeed(iface.getSpeed());
-            iDynamic.setType(iface.getType());
-
-            getVmNicDao().save(iDynamic);
-            getCompensationContext().snapshotNewEntity(iDynamic);
+            getVmNicDao().save(nic);
+            getCompensationContext().snapshotNewEntity(nic);
 
             VmNetworkStatistics iStat = new VmNetworkStatistics();
-            iDynamic.setStatistics(iStat);
+            nic.setStatistics(iStat);
             iStat.setId(iface.getId());
             iStat.setVmId(getVmTemplateId());
             getDbFacade().getVmNetworkStatisticsDao().save(iStat);

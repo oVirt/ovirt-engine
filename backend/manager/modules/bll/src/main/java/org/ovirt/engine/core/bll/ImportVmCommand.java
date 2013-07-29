@@ -1097,7 +1097,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
             iface.setVnicProfileId(vnicProfile.getId());
             addVnic(vmInterfaceManager, iface);
-            continue;
         }
 
         auditInvalidInterfaces(invalidNetworkNames, invalidIfaceNames);
