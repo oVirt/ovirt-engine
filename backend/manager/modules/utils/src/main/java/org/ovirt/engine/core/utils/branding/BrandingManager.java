@@ -141,7 +141,7 @@ public class BrandingManager {
                 }
             }
         }
-        return themes;
+        return themes != null ? themes : new ArrayList<BrandingTheme>();
     }
 
     /**
