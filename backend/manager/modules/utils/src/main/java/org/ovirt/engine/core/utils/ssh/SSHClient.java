@@ -21,8 +21,9 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 import javax.naming.AuthenticationException;
 import javax.naming.TimeLimitExceededException;
-import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -97,13 +98,13 @@ public class SSHClient {
             if (
                 !Arrays.equals(
                     digest.digest(),
-                    DatatypeConverter.parseHexBinary(actual)
+                    Hex.decodeHex(actual.toCharArray())
                 )
             ) {
                 throw new IOException("SSH copy failed, invalid localDigest");
             }
         }
-        catch (IllegalArgumentException e) {
+        catch (DecoderException e) {
             throw new IOException("SSH copy failed, invalid localDigest");
         }
     }
