@@ -32,7 +32,14 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     public String getNetworkName() {
-        return getNetwork().getName();
+        return getPersistedNetwork() == null ? null : getPersistedNetwork().getName();
+    }
+
+    @Override
+    protected String getDescription() {
+        String networkName = getNetworkName() == null ? "" : getNetworkName();
+        String clusterName = getVdsGroup() == null ? "" : getVdsGroup().getName();
+        return networkName + " - " + clusterName;
     }
 
     @Override
