@@ -1,17 +1,23 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
+import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -45,6 +51,8 @@ public class ImportNetworksModel extends Model {
     private final ListModel importedNetworks = new ListModel();
 
     private UICommand cancelImportCommand = new UICommand(null, this);
+
+    Map<Guid, Collection<VDSGroup>> dcClusters;
 
     public ListModel getDataCenters() {
         return dataCenters;
@@ -162,31 +170,70 @@ public class ImportNetworksModel extends Model {
     }
 
     public void onImport() {
-        List<VdcActionParametersBase> mulipleActionParameters =
+        List<VdcActionParametersBase> multipleActionParameters =
                 new LinkedList<VdcActionParametersBase>();
         List<IFrontendActionAsyncCallback> callbacks = new LinkedList<IFrontendActionAsyncCallback>();
+        dcClusters = new HashMap<Guid, Collection<VDSGroup>>();
 
         for (final ExternalNetwork externalNetwork : (Iterable<ExternalNetwork>) importedNetworks.getItems()) {
             final Network network = externalNetwork.getNetwork();
-            Guid dcId = ((StoragePool) externalNetwork.getDataCenters().getSelectedItem()).getId();
+            final Guid dcId = ((StoragePool) externalNetwork.getDataCenters().getSelectedItem()).getId();
             network.setName(externalNetwork.getDisplayName());
             network.setDataCenterId(dcId);
             AddNetworkStoragePoolParameters params =
                     new AddNetworkStoragePoolParameters(dcId, network);
             params.setVnicProfileRequired(false);
-            mulipleActionParameters.add(params);
+            multipleActionParameters.add(params);
             callbacks.add(new IFrontendActionAsyncCallback() {
 
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
                     network.setId((Guid) result.getReturnValue().getActionReturnValue());
-                    addVnicProfile(network, externalNetwork.isPublicUse());
+
+                    // Perform sequentially: first fetch clusters, then attach network, then create VNIC profile
+                    fetchDcClusters(dcId, network, externalNetwork.isPublicUse());
                 }
             });
         }
 
-        Frontend.RunMultipleActions(VdcActionType.AddNetwork, mulipleActionParameters, callbacks);
+        Frontend.RunMultipleActions(VdcActionType.AddNetwork, multipleActionParameters, callbacks);
         cancel();
+    }
+
+    private void fetchDcClusters(final Guid dcId, final Network network, final boolean publicUse) {
+        if (dcClusters.containsKey(dcId)) {
+            attachNetworkToClusters(network, dcClusters.get(dcId), publicUse);
+        } else {
+            AsyncDataProvider.getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
+
+                @Override
+                public void onSuccess(Object model, Object returnValue) {
+                    Collection<VDSGroup> clusters = (Collection<VDSGroup>) returnValue;
+                    dcClusters.put(dcId, clusters);
+                    attachNetworkToClusters(network, clusters, publicUse);
+                }
+            }), dcId);
+        }
+    }
+
+    private void attachNetworkToClusters(final Network network, Collection<VDSGroup> clusters, final boolean publicUse) {
+        NetworkCluster networkCluster = new NetworkCluster();
+        networkCluster.setRequired(false);
+        network.setCluster(networkCluster);
+        List<VdcActionParametersBase> parameters = new LinkedList<VdcActionParametersBase>();
+        for (VDSGroup cluster : clusters) {
+            parameters.add(new AttachNetworkToVdsGroupParameter(cluster, network));
+        }
+
+        Frontend.RunMultipleActions(VdcActionType.AttachNetworkToVdsGroup,
+                parameters,
+                new IFrontendActionAsyncCallback() {
+
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        addVnicProfile(network, publicUse);
+                    }
+                });
     }
 
     private void addVnicProfile(Network network, boolean publicUse) {
