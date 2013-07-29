@@ -81,6 +81,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.GuidUtils;
@@ -1063,43 +1064,71 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             initInterface(iface);
-
-            if (iface.getNetworkName() == null) {
-                if (FeatureSupported.networkLinking(getVdsGroup().getcompatibility_version())) {
-                    iface.setVnicProfileId(null);
-                } else {
-                    markNicHasNoProfile(invalidNetworkNames, invalidIfaceNames, iface);
-                }
-
-                addVnic(vmInterfaceManager, iface);
-                continue;
-            }
-
-            Network network = networksInClusterByName.get(iface.getNetworkName());
-            if (network == null || !network.isVmNetwork()) {
+            if (!updateNicWithVnicProfile(iface,
+                    iface.getNetworkName(),
+                    iface.getVnicProfileName(),
+                    getVdsGroup().getcompatibility_version(),
+                    networksInClusterByName,
+                    vnicProfilesInDc)) {
                 markNicHasNoProfile(invalidNetworkNames, invalidIfaceNames, iface);
-                addVnic(vmInterfaceManager, iface);
-                continue;
             }
 
-            VnicProfile vnicProfile = getVnicProfileForNetwork(vnicProfilesInDc, network, iface.getVnicProfileName());
-            if (vnicProfile == null) {
-                vnicProfile = findVnicProfileForUser(getCurrentUser().getUserId(), network);
-                if (vnicProfile == null) {
-                    markNicHasNoProfile(invalidNetworkNames, invalidIfaceNames, iface);
-                } else {
-                    iface.setVnicProfileId(vnicProfile.getId());
-                }
-
-                addVnic(vmInterfaceManager, iface);
-                continue;
-            }
-
-            iface.setVnicProfileId(vnicProfile.getId());
-            addVnic(vmInterfaceManager, iface);
+            vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity(),
+                    getVdsGroup().getcompatibility_version());
+            macsAdded.add(iface.getMacAddress());
         }
 
         auditInvalidInterfaces(invalidNetworkNames, invalidIfaceNames);
+    }
+
+    /**
+     * Updates the vnic profile id of a given {@link VmNic} by a network name and vnic profile name.
+     *
+     * @param iface
+     *            The vm network interface to be updated
+     * @param networkName
+     *            The network name which the vnic profile is associated with
+     * @param vnicProfileName
+     *            The vnic profile name
+     * @param compatibilityVersion
+     *            The compatibility version of the cluster in which the VM exists
+     * @param networksInClusterByName
+     *            The networks which are assigned to the cluster
+     * @param vnicProfilesInDc
+     *            The vnic profiles for the data-center in which the VM exists
+     * @return {@code true} if the vnic profile id is updated, else {@code false}
+     */
+    public boolean updateNicWithVnicProfile(VmNic iface,
+            String networkName,
+            String vnicProfileName,
+            Version compatibilityVersion,
+            Map<String, Network> networksInClusterByName,
+            List<VnicProfileView> vnicProfilesInDc) {
+
+        if (networkName == null) {
+            if (FeatureSupported.networkLinking(getVdsGroup().getcompatibility_version())) {
+                iface.setVnicProfileId(null);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        Network network = networksInClusterByName.get(networkName);
+        if (network == null || !network.isVmNetwork()) {
+            return false;
+        }
+
+        VnicProfile vnicProfile = getVnicProfileForNetwork(vnicProfilesInDc, network, vnicProfileName);
+        if (vnicProfile == null) {
+            vnicProfile = findVnicProfileForUser(getCurrentUser().getUserId(), network);
+            if (vnicProfile == null) {
+                return false;
+            }
+        }
+
+        iface.setVnicProfileId(vnicProfile.getId());
+        return true;
     }
 
     private VnicProfile findVnicProfileForUser(Guid userId, Network network) {
@@ -1125,12 +1154,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 actionGroup,
                 profile.getId(),
                 VdcObjectType.VnicProfile) != null;
-    }
-
-    private void addVnic(VmInterfaceManager vmInterfaceManager, VmNetworkInterface iface) {
-        vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity(),
-                getVdsGroup().getcompatibility_version());
-        macsAdded.add(iface.getMacAddress());
     }
 
     private void markNicHasNoProfile(List<String> invalidNetworkNames,
