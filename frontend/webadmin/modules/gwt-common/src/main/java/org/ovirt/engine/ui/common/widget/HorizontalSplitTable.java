@@ -7,6 +7,7 @@ import java.util.Set;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -41,6 +42,9 @@ public class HorizontalSplitTable extends Composite {
 
     private IEventListener topItemsChangedListener;
     private IEventListener bottomItemsChangedListener;
+
+    private UICommand onDownButtonPressed;
+    private UICommand onUpButtonPressed;
 
     @UiField
     protected SimpleDialogButton downButton;
@@ -108,6 +112,11 @@ public class HorizontalSplitTable extends Composite {
                 MultiSelectionModel<EntityModel> sourceSelectionModel = getSelectionModel(topTableIsSource);
                 EntityModelCellTable<ListModel> sourceTable = getTable(topTableIsSource);
                 EntityModelCellTable<ListModel> targetTable = getTable(!topTableIsSource);
+                UICommand command = topTableIsSource ? onDownButtonPressed : onUpButtonPressed;
+
+                if (command != null) {
+                    command.execute();
+                }
 
                 Set<EntityModel> selectedItems = sourceSelectionModel.getSelectedSet();
                 ((Collection<EntityModel>) sourceTable.asEditor().flush().getItems()).removeAll(selectedItems);
@@ -162,6 +171,15 @@ public class HorizontalSplitTable extends Composite {
     public void edit(ListModel topListModel, ListModel bottomListModel) {
         edit(topListModel, true);
         edit(bottomListModel, false);
+    }
+
+    public void edit(ListModel topListModel,
+            ListModel bottomListModel,
+            UICommand onDownButtonPressed,
+            UICommand onUpButtonPressed) {
+        edit(topListModel, bottomListModel);
+        this.onDownButtonPressed = onDownButtonPressed;
+        this.onUpButtonPressed = onUpButtonPressed;
     }
 
 }
