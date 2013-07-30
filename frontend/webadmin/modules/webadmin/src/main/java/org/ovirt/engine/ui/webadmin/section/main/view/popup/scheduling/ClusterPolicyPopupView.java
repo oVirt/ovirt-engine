@@ -170,7 +170,13 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
         }
         unusedFunctionPanel.clear();
         for (PolicyUnit policyUnit : model.getUnusedFunctions()) {
-            functionPolicyUnitPanel = new FunctionPolicyUnitPanel(policyUnit, model, false, false, style, null);
+            functionPolicyUnitPanel =
+                    new FunctionPolicyUnitPanel(policyUnit,
+                            model,
+                            false,
+                            model.getClusterPolicy().isLocked(),
+                            style,
+                            null);
             unusedFunctionPanel.add(functionPolicyUnitPanel);
             functionPolicyUnitPanel.initWidget();
         }

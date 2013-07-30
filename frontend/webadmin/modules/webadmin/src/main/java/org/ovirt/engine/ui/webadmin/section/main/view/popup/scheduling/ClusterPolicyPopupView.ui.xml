@@ -55,7 +55,7 @@
 		}
 		.usedFilterPolicyUnitStyle {
 		height: 20px;
-		width: 250px;
+		width: 240px;
 		background-color: #CED8DF;
 		border: 1px
 		solid
