@@ -353,6 +353,10 @@ class Daemon(service.Daemon):
                 engineProperty = '-D' + engineProperty
             self._engineArgs.append(engineProperty)
 
+        # Add extra jvm arguments provided in the configuration:
+        for arg in shlex.split(self._config.get('ENGINE_JVM_ARGS')):
+            self._engineArgs.append(arg)
+
         # Add arguments for remote debugging of the java virtual machine:
         engineDebugAddress = self._config.get('ENGINE_DEBUG_ADDRESS')
         if engineDebugAddress:

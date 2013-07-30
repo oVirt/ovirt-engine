@@ -105,6 +105,11 @@ ENGINE_PROPERTIES=""
 ENGINE_PROPERTIES="${ENGINE_PROPERTIES} jsse.enableSNIExtension=false"
 
 #
+# Extra Java arguments to be added to command-line.
+#
+ENGINE_JVM_ARGS=""
+
+#
 # Additional applications to be deployed in the instance of the
 # application server started by the engine. This is a list of space
 # separated files or directories that should exist under
