@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import static org.easymock.EasyMock.expect;
+import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.ROOT_PASSWORD;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.getModel;
 import static org.ovirt.engine.api.restapi.resource.BackendHostsResourceTest.setUpEntityExpectations;
 
@@ -101,7 +102,7 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         resource.setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                 UpdateVdsActionParameters.class,
                 new String[] { "RootPassword" },
-                new Object[] { "" },
+                new Object[] { ROOT_PASSWORD },
                 false,
                 true,
                 "ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST"));

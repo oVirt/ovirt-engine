@@ -65,6 +65,7 @@ public class BackendHostResourceTest
     private static final String ISCSI_PORT_STRING = "3260";
     private static final String ISCSI_IQN = "iqn.1986-03.com.sun:02:ori01";
     private static final String ISCSI_SERVER_ADDRESS = "shual1.eng.lab";
+    protected static final String ROOT_PASSWORD = "s3CR3t";
 
     public BackendHostResourceTest() {
         super(new BackendHostResource(GUIDS[0].toString(), new BackendHostsResource()));
@@ -181,7 +182,7 @@ public class BackendHostResourceTest
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
                                            new String[] { "RootPassword" },
-                                           new Object[] { "" },
+                                           new Object[] { ROOT_PASSWORD },
                                            true,
                                            true));
 
@@ -203,7 +204,7 @@ public class BackendHostResourceTest
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                 UpdateVdsActionParameters.class,
                 new String[] { "RootPassword" },
-                new Object[] { "" },
+                new Object[] { ROOT_PASSWORD },
                 true,
                 true));
 
@@ -233,7 +234,7 @@ public class BackendHostResourceTest
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                 UpdateVdsActionParameters.class,
                 new String[] { "RootPassword" },
-                new Object[] { "" },
+                new Object[] { ROOT_PASSWORD },
                 true,
                 true));
 
@@ -267,7 +268,7 @@ public class BackendHostResourceTest
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
                                            new String[] { "RootPassword" },
-                                           new Object[] { "" },
+                                           new Object[] { ROOT_PASSWORD },
                                            canDo,
                                            success));
 
@@ -361,8 +362,8 @@ public class BackendHostResourceTest
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVds,
                                            UpdateVdsActionParameters.class,
-                                           new String[] { "RootPassword" },
-                                           new Object[] { "" },
+                                           new String[] { },
+                                           new Object[] { },
                                            true,
                                            true,
                                            false));
