@@ -365,4 +365,7 @@ public interface ApplicationResources extends CommonApplicationResources {
 
     @Source("images/double_arrow.png")
     ImageResource doubleArrowImage();
+
+    @Source("images/host_prepare_to_migrate.png")
+    ImageResource prepareImage();
 }

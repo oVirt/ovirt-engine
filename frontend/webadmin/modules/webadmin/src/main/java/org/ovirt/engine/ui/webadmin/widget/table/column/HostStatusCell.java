@@ -36,6 +36,8 @@ public class HostStatusCell extends AbstractCell<VDS> {
             statusImage = resources.downImage();
             break;
         case PreparingForMaintenance:
+            statusImage = resources.prepareImage();
+            break;
         case Maintenance:
             statusImage = resources.maintenanceImage();
             break;
