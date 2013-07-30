@@ -1367,7 +1367,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("noVNC")
     String noVnc();
 
-    @DefaultStringValue("SPICE HTML5 browser client")
+    @DefaultStringValue("SPICE HTML5 browser client (Tech preview)")
     String spiceHtml5();
 
     @DefaultStringValue("Pass Ctrl-Alt-Del to virtual machine")
