@@ -6,7 +6,6 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Networks;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.PortMirroring;
-import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -36,7 +35,6 @@ public class NicMapperTest extends AbstractInvertibleMappingTest<NIC, VmNetworkI
         assertEquals(model.getInterface(), transform.getInterface());
         assertEquals(model.isLinked(), transform.isLinked());
         assertEquals(model.isPlugged(), transform.isPlugged());
-        assertEquals(CustomPropertiesParser.parse(model.getCustomProperties().getCustomProperty()), CustomPropertiesParser.parse(transform.getCustomProperties().getCustomProperty()));
     }
 
     @Test

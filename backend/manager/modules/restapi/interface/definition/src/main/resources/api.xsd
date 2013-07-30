@@ -2719,7 +2719,6 @@
           <xs:element name="plugged" type="xs:boolean" minOccurs="0"/>
           <xs:element ref="port_mirroring" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="reported_devices" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="custom_properties" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
