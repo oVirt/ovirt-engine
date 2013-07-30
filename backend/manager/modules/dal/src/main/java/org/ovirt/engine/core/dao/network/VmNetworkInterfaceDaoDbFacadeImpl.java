@@ -3,7 +3,6 @@ package org.ovirt.engine.core.dao.network;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.comparators.InterfaceComparerByMAC;
@@ -12,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultReadDaoDbFacade;
 import org.ovirt.engine.core.dao.network.VmNicDaoDbFacadeImpl.VmNicRowMapperBase;
-import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -96,8 +94,6 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Vm
             entity.setNetworkName(rs.getString("network_name"));
             entity.setVnicProfileName(rs.getString("vnic_profile_name"));
             entity.setPlugged(rs.getBoolean("is_plugged"));
-            entity.setCustomProperties(SerializationFactory.getDeserializer()
-                    .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class));
             entity.setPortMirroring(rs.getBoolean("port_mirroring"));
             return entity;
 

@@ -105,6 +105,7 @@ public class VnicProfileValidator {
                 DevicePropertiesUtils.getInstance().validateProperties(dataCenter.getcompatibility_version(),
                         VmDeviceGeneralType.INTERFACE,
                         vnicProfile.getCustomProperties());
+
         if (!errors.isEmpty()) {
             DevicePropertiesUtils.getInstance().handleCustomPropertiesError(errors, messages);
             return false;

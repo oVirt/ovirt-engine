@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-import java.util.Map;
-
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 /**
@@ -15,10 +13,6 @@ public class VmNetworkInterface extends VmNic {
     private boolean portMirroring;
     private String vmName;
     private boolean plugged = true;
-    /**
-     * Device custom properties
-     */
-    private Map<String, String> customProperties;
 
     public VmNetworkInterface() {
     }
@@ -76,14 +70,6 @@ public class VmNetworkInterface extends VmNic {
         this.plugged = plugged;
     }
 
-    public Map<String, String> getCustomProperties() {
-        return customProperties;
-    }
-
-    public void setCustomProperties(Map<String, String> customProperties) {
-        this.customProperties = customProperties;
-    }
-
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();
@@ -104,8 +90,6 @@ public class VmNetworkInterface extends VmNic {
                 .append(getMacAddress())
                 .append(", active=")
                 .append(isPlugged())
-                .append(", customProperties=")
-                .append(getCustomProperties())
                 .append(", linked=")
                 .append(isLinked())
                 .append(", portMirroring=")
@@ -129,7 +113,6 @@ public class VmNetworkInterface extends VmNic {
         result = prime * result + (isPortMirroring() ? 1231 : 1237);
         result = prime * result + ((getVmName() == null) ? 0 : getVmName().hashCode());
         result = prime * result + (isPlugged() ? 1231 : 1237);
-        result = prime * result + (getCustomProperties() == null ? 0 : getCustomProperties().hashCode());
         return result;
     }
 
@@ -155,9 +138,6 @@ public class VmNetworkInterface extends VmNic {
             return false;
         }
         if (!ObjectUtils.objectsEqual(other.getVmName(), other.getVmName())) {
-            return false;
-        }
-        if (!ObjectUtils.objectsEqual(getCustomProperties(), other.getCustomProperties())) {
             return false;
         }
         if (isPlugged() != other.isPlugged()) {
