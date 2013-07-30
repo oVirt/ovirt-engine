@@ -1,38 +1,33 @@
-# Print an error message to stderr and exit with an error code:
+
+export ENGINE_DEFAULTS="${ENGINE_DEFAULTS:-@ENGINE_DEFAULTS@}"
+export ENGINE_VARS="${ENGINE_VARS:-@ENGINE_VARS@}"
+
 die() {
-    local m="$1"
-    echo "FATAL: ${m}" >&2
-    exit 1
+	local m="$1"
+	echo "FATAL: ${m}" >&2
+	exit 1
 }
 
 load_config() {
-    # Load the defaults file:
-    ENGINE_DEFAULTS="${ENGINE_DEFAULTS:-@ENGINE_DEFAULTS@}"
-    export ENGINE_DEFAULTS
 
-    # Load the configuration file:
-    ENGINE_VARS="${ENGINE_VARS:-@ENGINE_VARS@}"
-    export ENGINE_VARS
+	[ -r "${ENGINE_DEFAULTS}" ] || die "Can't load defaults file \"${ENGINE_DEFAULTS}\"."
 
-    [ -r "${ENGINE_DEFAULTS}" ] || die "Can't load defaults file \"${ENGINE_DEFAULTS}\"."
+	for f in \
+		"${ENGINE_DEFAULTS}" \
+		"${ENGINE_VARS}" \
+		$([ -d "${ENGINE_VARS}.d" ] && find "${ENGINE_VARS}.d" -name '*.conf' | sort) \
+		; do
 
-    for f in \
-            "${ENGINE_DEFAULTS}" \
-            "${ENGINE_VARS}" \
-            $([ -d "${ENGINE_VARS}.d" ] && find "${ENGINE_VARS}.d" -name '*.conf' | sort) \
-            ; do
-        [ -r "${f}" ] && . "${f}"
-    done
+		[ -r "${f}" ] && . "${f}"
+	done
 
-    # Clean the class path:
-    CLASSPATH=""
-    export CLASSPATH
+	# we use jboss specific loader (jboss-modules.jar)
+	# setup module path
+	export JAVA_MODULEPATH="${ENGINE_USR}/modules:${JBOSS_HOME}/modules"
 
-    # Prepare the module path:
-    JAVA_MODULEPATH="${ENGINE_USR}/modules:${JBOSS_HOME}/modules"
-    export JAVA_MODULEPATH
+	# clean the class path
+	# jboss module loader will not run otherwise.
+	export CLASSPATH=""
 }
 
-# In addition to defining the functions we also perform some tasks that
-# any script will need:
 load_config
