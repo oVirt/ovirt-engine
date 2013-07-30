@@ -201,7 +201,7 @@ class MiniYum(object):
                         action=MiniYum.TRANSACTION_STATE.get(action, action),
                         count=ts_current,
                         total=ts_total,
-                        package=package.name,
+                        package=package,
                     )
                 )
 
