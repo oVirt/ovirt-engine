@@ -6,6 +6,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.StepEnum;
@@ -42,7 +43,7 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
         validateParameters(step, "type", "status.state" , "description");
         String id;
         if (step.isSetParentStep()) {
-            validateParameters(step, "step.parentStep.id");
+            validateParameters(step, "parentStep.id");
             id = step.getParentStep().getId();
         }
         else {
@@ -92,5 +93,13 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
         model.setJob(new Job());
         model.getJob().setId(jobId.toString());
         return model;
+    }
+
+    @Override
+    protected Step addLinks(Step model,
+            Class<? extends BaseResource> suggestedParent,
+            String... subCollectionMembersToExclude) {
+        Step linked = super.addLinks(model, suggestedParent, subCollectionMembersToExclude);
+        return injectParent(linked);
     }
 }
