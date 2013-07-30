@@ -13,7 +13,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.AddExternalStepParameters;
 import org.ovirt.engine.core.common.job.Job;
-import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
@@ -39,7 +38,7 @@ public class AddExternalStepCommandTest {
 
     @Before
     public void createParameters() {
-        parameters = new AddExternalStepParameters(jobId, "step 1", StepEnum.VALIDATING, JobExecutionStatus.STARTED);
+        parameters = new AddExternalStepParameters(jobId, "step 1", StepEnum.VALIDATING);
     }
 
     private Job makeExternalTestJob(Guid jobId) {

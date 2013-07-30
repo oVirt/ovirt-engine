@@ -13,7 +13,6 @@ import org.ovirt.engine.api.model.Steps;
 import org.ovirt.engine.api.resource.StepResource;
 import org.ovirt.engine.api.resource.StepsResource;
 import org.ovirt.engine.api.restapi.types.StepMapper;
-import org.ovirt.engine.api.restapi.types.JobMapper;
 import org.ovirt.engine.core.common.action.AddExternalStepParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetStepsByJobIdQueryParameters;
@@ -39,7 +38,7 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
 
     @Override
     public Response add(Step step) {
-        validateParameters(step, "type", "status.state" , "description");
+        validateParameters(step, "type", "description");
         String id;
         if (step.isSetParentStep()) {
             validateParameters(step, "step.parentStep.id");
@@ -50,7 +49,7 @@ public class BackendStepsResource extends AbstractBackendCollectionResource<Step
         }
 
         return performCreate(VdcActionType.AddExternalStep,
-                new AddExternalStepParameters(asGuid(id), step.getDescription(),StepMapper.map(StepEnum.fromValue(step.getType())), JobMapper.map(step.getStatus(), null)),
+                new AddExternalStepParameters(asGuid(id), step.getDescription(),StepMapper.map(StepEnum.fromValue(step.getType()))),
                 new QueryIdResolver<Guid>(VdcQueryType.GetStepByStepId, IdQueryParameters.class));
     }
 
