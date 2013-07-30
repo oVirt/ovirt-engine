@@ -1,6 +1,6 @@
 <div>
   <h2>
-    <span class="fakeH2">{portal_title}</span>
+    <span class="obrand_section_header">{portal_title}</span>
   </h2>
   <div>
     <a href="UserPortal/org.ovirt.engine.ui.userportal.UserPortal/UserPortal.html?locale={userLocale}">{portal_user_portal}</a>

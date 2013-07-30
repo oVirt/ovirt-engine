@@ -8,7 +8,7 @@
 
 
 
-.fakeH2 {
+.obrand_section_header {
 	height: 42px;
 	color: #FFFFFF;
 	background-color: #669900;
@@ -20,7 +20,7 @@
 	font-weight: bold;
 }
 
-.left
+.obrand_left
 {
 	background-image: url(images/welcome/logo.png);
 	background-repeat: no-repeat;
@@ -30,21 +30,21 @@
 	margin-top: 0px;
 }
 
-.center
+.obrand_center
 {
 	background-image: url(images/welcome/bg_head.gif);
 	background-repeat: repeat-x;
 	height: 73px;
 }
 
-.header_nav
+.obrand_header_nav
 {
 	padding-top: 22px;
 	padding-left: 90px;
 	width: 250px;
 }
 
-.main
+.obrand_main
 {
     
 	width: 500px;
@@ -55,7 +55,6 @@
 	padding-top: 50px;
 	line-height: 18pt ;
 }
-
 
 a, a:visited
 {
@@ -69,13 +68,13 @@ a:hover
 	font-weight: bold;
 }
 
-.welcome
+.obrand_welcome
 {
 	font-family: Verdana;
 	font-size: 16px;
 }
 
-.warningMessage
+.obrand_warningMessage
 {
 	color: #cc0000;
 	font-family: Verdana;
@@ -83,7 +82,7 @@ a:hover
 }
 
 /*The locale selection box.*/
-.locale_select_panel {
+.obrand_locale_select_panel {
     background: url("images/triangle_down_gray.gif") no-repeat scroll right center;
     float: right;
     margin-left: 270px;
@@ -92,7 +91,7 @@ a:hover
     overflow: hidden;
 }
 
-.locale_list_box {
+.obrand_locale_list_box {
    background: none repeat scroll 0 0 transparent;
    border-width: 0;
    color: gray;
@@ -102,7 +101,7 @@ a:hover
    width: 150px;
 }
 
-.locale_selected {
+.obrand_locale_selected {
     color: gray;
     font-size: 11px;
     padding-right: 15px;

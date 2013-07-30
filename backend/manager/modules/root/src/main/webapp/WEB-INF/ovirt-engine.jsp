@@ -19,19 +19,19 @@
 </head>
 <body onload="pageLoaded()">
     <div>
-        <div class="left">
-            <div class="header_nav">
+        <div class="obrand_left">
+            <div class="obrand_header_nav">
                 <fmt:message key="header.main" />
             </div>
         </div>
-        <div class="right">
+        <div class="obrand_right">
         </div>
-        <div class="center">
+        <div class="obrand_center">
         </div>
     </div>
-    <div class="main">
-        <div class="welcome"><fmt:message key="welcome.text" /></div>
-        <div class="welcome">
+    <div class="obrand_main">
+        <div class="obrand_welcome"><fmt:message key="welcome.text" /></div>
+        <div class="obrand_welcome">
              <script type="text/JavaScript">
             <!--
             document.write('<fmt:message key="version"><fmt:param value="${requestScope[\'version\']}" /> </fmt:message>')
@@ -39,15 +39,15 @@
             </script>
         </div>
 
-        <noscript id="warningMessage" class="warningMessage">
+        <noscript id="warningMessage" class="obrand_warningMessage">
             <b><fmt:message key="browser.javascript1" /></b>
             <fmt:message key="browser.javascript2" />
         </noscript>
         <div id='dynamicLinksSection' style="display: none;">
             ${requestScope['sections'].toString()}
         </div>
-        <div class="locale_select_panel">
-            <select class="gwt-ListBox locale_list_box" onchange="localeSelected(this)">
+        <div class="obrand_locale_select_panel">
+            <select class="gwt-ListBox obrand_locale_list_box" onchange="localeSelected(this)">
             <c:forEach items="${requestScope['localeKeys']}" var="localeKey">
                 <c:choose>
                 <c:when test="${requestScope['locale'].toString() == localeKey}">
@@ -60,7 +60,7 @@
                 </c:choose>
             </c:forEach>
             </select>
-            <div class="gwt-Label locale_selected"><fmt:message key="${selectedLocale}" bundle="${lang}"/></div>
+            <div class="gwt-Label obrand_locale_selected"><fmt:message key="${selectedLocale}" bundle="${lang}"/></div>
         </div>
     </div>
 </body>
