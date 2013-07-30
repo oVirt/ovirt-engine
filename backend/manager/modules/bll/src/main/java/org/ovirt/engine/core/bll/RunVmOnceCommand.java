@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 
+@NonTransactiveCommandAttribute
 public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T> implements QuotaStorageDependent {
     public RunVmOnceCommand(T runVmParams) {
         super(runVmParams);
