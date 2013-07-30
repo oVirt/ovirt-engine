@@ -12,7 +12,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
 
     private Double cpu_sysField = 0.0;
     // NOT PERSISTED
-    private Long currentMemory;
+    private VmBalloonInfo vmBalloonInfo;
 
     @Override
     public int hashCode() {
@@ -132,14 +132,6 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         this.usage_mem_percentField = value;
     }
 
-    public Long getCurrentMemory() {
-        return currentMemory;
-    }
-
-    public void setCurrentMemory(Long value) {
-        currentMemory = value;
-    }
-
     private String disksUsage;
 
     /**
@@ -188,5 +180,13 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     @Override
     public int compareTo(VmStatistics o) {
         return BusinessEntityGuidComparator.<VmStatistics>newInstance().compare(this,o);
+    }
+
+    public VmBalloonInfo getVmBalloonInfo() {
+        return vmBalloonInfo;
+    }
+
+    public void setVmBalloonInfo(VmBalloonInfo vmBalloonInfo) {
+        this.vmBalloonInfo = vmBalloonInfo;
     }
 }

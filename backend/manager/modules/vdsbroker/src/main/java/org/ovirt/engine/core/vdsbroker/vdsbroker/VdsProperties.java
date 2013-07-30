@@ -194,6 +194,9 @@ public final class VdsProperties {
 
     public static final String vm_balloonInfo = "balloonInfo";
     public static final String vm_balloon_cur = "balloon_cur";
+    public static final String vm_balloon_max = "balloon_max";
+    public static final String vm_balloon_min = "balloon_min";
+    public static final String vm_balloon_target = "balloon_target";
 
     public static final String DriveC = "hda"; // drive C:
     public static final String DriveE = "hdb"; // drive E: (D: is the CD-ROM)

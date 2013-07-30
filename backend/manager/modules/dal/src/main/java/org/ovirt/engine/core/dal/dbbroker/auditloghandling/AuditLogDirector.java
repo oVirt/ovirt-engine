@@ -509,6 +509,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.VM_PAUSED_EPERM, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VM_POWER_DOWN_FAILED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VM_MEMORY_UNDER_GUARANTEED_VALUE, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.VM_BALLOON_DRIVER_ERROR, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.VM_BALLOON_DRIVER_UNCONTROLLED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_RUN_VM, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_RUN_VM_AS_STATELESS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_FAILED_RUN_VM, AuditLogSeverity.ERROR);

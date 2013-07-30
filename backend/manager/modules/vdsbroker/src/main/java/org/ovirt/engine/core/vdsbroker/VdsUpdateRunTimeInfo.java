@@ -25,11 +25,13 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
+import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -104,6 +106,8 @@ public class VdsUpdateRunTimeInfo {
     private final List<Guid> _vmsMovedToDown = new ArrayList<Guid>();
     private final List<Guid> _vmsToRemoveFromAsync = new ArrayList<Guid>();
     private final List<Guid> _succededToRunVms = new ArrayList<Guid>();
+    private static final Map<Guid,Integer> vmsWithBalloonDriverProblem = new HashMap<>();
+    private static final Map<Guid,Integer> vmsWithUncontrolledBalloon = new HashMap<>();
     private boolean _saveVdsDynamic;
     private VDSStatus _firstStatus = VDSStatus.forValue(0);
     private boolean _saveVdsStatistics;
@@ -963,6 +967,8 @@ public class VdsUpdateRunTimeInfo {
 
             proceedWatchdogEvents();
 
+            proceedBalloonCheck();
+
             proceedDownVms();
 
             proceedGuaranteedMemoryCheck();
@@ -1313,19 +1319,116 @@ public class VdsUpdateRunTimeInfo {
                 continue;
             }
             VmStatistics vmStatistics = vmInternalData.getVmStatistics();
-            if (vmStatistics != null && vmStatistics.getCurrentMemory() != null &&
-                    vmStatistics.getCurrentMemory() > 0 &&
-                    savedVm.getMinAllocatedMem() > vmStatistics.getCurrentMemory() / TO_MEGA_BYTES) {
+            if (vmStatistics != null && vmStatistics.getVmBalloonInfo().getCurrentMemory() != null &&
+                    vmStatistics.getVmBalloonInfo().getCurrentMemory() > 0 &&
+                    savedVm.getMinAllocatedMem() > vmStatistics.getVmBalloonInfo().getCurrentMemory() / TO_MEGA_BYTES) {
                 AuditLogableBase auditLogable = new AuditLogableBase();
                 auditLogable.addCustomValue("VmName", savedVm.getName());
                 auditLogable.addCustomValue("VdsName", this._vds.getName());
                 auditLogable.addCustomValue("MemGuaranteed", String.valueOf(savedVm.getMinAllocatedMem()));
                 auditLogable.addCustomValue("MemActual",
-                        Long.toString((vmStatistics.getCurrentMemory() / TO_MEGA_BYTES)));
+                        Long.toString((vmStatistics.getVmBalloonInfo().getCurrentMemory() / TO_MEGA_BYTES)));
                 auditLog(auditLogable, AuditLogType.VM_MEMORY_UNDER_GUARANTEED_VALUE);
             }
 
         }
+    }
+
+    private void proceedBalloonCheck() {
+        if (isBalloonActiveOnHost()) {
+            for (VmInternalData vmInternalData : _runningVms.values()) {
+                VmBalloonInfo balloonInfo = vmInternalData.getVmStatistics().getVmBalloonInfo();
+                Guid vmId = vmInternalData.getVmDynamic().getId();
+                if (_vmDict.get(vmId) == null) {
+                    continue; // if vm is unknown - continue
+                }
+
+                if (isBalloonDeviceActiveOnVm(vmInternalData)
+                        && (balloonInfo.getCurrentMemory().intValue() == balloonInfo.getBalloonMaxMemory().intValue()
+                || balloonInfo.getCurrentMemory().intValue() != balloonInfo.getBalloonTargetMemory().intValue())) {
+                    vmBalloonDriverIsRequestedAndUnavailable(vmId);
+                } else {
+                    vmBalloonDriverIsNotRequestedOrAvailable(vmId);
+                }
+
+                if (vmInternalData.getVmStatistics().getusage_mem_percent() != null
+                    && vmInternalData.getVmStatistics().getusage_mem_percent() == 0  // guest agent is down
+                        && balloonInfo.getCurrentMemory().intValue() != balloonInfo.getBalloonMaxMemory().intValue()) {
+                    guestAgentIsDownAndBalloonInfalted(vmId);
+                } else {
+                    guestAgentIsUpOrBalloonDeflated(vmId);
+                }
+
+            }
+        }
+    }
+
+    // remove the vm from the list of vms with uncontrolled inflated balloon
+    private void guestAgentIsUpOrBalloonDeflated(Guid vmId) {
+        vmsWithUncontrolledBalloon.remove(vmId);
+    }
+
+    // add the vm to the list of vms with uncontrolled inflated balloon or increment its counter
+    // if it is already in the list
+    private void guestAgentIsDownAndBalloonInfalted(Guid vmId) {
+        Integer currentVal = vmsWithUncontrolledBalloon.get(vmId);
+        if (currentVal == null) {
+            vmsWithUncontrolledBalloon.put(vmId, 1);
+        } else {
+            vmsWithUncontrolledBalloon.put(vmId, currentVal + 1);
+            if (currentVal >= Config.<Integer> GetValue(ConfigValues.IterationsWithBalloonProblem)) {
+                AuditLogableBase auditLogable = new AuditLogableBase();
+                auditLogable.setVmId(vmId);
+                AuditLogDirector.log(auditLogable, AuditLogType.VM_BALLOON_DRIVER_UNCONTROLLED);
+                vmsWithUncontrolledBalloon.put(vmId, 0);
+            }
+        }
+    }
+
+    // remove the vm from the list of vms with balloon driver problem
+    private void vmBalloonDriverIsNotRequestedOrAvailable(Guid vmId) {
+        vmsWithBalloonDriverProblem.remove(vmId);
+    }
+
+    // add the vm to the list of vms with balloon driver problem or increment its counter
+    // if it is already in the list
+    private void vmBalloonDriverIsRequestedAndUnavailable(Guid vmId) {
+        Integer currentVal = vmsWithBalloonDriverProblem.get(vmId);
+        if (currentVal == null) {
+            vmsWithBalloonDriverProblem.put(vmId, 1);
+        } else {
+            vmsWithBalloonDriverProblem.put(vmId, currentVal + 1);
+            if (currentVal >= Config.<Integer> GetValue(ConfigValues.IterationsWithBalloonProblem)) {
+                AuditLogableBase auditLogable = new AuditLogableBase();
+                auditLogable.setVmId(vmId);
+                AuditLogDirector.log(auditLogable, AuditLogType.VM_BALLOON_DRIVER_ERROR);
+                vmsWithBalloonDriverProblem.put(vmId, 0);
+            }
+        }
+    }
+
+    private boolean isBalloonActiveOnHost() {
+        VDSGroup cluster = getDbFacade().getVdsGroupDao().get(_vds.getVdsGroupId());
+        return cluster != null && cluster.isEnableBallooning();
+    }
+
+    private boolean isBalloonDeviceActiveOnVm(VmInternalData vmInternalData) {
+        VM savedVm = _vmDict.get(vmInternalData.getVmDynamic().getId());
+
+        if (savedVm != null) {
+            VmBalloonInfo balloonInfo = vmInternalData.getVmStatistics().getVmBalloonInfo();
+            return savedVm.getMinAllocatedMem() < savedVm.getMemSizeMb() // minimum allocated mem of VM == total mem, ballooning is impossible
+                    && balloonInfo.isBalloonDeviceEnabled()
+                    && balloonInfo.getBalloonTargetMemory().intValue() != balloonInfo.getBalloonMaxMemory().intValue(); // ballooning was not requested/enabled on this VM
+        }
+        return false;
+    }
+
+    private Long toMegaByte(Long kilobytes) {
+        if (kilobytes != null && kilobytes > 0) {
+            return kilobytes / TO_MEGA_BYTES;
+        }
+        return 0L;
     }
 
     protected static boolean isNewWatchdogEvent(VmDynamic vmDynamic, VM vmTo) {

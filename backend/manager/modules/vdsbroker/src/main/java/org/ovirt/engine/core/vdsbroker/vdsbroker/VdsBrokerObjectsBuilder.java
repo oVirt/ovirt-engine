@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
+import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
@@ -306,16 +307,24 @@ public class VdsBrokerObjectsBuilder {
 
         // ------------- vm memory statistics -----------------------
         vm.setusage_mem_percent(AssignIntValue(xmlRpcStruct, VdsProperties.vm_usage_mem_percent));
-        vm.setCurrentMemory(getCurrMemory(xmlRpcStruct));
-
+        vm.setVmBalloonInfo(getBalloonInfo(xmlRpcStruct));
     }
 
-    private static Long getCurrMemory(Map<String, Object> xmlRpcStruct) {
+    private static VmBalloonInfo getBalloonInfo(Map<String, Object> xmlRpcStruct) {
         Map<String, Object> balloonInfo = (Map<String, Object>) xmlRpcStruct.get(VdsProperties.vm_balloonInfo);
-        if (balloonInfo != null) {
-            return AssignLongValue(balloonInfo, VdsProperties.vm_balloon_cur);
+        VmBalloonInfo vmBalloonInfo = new VmBalloonInfo();
+        if (balloonInfo != null && balloonInfo.size() > 0) {
+            vmBalloonInfo.setCurrentMemory(AssignLongValue(balloonInfo, VdsProperties.vm_balloon_cur));
+            vmBalloonInfo.setBalloonMaxMemory(AssignLongValue(balloonInfo, VdsProperties.vm_balloon_max));
+            vmBalloonInfo.setBalloonTargetMemory(AssignLongValue(balloonInfo, VdsProperties.vm_balloon_target));
+            vmBalloonInfo.setBalloonMinMemory(AssignLongValue(balloonInfo, VdsProperties.vm_balloon_min));
+            if (balloonInfo.size() >= 4) { // only if all 4 properties are found the balloon is considered enabled (available from 3.3)
+                vmBalloonInfo.setBalloonDeviceEnabled(true);
+            }
+        } else {
+            vmBalloonInfo.setBalloonDeviceEnabled(false);
         }
-        return null;
+        return vmBalloonInfo;
     }
 
     public static void updateVDSDynamicData(VDS vds, Map<String, Object> xmlRpcStruct) {

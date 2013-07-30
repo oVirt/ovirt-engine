@@ -1457,6 +1457,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     UserMessageOfTheDay(524),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("3")
+    IterationsWithBalloonProblem(525),
+
     Invalid(65535);
 
     private int intValue;
