@@ -138,6 +138,16 @@ public class PolicyUnitPanel extends FocusPanel {
 
     protected void addSubMenu(MenuBar menuBar) {
         MenuBar subMenu = new MenuBar(true);
+        if (position != 0) {
+            subMenu.addItem(constants.noPositionFilter(), new Command() {
+
+                @Override
+                public void execute() {
+                    model.addFilter(policyUnit, used, 0);
+                    menuPopup.hide();
+                }
+            });
+        }
         if (position >= 0) {
             subMenu.addItem(constants.firstFilter(), new Command() {
 
