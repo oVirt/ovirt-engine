@@ -22,7 +22,7 @@ public abstract class MemoryImageRemover {
     private static final Log log = LogFactory.getLog(MemoryImageRemover.class);
     private static final int NUM_OF_UUIDS_IN_MEMORY_STATE = 6;
 
-    private TaskHandlerCommand<?> enclosingCommand;
+    protected final TaskHandlerCommand<?> enclosingCommand;
     private boolean startPollingTasks;
 
     public MemoryImageRemover(TaskHandlerCommand<?> enclosingCommand) {
@@ -38,6 +38,13 @@ public abstract class MemoryImageRemover {
 
     protected abstract DeleteImageGroupVDSCommandParameters buildDeleteMemoryConfParams(List<Guid> guids);
 
+    protected Guid createTask(Guid taskId, VDSReturnValue vdsRetValue) {
+        return enclosingCommand.createTask(
+                taskId,
+                vdsRetValue.getCreationInfo(),
+                enclosingCommand.getActionType());
+    }
+
     /**
      * Default implementation checks whether the memory state representation is not empty
      */
@@ -45,10 +52,11 @@ public abstract class MemoryImageRemover {
         return !memoryVolume.isEmpty();
     }
 
-    protected void removeMemoryVolume(String memoryVolumes) {
+    protected boolean removeMemoryVolume(String memoryVolumes) {
         if (isMemoryStateRemovable(memoryVolumes)) {
-            removeMemoryVolumes(memoryVolumes);
+            return removeMemoryVolumes(memoryVolumes);
         }
+        return true;
     }
 
     protected void removeMemoryVolumes(Set<String> memoryVolumes) {
@@ -103,15 +111,17 @@ public abstract class MemoryImageRemover {
         VDSReturnValue vdsRetValue = removeImage(parameters);
         // if command succeeded, create a task
         if (vdsRetValue.getSucceeded()) {
-            Guid guid = enclosingCommand.createTask(taskId, vdsRetValue.getCreationInfo(),
-                    enclosingCommand.getActionType());
+            Guid guid = createTask(taskId, vdsRetValue);
             enclosingCommand.getTaskIdList().add(guid);
             return guid;
         }
-        // otherwise, if the command failed because the image already does not exist,
-        // no need to create and monitor task, so we return empty guid to mark this state
-        return vdsRetValue.getVdsError().getCode() == VdcBllErrors.ImageDoesNotExistInDomainError ?
-                Guid.Empty : null;
+        else {
+            enclosingCommand.deleteAsyncTaskPlaceHolder(taskKey);
+            // otherwise, if the command failed because the image already does not exist,
+            // no need to create and monitor task, so we return empty guid to mark this state
+            return vdsRetValue.getVdsError().getCode() == VdcBllErrors.ImageDoesNotExistInDomainError ?
+                    Guid.Empty : null;
+        }
     }
 
     protected VDSReturnValue removeImage(DeleteImageGroupVDSCommandParameters parameters) {

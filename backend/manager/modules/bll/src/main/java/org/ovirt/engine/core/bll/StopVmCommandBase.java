@@ -86,7 +86,18 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         if (getVm().getStatus() == VMStatus.Suspended
                 || StringUtils.isNotEmpty(getVm().getHibernationVolHandle())) {
             suspendedVm = true;
-            setSucceeded(stopSuspendedVm());
+
+            if (!stopSuspendedVm()) {
+                return;
+            }
+
+            // the following is true when the hibernation volumes don't exist
+            if (getTaskIdList().isEmpty()) {
+                endVmCommand();
+                setCommandShouldBeLogged(true);
+            } else {
+                setSucceeded(true);
+            }
         } else {
             super.executeVmCommand();
         }

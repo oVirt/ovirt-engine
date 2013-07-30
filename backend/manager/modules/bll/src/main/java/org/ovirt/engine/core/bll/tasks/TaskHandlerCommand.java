@@ -44,4 +44,5 @@ public interface TaskHandlerCommand<T extends VdcActionParametersBase> {
 
     ArrayList<Guid> getTaskIdList();
 
+    void deleteAsyncTaskPlaceHolder(String taskKey);
 }
