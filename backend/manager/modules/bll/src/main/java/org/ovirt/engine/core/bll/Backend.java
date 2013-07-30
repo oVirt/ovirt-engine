@@ -376,7 +376,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             CommandContext context) {
         VdcReturnValueBase result;
         // If non-monitored command is invoked with JobId or ActionId as parameters, reject this command on can do action.
-        if (!actionType.isActionMonitored() && (parameters.getJobId() != null || parameters.getStepId() != null)) {
+        if (!actionType.isActionMonitored() && !isActionExternal(actionType) && (parameters.getJobId() != null || parameters.getStepId() != null)) {
             result = new VdcReturnValueBase();
             result.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_NON_MONITORED.toString());
             result.setCanDoAction(false);
@@ -387,6 +387,10 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             result = runAction(command, runAsInternal, context);
         }
         return result;
+    }
+
+    private boolean isActionExternal(VdcActionType actionType){
+        return (actionType == VdcActionType.EndExternalJob || actionType == VdcActionType.EndExternalStep || actionType == VdcActionType.ClearExternalJob);
     }
 
     protected VdcReturnValueBase runAction(CommandBase<?> command,
