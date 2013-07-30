@@ -94,35 +94,35 @@ public class ExecutionHandler {
      * @param exitStatus
      *            Indicates if the execution described by the step ended successfully or not.
      */
-    public static void endStep(ExecutionContext context, Step step, boolean exitStatus) {
+    public static void endStep(ExecutionContext context, Step step,
+            boolean exitStatus) {
         if (context == null) {
             return;
         }
         if (context.isMonitored()) {
             Job job = context.getJob();
             try {
-                if (context.getExecutionMethod() == ExecutionMethod.AsJob && job != null) {
+                if (step != null) {
+                    step.markStepEnded(exitStatus);
+                    JobRepositoryFactory.getJobRepository().updateStep(step);
+                }
 
-                    if (exitStatus) {
-                        if (step != null) {
-                            step.markStepEnded(exitStatus);
-                            JobRepositoryFactory.getJobRepository().updateStep(step);
-                        }
-                    } else {
-                        // step failure will cause the job to be marked as failed
-                        context.setCompleted(true);
-                        job.markJobEnded(false);
-                        JobRepositoryFactory.getJobRepository().updateCompletedJobAndSteps(job);
-                    }
+                if (context.getExecutionMethod() == ExecutionMethod.AsJob
+                        && job != null && !exitStatus) {
+                    // step failure will cause the job to be marked as failed
+                    context.setCompleted(true);
+                    job.markJobEnded(false);
+                    JobRepositoryFactory.getJobRepository()
+                            .updateCompletedJobAndSteps(job);
                 } else {
                     Step parentStep = context.getStep();
-                    if (context.getExecutionMethod() == ExecutionMethod.AsStep && parentStep != null) {
-                        if (exitStatus) {
-                            if (step != null) {
-                                context.setCompleted(true);
-                                step.markStepEnded(exitStatus);
-                                JobRepositoryFactory.getJobRepository().updateStep(step);
-                            }
+                    if (context.getExecutionMethod() == ExecutionMethod.AsStep
+                            && parentStep != null) {
+                        context.setCompleted(true);
+                        if (!exitStatus) {
+                            job.markJobEnded(false);
+                            JobRepositoryFactory.getJobRepository()
+                                    .updateCompletedJobAndSteps(job);
                         }
                     }
                 }
