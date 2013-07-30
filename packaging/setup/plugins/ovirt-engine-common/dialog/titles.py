@@ -54,9 +54,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
         name=osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
-        after=[
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
-        ],
+        ),
     )
     def _title_e_summary(self):
         self._title(

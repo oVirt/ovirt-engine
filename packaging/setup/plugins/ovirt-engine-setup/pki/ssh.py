@@ -50,9 +50,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        after=[
+        after=(
             osetupcons.Stages.CA_AVAILABLE,
-        ],
+        ),
     )
     def _misc(self):
         rc, stdout, stderr = self.execute(
@@ -85,12 +85,12 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
-        ],
+        ),
     )
     def _closeup(self):
         temp = None

@@ -100,13 +100,13 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_PKI,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.CONFIG_PROTOCOLS_CUSTOMIZATION,
             osetupcons.Stages.DIALOG_TITLES_S_PKI,
-        ],
+        ),
     )
     def _customization(self):
         if self._enabled:
@@ -312,31 +312,31 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        after=[
+        after=(
             osetupcons.Stages.DB_CONNECTION_AVAILABLE,
-        ],
+        ),
         condition=lambda self: self._enabled,
     )
     def miscOptions(self):
         self.environment[osetupcons.DBEnv.STATEMENT].updateVdcOptions(
-            options=[
+            options=(
                 {
                     'name': 'OrganizationName',
                     'value': self.environment[
                         osetupcons.PKIEnv.ORG
                     ],
                 },
-            ],
+            ),
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
-        ],
+        ),
     )
     def _closeup(self):
         rc, stdout, stderr = self.execute(

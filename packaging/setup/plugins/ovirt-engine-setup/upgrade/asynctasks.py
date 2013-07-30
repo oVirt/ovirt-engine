@@ -320,9 +320,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: self._enabled,
-        after=[
+        after=(
             osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
-        ],
+        ),
     )
     def _validateZombies(self):
         self.logger.info(

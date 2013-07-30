@@ -42,9 +42,9 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self.environment[
             osetupcons.CoreEnv.UPGRADE_FROM_LEGACY
         ],
-        before=[
+        before=(
             osetupcons.Stages.NET_FIREWALL_MANAGER_AVAILABLE,
-        ],
+        ),
     )
     def _customization(self):
         managers = []

@@ -42,13 +42,13 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        before=[
+        before=(
             osetupcons.Stages.NET_FIREWALL_MANAGER_PROCESS_TEMPLATES,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.NET_FIREWALL_MANAGER_AVAILABLE,
             osetupcons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
-        ],
+        ),
     )
     def _configuration(self):
         self.environment[

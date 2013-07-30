@@ -89,13 +89,13 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
             osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
-        ],
+        ),
         condition=lambda self: self._enabled,
     )
     def _customization(self):
@@ -137,13 +137,13 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        before=[
+        before=(
             osetupcons.Stages.NET_FIREWALL_MANAGER_PROCESS_TEMPLATES,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.NET_FIREWALL_MANAGER_AVAILABLE,
             osetupcons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
-        ],
+        ),
         # must be run before firewall_manager plugin
         condition=lambda self: self._enabled
         # must be always enabled to create examples

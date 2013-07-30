@@ -66,9 +66,9 @@ class Plugin(plugin.PluginBase, packager.PackagerBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
-        after=[
+        after=(
             otopicons.Stages.PACKAGERS_DETECTION,
-        ],
+        ),
     )
     def _init(self):
         if self.environment.setdefault(

@@ -121,10 +121,10 @@ class Plugin(plugin.PluginBase):
             # execute rpm directly
             # yum is not good in offline usage
             rc, out, err = self._parent.execute(
-                args=[
+                args=(
                     self._parent.command.get('rpm'),
                     '-q',
-                ] + osetupcons.Const.RPM_LOCK_LIST,
+                ) + osetupcons.Const.RPM_LOCK_LIST,
             )
 
             self.environment[
@@ -174,7 +174,7 @@ class Plugin(plugin.PluginBase):
         upgradeAvailable = False
         myum = self._miniyum.MiniYum(
             sink=self._getSink(),
-            disabledPlugins=['versionlock'],
+            disabledPlugins=('versionlock',),
         )
         with myum.transaction():
             myum.update(
@@ -197,7 +197,7 @@ class Plugin(plugin.PluginBase):
         upgradeAvailable = False
         myum = self._miniyum.MiniYum(
             sink=self._getSink(),
-            disabledPlugins=['versionlock'],
+            disabledPlugins=('versionlock',),
         )
         with myum.transaction():
             for group in myum.queryGroups():
@@ -227,7 +227,7 @@ class Plugin(plugin.PluginBase):
                 # Verify all installed packages available in yum
                 for package in myum.queryTransaction():
                     for query in myum.queryPackages(
-                        patterns=[package['name']]
+                        patterns=(package['name'],)
                     ):
                         if query['operation'] == 'installed':
                             self.logger.debug(
@@ -235,7 +235,7 @@ class Plugin(plugin.PluginBase):
                                 query['display_name'],
                             )
                             if not myum.queryPackages(
-                                patterns=[query['display_name']],
+                                patterns=(query['display_name'],),
                                 showdups=True,
                             ):
                                 self.logger.debug(
@@ -291,12 +291,12 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_PACKAGES,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_PACKAGES,
-        ],
+        ),
         condition=lambda self: self._enabled,
     )
     def _customization(self):

@@ -127,12 +127,12 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.NET_FIREWALL_MANAGER_AVAILABLE,
         condition=lambda self: self._enabled,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_NETWORK,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_NETWORK,
-        ],
+        ),
     )
     def _customization(self):
         if self.environment[osetupcons.ConfigEnv.FIREWALL_MANAGER] is None:
@@ -180,9 +180,9 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.NET_FIREWALL_MANAGER_PROCESS_TEMPLATES,
         priority=plugin.Stages.PRIORITY_LOW,
-        after=[
+        after=(
             osetupcons.Stages.NET_FIREWALL_MANAGER_AVAILABLE,
-        ],
+        ),
         # must be always enabled to create examples
     )
     def _process_templates(self):
@@ -232,12 +232,12 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
-        ],
+        ),
         condition=lambda self: self.environment[
             osetupcons.ConfigEnv.FIREWALL_MANAGER
         ] is None

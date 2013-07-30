@@ -237,12 +237,12 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        after=[
+        after=(
             osetupcons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
-        ],
-        before=[
+        ),
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
-        ],
+        ),
         condition=lambda self: (
             self.environment[osetupcons.SystemEnv.NFS_CONFIG_ENABLED] and
             not self.environment[osetupcons.ConfigEnv.ISO_DOMAIN_EXISTS]
@@ -336,9 +336,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         name=osetupcons.Stages.CONFIG_ISO_DOMAIN_AVAILABLE,
-        after=[
+        after=(
             osetupcons.Stages.DB_CONNECTION_AVAILABLE,
-        ],
+        ),
         condition=lambda self: (
             self.environment[osetupcons.SystemEnv.NFS_CONFIG_ENABLED] and
             not self.environment[osetupcons.ConfigEnv.ISO_DOMAIN_EXISTS]

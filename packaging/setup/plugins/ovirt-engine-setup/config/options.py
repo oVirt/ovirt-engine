@@ -51,13 +51,13 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_ENGINE,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DB_CONNECTION_STATUS,
             osetupcons.Stages.DIALOG_TITLES_S_ENGINE,
-        ],
+        ),
     )
     def _customization(self):
         self._enabled = self.environment[
@@ -130,32 +130,32 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        after=[
+        after=(
             osetupcons.Stages.DB_CONNECTION_AVAILABLE,
-        ],
+        ),
     )
     def _miscAlways(self):
         self.environment[osetupcons.DBEnv.STATEMENT].updateVdcOptions(
-            options=[
+            options=(
                 {
                     'name': 'ProductRPMVersion',
                     'value': osetupcons.Const.DISPLAY_VERSION,
                 },
-            ]
+            ),
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        after=[
+        after=(
             osetupcons.Stages.DB_CONNECTION_AVAILABLE,
-        ],
+        ),
         condition=lambda self: self.environment[
             osetupcons.DBEnv.NEW_DATABASE
         ]
     )
     def _miscNewDatabase(self):
         self.environment[osetupcons.DBEnv.STATEMENT].updateVdcOptions(
-            options=[
+            options=(
                 {
                     'name': 'SSLEnabled',
                     'value': 'true',
@@ -246,21 +246,21 @@ class Plugin(plugin.PluginBase):
                         'gsysprep/sysprep.2k12x64',
                     ),
                 },
-            ],
+            ),
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        after=[
+        after=(
             osetupcons.Stages.CONFIG_DB_ENCRYPTION_AVAILABLE,
-        ],
+        ),
         condition=lambda self: self.environment[
             osetupcons.DBEnv.NEW_DATABASE
         ]
     )
     def _miscEncrypted(self):
         self.environment[osetupcons.DBEnv.STATEMENT].updateVdcOptions(
-            options=[
+            options=(
                 {
                     'name': 'LocalAdminPassword',
                     'value': self.environment[
@@ -275,17 +275,17 @@ class Plugin(plugin.PluginBase):
                     ],
                     'encrypt': True,
                 },
-            ],
+            ),
         )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
-        ],
+        ),
         condition=lambda self: self.environment[
             osetupcons.DBEnv.NEW_DATABASE
         ]

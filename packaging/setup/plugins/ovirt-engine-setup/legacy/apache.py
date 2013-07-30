@@ -75,9 +75,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
         condition=lambda self: self._enabled,
-        before=[
+        before=(
             osetupcons.Stages.APACHE_RESTART,
-        ],
+        ),
     )
     def _closeup(self):
         self.environment[osetupcons.ApacheEnv.NEED_RESTART] = True

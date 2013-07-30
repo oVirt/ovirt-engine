@@ -40,7 +40,7 @@ def queryBoolean(
         name=name,
         note=note,
         prompt=prompt,
-        validValues=[true, false],
+        validValues=(true, false),
         caseSensitive=False,
         default=true if default else false,
     ) != false.lower()

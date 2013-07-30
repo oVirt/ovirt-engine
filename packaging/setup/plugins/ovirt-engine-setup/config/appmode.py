@@ -49,12 +49,12 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_ENGINE,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_ENGINE,
-        ],
+        ),
         condition=lambda self: self.environment[
             osetupcons.DBEnv.NEW_DATABASE
         ],
@@ -72,20 +72,20 @@ class Plugin(plugin.PluginBase):
                 name='OVESETUP_CONFIG_APPLICATION_MODE',
                 note=_('Data center (@VALUES@) [@DEFAULT@]: '),
                 prompt=True,
-                validValues=[
+                validValues=(
                     'Both',
                     'Virt',
                     'Gluster',
-                ],
+                ),
                 caseSensitive=False,
                 default=osetupcons.Defaults.DEFAULT_CONFIG_APPLICATION_MODE,
             )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        after=[
+        after=(
             osetupcons.Stages.DB_CONNECTION_AVAILABLE,
-        ],
+        ),
         condition=lambda self: self._enabled,
     )
     def _misc(self):

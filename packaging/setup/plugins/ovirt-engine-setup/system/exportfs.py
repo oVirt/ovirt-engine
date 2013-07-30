@@ -93,9 +93,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self._enabled,
-        after=[
+        after=(
             osetupcons.Stages.CONFIG_ISO_DOMAIN_AVAILABLE,
-        ]
+        ),
     )
     def _misc(self):
         """
@@ -151,12 +151,12 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
-        ],
+        ),
         condition=lambda self: self._enabled,
     )
     def _closeup(self):
@@ -178,12 +178,12 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
-        ],
+        ),
         condition=lambda self: self._enabled,
     )
     def _closeupMessage(self):

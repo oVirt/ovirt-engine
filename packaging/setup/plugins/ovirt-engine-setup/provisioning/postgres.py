@@ -370,9 +370,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
-        after=[
+        after=(
             osetupcons.Stages.DB_CONNECTION_SETUP,
-        ],
+        ),
         condition=lambda self: (
             not self.environment[
                 osetupcons.CoreEnv.DEVELOPER_MODE
@@ -389,13 +389,13 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_DATABASE,
             osetupcons.Stages.DB_CONNECTION_CUSTOMIZATION,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_DATABASE,
-        ],
+        ),
         condition=lambda self: self._enabled,
     )
     def _customization(self):
@@ -502,12 +502,12 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        before=[
+        before=(
             osetupcons.Stages.DB_SCHEMA,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.SYSTEM_SYSCTL_CONFIG_AVAILABLE,
-        ],
+        ),
         condition=lambda self: self._enabled,
     )
     def _misc(self):
@@ -603,12 +603,12 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_SUMMARY,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
-        ],
+        ),
         condition=lambda self: self._renamedDBResources,
     )
     def _closeup(self):

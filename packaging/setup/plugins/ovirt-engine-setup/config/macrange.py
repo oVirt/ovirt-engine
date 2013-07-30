@@ -55,23 +55,23 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        after=[
+        after=(
             osetupcons.Stages.DB_CONNECTION_AVAILABLE,
-        ],
+        ),
         condition=lambda self: self.environment[
             osetupcons.DBEnv.NEW_DATABASE
         ]
     )
     def _misc(self):
         self.environment[osetupcons.DBEnv.STATEMENT].updateVdcOptions(
-            options=[
+            options=(
                 {
                     'name': 'MacPoolRanges',
                     'value': self.environment[
                         osetupcons.ConfigEnv.MAC_RANGE_POOL
                     ],
                 },
-            ],
+            ),
         )
 
 

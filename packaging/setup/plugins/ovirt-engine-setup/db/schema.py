@@ -131,9 +131,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         name=osetupcons.Stages.DB_SCHEMA,
-        after=[
+        after=(
             osetupcons.Stages.CONFIG_DB_CREDENTIALS,
-        ],
+        ),
         condition=lambda self: self.environment[
             osetupcons.DBEnv.NEW_DATABASE
         ],
@@ -197,9 +197,9 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: not self.environment[
             osetupcons.DBEnv.NEW_DATABASE
         ],
-        after=[
+        after=(
             osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
-        ],
+        ),
     )
     def _miscUpgrade(self):
         self._checkSupportedVersionsPresent()

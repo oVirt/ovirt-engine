@@ -41,9 +41,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
-        before=[
+        before=(
             osetupcons.Stages.DB_CONNECTION_SETUP,
-        ],
+        ),
         condition=lambda self: self.environment[
             osetupcons.CoreEnv.UPGRADE_FROM_LEGACY
         ],

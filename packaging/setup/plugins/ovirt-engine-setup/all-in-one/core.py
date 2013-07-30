@@ -70,9 +70,9 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: self._enabled,
         name=osetupcons.Stages.AIO_CONFIG_AVAILABLE,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_S_NETWORK,
-        ],
+        ),
     )
     def _constomization(self):
         if self.environment[
@@ -111,10 +111,10 @@ class Plugin(plugin.PluginBase):
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=osetupcons.FileLocations.AIO_POST_INSTALL_CONFIG,
-                content=[
+                content=(
                     '[environment:default]',
-                    'OVESETUP_AIO/enable=bool:False'
-                ],
+                    'OVESETUP_AIO/enable=bool:False',
+                ),
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
                 ],

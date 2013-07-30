@@ -573,7 +573,7 @@ class Const(object):
 
     @classproperty
     def RPM_LOCK_LIST(self):
-        return [
+        return tuple([
             '{name}%s'.format(
                 name=self.ENGINE_PACKAGE_NAME,
             ) % package for package in (
@@ -585,7 +585,7 @@ class Const(object):
                 '-userportal',
                 '-webadmin-portal',
             )
-        ]
+        ])
 
     FILE_GROUP_SECTION_PREFIX = 'file_group_'
 

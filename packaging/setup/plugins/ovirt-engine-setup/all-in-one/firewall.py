@@ -42,13 +42,13 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        before=[
+        before=(
             osetupcons.Stages.NET_FIREWALL_MANAGER_PROCESS_TEMPLATES,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.NET_FIREWALL_MANAGER_AVAILABLE,
-            osetupcons.Stages.AIO_CONFIG_AVAILABLE
-        ],
+            osetupcons.Stages.AIO_CONFIG_AVAILABLE,
+        ),
         # must be run before firewall_manager plugin
         condition=lambda self: self.environment[osetupcons.AIOEnv.CONFIGURE],
         # must be always enabled to create examples

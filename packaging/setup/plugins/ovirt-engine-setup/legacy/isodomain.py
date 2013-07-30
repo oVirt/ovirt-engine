@@ -45,13 +45,13 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self.environment[
             osetupcons.CoreEnv.UPGRADE_FROM_LEGACY
         ],
-        after=[
-            osetupcons.Stages.UPGRADE_FROM_LEGACY_CONFIG
-        ],
-        before=[
+        after=(
+            osetupcons.Stages.UPGRADE_FROM_LEGACY_CONFIG,
+        ),
+        before=(
             osetupcons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
             osetupcons.Stages.CONFIG_ISO_DOMAIN_AVAILABLE,
-        ],
+        ),
     )
     def _customization(self):
         dbovirtutils = database.OvirtUtils(plugin=self)

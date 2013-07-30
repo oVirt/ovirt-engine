@@ -171,12 +171,12 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self.environment[
             osetupcons.AIOEnv.CONFIGURE
         ],
-        after=[
+        after=(
             osetupcons.Stages.AIO_CONFIG_ROOT_PASSWORD,
             osetupcons.Stages.AIO_CONFIG_STORAGE,
             osetupcons.Stages.CORE_ENGINE_START,
-            osetupcons.Stages.APACHE_RESTART
-        ]
+            osetupcons.Stages.APACHE_RESTART,
+        ),
     )
     def _closeup(self):
         self._waitEngineUp()

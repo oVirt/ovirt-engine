@@ -111,10 +111,10 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         priority=plugin.Stages.PRIORITY_LOW,
-        after=[
+        after=(
             osetupcons.Stages.DB_CONNECTION_CUSTOMIZATION,
             osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_EARLY,
-        ],
+        ),
         condition=lambda self: self._enabled,
     )
     def _validation(self):

@@ -118,12 +118,12 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: self._enabled,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_APACHE,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_APACHE,
-        ],
+        ),
     )
     def _customization(self):
         if self.environment[

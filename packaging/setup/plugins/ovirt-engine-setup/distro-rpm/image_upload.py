@@ -79,9 +79,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self._enabled,
-        after=[
+        after=(
             osetupcons.Stages.CONFIG_ISO_DOMAIN_AVAILABLE,
-        ]
+        ),
     )
     def _misc(self):
         """

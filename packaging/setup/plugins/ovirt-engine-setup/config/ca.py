@@ -44,10 +44,10 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         name=osetupcons.Stages.CONFIG_DB_ENCRYPTION_AVAILABLE,
-        after=[
+        after=(
             osetupcons.Stages.DB_CONNECTION_AVAILABLE,
             osetupcons.Stages.CA_AVAILABLE,
-        ],
+        ),
     )
     def _misc(self):
         uninstall_files = []

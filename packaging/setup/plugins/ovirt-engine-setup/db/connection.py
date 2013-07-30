@@ -102,12 +102,12 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DB_CONNECTION_CUSTOMIZATION,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_DATABASE,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_DATABASE,
-        ],
+        ),
     )
     def _customization(self):
         dbovirtutils = database.OvirtUtils(plugin=self)
@@ -280,9 +280,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         name=osetupcons.Stages.DB_CONNECTION_AVAILABLE,
-        after=[
+        after=(
             osetupcons.Stages.DB_SCHEMA,
-        ],
+        ),
     )
     def _connection(self):
         # must be here as we do not have database at validation

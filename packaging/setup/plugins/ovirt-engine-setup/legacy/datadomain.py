@@ -47,12 +47,12 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self.environment[
             osetupcons.CoreEnv.UPGRADE_FROM_LEGACY
         ],
-        after=[
+        after=(
             osetupcons.Stages.UPGRADE_FROM_LEGACY_CONFIG,
-        ],
-        before=[
+        ),
+        before=(
             osetupcons.Stages.AIO_CONFIG_AVAILABLE,
-        ],
+        ),
     )
     def _customization(self):
         dbovirtutils = database.OvirtUtils(plugin=self)
@@ -110,10 +110,10 @@ class Plugin(plugin.PluginBase):
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=osetupcons.FileLocations.AIO_POST_INSTALL_CONFIG,
-                content=[
+                content=(
                     '[environment:default]',
-                    'OVESETUP_AIO/enable=bool:False'
-                ],
+                    'OVESETUP_AIO/enable=bool:False',
+                ),
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
                 ],

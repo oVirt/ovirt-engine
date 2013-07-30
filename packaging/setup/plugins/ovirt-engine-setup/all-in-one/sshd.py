@@ -56,12 +56,12 @@ class Plugin(plugin.PluginBase):
             self._enabled and
             self.environment[osetupcons.AIOEnv.CONFIGURE]
         ),
-        after=[
+        after=(
             osetupcons.Stages.AIO_CONFIG_AVAILABLE,
-        ],
-        before=[
+        ),
+        before=(
             osetupcons.Stages.AIO_CONFIG_ROOT_PASSWORD,
-        ]
+        ),
     )
     def _customization(self):
         if not self.services.exists(name='sshd'):

@@ -87,13 +87,13 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         condition=lambda self: self._enabled,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DB_CONNECTION_STATUS,
             osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
-        ],
+        ),
     )
     def _customization(self):
 
@@ -134,24 +134,24 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self._enabled,
-        after=[
+        after=(
             osetupcons.Stages.DB_CONNECTION_AVAILABLE,
             osetupcons.Stages.CA_AVAILABLE,
-        ],
+        ),
     )
     def _misc(self):
 
         self.logger.info(_('Configurating WebSocket Proxy'))
 
         self.environment[osetupcons.DBEnv.STATEMENT].updateVdcOptions(
-            options=[
+            options=(
                 {
                     'name': 'WebSocketProxy',
                     'value': 'Engine:%s' % self.environment[
                         osetupcons.ConfigEnv.WEBSOCKET_PROXY_PORT
                     ],
                 },
-            ]
+            ),
         )
 
         self.execute(

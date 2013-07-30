@@ -61,9 +61,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_E_PACKAGES,
-        after=[
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_PACKAGES,
-        ],
+        ),
     )
     def _title_e_packages(self):
         pass
@@ -71,9 +71,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_S_NETWORK,
-        after=[
+        after=(
             osetupcons.Stages.DIALOG_TITLES_E_PACKAGES,
-        ],
+        ),
     )
     def _title_s_network(self):
         self._title(
@@ -83,9 +83,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_E_NETWORK,
-        after=[
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_NETWORK,
-        ],
+        ),
     )
     def _title_e_network(self):
         pass
@@ -93,9 +93,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_S_DATABASE,
-        after=[
+        after=(
             osetupcons.Stages.DIALOG_TITLES_E_NETWORK,
-        ],
+        ),
     )
     def _title_s_database(self):
         self._title(
@@ -105,9 +105,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_E_DATABASE,
-        after=[
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_DATABASE,
-        ],
+        ),
     )
     def _title_e_database(self):
         pass
@@ -115,9 +115,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_S_ENGINE,
-        after=[
+        after=(
             osetupcons.Stages.DIALOG_TITLES_E_DATABASE,
-        ],
+        ),
     )
     def _title_s_engine(self):
         self._title(
@@ -127,9 +127,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_E_ENGINE,
-        after=[
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_ENGINE,
-        ],
+        ),
     )
     def _title_e_engine(self):
         pass
@@ -137,9 +137,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_S_PKI,
-        after=[
+        after=(
             osetupcons.Stages.DIALOG_TITLES_E_ENGINE,
-        ],
+        ),
     )
     def _title_s_pki(self):
         self._title(
@@ -149,9 +149,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_E_PKI,
-        after=[
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_PKI,
-        ],
+        ),
     )
     def _title_e_pki(self):
         pass
@@ -159,9 +159,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_S_APACHE,
-        after=[
+        after=(
             osetupcons.Stages.DIALOG_TITLES_E_PKI,
-        ],
+        ),
     )
     def _title_s_apache(self):
         self._title(
@@ -171,9 +171,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_E_APACHE,
-        after=[
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_APACHE,
-        ],
+        ),
     )
     def _title_e_apache(self):
         pass
@@ -181,9 +181,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
-        after=[
+        after=(
             osetupcons.Stages.DIALOG_TITLES_E_APACHE,
-        ],
+        ),
     )
     def _title_s_system(self):
         self._title(
@@ -193,9 +193,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
-        after=[
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
-        ],
+        ),
     )
     def _title_e_system(self):
         self._title(

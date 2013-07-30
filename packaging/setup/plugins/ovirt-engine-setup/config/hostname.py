@@ -310,12 +310,12 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.CONFIG_PROTOCOLS_CUSTOMIZATION,
-        before=[
+        before=(
             osetupcons.Stages.DIALOG_TITLES_E_NETWORK,
-        ],
-        after=[
+        ),
+        after=(
             osetupcons.Stages.DIALOG_TITLES_S_NETWORK,
-        ],
+        ),
     )
     def _customization(self):
         interactive = self.environment[osetupcons.ConfigEnv.FQDN] is None
