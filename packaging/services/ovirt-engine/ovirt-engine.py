@@ -19,6 +19,7 @@ import glob
 import os
 import sys
 import re
+import shlex
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine')
 
@@ -345,8 +346,9 @@ class Daemon(service.Daemon):
         ])
 
         # Add extra system properties provided in the configuration:
-        engineProperties = self._config.get('ENGINE_PROPERTIES')
-        for engineProperty in engineProperties.split():
+        for engineProperty in shlex.split(
+            self._config.get('ENGINE_PROPERTIES')
+        ):
             if not engineProperty.startswith('-D'):
                 engineProperty = '-D' + engineProperty
             self._engineArgs.append(engineProperty)
