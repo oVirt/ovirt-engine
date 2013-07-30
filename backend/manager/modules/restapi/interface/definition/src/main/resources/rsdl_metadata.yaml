@@ -3557,7 +3557,7 @@ actions:
     body:
       parameterType: Step
       signatures:
-      - mandatoryArguments: {step.type: 'xs:string' , step.description: 'xs:string', step.status.state: 'xs:string'}
+      - mandatoryArguments: {step.type: 'xs:string' , step.description: 'xs:string'}
         optionalArguments: {step.job.id: 'xs:string', step.parent_step.id: 'xs:string'}
     urlparams: {}
     headers:
