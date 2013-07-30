@@ -184,6 +184,10 @@ public abstract class SearchableListModel extends ListModel implements GridContr
 
     public String getSearchString()
     {
+        // pagingSearchString is relevant only for non-null searchString
+        if (searchString == null) {
+            return null;
+        }
         return searchString + (pagingSearchString == null ? "" : pagingSearchString);
     }
 
