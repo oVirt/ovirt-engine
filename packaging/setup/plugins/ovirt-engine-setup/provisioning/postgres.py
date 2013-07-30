@@ -83,8 +83,8 @@ class Plugin(plugin.PluginBase):
 
     def _generatePassword(self):
         return '%s%s' % (
-            ''.join([random.choice(string.digits) for i in xrange(4)]),
-            ''.join([random.choice(string.letters) for i in xrange(4)]),
+            ''.join([random.choice(string.digits) for i in range(4)]),
+            ''.join([random.choice(string.letters) for i in range(4)]),
         )
 
     def _initDB(self):
