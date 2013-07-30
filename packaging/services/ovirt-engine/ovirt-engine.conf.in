@@ -108,6 +108,8 @@ ENGINE_PROPERTIES="${ENGINE_PROPERTIES} jsse.enableSNIExtension=false"
 # Extra Java arguments to be added to command-line.
 #
 ENGINE_JVM_ARGS=""
+ENGINE_JVM_ARGS="${ENGINE_JVM_ARGS} -XX:+HeapDumpOnOutOfMemoryError"
+ENGINE_JVM_ARGS="${ENGINE_JVM_ARGS} -XX:HeapDumpPath=\"${ENGINE_LOG}/dump\""
 
 #
 # Additional applications to be deployed in the instance of the
