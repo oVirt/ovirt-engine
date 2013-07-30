@@ -427,7 +427,7 @@ make %{make_common_opts} install DESTDIR=%{buildroot}
 
 install -dm 755 %{buildroot}/%{engine_state}/deployments
 install -dm 755 %{buildroot}/%{engine_state}/content
-install -dm 755 %{buildroot}/%{engine_log}/{host-deploy,setup,notifier,engine-manage-domains}
+install -dm 755 %{buildroot}/%{engine_log}/{host-deploy,setup,notifier,engine-manage-domains,dump}
 install -dm 755 %{buildroot}/%{engine_cache}
 install -dm 755 %{buildroot}/%{engine_run}/notifier
 
@@ -635,6 +635,7 @@ fi
 %dir %{engine_data}
 %dir %{engine_data}/scripts
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}
+%dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/dump
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_cache}
 
 %dir %{engine_data}/conf

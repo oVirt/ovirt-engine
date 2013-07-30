@@ -14,3 +14,11 @@
 	nocreate
 	rotate 1
 }
+
+"@ENGINE_LOG@/dump"/*.hprof {
+	daily
+	missingok
+	compress
+	nocreate
+	rotate 1
+}
