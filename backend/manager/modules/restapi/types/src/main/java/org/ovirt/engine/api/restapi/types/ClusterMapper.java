@@ -54,7 +54,8 @@ public class ClusterMapper {
         }
         if (model.isSetMemoryPolicy()) {
             entity = map(model.getMemoryPolicy(), entity);
-        } else if (model.isSetVersion() && greaterOrEqual(model.getVersion() , min_thp_version)){
+        } else if (model.isSetVersion() && model.getVersion().getMajor() != null
+                && model.getVersion().getMinor() != null && greaterOrEqual(model.getVersion(), min_thp_version)) {
             entity.setTransparentHugepages(true);
         }
         if (model.isSetSchedulingPolicy()) {
