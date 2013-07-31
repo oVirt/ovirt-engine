@@ -88,7 +88,7 @@ public class AutoRecoveryManager {
             @Override
             public VdcActionParametersBase doWith(final StorageDomain arg) {
                 final StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase(
-                        arg.getId(), new Guid(arg.getStoragePoolId().getUuid()));
+                        arg.getId(), arg.getStoragePoolId());
                 params.setRunSilent(true);
                 return params;
             }

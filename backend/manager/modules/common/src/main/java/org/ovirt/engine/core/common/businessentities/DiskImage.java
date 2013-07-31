@@ -371,10 +371,10 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.flushLatency = diskImage.flushLatency;
         // string is immutable, so no need to deep copy it
         di.description = diskImage.description;
-        di.setImageId(new Guid(diskImage.getImageId().getUuid()));
+        di.setImageId(diskImage.getImageId());
         di.appList = diskImage.appList;
-        di.setImageTemplateId(new Guid(diskImage.getImageTemplateId().getUuid()));
-        di.setParentId(new Guid(diskImage.getParentId().getUuid()));
+        di.setImageTemplateId(diskImage.getImageTemplateId());
+        di.setParentId(diskImage.getParentId());
         di.setImageStatus(diskImage.getImageStatus());
         di.setLastModified(new Date(diskImage.getLastModified().getTime()));
         di.storageIds = new ArrayList<Guid>(diskImage.storageIds);
@@ -388,7 +388,7 @@ public class DiskImage extends DiskImageBase implements IImage {
         di.setDiskAlias(diskImage.getDiskAlias());
         di.setDiskDescription(diskImage.getDiskDescription());
         di.setShareable(diskImage.isShareable());
-        di.storagePoolId = new Guid(diskImage.storagePoolId.getUuid());
+        di.storagePoolId = diskImage.storagePoolId;
         di.actualSize = diskImage.actualSize;
         di.readRateKbPerSec = diskImage.readRateKbPerSec;
         di.writeRateKbPerSec = diskImage.writeRateKbPerSec;

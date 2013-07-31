@@ -59,13 +59,6 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
             return availableDiskSize;
     }
 
-    public static StorageDomainDynamic copyOf(StorageDomainDynamic domain) {
-        StorageDomainDynamic sdd = new StorageDomainDynamic();
-        sdd.availableDiskSize = domain.availableDiskSize;
-        sdd.id = new Guid(domain.id.getUuid());
-        sdd.usedDiskSize = domain.usedDiskSize;
-        return sdd;
-    }
 
     @Override
     public int hashCode() {
