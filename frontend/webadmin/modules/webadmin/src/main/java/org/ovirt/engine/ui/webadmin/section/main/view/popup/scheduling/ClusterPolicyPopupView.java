@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
@@ -19,6 +20,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.ClusterPolicyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.panels.FunctionPolicyUnitPanel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.panels.PolicyUnitListPanel;
@@ -81,11 +83,27 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
     @UiField
     WidgetStyle style;
 
+    @UiField(provided = true)
+    InfoIcon filterInfoIcon;
+
+    @UiField(provided = true)
+    InfoIcon functionInfoIcon;
+
+    @UiField(provided = true)
+    InfoIcon loadBalancingInfoIcon;
+
+    @UiField(provided = true)
+    InfoIcon propertiesInfoIcon;
+
     @Inject
-    public ClusterPolicyPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public ClusterPolicyPopupView(EventBus eventBus,
+            ApplicationResources resources,
+            ApplicationConstants constants,
+            ApplicationTemplates templates) {
         super(eventBus, resources);
         initListBoxEditors();
         initPanels();
+        initInfoIcons(resources, constants, templates);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
@@ -152,6 +170,39 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
                 customPropertiesSheetEditor.edit(model.getCustomPropertySheet());
             }
         });
+        updateTooltips(model);
+        model.getLoadBalanceList().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                updateTooltips(model);
+            }
+        });
+    }
+
+    private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
+        filterInfoIcon =
+                new InfoIcon(templates.italicWordWrapMaxWidth(constants.clusterPolicyFilterInfo()),
+                        resources);
+
+        functionInfoIcon =
+                new InfoIcon(templates.italicWordWrapMaxWidth(constants.clusterPolicyWeightFunctionInfo()),
+                        resources);
+
+        loadBalancingInfoIcon =
+                new InfoIcon(templates.italicWordWrapMaxWidth(constants.clusterPolicyLoadBalancingInfo()),
+                        resources);
+
+        propertiesInfoIcon =
+                new InfoIcon(templates.italicWordWrapMaxWidth(constants.clusterPolicyPropertiesInfo()),
+                        resources);
+
+    }
+
+    private void updateTooltips(NewClusterPolicyModel model) {
+        PolicyUnit selectedItem = (PolicyUnit) model.getLoadBalanceList().getSelectedItem();
+        if (selectedItem != null) {
+            loadBalanceListEditor.getElement().setTitle(selectedItem.getDescription());
+        }
     }
 
     private void updateFunctions(NewClusterPolicyModel model) {

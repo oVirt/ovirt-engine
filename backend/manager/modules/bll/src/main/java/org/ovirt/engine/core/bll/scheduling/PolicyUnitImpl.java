@@ -123,6 +123,16 @@ public class PolicyUnitImpl extends PolicyUnit {
     }
 
     @Override
+    public String getDescription() {
+        return policyUnit.getDescription();
+    }
+
+    @Override
+    public void setDescription(String description) {
+        policyUnit.setDescription(description);
+    }
+
+    @Override
     public final boolean isInternal() {
         return policyUnit.isInternal();
     }

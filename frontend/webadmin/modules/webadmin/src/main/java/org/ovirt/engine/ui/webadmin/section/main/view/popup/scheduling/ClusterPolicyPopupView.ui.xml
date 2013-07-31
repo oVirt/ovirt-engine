@@ -72,6 +72,9 @@
 		width: 50px;
 		margin: 4px;
 		}
+		.iconInfoStyle {
+		margin-left: 10px;
+		}
 	</ui:style>
 
 	<d:SimpleDialogPanel width="700px" height="650px">
@@ -87,6 +90,7 @@
 							text="{constants.clusterPolicyFilterLabel}" />
 						<g:Label addStyleNames="{style.labelStyle}"
 							text="{constants.clusterPolicyExplanationMessage}" />
+						<d:InfoIcon ui:field="filterInfoIcon" addStyleNames="{style.iconInfoStyle}"/>	
 					</g:HorizontalPanel>
 					<g:HTML>
 						<hr style="width:100%;" />
@@ -118,6 +122,7 @@
 							text="{constants.clusterPolicyFunctionLabel}" />
 						<g:Label addStyleNames="{style.labelStyle}"
 							text="{constants.clusterPolicyExplanationMessage}" />
+					    <d:InfoIcon ui:field="functionInfoIcon" addStyleNames="{style.iconInfoStyle}"/>
 					</g:HorizontalPanel>
 					<g:HTML>
 						<hr style="width:100%;" />
@@ -144,16 +149,22 @@
 							</g:VerticalPanel>
 						</g:Cell>
 					</g:HorizontalPanel>
-					<g:Label addStyleNames="{style.sectionLabel}"
-						text="{constants.clusterPolicyLoadBalancerLabel}" />
+					<g:HorizontalPanel>
+						<g:Label addStyleNames="{style.sectionLabel}"
+							text="{constants.clusterPolicyLoadBalancerLabel}" />
+						<d:InfoIcon ui:field="loadBalancingInfoIcon" addStyleNames="{style.iconInfoStyle}"/>
+					</g:HorizontalPanel>
 					<g:HTML>
 						<hr style="width:100%;" />
 					</g:HTML>
 					<e:ListModelListBoxOnlyEditor
 						ui:field="loadBalanceListEditor" />
 				</g:FlowPanel>
-				<g:Label addStyleNames="{style.sectionLabel}"
-					text="{constants.clusterPolicyPropertiesLabel}" />
+				<g:HorizontalPanel>
+					<g:Label addStyleNames="{style.sectionLabel}"
+						text="{constants.clusterPolicyPropertiesLabel}" />
+					<d:InfoIcon ui:field="propertiesInfoIcon" addStyleNames="{style.iconInfoStyle}"/>
+				</g:HorizontalPanel>
 				<g:HTML>
 					<hr style="width:100%;" />
 				</g:HTML>

@@ -27,6 +27,7 @@ public class PolicyUnitDaoImpl extends DefaultGenericDaoDbFacade<PolicyUnit, Gui
                         entity.getPolicyUnitType() == null ? PolicyUnitType.Filter.getValue()
                                 : entity.getPolicyUnitType()
                                 .getValue())
+                .addValue("description", entity.getDescription())
                 .addValue("custom_properties_regex",
                         SerializationFactory.getSerializer().serialize(entity.getParameterRegExMap()))
                 .addValue("enabled", entity.isEnabled());
@@ -48,6 +49,7 @@ public class PolicyUnitDaoImpl extends DefaultGenericDaoDbFacade<PolicyUnit, Gui
                 policyUnit.setName(rs.getString("name"));
                 policyUnit.setInternal(rs.getBoolean("is_internal"));
                 policyUnit.setPolicyUnitType(PolicyUnitType.forValue(rs.getInt("type")));
+                policyUnit.setDescription(rs.getString("description"));
                 policyUnit.setParameterRegExMap(SerializationFactory.getDeserializer()
                         .deserializeOrCreateNew(rs.getString("custom_properties_regex"), LinkedHashMap.class));
                 policyUnit.setEnabled(rs.getBoolean("enabled"));

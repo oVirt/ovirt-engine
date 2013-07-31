@@ -45,6 +45,7 @@ public class PolicyUnitPanel extends FocusPanel {
         this.used = used;
         this.locked = locked;
         this.style = style;
+        getElement().setTitle(policyUnit.getDescription());
         if (!locked) {
             addDomHandler(new ContextMenuHandler() {
 

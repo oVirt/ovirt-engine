@@ -3059,4 +3059,33 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("For allowing PK authentication, copy the following PK to host under .ssh/authorized_keys")
     String publicKeyUsage();
+
+    @DefaultStringValue("Filters represents hard constraints for running a VM. " +
+            "Each filter implements logic which validates a minimum requirements in order to run a VM. " +
+            "For example, minimum RAM, CPU, designated host, etc. Hosts which fail this validation " +
+            "are filtered out from the current request.")
+    String clusterPolicyFilterInfo();
+
+    @DefaultStringValue("Weights represent soft constraints for running a VM. " +
+            "Note: in a weighting system, lower score is considered better. So a host with the " +
+            "lowest score (weight) is the one the scheduler will choose. " +
+            "Each weight module scores any given host based on an optimization logic the module " +
+            "implements. For example, if we want to optimize for CPU load, the module will score " +
+            "each host based on its known CPU load. " +
+            "Weight modules scores are being summed, so it is possible to have more than one " +
+            "weight module. The way to prioritize modules is by increasing / decreasing a factor.")
+    String clusterPolicyWeightFunctionInfo();
+
+    @DefaultStringValue("Load balancing is a logic that determines which hosts are over-utilized and which " +
+            "are under-utilized. Then, the balancing mechanism calls the scheduler trying to " +
+            "migrate a VM from an over-utilized to an under-utilized host. " +
+            "Note that it is important to choose a balancing module that does not conflict with " +
+            "the weight module. Such a policy may destabilize this cluster. " +
+            "Only a single load-balancing module is supported.")
+    String clusterPolicyLoadBalancingInfo();
+
+    @DefaultStringValue("These properties are needed for one of the above modules, so they will appear when " +
+            "needed. Setting it when creating a policy generates the default values, which may " +
+            "be overridden in each specific cluster using this policy.")
+    String clusterPolicyPropertiesInfo();
 }

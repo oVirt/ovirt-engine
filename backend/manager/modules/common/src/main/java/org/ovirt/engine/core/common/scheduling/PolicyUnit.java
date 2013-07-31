@@ -22,6 +22,10 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
      */
     private String name;
     /**
+     * policy unit description.
+     */
+    private String description;
+    /**
      * policy unit that is implemented in the system, or loaded externally.
      */
     private boolean internal = true;
@@ -65,6 +69,14 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
         return internal;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public void setInternal(boolean internal) {
         this.internal = internal;
     }
@@ -98,6 +110,7 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
         final int prime = 31;
         int result = 1;
         result = prime * result + ((policyUnitType == null) ? 0 : policyUnitType.hashCode());
+        result = prime * result + ((description == null) ? 0 : description.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + (internal ? 1231 : 1237);
         result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -115,6 +128,11 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
         if (getClass() != obj.getClass())
             return false;
         PolicyUnit other = (PolicyUnit) obj;
+        if (description == null) {
+            if (other.description != null)
+                return false;
+        } else if (!description.equals(other.description))
+            return false;
         if (id == null) {
             if (other.id != null)
                 return false;

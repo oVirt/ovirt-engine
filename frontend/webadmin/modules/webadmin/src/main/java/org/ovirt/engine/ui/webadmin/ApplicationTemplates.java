@@ -142,4 +142,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
             "</table>" +
             "</div>")
     SafeHtml vmCountWithMigrating(String vmCountStr, String vmMigratingStr, String title, SafeHtml image);
+
+    @Template("<div style='max-width: 500px; word-wrap:break-word; font-style: italic;'>{0}</div>")
+    SafeHtml italicWordWrapMaxWidth(String text);
 }
