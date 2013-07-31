@@ -682,7 +682,6 @@ fi
 
 
 %files lib
-%dir %{python_sitelib}/ovirt_engine
 %{python_sitelib}/ovirt_engine
 
 
