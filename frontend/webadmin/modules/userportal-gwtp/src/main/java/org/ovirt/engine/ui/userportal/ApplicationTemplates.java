@@ -45,4 +45,7 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
             String usedByYouLabel, int usedByYouPercentage,String usedByYou,
             String usedByOthersLabel, int usedByOthersPercentage, String usedByOthers,
             String freeLabel, int freePercentage, String free);
+
+    @Template("<div>{0}</div>")
+    SafeHtml userMessageOfTheDay(String title);
 }

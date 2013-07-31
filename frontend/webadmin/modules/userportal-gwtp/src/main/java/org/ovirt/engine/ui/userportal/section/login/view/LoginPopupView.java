@@ -13,23 +13,32 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.ApplicationMessages;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
+import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.section.login.presenter.LoginPopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
+import com.google.gwt.user.client.ui.PopupPanel;
 import com.google.inject.Inject;
 
 public class LoginPopupView extends AbstractLoginPopupView implements LoginPopupPresenterWidget.ViewDef {
+
+    private final ApplicationTemplates templates;
 
     interface Driver extends SimpleBeanEditorDriver<UserPortalLoginModel, LoginPopupView> {
     }
@@ -93,7 +102,22 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     @Ignore
     Panel errorMessagePanel;
 
+    @Ignore
+    SimplePopupPanel tooltipPanel;
+
+    @Ignore
+    HTML tooltip;
+
+    @UiField
+    Style style;
+
     private final Driver driver = GWT.create(Driver.class);
+
+    private int popupLeft = 0;
+    private int popupTop = 0;
+
+    // This is true by default. If no message exists then the tooltip is hidden
+    private boolean hasMessageOfTheDay = true;
 
     @Inject
     public LoginPopupView(EventBus eventBus,
@@ -101,8 +125,11 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
             ApplicationResources resources,
             ApplicationConstants constants,
             ApplicationMessages messages,
-            ApplicationDynamicMessages dynamicMessages) {
+            ApplicationDynamicMessages dynamicMessages,
+            ApplicationTemplates templates) {
         super(eventBus, resources, clientAgentType);
+
+        this.templates = templates;
 
         // We need this code because resetAndFocus is called when userNameEditor is Disabled
         userNameEditor = new EntityModelTextBoxEditor() {
@@ -129,6 +156,57 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         driver.initialize(this);
     }
 
+    private void initUserMessageOfTheDayToolTip(final ApplicationTemplates templates) {
+        tooltipPanel = new SimplePopupPanel();
+        tooltipPanel.setStyleName(style.motd());
+        tooltipPanel.hide();
+        tooltip = new HTML();
+
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result) {
+                String message = (String) result;
+
+                if (message != null && !message.isEmpty()) {
+                    tooltip.setHTML(templates.userMessageOfTheDay(message));
+                    tooltipPanel.setWidget(tooltip);
+                } else {
+                    tooltipPanel.hide();
+                    hasMessageOfTheDay = false;
+                }
+
+            }
+        };
+        AsyncDataProvider.getUserMessageOfTheDayViaPublic(_asyncQuery);
+
+    }
+
+    private void setToolTipPositionAndShow() {
+        // We set those as the absoulute left and top values
+        // are different in subsequent calls, so we anchor them to the first ones that aren't zero
+        // It is a workaround to a strange behavior
+        if (popupLeft == 0) {
+            popupLeft = popup.getAbsoluteLeft();
+        }
+
+        if (popupTop == 0) {
+            popupTop = popup.getAbsoluteTop();
+        }
+
+        if (hasMessageOfTheDay) {
+            final int errorHeight = errorMessagePanel.isVisible() ? errorMessage.getOffsetHeight() - 2 : 0;
+            tooltipPanel.setPopupPositionAndShow(new PopupPanel.PositionCallback() {
+                @Override
+                public void setPosition(int offsetWidth, int offsetHeight) {
+                    // Putting the tooltip in the center of the login dialog, right underneath it
+                    tooltipPanel.setPopupPosition(popupLeft - (offsetWidth / 2), popupTop + (popup.getOffsetHeight() / 2 + errorHeight));
+                }
+            });
+        }
+    }
+
     void localize(ApplicationConstants constants,
             ApplicationDynamicMessages dynamicMessages) {
         headerLabel.setText(dynamicMessages.loginHeaderLabel());
@@ -148,6 +226,9 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
     @Override
     public void edit(UserPortalLoginModel object) {
         driver.edit(object);
+
+        // Initializing relevant widgets of the user message of the day
+        initUserMessageOfTheDayToolTip(templates);
     }
 
     @Override
@@ -160,6 +241,7 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         userNameEditor.asValueBox().selectAll();
         userNameEditor.asValueBox().setFocus(true);
         clearErrorMessage();
+        setToolTipPositionAndShow();
     }
 
     @Override
@@ -168,6 +250,9 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         errorMessage.setVisible(text != null);
         if (errorMessage.isVisible()) {
             errorMessagePanel.setVisible(true);
+            // In case an error message is displayed, we need to recalculate the position of the
+            // user message of the day tool tip
+            setToolTipPositionAndShow();
         }
     }
 
@@ -181,4 +266,9 @@ public class LoginPopupView extends AbstractLoginPopupView implements LoginPopup
         return loginButton;
     }
 
+    public interface Style extends CssResource {
+
+        String motd();
+
+    }
 }

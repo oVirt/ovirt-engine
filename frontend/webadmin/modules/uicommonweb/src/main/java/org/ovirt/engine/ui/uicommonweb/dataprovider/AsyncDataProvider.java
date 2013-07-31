@@ -1350,6 +1350,20 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
+    public static void getUserMessageOfTheDayViaPublic(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (String) source : ""; //$NON-NLS-1$
+            }
+        };
+        Frontend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
+                new GetConfigurationValueParameters(ConfigurationValues.UserMessageOfTheDay,
+                        getDefaultConfigurationVersion()),
+                aQuery);
+    }
+
     public static void getSearchResultsLimit(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
