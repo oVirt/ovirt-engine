@@ -42,6 +42,11 @@ public class LocaleFilter implements Filter {
     public static final String LOCALE = "locale";
 
     /**
+     * The root of a path.
+     */
+    public static final String ROOT_PATH = "/";
+
+    /**
      * The default locale.
      */
     public static final Locale DEFAULT_LOCALE = Locale.US;
@@ -70,7 +75,7 @@ public class LocaleFilter implements Filter {
             final Locale userLocale) {
         // Detected locale doesn't match the default locale, set a cookie.
         Cookie cookie = new Cookie(LocaleFilter.LOCALE, userLocale.toString());
-        cookie.setPath(servletContext.getContextPath());
+        cookie.setPath(ROOT_PATH);
         cookie.setMaxAge(Integer.MAX_VALUE); // Doesn't expire.
         response.addCookie(cookie);
     }
