@@ -599,7 +599,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             GetConfigurationValueParameters configParameters = (GetConfigurationValueParameters) parameters;
             if (configParameters.getConfigValue() == ConfigurationValues.VdcVersion ||
                     configParameters.getConfigValue() == ConfigurationValues.ProductRPMVersion ||
-                    configParameters.getConfigValue() == ConfigurationValues.ApplicationMode) {
+                    configParameters.getConfigValue() == ConfigurationValues.ApplicationMode ||
+                    configParameters.getConfigValue() == ConfigurationValues.UserMessageOfTheDay) {
                 return runQueryImpl(actionType, parameters, false);
             }
 

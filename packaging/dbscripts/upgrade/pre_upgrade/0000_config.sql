@@ -586,6 +586,7 @@ select fn_db_add_config_value('MaxPeakNetworkQoSValue','2048','general');
 select fn_db_add_config_value('MaxBurstNetworkQoSValue','10240','general');
 select fn_db_add_config_value('AverageToPeakRatio','2.0','general');
 select fn_db_add_config_value('AverageToBurstRatio','0.2','general');
+select fn_db_add_config_value('UserMessageOfTheDay','','general');
 
 -- single qxl pci
 select fn_db_add_config_value('SingleQxlPciEnabled','false','3.0');

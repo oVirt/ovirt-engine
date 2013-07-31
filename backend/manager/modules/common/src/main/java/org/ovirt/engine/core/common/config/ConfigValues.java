@@ -1453,6 +1453,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     SingleQxlPciEnabled(523),
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    UserMessageOfTheDay(524),
+
     Invalid(65535);
 
     private int intValue;

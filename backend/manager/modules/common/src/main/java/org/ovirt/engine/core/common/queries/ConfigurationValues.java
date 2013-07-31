@@ -98,7 +98,8 @@ public enum ConfigurationValues {
     MaxPeakNetworkQoSValue,
     MaxBurstNetworkQoSValue,
     AverageToPeakRatio,
-    AverageToBurstRatio
+    AverageToBurstRatio,
+    UserMessageOfTheDay(ConfigAuthType.User)
     ;
 
     public static enum ConfigAuthType {
