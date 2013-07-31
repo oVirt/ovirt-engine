@@ -122,30 +122,21 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION InsertClusterPolicyUnit(
     v_cluster_policy_id UUID,
     v_policy_unit_id UUID,
-    v_is_filter_selected BOOLEAN,
     v_filter_sequence int,
-    v_is_function_selected BOOLEAN,
-    v_factor int,
-    v_is_balance_selected BOOLEAN)
+    v_factor int)
 RETURNS VOID
 AS $procedure$
 BEGIN
     INSERT INTO cluster_policy_units(
         cluster_policy_id,
         policy_unit_id,
-        is_filter_selected,
         filter_sequence,
-        is_function_selected,
-        factor,
-        is_balance_selected)
+        factor)
     VALUES(
         v_cluster_policy_id,
         v_policy_unit_id,
-        v_is_filter_selected,
         v_filter_sequence,
-        v_is_function_selected,
-        v_factor,
-        v_is_balance_selected);
+        v_factor);
 END; $procedure$
 LANGUAGE plpgsql;
 

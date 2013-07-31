@@ -52,7 +52,6 @@ public class PolicyUnitDaoTest extends BaseDAOTestCase {
         dummyPolicyUnit = new PolicyUnit();
         dummyPolicyUnit.setId(Guid.newGuid());
         dummyPolicyUnit.setName("Dummy policy unit");
-        dummyPolicyUnit.setBalanceImplemeted(true);
     }
 
 }

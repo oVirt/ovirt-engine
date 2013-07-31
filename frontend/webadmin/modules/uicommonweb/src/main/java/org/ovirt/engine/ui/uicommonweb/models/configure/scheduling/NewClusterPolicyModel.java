@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -179,7 +180,7 @@ public class NewClusterPolicyModel extends Model {
         }
         ArrayList<PolicyUnit> balancePolicyUnits = new ArrayList<PolicyUnit>();
         for (PolicyUnit policyUnit : list) {
-            if (policyUnit.isBalanceImplemeted()) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
                 balancePolicyUnits.add(policyUnit);
             }
         }
@@ -192,7 +193,7 @@ public class NewClusterPolicyModel extends Model {
         }
         ArrayList<PolicyUnit> filterPolicyUnits = new ArrayList<PolicyUnit>();
         for (PolicyUnit policyUnit : list) {
-            if (policyUnit.isFilterImplemeted()) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Filter) {
                 filterPolicyUnits.add(policyUnit);
             }
         }
@@ -205,7 +206,7 @@ public class NewClusterPolicyModel extends Model {
         }
         ArrayList<PolicyUnit> functionPolicyUnits = new ArrayList<PolicyUnit>();
         for (PolicyUnit policyUnit : list) {
-            if (policyUnit.isFunctionImplemeted()) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
                 functionPolicyUnits.add(policyUnit);
             }
         }

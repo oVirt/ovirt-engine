@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
+import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
@@ -17,6 +19,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolicy, Guid> implements ClusterPolicyDao {
+    private static Map<Guid, PolicyUnit> policyUnitMap = null;
 
     public ClusterPolicyDaoImpl() {
         super("ClusterPolicy");
@@ -78,9 +81,15 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
     }
 
     private void fillClusterPolicy(Map<Guid, ClusterPolicy> map, List<ClusterPolicyUnit> clusterPolicyUnits) {
+        if (policyUnitMap == null) {
+            policyUnitMap = new HashMap<Guid, PolicyUnit>();
+            for (PolicyUnit policyUnit : dbFacade.getPolicyUnitDao().getAll()) {
+                policyUnitMap.put(policyUnit.getId(), policyUnit);
+            }
+        }
         for (ClusterPolicyUnit clusterPolicyUnit : clusterPolicyUnits) {
             ClusterPolicy clusterPolicy = map.get(clusterPolicyUnit.getClusterPolicyId());
-            if (clusterPolicyUnit.isFilterSelected()) {
+            if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.Filter) {
                 if (clusterPolicy.getFilters() == null) {
                     clusterPolicy.setFilters(new ArrayList<Guid>());
                 }
@@ -93,14 +102,14 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
                             clusterPolicyUnit.getFilterSequence());
                 }
             }
-            if (clusterPolicyUnit.isFunctionSelected()) {
+            if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.Weight) {
                 if(clusterPolicy.getFunctions() == null){
                     clusterPolicy.setFunctions(new ArrayList<Pair<Guid, Integer>>());
                 }
                 clusterPolicy.getFunctions().add(new Pair<Guid, Integer>(clusterPolicyUnit.getPolicyUnitId(),
                         clusterPolicyUnit.getFactor()));
             }
-            if (clusterPolicyUnit.isBalanceSelected()) {
+            if (policyUnitMap.get(clusterPolicyUnit.getPolicyUnitId()).getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
                 clusterPolicy.setBalance(clusterPolicyUnit.getPolicyUnitId());
             }
         }
@@ -112,7 +121,6 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
         if (entity.getFilters() != null) {
             for (Guid policyUnitId : entity.getFilters()) {
                 unit = getClusterPolicyUnit(entity, policyUnitId, map);
-                unit.setFilterSelected(true);
                 if (entity.getFilterPositionMap() != null) {
                     Integer position = entity.getFilterPositionMap().get(policyUnitId);
                     unit.setFilterSequence(position != null ? position : 0);
@@ -122,13 +130,11 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
         if (entity.getFunctions() != null) {
             for (Pair<Guid, Integer> pair : entity.getFunctions()) {
                 unit = getClusterPolicyUnit(entity, pair.getFirst(), map);
-                unit.setFunctionSelected(true);
                 unit.setFactor(pair.getSecond());
             }
         }
         if (entity.getBalance() != null) {
             unit = getClusterPolicyUnit(entity, entity.getBalance(), map);
-            unit.setBalanceSelected(true);
         }
         return new ArrayList<ClusterPolicyUnit>(map.values());
     }
@@ -141,11 +147,8 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
     private MapSqlParameterSource getClusterPolicyUnitParameterMap(ClusterPolicyUnit clusterPolicyUnit) {
         return getCustomMapSqlParameterSource().addValue("cluster_policy_id", clusterPolicyUnit.getClusterPolicyId())
                 .addValue("policy_unit_id", clusterPolicyUnit.getPolicyUnitId())
-                .addValue("is_filter_selected", clusterPolicyUnit.isFilterSelected())
                 .addValue("filter_sequence", clusterPolicyUnit.getFilterSequence())
-                .addValue("is_function_selected", clusterPolicyUnit.isFunctionSelected())
-                .addValue("factor", clusterPolicyUnit.getFactor())
-                .addValue("is_balance_selected", clusterPolicyUnit.isBalanceSelected());
+                .addValue("factor", clusterPolicyUnit.getFactor());
     }
 
     protected RowMapper<ClusterPolicyUnit> createClusterPolicyUnitRowMapper() {
@@ -155,11 +158,8 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
                 ClusterPolicyUnit unit = new ClusterPolicyUnit();
                 unit.setClusterPolicyId(getGuid(rs, "cluster_policy_id"));
                 unit.setPolicyUnitId(getGuid(rs, "policy_unit_id"));
-                unit.setFilterSelected(rs.getBoolean("is_filter_selected"));
                 unit.setFilterSequence(rs.getInt("filter_sequence"));
-                unit.setFunctionSelected(rs.getBoolean("is_function_selected"));
                 unit.setFactor(rs.getInt("factor"));
-                unit.setBalanceSelected(rs.getBoolean("is_balance_selected"));
                 return unit;
             }
         };
@@ -218,11 +218,8 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
     private static class ClusterPolicyUnit {
         Guid clusterPolicyId;
         Guid policyUnitId;
-        boolean filterSelected;
         int filterSequence;
-        boolean functionSelected;
         int factor;
-        boolean balanceSelected;
 
         public ClusterPolicyUnit() {
         }
@@ -248,28 +245,12 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
             this.policyUnitId = policyUnitId;
         }
 
-        public boolean isFilterSelected() {
-            return filterSelected;
-        }
-
-        public void setFilterSelected(boolean filterSelected) {
-            this.filterSelected = filterSelected;
-        }
-
         public int getFilterSequence() {
             return filterSequence;
         }
 
         public void setFilterSequence(int filterSequence) {
             this.filterSequence = filterSequence;
-        }
-
-        public boolean isFunctionSelected() {
-            return functionSelected;
-        }
-
-        public void setFunctionSelected(boolean functionSelected) {
-            this.functionSelected = functionSelected;
         }
 
         public int getFactor() {
@@ -280,12 +261,5 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
             this.factor = factor;
         }
 
-        public boolean isBalanceSelected() {
-            return balanceSelected;
-        }
-
-        public void setBalanceSelected(boolean balanceSelected) {
-            this.balanceSelected = balanceSelected;
-        }
     }
 }

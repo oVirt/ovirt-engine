@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -48,7 +49,7 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
     public List<PolicyUnit> getBalancePolicyUnits() {
         ArrayList<PolicyUnit> list = new ArrayList<PolicyUnit>();
         for (PolicyUnit policyUnit : getPolicyUnits()) {
-            if (policyUnit.isBalanceImplemeted()) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
                 list.add(policyUnit);
             }
 
@@ -59,7 +60,7 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
     public ArrayList<PolicyUnit> getFilterPolicyUnits() {
         ArrayList<PolicyUnit> list = new ArrayList<PolicyUnit>();
         for (PolicyUnit policyUnit : getPolicyUnits()) {
-            if (policyUnit.isFilterImplemeted()) {
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Filter) {
                 list.add(policyUnit);
             }
         }

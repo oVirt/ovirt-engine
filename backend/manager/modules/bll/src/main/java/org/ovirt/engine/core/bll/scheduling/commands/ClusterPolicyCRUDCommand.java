@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.scheduling.parameters.ClusterPolicyCRUDParameters;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
@@ -46,7 +47,7 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
                 if (policyUnitImpl == null) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
                 }
-                if (!policyUnitImpl.isFilterImplemeted()) {
+                if (policyUnitImpl.getPolicyUnitType() != PolicyUnitType.Filter) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_FILTER_NOT_IMPLEMENTED);
                 }
             }
@@ -78,7 +79,7 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
                 if (policyUnitImpl == null) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
                 }
-                if (!policyUnitImpl.isFunctionImplemeted()) {
+                if (policyUnitImpl.getPolicyUnitType() != PolicyUnitType.Weight) {
                     return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_FUNCTION_NOT_IMPLEMENTED);
                 }
                 if (functionPair.getSecond() < 0) {
@@ -92,7 +93,7 @@ public abstract class ClusterPolicyCRUDCommand extends CommandBase<ClusterPolicy
             if (policyUnitImpl == null) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_UNKNOWN_POLICY_UNIT);
             }
-            if (!policyUnitImpl.isBalanceImplemeted()) {
+            if (policyUnitImpl.getPolicyUnitType() != PolicyUnitType.LoadBalancing) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_POLICY_BALANCE_NOT_IMPLEMENTED);
             }
         }
