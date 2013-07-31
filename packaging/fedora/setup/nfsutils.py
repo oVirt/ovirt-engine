@@ -140,9 +140,9 @@ def setSELinuxContextForDir(path, contextName):
 DEFAULT_MD = {
         "CLASS" : "Iso",
         "DESCRIPTION" : "isofun",
-        "IOOPTIMEOUTSEC" : "1",
+        "IOOPTIMEOUTSEC" : "10",
         "LEASERETRIES" : "3",
-        "LEASETIMESEC" : "5",
+        "LEASETIMESEC" : "60",
         "LOCKPOLICY" : "",
         "LOCKRENEWALINTERVALSEC" : "5",
         "POOL_UUID" : "",
