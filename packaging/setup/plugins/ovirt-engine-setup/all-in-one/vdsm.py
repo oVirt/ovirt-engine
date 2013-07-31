@@ -168,6 +168,7 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
+        name=osetupcons.Stages.AIO_CONFIG_VDSM,
         condition=lambda self: self.environment[
             osetupcons.AIOEnv.CONFIGURE
         ],
