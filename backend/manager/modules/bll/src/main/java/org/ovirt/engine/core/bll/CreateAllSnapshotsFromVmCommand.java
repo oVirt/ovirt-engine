@@ -301,7 +301,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     private boolean isLiveSnapshotApplicable() {
         return getParameters().getParentCommand() != VdcActionType.RunVm && getVm() != null
-                && getVm().isRunning() && getVm().getRunOnVds() != null;
+                && (getVm().isRunning() || getVm().getStatus() == VMStatus.Paused) && getVm().getRunOnVds() != null;
     }
 
     @Override
