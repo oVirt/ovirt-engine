@@ -17,12 +17,13 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 
 
 @NonTransactiveCommandAttribute
 @LockIdNameAttribute
-public class RemoveStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends DisconnectStorageServerConnectionCommand {
+public class RemoveStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends DisconnectStorageServerConnectionCommand<T> {
 
     public RemoveStorageServerConnectionCommand(T parameters) {
         super(parameters);
@@ -106,8 +107,13 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
     protected void executeCommand() {
         String connectionId = getConnection().getid();
         getStorageServerConnectionDao().remove(connectionId);
-        // disconnect the connection from vdsm
-        disconnectStorage();
+        log.infoFormat("Removing connection {0} from database ", connectionId);
+        if (Guid.isNullOrEmpty(getParameters().getVdsId())) {
+            log.info("No vdsId passed - hosts will not be disconnected.");
+        } else {
+            // disconnect the connection from vdsm
+            disconnectStorage();
+        }
         setSucceeded(true);
     }
 

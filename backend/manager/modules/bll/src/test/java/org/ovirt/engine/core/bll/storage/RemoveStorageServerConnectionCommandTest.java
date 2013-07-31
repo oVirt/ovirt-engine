@@ -1,7 +1,10 @@
 package org.ovirt.engine.core.bll.storage;
 
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -223,4 +226,31 @@ public class RemoveStorageServerConnectionCommandTest {
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_BELONGS_TO_SEVERAL_DISKS);
     }
 
+    @Test
+    public void checkExecuteCommandWithVdsId() {
+        parameters.setStorageServerConnection(NFSConnection);
+        doNothing().when(storageServerConnectionDAO).remove(NFSConnection.getid());
+        doReturn(true).when(command).disconnectStorage();
+        command.executeCommand();
+    }
+
+    @Test
+    public void checkExecuteCommandWithEmptyVdsId() {
+        parameters.setStorageServerConnection(NFSConnection);
+        parameters.setVdsId(Guid.Empty);
+        doNothing().when(storageServerConnectionDAO).remove(NFSConnection.getid());
+        // Test will fail if we try to disconnect
+        command.executeCommand();
+        verify(command, never()).disconnectStorage();
+    }
+
+    @Test
+    public void checkExecuteCommandWithNullVdsId() {
+        parameters.setStorageServerConnection(NFSConnection);
+        parameters.setVdsId(null);
+        doNothing().when(storageServerConnectionDAO).remove(NFSConnection.getid());
+        // Test will fail if we try to disconnect
+        command.executeCommand();
+        verify(command, never()).disconnectStorage();
+    }
 }
