@@ -529,26 +529,20 @@
         <column>id</column>
         <column>name</column>
         <column>is_internal</column>
-        <column>has_filter</column>
-        <column>has_function</column>
-        <column>has_balance</column>
+        <column>type</column>
         <column>custom_properties_regex</column>
         <row>
             <value>84e6ddee-ab0d-42dd-82f0-c297779db5e5</value>
             <value>Migration</value>
             <value>true</value>
-            <value>true</value>
-            <value>false</value>
-            <value>false</value>
+            <value>0</value>
             <null/>
         </row>
         <row>
             <value>a267eddb-768d-45fd-9dbb-6ebcee343508</value>
             <value>MigrationDomain</value>
             <value>true</value>
-            <value>true</value>
-            <value>false</value>
-            <value>false</value>
+            <value>0</value>
             <null/>
         </row>
     </table>
@@ -556,28 +550,19 @@
     <table name="cluster_policy_units">
         <column>cluster_policy_id</column>
         <column>policy_unit_id</column>
-        <column>is_filter_selected</column>
         <column>filter_sequence</column>
-        <column>is_function_selected</column>
         <column>factor</column>
-        <column>is_balance_selected</column>
         <row>
             <value>20d25257-b4bd-4589-92a6-c4c5c5d3fd1a</value>
             <value>84e6ddee-ab0d-42dd-82f0-c297779db5e5</value>
-            <value>true</value>
             <value>1</value>
-            <value>false</value>
             <value>0</value>
-            <value>false</value>
         </row>
         <row>
             <value>5a2b0939-7d46-4b73-a469-e9c2c7fc6a53</value>
             <value>a267eddb-768d-45fd-9dbb-6ebcee343508</value>
-            <value>true</value>
             <value>1</value>
-            <value>false</value>
             <value>0</value>
-            <value>false</value>
         </row>
     </table>
 

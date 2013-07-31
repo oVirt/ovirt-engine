@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingPolicyUnit;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
@@ -111,33 +112,13 @@ public class PolicyUnitImpl extends PolicyUnit {
     }
 
     @Override
-    public final boolean isFilterImplemeted() {
-        return policyUnit.isFilterImplemeted();
+    public PolicyUnitType getPolicyUnitType() {
+        return policyUnit.getPolicyUnitType();
     }
 
     @Override
-    public final void setFilterImplemeted(boolean filterImplemeted) {
-        policyUnit.setFilterImplemeted(filterImplemeted);
-    }
-
-    @Override
-    public final boolean isFunctionImplemeted() {
-        return policyUnit.isFunctionImplemeted();
-    }
-
-    @Override
-    public final void setFunctionImplemeted(boolean functionImplemeted) {
-        policyUnit.setFunctionImplemeted(functionImplemeted);
-    }
-
-    @Override
-    public final boolean isBalanceImplemeted() {
-        return policyUnit.isBalanceImplemeted();
-    }
-
-    @Override
-    public final void setBalanceImplemeted(boolean balanceImplemeted) {
-        policyUnit.setBalanceImplemeted(balanceImplemeted);
+    public void setPolicyUnitType(PolicyUnitType policyUnitType) {
+        policyUnit.setPolicyUnitType(policyUnitType);
     }
 
     @Override

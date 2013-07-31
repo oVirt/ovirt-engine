@@ -26,17 +26,9 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
      */
     private boolean internal = true;
     /**
-     * specifies whether filter method implemented in loaded class
+     * specifies policy unit type (filter, weight or load balance)
      */
-    private boolean filterImplemeted;
-    /**
-     * specifies whether weight function method implemented in loaded class
-     */
-    private boolean functionImplemeted;
-    /**
-     * specifies whether load balancing method implemented in loaded class
-     */
-    private boolean balanceImplemeted;
+    private PolicyUnitType policyUnitType;
     /**
      * policy unit acceptable custom parameters; format <parameterName, regex>
      */
@@ -73,28 +65,12 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
         this.internal = internal;
     }
 
-    public boolean isFilterImplemeted() {
-        return filterImplemeted;
+    public PolicyUnitType getPolicyUnitType() {
+        return policyUnitType;
     }
 
-    public void setFilterImplemeted(boolean filterImplemeted) {
-        this.filterImplemeted = filterImplemeted;
-    }
-
-    public boolean isFunctionImplemeted() {
-        return functionImplemeted;
-    }
-
-    public void setFunctionImplemeted(boolean functionImplemeted) {
-        this.functionImplemeted = functionImplemeted;
-    }
-
-    public boolean isBalanceImplemeted() {
-        return balanceImplemeted;
-    }
-
-    public void setBalanceImplemeted(boolean balanceImplemeted) {
-        this.balanceImplemeted = balanceImplemeted;
+    public void setPolicyUnitType(PolicyUnitType policyUnitType) {
+        this.policyUnitType = policyUnitType;
     }
 
     public Map<String, String> getParameterRegExMap() {
@@ -109,9 +85,7 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + (balanceImplemeted ? 1231 : 1237);
-        result = prime * result + (filterImplemeted ? 1231 : 1237);
-        result = prime * result + (functionImplemeted ? 1231 : 1237);
+        result = prime * result + ((policyUnitType == null) ? 0 : policyUnitType.hashCode());
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + (internal ? 1231 : 1237);
         result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -128,12 +102,6 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
         if (getClass() != obj.getClass())
             return false;
         PolicyUnit other = (PolicyUnit) obj;
-        if (balanceImplemeted != other.balanceImplemeted)
-            return false;
-        if (filterImplemeted != other.filterImplemeted)
-            return false;
-        if (functionImplemeted != other.functionImplemeted)
-            return false;
         if (id == null) {
             if (other.id != null)
                 return false;
@@ -150,6 +118,8 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
             if (other.parameterRegExMap != null)
                 return false;
         } else if (!parameterRegExMap.equals(other.parameterRegExMap))
+            return false;
+        if (policyUnitType != other.policyUnitType)
             return false;
         return true;
     }

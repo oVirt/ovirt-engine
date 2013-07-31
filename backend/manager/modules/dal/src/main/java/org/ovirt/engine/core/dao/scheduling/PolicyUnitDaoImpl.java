@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.LinkedHashMap;
 
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
 import org.ovirt.engine.core.utils.SerializationFactory;
@@ -22,9 +23,7 @@ public class PolicyUnitDaoImpl extends DefaultGenericDaoDbFacade<PolicyUnit, Gui
         return createIdParameterMapper(entity.getId())
                 .addValue("name", entity.getName())
                 .addValue("is_internal", entity.isInternal())
-                .addValue("has_filter", entity.isFilterImplemeted())
-                .addValue("has_function", entity.isFunctionImplemeted())
-                .addValue("has_balance", entity.isBalanceImplemeted())
+                .addValue("type", entity.getPolicyUnitType().getValue())
                 .addValue("custom_properties_regex",
                         SerializationFactory.getSerializer().serialize(entity.getParameterRegExMap()));
     }
@@ -43,10 +42,8 @@ public class PolicyUnitDaoImpl extends DefaultGenericDaoDbFacade<PolicyUnit, Gui
                 PolicyUnit policyUnit = new PolicyUnit();
                 policyUnit.setId(getGuid(rs, "id"));
                 policyUnit.setName(rs.getString("name"));
-
-                policyUnit.setFilterImplemeted(rs.getBoolean("has_filter"));
-                policyUnit.setFunctionImplemeted(rs.getBoolean("has_function"));
-                policyUnit.setBalanceImplemeted(rs.getBoolean("has_balance"));
+                policyUnit.setInternal(rs.getBoolean("is_internal"));
+                policyUnit.setPolicyUnitType(PolicyUnitType.forValue(rs.getInt("type")));
                 policyUnit.setParameterRegExMap(SerializationFactory.getDeserializer()
                         .deserializeOrCreateNew(rs.getString("custom_properties_regex"), LinkedHashMap.class));
                 return policyUnit;
