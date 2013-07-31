@@ -22,12 +22,16 @@ public class StringValueHelper extends BaseValueHelper {
         List<String> validValues = key.getValidValues();
 
         boolean isValid = false;
+        String details = "";
         if (validValues.isEmpty()) {
             isValid = true;
         } else {
             isValid = validValues.contains(value);
+            if (!isValid) {
+                details = "Valid values are "+key.getValidValues();
+            }
         }
-        return new ValidationResult(isValid);
+        return new ValidationResult(isValid, details);
     }
 
     @Override
