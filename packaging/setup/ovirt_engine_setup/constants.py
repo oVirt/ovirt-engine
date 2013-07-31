@@ -547,6 +547,7 @@ class Stages(object):
     AIO_CONFIG_AVAILABLE = 'osetup.aio.config.available'
     AIO_CONFIG_ROOT_PASSWORD = 'osetup.aio.config.rootpassword'
     AIO_CONFIG_STORAGE = 'osetup.aio.config.storage'
+    AIO_CONFIG_VDSM = 'osetup.aio.config.vdsm'
 
     UPGRADE_FROM_LEGACY_CONFIG = 'osetup.legacy.upgrade'
 
