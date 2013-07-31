@@ -36,7 +36,8 @@ Create or replace FUNCTION Updateasync_tasks(v_action_type INTEGER,
 	v_task_params_class varchar(256),
 	v_step_id UUID,
 	v_command_id UUID,
-	v_root_command_id UUID)
+	v_root_command_id UUID,
+        v_storage_pool_id UUID)
 RETURNS VOID
 
 	--The [async_tasks] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -53,7 +54,8 @@ BEGIN
           step_id = v_step_id,
           command_id = v_command_id,
           root_command_id = v_root_command_id,
-          vdsm_task_id = v_vdsm_task_id
+          vdsm_task_id = v_vdsm_task_id,
+          storage_pool_id = v_storage_pool_id
       WHERE task_id = v_task_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -80,7 +82,7 @@ BEGIN
             PERFORM Insertasync_tasks(v_action_type, v_result, v_status, v_vdsm_task_id, v_task_id, v_action_parameters,
             v_action_params_class, v_task_parameters, v_task_params_class, v_step_id, v_command_id, v_root_command_id, v_started_at, v_storage_pool_id, v_async_task_type);
       ELSE
-            PERFORM Updateasync_tasks(v_action_type, v_result, v_status, v_vdsm_task_id, v_task_id, v_action_parameters,  v_action_params_class, v_task_parameters, v_task_params_class, v_step_id, v_command_id, v_root_command_id);
+            PERFORM Updateasync_tasks(v_action_type, v_result, v_status, v_vdsm_task_id, v_task_id, v_action_parameters,  v_action_params_class, v_task_parameters, v_task_params_class, v_step_id, v_command_id, v_root_command_id,v_storage_pool_id);
       END IF;
 END; $procedure$
 LANGUAGE plpgsql;

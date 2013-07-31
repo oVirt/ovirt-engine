@@ -175,6 +175,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
         logNullParameters(task);
 
         AsyncTaskParameterSource parameterSource = getTaskParameterSource(task);
+        parameterSource.addValue("storage_pool_id", task.getStoragePoolId());
         getCallsHandler().executeModification("Updateasync_tasks", parameterSource);
     }
 
