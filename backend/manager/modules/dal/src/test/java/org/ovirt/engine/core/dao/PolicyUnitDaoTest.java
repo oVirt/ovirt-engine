@@ -55,6 +55,7 @@ public class PolicyUnitDaoTest extends BaseDAOTestCase {
         dummyPolicyUnit = new PolicyUnit();
         dummyPolicyUnit.setId(Guid.newGuid());
         dummyPolicyUnit.setName("Dummy policy unit");
+        dummyPolicyUnit.setDescription("Description");
         dummyPolicyUnit.setPolicyUnitType(PolicyUnitType.Filter);
         dummyPolicyUnit.setParameterRegExMap(new LinkedHashMap<String, String>());
     }
@@ -72,6 +73,7 @@ public class PolicyUnitDaoTest extends BaseDAOTestCase {
         Map<String, String> map = new LinkedHashMap<String, String>();
         map.put("A", "B");
         policyUnitToUpdate.setParameterRegExMap(map);
+        policyUnitToUpdate.setDescription("dummy description");
         dao.update(policyUnitToUpdate);
 
         PolicyUnit result = dao.get(policyUnitToUpdate.getId());
