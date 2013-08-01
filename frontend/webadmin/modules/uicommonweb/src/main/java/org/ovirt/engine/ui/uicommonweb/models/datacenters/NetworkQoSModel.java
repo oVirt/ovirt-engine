@@ -21,8 +21,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 public abstract class NetworkQoSModel extends Model {
 
 
-    private static Double AVERAGE_TO_BURST_RATIO;
-    private static Double AVERAGE_TO_PEAK_RATIO;
     private final ListModel sourceListModel;
     private ListModel dataCenters;
 
@@ -39,28 +37,22 @@ public abstract class NetworkQoSModel extends Model {
     protected NetworkQoS networkQoS = new NetworkQoS();
 
     public NetworkQoSModel(DataCenterNetworkQoSListModel sourceListModel) {
-        AVERAGE_TO_PEAK_RATIO = (Double) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.AverageToPeakRatio);
-        AVERAGE_TO_BURST_RATIO = (Double) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.AverageToBurstRatio);
-
-
         this.sourceListModel = sourceListModel;
         setName(new EntityModel());
         setDataCenters(new ListModel());
         getDataCenters().setSelectedItem(sourceListModel.getDataCenter());
         getDataCenters().setIsChangable(false);
-        setInboundAverage(new EntityModel());
-        setInboundPeak(new EntityModel());
-        setInboundBurst(new EntityModel());
-        setOutboundAverage(new EntityModel());
-        setOutboundPeak(new EntityModel());
-        setOutboundBurst(new EntityModel());
+        setInboundAverage(new EntityModel(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSInboundAverageDefaultValue)));
+        setInboundPeak(new EntityModel(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSInboundPeakDefaultValue)));
+        setInboundBurst(new EntityModel(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSInboundBurstDefaultValue)));
+        setOutboundAverage(new EntityModel(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSOutboundAverageDefaultValue)));
+        setOutboundPeak(new EntityModel(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSOutboundPeakDefaultValue)));
+        setOutboundBurst(new EntityModel(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSOutboundBurstDefaultValue)));
         addCommands();
         setInboundEnabled(new EntityModel(Boolean.TRUE));
         setOutboundEnabled(new EntityModel(Boolean.TRUE));
         getInboundEnabled().getEntityChangedEvent().addListener(this);
         getOutboundEnabled().getEntityChangedEvent().addListener(this);
-        getInboundAverage().getEntityChangedEvent().addListener(this);
-        getOutboundAverage().getEntityChangedEvent().addListener(this);
     }
 
     public ListModel getSourceListModel() {
@@ -180,39 +172,7 @@ public abstract class NetworkQoSModel extends Model {
             updateInboundAvailability();
         } else if (getOutboundEnabled().equals(sender)) {
             updateOutboundAvailability();
-        } else if (getInboundAverage().equals(sender)) {
-            updateInboundValues();
-        } else if (getOutboundAverage().equals(sender)) {
-            updateOutboundValues();
         }
-    }
-
-    private void updateOutboundValues() {
-        try {
-            int average = Integer.parseInt(getOutboundAverage().getEntity().toString());
-
-            if (getOutboundPeak().getEntity() == null || getOutboundPeak().getEntity() instanceof Integer) {
-                getOutboundPeak().setEntity((int) (average * AVERAGE_TO_PEAK_RATIO));
-            }
-            if (getOutboundBurst().getEntity() == null || getOutboundBurst().getEntity() instanceof Integer) {
-                getOutboundBurst().setEntity((int) (average * AVERAGE_TO_BURST_RATIO));
-            }
-
-        } catch (NumberFormatException ignored) {}
-    }
-
-    private void updateInboundValues() {
-        try {
-            int average = Integer.parseInt(getInboundAverage().getEntity().toString());
-
-            if (getInboundPeak().getEntity() == null || getInboundPeak().getEntity() instanceof Integer) {
-                getInboundPeak().setEntity((int) (average * AVERAGE_TO_PEAK_RATIO));
-            }
-            if (getInboundBurst().getEntity() == null || getInboundBurst().getEntity() instanceof Integer) {
-                getInboundBurst().setEntity((int) (average * AVERAGE_TO_BURST_RATIO));
-            }
-
-        } catch (NumberFormatException ignored) {}
     }
 
     private void updateOutboundAvailability() {

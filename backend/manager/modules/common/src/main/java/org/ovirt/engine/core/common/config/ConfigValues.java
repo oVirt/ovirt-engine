@@ -1437,17 +1437,17 @@ public enum ConfigValues {
     @DefaultValueAttribute("10240")
     MaxBurstNetworkQoSValue(519),
 
-    @TypeConverterAttribute(Double.class)
-    @DefaultValueAttribute("2.0")
-    AverageToPeakRatio(520),
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    QoSInboundAverageDefaultValue(520),
 
-    @TypeConverterAttribute(Double.class)
-    @DefaultValueAttribute("0.2")
-    AverageToBurstRatio(521),
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    QoSInboundPeakDefaultValue(521),
 
-    @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
-    NormalizedMgmgNetworkEnabled(522),
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("100")
+    QoSInboundBurstDefaultValue(522),
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
@@ -1460,6 +1460,22 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     IterationsWithBalloonProblem(525),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    QoSOutboundAverageDefaultValue(526),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    QoSOutboundPeakDefaultValue(527),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("100")
+    QoSOutboundBurstDefaultValue(528),
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    NormalizedMgmgNetworkEnabled(529),
 
     Invalid(65535);
 
