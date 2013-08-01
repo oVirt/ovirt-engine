@@ -185,17 +185,12 @@ class Plugin(plugin.PluginBase):
 
         rc, stdout, stderr = self.execute(
             args=(
-                self.command.get('openssl'),
-                'pkcs12',
-                '-in', (
-                    osetupcons.FileLocations.
-                    OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_STORE
-                ),
-                '-passin', 'pass:%s' % self.environment[
+                osetupcons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                '--name=websocket-proxy',
+                '--passin=%s' % self.environment[
                     osetupcons.PKIEnv.STORE_PASS
                 ],
-                '-nodes',
-                '-nocerts',
+                '--key=-',
             ),
             logStreams=False,
         )
