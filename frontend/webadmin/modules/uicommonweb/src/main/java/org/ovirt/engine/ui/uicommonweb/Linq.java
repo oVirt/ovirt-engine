@@ -35,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.comparators.NameableCompara
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -1101,6 +1102,25 @@ public final class Linq
             }
 
             return lexoNumeric.compare(net1.getName(), net2.getName());
+        }
+    }
+
+    public final static class VnicProfileViewComparator implements Comparator<VnicProfileView>, Serializable {
+
+        private static final long serialVersionUID = 990203400356561587L;
+        private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+        @Override
+        public int compare(VnicProfileView vnicProfile1, VnicProfileView vnicProfile2) {
+            if (vnicProfile1 == null) {
+                return vnicProfile2 == null ? 0 : 1;
+            } else if (vnicProfile2 == null) {
+                return -1;
+            }
+
+            int retVal = lexoNumeric.compare(vnicProfile1.getNetworkName(), vnicProfile2.getNetworkName());
+
+            return retVal == 0 ? lexoNumeric.compare(vnicProfile1.getName(), vnicProfile2.getName()) : retVal;
         }
     }
 

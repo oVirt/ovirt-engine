@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -302,6 +303,14 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
     @Override
     public VnicProfileView getEntity() {
         return (VnicProfileView) super.getEntity();
+    }
+
+    @Override
+    public void setItems(Iterable value) {
+        if (value != null) {
+            Collections.sort((List<VnicProfileView>) value, new Linq.VnicProfileViewComparator());
+        }
+        super.setItems(value);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
@@ -8,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -174,6 +176,14 @@ public class NetworkProfileListModel extends SearchableListModel
     protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
+    }
+
+    @Override
+    public void setItems(Iterable value) {
+        if (value != null) {
+            Collections.sort((List<VnicProfileView>) value, new Linq.VnicProfileViewComparator());
+        }
+        super.setItems(value);
     }
 
     @Override
