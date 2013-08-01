@@ -31,10 +31,25 @@ public interface StorageServerConnectionsResource {
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     public Response add(StorageConnection storageConnection);
 
+    /**
+     * Deletes the connection from the system, and disconnects the specified host from it
+     * @param id
+     * @param host
+     * @return
+     */
     @DELETE
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     @Path("{id}")
     public Response remove(@PathParam("id") String id, Host host);
+
+    /**
+     * Deletes the connection from the system
+     * @param id
+     * @return
+     */
+    @DELETE
+    @Path("{id}")
+    public Response remove(@PathParam("id") String id);
 
     /**
      * Sub-resource locator method, returns individual DataCenterResource on which the remainder of the URI is
