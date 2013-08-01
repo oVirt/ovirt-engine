@@ -282,33 +282,16 @@ class Plugin(plugin.PluginBase):
             )
 
         for f in (
-            {
-                'name': (
-                    osetupcons.FileLocations.
-                    OVIRT_ENGINE_PKI_ENGINE_STORE
-                ),
-                'owner': self.environment[osetupcons.SystemEnv.USER_ENGINE],
-            },
-            {
-                'name': osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_STORE,
-                'owner': None,
-            },
-            {
-                'name': osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
-                'owner': None,
-            },
-            {
-                'name': osetupcons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_STORE,
-                'owner': self.environment[osetupcons.SystemEnv.USER_ENGINE],
-            },
+            osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_STORE,
+            osetupcons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_STORE,
         ):
-            os.chmod(f['name'], 0o600)
-            if f['owner'] is not None:
-                os.chown(
-                    f['name'],
-                    osetuputil.getUid(f['owner']),
-                    -1
-                )
+            os.chown(
+                f,
+                osetuputil.getUid(
+                    self.environment[osetupcons.SystemEnv.USER_ENGINE]
+                ),
+                -1,
+            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
