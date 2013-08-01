@@ -55,11 +55,6 @@
 			padding: 5px;
 		}
 
-		.publicUseEditor {
-			padding: 0px;
-			width: 100%;
-		}
-
 	</ui:style>
 
 	<d:SimpleDialogPanel ui:field="mainPanel" width="670px" height="550px">
@@ -93,9 +88,6 @@
 										<e:EntityModelCheckBoxEditor ui:field="hasMtuEditor"/>
 										<e:EntityModelTextBoxOnlyEditor ui:field="mtuEditor" />
 									</g:HorizontalPanel>
-								</g:FlowPanel>
-								<g:FlowPanel addStyleNames="{style.sectionStyle}">
-									<e:EntityModelCheckBoxEditor ui:field="publicUseEditor"/>
 								</g:FlowPanel>
 							</g:FlowPanel>
                         </t:content>

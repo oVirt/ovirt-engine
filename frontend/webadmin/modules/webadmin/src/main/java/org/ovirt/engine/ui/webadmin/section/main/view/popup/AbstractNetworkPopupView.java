@@ -124,10 +124,6 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @UiField
     public WidgetStyle style;
 
-    @UiField(provided = true)
-    @Path(value = "publicUse.entity")
-    public final EntityModelCheckBoxEditor publicUseEditor;
-
     @UiField
     @Path(value = "networkLabel.entity")
     public EntityModelTextBoxEditor networkLabel;
@@ -173,7 +169,6 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         hasMtuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        publicUseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         this.clustersTable = new EntityModelCellTable<ListModel>(SelectionMode.NONE, true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTable(constants, templates);
@@ -198,7 +193,6 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         isVmNetworkEditor.setLabel(constants.vmNetworkLabel());
         vlanTagging.setLabel(constants.enableVlanTagLabel());
         hasMtuEditor.setLabel(constants.overrideMtuLabel());
-        publicUseEditor.setLabel(constants.networkPublicUseLabel());
 
         profilesLabel.setText(constants.profilesLabel());
     }
@@ -212,8 +206,6 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         vlanTagging.asCheckBox().addStyleName(style.checkBox());
         hasMtuEditor.addContentWidgetStyleName(style.checkBox());
         hasMtuEditor.asCheckBox().addStyleName(style.checkBox());
-        publicUseEditor.addContentWidgetStyleName(style.publicUseEditor());
-        publicUseEditor.asCheckBox().addStyleName(style.checkBox());
     }
 
     @Override
@@ -312,7 +304,6 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Override
     public void updateVisibility() {
         messageLabel.setVisible(false);
-        publicUseEditor.setVisible(false);
     }
 
     interface WidgetStyle extends CssResource {
@@ -321,8 +312,6 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         String vlanEditor();
 
         String checkBox();
-
-        String publicUseEditor();
     }
 
 }

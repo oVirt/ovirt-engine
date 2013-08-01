@@ -31,7 +31,6 @@ public class NewNetworkPopupView extends AbstractNetworkPopupView<NewNetworkMode
     public void updateVisibility() {
         super.updateVisibility();
         messageLabel.setVisible(false);
-        publicUseEditor.setVisible(true);
     }
 
     @Override

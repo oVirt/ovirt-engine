@@ -48,7 +48,6 @@ public abstract class NetworkModel extends Model
     private EntityModel privateHasMtu;
     private EntityModel privateMtu;
     private EntityModel privateIsVmNetwork;
-    private EntityModel publicUse;
     private boolean isSupportBridgesReportByVDSM = false;
     private boolean mtuOverrideSupported = false;
     private ListModel privateDataCenters;
@@ -119,7 +118,6 @@ public abstract class NetworkModel extends Model
         setIsVmNetwork(isVmNetwork);
         EntityModel publicUse = new EntityModel();
         publicUse.setEntity(true);
-        setPublicUse(publicUse);
 
         setProfiles(new ListModel());
 
@@ -239,14 +237,6 @@ public abstract class NetworkModel extends Model
     public void setIsVmNetwork(EntityModel value)
     {
         privateIsVmNetwork = value;
-    }
-
-    public EntityModel getPublicUse() {
-        return publicUse;
-    }
-
-    public void setPublicUse(EntityModel publicUse) {
-        this.publicUse = publicUse;
     }
 
     public boolean isSupportBridgesReportByVDSM() {
