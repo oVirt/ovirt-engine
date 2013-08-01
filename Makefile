@@ -312,9 +312,6 @@ install_artifacts:
 	install -dm 0755 "$(DESTDIR)$(PKG_EAR_DIR)"
 	find "$(MAVEN_OUTPUT_DIR)" -name '*.ear' -type f | grep -v tmp.repos | xargs -n 1 unzip -q -o -d "$(DESTDIR)$(PKG_EAR_DIR)"
 
-	# TODO: remove some day
-	sed -i "s/MYVERSION/$(DISPLAY_VERSION)/" "$(DESTDIR)$(PKG_EAR_DIR)/root.war/engineVersion.js"
-
 install_poms:
 	install -dm 755 "$(DESTDIR)$(MAVENPOM_DIR)"
 	install -m 644 backend/manager/modules/bll/pom.xml "$(DESTDIR)$(MAVENPOM_DIR)/$(PACKAGE_NAME)-bll.pom"
