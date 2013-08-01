@@ -749,20 +749,15 @@ public class IsoDomainListSyncronizer {
      * @return Iso Guid of active Iso, and null if not.
      */
     public Guid findActiveISODomain(Guid storagePoolId) {
-        Guid isoGuid = null;
         List<StorageDomain> domains = getStorageDomainDAO().getAllForStoragePool(
                 storagePoolId);
         for (StorageDomain domain : domains) {
-            if (domain.getStorageDomainType() == StorageDomainType.ISO) {
-                StorageDomain sd = getStorageDomainDAO().getForStoragePool(domain.getId(),
-                        storagePoolId);
-                if (sd != null && sd.getStatus() == StorageDomainStatus.Active) {
-                    isoGuid = sd.getId();
-                    break;
-                }
+            if (domain.getStorageDomainType() == StorageDomainType.ISO &&
+                    domain.getStatus() == StorageDomainStatus.Active) {
+                return domain.getId();
             }
         }
-        return isoGuid;
+        return null;
     }
 
     private StorageDomainDAO getStorageDomainDAO() {
