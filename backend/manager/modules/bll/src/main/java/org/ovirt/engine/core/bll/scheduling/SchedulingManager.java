@@ -13,6 +13,9 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
+import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerDiscoveryThread;
+import org.ovirt.engine.core.bll.scheduling.external.ExternalSchedulerFactory;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -61,7 +64,9 @@ public class SchedulingManager {
     /**
      * <policy unit id, policy unit> map
      */
-    private final ConcurrentHashMap<Guid, PolicyUnitImpl> policyUnits;
+    private volatile ConcurrentHashMap<Guid, PolicyUnitImpl> policyUnits;
+
+    private final Object policyUnitsLock = new Object();
 
     private final ConcurrentHashMap<Guid, Object> clusterLockMap = new ConcurrentHashMap<Guid, Object>();
 
@@ -78,6 +83,15 @@ public class SchedulingManager {
     private void init() {
         loadPolicyUnits();
         loadClusterPolicies();
+        ExternalSchedulerDiscoveryThread discoveryThread = new ExternalSchedulerDiscoveryThread();
+        discoveryThread.start();
+    }
+
+    public void reloadPolicyUnits() {
+        synchronized (policyUnitsLock) {
+            policyUnits = new ConcurrentHashMap<Guid, PolicyUnitImpl>();
+            loadPolicyUnits();
+        }
     }
 
     public List<ClusterPolicy> getClusterPolicies() {
@@ -114,7 +128,9 @@ public class SchedulingManager {
     }
 
     public Map<Guid, PolicyUnitImpl> getPolicyUnitsMap() {
-        return policyUnits;
+        synchronized (policyUnitsLock) {
+            return policyUnits;
+        }
     }
 
     protected void loadClusterPolicies() {
@@ -178,6 +194,7 @@ public class SchedulingManager {
                             policy.getFilterPositionMap(),
                             messages,
                             memoryChecker);
+
             if (vdsList == null || vdsList.size() == 0) {
                 return null;
             }
@@ -231,6 +248,7 @@ public class SchedulingManager {
                         policy.getFilterPositionMap(),
                         messages,
                         noWaitingMemoryChecker);
+
         if (vdsList == null || vdsList.size() == 0) {
             return false;
         }
@@ -259,7 +277,16 @@ public class SchedulingManager {
                         policy.getFilterPositionMap(),
                         messages,
                         memoryChecker);
+
         return destVdsList != null && destVdsList.size() == 1;
+    }
+
+    static List<Guid> getEntityIds(List<? extends BusinessEntity<Guid>> entities) {
+        ArrayList<Guid> ids = new ArrayList<>();
+        for (BusinessEntity<Guid> entity : entities) {
+            ids.add(entity.getId());
+        }
+        return ids;
     }
 
     protected Map<String, String> createClusterPolicyParameters(VDSGroup cluster) {
@@ -289,18 +316,83 @@ public class SchedulingManager {
             Map<String, String> parameters,
             Map<Guid, Integer> filterPositionMap,
             List<String> messages, VdsFreeMemoryChecker memoryChecker) {
+        ArrayList<PolicyUnitImpl> internalFilters = new ArrayList<PolicyUnitImpl>();
+        ArrayList<PolicyUnitImpl> externalFilters = new ArrayList<PolicyUnitImpl>();
+        sortFilters(filters, filterPositionMap);
         if (filters != null) {
-            sortFilters(filters, filterPositionMap);
             for (Guid filter : filters) {
+                PolicyUnitImpl filterPolicyUnit = policyUnits.get(filter);
+                if (filterPolicyUnit.isInternal()){
+                    internalFilters.add(filterPolicyUnit);
+                } else {
+                    if (filterPolicyUnit.isEnabled()) {
+                        externalFilters.add(filterPolicyUnit);
+                    }
+                }
+            }
+        }
+
+        hostList =
+                runInternalFilters(internalFilters, hostList, vm, parameters, filterPositionMap, messages, memoryChecker);
+
+        if (Config.GetValue(ConfigValues.ExternalSchedulerEnabled)){
+            hostList = runExternalFilters(externalFilters, hostList, vm, parameters, messages);
+        }
+
+        return hostList;
+    }
+
+    private List<VDS> runInternalFilters(ArrayList<PolicyUnitImpl> filters,
+            List<VDS> hostList,
+            VM vm,
+            Map<String, String> parameters,
+            Map<Guid, Integer> filterPositionMap,
+            List<String> messages, VdsFreeMemoryChecker memoryChecker) {
+        if (filters != null) {
+            for (PolicyUnitImpl filterPolicyUnit : filters) {
                 if (hostList == null || hostList.isEmpty()) {
                     break;
                 }
-                PolicyUnitImpl filterPolicyUnit = policyUnits.get(filter);
                 filterPolicyUnit.setMemoryChecker(memoryChecker);
                 hostList = filterPolicyUnit.filter(hostList, vm, parameters, messages);
             }
         }
         return hostList;
+    }
+
+    private List<VDS> runExternalFilters(ArrayList<PolicyUnitImpl> filters,
+            List<VDS> hostList,
+            VM vm,
+            Map<String, String> parameters,
+            List<String> messages) {
+        List<Guid> filteredIDs = null;
+        if (filters != null) {
+            List<String> filterNames = new ArrayList<String>();
+            for (PolicyUnitImpl filter : filters) {
+                filterNames.add(filter.getName());
+            }
+            List<Guid> hostIDs = new ArrayList<Guid>();
+            for (VDS host : hostList) {
+                hostIDs.add(host.getId());
+            }
+            filteredIDs =
+                    ExternalSchedulerFactory.getInstance().runFilters(filterNames, hostIDs, vm.getId(), parameters);
+        }
+
+        return intersectHosts(hostList, filteredIDs);
+    }
+
+    private List<VDS> intersectHosts(List<VDS> hosts, List<Guid> IDs) {
+        if (IDs == null) {
+            return hosts;
+        }
+        List<VDS> retList = new ArrayList<VDS>();
+        for (VDS vds : hosts) {
+            if (IDs.contains(vds.getId())) {
+                retList.add(vds);
+            }
+        }
+        return retList;
     }
 
     private void sortFilters(ArrayList<Guid> filters, final Map<Guid, Integer> filterPositionMap) {
@@ -328,17 +420,26 @@ public class SchedulingManager {
             List<VDS> hostList,
             VM vm,
             Map<String, String> parameters) {
-        Map<Guid, Integer> hostCostTable = new HashMap<Guid, Integer>();
+        ArrayList<Pair<PolicyUnitImpl, Integer>> internalScoreFunctions =
+                new ArrayList<Pair<PolicyUnitImpl, Integer>>();
+        ArrayList<Pair<PolicyUnitImpl, Integer>> externalScoreFunctions =
+                new ArrayList<Pair<PolicyUnitImpl, Integer>>();
+
         for (Pair<Guid, Integer> pair : functions) {
-            List<Pair<Guid, Integer>> scoreResult = policyUnits.get(pair.getFirst()).score(hostList, vm, parameters);
-            for (Pair<Guid, Integer> result : scoreResult) {
-                Guid hostId = result.getFirst();
-                if (hostCostTable.get(hostId) == null) {
-                    hostCostTable.put(hostId, 0);
+            PolicyUnitImpl currentPolicy = policyUnits.get(pair.getFirst());
+            if(currentPolicy.isInternal()){
+                internalScoreFunctions.add(new Pair<PolicyUnitImpl, Integer>(currentPolicy, pair.getSecond()));
+            } else {
+                if (currentPolicy.isEnabled()) {
+                    externalScoreFunctions.add(new Pair<PolicyUnitImpl, Integer>(currentPolicy, pair.getSecond()));
                 }
-                hostCostTable.put(hostId,
-                        hostCostTable.get(hostId) + pair.getSecond() * result.getSecond());
             }
+        }
+
+        Map<Guid, Integer> hostCostTable = runInternalFunctions(internalScoreFunctions, hostList, vm, parameters);
+
+        if (Config.GetValue(ConfigValues.ExternalSchedulerEnabled)) {
+            runExternalFunctions(externalScoreFunctions, hostList, vm, parameters, hostCostTable);
         }
         Entry<Guid, Integer> bestHostEntry = null;
         for (Entry<Guid, Integer> entry : hostCostTable.entrySet()) {
@@ -350,6 +451,58 @@ public class SchedulingManager {
             return null;
         }
         return bestHostEntry.getKey();
+    }
+
+    private Map<Guid, Integer> runInternalFunctions(ArrayList<Pair<PolicyUnitImpl, Integer>> functions,
+            List<VDS> hostList,
+            VM vm,
+            Map<String, String> parameters) {
+        Map<Guid, Integer> hostCostTable = new HashMap<Guid, Integer>();
+        for (Pair<PolicyUnitImpl, Integer> pair : functions) {
+            List<Pair<Guid, Integer>> scoreResult = pair.getFirst().score(hostList, vm, parameters);
+            for (Pair<Guid, Integer> result : scoreResult) {
+                Guid hostId = result.getFirst();
+                if (hostCostTable.get(hostId) == null) {
+                    hostCostTable.put(hostId, 0);
+                }
+                hostCostTable.put(hostId,
+                        hostCostTable.get(hostId) + pair.getSecond() * result.getSecond());
+            }
+        }
+        return hostCostTable;
+    }
+
+    private void runExternalFunctions(ArrayList<Pair<PolicyUnitImpl, Integer>> functions,
+            List<VDS> hostList,
+            VM vm,
+            Map<String, String> parameters,
+            Map<Guid, Integer> hostCostTable) {
+        List<Pair<String, Integer>> scoreNameAndWeight = new ArrayList<Pair<String, Integer>>();
+        for (Pair<PolicyUnitImpl, Integer> pair : functions) {
+            scoreNameAndWeight.add(new Pair<String, Integer>(pair.getFirst().getName(), pair.getSecond()));
+        }
+
+        List<Guid> hostIDs = new ArrayList<Guid>();
+        for (VDS vds : hostList) {
+            hostIDs.add(vds.getId());
+        }
+        List<Pair<Guid, Integer>> externalScores =
+                ExternalSchedulerFactory.getInstance().runScores(scoreNameAndWeight,
+                        hostIDs,
+                        vm.getId(),
+                        parameters);
+        sumScoreResults(hostCostTable, externalScores);
+    }
+
+    private void sumScoreResults(Map<Guid, Integer> hostCostTable, List<Pair<Guid, Integer>> externalScores) {
+        for (Pair<Guid, Integer> pair : externalScores) {
+            Guid hostId = pair.getFirst();
+            if (hostCostTable.get(hostId) == null) {
+                hostCostTable.put(hostId, 0);
+            }
+            hostCostTable.put(hostId,
+                    hostCostTable.get(hostId) + pair.getSecond());
+        }
     }
 
     public Map<String, String> getCustomPropertiesRegexMap(ClusterPolicy clusterPolicy) {
@@ -428,16 +581,39 @@ public class SchedulingManager {
         for (VDSGroup cluster : clusters) {
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             PolicyUnitImpl policyUnit = policyUnits.get(policy.getBalance());
-            List<VDS> hosts = getVdsDAO()
-                    .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode });
-            Pair<List<Guid>, Guid> pair = policyUnit.balance(cluster,
-                    hosts,
-                    cluster.getClusterPolicyProperties(),
-                    new ArrayList<String>());
-            if (pair != null && pair.getSecond() != null) {
-                migrationHandler.migrateVM((ArrayList<Guid>) pair.getFirst(), pair.getSecond());
+            Pair<List<Guid>, Guid> balanceResult = null;
+            if (policyUnit.isInternal()){
+                balanceResult = internalRunBalance(policyUnit, cluster);
+            } else if (Config.GetValue(ConfigValues.ExternalSchedulerEnabled)) {
+                if (policyUnit.isEnabled()) {
+                    balanceResult = externalRunBalance(policyUnit, cluster);
+                }
+            }
+
+            if (balanceResult != null && balanceResult.getSecond() != null) {
+                migrationHandler.migrateVM((ArrayList<Guid>) balanceResult.getFirst(), balanceResult.getSecond());
             }
         }
+    }
+
+    private Pair<List<Guid>, Guid> internalRunBalance(PolicyUnitImpl policyUnit, VDSGroup cluster) {
+        List<VDS> hosts = getVdsDAO()
+                .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode });
+        return policyUnit.balance(cluster,
+                hosts,
+                cluster.getClusterPolicyProperties(),
+                new ArrayList<String>());
+    }
+
+    private Pair<List<Guid>, Guid> externalRunBalance(PolicyUnitImpl policyUnit, VDSGroup cluster){
+        List<VDS> hosts = getVdsDAO()
+                .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode });
+        List<Guid> hostIDs = new ArrayList<Guid>();
+        for (VDS vds : hosts) {
+            hostIDs.add(vds.getId());
+        }
+        return ExternalSchedulerFactory.getInstance()
+                .runBalance(policyUnit.getName(), hostIDs, cluster.getClusterPolicyProperties());
     }
 
 }

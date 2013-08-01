@@ -587,6 +587,11 @@ select fn_db_add_config_value('MaxBurstNetworkQoSValue','10240','general');
 select fn_db_add_config_value('AverageToPeakRatio','2.0','general');
 select fn_db_add_config_value('AverageToBurstRatio','0.2','general');
 
+--external scheduler
+select fn_db_add_config_value('ExternalSchedulerServiceURL','http://localhost:18781/','general');
+select fn_db_add_config_value('ExternalSchedulerConnectionTimeout','100','general');
+select fn_db_add_config_value('ExternalSchedulerEnabled','false','general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
