@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.Storage;
+import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnections;
 
 @Path("/storageconnections")
@@ -29,7 +29,7 @@ public interface StorageServerConnectionsResource {
     @POST
     @Formatted
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
-    public Response add(Storage storageConnection);
+    public Response add(StorageConnection storageConnection);
 
     @DELETE
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })

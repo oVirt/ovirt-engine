@@ -1993,7 +1993,24 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="StorageDomain">
+ <xs:element name="storage_connection" type="StorageConnection"/>
+
+    <xs:complexType name="StorageConnection">
+        <xs:complexContent>
+            <xs:extension base="BaseResource">
+                <xs:sequence>
+                    <xs:group ref="BaseStorageConnection"/>
+                    <xs:choice>
+                        <xs:group ref="FileStorageConnection"/>
+                        <xs:group ref="IscsiStorageConnection"/>
+                    </xs:choice>
+                    <xs:element ref="host" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:complexType name="StorageDomain">
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
@@ -2054,7 +2071,7 @@
                 <jaxb:property name="StorageConnections"/>
             </xs:appinfo>
           </xs:annotation>
-          <xs:element ref="storage" minOccurs="0" maxOccurs="unbounded"/>
+          <xs:element ref="storage_connection" minOccurs="0" maxOccurs="unbounded"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

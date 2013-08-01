@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import org.junit.Test;
 import org.ovirt.engine.api.model.NfsVersion;
 import org.ovirt.engine.api.model.Storage;
+import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
@@ -117,7 +118,7 @@ public class StorageDomainMapperTest extends
         RESTConnection.setAddress("1.2.135.255");
         RESTConnection.setUsername("myuser1");
 
-        Storage mappedResult = StorageDomainMapper.map(connection,null);
+        StorageConnection mappedResult = StorageDomainMapper.map(connection,null);
         assertEquals(RESTConnection.getId(),mappedResult.getId());
         // Although password was set on StorageServerConnections object, it should not be returned via REST
         // thus testing here that it remains empty.
@@ -148,7 +149,7 @@ public class StorageDomainMapperTest extends
         RESTConnection.setNfsTimeo(400);
         RESTConnection.setNfsVersion(NfsVersion.V3.toString());
 
-        Storage mappedResult = StorageDomainMapper.map(connection,null);
+        StorageConnection mappedResult = StorageDomainMapper.map(connection,null);
         assertEquals(RESTConnection.getId(),mappedResult.getId());
         assertEquals(RESTConnection.getType(),mappedResult.getType());
         assertEquals(RESTConnection.getAddress(),mappedResult.getAddress());
@@ -176,7 +177,7 @@ public class StorageDomainMapperTest extends
         RESTConnection.setVfsType("nfs");
         RESTConnection.setMountOptions("timeo=30");
 
-        Storage mappedResult = StorageDomainMapper.map(connection,null);
+        StorageConnection mappedResult = StorageDomainMapper.map(connection,null);
         assertEquals(RESTConnection.getId(),mappedResult.getId());
         assertEquals(RESTConnection.getType(),mappedResult.getType());
         assertEquals(RESTConnection.getAddress(),mappedResult.getAddress());
@@ -195,7 +196,7 @@ public class StorageDomainMapperTest extends
         connection.setVfsType("nfs");
         connection.setMountOptions("timeo=30");
 
-        Storage RESTConnection = new Storage();
+        StorageConnection RESTConnection = new StorageConnection();
         RESTConnection.setId(connId.toString());
         RESTConnection.setType(StorageType.POSIXFS.toString().toLowerCase());
         RESTConnection.setAddress("1.2.135.255");
@@ -222,7 +223,7 @@ public class StorageDomainMapperTest extends
         connection.setNfsTimeo((short) 400);
         connection.setNfsVersion(org.ovirt.engine.core.common.businessentities.NfsVersion.V3);
 
-        Storage RESTConnection = new Storage();
+        StorageConnection RESTConnection = new StorageConnection();
         RESTConnection.setId(connId.toString());
         RESTConnection.setType(StorageType.NFS.toString().toLowerCase());
         RESTConnection.setAddress("1.2.135.255");
@@ -252,7 +253,7 @@ public class StorageDomainMapperTest extends
         connection.setuser_name("myuser1");
         connection.setpassword("123");
 
-        Storage RESTConnection = new Storage();
+        StorageConnection RESTConnection = new StorageConnection();
         RESTConnection.setId(connId.toString());
         RESTConnection.setType(StorageType.ISCSI.toString().toLowerCase());
         RESTConnection.setPort(3260);

@@ -62,6 +62,7 @@ import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.Storage;
+import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Tag;
 import org.ovirt.engine.api.model.Template;
@@ -269,9 +270,11 @@ public class LinkHelper {
         map = new ParentToCollectionMap(SnapshotResource.class, SnapshotsResource.class, VM.class);
         TYPES.put(Snapshot.class, map);
 
-        map = new ParentToCollectionMap(StorageServerConnectionResource.class, StorageServerConnectionsResource.class);
-        map.add(StorageResource.class, HostStorageResource.class, Host.class);
+        map = new ParentToCollectionMap(StorageResource.class, HostStorageResource.class, Host.class);
         TYPES.put(Storage.class, map);
+
+        map = new ParentToCollectionMap(StorageServerConnectionResource.class, StorageServerConnectionsResource.class);
+        TYPES.put(StorageConnection.class, map);
 
         map = new ParentToCollectionMap(StorageDomainResource.class, StorageDomainsResource.class);
         map.add(AttachedStorageDomainResource.class, AttachedStorageDomainsResource.class, DataCenter.class);

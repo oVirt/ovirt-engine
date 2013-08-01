@@ -11,7 +11,7 @@ import javax.ws.rs.core.Response;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.Storage;
+import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -20,7 +20,7 @@ import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParamete
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
-public class BackendStorageServerConnectionsResourceTest extends AbstractBackendCollectionResourceTest<Storage, StorageServerConnections, BackendStorageServerConnectionsResource> {
+public class BackendStorageServerConnectionsResourceTest extends AbstractBackendCollectionResourceTest<StorageConnection, StorageServerConnections, BackendStorageServerConnectionsResource> {
 
     protected static final org.ovirt.engine.core.common.businessentities.StorageType STORAGE_TYPES_MAPPED[] = {
             org.ovirt.engine.core.common.businessentities.StorageType.NFS,
@@ -39,7 +39,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
     }
 
     @Override
-    protected List<Storage> getCollection() {
+    protected List<StorageConnection> getCollection() {
         return collection.list().getStorageConnections();
     }
 
@@ -48,8 +48,8 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
         return setUpEntityExpectations(control.createMock(StorageServerConnections.class), index);
     }
 
-    Storage getModel(int index) {
-        Storage model = new Storage();
+    StorageConnection getModel(int index) {
+        StorageConnection model = new StorageConnection();
         model.setType(STORAGE_TYPES_MAPPED[index].toString());
         if ( index == 0 || index == 3 ) {
             model.setAddress("1.1.1.1");
@@ -89,7 +89,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
     }
 
     @Override
-    protected void verifyCollection(List<Storage> collection) throws Exception {
+    protected void verifyCollection(List<StorageConnection> collection) throws Exception {
         assertNotNull(collection);
         assertEquals(GUIDS.length, collection.size());
     }
@@ -195,8 +195,8 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
 
         Response response = collection.add(getModel(0));
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof Storage);
-        verifyModel((Storage) response.getEntity(), 0);
+        assertTrue(response.getEntity() instanceof StorageConnection);
+        verifyModel((StorageConnection) response.getEntity(), 0);
     }
 
     @Test
@@ -222,8 +222,8 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
 
         Response response = collection.add(getModel(1));
         assertEquals(201, response.getStatus());
-        assertTrue(response.getEntity() instanceof Storage);
-        verifyModel((Storage) response.getEntity(), 1);
+        assertTrue(response.getEntity() instanceof StorageConnection);
+        verifyModel((StorageConnection) response.getEntity(), 1);
     }
 
     @Test
@@ -256,7 +256,7 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
         }
     }
 
-    protected void verifyModel(Storage model, int index) {
+    protected void verifyModel(StorageConnection model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(STORAGE_TYPES_MAPPED[index].toString().toLowerCase(), model.getType());
         verifyLinks(model);

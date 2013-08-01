@@ -1,7 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.Storage;
+import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -14,23 +14,23 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendStorageServerConnectionResource extends
-        AbstractBackendSubResource<Storage, org.ovirt.engine.core.common.businessentities.StorageServerConnections> implements StorageServerConnectionResource {
+        AbstractBackendSubResource<StorageConnection, org.ovirt.engine.core.common.businessentities.StorageServerConnections> implements StorageServerConnectionResource {
     private BackendStorageServerConnectionsResource parent;
 
     public BackendStorageServerConnectionResource(String id, BackendStorageServerConnectionsResource parent) {
-        super(id, Storage.class, StorageServerConnections.class);
+        super(id, StorageConnection.class, StorageServerConnections.class);
         this.parent = parent;
     }
 
     @Override
-    public Storage get() {
+    public StorageConnection get() {
         return performGet(VdcQueryType.GetStorageServerConnectionById,
                 new StorageServerConnectionQueryParametersBase(guid.toString()));
     }
 
     @Override
-    public Storage update(Storage connection) {
-        validateEnums(Storage.class, connection);
+    public StorageConnection update(StorageConnection connection) {
+        validateEnums(StorageConnection.class, connection);
         return performUpdate(connection,
                 new QueryIdResolver<String>(VdcQueryType.GetStorageServerConnectionById,
                         StorageServerConnectionQueryParametersBase.class),
@@ -39,7 +39,7 @@ public class BackendStorageServerConnectionResource extends
     }
 
     @Override
-    protected Storage doPopulate(Storage model, StorageServerConnections entity) {
+    protected StorageConnection doPopulate(StorageConnection model, StorageServerConnections entity) {
         return model;
     }
 
@@ -48,9 +48,9 @@ public class BackendStorageServerConnectionResource extends
     }
 
     protected class UpdateParametersProvider implements
-            ParametersProvider<Storage, StorageServerConnections> {
+            ParametersProvider<StorageConnection, StorageServerConnections> {
         @Override
-        public VdcActionParametersBase getParameters(Storage incoming, StorageServerConnections entity) {
+        public VdcActionParametersBase getParameters(StorageConnection incoming, StorageServerConnections entity) {
             StorageServerConnections connection = map(incoming, entity);
             Guid hostId = Guid.Empty;
             if (incoming.getHost() != null) {

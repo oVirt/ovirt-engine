@@ -6,7 +6,7 @@ import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.Storage;
+import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
-public class BackendStorageServerConnectionResourceTest extends AbstractBackendSubResourceTest<Storage, StorageServerConnections, BackendStorageServerConnectionResource> {
+public class BackendStorageServerConnectionResourceTest extends AbstractBackendSubResourceTest<StorageConnection, StorageServerConnections, BackendStorageServerConnectionResource> {
     protected static final org.ovirt.engine.core.common.businessentities.StorageType STORAGE_TYPES_MAPPED[] = {
             org.ovirt.engine.core.common.businessentities.StorageType.NFS,
             org.ovirt.engine.core.common.businessentities.StorageType.LOCALFS,
@@ -150,8 +150,8 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         return entity;
     }
 
-    Storage getModel(int index) {
-        Storage model = new Storage();
+    StorageConnection getModel(int index) {
+        StorageConnection model = new StorageConnection();
         model.setType(STORAGE_TYPES_MAPPED[index].toString());
         model.setAddress("1.122.10.125");
         Host host = new Host();
@@ -166,7 +166,7 @@ public class BackendStorageServerConnectionResourceTest extends AbstractBackendS
         return model;
     }
 
-    protected void verifyModel(Storage model, int index) {
+    protected void verifyModel(StorageConnection model, int index) {
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(STORAGE_TYPES_MAPPED[index].toString().toLowerCase(), model.getType());
         verifyLinks(model);

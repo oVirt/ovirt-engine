@@ -5,6 +5,7 @@ import org.ovirt.engine.api.common.util.SizeConverter;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.NfsVersion;
 import org.ovirt.engine.api.model.Storage;
+import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomainStatus;
 import org.ovirt.engine.api.model.StorageDomainType;
@@ -149,8 +150,8 @@ public class StorageDomainMapper {
         return model;
     }
 
-    @Mapping(from = Storage.class, to = StorageServerConnections.class)
-    public static StorageServerConnections map(Storage model, StorageServerConnections template) {
+    @Mapping(from = StorageConnection.class, to = StorageServerConnections.class)
+    public static StorageServerConnections map(StorageConnection model, StorageServerConnections template) {
         StorageServerConnections entity = template != null ? template : new StorageServerConnections();
         if (model.isSetId()) {
             entity.setid(model.getId());
@@ -248,9 +249,9 @@ public class StorageDomainMapper {
     }
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.StorageServerConnections.class,
-            to = org.ovirt.engine.api.model.Storage.class)
-    public static Storage map(StorageServerConnections entity, Storage template) {
-        Storage model = template != null ? template : new Storage();
+            to = org.ovirt.engine.api.model.StorageConnection.class)
+    public static StorageConnection map(StorageServerConnections entity, StorageConnection template) {
+        StorageConnection model = template != null ? template : new StorageConnection();
         model.setId(entity.getid());
         model.setType(map(entity.getstorage_type(), null));
         if (entity.getstorage_type() == org.ovirt.engine.core.common.businessentities.StorageType.ISCSI) {
@@ -280,7 +281,7 @@ public class StorageDomainMapper {
         return model;
     }
 
-    private static void setPath(StorageServerConnections entity, Storage model) {
+    private static void setPath(StorageServerConnections entity, StorageConnection model) {
         if (entity.getconnection().contains(":")) {
             String[] parts = entity.getconnection().split(":");
             model.setAddress(parts[0]);

@@ -5,7 +5,7 @@ import java.util.List;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Host;
-import org.ovirt.engine.api.model.Storage;
+import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnections;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
 import org.ovirt.engine.api.resource.StorageServerConnectionsResource;
@@ -17,14 +17,14 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendStorageServerConnectionsResource extends AbstractBackendCollectionResource<Storage, StorageServerConnections> implements StorageServerConnectionsResource {
+public class BackendStorageServerConnectionsResource extends AbstractBackendCollectionResource<StorageConnection, StorageServerConnections> implements StorageServerConnectionsResource {
     private final EntityIdResolver<String> ENTITY_RETRIEVER =
             new QueryIdResolver<String>(VdcQueryType.GetStorageServerConnectionById,
                     StorageServerConnectionQueryParametersBase.class);
     private Host host = null; // host used for removal of connection
 
     public BackendStorageServerConnectionsResource() {
-        super(Storage.class, org.ovirt.engine.core.common.businessentities.StorageServerConnections.class);
+        super(StorageConnection.class, org.ovirt.engine.core.common.businessentities.StorageServerConnections.class);
     }
 
     @Override
@@ -34,14 +34,14 @@ public class BackendStorageServerConnectionsResource extends AbstractBackendColl
     }
 
     @Override
-    protected Storage doPopulate(Storage model, StorageServerConnections entity) {
+    protected StorageConnection doPopulate(StorageConnection model, StorageServerConnections entity) {
         return model;
     }
 
     private StorageConnections mapCollection(List<StorageServerConnections> entities) {
         StorageConnections collection = new StorageConnections();
         for (org.ovirt.engine.core.common.businessentities.StorageServerConnections entity : entities) {
-            Storage connection = map(entity);
+            StorageConnection connection = map(entity);
             if (connection != null) {
                 collection.getStorageConnections().add(addLinks(populate(connection,entity)));
             }
@@ -50,30 +50,30 @@ public class BackendStorageServerConnectionsResource extends AbstractBackendColl
     }
 
     @Override
-    public Response add(Storage storage) {
-        validateParameters(storage, "type");
+    public Response add(StorageConnection storageConn) {
+        validateParameters(storageConn, "type");
         // map to backend object
         StorageServerConnections storageConnection =
-                getMapper(Storage.class, StorageServerConnections.class).map(storage, null);
+                getMapper(StorageConnection.class, StorageServerConnections.class).map(storageConn, null);
 
         Guid hostId = Guid.Empty;
-        if (storage.getHost() != null) {
-           hostId = getHostId(storage.getHost());
+        if (storageConn.getHost() != null) {
+           hostId = getHostId(storageConn.getHost());
         }
         switch (storageConnection.getstorage_type()) {
         case ISCSI:
-            validateParameters(storage, "address", "target", "port");
+            validateParameters(storageConn, "address", "target", "port");
             break;
         case NFS:
-            validateParameters(storage, "address", "path");
+            validateParameters(storageConn, "address", "path");
             break;
         case LOCALFS:
-            validateParameters(storage, "path");
+            validateParameters(storageConn, "path");
             break;
         case POSIXFS:
         case GLUSTERFS:
             // address is possible, but is optional, non mandatory
-            validateParameters(storage, "path", "vfsType");
+            validateParameters(storageConn, "path", "vfsType");
             break;
         default:
             break;
