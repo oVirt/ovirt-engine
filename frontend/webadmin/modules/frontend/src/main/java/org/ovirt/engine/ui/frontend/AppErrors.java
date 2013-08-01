@@ -76,7 +76,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("VM Name cannot be empty.")
     String VM_NAME_CANNOT_BE_EMPTY();
 
-    @DefaultStringValue("Failed updating the properties of the VM. This may be caused either by:\n1. The values selected are not appropriate for the VM; or\n2. Its values cannot be updated while the VM is in UP state (Please shut down the VM in order to modify properties such as CPU or cluster).")
+    @DefaultStringValue("There was an attempt to change VM values while the VM is not down. Please shut down the VM in order to modify these properties.")
     String VM_CANNOT_UPDATE_ILLEGAL_FIELD();
 
     @DefaultStringValue("VM is configured to be 'Network bootable', but no Network Interface is configured.\nAlternatives:\n-Select a different boot device (using the 'Run Once' command or 'Edit VM' command on Boot Option Sub-Tab).\n-Configure Network Interface and rerun the VM.")
