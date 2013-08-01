@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.permissions;
@@ -142,8 +143,19 @@ public class AddPermissionCommand<T extends PermissionsOperationsParametes> exte
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         permissions permission = getParameters().getPermission();
-        return Collections.singletonList(new PermissionSubject(permission.getObjectId(),
+        List<PermissionSubject> permissionsSubject = new ArrayList<>();
+        permissionsSubject.add(new PermissionSubject(permission.getObjectId(),
                 permission.getObjectType(),
                 getActionType().getActionGroup()));
+        initUserAndGroupData();
+        // if the user does not exist in the database we need to
+        // check if the logged in user has permissions to add another
+        // user from the directory service
+        if (getParameters().getVdcUser() != null && _dbUser == null) {
+            permissionsSubject.add(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
+                VdcObjectType.System,
+                VdcActionType.AddUser.getActionGroup()));
+        }
+        return permissionsSubject;
     }
 }
