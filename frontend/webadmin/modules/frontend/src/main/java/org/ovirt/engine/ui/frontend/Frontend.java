@@ -778,6 +778,7 @@ public class Frontend {
             public void onSuccess(final VdcReturnValueBase result) {
                 logger.finer("Succesful returned result from Login."); //$NON-NLS-1$
                 setLoggedInUser(null);
+                result.setCanDoActionMessages((ArrayList<String>) translateError(result));
                 callback.getDel().onSuccess(callback.getModel(), result);
                 if (getLoginHandler() != null && result.getSucceeded()) {
                     getLoginHandler().onLoginSuccess(userName, password, domain);
