@@ -47,9 +47,6 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -81,8 +78,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -93,8 +88,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         implements QuotaVdsDependent {
 
     private static final RunVmValidator runVmValidator = new RunVmValidator();
-    private String _cdImagePath = "";
-    private String _floppyImagePath = "";
+    private String cdImagePath = "";
+    private String floppyImagePath = "";
     private boolean mResume;
     /** Note: this field should not be used directly, use {@link #isVmRunningStateless()} instead */
     private Boolean cachedVmIsRunningStateless;
@@ -106,6 +101,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     /** This flag is used to indicate that the disks might be dirty since the memory
      *  from the active snapshot was restored so the memory should not be used */
     private boolean memoryFromSnapshotIrrelevant;
+
+    public static final String ISO_PREFIX = "iso://";
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
@@ -136,12 +133,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private void initRunVmCommand() {
         RunVmParams runVmParameters = getParameters();
         if (!StringUtils.isEmpty(runVmParameters.getDiskPath())) {
-            _cdImagePath = ImagesHandler.cdPathWindowsToLinux(runVmParameters.getDiskPath(), getVm()
-                    .getStoragePoolId());
+            cdImagePath = cdPathWindowsToLinux(runVmParameters.getDiskPath());
         }
         if (!StringUtils.isEmpty(runVmParameters.getFloppyPath())) {
-            _floppyImagePath = ImagesHandler.cdPathWindowsToLinux(runVmParameters.getFloppyPath(), getVm()
-                    .getStoragePoolId());
+            floppyImagePath = cdPathWindowsToLinux(runVmParameters.getFloppyPath());
         }
 
         if (getVm() != null) {
@@ -190,14 +185,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * @return String of the full file path.
      */
     protected String getIsoPrefixFilePath(String url) {
-        String isoPrefixName = "iso://";
         // The initial Url.
         String fullPathFileName = url;
 
         // If file name got prefix of iso:// then set the path to the Iso domain.
-        int prefixLength = isoPrefixName.length();
-        if (url.length() >= prefixLength && (url.substring(0, prefixLength)).equalsIgnoreCase(isoPrefixName)) {
-            fullPathFileName = cdPathWindowsToLinux(url.substring(prefixLength, url.length()));
+        int prefixLength = ISO_PREFIX.length();
+        if (url.length() >= prefixLength && (url.substring(0, prefixLength)).equalsIgnoreCase(ISO_PREFIX)) {
+            fullPathFileName = cdPathWindowsToLinux(url.substring(prefixLength));
         }
         return fullPathFileName;
     }
@@ -328,15 +322,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private void attachCd() {
         Guid storagePoolId = getVm().getStoragePoolId();
 
-        boolean isIsoFound = (getIsoDomainListSyncronizer().findActiveISODomain(storagePoolId) != null);
-        if (isIsoFound) {
+        // if iso domain found
+        if (getIsoDomainListSyncronizer().findActiveISODomain(storagePoolId) != null) {
             if (StringUtils.isEmpty(getVm().getCdPath())) {
                 getVm().setCdPath(getVm().getIsoPath());
                 guestToolsVersionTreatment();
                 if (getVm().getBootSequence() != null && getVm().getBootSequence().containsSubsequence(BootSequence.D)) {
                     getVm().setCdPath(getVm().getIsoPath());
                 }
-                getVm().setCdPath(ImagesHandler.cdPathWindowsToLinux(getVm().getCdPath(), getVm().getStoragePoolId()));
+                getVm().setCdPath(cdPathWindowsToLinux(getVm().getCdPath()));
             }
         } else if (!StringUtils.isEmpty(getVm().getIsoPath())) {
             getVm().setCdPath("");
@@ -602,8 +596,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         } else {
             handleMemoryAdjustments();
             VmHandler.updateDisksFromDb(getVm());
-            getVm().setCdPath(_cdImagePath);
-            getVm().setFloppyPath(_floppyImagePath);
+            getVm().setCdPath(cdImagePath);
+            getVm().setFloppyPath(floppyImagePath);
             getVm().setKvmEnable(getParameters().getKvmEnable());
             getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
             getVm().setAcpiEnable(getParameters().getAcpiEnable());
@@ -686,17 +680,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         boolean attachCd = false;
         String selectedToolsVersion = "";
         String selectedToolsClusterVersion = "";
-        StorageDomain isoDomain = null;
+        Guid isoDomainId = getIsoDomainListSyncronizer().findActiveISODomain(getVm().getStoragePoolId());
         if (OsRepositoryImpl.INSTANCE.isWindows(getVm().getVmOsId())
-                && (null != (isoDomain =
-                        LinqUtils.firstOrNull(getStorageDomainDAO().getAllForStoragePool(getVm().getStoragePoolId()),
-                                new Predicate<StorageDomain>() {
-                                    @Override
-                                    public boolean eval(StorageDomain domain) {
-                                        return domain.getStorageDomainType() == StorageDomainType.ISO;
-                                    }
-                                }))
-                        && isoDomain.getStatus() == StorageDomainStatus.Active && StringUtils.isEmpty(_cdImagePath))) {
+                && null != isoDomainId && StringUtils.isEmpty(cdImagePath)) {
 
             // get cluster version of the vm tools
             Version vmToolsClusterVersion = null;
@@ -711,8 +697,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             // Fetch cached Iso files from active Iso domain.
             List<RepoImage> repoFilesMap =
-                    getIsoDomainListSyncronizer().getCachedIsoListByDomainId(isoDomain.getId(),
-                            ImageFileType.ISO);
+                    getIsoDomainListSyncronizer().getCachedIsoListByDomainId(isoDomainId, ImageFileType.ISO);
             Version bestClusterVer = null;
             int bestToolVer = 0;
             for (RepoImage map : repoFilesMap) {
@@ -759,7 +744,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     new IrsBaseVDSCommandParameters(getVm().getStoragePoolId())).getReturnValue();
             rhevToolsPath = isoDir + File.separator + rhevToolsPath;
 
-            getVm().setCdPath(ImagesHandler.cdPathWindowsToLinux(rhevToolsPath, getVm().getStoragePoolId()));
+            getVm().setCdPath(cdPathWindowsToLinux(rhevToolsPath));
         }
     }
 
@@ -775,22 +760,23 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             // if VM is paused, it was already checked before that it is capable to run
             return true;
         }
-        List<String> messages = getReturnValue().getCanDoActionMessages();
-        List<Disk> vmDisks = getDiskDao().getAllForVm(vm.getId(), true);
-        VDS destVds = getDestinationVds();
+
         if (!getRunVmValidator().canRunVm(vm,
-                        messages,
-                        vmDisks,
-                        getParameters().getBootSequence(),
-                        getStoragePool(),
-                        isInternalExecution(),
-                        getParameters().getDiskPath(),
-                        getParameters().getFloppyPath(),
-                        getParameters().getRunAsStateless(),
-                        getRunVdssList(),
-                        destVds == null ? null : destVds.getId(),
-                        getVdsGroup()) &&
-                        validateNetworkInterfaces()) {
+                getReturnValue().getCanDoActionMessages(),
+                getDiskDao().getAllForVm(vm.getId(), true),
+                getParameters().getBootSequence(),
+                getStoragePool(),
+                isInternalExecution(),
+                getParameters().getDiskPath(),
+                getParameters().getFloppyPath(),
+                getParameters().getRunAsStateless(),
+                getRunVdssList(),
+                getDestinationVds() != null ? getDestinationVds().getId() : null,
+                getVdsGroup())) {
+            return false;
+        }
+
+        if (!validateNetworkInterfaces()) {
             return false;
         }
 
