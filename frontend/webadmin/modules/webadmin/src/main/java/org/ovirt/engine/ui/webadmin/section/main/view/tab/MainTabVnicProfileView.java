@@ -45,7 +45,16 @@ public class MainTabVnicProfileView extends AbstractMainTabWithDetailsTableView<
             }
         };
 
-        getTable().addColumn(nameColumn, constants.nameNetworkProfile(), "200px"); //$NON-NLS-1$
+        getTable().addColumn(nameColumn, constants.nameVnicProfile(), "200px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<VnicProfileView> descriptionColumn = new TextColumnWithTooltip<VnicProfileView>() {
+            @Override
+            public String getValue(VnicProfileView object) {
+                return object.getDescription();
+            }
+        };
+
+       getTable().addColumn(descriptionColumn, constants.descriptionVnicProfile(), "400px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.newVnicProfile()) {
             @Override

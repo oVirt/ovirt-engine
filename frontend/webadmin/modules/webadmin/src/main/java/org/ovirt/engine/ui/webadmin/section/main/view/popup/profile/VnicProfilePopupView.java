@@ -100,11 +100,11 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     }
 
     private void localize(ApplicationConstants constants) {
-        networkEditor.setLabel(constants.networkProfilePopup());
-        nameEditor.setLabel(constants.nameProfilePopup());
-        descriptionEditor.setLabel(constants.descriptionProfilePopup());
-        portMirroringEditor.setLabel(constants.portMirroringProfilePopup());
-        publicUseEditor.setLabel(constants.publicUseProfilePopup());
+        networkEditor.setLabel(constants.networkVnicProfile());
+        nameEditor.setLabel(constants.nameVnicProfile());
+        descriptionEditor.setLabel(constants.descriptionVnicProfile());
+        portMirroringEditor.setLabel(constants.portMirroringVnicProfile());
+        publicUseEditor.setLabel(constants.publicUseVnicProfile());
     }
 
     @Override

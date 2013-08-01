@@ -36,7 +36,16 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
                         return object.getName();
                     }
                 };
-        getTable().addColumn(nameColumn, constants.nameNetworkProfile(), "400px"); //$NON-NLS-1$
+        getTable().addColumn(nameColumn, constants.nameVnicProfile(), "400px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<VnicProfileView> descriptionColumn =
+                new TextColumnWithTooltip<VnicProfileView>() {
+                    @Override
+                    public String getValue(VnicProfileView object) {
+                        return object.getDescription();
+                    }
+                };
+        getTable().addColumn(descriptionColumn, constants.descriptionVnicProfile(), "400px"); //$NON-NLS-1$
 
         BooleanColumn<VnicProfileView> portMirroringColumn =
                 new BooleanColumn<VnicProfileView>(constants.portMirroringEnabled()) {
@@ -45,7 +54,7 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
                         return object.isPortMirroring();
                     }
                 };
-        getTable().addColumnWithHtmlHeader(portMirroringColumn, constants.portMirroringNetworkProfile(), "85px"); //$NON-NLS-1$
+        getTable().addColumnWithHtmlHeader(portMirroringColumn, constants.portMirroringVnicProfile(), "85px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.newNetworkProfile()) {
             @Override

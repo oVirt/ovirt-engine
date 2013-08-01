@@ -1097,14 +1097,23 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Used Storage/Total")
     String usedStorageTotalQuotaStorage();
 
-    // Network Profile
+    // Vnic Profile
+    @DefaultStringValue("Network")
+    String networkVnicProfile();
+
     @DefaultStringValue("Name")
-    String nameNetworkProfile();
+    String nameVnicProfile();
+
+    @DefaultStringValue("Description")
+    String descriptionVnicProfile();
 
     @DefaultStringValue("Port Mirroring")
-    String portMirroringNetworkProfile();
+    String portMirroringVnicProfile();
 
-    @DefaultStringValue("Virtual Machines")
+    @DefaultStringValue("Allow all users to use this Profile")
+    String publicUseVnicProfile();
+
+   @DefaultStringValue("Virtual Machines")
     String vnicProfileVmSubTabLabel();
 
     @DefaultStringValue("Templates")
