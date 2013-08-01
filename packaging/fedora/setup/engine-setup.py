@@ -1111,12 +1111,11 @@ def _configureIptables():
 
 def _setApplicationMode():
     virtService = 'true'
-    glusterService = 'true'
+    glusterService = 'false'
 
     if controller.CONF["APPLICATION_MODE"].upper() == "GLUSTER":
         virtService = 'false'
-    elif controller.CONF["APPLICATION_MODE"].upper() == "VIRT":
-        glusterService = 'false'
+        glusterService = 'true'
 
     # Update default cluster group service types, since default value of gluster_service
     # column is false.

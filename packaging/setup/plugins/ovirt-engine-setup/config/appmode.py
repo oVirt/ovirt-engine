@@ -34,6 +34,10 @@ from ovirt_engine_setup import constants as osetupcons
 class Plugin(plugin.PluginBase):
     """Application mode plugin."""
 
+    class ApplicationMode(object):
+        VirtOnly = 1
+        GlusterOnly = 2
+
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._enabled = False
@@ -89,14 +93,8 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _misc(self):
-        virt = gluster = False
+
         v = self.environment[osetupcons.ConfigEnv.APPLICATION_MODE]
-        if v == 'both':
-            virt = gluster = True
-        elif v == 'virt':
-            virt = True
-        elif v == 'gluster':
-            gluster = True
 
         self.environment[osetupcons.DBEnv.STATEMENT].execute(
             statement="""
@@ -108,10 +106,28 @@ class Plugin(plugin.PluginBase):
             """,
             args=dict(
                 clusterid=osetupcons.Const.DEFAULT_CLUSTER_ID,
-                virt=virt,
-                gluster=gluster,
+                virt=(v in ('both', 'virt')),
+                gluster=(v == 'gluster'),
             ),
         )
+
+        if v != 'both':
+            self.environment[osetupcons.DBEnv.STATEMENT].execute(
+                statement="""
+                    select fn_db_update_config_value(
+                        'ApplicationMode',
+                        %(mode)s,
+                        'general'
+                    )
+                """,
+                args=dict(
+                    mode=str(
+                        self.ApplicationMode.GlusterOnly
+                        if v == 'gluster'
+                        else self.ApplicationMode.VirtOnly
+                    ),
+                ),
+            )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
