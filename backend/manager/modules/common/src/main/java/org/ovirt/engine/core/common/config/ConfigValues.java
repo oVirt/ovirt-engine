@@ -1477,6 +1477,11 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     NormalizedMgmgNetworkEnabled(529),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    MomPoliciesOnHostSupported(530),
+
+
     Invalid(65535);
 
     private int intValue;

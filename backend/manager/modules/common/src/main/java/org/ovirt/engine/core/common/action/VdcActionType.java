@@ -279,7 +279,9 @@ public enum VdcActionType {
     EndExternalJob(1801, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE),
     ClearExternalJob(1802, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE),
     AddExternalStep(1803, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE),
-    EndExternalStep(1804, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE);
+    EndExternalStep(1804, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE),
+
+    UpdateMomPolicy(1900, ActionGroup.MANIPUTLATE_HOST, false, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;

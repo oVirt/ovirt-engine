@@ -480,6 +480,11 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_FAILED_TO_UPDATE_NETWORK_QOS, AuditLogSeverity.ERROR);
     }
 
+    private static void initMomPoliciesSeverities() {
+        severities.put(AuditLogType.USER_UPDATED_MOM_POLICIES, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.USER_FAILED_TO_UPDATE_MOM_POLICIES, AuditLogSeverity.WARNING);
+    }
+
     private static void initVMSeverities() {
         severities.put(AuditLogType.USER_ATTACH_VM_TO_AD_GROUP, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_ATTACH_VM_TO_AD_GROUP_FAILED, AuditLogSeverity.ERROR);

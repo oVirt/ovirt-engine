@@ -150,4 +150,13 @@ public class FeatureSupported {
     public static boolean singleQxlPci(Version version) {
         return supportedInConfig(ConfigValues.SingleQxlPciEnabled, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> iff MoM Policy on host is supported for the cluster version.
+     */
+    public static boolean momPolicyOnHost(Version version) {
+        return supportedInConfig(ConfigValues.MomPoliciesOnHostSupported, version);
+    }
 }

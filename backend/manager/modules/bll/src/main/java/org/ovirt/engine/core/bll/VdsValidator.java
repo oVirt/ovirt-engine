@@ -81,4 +81,14 @@ public class VdsValidator {
         }
         return ValidationResult.VALID;
     }
+
+    public ValidationResult validateStatus(VDSStatus vdsStatus, VdcBllMessages hostStatus) {
+        return vdsStatus == vds.getStatus()
+                ? ValidationResult.VALID
+                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL, hostStatus.toString());
+    }
+
+    public ValidationResult isUp() {
+        return validateStatus(VDSStatus.Up, VdcBllMessages.VAR__HOST_STATUS__UP);
+    }
 }

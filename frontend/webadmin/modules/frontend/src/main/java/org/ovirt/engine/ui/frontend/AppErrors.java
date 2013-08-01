@@ -1429,6 +1429,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Selected Power Management Agent is not supported.")
     String ACTION_TYPE_FAILED_AGENT_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The cluster's compatibility version doesn't support MoM Policy update.")
+    String ACTION_TYPE_FAILED_MOM_UPDATE_VDS_VERSION();
+
     @DefaultStringValue("Bond is not attached to Network.")
     String NETWORK_BOND_NOT_ATTACCH_TO_NETWORK();
 

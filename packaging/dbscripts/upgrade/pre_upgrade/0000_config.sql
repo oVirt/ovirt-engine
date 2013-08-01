@@ -197,6 +197,10 @@ select fn_db_add_config_value('VirtIoScsiUnsupportedOsList','WindowsXP,RHEL5,RHE
 select fn_db_add_config_value('NormalizedMgmgNetworkEnabled','false','3.0');
 select fn_db_add_config_value('NormalizedMgmgNetworkEnabled','false','3.1');
 select fn_db_add_config_value('IterationsWithBalloonProblem','3','general');
+select fn_db_add_config_value('MomPoliciesOnHostSupported','false','3.0');
+select fn_db_add_config_value('MomPoliciesOnHostSupported','false','3.1');
+select fn_db_add_config_value('MomPoliciesOnHostSupported','false','3.2');
+select fn_db_add_config_value('MomPoliciesOnHostSupported','true','3.3');
 
 -- by default use no proxy
 select fn_db_add_config_value('SpiceProxyDefault','','general');
