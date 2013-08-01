@@ -71,6 +71,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VersionCaps;
 import org.ovirt.engine.api.model.VmPool;
+import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.model.WatchDog;
 import org.ovirt.engine.api.resource.AssignedNetworkResource;
 import org.ovirt.engine.api.resource.AssignedNetworksResource;
@@ -154,6 +155,8 @@ import org.ovirt.engine.api.resource.VmReportedDeviceResource;
 import org.ovirt.engine.api.resource.VmReportedDevicesResource;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
+import org.ovirt.engine.api.resource.VnicProfileResource;
+import org.ovirt.engine.api.resource.VnicProfilesResource;
 import org.ovirt.engine.api.resource.WatchdogResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBrickResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBricksResource;
@@ -341,6 +344,9 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(StepResource.class, StepsResource.class, Job.class);
         TYPES.put(Step.class, map);
+
+        map = new ParentToCollectionMap(VnicProfileResource.class, VnicProfilesResource.class);
+        TYPES.put(VnicProfile.class, map);
     }
 
     /**

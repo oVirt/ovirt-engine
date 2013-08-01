@@ -1891,6 +1891,38 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <!-- Vnic Profiles -->
+  <xs:element name="vnic_profile" type="VnicProfile"/>
+
+  <xs:element name="vnic_profiles" type="VnicProfiles" />
+
+  <xs:complexType name="VnicProfile">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="network" minOccurs="1" maxOccurs="1"/>
+          <xs:element name="port_mirroring" type="xs:boolean" minOccurs="0"/>
+          <xs:element ref="custom_properties" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="VnicProfiles">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+                <jaxb:property name="VnicProfiles"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="vnic_profile" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <!-- Storage Domains -->
 
   <xs:element name="storage_domain" type="StorageDomain"/>
@@ -2710,15 +2742,16 @@
     <xs:complexContent>
       <xs:extension base="BaseDevice">
         <xs:sequence>
-          <xs:element ref="network" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="network" minOccurs="0" maxOccurs="1"/> <!-- Deprecated, replaced by 'vnic_profile' -->
           <xs:element name="linked" type="xs:boolean" minOccurs="0"/>
           <xs:element name="interface" type="xs:string" minOccurs="0"/>
           <xs:element ref="mac" minOccurs="0"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
           <xs:element name="active" type="xs:boolean" minOccurs="0"/> <!-- Deprecated, replaced by 'plugged' -->
           <xs:element name="plugged" type="xs:boolean" minOccurs="0"/>
-          <xs:element ref="port_mirroring" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="port_mirroring" minOccurs="0" maxOccurs="1"/> <!-- Deprecated, replaced by 'vnic_profile' -->
           <xs:element ref="reported_devices" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="vnic_profile" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

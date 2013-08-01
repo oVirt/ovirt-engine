@@ -64,6 +64,7 @@ public class FeaturesHelper {
             addFeatureStorageServerConnectionsForDomain(features);
             addSingleQxlPciFeature(features);
             addFeatureAddVmFromOvf(features);
+            addVnicProfilesFeature(features);
         }
         return features;
     }
@@ -324,6 +325,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Storage server connections of a storage domain");
         feature.setDescription("Ability to view storage server connections of a specific storage domain (GET .../storagedomains/{storagedomain:id}/storageconnections)");
+        features.getFeature().add(feature);
+    }
+
+    private void addVnicProfilesFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Vnic Profiles");
+        feature.setDescription("Configuring VM network interface by a profile (for network QoS, custom properties and port mirroring)");
         features.getFeature().add(feature);
     }
 }

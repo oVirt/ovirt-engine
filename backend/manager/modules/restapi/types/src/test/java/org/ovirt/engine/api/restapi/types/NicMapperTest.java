@@ -35,6 +35,8 @@ public class NicMapperTest extends AbstractInvertibleMappingTest<NIC, VmNetworkI
         assertEquals(model.getInterface(), transform.getInterface());
         assertEquals(model.isLinked(), transform.isLinked());
         assertEquals(model.isPlugged(), transform.isPlugged());
+        assertNotNull(transform.getVnicProfile());
+        assertEquals(model.getVnicProfile().getId(), transform.getVnicProfile().getId());
     }
 
     @Test

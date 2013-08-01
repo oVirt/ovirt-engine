@@ -56,6 +56,7 @@ import org.ovirt.engine.api.restapi.resource.BackendTemplatesResource;
 import org.ovirt.engine.api.restapi.resource.BackendUsersResource;
 import org.ovirt.engine.api.restapi.resource.BackendVmPoolsResource;
 import org.ovirt.engine.api.restapi.resource.BackendVmsResource;
+import org.ovirt.engine.api.restapi.resource.BackendVnicProfilesResource;
 import org.ovirt.engine.api.restapi.resource.validation.MalformedIdExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.security.auth.LoginValidator;
@@ -132,6 +133,7 @@ public class BackendApplication extends Application {
         addResource(new BackendDomainsResource());
         addResource(new BackendJobsResource());
         addResource(new BackendStorageServerConnectionsResource());
+        addResource(new BackendVnicProfilesResource());
 
         // Authentication singletons:
         final BasicAuthorizationScheme scheme = new BasicAuthorizationScheme();

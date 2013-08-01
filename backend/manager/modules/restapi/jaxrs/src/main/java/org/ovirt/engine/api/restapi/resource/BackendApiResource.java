@@ -119,6 +119,7 @@ public class BackendApiResource
         links.add(createLink("disks", LinkFlags.SEARCHABLE));
         links.add(createLink("jobs"));
         links.add(createLink("storageconnections"));
+        links.add(createLink("vnicprofiles"));
         return links;
     }
 

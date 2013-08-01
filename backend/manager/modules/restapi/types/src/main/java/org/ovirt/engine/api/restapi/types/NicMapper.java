@@ -5,6 +5,7 @@ import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NicInterface;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.VnicProfile;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 
@@ -51,6 +52,11 @@ public class NicMapper {
                 entity.setPortMirroring(false);
             }
         }
+
+        if (model.isSetVnicProfile() && model.getVnicProfile().isSetId()) {
+            entity.setVnicProfileId(GuidUtils.asGuid(model.getVnicProfile().getId()));
+        }
+
         return entity;
     }
 
@@ -81,6 +87,12 @@ public class NicMapper {
         model.setInterface(map(entity.getType()));
         model.setActive(entity.isPlugged());
         model.setPlugged(entity.isPlugged());
+
+        if (entity.getVnicProfileId() != null) {
+            model.setVnicProfile(new VnicProfile());
+            model.getVnicProfile().setId(entity.getVnicProfileId().toString());
+        }
+
         return model;
     }
 

@@ -19,15 +19,11 @@ package org.ovirt.engine.api.resource;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import org.ovirt.engine.api.model.Network;
-
+import org.ovirt.engine.api.model.VnicProfile;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-public interface NetworkResource extends UpdatableResource<Network> {
+public interface VnicProfileResource extends UpdatableResource<VnicProfile> {
 
     @Path("permissions")
     public AssignedPermissionsResource getPermissionsResource();
-
-    @Path("vnicprofiles")
-    public AssignedVnicProfilesResource getVnicProfilesResource();
 }

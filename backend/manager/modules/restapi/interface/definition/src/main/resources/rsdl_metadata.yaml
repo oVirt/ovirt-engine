@@ -570,6 +570,9 @@ actions:
       parameterType: NIC
       signatures:
       - mandatoryArguments: {}
+        optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
+      #deprecated, replaced by a signature with vnic profile id instead of network name and port mirroring
+      - mandatoryArguments: {}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}, nic.plugged: 'xs:boolean'}
     urlparams: {}
     headers:
@@ -598,6 +601,9 @@ actions:
     body:
       parameterType: NIC
       signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
+      #deprecated, replaced by a signature with vnic profile id instead of network name and port mirroring
       - mandatoryArguments: {nic.name: 'xs:string'}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}, nic.plugged: 'xs:boolean'}
     urlparams: {}
@@ -2368,6 +2374,130 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/networks/{network:id}/vnicprofiles|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /api/networks/{network:id}/vnicprofiles/{vnicprofile:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/networks/{network:id}/vnicprofiles/{vnicprofile:id}|rel=delete
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/networks/{network:id}/vnicprofiles|rel=add
+  request:
+    body:
+      parameterType: VnicProfile
+      signatures:
+      - mandatoryArguments: {vnicprofile.name: 'xs:string'}
+        optionalArguments: {vnicprofile.description: 'xs:string', vnicprofile.port_mirroring: 'xs:boolean',
+        vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/vnicprofiles|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /api/vnicprofiles/{vnicprofile:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/vnicprofiles/{vnicprofile:id}|rel=delete
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/vnicprofiles/{vnicprofile:id}|rel=update
+  request:
+    body:
+      parameterType: VnicProfile
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {vnicprofile.name: 'xs:string', vnicprofile.description: 'xs:string', vnicprofile.port_mirroring: 'xs:boolean',
+        vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/vnicprofiles|rel=add
+  request:
+    body:
+      parameterType: VnicProfile
+      signatures:
+      - mandatoryArguments: {vnicprofile.network.id: 'xs:string', vnicprofile.name: 'xs:string'}
+        optionalArguments: {vnicprofile.description: 'xs:string', vnicprofile.port_mirroring: 'xs:boolean',
+        vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/vnicprofiles/{vnicprofile:id}/permissions|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /api/vnicprofiles/{vnicprofile:id}/permissions/{permission:id}|rel=get
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /api/vnicprofiles/{vnicprofiles:id}/permissions/{permission:id}|rel=delete
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /api/vnicprofiles/{vnicprofile:id}/permissions|rel=add
+  request:
+    body:
+      parameterType: Permission
+      signatures:
+      - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
+        optionalArguments: {}
+      - mandatoryArguments: {permission.group.id: 'xs:string', permission.role.id: 'xs:string'}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /api/roles|rel=get
   request:
     body:
@@ -2694,6 +2824,9 @@ actions:
     body:
       parameterType: NIC
       signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
+      #deprecated, replaced by a signature with vnic profile id instead of network name and port mirroring
       - mandatoryArguments: {nic.name: 'xs:string'}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
     urlparams: {}
@@ -2722,6 +2855,9 @@ actions:
     body:
       parameterType: NIC
       signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
+      #deprecated, replaced by a signature with vnic profile id instead of network name and port mirroring
       - mandatoryArguments: {}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
     urlparams: {}

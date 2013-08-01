@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendNetworksResource extends AbstractBackendNetworksResource implements NetworksResource {
 
-    static final String[] SUB_COLLECTIONS = {"permissions"};
+    static final String[] SUB_COLLECTIONS = { "permissions", "vnicprofiles" };
 
     public BackendNetworksResource() {
         super(VdcQueryType.GetAllNetworks, VdcActionType.AddNetwork, VdcActionType.RemoveNetwork, SUB_COLLECTIONS);
