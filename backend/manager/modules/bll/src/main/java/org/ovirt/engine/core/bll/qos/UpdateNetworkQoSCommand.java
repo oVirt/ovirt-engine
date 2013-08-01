@@ -21,8 +21,12 @@ public class UpdateNetworkQoSCommand extends NetworkQoSCommandBase {
             } else if (!oldNetworkQoS.getStoragePoolId().equals(getNetworkQoS().getStoragePoolId())) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_INVALID_DC_ID);
             } else {
-                if (validateValues() && !oldNetworkQoS.getName().equals(getNetworkQoS().getName())) {
-                    return validateNameNotExistInDC();
+                if (validateValues()) {
+                    if (!oldNetworkQoS.getName().equals(getNetworkQoS().getName())) {
+                        return validateNameNotExistInDC();
+                    }
+                } else {
+                    return false;
                 }
             }
         }
