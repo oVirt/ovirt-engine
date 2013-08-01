@@ -603,6 +603,11 @@ select fn_db_add_config_value('SingleQxlPciEnabled','false','3.1');
 select fn_db_add_config_value('SingleQxlPciEnabled','false','3.2');
 select fn_db_add_config_value('SingleQxlPciEnabled','true','3.3');
 
+--external scheduler
+select fn_db_add_config_value('ExternalSchedulerServiceURL','http://localhost:18781/','general');
+select fn_db_add_config_value('ExternalSchedulerConnectionTimeout','100','general');
+select fn_db_add_config_value('ExternalSchedulerEnabled','false','general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

@@ -1481,6 +1481,17 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     MomPoliciesOnHostSupported(530),
 
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("http://localhost:18781/")
+    ExternalSchedulerServiceURL(531),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("100")
+    ExternalSchedulerConnectionTimeout(532),
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    ExternalSchedulerEnabled(533),
 
     Invalid(65535);
 
