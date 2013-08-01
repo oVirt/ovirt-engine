@@ -10,7 +10,7 @@
     <c:if test="${requestScope['brandingStyle'] != null}">
         <c:forEach items="${requestScope['brandingStyle']}" var="theme">
             <c:if test="${theme.getThemeStyleSheet(requestScope['applicationType']) != null}">
-    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/theme${theme.path}/${theme.getThemeStyleSheet(requestScope['applicationType'])}">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/ovirt-engine-theme${theme.path}/${theme.getThemeStyleSheet(requestScope['applicationType'])}">
             </c:if>
         </c:forEach>
     </c:if>

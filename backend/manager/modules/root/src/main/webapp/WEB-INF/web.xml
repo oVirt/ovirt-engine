@@ -242,7 +242,7 @@
   </servlet>
   <servlet-mapping>
     <servlet-name>BrandingServlet</servlet-name>
-    <url-pattern>/theme/*</url-pattern>
+    <url-pattern>/ovirt-engine-theme/*</url-pattern>
   </servlet-mapping>
 
   <!-- Filters -->
