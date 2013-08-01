@@ -228,15 +228,19 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
             @Override
             public Void runInTransaction() {
-                final boolean taskGroupSucceeded = getParameters().getTaskGroupSuccess();
+                boolean taskGroupSucceeded = getParameters().getTaskGroupSuccess();
                 Snapshot createdSnapshot = getSnapshotDao().get(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
+                // if the snapshot was not created the command should be
+                // handled as a failure
+                if (createdSnapshot == null) {
+                    taskGroupSucceeded = false;
+                }
                 if (taskGroupSucceeded) {
                     getSnapshotDao().updateStatus(createdSnapshot.getId(), SnapshotStatus.OK);
 
                     if (isLiveSnapshotApplicable()) {
                         performLiveSnapshot(createdSnapshot);
-                    }
-                    else {
+                    } else {
                         // If the created snapshot contains memory, remove the memory volumes as
                         // they are not in use since no live snapshot was created
                         if (!createdSnapshot.getMemoryVolume().isEmpty()) {
