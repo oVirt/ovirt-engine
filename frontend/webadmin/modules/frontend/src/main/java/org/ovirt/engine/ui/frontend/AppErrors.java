@@ -2219,6 +2219,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot decrease VMs from VM-Pool.")
     String VM_POOL_CANNOT_DECREASE_VMS_FROM_POOL();
 
+    @DefaultStringValue("User is already attached to maximum number of VMs from this VM-Pool.")
+    String VM_POOL_CANNOT_ATTACH_TO_MORE_VMS_FROM_POOL();
+
     // bad names
     // NETWORK_INTERFACE_EXITED_MAX_INTERFACES
     @DefaultStringValue("Cannot ${action} ${type}. Selected Cluster is missing one or more networks ${networks} that is used by VM.")
