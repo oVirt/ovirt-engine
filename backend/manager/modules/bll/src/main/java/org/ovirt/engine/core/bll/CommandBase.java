@@ -1365,7 +1365,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return persistAsyncTaskPlaceHolder(parentCommand, DEFAULT_TASK_KEY);
     }
 
-    public Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand, String taskKey) {
+
+
+    public Guid persistAsyncTaskPlaceHolder(VdcActionType parentCommand, final String taskKey) {
         if (taskKeyToTaskIdMap.containsKey(taskKey)) {
             return taskKeyToTaskIdMap.get(taskKey);
         }
@@ -1378,15 +1380,28 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             } else {
                 creationInfo.setTaskType(getCurrentTaskHandler().getTaskType());
             }
-            AsyncTasks task = createAsyncTask(creationInfo, parentCommand);
+            final AsyncTasks task = createAsyncTask(creationInfo, parentCommand);
             taskId = task.getTaskId();
-            getAsyncTaskDao().save(task);
-            taskKeyToTaskIdMap.put(taskKey, taskId);
+            TransactionScopeOption scopeOption =
+                    getTransactive() ? TransactionScopeOption.RequiresNew : TransactionScopeOption.Required;
+            TransactionSupport.executeInScope(scopeOption, new TransactionMethod<Void>() {
+
+                @Override
+                public Void runInTransaction() {
+                    saveTaskAndPutInMap(taskKey, task);
+                    return null;
+                }
+            });
             addToReturnValueTaskPlaceHolderIdList(taskId);
         } catch (RuntimeException ex) {
             log.errorFormat("Error during persistAsyncTaskPlaceHolder for command: {0}. Exception {1}", getClass().getName(), ex);
         }
         return taskId;
+    }
+
+    private void saveTaskAndPutInMap(String taskKey, AsyncTasks task) {
+        getAsyncTaskDao().save(task);
+        taskKeyToTaskIdMap.put(taskKey, task.getTaskId());
     }
 
     private void addToReturnValueTaskPlaceHolderIdList(Guid taskId) {
