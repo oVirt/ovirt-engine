@@ -1104,6 +1104,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String nameVnicProfile();
 
+    @DefaultStringValue("Data Center")
+    String dcVnicProfile();
+
+    @DefaultStringValue("Compatibility Version")
+    String compatibilityVersionVnicProfile();
+
     @DefaultStringValue("Description")
     String descriptionVnicProfile();
 
@@ -1113,7 +1119,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Allow all users to use this Profile")
     String publicUseVnicProfile();
 
-   @DefaultStringValue("Virtual Machines")
+    @DefaultStringValue("Virtual Machines")
     String vnicProfileVmSubTabLabel();
 
     @DefaultStringValue("Templates")

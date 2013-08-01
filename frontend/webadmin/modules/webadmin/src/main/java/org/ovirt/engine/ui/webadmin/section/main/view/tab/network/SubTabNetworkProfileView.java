@@ -38,14 +38,30 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
                 };
         getTable().addColumn(nameColumn, constants.nameVnicProfile(), "400px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<VnicProfileView> descriptionColumn =
+        TextColumnWithTooltip<VnicProfileView> networkColumn = new TextColumnWithTooltip<VnicProfileView>() {
+            @Override
+            public String getValue(VnicProfileView object) {
+                return object.getNetworkName();
+            }
+        };
+        getTable().addColumn(networkColumn, constants.networkVnicProfile(), "200px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<VnicProfileView> dcColumn = new TextColumnWithTooltip<VnicProfileView>() {
+            @Override
+            public String getValue(VnicProfileView object) {
+                return object.getDataCenterName();
+            }
+        };
+        getTable().addColumn(dcColumn, constants.dcVnicProfile(), "200px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<VnicProfileView> compatibilityVersionColumn =
                 new TextColumnWithTooltip<VnicProfileView>() {
                     @Override
                     public String getValue(VnicProfileView object) {
-                        return object.getDescription();
+                        return object.getCompatibilityVersion().toString();
                     }
                 };
-        getTable().addColumn(descriptionColumn, constants.descriptionVnicProfile(), "400px"); //$NON-NLS-1$
+        getTable().addColumn(compatibilityVersionColumn, constants.compatibilityVersionVnicProfile(), "200px"); //$NON-NLS-1$
 
         BooleanColumn<VnicProfileView> portMirroringColumn =
                 new BooleanColumn<VnicProfileView>(constants.portMirroringEnabled()) {
@@ -55,6 +71,15 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
                     }
                 };
         getTable().addColumnWithHtmlHeader(portMirroringColumn, constants.portMirroringVnicProfile(), "85px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<VnicProfileView> descriptionColumn =
+                new TextColumnWithTooltip<VnicProfileView>() {
+                    @Override
+                    public String getValue(VnicProfileView object) {
+                        return object.getDescription();
+                    }
+                };
+        getTable().addColumn(descriptionColumn, constants.descriptionVnicProfile(), "400px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.newNetworkProfile()) {
             @Override
