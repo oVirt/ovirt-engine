@@ -53,7 +53,7 @@ public class WelcomeServletTest {
     private void mockBackendQuery(VdcQueryType queryType, Object returnValue) {
         VdcQueryReturnValue queryReturnValueMock = when(mock(VdcQueryReturnValue.class).getReturnValue())
                 .thenReturn(returnValue).getMock();
-        when(mockBackend.RunQuery(eq(queryType), any(VdcQueryParametersBase.class)))
+        when(mockBackend.RunPublicQuery(eq(queryType), any(VdcQueryParametersBase.class)))
                 .thenReturn(queryReturnValueMock);
     }
 

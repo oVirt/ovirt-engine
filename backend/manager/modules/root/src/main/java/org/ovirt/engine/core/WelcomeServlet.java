@@ -101,7 +101,7 @@ public class WelcomeServlet extends HttpServlet {
         List<BrandingTheme> brandingThemes = brandingManager.getBrandingThemes();
         request.setAttribute(THEMES_KEY, brandingThemes);
         request.setAttribute(APPLICATION_TYPE, BrandingTheme.ApplicationType.WELCOME);
-        String oVirtVersion = (String) backend.RunQuery(VdcQueryType.GetConfigurationValue,
+        String oVirtVersion = (String) backend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
                 new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion,
                         ConfigCommon.defaultConfigurationVersion)).getReturnValue();
         request.setAttribute(VERSION, oVirtVersion != null ? oVirtVersion : "myVersion");

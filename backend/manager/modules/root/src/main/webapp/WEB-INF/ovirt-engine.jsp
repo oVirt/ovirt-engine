@@ -14,7 +14,6 @@
             </c:if>
         </c:forEach>
     </c:if>
-    <script src="engineVersion.js" type="text/javascript"></script>
     <script src="splash.js" type="text/javascript"></script>
 </head>
 <body onload="pageLoaded()">
