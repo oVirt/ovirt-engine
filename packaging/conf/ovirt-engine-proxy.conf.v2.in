@@ -41,7 +41,7 @@
         ProxyPass ajp://localhost:@JBOSS_AJP_PORT@/
     </Location>
 
-    <LocationMatch ^/(UserPortal($|/)|OvirtEngineWeb($|/)|webadmin($|/)|docs($|/)|ovirt-engine-novnc/|ovirt-engine-novnc-main.html$|ovirt-engine-spicehtml5/|ovirt-engine-spicehtml5-main.html$|spice/|ca.crt$|engine.ssh.key.txt$|rhevm.ssh.key.txt$|ovirt-engine-style.css$|ovirt-engine-attachment/)>
+    <LocationMatch ^/(UserPortal($|/)|OvirtEngineWeb($|/)|webadmin($|/)|docs($|/)|ovirt-engine-novnc/|ovirt-engine-novnc-main.html$|ovirt-engine-theme/|ovirt-engine-spicehtml5/|ovirt-engine-spicehtml5-main.html$|spice/|ca.crt$|engine.ssh.key.txt$|rhevm.ssh.key.txt$|ovirt-engine-style.css$|ovirt-engine-attachment/)>
         ProxyPassMatch ajp://localhost:@JBOSS_AJP_PORT@
         <IfModule deflate_module>
             AddOutputFilterByType DEFLATE text/javascript text/css text/html text/xml text/json application/xml application/json application/x-yaml
