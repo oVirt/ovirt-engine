@@ -770,6 +770,7 @@ fi
 %{engine_data}/bin/pki-create-ca.sh
 %{engine_data}/bin/pki-enroll-pkcs12.sh
 %{engine_data}/bin/pki-enroll-request.sh
+%{engine_data}/bin/pki-pkcs12-extract.sh
 
 # PKI configuration files:
 %config(noreplace) %{engine_pki}/openssl.conf

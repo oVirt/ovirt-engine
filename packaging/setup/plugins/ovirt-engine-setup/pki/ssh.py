@@ -57,16 +57,12 @@ class Plugin(plugin.PluginBase):
     def _misc(self):
         rc, stdout, stderr = self.execute(
             (
-                self.command.get('openssl'),
-                'pkcs12',
-                '-in', (
-                    osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_STORE
-                ),
-                '-passin', 'pass:%s' % self.environment[
+                osetupcons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                '--name=engine',
+                '--passin=%s' % self.environment[
                     osetupcons.PKIEnv.STORE_PASS
                 ],
-                '-nodes',
-                '-nocerts',
+                '--key=-',
             ),
             logStreams=False,
         )

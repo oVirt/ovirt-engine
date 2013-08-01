@@ -195,6 +195,10 @@ class FileLocations(object):
         OVIRT_ENGINE_BINDIR,
         'pki-enroll-pkcs12.sh',
     )
+    OVIRT_ENGINE_PKI_PKCS12_EXTRACT = os.path.join(
+        OVIRT_ENGINE_BINDIR,
+        'pki-pkcs12-extract.sh',
+    )
     OVIRT_ENGINE_LOG_SETUP_EVENT = os.path.join(
         OVIRT_ENGINE_BINDIR,
         'ovirt-engine-log-setup-event.sh',

@@ -250,18 +250,13 @@ class Plugin(plugin.PluginBase):
 
         self.execute(
             args=(
-                self.command.get('openssl'),
-                'pkcs12',
-                '-in', (
-                    osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_STORE
+                osetupcons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                '--name=apache',
+                '--passin=%s' % (
+                    self.environment[osetupcons.PKIEnv.STORE_PASS],
                 ),
-                '-passin', 'pass:%s' % self.environment[
-                    osetupcons.PKIEnv.STORE_PASS
-                ],
-                '-nodes',
-                '-nocerts',
-                '-out', (
-                    osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY
+                '--key=%s' % (
+                    osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
                 ),
             ),
             logStreams=False,
