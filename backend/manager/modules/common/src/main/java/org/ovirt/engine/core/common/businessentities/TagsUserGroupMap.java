@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -12,8 +11,6 @@ public class TagsUserGroupMap implements Serializable {
     private Guid tagId;
 
     private Guid groupId = Guid.Empty;
-
-    private Date created = new Date();
 
     public TagsUserGroupMap() {
     }
