@@ -1,12 +1,14 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter;
 
+import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterModel;
@@ -38,32 +40,32 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     @UiField
     @Path(value = "name.entity")
     @WithElementId
-    EntityModelTextBoxEditor nameEditor;
+    StringEntityModelTextBoxEditor nameEditor;
 
     @UiField
     @Path(value = "description.entity")
     @WithElementId
-    EntityModelTextBoxEditor descriptionEditor;
+    StringEntityModelTextBoxEditor descriptionEditor;
 
     @UiField
     @Path(value = "comment.entity")
     @WithElementId
-    EntityModelTextBoxEditor commentEditor;
+    StringEntityModelTextBoxEditor commentEditor;
 
     @UiField(provided = true)
     @Path(value = "storageTypeList.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> storageTypeListEditor;
+    ListModelListBoxEditor<StorageType> storageTypeListEditor;
 
     @UiField(provided = true)
     @Path(value = "version.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> versionEditor;
+    ListModelListBoxEditor<Version> versionEditor;
 
     @UiField(provided = true)
     @Path(value = "quotaEnforceTypeListModel.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> quotaEnforceTypeEditor;
+    ListModelListBoxEditor<QuotaEnforcementTypeEnum> quotaEnforceTypeEditor;
 
     @UiField
     Style style;
@@ -83,16 +85,16 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
     void initListBoxEditors() {
-        storageTypeListEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        storageTypeListEditor = new ListModelListBoxEditor<StorageType>(new EnumRenderer());
 
-        versionEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        versionEditor = new ListModelListBoxEditor<Version>(new NullSafeRenderer<Version>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((Version) object).getValue();
+            public String renderNullSafe(Version object) {
+                return object.getValue();
             }
         });
 
-        quotaEnforceTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
+        quotaEnforceTypeEditor = new ListModelListBoxEditor<QuotaEnforcementTypeEnum>(new EnumRenderer());
     }
 
     void localize(ApplicationConstants constants) {

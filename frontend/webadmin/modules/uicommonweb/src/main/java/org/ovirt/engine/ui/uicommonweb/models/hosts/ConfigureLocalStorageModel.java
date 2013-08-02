@@ -149,11 +149,9 @@ public class ConfigureLocalStorageModel extends Model {
         });
 
         // Set the storage type to be Local.
-        ListModel storageTypeListModel = getDataCenter().getStorageTypeList();
-
-        for (StorageType item : (ArrayList<StorageType>) storageTypeListModel.getItems()) {
+        for (StorageType item : getDataCenter().getStorageTypeList().getItems()) {
             if (item == StorageType.LOCALFS) {
-                storageTypeListModel.setSelectedItem(item);
+                getDataCenter().getStorageTypeList().setSelectedItem(item);
                 break;
             }
         }

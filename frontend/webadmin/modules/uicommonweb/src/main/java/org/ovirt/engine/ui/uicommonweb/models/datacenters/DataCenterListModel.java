@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -616,7 +615,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
             StoragePool sp = (StoragePool) getSelectedItem();
             StorageFormatType newFormat = VersionStorageFormatUtil.getPreferredForVersion(
-                (Version) model.getVersion().getSelectedItem(), sp.getStorageType());
+                model.getVersion().getSelectedItem(), sp.getStorageType());
             StorageFormatType oldFormat = VersionStorageFormatUtil.getPreferredForVersion(
                 sp.getcompatibility_version(), sp.getStorageType());
             if (newFormat == oldFormat) {
@@ -706,12 +705,12 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         cancelConfirmation();
 
         // Save changes.
-        dataCenter.setName((String) model.getName().getEntity());
-        dataCenter.setdescription((String) model.getDescription().getEntity());
-        dataCenter.setComment((String) model.getComment().getEntity());
-        dataCenter.setStorageType((StorageType) model.getStorageTypeList().getSelectedItem());
-        dataCenter.setcompatibility_version((Version) model.getVersion().getSelectedItem());
-        dataCenter.setQuotaEnforcementType((QuotaEnforcementTypeEnum) model.getQuotaEnforceTypeListModel()
+        dataCenter.setName(model.getName().getEntity());
+        dataCenter.setdescription(model.getDescription().getEntity());
+        dataCenter.setComment(model.getComment().getEntity());
+        dataCenter.setStorageType(model.getStorageTypeList().getSelectedItem());
+        dataCenter.setcompatibility_version(model.getVersion().getSelectedItem());
+        dataCenter.setQuotaEnforcementType(model.getQuotaEnforceTypeListModel()
                 .getSelectedItem());
 
         model.startProgress(null);

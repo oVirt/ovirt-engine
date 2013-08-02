@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
 
+import java.util.List;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -75,62 +76,62 @@ public class DataCenterModel extends Model
         privateOriginalName = value;
     }
 
-    private EntityModel privateName;
+    private EntityModel<String> privateName;
 
-    public EntityModel getName()
+    public EntityModel<String> getName()
     {
         return privateName;
     }
 
-    public void setName(EntityModel value)
+    public void setName(EntityModel<String> value)
     {
         privateName = value;
     }
 
-    private EntityModel privateDescription;
+    private EntityModel<String> privateDescription;
 
-    public EntityModel getDescription()
+    public EntityModel<String> getDescription()
     {
         return privateDescription;
     }
 
-    public void setDescription(EntityModel value)
+    public void setDescription(EntityModel<String> value)
     {
         privateDescription = value;
     }
 
-    private EntityModel privateComment;
+    private EntityModel<String> privateComment;
 
-    public EntityModel getComment()
+    public EntityModel<String> getComment()
     {
         return privateComment;
     }
 
-    public void setComment(EntityModel value)
+    public void setComment(EntityModel<String> value)
     {
         privateComment = value;
     }
 
-    private ListModel privateStorageTypeList;
+    private ListModel<StorageType> privateStorageTypeList;
 
-    public ListModel getStorageTypeList()
+    public ListModel<StorageType> getStorageTypeList()
     {
         return privateStorageTypeList;
     }
 
-    public void setStorageTypeList(ListModel value)
+    public void setStorageTypeList(ListModel<StorageType> value)
     {
         privateStorageTypeList = value;
     }
 
-    private ListModel privateVersion;
+    private ListModel<Version> privateVersion;
 
-    public ListModel getVersion()
+    public ListModel<Version> getVersion()
     {
         return privateVersion;
     }
 
-    public void setVersion(ListModel value)
+    public void setVersion(ListModel<Version> value)
     {
         privateVersion = value;
     }
@@ -147,29 +148,29 @@ public class DataCenterModel extends Model
         privateMaxNameLength = value;
     }
 
-    ListModel quotaEnforceTypeListModel;
+    ListModel<QuotaEnforcementTypeEnum> quotaEnforceTypeListModel;
 
-    public ListModel getQuotaEnforceTypeListModel() {
+    public ListModel<QuotaEnforcementTypeEnum> getQuotaEnforceTypeListModel() {
         return quotaEnforceTypeListModel;
     }
 
-    public void setQuotaEnforceTypeListModel(ListModel quotaEnforceTypeListModel) {
+    public void setQuotaEnforceTypeListModel(ListModel<QuotaEnforcementTypeEnum> quotaEnforceTypeListModel) {
         this.quotaEnforceTypeListModel = quotaEnforceTypeListModel;
     }
 
     public DataCenterModel()
     {
-        setName(new EntityModel());
-        setDescription(new EntityModel());
-        setComment(new EntityModel());
-        setVersion(new ListModel());
+        setName(new EntityModel<String>());
+        setDescription(new EntityModel<String>());
+        setComment(new EntityModel<String>());
+        setVersion(new ListModel<Version>());
 
-        setStorageTypeList(new ListModel());
+        setStorageTypeList(new ListModel<StorageType>());
         getStorageTypeList().getSelectedItemChangedEvent().addListener(this);
         getStorageTypeList().setItems(AsyncDataProvider.getStoragePoolTypeList());
 
-        setQuotaEnforceTypeListModel(new ListModel());
-        ArrayList<QuotaEnforcementTypeEnum> list = AsyncDataProvider.getQuotaEnforcmentTypes();
+        setQuotaEnforceTypeListModel(new ListModel<QuotaEnforcementTypeEnum>());
+        List<QuotaEnforcementTypeEnum> list = AsyncDataProvider.getQuotaEnforcmentTypes();
         getQuotaEnforceTypeListModel().setItems(list);
         getQuotaEnforceTypeListModel().setSelectedItem(list.get(0));
 
@@ -212,7 +213,7 @@ public class DataCenterModel extends Model
 
                 // Rebuild version items.
                 ArrayList<Version> list = new ArrayList<Version>();
-                StorageType type = (StorageType) dataCenterModel.getStorageTypeList().getSelectedItem();
+                StorageType type = dataCenterModel.getStorageTypeList().getSelectedItem();
 
                 for (Version item : versions)
                 {
@@ -239,7 +240,7 @@ public class DataCenterModel extends Model
                 Version selectedVersion = null;
                 if (dataCenterModel.getVersion().getSelectedItem() != null)
                 {
-                    selectedVersion = (Version) dataCenterModel.getVersion().getSelectedItem();
+                    selectedVersion = dataCenterModel.getVersion().getSelectedItem();
                     boolean hasSelectedVersion = false;
                     for (Version version : list)
                     {
@@ -283,9 +284,8 @@ public class DataCenterModel extends Model
         if (!isVersionInit)
         {
             isVersionInit = true;
-            for (Object a : getVersion().getItems())
+            for (Version item : getVersion().getItems())
             {
-                Version item = (Version) a;
                 if (Version.OpEquality(item, getEntity().getcompatibility_version()))
                 {
                     getVersion().setSelectedItem(item);

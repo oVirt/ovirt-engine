@@ -8,12 +8,10 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -49,7 +47,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         ConfigureLocalStorageModel configureModel = (ConfigureLocalStorageModel) model.getWindow();
 
         DataCenterModel dataCenterModel = configureModel.getDataCenter();
-        String dataCenterName = (String) dataCenterModel.getName().getEntity();
+        String dataCenterName = dataCenterModel.getName().getEntity();
 
         if (!StringHelper.isNullOrEmpty(dataCenterName)) {
 
@@ -77,7 +75,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         StoragePool candidate = configureModel.getCandidateDataCenter();
         DataCenterModel dataCenterModel = configureModel.getDataCenter();
-        String dataCenterName = (String) dataCenterModel.getName().getEntity();
+        String dataCenterName = dataCenterModel.getName().getEntity();
 
         if (candidate == null || !StringHelper.stringsEqual(candidate.getName(), dataCenterName)) {
 
@@ -94,10 +92,10 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
                 dataCenter = new StoragePool();
                 dataCenter.setName(dataCenterName);
-                dataCenter.setdescription((String) dataCenterModel.getDescription().getEntity());
-                dataCenter.setComment((String) dataCenterModel.getComment().getEntity());
-                dataCenter.setStorageType((StorageType) dataCenterModel.getStorageTypeList().getSelectedItem());
-                dataCenter.setcompatibility_version((Version) dataCenterModel.getVersion().getSelectedItem());
+                dataCenter.setdescription(dataCenterModel.getDescription().getEntity());
+                dataCenter.setComment(dataCenterModel.getComment().getEntity());
+                dataCenter.setStorageType(dataCenterModel.getStorageTypeList().getSelectedItem());
+                dataCenter.setcompatibility_version(dataCenterModel.getVersion().getSelectedItem());
 
                 StoragePoolManagementParameter parameters = new StoragePoolManagementParameter(dataCenter);
                 parameters.setCorrelationId(getCorrelationId());
