@@ -19,11 +19,14 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GlusterHookSyncStatusColumn;
 
-public class SubTabClusterGlusterHookView extends AbstractSubTabTableView<VDSGroup, GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel>
+public class SubTabClusterGlusterHookView
+        extends
+        AbstractSubTabTableView<VDSGroup, GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel>
         implements SubTabClusterGlusterHookPresenter.ViewDef {
 
     @Inject
-    public SubTabClusterGlusterHookView(SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel> modelProvider,
+    public SubTabClusterGlusterHookView(
+            SearchableDetailModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel> modelProvider,
             ApplicationConstants constants) {
         super(modelProvider);
         initTable(constants);
@@ -33,7 +36,8 @@ public class SubTabClusterGlusterHookView extends AbstractSubTabTableView<VDSGro
     void initTable(final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new GlusterHookSyncStatusColumn(), constants.empty(), "10px"); //$NON-NLS-1$
+        getTable().addColumn(new GlusterHookSyncStatusColumn(),
+                constants.empty(), "10px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterHookEntity> nameColumn = new TextColumnWithTooltip<GlusterHookEntity>() {
             @Override
@@ -42,23 +46,6 @@ public class SubTabClusterGlusterHookView extends AbstractSubTabTableView<VDSGro
             }
         };
         getTable().addColumn(nameColumn, constants.nameHook(), "200px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<GlusterHookEntity> glusterCommandColumn = new TextColumnWithTooltip<GlusterHookEntity>() {
-            @Override
-            public String getValue(GlusterHookEntity object) {
-                return object.getGlusterCommand();
-            }
-        };
-        getTable().addColumn(glusterCommandColumn, constants.glusterVolumeEventHook(), "100px"); //$NON-NLS-1$;
-
-        TextColumnWithTooltip<GlusterHookEntity> stageColumn = new EnumColumn<GlusterHookEntity, GlusterHookStage>() {
-
-            @Override
-            protected GlusterHookStage getRawValue(GlusterHookEntity object) {
-                return object.getStage();
-            }
-        };
-        getTable().addColumn(stageColumn, constants.stageHook(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterHookEntity> statusColumn = new EnumColumn<GlusterHookEntity, GlusterHookStatus>() {
 
@@ -69,46 +56,76 @@ public class SubTabClusterGlusterHookView extends AbstractSubTabTableView<VDSGro
         };
         getTable().addColumn(statusColumn, constants.statusHook(), "150px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<GlusterHookEntity> glusterCommandColumn = new TextColumnWithTooltip<GlusterHookEntity>() {
+            @Override
+            public String getValue(GlusterHookEntity object) {
+                return object.getGlusterCommand();
+            }
+        };
+
+        getTable().addColumn(glusterCommandColumn,
+                constants.glusterVolumeEventHook(), "100px"); //$NON-NLS-1$;
+
+        TextColumnWithTooltip<GlusterHookEntity> stageColumn = new EnumColumn<GlusterHookEntity, GlusterHookStage>() {
+
+            @Override
+            protected GlusterHookStage getRawValue(GlusterHookEntity object) {
+                return object.getStage();
+            }
+        };
+        getTable().addColumn(stageColumn, constants.stageHook(), "100px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<GlusterHookEntity> contentTypeColumn =
                 new EnumColumn<GlusterHookEntity, GlusterHookContentType>() {
 
                     @Override
-                    protected GlusterHookContentType getRawValue(GlusterHookEntity object) {
+                    protected GlusterHookContentType getRawValue(
+                            GlusterHookEntity object) {
                         return object.getContentType();
                     }
                 };
         getTable().addColumn(contentTypeColumn, constants.contentTypeHook(), "150px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterHookEntity>(constants.enableHook()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getEnableHookCommand();
-            }
-        });
+        getTable().addActionButton(
+                new WebAdminButtonDefinition<GlusterHookEntity>(constants
+                        .enableHook()) {
+                    @Override
+                    protected UICommand resolveCommand() {
+                        return getDetailModel().getEnableHookCommand();
+                    }
+                });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterHookEntity>(constants.disableHook()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getDisableHookCommand();
-            }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterHookEntity>(constants.viewHookContent()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getViewHookCommand();
-            }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterHookEntity>(constants.resolveConflictsGlusterHook()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getResolveConflictsCommand();
-            }
-        });
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterHookEntity>(constants.syncWithServersGlusterHook()) {
-            @Override
-            protected UICommand resolveCommand() {
-                return getDetailModel().getSyncWithServersCommand();
-            }
-        });
+        getTable().addActionButton(
+                new WebAdminButtonDefinition<GlusterHookEntity>(constants
+                        .disableHook()) {
+                    @Override
+                    protected UICommand resolveCommand() {
+                        return getDetailModel().getDisableHookCommand();
+                    }
+                });
+        getTable().addActionButton(
+                new WebAdminButtonDefinition<GlusterHookEntity>(constants
+                        .viewHookContent()) {
+                    @Override
+                    protected UICommand resolveCommand() {
+                        return getDetailModel().getViewHookCommand();
+                    }
+                });
+        getTable().addActionButton(
+                new WebAdminButtonDefinition<GlusterHookEntity>(constants
+                        .resolveConflictsGlusterHook()) {
+                    @Override
+                    protected UICommand resolveCommand() {
+                        return getDetailModel().getResolveConflictsCommand();
+                    }
+                });
+        getTable().addActionButton(
+                new WebAdminButtonDefinition<GlusterHookEntity>(constants
+                        .syncWithServersGlusterHook()) {
+                    @Override
+                    protected UICommand resolveCommand() {
+                        return getDetailModel().getSyncWithServersCommand();
+                    }
+                });
     }
 }
