@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -54,6 +55,7 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable, Com
     private int vmPoolRunningCount = 1;
 
     @Min(value = 1, message = "VALIDATION.VM_POOLS.NUMBER_OF_MAX_ASSIGNED_VMS_OUT_OF_RANGE")
+    @Max(value = Short.MAX_VALUE, message = "VALIDATION.VM_POOLS.NUMBER_OF_MAX_ASSIGNED_VMS_OUT_OF_RANGE")
     private int maxAssignedVmsPerUser = 1;
 
     public static final char MASK_CHARACTER = '?';
