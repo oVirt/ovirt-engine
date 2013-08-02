@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.List;
-
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -14,8 +13,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvideCollectionChangedEvent;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 
-@SuppressWarnings("unused")
-public class ListModel extends EntityModel
+public class ListModel<T> extends EntityModel<T>
 {
 
     public static EventDefinition selectedItemChangedEventDefinition;
@@ -57,14 +55,14 @@ public class ListModel extends EntityModel
         privateItemsChangedEvent = value;
     }
 
-    protected List selectedItems;
+    protected List<T> selectedItems;
 
-    public List getSelectedItems()
+    public List<T> getSelectedItems()
     {
         return selectedItems;
     }
 
-    public void setSelectedItems(List value)
+    public void setSelectedItems(List<T> value)
     {
         if (selectedItems != value)
         {
@@ -76,14 +74,14 @@ public class ListModel extends EntityModel
         }
     }
 
-    protected Object selectedItem;
+    protected T selectedItem;
 
-    public Object getSelectedItem()
+    public T getSelectedItem()
     {
         return selectedItem;
     }
 
-    public void setSelectedItem(Object value)
+    public void setSelectedItem(T value)
     {
         if (selectedItem != value)
         {
@@ -95,14 +93,14 @@ public class ListModel extends EntityModel
         }
     }
 
-    protected Iterable items;
+    protected Iterable<T> items;
 
-    public Iterable getItems()
+    public Iterable<T> getItems()
     {
         return items;
     }
 
-    public void setItems(Iterable value)
+    public void setItems(Iterable<T> value)
     {
         if (items != value)
         {
@@ -158,7 +156,7 @@ public class ListModel extends EntityModel
         setItemsChangedEvent(new Event(ItemsChangedEventDefinition));
     }
 
-    protected void onSelectedItemChanging(Object newValue, Object oldValue)
+    protected void onSelectedItemChanging(T newValue, T oldValue)
     {
     }
 
@@ -170,7 +168,7 @@ public class ListModel extends EntityModel
     {
     }
 
-    protected void selectedItemsChanging(List newValue, List oldValue)
+    protected void selectedItemsChanging(List<T> newValue, List<T> oldValue)
     {
         // Skip this method when notifying on property change for any
         // item but not only for selected ones is requested.
@@ -198,7 +196,7 @@ public class ListModel extends EntityModel
                 boolean anyOfSelectedItem = false;
                 if (getSelectedItems() != null)
                 {
-                    for (Object item : getSelectedItems())
+                    for (T item : getSelectedItems())
                     {
                         if (item == sender)
                         {
@@ -225,7 +223,7 @@ public class ListModel extends EntityModel
         }
         else if (ev.matchesDefinition(ProvideCollectionChangedEvent.Definition))
         {
-            itemsCollectionChanged(sender, (NotifyCollectionChangedEventArgs) args);
+            itemsCollectionChanged(sender, (NotifyCollectionChangedEventArgs<T>) args);
         }
     }
 
@@ -251,7 +249,7 @@ public class ListModel extends EntityModel
         setSelectedItems(null);
     }
 
-    protected void itemsChanging(Iterable newValue, Iterable oldValue)
+    protected void itemsChanging(Iterable<T> newValue, Iterable<T> oldValue)
     {
         IProvideCollectionChangedEvent notifier =
                 (IProvideCollectionChangedEvent) ((oldValue instanceof IProvideCollectionChangedEvent) ? oldValue
@@ -277,7 +275,7 @@ public class ListModel extends EntityModel
     /**
      * Invoked whenever items collection was changed, i.e. some items was added or removed.
      */
-    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs e)
+    protected void itemsCollectionChanged(Object sender, NotifyCollectionChangedEventArgs<T> e)
     {
         if (!getNotifyPropertyChangeForAnyItem())
         {
@@ -314,14 +312,14 @@ public class ListModel extends EntityModel
         }
     }
 
-    private void subscribeList(Iterable list)
+    private void subscribeList(Iterable<T> list)
     {
         if (list == null)
         {
             return;
         }
 
-        for (Object a : list)
+        for (T a : list)
         {
             IProvidePropertyChangedEvent notifier =
                     (IProvidePropertyChangedEvent) ((a instanceof IProvidePropertyChangedEvent) ? a : null);
@@ -332,14 +330,14 @@ public class ListModel extends EntityModel
         }
     }
 
-    private void unsubscribeList(Iterable list)
+    private void unsubscribeList(Iterable<T> list)
     {
         if (list == null)
         {
             return;
         }
 
-        for (Object a : list)
+        for (T a : list)
         {
             IProvidePropertyChangedEvent notifier =
                     (IProvidePropertyChangedEvent) ((a instanceof IProvidePropertyChangedEvent) ? a : null);
@@ -349,4 +347,5 @@ public class ListModel extends EntityModel
             }
         }
     }
+
 }

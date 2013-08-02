@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.common.widget.editor;
+package org.ovirt.engine.ui.common.widget.editor.generic;
 
 import com.google.gwt.editor.ui.client.adapters.ValueBoxEditor;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
@@ -8,14 +8,12 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.user.client.ui.ValueBoxBase;
 
 /**
- * A {@link ValueBoxEditor} that adapts to {@link HasValueChangeHandlers} interface.
- * @deprecated use org.ovirt.engine.ui.common.widget.editor.generic.ObservableValueBoxEditor
+ * A {@link com.google.gwt.editor.ui.client.adapters.ValueBoxEditor} that adapts to {@link com.google.gwt.event.logical.shared.HasValueChangeHandlers} interface.
  */
-@Deprecated
-public class ObservableValueBoxEditor extends ValueBoxEditor<Object> implements HasValueChangeHandlers<Object> {
-    private final ValueBoxBase<Object> peer;
+public class ObservableValueBoxEditor<T> extends ValueBoxEditor<T> implements HasValueChangeHandlers<T> {
+    private final ValueBoxBase<T> peer;
 
-    public ObservableValueBoxEditor(ValueBoxBase<Object> peer) {
+    public ObservableValueBoxEditor(ValueBoxBase<T> peer) {
         super(peer);
         this.peer = peer;
     }
@@ -26,7 +24,7 @@ public class ObservableValueBoxEditor extends ValueBoxEditor<Object> implements 
     }
 
     @Override
-    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Object> handler) {
+    public HandlerRegistration addValueChangeHandler(ValueChangeHandler<T> handler) {
         return peer.addValueChangeHandler(handler);
     }
 

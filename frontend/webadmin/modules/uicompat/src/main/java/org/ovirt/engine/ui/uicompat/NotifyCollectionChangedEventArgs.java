@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.uicompat;
 
-public class NotifyCollectionChangedEventArgs extends EventArgs {
+public class NotifyCollectionChangedEventArgs<T> extends EventArgs {
 
-    public Iterable<Object> NewItems;
-    public Iterable<Object> OldItems;
+    public Iterable<T> NewItems;
+    public Iterable<T> OldItems;
 }

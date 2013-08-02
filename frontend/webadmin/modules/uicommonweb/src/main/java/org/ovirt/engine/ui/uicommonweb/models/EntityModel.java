@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 
 @SuppressWarnings("unused")
-public class EntityModel extends Model
+public class EntityModel<T> extends Model
 {
 
     public static EventDefinition EntityChangedEventDefinition;
@@ -27,14 +27,14 @@ public class EntityModel extends Model
         privateEntityChangedEvent = value;
     }
 
-    private Object entity;
+    private T entity;
 
-    public Object getEntity()
+    public T getEntity()
     {
         return entity;
     }
 
-    public void setEntity(Object value)
+    public void setEntity(T value)
     {
         if (entity != value)
         {
@@ -59,7 +59,7 @@ public class EntityModel extends Model
         return this;
     }
 
-    public void setEntity(Object value, boolean fireEvents) {
+    public void setEntity(T value, boolean fireEvents) {
         if (fireEvents) {
             setEntity(value);
         }
@@ -78,19 +78,19 @@ public class EntityModel extends Model
         setEntityChangedEvent(new Event(EntityChangedEventDefinition));
     }
 
-    public EntityModel(Object entity) {
+    public EntityModel(T entity) {
         this();
 
         setEntity(entity);
     }
 
-    public EntityModel(String title, Object entity) {
+    public EntityModel(String title, T entity) {
         this(entity);
 
         setTitle(title);
     }
 
-    protected void entityChanging(Object newValue, Object oldValue)
+    protected void entityChanging(T newValue, T oldValue)
     {
         IProvidePropertyChangedEvent notifier =
                 (IProvidePropertyChangedEvent) ((oldValue instanceof IProvidePropertyChangedEvent) ? oldValue : null);
@@ -161,4 +161,5 @@ public class EntityModel extends Model
     public Convertible asConvertible() {
         return new Convertible(this);
     }
+
 }

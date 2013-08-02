@@ -57,8 +57,9 @@ public class UiCommonEditorDriverGenerator extends
             SourceWriter sw)
             throws UnableToCompleteException {
         TypeOracle typeOracle = context.getTypeOracle();
-        entityModelType = typeOracle.findType("org.ovirt.engine.ui.uicommonweb.models.EntityModel"); //$NON-NLS-1$
-        listModelType = typeOracle.findType("org.ovirt.engine.ui.uicommonweb.models.ListModel"); //$NON-NLS-1$
+        entityModelType = eraseType(typeOracle.findType("org.ovirt.engine.ui.uicommonweb.models.EntityModel")); //$NON-NLS-1$
+        listModelType = eraseType(typeOracle.findType("org.ovirt.engine.ui.uicommonweb.models.ListModel")); //$NON-NLS-1$
+
         this.logger = logger;
         this.model = model;
         this.sw = sw;
@@ -67,6 +68,7 @@ public class UiCommonEditorDriverGenerator extends
         writeListenerMap();
         writeEventMap();
         writeOwnerModels();
+
     }
 
     /**
@@ -144,7 +146,7 @@ public class UiCommonEditorDriverGenerator extends
                 continue;
             }
 
-            JClassType propertyOwnerType = editorData.getPropertyOwnerType();
+            JClassType propertyOwnerType = eraseType(editorData.getPropertyOwnerType());
 
             if (propertyOwnerType == entityModelType) {
                 logger.log(Type.DEBUG, "Found EntityModel Field: " + editorData); //$NON-NLS-1$
@@ -191,7 +193,7 @@ public class UiCommonEditorDriverGenerator extends
                 continue;
             }
 
-            JClassType propertyOwnerType = editorData.getPropertyOwnerType();
+            JClassType propertyOwnerType = eraseType(editorData.getPropertyOwnerType());
 
             if (propertyOwnerType == listModelType || propertyOwnerType == entityModelType) {
                 logger.log(Type.DEBUG, "Found owner Model Field: " + editorData); //$NON-NLS-1$
@@ -202,5 +204,9 @@ public class UiCommonEditorDriverGenerator extends
         sw.outdent();
         sw.println("}"); //$NON-NLS-1$
 
+    }
+
+    private JClassType eraseType(JClassType classType) {
+        return classType == null ? null : classType.getErasedType();
     }
 }
