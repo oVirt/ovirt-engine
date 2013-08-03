@@ -61,7 +61,14 @@ public class BackendNetworksResource extends AbstractBackendNetworksResource imp
         if (namedDataCenter(network)) {
             entity.setDataCenterId(getDataCenterId(network));
         }
-        return new AddNetworkStoragePoolParameters(entity.getDataCenterId(), entity);
+
+        AddNetworkStoragePoolParameters parameters =
+                new AddNetworkStoragePoolParameters(entity.getDataCenterId(), entity);
+        if (network != null && network.isSetProfileRequired()) {
+            parameters.setVnicProfileRequired(network.isProfileRequired());
+        }
+
+        return parameters;
     }
 
     protected String[] getRequiredAddFields() {

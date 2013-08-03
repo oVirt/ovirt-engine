@@ -2330,7 +2330,7 @@ actions:
       - mandatoryArguments: {network.data_center.id|name: 'xs:string', network.name: 'xs:string'}
         optionalArguments: {network.description: 'xs:string', network.comment: 'xs:string', network.vlan.id: 'xs:string',
           network.ip.address: 'xs:string', network.ip.gateway: 'xs:string', network.ip.netmask: 'xs:string',
-          network.display: 'xs:boolean', network.stp: 'xs:boolean', network.mtu: 'xs:int'}
+          network.display: 'xs:boolean', network.stp: 'xs:boolean', network.mtu: 'xs:int', network.profile_required: 'xs:boolean'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
