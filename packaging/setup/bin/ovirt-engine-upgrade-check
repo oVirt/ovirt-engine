@@ -1,0 +1,141 @@
+#!/usr/bin/python
+#
+# ovirt-engine-setup -- ovirt engine setup
+# Copyright (C) 2013 Red Hat, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#
+
+
+import sys
+import os
+import time
+import platform
+import optparse
+import gettext
+_ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
+
+
+sys.path.append(os.path.dirname(
+    os.path.dirname(os.path.realpath(sys.argv[0]))
+))
+
+
+from ovirt_engine_setup import constants as osetupcons
+
+
+def main():
+    parser = optparse.OptionParser(
+        usage=_('usage: %prog [options]'),
+    )
+    parser.add_option(
+        '-q', '--quiet',
+        dest='quiet',
+        action='store_true',
+        default=False,
+        help=_('quiet mode'),
+    )
+    (options, args) = parser.parse_args()
+
+    try:
+        if platform.linux_distribution(
+            full_distribution_name=0
+        )[0] not in ('redhat', 'fedora', 'centos'):
+            raise RuntimeError(_('Unsupported distribution'))
+
+        exit = 1
+
+        from otopi import miniyum
+
+        class _MyMiniYumSink(miniyum.MiniYumSinkBase):
+
+            KEEPALIVE_INTERVAL = 60
+
+            def __init__(self):
+                super(_MyMiniYumSink, self).__init__()
+                self._stream = os.dup(sys.stdout.fileno())
+                self._touch()
+
+            def __del__(self):
+                os.close(self._stream)
+
+            def _touch(self):
+                self._last = time.time()
+
+            def verbose(self, msg):
+                super(_MyMiniYumSink, self).verbose(msg)
+                os.write(self._stream, ('VERB: %s\n' % msg).encode('utf-8'))
+
+            def info(self, msg):
+                super(_MyMiniYumSink, self).info(msg)
+                self._touch()
+                os.write(self._stream, ('OK:   %s\n' % msg).encode('utf-8'))
+
+            def error(self, msg):
+                super(_MyMiniYumSink, self).error(msg)
+                self._touch()
+                os.write(self._stream, ('FAIL: %s\n' % msg).encode('utf-8'))
+
+            def keepAlive(self, msg):
+                super(_MyMiniYumSink, self).keepAlive(msg)
+                if time.time() - self._last >= \
+                        self.KEEPALIVE_INTERVAL:
+                    self.info(msg)
+
+            def askForGPGKeyImport(self, userid, hexkeyid):
+                os.write(
+                    self._stream,
+                    (
+                        'APPROVE-GPG: %s-%s\n' % (userid, hexkeyid)
+                    ).encode('utf-8')
+                )
+                return True
+
+        myum = miniyum.MiniYum(
+            sink=(
+                miniyum.MiniYumSinkBase if options.quiet
+                else _MyMiniYumSink()
+            ),
+            disabledPlugins=('versionlock',),
+        )
+        with myum.transaction():
+            myum.update(
+                packages=(osetupcons.Const.ENGINE_PACKAGE_SETUP_NAME,)
+            )
+            if myum.buildTransaction():
+                exit = 0
+
+        if not options.quiet:
+            sys.stdout.write(
+                '%s\n' % (
+                    _('Upgrade available') if exit == 0
+                    else _('No upgrade')
+                )
+            )
+        sys.exit(exit)
+
+    except Exception as e:
+        if not options.quiet:
+            sys.stderr.write(
+                _('Error: {error}\n').format(
+                    error=e,
+                )
+            )
+        sys.exit(2)
+
+
+if __name__ == '__main__':
+    main()
+
+
+# vim: expandtab tabstop=4 shiftwidth=4

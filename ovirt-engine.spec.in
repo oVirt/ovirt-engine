@@ -799,6 +799,7 @@ fi
 %{_bindir}/engine-upgrade
 %{_bindir}/engine-cleanup
 %{_bindir}/engine-backup
+%{_bindir}/engine-upgrade-check
 
 # Python scripts:
 %{engine_data}/scripts/basedefs.py*
