@@ -158,6 +158,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String ActionGroup___DELETE_DISK();
 
+    String ActionGroup___CONFIGURE_NETWORK_VNIC_PROFILE();
+
+    String ActionGroup___CREATE_NETWORK_VNIC_PROFILE();
+
+    String ActionGroup___DELETE_NETWORK_VNIC_PROFILE();
+
 	// Gluster action groups
 	String ActionGroup___CREATE_GLUSTER_VOLUME();
 
@@ -645,6 +651,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
 	String VdcActionType___ConnectStorageToVds();
 
+    String VdcActionType___AddVnicProfile();
+
+    String VdcActionType___UpdateProfile();
+
+    String VdcActionType___RemoveVnicProfile();
+
 	String VdcObjectType___AdElements();
 
 	String VdcObjectType___System();
@@ -686,6 +698,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 	String VdcObjectType___AddWatchdog();
 
 	String VdcObjectType___GlusterService();
+
+    String VdcObjectType___VnicProfile();
 
 	String VdsSelectionAlgorithm___None();
 
