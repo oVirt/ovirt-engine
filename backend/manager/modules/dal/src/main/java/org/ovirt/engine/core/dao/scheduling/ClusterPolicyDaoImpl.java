@@ -19,7 +19,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolicy, Guid> implements ClusterPolicyDao {
-    private static Map<Guid, PolicyUnit> policyUnitMap = null;
 
     public ClusterPolicyDaoImpl() {
         super("ClusterPolicy");
@@ -81,11 +80,9 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
     }
 
     private void fillClusterPolicy(Map<Guid, ClusterPolicy> map, List<ClusterPolicyUnit> clusterPolicyUnits) {
-        if (policyUnitMap == null) {
-            policyUnitMap = new HashMap<Guid, PolicyUnit>();
-            for (PolicyUnit policyUnit : dbFacade.getPolicyUnitDao().getAll()) {
-                policyUnitMap.put(policyUnit.getId(), policyUnit);
-            }
+        Map<Guid, PolicyUnit> policyUnitMap = new HashMap<Guid, PolicyUnit>();
+        for (PolicyUnit policyUnit : dbFacade.getPolicyUnitDao().getAll()) {
+            policyUnitMap.put(policyUnit.getId(), policyUnit);
         }
         for (ClusterPolicyUnit clusterPolicyUnit : clusterPolicyUnits) {
             ClusterPolicy clusterPolicy = map.get(clusterPolicyUnit.getClusterPolicyId());
@@ -134,7 +131,7 @@ public class ClusterPolicyDaoImpl extends DefaultGenericDaoDbFacade<ClusterPolic
             }
         }
         if (entity.getBalance() != null) {
-            unit = getClusterPolicyUnit(entity, entity.getBalance(), map);
+            getClusterPolicyUnit(entity, entity.getBalance(), map);
         }
         return new ArrayList<ClusterPolicyUnit>(map.values());
     }
