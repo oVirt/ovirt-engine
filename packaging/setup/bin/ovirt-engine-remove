@@ -45,7 +45,7 @@ baseenv="APPEND:BASE/pluginPath=str:${scriptdir}/../plugins APPEND:BASE/pluginGr
 otopienv=""
 environment=""
 
-environment="${environment} OVESETUP_CORE/offlinePackager=bool:True"
+environment="${environment} OVESETUP_CORE/offlinePackager=bool:True PACKAGER/yumpackagerEnabled=bool:False"
 
 while [ -n "$1" ]; do
 	x="$1"
