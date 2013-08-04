@@ -119,9 +119,9 @@ public final class CommandsFactory {
         }
         for (String commandPackage : COMMAND_PACKAGES) {
             String className = String.format(CLASS_NAME_FORMAT, commandPackage, name, suffix);
-            Class<CommandBase<?>> type = loadClass(className);
+            Class<CommandBase<? extends VdcActionParametersBase>> type = loadClass(className);
             if (type != null) {
-                Class<CommandBase<?>> cachedType = commandsCache.putIfAbsent(key, type); // update cache
+                Class<CommandBase<? extends VdcActionParametersBase>> cachedType = commandsCache.putIfAbsent(key, type); // update cache
                 return cachedType == null ? type : cachedType;
             }
         }
@@ -169,4 +169,5 @@ public final class CommandsFactory {
     }
 
     private static Log log = LogFactory.getLog(CommandsFactory.class);
+
 }
