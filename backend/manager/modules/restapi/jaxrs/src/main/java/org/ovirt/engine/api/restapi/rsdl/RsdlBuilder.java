@@ -67,6 +67,7 @@ public class RsdlBuilder {
 
     private static final String COLLECTION_PARAMETER_RSDL = "collection";
     private static final String COLLECTION_PARAMETER_YAML = "--COLLECTION";
+    private static final String DEPRECATED_PARAMETER_YAML = "--DEPRECATED";
     private RSDL rsdl;
     private String entryPointPath;
     private BackendApiResource apiResource;
@@ -413,22 +414,36 @@ public class RsdlBuilder {
     private Parameter createBodyParam(Entry<Object, Object> mandatoryKeyValuePair, boolean required) {
         Parameter param = new Parameter();
         param.setRequired(required);
-        String paramName = mandatoryKeyValuePair.getKey().toString();
-        if (paramName.endsWith(COLLECTION_PARAMETER_YAML)) {
-            param.setName(paramName.substring(0, paramName.length()-(COLLECTION_PARAMETER_YAML.length())));
-            param.setType(COLLECTION_PARAMETER_RSDL);
-            @SuppressWarnings("unchecked")
-            Map<Object, Object> listParams = (Map<Object, Object>)mandatoryKeyValuePair.getValue();
-            param.setParametersSet(new ParametersSet());
-            for (Entry<Object, Object> listParamData : listParams.entrySet()) {
-                Parameter listParam = createBodyParam(listParamData, required);
-                param.getParametersSet().getParameters().add(listParam);
-            }
+        String paramName = getParamName(mandatoryKeyValuePair);
+        param.setName(paramName);
+        if (mandatoryKeyValuePair.getKey().toString().contains(COLLECTION_PARAMETER_YAML)) {
+            handleCollection(mandatoryKeyValuePair, required, param);
         } else {
-            param.setName(paramName);
             param.setType(mandatoryKeyValuePair.getValue().toString());
         }
+        if (mandatoryKeyValuePair.getKey().toString().contains(DEPRECATED_PARAMETER_YAML)) {
+            param.setDeprecated(true);
+        }
         return param;
+    }
+
+    private void handleCollection(Entry<Object, Object> mandatoryKeyValuePair, boolean required, Parameter param) {
+        param.setType(COLLECTION_PARAMETER_RSDL);
+        @SuppressWarnings("unchecked")
+        Map<Object, Object> listParams = (Map<Object, Object>)mandatoryKeyValuePair.getValue();
+        param.setParametersSet(new ParametersSet());
+        for (Entry<Object, Object> listParamData : listParams.entrySet()) {
+            Parameter listParam = createBodyParam(listParamData, required);
+            param.getParametersSet().getParameters().add(listParam);
+        }
+    }
+
+    private String getParamName(Entry<Object, Object> mandatoryKeyValuePair) {
+        String paramName = mandatoryKeyValuePair.getKey().toString();
+        if (paramName.contains("--")) {
+            paramName = paramName.substring(0, paramName.indexOf("--"));
+        }
+        return paramName;
     }
 
     private void addHeaderParams(DetailedLink link, Action action) {
@@ -442,6 +457,7 @@ public class RsdlBuilder {
                     ParamData paramData = (ParamData) value;
                     header.setValue(paramData.getValue());
                     header.setRequired(paramData.getRequired() == null ? Boolean.FALSE : paramData.getRequired());
+                    header.setDeprecated(paramData.getDeprecated());
                 }
 
                 link.getRequest().getHeaders().getHeaders().add(header);
@@ -463,6 +479,7 @@ public class RsdlBuilder {
                     param.setContext(urlParamData.getContext());
                     param.setValue(urlParamData.getValue());
                     param.setRequired(urlParamData.getRequired()==null ? Boolean.FALSE : urlParamData.getRequired());
+                    param.setDeprecated(urlParamData.getDeprecated());
                 }
                 ps.getParameters().add(param);
             }
