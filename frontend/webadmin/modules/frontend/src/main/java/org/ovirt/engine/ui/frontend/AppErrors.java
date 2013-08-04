@@ -1156,6 +1156,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM network interface profiles can be added to a VM network only.")
     String CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK();
 
+    @DefaultStringValue("Cannot ${action} ${type}. There is no VM network interface profile for the network the user can use.\n- Please use a VM network interface profile instead of a network name.")
+    String ACTION_TYPE_FAILED_CANNOT_FIND_VNIC_PROFILE_FOR_NETWORK();
+
     @DefaultStringValue("The specified external network cannot be configured on the host's interface.")
     String EXTERNAL_NETWORK_CANNOT_BE_PROVISIONED();
 

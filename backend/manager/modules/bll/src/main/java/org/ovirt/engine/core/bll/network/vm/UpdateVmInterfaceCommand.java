@@ -137,6 +137,14 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
     @Override
     protected boolean canDoAction() {
+        if (getVm() == null) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
+            return false;
+        }
+
+        if (!updateVnicForBackwardCompatibility()) {
+            return false;
+        }
 
         if (!updateVmNicAllowed(getVm().getStatus())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_CHANGE_STATUS_WHEN_NOT_DOWN_UP);

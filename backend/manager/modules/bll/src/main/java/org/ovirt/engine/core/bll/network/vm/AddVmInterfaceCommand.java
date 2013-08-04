@@ -101,6 +101,10 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
+        if (!updateVnicForBackwardCompatibility()) {
+            return false;
+        }
+
         switch (getVmDynamicDao().get(getParameters().getVmId()).getStatus()) {
         case Up:
         case Down:

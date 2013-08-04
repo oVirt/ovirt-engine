@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
+import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
@@ -97,6 +98,17 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         return getInterface().getVmTemplateId() != null
                 ? new ValidationResult(VdcBllMessages.NETWORK_INTERFACE_TEMPLATE_CANNOT_BE_SET)
                 : ValidationResult.VALID;
+    }
+
+    protected boolean updateVnicForBackwardCompatibility() {
+        VmInterfaceManager nicManager = new VmInterfaceManager();
+        if (!validate(nicManager.updateNicForBackwardCompatibility(getParameters().getInterface(),
+                getVm().getStaticData(),
+                getCurrentUser().getUserId()))) {
+            return false;
+        }
+
+        return true;
     }
 
     protected String getMacAddress() {

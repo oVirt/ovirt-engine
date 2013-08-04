@@ -5,12 +5,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -18,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -25,6 +28,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
@@ -206,18 +210,42 @@ public class VmInterfaceManager {
         return true;
     }
 
+    public ValidationResult updateNicForBackwardCompatibility(VmNetworkInterface nic, VmBase vm, Guid userId) {
+        if (nic.getVnicProfileId() != null) {
+            return ValidationResult.VALID;
+        }
+
+        if (nic.getNetworkName() == null) {
+            if (nic.isPortMirroring()) {
+                return new ValidationResult(VdcBllMessages.PORT_MIRRORING_REQUIRES_NETWORK);
+            } else {
+                return ValidationResult.VALID;
+            }
+        }
+
+        Network network = getNetworkDao().getByNameAndCluster(nic.getNetworkName(), vm.getVdsGroupId());
+
+        if (network == null) {
+            return new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CLUSTER);
+        }
+
+        List<VnicProfile> vnicProfiles = getVnicProfileDao().getAllForNetwork(network.getId());
+        for (VnicProfile profile : vnicProfiles) {
+            if (isVnicProfilePermitted(userId, profile, nic.isPortMirroring())) {
+                nic.setVnicProfileId(profile.getId());
+                return ValidationResult.VALID;
+            }
+        }
+
+        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_FIND_VNIC_PROFILE_FOR_NETWORK);
+    }
+
     private VnicProfile findVnicProfileForUser(Guid userId, Network network) {
         List<VnicProfile> networkProfiles = getVnicProfileDao().getAllForNetwork(network.getId());
 
         for (VnicProfile profile : networkProfiles) {
-            if (profile.isPortMirroring()) {
-                if (isVnicProfilePermitted(userId, profile, ActionGroup.PORT_MIRRORING)) {
-                    return profile;
-                }
-            } else {
-                if (isVnicProfilePermitted(userId, profile, ActionGroup.CONFIGURE_VM_NETWORK)) {
-                    return profile;
-                }
+            if (isVnicProfilePermitted(userId, profile, profile.isPortMirroring())) {
+                return profile;
             }
         }
 
@@ -242,11 +270,12 @@ public class VmInterfaceManager {
         return null;
     }
 
-    private boolean isVnicProfilePermitted(Guid userId, VnicProfile profile, ActionGroup actionGroup) {
-        return getPermissionDAO().getEntityPermissions(userId,
-                actionGroup,
-                profile.getId(),
-                VdcObjectType.VnicProfile) != null;
+    private boolean isVnicProfilePermitted(Guid userId, VnicProfile profile, boolean portMirroring) {
+        return portMirroring == profile.isPortMirroring()
+                && getPermissionDAO().getEntityPermissions(userId,
+                        ActionGroup.CONFIGURE_VM_NETWORK,
+                        profile.getId(),
+                        VdcObjectType.VnicProfile) != null;
     }
 
     /**
@@ -285,6 +314,10 @@ public class VmInterfaceManager {
 
     private PermissionDAO getPermissionDAO() {
         return DbFacade.getInstance().getPermissionDao();
+    }
+
+    private NetworkDao getNetworkDao() {
+        return DbFacade.getInstance().getNetworkDao();
     }
 
     private AuditLogableBase createAuditLog(final VmNic iface) {
