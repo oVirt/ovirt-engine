@@ -44,8 +44,11 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
         }
 
         List<VmNic> interfaces = getVmNicDao().getAllForTemplate(getParameters().getVmTemplateId());
-
         if (!validate(templateExists())) {
+            return false;
+        }
+
+        if (!updateVnicForBackwardCompatibility()) {
             return false;
         }
 

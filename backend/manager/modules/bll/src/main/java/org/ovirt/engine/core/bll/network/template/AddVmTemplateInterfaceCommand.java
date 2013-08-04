@@ -55,6 +55,10 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
             return false;
         }
 
+        if (!updateVnicForBackwardCompatibility()) {
+            return false;
+        }
+
         VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
 
         if (!VmCommand.checkPciAndIdeLimit(getVmTemplate().getNumOfMonitors(),
