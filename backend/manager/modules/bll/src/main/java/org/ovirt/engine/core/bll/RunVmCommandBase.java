@@ -18,6 +18,9 @@ import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
+import org.ovirt.engine.core.common.RemoveVmHibernationVolumesParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -161,8 +164,10 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         if (getVm().getLastVdsRunOn() == null || !getVm().getLastVdsRunOn().equals(getCurrentVdsId())) {
             getVm().setLastVdsRunOn(getCurrentVdsId());
         }
+
         if (StringUtils.isNotEmpty(getVm().getHibernationVolHandle())) {
-            removeMemoryVolumes(getVm().getHibernationVolHandle(), getActionType(), true);
+            removeVmHibernationVolumes();
+
             // In order to prevent a race where VdsUpdateRuntimeInfo saves the Vm Dynamic as UP prior to execution of
             // this method (which is a part of the cached VM command,
             // so the state this method is aware to is RESTORING, in case of RunVmCommand after the VM got suspended.
@@ -174,6 +179,22 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                     .getResourceManager()
                     .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
                             new UpdateVmDynamicDataVDSCommandParameters(getCurrentVdsId(), getVm().getDynamicData()));
+        }
+    }
+
+    private void removeVmHibernationVolumes() {
+        RemoveVmHibernationVolumesParameters removeVmHibernationVolumesParameters = new RemoveVmHibernationVolumesParameters(getVmId());
+        removeVmHibernationVolumesParameters.setParentCommand(getActionType());
+        removeVmHibernationVolumesParameters.setEntityInfo(getParameters().getEntityInfo());
+        removeVmHibernationVolumesParameters.setParentParameters(getParameters());
+
+        VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
+                VdcActionType.RemoveVmHibernationVolumes,
+                removeVmHibernationVolumesParameters,
+                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+
+        for (Guid taskId : vdcRetValue.getInternalVdsmTaskIdList()) {
+            AsyncTaskManager.getInstance().StartPollingTask(taskId);
         }
     }
 

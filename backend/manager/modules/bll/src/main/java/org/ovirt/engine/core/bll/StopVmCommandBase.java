@@ -4,13 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.RemoveVmHibernationVolumesParameters;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -107,14 +111,36 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         if (getVm().getStatus() != VMStatus.ImageLocked) {
             // Set the VM to image locked to decrease race condition.
             updateVmStatus(VMStatus.ImageLocked);
-            if (StringUtils.isNotEmpty(getVm().getHibernationVolHandle())
-                    && removeMemoryVolumes(getVm().getHibernationVolHandle(), getActionType(), false)) {
+
+            if (removeVmHibernationVolumes()) {
                 returnVal = true;
             } else {
                 updateVmStatus(vmStatus);
             }
         }
         return returnVal;
+    }
+
+    private boolean removeVmHibernationVolumes() {
+        if (StringUtils.isEmpty(getVm().getHibernationVolHandle())) {
+            return false;
+        }
+
+        RemoveVmHibernationVolumesParameters parameters = new RemoveVmHibernationVolumesParameters(getVmId());
+        parameters.setParentCommand(getActionType());
+        parameters.setEntityInfo(getParameters().getEntityInfo());
+        parameters.setParentParameters(getParameters());
+
+        VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
+                VdcActionType.RemoveVmHibernationVolumes,
+                parameters,
+                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+
+        if (vdcRetValue.getSucceeded()) {
+            getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
+        }
+
+        return vdcRetValue.getSucceeded();
     }
 
     private void updateVmStatus(VMStatus newStatus) {
