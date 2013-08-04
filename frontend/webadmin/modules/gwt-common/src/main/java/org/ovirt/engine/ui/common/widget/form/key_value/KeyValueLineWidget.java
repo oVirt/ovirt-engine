@@ -4,6 +4,9 @@ import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueLineModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -88,8 +91,26 @@ public class KeyValueLineWidget extends Composite implements HasEditorDriver<Key
                 object.getRemoveLine().execute();
             }
         });
-
+        updateKeyTitle(object);
+        object.getKeys().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                updateKeyTitle(object);
+            }
+        });
         driver.edit(object);
+    }
+
+    /**
+     * set dropdown with selected key tooltip.
+     */
+    private void updateKeyTitle(KeyValueLineModel object) {
+        String selectedKey = (String) object.getKeys().getSelectedItem();
+        // Setting the title to null results in the string "null" being displayed on some browsers.
+        if (selectedKey == null) {
+            selectedKey = "";
+        }
+        keyField.getElement().setTitle(selectedKey);
     }
 
     @Override
