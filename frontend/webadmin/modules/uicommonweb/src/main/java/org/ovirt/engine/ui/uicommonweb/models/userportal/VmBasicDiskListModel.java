@@ -19,6 +19,10 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 @SuppressWarnings("unused")
 public class VmBasicDiskListModel extends SearchableListModel
 {
+    public VmBasicDiskListModel() {
+        setIsTimerDisabled(true);
+    }
+
     @Override
     protected void onEntityChanged()
     {
