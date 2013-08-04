@@ -14,8 +14,6 @@ public class VmPoolUserParameters extends VmPoolSimpleUserParameters implements 
 
     private VdcUser privateVdcUserData;
 
-    private boolean reinitialize;
-
     public VdcUser getVdcUserData() {
         return privateVdcUserData;
     }
@@ -32,14 +30,6 @@ public class VmPoolUserParameters extends VmPoolSimpleUserParameters implements 
 
     private void setIsInternal(boolean value) {
         privateIsInternal = value;
-    }
-
-    public boolean isReinitialize() {
-        return reinitialize;
-    }
-
-    public void setReinitialize(boolean reinitialize) {
-        this.reinitialize = reinitialize;
     }
 
     public VmPoolUserParameters() {

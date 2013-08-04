@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -70,8 +69,6 @@ public class PoolItemBehavior extends ItemBehavior
                 Frontend.getLoggedInUser(),
                 false);
 
-        params.setReinitialize(!getItem().isInitialized() && AsyncDataProvider.isWindowsOsType(getItem().getOsId()));
-
         Frontend.RunAction(VdcActionType.AttachUserToVmFromPoolAndRun, params,
                 new IFrontendActionAsyncCallback() {
                     @Override
@@ -115,7 +112,6 @@ public class PoolItemBehavior extends ItemBehavior
                                     UserPortalItemModel model = behavior.getItem();
                                     model.setOsId(vm.getVmOsId());
                                     model.setSpiceDriverVersion(vm.getSpiceDriverVersion());
-                                    model.setInitialized(vm.isInitialized());
                                     poolToOsType.put(((VmPool) model.getEntity()).getVmPoolId(), vm.getVmOsId());
                                 }
 

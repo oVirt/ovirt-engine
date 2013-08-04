@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
-import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
@@ -208,13 +207,6 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                     // use sysprep iff the vm is not initialized and vm has Win OS
                     RunVmParams tempVar = new RunVmParams(getEntity().getId());
                     tempVar.setRunAsStateless(getEntity().isStateless());
-                    if (!getEntity().isInitialized() && AsyncDataProvider.isWindowsOsType(getEntity().getVmOsId())) {
-                        tempVar.setInitializationType(InitializationType.Sysprep);
-                    } else if (!getEntity().isInitialized() && AsyncDataProvider.isLinuxOsType(getEntity().getVmOsId())) {
-                        tempVar.setInitializationType(InitializationType.CloudInit);
-                    } else {
-                        tempVar.setInitializationType(InitializationType.None);
-                    }
                     Frontend.RunMultipleAction(VdcActionType.RunVm,
                             new ArrayList<VdcActionParametersBase>(Arrays.asList(new VdcActionParametersBase[] { tempVar })));
 

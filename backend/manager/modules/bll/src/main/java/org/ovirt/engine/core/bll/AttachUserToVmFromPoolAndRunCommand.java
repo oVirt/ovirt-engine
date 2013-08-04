@@ -19,7 +19,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
-import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -31,7 +30,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -211,12 +209,6 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             runVmParams.setSessionId(getParameters().getSessionId());
             runVmParams.setParentParameters(getParameters());
             runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToAttach));
-            // if reinitialize needed, select sysprep for windows and cloud-init for linux
-            // sysprep / cloud-init info will be taken from vm
-            runVmParams.setInitializationType(getParameters().isReinitialize() ?
-                    OsRepositoryImpl.INSTANCE.isWindows(getVm().getVmOsId()) ?
-                            InitializationType.Sysprep : InitializationType.CloudInit
-                    : InitializationType.None);
             runVmParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
             runVmParams.setRunAsStateless(true);
             ExecutionContext runVmContext = createRunVmContext();

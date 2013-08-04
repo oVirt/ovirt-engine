@@ -41,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
+import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -618,7 +619,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                      // the VM can run with display type which is different from its default display type
                     (getParameters().getUseVnc() ? DisplayType.vnc : DisplayType.qxl));
 
-            getVm().setInitializationType(getParameters().getInitializationType());
+            if (getParameters().getInitializationType() == null) {
+                // if vm not initialized, use sysprep/cloud-init
+                if (!getVm().isInitialized()) {
+                    getVm().setInitializationType(OsRepositoryImpl.INSTANCE.isWindows(getVm().getVmOsId()) ?
+                            InitializationType.Sysprep :
+                            InitializationType.CloudInit);
+                }
+            } else {
+                getVm().setInitializationType(getParameters().getInitializationType());
+            }
 
             // if we attach floppy we don't need the sysprep
             if (!StringUtils.isEmpty(getVm().getFloppyPath())) {

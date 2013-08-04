@@ -21,7 +21,7 @@ public class RunVmParams extends VmOperationParameterBase {
     private String privateClientIp;
     private VdcUser privateRequestingUser;
     private Guid _destinationVdsId;
-    private InitializationType privateInitializationType = InitializationType.None;
+    private InitializationType privateInitializationType;
     private Boolean privateRunAsStateless;
     private String initrd_url;
     private String kernel_url;

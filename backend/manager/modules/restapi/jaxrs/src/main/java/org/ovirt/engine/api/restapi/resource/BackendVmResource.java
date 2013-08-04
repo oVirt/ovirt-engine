@@ -47,17 +47,14 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
-import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
 
@@ -240,23 +237,7 @@ public class BackendVmResource extends
         if (action.isSetPause() && action.isPause()) {
             params.setRunAndPause(true);
         }
-        return doAction(VdcActionType.RunVmOnce, setInitializationType(params), action);
-    }
-
-    private VdcActionParametersBase setInitializationType(RunVmOnceParams params) {
-        //REVISE when BE supports default val. for RunVmOnceParams.privateReinitialize
-        org.ovirt.engine.core.common.businessentities.VM vm = getEntity(org.ovirt.engine.core.common.businessentities.VM.class,
-                                                                        VdcQueryType.GetVmByVmId,
-                                                                        new IdQueryParameters(guid),
-                                                                        "VM");
-        if (SimpleDependecyInjector.getInstance().get(OsRepository.class).isWindows(vm.getVmOsId()) && vm.isFirstRun()) {
-            params.setInitializationType(InitializationType.Sysprep);
-        } else if (SimpleDependecyInjector.getInstance().get(OsRepository.class).isLinux(vm.getVmOsId()) && params.getCloudInitParameters() != null) {
-            params.setInitializationType(InitializationType.CloudInit);
-        } else {
-            params.setInitializationType(InitializationType.None);
-        }
-        return params;
+        return doAction(VdcActionType.RunVmOnce, params, action);
     }
 
     @Override
