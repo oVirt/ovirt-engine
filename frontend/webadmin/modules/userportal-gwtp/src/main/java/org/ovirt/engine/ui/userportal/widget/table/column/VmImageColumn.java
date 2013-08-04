@@ -25,7 +25,7 @@ public class VmImageColumn<T> extends UserPortalImageResourceColumn<T> {
         ResourcePrototype resource = getApplicationResourcesWithLookup().getResource(osTypeName + "SmallImage"); //$NON-NLS-1$
 
         if (resource == null || !(resource instanceof ImageResource)) {
-            resource = getApplicationResourcesWithLookup().other_SmallImage();
+            resource = getApplicationResourcesWithLookup().otherSmallImage();
         }
 
         return (ImageResource) resource;

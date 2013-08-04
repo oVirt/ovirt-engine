@@ -7,7 +7,7 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
 
     // OS large types
     @Source("images/os/large/other.png")
-    ImageResource other_LargeImage();
+    ImageResource otherLargeImage();
 
     @Source("images/os/large/other_linux.png")
     ImageResource other_linuxLargeImage();
@@ -88,7 +88,7 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
 
     // TODO remove the same resources from ApplicationResources and rename this
     @Source("images/os/other.jpg")
-    ImageResource other_SmallImage();
+    ImageResource otherSmallImage();
 
     @Source("images/os/other_linux.jpg")
     ImageResource other_linuxSmallImage();

@@ -27,7 +27,7 @@ public class OsTypeImage extends AbstractDynamicImage<Integer, ApplicationResour
 
     @Override
     protected String defaultImageName(Integer value) {
-        return "OtherOs" + nameUniquePart + IMAGE; //$NON-NLS-1$
+        return "other" + nameUniquePart + IMAGE; //$NON-NLS-1$
     }
 
 }
