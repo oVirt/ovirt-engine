@@ -3164,7 +3164,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new ArrayList<VnicProfile>();
+                    return new ArrayList<VnicProfileView>();
                 }
                 return source;
             }

@@ -27,6 +27,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CheckboxHeader;
+import org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfilesEditor;
 
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.FieldUpdater;
@@ -132,6 +133,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     public EntityModelTextBoxEditor networkLabel;
 
     @UiField
+    @Path(value = "profiles.selectedItem")
+    public VnicProfilesEditor profilesEditor;
+
+    @UiField
     @Ignore
     public DialogTab generalTab;
 
@@ -139,8 +144,16 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Ignore
     public DialogTab clusterTab;
 
-    @Inject
-    public AbstractNetworkPopupView(EventBus eventBus, ApplicationResources resources,
+    @UiField
+    @Ignore
+    public DialogTab profilesTab;
+
+    @UiField
+    @Ignore
+    public Label profilesLabel;
+
+ @Inject
+ public AbstractNetworkPopupView(EventBus eventBus, ApplicationResources resources,
             ApplicationConstants constants, ApplicationTemplates templates) {
         super(eventBus, resources);
         // Initialize Editors
@@ -171,6 +184,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     protected void localize(ApplicationConstants constants) {
         generalTab.setLabel(constants.generalTabNetworkPopup());
         clusterTab.setLabel(constants.clusterTabNetworkPopup());
+        profilesTab.setLabel(constants.profilesTabNetworkPopup());
 
         dataCenterEditor.setLabel(constants.networkPopupDataCenterLabel());
         assignLabel.setText(constants.networkPopupAssignLabel());
@@ -185,9 +199,11 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         vlanTagging.setLabel(constants.enableVlanTagLabel());
         hasMtuEditor.setLabel(constants.overrideMtuLabel());
         publicUseEditor.setLabel(constants.networkPublicUseLabel());
+
+        profilesLabel.setText(constants.profilesLabel());
     }
 
-    protected void addStyles() {
+   protected void addStyles() {
         vlanTag.addContentWidgetStyleName(style.vlanEditor());
         mtuEditor.addContentWidgetStyleName(style.mtuEditor());
         isVmNetworkEditor.addContentWidgetStyleName(style.checkBox());

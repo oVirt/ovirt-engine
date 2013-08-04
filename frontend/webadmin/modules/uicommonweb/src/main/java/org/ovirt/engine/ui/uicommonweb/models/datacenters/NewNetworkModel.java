@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
@@ -19,9 +20,13 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class NewNetworkModel extends NetworkModel {
 
@@ -93,6 +98,14 @@ public class NewNetworkModel extends NetworkModel {
     @Override
     protected void initIsVm() {
         getIsVmNetwork().setEntity(true);
+    }
+
+    @Override
+    protected void initProfiles() {
+        List<VnicProfileModel> profiles = new LinkedList<VnicProfileModel>();
+
+        profiles.add(new NewVnicProfileModel(getSourceListModel(), getSelectedDc().getcompatibility_version(), false));
+        getProfiles().setItems(profiles);
     }
 
     @Override
@@ -187,5 +200,19 @@ public class NewNetworkModel extends NetworkModel {
             }
         }
         return clusterToAttach;
+    }
+
+    @Override
+    protected void performProfilesActions(Guid networkGuid) {
+        performVnicProfileAction(VdcActionType.AddVnicProfile,
+                (List<VnicProfileModel>) getProfiles().getItems(),
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendMultipleActionAsyncResult result) {
+                        stopProgress();
+                        cancel();
+
+                    }
+                }, networkGuid);
     }
 }

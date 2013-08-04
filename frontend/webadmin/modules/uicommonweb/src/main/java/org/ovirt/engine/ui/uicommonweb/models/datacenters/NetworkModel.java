@@ -1,15 +1,24 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
@@ -20,6 +29,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public abstract class NetworkModel extends Model
 {
@@ -42,6 +52,7 @@ public abstract class NetworkModel extends Model
     private boolean isSupportBridgesReportByVDSM = false;
     private boolean mtuOverrideSupported = false;
     private ListModel privateDataCenters;
+    private ListModel profiles;
     private final Network network;
     private final ListModel sourceListModel;
 
@@ -109,6 +120,8 @@ public abstract class NetworkModel extends Model
         EntityModel publicUse = new EntityModel();
         publicUse.setEntity(true);
         setPublicUse(publicUse);
+
+        setProfiles(new ListModel());
 
         // Update changeability according to initial values
         onExportChanged();
@@ -286,6 +299,16 @@ public abstract class NetworkModel extends Model
         privateDataCenters = value;
     }
 
+    public ListModel getProfiles()
+    {
+        return profiles;
+    }
+
+    private void setProfiles(ListModel value)
+    {
+        profiles = value;
+    }
+
     public Network getNetwork() {
         return network;
     }
@@ -329,7 +352,7 @@ public abstract class NetworkModel extends Model
             getMtu().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar5 });
         }
 
-        getExternalProviders().validateSelectedItem(new IValidation [] { new NotEmptyValidation() });
+        getExternalProviders().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         return getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()
                 && getMtu().getIsValid() && getExternalProviders().getIsValid() && getComment().getIsValid();
@@ -357,6 +380,8 @@ public abstract class NetworkModel extends Model
         setMTUOverrideSupported(isMTUOverrideSupported);
 
         onExportChanged();
+
+        initProfiles();
     }
 
     protected void addCommands() {
@@ -394,6 +419,10 @@ public abstract class NetworkModel extends Model
         {
             network.setVlanId(Integer.parseInt(getVLanTag().getEntity().toString()));
         }
+
+        for (VnicProfileModel profileModel : (List<VnicProfileModel>) getProfiles().getItems()) {
+            profileModel.flush();
+        }
     }
 
     protected abstract void executeSave();
@@ -401,12 +430,37 @@ public abstract class NetworkModel extends Model
     protected void postSaveAction(Guid networkGuid, boolean succeeded) {
         if (succeeded)
         {
-            cancel();
+            performProfilesActions(networkGuid);
         }
         stopProgress();
     }
 
-    private void cancel() {
+    protected abstract void performProfilesActions(Guid networkGuid);
+
+    protected void performVnicProfileAction(VdcActionType action,
+            List<VnicProfileModel> profileModels,
+            IFrontendMultipleActionAsyncCallback callback, Guid networkGuid) {
+        if (profileModels.isEmpty()) {
+            callback.executed(null);
+            return;
+        }
+
+        networkGuid = networkGuid == null ? getNetwork().getId() : networkGuid;
+        ArrayList<VdcActionParametersBase> paramlist = new ArrayList<VdcActionParametersBase>();
+        for (VnicProfileModel profileModel : profileModels)
+        {
+            if (!StringHelper.isNullOrEmpty(profileModel.getProfile().getName())) {
+                VnicProfile vnicProfile = profileModel.getProfile();
+                vnicProfile.setNetworkId(networkGuid);
+                VdcActionParametersBase parameters = new VnicProfileParameters(vnicProfile);
+                paramlist.add(parameters);
+            }
+        }
+
+        Frontend.RunMultipleAction(action, paramlist, callback, null);
+    }
+
+    void cancel() {
         sourceListModel.setWindow(null);
         sourceListModel.setConfirmWindow(null);
     }
@@ -447,6 +501,8 @@ public abstract class NetworkModel extends Model
     protected abstract void initMtu();
 
     protected abstract void initIsVm();
+
+    protected abstract void initProfiles();
 
     protected abstract void onExportChanged();
 

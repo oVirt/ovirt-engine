@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+    <ui:style type="org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfileWidget.WidgetStyle" >
+		.publicUse {
+			width: 75px;
+		}
+
+		.publicUsePanel {
+			width: 75px;
+		}
+    </ui:style>
+	<g:HorizontalPanel>
+		<e:EntityModelTextBoxOnlyEditor ui:field="nameEditor" />
+		<g:SimplePanel addStyleNames="{style.publicUsePanel}">
+			<e:EntityModelCheckBoxEditor ui:field="publicUseEditor"/>
+		</g:SimplePanel>
+	</g:HorizontalPanel>
+
+</ui:UiBinder>

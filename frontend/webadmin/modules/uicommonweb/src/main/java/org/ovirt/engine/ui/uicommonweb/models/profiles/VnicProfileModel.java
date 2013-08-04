@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
@@ -42,6 +43,8 @@ public abstract class VnicProfileModel extends Model {
     private final Version dcCompatibilityVersion;
     private final boolean customPropertiesSupported;
     private ListModel network;
+    private VnicProfile vnicProfile = null;
+    private boolean customPropertiesVisible;
 
     public EntityModel getName()
     {
@@ -95,9 +98,18 @@ public abstract class VnicProfileModel extends Model {
         return sourceModel;
     }
 
-    public VnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion) {
+    public void setProfile(VnicProfile vnicProfile) {
+        this.vnicProfile = vnicProfile;
+    }
+
+    public VnicProfile getProfile() {
+        return vnicProfile;
+    }
+
+    public VnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion, boolean customPropertiesVisible) {
         this.sourceModel = sourceModel;
         this.dcCompatibilityVersion = dcCompatibilityVersion;
+        this.customPropertiesVisible = customPropertiesVisible;
 
         customPropertiesSupported =
                 (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
@@ -114,6 +126,10 @@ public abstract class VnicProfileModel extends Model {
         initCustomPropertySheet();
 
         initCommands();
+    }
+
+    public VnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion) {
+        this(sourceModel, dcCompatibilityVersion, true);
     }
 
     protected boolean isPortMirroringSupported() {
@@ -146,23 +162,13 @@ public abstract class VnicProfileModel extends Model {
             return;
         }
 
-        VnicProfile profile = getProfile();
-
-        if (profile == null) {
-            profile = new VnicProfile();
-        }
-
         // Save changes.
-        profile.setName((String) getName().getEntity());
-        Network network = (Network) getNetwork().getSelectedItem();
-        profile.setNetworkId(network != null ? network.getId() : null);
-        profile.setPortMirroring((Boolean) getPortMirroring().getEntity());
-        profile.setCustomProperties(KeyValueModel.convertProperties(getCustomPropertySheet().getEntity()));
+        flush();
 
         startProgress(null);
 
         Frontend.RunAction(getVdcActionType(),
-                new VnicProfileParameters(profile),
+                getActionParameters(),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -176,6 +182,22 @@ public abstract class VnicProfileModel extends Model {
                     }
                 },
                 this);
+    }
+
+    public void flush() {
+        if (vnicProfile == null) {
+            vnicProfile = new VnicProfile();
+        }
+        vnicProfile.setName((String) getName().getEntity());
+        Network network = (Network) getNetwork().getSelectedItem();
+        vnicProfile.setNetworkId(network != null ? network.getId() : null);
+        vnicProfile.setPortMirroring((Boolean) getPortMirroring().getEntity());
+
+        if (customPropertiesVisible) {
+            vnicProfile.setCustomProperties(KeyValueModel.convertProperties(getCustomPropertySheet().getEntity()));
+        } else {
+            vnicProfile.setCustomProperties(null);
+        }
     }
 
     private void cancel()
@@ -199,6 +221,10 @@ public abstract class VnicProfileModel extends Model {
     }
 
     private void initCustomPropertySheet() {
+        if (!customPropertiesVisible) {
+            return;
+        }
+
         if (customPropertiesSupported) {
             GetDeviceCustomPropertiesParameters params = new GetDeviceCustomPropertiesParameters();
             params.setVersion(getDcCompatibilityVersion());
@@ -239,9 +265,11 @@ public abstract class VnicProfileModel extends Model {
         return getName().getIsValid() && getCustomPropertySheet().validate();
     }
 
-    public abstract VnicProfile getProfile();
-
     protected abstract void initCustomProperties();
 
     protected abstract VdcActionType getVdcActionType();
+
+    protected VdcActionParametersBase getActionParameters() {
+        return new VnicProfileParameters(vnicProfile);
+    }
 }

@@ -1572,4 +1572,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("CPU Shares")
     String cpuShares();
+
+    @DefaultStringValue("Network")
+    String networkProfilePopup();
 }

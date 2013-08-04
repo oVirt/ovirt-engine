@@ -281,7 +281,7 @@ public class KeyValueModel extends EntityModel implements IModifyLines {
         }
         for (KeyValueLineModel keyValueLineModel : (List<KeyValueLineModel>) getKeyValueLines().getItems()) {
             String key = (String) keyValueLineModel.getKeys().getSelectedItem();
-            if (key.equals(NO_KEYS) || key.equals(SELECT_KEY)) {
+            if (key == null || key.equals(NO_KEYS) || key.equals(SELECT_KEY)) {
                 continue;
             }
             builder.append(key);

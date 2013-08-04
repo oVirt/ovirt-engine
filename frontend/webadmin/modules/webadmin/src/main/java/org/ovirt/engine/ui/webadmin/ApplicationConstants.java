@@ -184,6 +184,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Export")
     String exportLabel();
 
+    @DefaultStringValue("vNic Profiles")
+    String profilesLabel();
+
     @DefaultStringValue("Create on external provider")
     String exportCheckboxLabel();
 
@@ -1054,6 +1057,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Cluster")
     String clusterTabNetworkPopup();
+
+    @DefaultStringValue("Profiles")
+    String profilesTabNetworkPopup();
 
     @DefaultStringValue("General")
     String networkGeneralSubTabLabel();
@@ -2850,6 +2856,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Allow all users to use this Profile")
     String profilePublicUseLabel();
+
+    @DefaultStringValue("Public")
+    String profilePublicUseInstanceTypeLabel();
 
     @DefaultStringValue("Some hosts in this cluster have the console address overridden and some not. For details please see the Hosts subtab")
     String consolePartiallyOverridden();

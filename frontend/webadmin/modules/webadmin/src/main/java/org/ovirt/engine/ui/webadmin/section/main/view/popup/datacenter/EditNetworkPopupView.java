@@ -49,7 +49,9 @@ public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkMo
 
     @Override
     public EditNetworkModel flush() {
-        return driver.flush();
+        EditNetworkModel model = driver.flush();
+        model.getProfiles().setItems(profilesEditor.flush().getItems());
+        return model;
     }
 
 }

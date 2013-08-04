@@ -3,6 +3,7 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:we="urn:import:org.ovirt.engine.ui.webadmin.widget.editor"
+	xmlns:v="urn:import:org.ovirt.engine.ui.webadmin.widget.vnicProfile"
 	xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
@@ -109,6 +110,16 @@
 									<e:EntityModelCellTable ui:field="clustersTable" />
 								</g:ScrollPanel>
 							</g:VerticalPanel>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="profilesTab">
+                        <t:content>
+                        	<g:FlowPanel>
+                        		<g:Label ui:field="profilesLabel" addStyleNames="{style.mainLabel}" />
+                        		<v:VnicProfilesEditor ui:field="profilesEditor" />
+                        	</g:FlowPanel>
                         </t:content>
                     </t:DialogTab>
                 </t:tab>

@@ -9,21 +9,24 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public class EditVnicProfileModel extends VnicProfileModel {
 
-    private VnicProfile profile;
-
-    public EditVnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion, VnicProfile profile) {
-        super(sourceModel, dcCompatibilityVersion);
+    public EditVnicProfileModel(EntityModel sourceModel,
+            Version dcCompatibilityVersion,
+            VnicProfile profile,
+            boolean customPropertiesVisible) {
+        super(sourceModel, dcCompatibilityVersion, customPropertiesVisible);
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfileTitle());
         setHashName("edit_vnic_profile"); //$NON-NLS-1$
 
-        this.profile = profile;
+        setProfile(profile);
 
         getName().setEntity(profile.getName());
         getPortMirroring().setEntity(getProfile().isPortMirroring());
+
+        getPublicUse().setIsAvailable(false);
     }
 
-    public VnicProfile getProfile() {
-        return profile;
+    public EditVnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion, VnicProfile profile) {
+        this(sourceModel, dcCompatibilityVersion, profile, true);
     }
 
     @Override
