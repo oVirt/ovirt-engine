@@ -358,6 +358,7 @@ install-layout: \
 	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-setup" "$(DESTDIR)$(BIN_DIR)/engine-setup"
 	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-setup" "$(DESTDIR)$(BIN_DIR)/engine-upgrade"
 	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-remove" "$(DESTDIR)$(BIN_DIR)/engine-cleanup"
+	ln -sf "$(DATA_DIR)/setup/bin/ovirt-engine-upgrade-check" "$(DESTDIR)$(BIN_DIR)/engine-upgrade-check"
 	ln -sf "$(DATA_DIR)/bin/engine-config.sh" "$(DESTDIR)$(BIN_DIR)/engine-config"
 	ln -sf "$(DATA_DIR)/bin/engine-manage-domains.sh" "$(DESTDIR)$(BIN_DIR)/engine-manage-domains"
 	ln -sf "$(DATA_DIR)/bin/engine-backup.sh" "$(DESTDIR)$(BIN_DIR)/engine-backup"
