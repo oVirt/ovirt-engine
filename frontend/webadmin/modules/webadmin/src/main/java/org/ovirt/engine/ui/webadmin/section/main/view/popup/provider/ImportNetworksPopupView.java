@@ -90,8 +90,7 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
                 new HorizontalSplitTable(providerNetworks,
                         importedNetworks,
                         constants.providerNetworks(),
-                        constants.importedNetworks(),
-                        constants);
+                        constants.importedNetworks());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTables(constants, templates, resources);
         providersEditor.setLabel(constants.networkProvider());

@@ -4,7 +4,7 @@
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
 
-	<ui:style type="org.ovirt.engine.ui.common.widget.HorizontalSplitTable.Style">
+	<ui:style>
 		.headers {
 			font-weight: bold;
 		}

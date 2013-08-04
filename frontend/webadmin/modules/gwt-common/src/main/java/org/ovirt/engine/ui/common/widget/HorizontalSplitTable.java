@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.ButtonBase;
@@ -34,8 +33,7 @@ public class HorizontalSplitTable extends Composite {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    interface Style extends CssResource {
-    }
+    private static CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
 
     private final MultiSelectionModel<EntityModel> topSelectionModel;
     private final MultiSelectionModel<EntityModel> bottomSelectionModel;
@@ -68,8 +66,7 @@ public class HorizontalSplitTable extends Composite {
     public HorizontalSplitTable(EntityModelCellTable<ListModel> topTable,
             EntityModelCellTable<ListModel> bottomTable,
             String topTitle,
-            String bottomTitle,
-            CommonApplicationConstants constants) {
+            String bottomTitle) {
 
         this.topTable = topTable;
         this.bottomTable = bottomTable;
