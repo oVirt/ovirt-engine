@@ -679,6 +679,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Network Name")
     String networkNameInterface();
 
+    @DefaultStringValue("Profile Name")
+    String profileNameInterface();
+
     @DefaultStringValue("Type")
     String typeInterface();
 

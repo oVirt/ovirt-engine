@@ -59,6 +59,14 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
         };
         getTable().addColumn(networkNameColumn, constants.networkNameInterface(), "200px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<VmNetworkInterface> profileNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+            @Override
+            public String getValue(VmNetworkInterface object) {
+                return object.getVnicProfileName();
+            }
+        };
+        getTable().addColumn(profileNameColumn, constants.profileNameInterface(), "150px"); //$NON-NLS-1$
+
         BooleanColumn<VmNetworkInterface> linkStateColumn =
                 new BooleanColumn<VmNetworkInterface>(constants.linkedNetworkInteface(),
                         constants.unlinkedNetworkInteface()) {
@@ -78,21 +86,24 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
         };
         getTable().addColumn(typeColumn, constants.typeInterface(), "100px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), constants.newInterface()) {
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
+                constants.newInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getNewCommand();
             }
         });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), constants.editInterface()) {
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
+                constants.editInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getEditCommand();
             }
         });
 
-        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(), constants.removeInterface()) {
+        getTable().addActionButton(new UiCommandButtonDefinition<VmNetworkInterface>(getEventBus(),
+                constants.removeInterface()) {
             @Override
             protected UICommand resolveCommand() {
                 return getModel().getRemoveCommand();
@@ -101,4 +112,3 @@ public class TemplateInterfaceListModelTable extends AbstractModelBoundTableWidg
     }
 
 }
-
