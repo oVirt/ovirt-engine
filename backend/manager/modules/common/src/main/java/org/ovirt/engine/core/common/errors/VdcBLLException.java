@@ -44,7 +44,7 @@ public class VdcBLLException extends RuntimeException {
 
     @Override
     public String getMessage() {
-        return String.format(super.getMessage() + " (Failed with VDSM error %1$s and code %2$s)",
+        return String.format(super.getMessage() + " (Failed with error %1$s and code %2$s)",
                 privateVdsError.getCode(),
                 privateVdsError.getCode().getValue());
     }

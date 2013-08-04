@@ -249,6 +249,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 case PROVIDER_FAILURE:
                     throw e;
                 default:
+                    log.warnFormat("Failed to run VM {0}: {1}", getVmName(), e.getMessage());
                 }
 
             } finally {
@@ -262,7 +263,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             } else {
                 // Try to rerun Vm on different vds no need to log the command because it is
                 // being logged inside the rerun
-                log.infoFormat("Failed to run desktop {0}, rerun", getVm().getName());
+                log.infoFormat("Trying to rerun VM {0}", getVm().getName());
                 setCommandShouldBeLogged(false);
                 setSucceeded(true);
                 rerun();
