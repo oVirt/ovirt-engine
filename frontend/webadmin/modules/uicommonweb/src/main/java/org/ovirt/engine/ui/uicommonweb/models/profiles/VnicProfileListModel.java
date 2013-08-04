@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -25,7 +24,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
-import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -66,9 +64,11 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
             return;
         }
 
-        // TODO - fix
-        // final VnicProfileModel profileModel = new NewVnicProfileModel(this, getEntity().getCompatibilityVersion());
-        final VnicProfileModel profileModel = new NewVnicProfileModel(this, Version.v3_3);
+        SystemTreeItemModel treeSelectedItem =
+                (SystemTreeItemModel) CommonModel.getInstance().getSystemTree().getSelectedItem();
+        SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, treeSelectedItem);
+        final VnicProfileModel profileModel =
+                new NewVnicProfileModel(this, ((StoragePool) treeSelectedDc.getEntity()).getcompatibility_version());
         setWindow(profileModel);
 
         initNetworkList(profileModel);
@@ -82,10 +82,8 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
             return;
         }
 
-        // TODO - fix
-        // final VnicProfileModel profileModel = new EditVnicProfileModel(this, getEntity().getCompatibilityVersion(),
-        // getEntity());
-        final VnicProfileModel profileModel = new EditVnicProfileModel(this, Version.v3_3, profile);
+        final VnicProfileModel profileModel =
+                new EditVnicProfileModel(this, profile.getCompatibilityVersion(), profile);
         setWindow(profileModel);
 
         initNetworkList(profileModel);
@@ -198,14 +196,11 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
         if (treeSelectedNetwork != null) {
             Network network = (Network) treeSelectedNetwork.getEntity();
             AsyncQuery asyncQuery = new AsyncQuery();
-            asyncQuery.setModel(this);
             asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue)
                 {
-                    List<VnicProfileView> newItems = (List<VnicProfileView>) returnValue;
-                    SearchableListModel searchableListModel = (SearchableListModel) model;
-                    searchableListModel.setItems(newItems);
+                    setItems((List<VnicProfileView>) returnValue);
                 }
             };
             AsyncDataProvider.getVnicProfilesByNetworkId(asyncQuery, network.getId());
@@ -219,26 +214,14 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
             StoragePool dc = (StoragePool) treeSelectedDc.getEntity();
 
             AsyncQuery asyncQuery = new AsyncQuery();
-            asyncQuery.setModel(this);
             asyncQuery.asyncCallback = new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue)
                 {
-                    List<VnicProfileView> notFilteredProfiles = (List<VnicProfileView>) returnValue;
-                    List<VnicProfileView> filteredProfiles = new ArrayList<VnicProfileView>();
-
-                    for (VnicProfileView profile : notFilteredProfiles) {
-                        // TODO - fix
-                        // if (profile.getDataCenterName().equals(dc.getName())){
-                        filteredProfiles.add(profile);
-                        // }
-                    }
-
-                    SearchableListModel searchableListModel = (SearchableListModel) model;
-                    searchableListModel.setItems(filteredProfiles);
+                    setItems((List<VnicProfileView>) returnValue);
                 }
             };
-            AsyncDataProvider.getAllVnicProfiles(asyncQuery);
+            AsyncDataProvider.getVnicProfilesByDcId(asyncQuery, dc.getId());
         }
     }
 
