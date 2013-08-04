@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -77,7 +77,9 @@ public class NetworkProfileListModel extends SearchableListModel
         }
 
         EditVnicProfileModel model =
-                new EditVnicProfileModel(this, getEntity().getCompatibilityVersion(), (VnicProfile) getSelectedItem());
+                new EditVnicProfileModel(this,
+                        getEntity().getCompatibilityVersion(),
+                        (VnicProfileView) getSelectedItem());
         setWindow(model);
 
         initProfileNetwork(model);
@@ -140,7 +142,7 @@ public class NetworkProfileListModel extends SearchableListModel
         asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                NetworkProfileListModel.this.setItems((List<VnicProfile>) returnValue);
+                NetworkProfileListModel.this.setItems((List<VnicProfileView>) returnValue);
             }
         };
         AsyncDataProvider.getVnicProfilesByNetworkId(asyncQuery, getEntity().getId());

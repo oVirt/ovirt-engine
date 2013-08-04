@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
-public class MainTabVnicProfileView extends AbstractMainTabWithDetailsTableView<VnicProfile, VnicProfileListModel> implements MainTabVnicProfilePresenter.ViewDef {
+public class MainTabVnicProfileView extends AbstractMainTabWithDetailsTableView<VnicProfileView, VnicProfileListModel> implements MainTabVnicProfilePresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<MainTabVnicProfileView> {
 
@@ -25,7 +25,7 @@ public class MainTabVnicProfileView extends AbstractMainTabWithDetailsTableView<
     private final ApplicationConstants constants;
 
     @Inject
-    public MainTabVnicProfileView(MainModelProvider<VnicProfile, VnicProfileListModel> modelProvider,
+    public MainTabVnicProfileView(MainModelProvider<VnicProfileView, VnicProfileListModel> modelProvider,
             ApplicationConstants constants,
             ApplicationResources resources) {
         super(modelProvider);
@@ -38,28 +38,28 @@ public class MainTabVnicProfileView extends AbstractMainTabWithDetailsTableView<
     void initTable() {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<VnicProfile> nameColumn = new TextColumnWithTooltip<VnicProfile>() {
+        TextColumnWithTooltip<VnicProfileView> nameColumn = new TextColumnWithTooltip<VnicProfileView>() {
             @Override
-            public String getValue(VnicProfile object) {
+            public String getValue(VnicProfileView object) {
                 return object.getName();
             }
         };
 
         getTable().addColumn(nameColumn, constants.nameNetworkProfile(), "200px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfile>(constants.newVnicProfile()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.newVnicProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfile>(constants.editVnicProfile()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.editVnicProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfile>(constants.removeVnicProfile()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.removeVnicProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getRemoveCommand();

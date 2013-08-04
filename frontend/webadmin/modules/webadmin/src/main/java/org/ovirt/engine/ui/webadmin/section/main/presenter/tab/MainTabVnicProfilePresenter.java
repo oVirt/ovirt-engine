@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
@@ -23,12 +23,12 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class MainTabVnicProfilePresenter extends AbstractMainTabWithDetailsPresenter<VnicProfile, VnicProfileListModel, MainTabVnicProfilePresenter.ViewDef, MainTabVnicProfilePresenter.ProxyDef> {
+public class MainTabVnicProfilePresenter extends AbstractMainTabWithDetailsPresenter<VnicProfileView, VnicProfileListModel, MainTabVnicProfilePresenter.ViewDef, MainTabVnicProfilePresenter.ProxyDef> {
 
     @GenEvent
     public class VnicProfileSelectionChange {
 
-        List<VnicProfile> selectedItems;
+        List<VnicProfileView> selectedItems;
 
     }
 
@@ -37,19 +37,19 @@ public class MainTabVnicProfilePresenter extends AbstractMainTabWithDetailsPrese
     public interface ProxyDef extends TabContentProxyPlace<MainTabVnicProfilePresenter> {
     }
 
-    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<VnicProfile> {
+    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<VnicProfileView> {
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            MainModelProvider<VnicProfile, VnicProfileListModel> modelProvider) {
+            MainModelProvider<VnicProfileView, VnicProfileListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.vnicProfilesMainTabLabel(), 12,
                 modelProvider);
     }
 
     @Inject
     public MainTabVnicProfilePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<VnicProfile, VnicProfileListModel> modelProvider) {
+            PlaceManager placeManager, MainModelProvider<VnicProfileView, VnicProfileListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

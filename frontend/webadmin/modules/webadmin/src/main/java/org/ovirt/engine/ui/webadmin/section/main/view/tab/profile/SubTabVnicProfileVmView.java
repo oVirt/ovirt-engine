@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.profile;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -15,7 +15,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
 import com.google.gwt.core.client.GWT;
 
-public class SubTabVnicProfileVmView extends AbstractSubTabTableView<VnicProfile, VM, VnicProfileListModel, VnicProfileVmListModel>
+public class SubTabVnicProfileVmView extends AbstractSubTabTableView<VnicProfileView, VM, VnicProfileListModel, VnicProfileVmListModel>
         implements SubTabVnicProfileVmPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVnicProfileVmView> {

@@ -38,6 +38,7 @@
 			<g:FlowPanel>
 				<e:ListModelListBoxEditor ui:field="networkEditor" />
 				<e:EntityModelTextBoxEditor ui:field="nameEditor" />
+				<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
 				<g:SimplePanel width="100%">
 					<e:EntityModelCheckBoxEditor ui:field="portMirroringEditor" />
 				</g:SimplePanel>

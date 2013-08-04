@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -29,11 +29,11 @@ public class VnicProfileTemplateListModel extends SearchableListModel
     }
 
     @Override
-    public VnicProfile getEntity() {
-        return (VnicProfile) super.getEntity();
+    public VnicProfileView getEntity() {
+        return (VnicProfileView) super.getEntity();
     }
 
-    public void setEntity(VnicProfile value) {
+    public void setEntity(VnicProfileView value) {
         super.setEntity(value);
     }
 

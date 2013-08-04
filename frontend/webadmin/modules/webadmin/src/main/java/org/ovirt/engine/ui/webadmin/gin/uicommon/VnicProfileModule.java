@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
@@ -33,12 +33,12 @@ public class VnicProfileModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public MainModelProvider<VnicProfile, VnicProfileListModel> getVnicProfileListProvider(EventBus eventBus,
+    public MainModelProvider<VnicProfileView, VnicProfileListModel> getVnicProfileListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VnicProfilePopupPresenterWidget> newVnicProfilePopupProvider,
             final Provider<VnicProfilePopupPresenterWidget> editVnicProfilePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new MainTabModelProvider<VnicProfile, VnicProfileListModel>(eventBus, defaultConfirmPopupProvider, VnicProfileListModel.class) {
+        return new MainTabModelProvider<VnicProfileView, VnicProfileListModel>(eventBus, defaultConfirmPopupProvider, VnicProfileListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VnicProfileListModel source,
                     UICommand lastExecutedCommand,

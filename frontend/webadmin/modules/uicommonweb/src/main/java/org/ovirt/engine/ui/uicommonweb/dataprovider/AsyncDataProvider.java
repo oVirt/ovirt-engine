@@ -60,7 +60,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -3179,7 +3178,7 @@ public final class AsyncDataProvider {
             {
                 if (source == null)
                 {
-                    return new ArrayList<VnicProfile>();
+                    return new ArrayList<VnicProfileView>();
                 }
                 return source;
             }

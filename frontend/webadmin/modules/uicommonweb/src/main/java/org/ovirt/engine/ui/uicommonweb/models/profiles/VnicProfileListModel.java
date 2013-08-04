@@ -6,7 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -74,7 +74,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
     }
 
     public void edit() {
-        final VnicProfile profile = (VnicProfile) getSelectedItem();
+        final VnicProfileView profile = (VnicProfileView) getSelectedItem();
 
         if (getWindow() != null)
         {
@@ -202,7 +202,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
                 @Override
                 public void onSuccess(Object model, Object returnValue)
                 {
-                    List<VnicProfile> newItems = (List<VnicProfile>) returnValue;
+                    List<VnicProfileView> newItems = (List<VnicProfileView>) returnValue;
                     SearchableListModel searchableListModel = (SearchableListModel) model;
                     searchableListModel.setItems(newItems);
                 }
@@ -223,10 +223,10 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
                 @Override
                 public void onSuccess(Object model, Object returnValue)
                 {
-                    List<VnicProfile> notFilteredProfiles = (List<VnicProfile>) returnValue;
-                    List<VnicProfile> filteredProfiles = new ArrayList<VnicProfile>();
+                    List<VnicProfileView> notFilteredProfiles = (List<VnicProfileView>) returnValue;
+                    List<VnicProfileView> filteredProfiles = new ArrayList<VnicProfileView>();
 
-                    for (VnicProfile profile : notFilteredProfiles) {
+                    for (VnicProfileView profile : notFilteredProfiles) {
                         // TODO - fix
                         // if (profile.getDataCenterName().equals(dc.getName())){
                         filteredProfiles.add(profile);
@@ -300,8 +300,8 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
     }
 
     @Override
-    public VnicProfile getEntity() {
-        return (VnicProfile) super.getEntity();
+    public VnicProfileView getEntity() {
+        return (VnicProfileView) super.getEntity();
     }
 
     @Override

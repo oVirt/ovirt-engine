@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -35,7 +35,7 @@ public class SubTabNetworkProfilePresenter extends AbstractSubTabPresenter<Netwo
 
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<VnicProfile, NetworkListModel, NetworkProfileListModel> modelProvider) {
+            SearchableDetailModelProvider<VnicProfileView, NetworkListModel, NetworkProfileListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.networkProfileSubTabLabel(), 1,
                 modelProvider);
     }
@@ -43,7 +43,7 @@ public class SubTabNetworkProfilePresenter extends AbstractSubTabPresenter<Netwo
     @Inject
     public SubTabNetworkProfilePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<VnicProfile, NetworkListModel, NetworkProfileListModel> modelProvider) {
+            SearchableDetailModelProvider<VnicProfileView, NetworkListModel, NetworkProfileListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, NetworkSubTabPanelPresenter.TYPE_SetTabContent);
     }
 

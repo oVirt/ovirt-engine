@@ -39,6 +39,7 @@ public abstract class VnicProfileModel extends Model {
     private EntityModel portMirroring;
     private KeyValueModel customPropertySheet;
     private EntityModel publicUse;
+    private EntityModel description;
     private final EntityModel sourceModel;
     private final Version dcCompatibilityVersion;
     private final boolean customPropertiesSupported;
@@ -82,6 +83,14 @@ public abstract class VnicProfileModel extends Model {
         this.publicUse = publicUse;
     }
 
+    public EntityModel getDescription() {
+        return description;
+    }
+
+    public void setDescription(EntityModel description) {
+        this.description = description;
+    }
+
     public Version getDcCompatibilityVersion() {
         return dcCompatibilityVersion;
     }
@@ -122,6 +131,7 @@ public abstract class VnicProfileModel extends Model {
         EntityModel publicUse = new EntityModel();
         publicUse.setEntity(true);
         setPublicUse(publicUse);
+        setDescription(new EntityModel());
         getPortMirroring().setIsChangable(isPortMirroringSupported());
         initCustomPropertySheet();
 
@@ -198,6 +208,8 @@ public abstract class VnicProfileModel extends Model {
         } else {
             vnicProfile.setCustomProperties(null);
         }
+
+        vnicProfile.setDescription((String) getDescription().getEntity());
     }
 
     private void cancel()

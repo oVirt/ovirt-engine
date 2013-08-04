@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.BooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -15,11 +15,11 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.inject.Inject;
 
-public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkView, VnicProfile, NetworkListModel, NetworkProfileListModel>
+public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkView, VnicProfileView, NetworkListModel, NetworkProfileListModel>
         implements SubTabNetworkProfilePresenter.ViewDef {
 
     @Inject
-    public SubTabNetworkProfileView(SearchableDetailModelProvider<VnicProfile, NetworkListModel, NetworkProfileListModel> modelProvider,
+    public SubTabNetworkProfileView(SearchableDetailModelProvider<VnicProfileView, NetworkListModel, NetworkProfileListModel> modelProvider,
             ApplicationConstants constants) {
         super(modelProvider);
         initTable(constants);
@@ -29,37 +29,37 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        TextColumnWithTooltip<VnicProfile> nameColumn =
-                new TextColumnWithTooltip<VnicProfile>() {
+        TextColumnWithTooltip<VnicProfileView> nameColumn =
+                new TextColumnWithTooltip<VnicProfileView>() {
                     @Override
-                    public String getValue(VnicProfile object) {
+                    public String getValue(VnicProfileView object) {
                         return object.getName();
                     }
                 };
         getTable().addColumn(nameColumn, constants.nameNetworkProfile(), "400px"); //$NON-NLS-1$
 
-        BooleanColumn<VnicProfile> portMirroringColumn =
-                new BooleanColumn<VnicProfile>(constants.portMirroringEnabled()) {
+        BooleanColumn<VnicProfileView> portMirroringColumn =
+                new BooleanColumn<VnicProfileView>(constants.portMirroringEnabled()) {
                     @Override
-                    public Boolean getRawValue(VnicProfile object) {
+                    public Boolean getRawValue(VnicProfileView object) {
                         return object.isPortMirroring();
                     }
                 };
         getTable().addColumnWithHtmlHeader(portMirroringColumn, constants.portMirroringNetworkProfile(), "85px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfile>(constants.newNetworkProfile()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.newNetworkProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfile>(constants.editNetworkProfile()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.editNetworkProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditCommand();
             }
         });
-        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfile>(constants.removeNetworkProfile()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<VnicProfileView>(constants.removeNetworkProfile()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();

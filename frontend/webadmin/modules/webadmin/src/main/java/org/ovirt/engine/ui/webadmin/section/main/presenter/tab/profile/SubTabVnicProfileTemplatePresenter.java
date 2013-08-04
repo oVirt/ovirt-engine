@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -23,14 +23,14 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabVnicProfileTemplatePresenter extends AbstractSubTabPresenter<VnicProfile, VnicProfileListModel, VnicProfileTemplateListModel, SubTabVnicProfileTemplatePresenter.ViewDef, SubTabVnicProfileTemplatePresenter.ProxyDef> {
+public class SubTabVnicProfileTemplatePresenter extends AbstractSubTabPresenter<VnicProfileView, VnicProfileListModel, VnicProfileTemplateListModel, SubTabVnicProfileTemplatePresenter.ViewDef, SubTabVnicProfileTemplatePresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.vnicProfileTemplateSubTabPlace)
     public interface ProxyDef extends TabContentProxyPlace<SubTabVnicProfileTemplatePresenter> {
     }
 
-    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VnicProfile> {
+    public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VnicProfileView> {
     }
 
     @TabInfo(container = VnicProfileSubTabPanelPresenter.class)

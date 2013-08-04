@@ -6,7 +6,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -18,11 +18,11 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class RemoveVnicProfileModel extends ConfirmationModel {
 
-    private final List<VnicProfile> profiles;
+    private final List<VnicProfileView> profiles;
     private final boolean fullMsg;
     private final ListModel sourceListModel;
 
-    public RemoveVnicProfileModel(ListModel sourceListModel, List<VnicProfile> profiles, boolean isFullMsg) {
+    public RemoveVnicProfileModel(ListModel sourceListModel, List<VnicProfileView> profiles, boolean isFullMsg) {
         setTitle(ConstantsManager.getInstance().getConstants().removeVnicProfileTitle());
         setHashName("remove_vnic_prfoile"); //$NON-NLS-1$
         setMessage(ConstantsManager.getInstance().getConstants().vnicProfilesMsg());
@@ -32,7 +32,7 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
         this.fullMsg = isFullMsg;
 
         ArrayList<String> items = new ArrayList<String>();
-        for (VnicProfile profile : profiles)
+        for (VnicProfileView profile : profiles)
         {
             if (isFullMsg) {
                 items.add(getRemoveVnicProfileFullMsg(profile));
@@ -60,7 +60,7 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
         }
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (VnicProfile profile : getProfiles())
+        for (VnicProfileView profile : getProfiles())
         {
             VdcActionParametersBase parameters = getRemoveVnicProfileParams(profile);
             list.add(parameters);
@@ -81,17 +81,17 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
                 }, null);
     }
 
-    protected String getRemoveVnicProfileFullMsg(VnicProfile profile) {
+    protected String getRemoveVnicProfileFullMsg(VnicProfileView profile) {
         return ConstantsManager.getInstance()
                 .getMessages()
-                .vnicProfileFromNetwork(profile.getName(), profile.getNetworkId().toString());
+                .vnicProfileFromNetwork(profile.getName(), profile.getNetworkName());
     }
 
-    protected VdcActionParametersBase getRemoveVnicProfileParams(VnicProfile profile) {
+    protected VdcActionParametersBase getRemoveVnicProfileParams(VnicProfileView profile) {
         return new VnicProfileParameters(profile);
     }
 
-    public List<VnicProfile> getProfiles() {
+    public List<VnicProfileView> getProfiles() {
         return profiles;
     }
 

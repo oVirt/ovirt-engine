@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -110,12 +110,12 @@ public class NetworkModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<VnicProfile, NetworkListModel, NetworkProfileListModel> getNetworkProfileListProvider(EventBus eventBus,
+    public SearchableDetailModelProvider<VnicProfileView, NetworkListModel, NetworkProfileListModel> getNetworkProfileListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VnicProfilePopupPresenterWidget> newProfilePopupProvider,
             final Provider<VnicProfilePopupPresenterWidget> editProfilePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<VnicProfile, NetworkListModel, NetworkProfileListModel>(eventBus,
+        return new SearchableDetailTabModelProvider<VnicProfileView, NetworkListModel, NetworkProfileListModel>(eventBus,
                 defaultConfirmPopupProvider,
                 NetworkListModel.class,
                 NetworkProfileListModel.class) {

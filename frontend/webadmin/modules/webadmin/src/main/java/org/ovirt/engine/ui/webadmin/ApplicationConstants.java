@@ -2,6 +2,8 @@ package org.ovirt.engine.ui.webadmin;
 
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 
+import com.google.gwt.i18n.client.Constants.DefaultStringValue;
+
 public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("oVirt Engine Web Administration")
@@ -2854,9 +2856,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Allow all users to use this Network")
     String networkPublicUseLabel();
 
-    @DefaultStringValue("Allow all users to use this Profile")
-    String profilePublicUseLabel();
-
     @DefaultStringValue("Public")
     String profilePublicUseInstanceTypeLabel();
 
@@ -3117,4 +3116,19 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("For allowing PK authentication, copy the following PK to host under .ssh/authorized_keys")
     String publicKeyUsage();
+
+    @DefaultStringValue("Network")
+    String networkProfilePopup();
+
+    @DefaultStringValue("Name")
+    String nameProfilePopup();
+
+    @DefaultStringValue("Description")
+    String descriptionProfilePopup();
+
+    @DefaultStringValue("Port Mirroring")
+    String portMirroringProfilePopup();
+
+    @DefaultStringValue("Allow all users to use this Profile")
+    String publicUseProfilePopup();
 }

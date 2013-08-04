@@ -59,6 +59,11 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     EntityModelTextBoxEditor nameEditor;
 
     @UiField
+    @Path("description.entity")
+    @WithElementId("description")
+    EntityModelTextBoxEditor descriptionEditor;
+
+    @UiField
     @Path("portMirroring.entity")
     @WithElementId("portMirroring")
     protected EntityModelCheckBoxEditor portMirroringEditor;
@@ -96,9 +101,10 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
 
     private void localize(ApplicationConstants constants) {
         networkEditor.setLabel(constants.networkProfilePopup());
-        nameEditor.setLabel(constants.nameNetworkIntefacePopup());
-        portMirroringEditor.setLabel(constants.portMirroringNetworkIntefacePopup());
-        publicUseEditor.setLabel(constants.profilePublicUseLabel());
+        nameEditor.setLabel(constants.nameProfilePopup());
+        descriptionEditor.setLabel(constants.descriptionProfilePopup());
+        portMirroringEditor.setLabel(constants.portMirroringProfilePopup());
+        publicUseEditor.setLabel(constants.publicUseProfilePopup());
     }
 
     @Override

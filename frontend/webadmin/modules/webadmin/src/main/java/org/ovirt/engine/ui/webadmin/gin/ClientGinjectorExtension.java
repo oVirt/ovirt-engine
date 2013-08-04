@@ -30,7 +30,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -158,7 +158,7 @@ public interface ClientGinjectorExtension {
 
     MainModelProvider<NetworkView, NetworkListModel> getMainTabNetworkModelProvider();
 
-    MainModelProvider<VnicProfile, VnicProfileListModel> getMainTabVnicProfileModelProvider();
+    MainModelProvider<VnicProfileView, VnicProfileListModel> getMainTabVnicProfileModelProvider();
 
     MainModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel> getMainTabProviderModelProvider();
 
@@ -356,7 +356,7 @@ public interface ClientGinjectorExtension {
 
     DetailModelProvider<NetworkListModel, NetworkGeneralModel> getSubTabNetworkGeneralModelProvider();
 
-    SearchableDetailModelProvider<VnicProfile, NetworkListModel, NetworkProfileListModel> getSubTabNetworkProfileModelProvider();
+    SearchableDetailModelProvider<VnicProfileView, NetworkListModel, NetworkProfileListModel> getSubTabNetworkProfileModelProvider();
 
     SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> getSubTabNetworkClusterModelProvider();
 
