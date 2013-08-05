@@ -42,7 +42,19 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
             }
             // set the AD user on the parameters to save another roundtrip to the AD when adding the user
             getParameters().setAdUser(adUser);
-        } else if (getParameters().getAdGroup() != null) {
+        }
+        else if (getParameters().getAdUser() != null) {
+            addCustomValue("NewUserName", getParameters().getAdUser().getUserName());
+            userId = getParameters().getAdUser().getUserId();
+            domain = getParameters().getAdUser().getDomainControler();
+            LdapUser adUser = (LdapUser) LdapFactory.getInstance(domain).RunAdAction(AdActionType.GetAdUserByUserId,
+                    new LdapSearchByIdParameters(domain, userId)).getReturnValue();
+            if (adUser == null) {
+                addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
+                return false;
+            }
+        }
+        else if (getParameters().getAdGroup() != null) {
             addCustomValue("NewUserName", getParameters().getAdGroup().getname());
             userId = getParameters().getAdGroup().getid();
             domain = getParameters().getAdGroup().getdomain();
@@ -65,7 +77,7 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
 
     @Override
     protected void executeCommand() {
-        if (getParameters().getVdcUser() != null) {
+        if (getParameters().getAdUser() != null) {
             UserCommandBase.persistAuthenticatedUser(getParameters().getAdUser());
         }
         // try to add group to db if adGroup sent
