@@ -76,7 +76,10 @@ public class BackendStorageDomainsResource
     }
 
     private Response addDomain(VdcActionType action, StorageDomain model, StorageDomainStatic entity, Guid hostId, StorageServerConnections connection) {
+        Response response = null;
+        boolean isConnNew = false;
         if (connection.getstorage_type().isFileDomain() && StringUtils.isEmpty(connection.getid())) {
+                isConnNew = true;
                 connection.setid(addStorageServerConnection(connection, hostId));
         }
         entity.setStorage(connection.getid());
@@ -96,7 +99,16 @@ public class BackendStorageDomainsResource
             validateParameters(model, 2, "name");
         }
 
-        return performCreate(action, getAddParams(entity, hostId), ID_RESOLVER);
+        try {
+            response = performCreate(action, getAddParams(entity, hostId), ID_RESOLVER);
+        } catch (WebFaultException e) {
+            // cleanup of created connection
+            if (isConnNew) {
+                removeStorageServerConnection(connection, hostId);
+            }
+            throw e;
+        }
+        return response;
     }
 
 
@@ -357,6 +369,12 @@ public class BackendStorageDomainsResource
 
     private String addStorageServerConnection(StorageServerConnections cnx, Guid hostId) {
         return performAction(VdcActionType.AddStorageServerConnection,
+                             new StorageServerConnectionParametersBase(cnx, hostId),
+                             String.class);
+    }
+
+    private String removeStorageServerConnection(StorageServerConnections cnx, Guid hostId) {
+        return performAction(VdcActionType.RemoveStorageServerConnection,
                              new StorageServerConnectionParametersBase(cnx, hostId),
                              String.class);
     }
