@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage;
 
 import static org.ovirt.engine.core.bll.MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -18,14 +19,18 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.CreateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainsListVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -104,10 +109,35 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     protected void executeCommand() {
         initializeStorageDomain();
         addStorageDomainInDb();
-        if (addStorageDomainInIrs()) {
+        // check connection to storage
+        Pair<Boolean, Integer> connectReturnValue = connectStorage();
+        if (!connectReturnValue.getFirst()) {
+            VdcFault fault = new VdcFault();
+            fault.setError(VdcBllErrors.forValue(connectReturnValue.getSecond()));
+            getReturnValue().setFault(fault);
+            setSucceeded(false);
+        }
+        else if (addStorageDomainInIrs()) {
             updateStorageDomainDynamicFromIrs();
             setSucceeded(true);
         }
+    }
+
+    protected Pair<Boolean, Integer> connectStorage() {
+        String connectionId = getStorageDomain().getStorage();
+        StorageServerConnections connection = getStorageServerConnectionDAO().get(connectionId);
+        java.util.HashMap<String, String> result = (java.util.HashMap<String, String>) runVdsCommand(
+                        VDSCommandType.ConnectStorageServer,
+                        new StorageServerConnectionManagementVDSParameters(getParameters().getVdsId(), Guid.Empty,
+                                connection.getstorage_type(),
+                                new java.util.ArrayList<StorageServerConnections>(java.util.Arrays
+                                        .asList(new StorageServerConnections[] { connection }))))
+                .getReturnValue();
+        return new Pair<Boolean, Integer>(StorageHelperDirector.getInstance()
+                .getItem(connection.getstorage_type())
+                .isConnectSucceeded(result, Arrays.asList(connection)),
+                 Integer.parseInt(result.values().iterator().next()));
+
     }
 
     @Override
