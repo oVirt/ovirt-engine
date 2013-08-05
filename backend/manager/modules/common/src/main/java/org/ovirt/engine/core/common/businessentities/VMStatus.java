@@ -7,7 +7,6 @@ public enum VMStatus implements Identifiable {
     Down(0),
     Up(1),
     PoweringUp(2),
-    PoweredDown(3),
     Paused(4),
     MigratingFrom(5),
     MigratingTo(6),
@@ -85,7 +84,7 @@ public enum VMStatus implements Identifiable {
      * @return true if this status indicates that the VM is running for sure, otherwise false
      */
     public boolean isRunning() {
-        return this == Up || this == PoweredDown || this == PoweringDown
+        return this == Up || this == PoweringDown
                 || this == PoweringUp || this == MigratingFrom || this == WaitForLaunch || this == RebootInProgress;
     }
 

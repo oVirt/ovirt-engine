@@ -48,7 +48,7 @@ public final class SearchObjects {
     private static final String ERROR = "Events: severity=error";
     private static final String HOST_BY_CPU = "Host: sortby cpu_usage desc";
     private static final String DATACENTER_BY_NAME = "DataCenter: sortby name";
-    private static final String VM_BY_STATUS = "Vms: status=Up or status=PoweringUp or status=PoweredDown or status=MigratingTo or status=WaitForLaunch or status=RebootInProgress or status=PoweringDown or status=Paused or status=Unknown sortby cpu_usage desc";
+    private static final String VM_BY_STATUS = "Vms: status=Up or status=PoweringUp or status=MigratingTo or status=WaitForLaunch or status=RebootInProgress or status=PoweringDown or status=Paused or status=Unknown sortby cpu_usage desc";
     @SuppressWarnings("serial")
     private static final Set<String> SAFE_SEARCH_EXPR = Collections.unmodifiableSet(new HashSet<String>() {
         {

@@ -23,7 +23,6 @@ public class MainTabBasicListItemMessagesTranslator {
         dictionary.put("Paused", constants.Paused()); //$NON-NLS-1$
         dictionary.put("Suspended", constants.Suspended()); //$NON-NLS-1$
         dictionary.put("PoweringDown", constants.PoweringDown()); //$NON-NLS-1$
-        dictionary.put("PoweredDown", constants.PoweredDown()); //$NON-NLS-1$
         dictionary.put("Unknown", constants.Unknown()); //$NON-NLS-1$
         dictionary.put("Unassigned", constants.Unassigned()); //$NON-NLS-1$
         dictionary.put("NotResponding", constants.NotResponding()); //$NON-NLS-1$

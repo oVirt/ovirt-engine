@@ -44,8 +44,6 @@ public class VmStatusColumn extends UserPortalImageResourceColumn<UserPortalItem
         case Unassigned:
         case ImageIllegal:
         case Down:
-        case PoweredDown:
-            return getApplicationResources().vmStatusStopped();
         case PoweringDown:
             return getApplicationResources().vmStatusStopping();
         default:

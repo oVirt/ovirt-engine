@@ -647,7 +647,6 @@ public class VmMapper {
         case Down:                  return VmStatus.DOWN;
         case Up:                    return VmStatus.UP;
         case PoweringUp:            return VmStatus.POWERING_UP;
-        case PoweredDown:           return VmStatus.POWERED_DOWN;
         case Paused:                return VmStatus.PAUSED;
         case MigratingFrom:         return VmStatus.MIGRATING;
         case MigratingTo:           return VmStatus.MIGRATING;

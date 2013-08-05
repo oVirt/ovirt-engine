@@ -159,8 +159,6 @@ public interface Enums extends LocalizedEnums {
 
     String VMStatus___Paused();
 
-    String VMStatus___PoweredDown();
-
     String VMStatus___PoweringDown();
 
     String VMStatus___PoweringUp();

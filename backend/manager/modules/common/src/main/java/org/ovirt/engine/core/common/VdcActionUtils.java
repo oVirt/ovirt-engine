@@ -151,16 +151,6 @@ public final class VdcActionUtils {
                         VdcActionType.RemoveVmInterface, VdcActionType.CreateAllSnapshotsFromVm,
                         VdcActionType.ExtendImageSize)));
         vmMatrix.put(
-                VMStatus.PoweredDown,
-                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.HibernateVm,
-                        VdcActionType.RunVm, VdcActionType.RunVmOnce, VdcActionType.AddVmTemplate,
-                        VdcActionType.RemoveVm,
-                        VdcActionType.ExportVm, VdcActionType.MoveVm, VdcActionType.ImportVm, VdcActionType.ChangeDisk,
-                        VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
-                        VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm,
-                        VdcActionType.ExtendImageSize)));
-
-        vmMatrix.put(
                 VMStatus.Suspended,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.HibernateVm, VdcActionType.AddVmTemplate,
                         VdcActionType.RunVmOnce, VdcActionType.MigrateVm, VdcActionType.ExportVm, VdcActionType.MoveVm,

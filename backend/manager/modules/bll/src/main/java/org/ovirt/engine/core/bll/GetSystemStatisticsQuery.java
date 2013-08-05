@@ -61,7 +61,6 @@ public class GetSystemStatisticsQuery<P extends GetSystemStatisticsQueryParamete
     private int getActiveVMsStat() {
         String[] activeVmStatuses = { (String.valueOf(VMStatus.Up.getValue())),
                 (String.valueOf(VMStatus.PoweringUp.getValue())),
-                (String.valueOf(VMStatus.PoweredDown.getValue())),
                 (String.valueOf(VMStatus.MigratingTo.getValue())),
                 (String.valueOf(VMStatus.WaitForLaunch.getValue())),
                 (String.valueOf(VMStatus.RebootInProgress.getValue())),

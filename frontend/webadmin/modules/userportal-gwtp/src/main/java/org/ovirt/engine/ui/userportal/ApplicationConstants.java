@@ -283,9 +283,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Powering Down")
     String PoweringDown();
 
-    @DefaultStringValue("Powering Down")
-    String PoweredDown();
-
     @DefaultStringValue("Not Available")
     String Unknown();
 

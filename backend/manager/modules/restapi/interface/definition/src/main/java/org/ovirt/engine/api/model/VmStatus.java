@@ -22,7 +22,6 @@ public enum VmStatus {
     DOWN,
     UP,
     POWERING_UP,
-    POWERED_DOWN,
     PAUSED,
     MIGRATING,
     UNKNOWN,

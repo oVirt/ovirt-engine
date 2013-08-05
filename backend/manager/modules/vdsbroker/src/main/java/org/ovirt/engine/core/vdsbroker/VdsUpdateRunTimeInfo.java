@@ -1573,11 +1573,6 @@ public class VdsUpdateRunTimeInfo {
             }
             break;
         }
-        case PoweredDown: {
-            logable.addCustomValue("VmStatus", "PoweredDown");
-            type = AuditLogType.VM_DOWN;
-            break;
-        }
         default:
             break;
         }
