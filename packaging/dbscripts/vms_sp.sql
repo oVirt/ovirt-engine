@@ -574,6 +574,7 @@ BEGIN
       usb_policy = v_usb_policy,time_zone = v_time_zone,auto_startup = v_auto_startup,
       is_stateless = v_is_stateless,dedicated_vm_for_vds = v_dedicated_vm_for_vds,
       fail_back = v_fail_back,vm_type = v_vm_type,
+      nice_level = v_nice_level,
       cpu_shares = v_cpu_shares,
       _update_date = LOCALTIMESTAMP,default_boot_sequence = v_default_boot_sequence,
       default_display_type = v_default_display_type,
