@@ -2091,6 +2091,7 @@
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
           <xs:element name="memory" type="xs:long" minOccurs="0"/>
           <xs:element name="cpu" type="CPU" minOccurs="0"/>
+          <xs:element name="cpu_shares" type="xs:int" minOccurs="0" maxOccurs="1"/>
           <xs:element name="os" type="OperatingSystem" minOccurs="0"/>
           <xs:element ref="cluster" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="storage_domain" minOccurs="0" maxOccurs="1"/>
@@ -2285,6 +2286,7 @@
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
           <xs:element name="memory" type="xs:long" minOccurs="0"/>
           <xs:element name="cpu" type="CPU" minOccurs="0"/>
+          <xs:element name="cpu_shares" type="xs:int" minOccurs="0" maxOccurs="1"/>
           <xs:element name="os" type="OperatingSystem" minOccurs="0"/>
           <xs:element name="high_availability" type="HighAvailability" minOccurs="0"/>
           <xs:element name="display" type="Display" minOccurs="0" maxOccurs="1"/>

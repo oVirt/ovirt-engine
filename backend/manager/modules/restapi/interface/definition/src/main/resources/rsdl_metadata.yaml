@@ -61,6 +61,7 @@ actions:
           vm.os.cmdline: xs:string
           vm.cpu.mode: xs:string
           vm.cpu.topology.cores: xs:int
+          vm.cpu_shares: xs:int
           vm.memory: xs:long
           vm.high_availability.priority: xs:int
           vm.high_availability.enabled: xs:boolean
@@ -135,6 +136,7 @@ actions:
           vm.console.enabled: xs:boolean
           vm.cpu.mode: xs:string
           vm.cpu.topology.sockets: xs:int
+          vm.cpu_shares: xs:int
           vm.placement_policy.affinity: xs:string
           vm.placement_policy.host.id|name: xs:string
           vm.origin: xs:string
@@ -164,6 +166,7 @@ actions:
           vm.display.keyboard_layout: xs:string
           vm.os.cmdline: xs:string
           vm.cpu.topology.cores: xs:int
+          vm.cpu_shares: xs:int
           vm.memory: xs:long
           vm.memory_policy.guaranteed: xs:long
           vm.high_availability.priority: xs:int
@@ -2490,6 +2493,7 @@ actions:
           template.os.type: xs:string
           template.os.boot--COLLECTION: {boot.dev: 'xs:string'}
           template.cpu.topology.sockets: xs:int
+          template.cpu_shares: xs:int
           template.os.kernel: xs:string
           template.display.type: xs:string
           template.display.monitors: xs:int
@@ -2531,6 +2535,7 @@ actions:
           template.os.type: xs:string
           template.os.boot--COLLECTION: {boot.dev: 'xs:string'}
           template.cpu.topology.sockets: xs:int
+          template.cpu_shares: xs:int
           template.os.kernel: xs:string
           template.display.type: xs:string
           template.display.monitors: xs:int

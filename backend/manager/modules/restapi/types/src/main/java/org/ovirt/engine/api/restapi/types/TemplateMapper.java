@@ -81,6 +81,9 @@ public class TemplateMapper {
                 entity.setNumOfSockets(model.getCpu().getTopology().getSockets());
             }
         }
+        if (model.isSetCpuShares()) {
+            entity.setCpuShares(model.getCpuShares());
+        }
         if (model.isSetOs()) {
             if (model.getOs().isSetType()) {
                 entity.setOsId(VmMapper.mapOsType(model.getOs().getType()));
@@ -189,6 +192,9 @@ public class TemplateMapper {
                 staticVm.setNumOfSockets(model.getCpu().getTopology().getSockets());
             }
         }
+        if (model.isSetCpuShares()) {
+            staticVm.setCpuShares(model.getCpuShares());
+        }
         if (model.isSetOs()) {
             if (model.getOs().isSetType()) {
                 staticVm.setOsId(VmMapper.mapOsType(model.getOs().getType()));
@@ -295,6 +301,7 @@ public class TemplateMapper {
         topology.setCores(entity.getNumOfCpus() / entity.getNumOfSockets());
         model.setCpu(new CPU());
         model.getCpu().setTopology(topology);
+        model.setCpuShares(entity.getCpuShares());
         if (entity.getDefaultDisplayType() != null) {
             model.setDisplay(new Display());
             model.getDisplay().setType(VmMapper.map(entity.getDefaultDisplayType(), null));

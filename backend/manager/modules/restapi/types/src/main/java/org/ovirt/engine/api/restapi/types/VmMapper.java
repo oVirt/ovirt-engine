@@ -79,6 +79,7 @@ public class VmMapper {
         staticVm.setMemSizeMb(entity.getMemSizeMb());
         staticVm.setOsId(entity.getOsId());
         staticVm.setNiceLevel(entity.getNiceLevel());
+        staticVm.setCpuShares(entity.getCpuShares());
         staticVm.setFailBack(entity.isFailBack());
         staticVm.setAutoStartup(entity.isAutoStartup());
         staticVm.setStateless(entity.isStateless());
@@ -147,6 +148,9 @@ public class VmMapper {
             if (vm.getCpu().isSetCpuTune()) {
                 staticVm.setCpuPinning(cpuTuneToString(vm.getCpu().getCpuTune()));
             }
+        }
+        if (vm.isSetCpuShares()) {
+            staticVm.setCpuShares(vm.getCpuShares());
         }
         if (vm.isSetOs()) {
             if (vm.getOs().isSetType()) {
@@ -336,6 +340,7 @@ public class VmMapper {
         }
         cpu.setCpuTune(stringToCpuTune(entity.getCpuPinning()));
         cpu.setTopology(topology);
+        model.setCpuShares(entity.getCpuShares());
         if (entity.getVmPoolId() != null) {
             VmPool pool = new VmPool();
             pool.setId(entity.getVmPoolId().toString());
@@ -499,6 +504,9 @@ public class VmMapper {
                     params.setSysPrepPassword(vm.getDomain().getUser().getPassword());
                 }
             }
+        }
+        if (vm.isSetCpuShares()) {
+            params.setCpuShares(vm.getCpuShares());
         }
 
         return params;
