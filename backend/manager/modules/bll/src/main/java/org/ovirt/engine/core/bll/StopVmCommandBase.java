@@ -83,10 +83,10 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
     @Override
     protected void executeVmCommand() {
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getVm().getId()));
-        if (getVm().getStatus() == VMStatus.Suspended
-                || StringUtils.isNotEmpty(getVm().getHibernationVolHandle())) {
-            suspendedVm = true;
+        // Mark that the stopped vm was suspended before for audit log messages
+        suspendedVm = getVm().getStatus() == VMStatus.Suspended;
 
+        if (suspendedVm || StringUtils.isNotEmpty(getVm().getHibernationVolHandle())) {
             if (!stopSuspendedVm()) {
                 return;
             }
