@@ -103,7 +103,9 @@ public enum ConfigurationValues {
     QoSInboundBurstDefaultValue,
     QoSOutboundAverageDefaultValue,
     QoSOutboundPeakDefaultValue,
-    QoSOutboundBurstDefaultValue
+    QoSOutboundBurstDefaultValue,
+    MaxVmNameLengthWindows(ConfigAuthType.User),
+    MaxVmNameLengthNonWindows(ConfigAuthType.User)
     ;
 
     public static enum ConfigAuthType {

@@ -59,8 +59,8 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class UnitVmModel extends Model {
 
-    public static final int WINDOWS_VM_NAME_MAX_LIMIT = 15;
-    public static final int NON_WINDOWS_VM_NAME_MAX_LIMIT = 64;
+    public static final Integer WINDOWS_VM_NAME_MAX_LIMIT = (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxVmNameLengthWindows);
+    public static final Integer NON_WINDOWS_VM_NAME_MAX_LIMIT = (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxVmNameLengthNonWindows);
     public static final int VM_TEMPLATE_NAME_MAX_LIMIT = 40;
     public static final int DESCRIPTION_MAX_LIMIT = 255;
 
