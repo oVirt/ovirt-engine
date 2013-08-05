@@ -94,7 +94,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Providers")
     String providerMainTabLabel();
 
-    @DefaultStringValue("Summary")
+    @DefaultStringValue("General")
     String volumeGeneralSubTabLabel();
 
     @DefaultStringValue("Volume Options")
