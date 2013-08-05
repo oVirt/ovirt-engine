@@ -486,7 +486,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     public VdcReturnValueBase endAction() {
-        ExecutionHandler.startFinalizingStep(getExecutionContext());
+        if (!hasTaskHandlers() || getExecutionIndex() == getTaskHandlers().size() - 1) {
+            ExecutionHandler.startFinalizingStep(getExecutionContext());
+        }
 
         try {
             initiateLockEndAction();
@@ -1224,7 +1226,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         getReturnValue().setCanDoAction(true);
         getReturnValue().setIsSyncronious(true);
 
-        ExecutionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
+        if (!hasTaskHandlers() || getExecutionIndex() == 0) {
+            ExecutionHandler.addStep(getExecutionContext(), StepEnum.EXECUTING, null);
+        }
 
         try {
             handleTransactivity();
