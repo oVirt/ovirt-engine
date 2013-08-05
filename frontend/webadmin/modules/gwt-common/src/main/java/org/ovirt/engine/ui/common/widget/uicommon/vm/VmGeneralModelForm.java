@@ -34,6 +34,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     TextBoxLabel customProperties = new TextBoxLabel();
     TextBoxLabel domain = new TextBoxLabel();
     TextBoxLabel compatibilityVersion = new TextBoxLabel();
+    TextBoxLabel vmId = new TextBoxLabel();
 
     BooleanLabel isHighlyAvailable;
 
@@ -43,7 +44,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     private final Driver driver = GWT.create(Driver.class);
 
     public VmGeneralModelForm(ModelProvider<VmGeneralModel> modelProvider, CommonApplicationConstants constants) {
-        super(modelProvider, 3, 6);
+        super(modelProvider, 3, 7);
         isHighlyAvailable = new BooleanLabel(constants.yes(), constants.no());
 
         driver.initialize(this);
@@ -66,7 +67,9 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
         formBuilder.addFormItem(new FormItem(constants.runOnVm(), defaultHost, 1, 2));
         formBuilder.addFormItem(new FormItem(constants.customPropertiesVm(), customProperties, 2, 2));
         formBuilder.addFormItem(new FormItem(constants.clusterCompatibilityVersionVm(), compatibilityVersion, 3, 2));
-        formBuilder.addFormItem(new FormItem(constants.quotaVm(), quotaName, 4, 2) {
+        formBuilder.addFormItem(new FormItem(constants.vmId(), vmId, 4, 2));
+
+        formBuilder.addFormItem(new FormItem(constants.quotaVm(), quotaName, 5, 2) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().isQuotaAvailable();
@@ -78,7 +81,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
                 return quotaName == null || "".equals(quotaName);
             }
         });
-        formBuilder.addFormItem(new FormItem(constants.domainVm(), domain, 5, 2) {
+        formBuilder.addFormItem(new FormItem(constants.domainVm(), domain, 6, 2) {
             @Override
             public boolean getIsAvailable() {
                 return getModel().getHasDomain();

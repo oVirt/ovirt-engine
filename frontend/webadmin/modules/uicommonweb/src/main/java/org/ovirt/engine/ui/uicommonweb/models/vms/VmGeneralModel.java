@@ -468,6 +468,22 @@ public class VmGeneralModel extends EntityModel
         }
     }
 
+    private String vmId;
+
+    public String getVmId()
+    {
+        return vmId;
+    }
+
+    public void setVmId(String value)
+    {
+        if (!StringHelper.stringsEqual(vmId, value))
+        {
+            vmId = value;
+            onPropertyChanged(new PropertyChangedEventArgs("VmId")); //$NON-NLS-1$
+        }
+    }
+
     private String compatibilityVersion;
 
     public String getCompatibilityVersion()
@@ -562,6 +578,8 @@ public class VmGeneralModel extends EntityModel
 
         setCompatibilityVersion(vm.getVdsGroupCompatibilityVersion() != null ?
                 vm.getVdsGroupCompatibilityVersion().toString() : ""); //$NON-NLS-1$
+
+        setVmId(vm.getId().toString());
 
         setHasAlert(vm.getVmPauseStatus() != VmPauseStatus.NONE && vm.getVmPauseStatus() != VmPauseStatus.NOERR);
         if (getHasAlert())

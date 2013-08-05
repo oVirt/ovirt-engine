@@ -1560,4 +1560,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Memory Balloon Device Enabled")
     String memoryBalloonDeviceEnabled();
+
+    @DefaultStringValue("VM Id")
+    String vmId();
 }
