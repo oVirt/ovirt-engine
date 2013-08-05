@@ -617,6 +617,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Memory Allocation:")
     String memAllocVmPopup();
 
+    @DefaultStringValue("CPU Allocation:")
+    String cpuAllocVmPopup();
+
     @DefaultStringValue("Storage Allocation:")
     String storageAllocVmPopup();
 
@@ -1226,7 +1229,10 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("CPU Pinning topology")
     String cpuPinningLabel();
 
-    @DefaultStringValue("Format: v#p[_v#p]</br>Examples:</br>&#149;0#0 => pin vCPU 0 to pCPU 0</br>&#149;0#0_1#3 => pin vCPU 0 to pCPU 0 and pin vCPU 1 to pCPU 3</br>&#149;1#1-4,^2 => pin vCPU 1 to pCPU set 1 to 4, excluding 2</br>")
+    @DefaultStringValue("Format: v#p[_v#p]\n" +
+            "Examples:0#0 => pin vCPU 0 to pCPU 0\n" +
+            "               0#0_1#3 => pin vCPU 0 to pCPU 0 and pin vCPU 1 to pCPU 3\n" +
+            "               1#1-4,^2 => pin vCPU 1 to pCPU set 1 to 4, excluding 2")
     String cpuPinningLabelExplanation();
 
     @DefaultStringValue("Migration is NOT currently supported using SPICE Native USB redirection on cluster version lower than 3.2")
@@ -1563,4 +1569,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("VM Id")
     String vmId();
+
+    @DefaultStringValue("CPU Shares")
+    String cpuShares();
 }

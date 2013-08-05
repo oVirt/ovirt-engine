@@ -70,4 +70,6 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<div style='width: 600px'><div style='width: 30%; display: inline-block; border-right: 1px solid black; font-weight:bold; padding-right: 25px; float: left'>{0}</div><div style='display: inline-block; margin-left: 25px;'>{1}</div></div>")
     SafeHtml typeAheadNameDescription(String name, String description);
 
+    @Template("<div style='width: {0}; font-style: italic;'>{1}</div>")
+    SafeHtml italicFixedWidth(String pxWidth, String text);
 }

@@ -187,6 +187,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         updateTemplate();
         initNetworkInterfaces(networkBehavior, null);
         updateMemoryBalloon();
+        updateCpuSharesAvailability();
     }
 
     private void updateNetworkInterfacesByTemplate(VmTemplate template) {

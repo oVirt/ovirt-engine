@@ -171,6 +171,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getCustomProperties().setEntity(vm.getCustomProperties());
         getModel().getCustomPropertySheet().setEntity(vm.getCustomProperties());
         getModel().getCpuPinning().setEntity(vm.getCpuPinning());
+        getModel().getCpuSharesAmount().setEntity(vm.getCpuShares());
+        updateCpuSharesSelection();
 
         Frontend.RunQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(getVm().getId()), new AsyncQuery(this,
                 new INewAsyncCallback() {
@@ -251,6 +253,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         updateCpuPinningVisibility();
         initNetworkInterfaces();
         updateMemoryBalloon();
+        updateCpuSharesAvailability();
     }
 
     private void initNetworkInterfaces() {

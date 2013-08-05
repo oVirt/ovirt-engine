@@ -198,6 +198,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
         }
         updateMemoryBalloon();
+        updateCpuSharesAvailability();
     }
 
     @Override

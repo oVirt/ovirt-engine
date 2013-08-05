@@ -112,6 +112,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         updateNumOfSockets();
         updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
         updateMemoryBalloon();
+        updateCpuSharesAvailability();
     }
 
     @Override

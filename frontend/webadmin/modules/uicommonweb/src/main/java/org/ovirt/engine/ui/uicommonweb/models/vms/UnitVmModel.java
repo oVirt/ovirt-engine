@@ -1084,6 +1084,26 @@ public class UnitVmModel extends Model {
         this.cpuPinning = cpuPinning;
     }
 
+    private NotChangableForVmInPoolEntityModel cpuSharesAmount;
+
+    public EntityModel getCpuSharesAmount() {
+        return cpuSharesAmount;
+    }
+
+    public void setCpuSharesAmount(NotChangableForVmInPoolEntityModel cpuSharesAmount) {
+        this.cpuSharesAmount = cpuSharesAmount;
+    }
+
+    private NotChangableForVmInPoolListModel cpuSharesAmountSelection;
+
+    public ListModel getCpuSharesAmountSelection() {
+        return cpuSharesAmountSelection;
+    }
+
+    public void setCpuSharesAmountSelection(NotChangableForVmInPoolListModel cpuSharesAmountSelection) {
+        this.cpuSharesAmountSelection = cpuSharesAmountSelection;
+    }
+
     private ListModel vncKeyboardLayout;
 
     public ListModel getVncKeyboardLayout() {
@@ -1280,6 +1300,16 @@ public class UnitVmModel extends Model {
         getCpuPinning().setEntity("");
         getCpuPinning().setIsChangable(false);
 
+        setCpuSharesAmount(new NotChangableForVmInPoolEntityModel());
+        getCpuSharesAmount().setEntity("");
+        getCpuSharesAmount().setIsChangable(false);
+
+        setCpuSharesAmountSelection(new NotChangableForVmInPoolListModel());
+        getCpuSharesAmountSelection().setItems(Arrays.asList(CpuSharesAmount.values()));
+        getCpuSharesAmountSelection().getEntityChangedEvent().addListener(this);
+        getCpuSharesAmountSelection().getSelectedItemChangedEvent().addListener(this);
+        getCpuSharesAmountSelection().setSelectedItem(CpuSharesAmount.MEDIUM);
+
         setIsSoundcardEnabled(new NotChangableForVmInPoolEntityModel());
         getIsSoundcardEnabled().setEntity(false);
         getIsSoundcardEnabled().setIsChangable(false);
@@ -1386,6 +1416,10 @@ public class UnitVmModel extends Model {
                 behavior.updateUseHostCpuAvailability();
                 behavior.updateCpuPinningVisibility();
                 behavior.updateHaAvailability();
+            }
+            else if (sender == getCpuSharesAmountSelection())
+            {
+                behavior.updateCpuSharesAmountChangeability();
             }
         }
         else if (ev.matchesDefinition(EntityModel.EntityChangedEventDefinition))
@@ -2106,6 +2140,11 @@ public class UnitVmModel extends Model {
             }
         }
 
+        if (getCpuSharesAmount().getIsAvailable()) {
+            getCpuSharesAmount().validateEntity(new IValidation[] {new NotEmptyValidation()
+                    , new IntegerValidation(0, 262144)});
+        }
+
         boolean customPropertySheetValid = getCustomPropertySheet().validate();
 
         setIsBootSequenceTabValid(true);
@@ -2122,7 +2161,8 @@ public class UnitVmModel extends Model {
         setIsFirstRunTabValid(getDomain().getIsValid() && getTimeZone().getIsValid());
         setIsDisplayTabValid(getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid());
         setIsHostTabValid(getDefaultHost().getIsValid());
-        setIsAllocationTabValid(getDisksAllocationModel().getIsValid() && getMinAllocatedMemory().getIsValid());
+        setIsAllocationTabValid(getDisksAllocationModel().getIsValid() && getMinAllocatedMemory().getIsValid()
+                && getCpuSharesAmount().getIsValid());
         setIsBootSequenceTabValid(getCdImage().getIsValid() && getKernel_path().getIsValid());
         setIsCustomPropertiesTabValid(customPropertySheetValid);
 
@@ -2134,6 +2174,7 @@ public class UnitVmModel extends Model {
                 && getKernel_path().getIsValid()
                 && getInitrd_path().getIsValid()
                 && getKernel_parameters().getIsValid()
+                && getCpuSharesAmount().getIsValid()
                 && behavior.validate()
                 && customPropertySheetValid && getQuota().getIsValid();
 
@@ -2337,5 +2378,17 @@ public class UnitVmModel extends Model {
         }
 
         return dataCenterWithCluster.getCluster();
+    }
+
+    public static enum CpuSharesAmount {
+        LOW(512), MEDIUM(1024), HIGH(2048), CUSTOM(-1);
+
+        private int value;
+        private CpuSharesAmount(int value) {
+            this.value = value;
+        }
+        public int getValue() {
+            return value;
+        }
     }
 }

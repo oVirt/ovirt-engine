@@ -661,6 +661,17 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
+
+    protected void updateCpuSharesAvailability() {
+        if (getModel().getSelectedCluster() != null) {
+            VDSGroup cluster = getModel().getSelectedCluster();
+            boolean availableCpuShares = cluster.getcompatibility_version()
+                    .compareTo(Version.v3_3) >= 0;
+            getModel().getCpuSharesAmountSelection().setIsAvailable(availableCpuShares);
+            getModel().getCpuSharesAmount().setIsAvailable(availableCpuShares);
+        }
+    }
+
     protected void setupTemplate(VM vm, ListModel model) {
         AsyncDataProvider.getTemplateById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
@@ -695,11 +706,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 hasCpuPinning = false;
             }
 
-            getModel().getCpuPinning()
-                    .setIsChangable(hasCpuPinning);
             if (!hasCpuPinning) {
+                getModel().getCpuPinning().setChangeProhibitionReason(constants.cpuPinningUnavailable());
                 getModel().getCpuPinning().setEntity("");
             }
+            getModel().getCpuPinning().setIsChangable(hasCpuPinning);
         }
     }
 
@@ -742,6 +753,34 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
         getModel().getMigrationMode().setIsChangable(!haHost);
 
+    }
+
+    public void updateCpuSharesAmountChangeability() {
+        boolean changeable =
+                getModel().getCpuSharesAmountSelection().getSelectedItem() == UnitVmModel.CpuSharesAmount.CUSTOM;
+        getModel().getCpuSharesAmount().setIsChangable(changeable);
+        getModel().getCpuSharesAmount()
+                .setEntity(changeable
+                        ? "" //$NON-NLS-1$
+                        : ((UnitVmModel.CpuSharesAmount) getModel().getCpuSharesAmountSelection()
+                        .getSelectedItem()).getValue());
+    }
+
+    public void updateCpuSharesSelection() {
+        boolean foundEnum = false;
+        for (UnitVmModel.CpuSharesAmount cpuSharesAmount : UnitVmModel.CpuSharesAmount.values()) {
+            if (cpuSharesAmount.getValue() == (Integer)getModel().getCpuSharesAmount().getEntity()) {
+                getModel().getCpuSharesAmountSelection().setSelectedItem(cpuSharesAmount);
+                foundEnum = true;
+                break;
+            }
+        }
+        if (!foundEnum) {
+            // saving the value - because when Custom is selected the value automatically clears.
+            int currentVal = Integer.parseInt(getModel().getCpuSharesAmount().getEntity().toString());
+            getModel().getCpuSharesAmountSelection().setSelectedItem(UnitVmModel.CpuSharesAmount.CUSTOM);
+            getModel().getCpuSharesAmount().setEntity(currentVal);
+        }
     }
 
     private boolean isVmMigratable() {

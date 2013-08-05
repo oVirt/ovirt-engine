@@ -810,4 +810,13 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String AuditLogType___USER_UPDATE_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED();
 
     String AuditLogType___USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED();
+
+    String UnitVmModel$CpuSharesAmount___HIGH();
+
+    String UnitVmModel$CpuSharesAmount___MEDIUM();
+
+    String UnitVmModel$CpuSharesAmount___LOW();
+
+    String UnitVmModel$CpuSharesAmount___CUSTOM();
+
 }

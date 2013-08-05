@@ -70,7 +70,6 @@ import com.google.gwt.user.cellview.client.CellTable;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
@@ -153,10 +152,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "template.selectedItem")
     @WithElementId("template")
     public ListModelTypeAheadListBoxEditor<Object> templateEditor;
-
-    @UiField
-    @Ignore
-    HTML cpuPinningLabel;
 
     @UiField(provided = true)
     @Path(value = "OSType.selectedItem")
@@ -421,9 +416,22 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public EntityModelRadioButtonEditor isAutoAssignEditor;
 
     @UiField(provided = true)
+    InfoIcon cpuPinningInfo;
+
+    @UiField(provided = true)
     @Path(value = "cpuPinning.entity")
     @WithElementId("cpuPinning")
-    public EntityModelTextBoxEditor cpuPinning;
+    public EntityModelTextBoxOnlyEditor cpuPinning;
+
+    @UiField(provided = true)
+    @Path(value = "cpuSharesAmountSelection.selectedItem")
+    @WithElementId("cpuSharesAmountSelection")
+    public ListModelListBoxEditor<Object> cpuSharesAmountSelectionEditor;
+
+    @UiField(provided = true)
+    @Path(value = "cpuSharesAmount.entity")
+    @WithElementId("cpuSharesAmount")
+    public EntityModelTextBoxOnlyEditor cpuSharesAmountEditor;
 
     // ==High Availability Tab==
     @UiField
@@ -602,6 +610,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         copyTemplatePermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isMemoryBalloonDeviceEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
         isSingleQxlEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
+        cpuPinningInfo = new InfoIcon(applicationTemplates.italicFixedWidth("465px",  //$NON-NLS-1$
+                constants.cpuPinningLabelExplanation()), resources);
 
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
@@ -639,7 +649,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         commentEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         totalvCPUsEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         numOfVmsEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
-        cpuPinning = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
+        cpuPinning = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        cpuSharesAmountEditor = new EntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
+        cpuSharesAmountEditor.asValueBox().setWidth("110px");//$NON-NLS-1$
         kernel_pathEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         initrd_pathEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         kernel_parametersEditor = new EntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
@@ -872,6 +884,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 return (String) object;
             }
         }, new ModeSwitchingVisibilityRenderer());
+
+        cpuSharesAmountSelectionEditor =
+                new ListModelListBoxEditor<Object>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+        cpuSharesAmountSelectionEditor.asListBox().setWidth("110px"); //$NON-NLS-1$
+        cpuSharesAmountSelectionEditor.getContentWidgetContainer().setWidth("110px"); //$NON-NLS-1$
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
@@ -937,7 +954,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         // specificHostEditor.setLabel("Specific");
         hostCpuEditor.setLabel(constants.useHostCpu());
         cpuPinning.setLabel(constants.cpuPinningLabel());
-        cpuPinningLabel.setHTML(constants.cpuPinningLabelExplanation());
 
         // High Availability Tab
         isHighlyAvailableEditor.setLabel(constants.highlyAvailableVmPopup());
@@ -951,6 +967,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         provisioningThinEditor.setLabel(constants.thinVmPopup());
         provisioningCloneEditor.setLabel(constants.cloneVmPopup());
         minAllocatedMemoryEditor.setLabel(constants.physMemGuarVmPopup());
+        cpuSharesAmountSelectionEditor.setLabel(constants.cpuShares());
 
         // Boot Options
         firstBootDeviceEditor.setLabel(constants.firstDeviceVmPopup());
@@ -1207,16 +1224,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                     specificHost.setValue(true, true);
             }
         });
-
-        changeApplicationLevelVisibility(cpuPinningLabel, vm.getCpuPinning().getIsChangable());
-        vm.getCpuPinning().getPropertyChangedEvent().addListener(new IEventListener() {
-
-            @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                changeApplicationLevelVisibility(cpuPinningLabel, vm.getCpuPinning().getIsChangable());
-            }
-        });
-
     }
 
     private void updateDisksWarningByImageStatus(List<DiskModel> disks, ImageStatus imageStatus) {
@@ -1331,7 +1338,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         defaultHostEditor.setTabIndex(nextTabIndex++);
         migrationModeEditor.setTabIndex(nextTabIndex++);
         hostCpuEditor.setTabIndex(nextTabIndex++);
-        cpuPinning.setTabIndex(nextTabIndex++);
 
         // ==High Availability Tab==
         nextTabIndex = highAvailabilityTab.setTabIndexes(nextTabIndex);
@@ -1347,6 +1353,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         provisioningEditor.setTabIndex(nextTabIndex++);
         provisioningThinEditor.setTabIndex(nextTabIndex++);
         provisioningCloneEditor.setTabIndex(nextTabIndex++);
+        cpuPinning.setTabIndex(nextTabIndex++);
+        cpuSharesAmountEditor.setTabIndex(nextTabIndex++);
         nextTabIndex = disksAllocationView.setTabIndexes(nextTabIndex);
 
         // ==Boot Options Tab==
