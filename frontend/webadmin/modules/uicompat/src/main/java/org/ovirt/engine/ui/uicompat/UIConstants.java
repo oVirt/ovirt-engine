@@ -232,8 +232,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Volumes")
     String volumesTitle();
 
-    @DefaultStringValue("Create Volume")
-    String createVolumeTitle();
+    @DefaultStringValue("New Volume")
+    String newVolumeTitle();
 
     @DefaultStringValue("Parameters")
     String parameterTitle();

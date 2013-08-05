@@ -58,16 +58,16 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     public static Integer REPLICATE_COUNT_DEFAULT = 2;
     public static Integer STRIPE_COUNT_DEFAULT = 4;
 
-    private UICommand createVolumeCommand;
+    private UICommand newVolumeCommand;
 
-    public UICommand getCreateVolumeCommand()
+    public UICommand getNewVolumeCommand()
     {
-        return createVolumeCommand;
+        return newVolumeCommand;
     }
 
-    private void setCreateVolumeCommand(UICommand value)
+    private void setNewVolumeCommand(UICommand value)
     {
-        createVolumeCommand = value;
+        newVolumeCommand = value;
     }
 
     private UICommand removeVolumeCommand;
@@ -127,7 +127,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         setSearchObjects(new String[] { SearchObjects.GLUSTER_VOLUME_OBJ_NAME, SearchObjects.GLUSTER_VOLUME_PLU_OBJ_NAME });
         setAvailableInModes(ApplicationMode.GlusterOnly);
 
-        setCreateVolumeCommand(new UICommand("Create Volume", this)); //$NON-NLS-1$
+        setNewVolumeCommand(new UICommand("Create Volume", this)); //$NON-NLS-1$
         setRemoveVolumeCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setStartCommand(new UICommand("Start", this)); //$NON-NLS-1$
         setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
@@ -156,13 +156,13 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         setDetailModels(list);
     }
 
-    private void createVolume() {
+    private void newVolume() {
         if (getWindow() != null) {
             return;
         }
 
         VolumeModel volumeModel = new VolumeModel();
-        volumeModel.setTitle(ConstantsManager.getInstance().getConstants().createVolumeTitle());
+        volumeModel.setTitle(ConstantsManager.getInstance().getConstants().newVolumeTitle());
         setWindow(volumeModel);
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -366,7 +366,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         boolean isAvailable =
                 !(getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Volume);
 
-        getCreateVolumeCommand().setIsAvailable(isAvailable);
+        getNewVolumeCommand().setIsAvailable(isAvailable);
         getRemoveVolumeCommand().setIsAvailable(isAvailable);
 
     }
@@ -378,8 +378,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
-        if (command.equals(getCreateVolumeCommand())) {
-            createVolume();
+        if (command.equals(getNewVolumeCommand())) {
+            newVolume();
         }
         else if (command.equals(getRemoveVolumeCommand())) {
             removeVolume();

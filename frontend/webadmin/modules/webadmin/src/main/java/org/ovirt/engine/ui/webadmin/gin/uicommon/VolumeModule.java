@@ -51,7 +51,7 @@ public class VolumeModule extends AbstractGinModule {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getCreateVolumeCommand()) {
+                if (lastExecutedCommand == getModel().getNewVolumeCommand()) {
                     return popupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);

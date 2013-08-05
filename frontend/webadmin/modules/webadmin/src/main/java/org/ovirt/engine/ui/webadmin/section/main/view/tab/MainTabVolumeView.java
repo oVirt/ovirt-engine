@@ -117,10 +117,10 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 };
         getTable().addColumn(statusColumn, constants.statusVolume(), "150px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.createVolumeVolume()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolume()) {
             @Override
             protected UICommand resolveCommand() {
-                return getMainModel().getCreateVolumeCommand();
+                return getMainModel().getNewVolumeCommand();
             }
         });
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.removeVolume()) {
