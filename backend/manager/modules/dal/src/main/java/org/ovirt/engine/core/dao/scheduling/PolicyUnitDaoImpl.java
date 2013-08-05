@@ -23,7 +23,10 @@ public class PolicyUnitDaoImpl extends DefaultGenericDaoDbFacade<PolicyUnit, Gui
         return createIdParameterMapper(entity.getId())
                 .addValue("name", entity.getName())
                 .addValue("is_internal", entity.isInternal())
-                .addValue("type", entity.getPolicyUnitType().getValue())
+                .addValue("type",
+                        entity.getPolicyUnitType() == null ? PolicyUnitType.Filter.getValue()
+                                : entity.getPolicyUnitType()
+                                .getValue())
                 .addValue("custom_properties_regex",
                         SerializationFactory.getSerializer().serialize(entity.getParameterRegExMap()));
     }
