@@ -36,11 +36,11 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/actions/play_Disabled.png")
     ImageResource playDisabledIcon();
 
-    @Source("images/actions/pause.png")
-    ImageResource pauseIcon();
+    @Source("images/actions/icn_suspend_enabled.png")
+    ImageResource suspendIcon();
 
-    @Source("images/actions/pause_Disabled.png")
-    ImageResource pauseDisabledIcon();
+    @Source("images/actions/icn_suspend_disabled.png")
+    ImageResource suspendDisabledIcon();
 
     @Source("images/actions/stop.png")
     ImageResource stopIcon();
@@ -55,8 +55,8 @@ public interface ApplicationResources extends CommonApplicationResources {
     ImageResource powerDisabledIcon();
 
     // status images
-    @Source("images/status/pause_icon.png")
-    ImageResource pausedIcon();
+    @Source("images/status/suspendedOverlay.png")
+    ImageResource suspendedIcon();
 
     // VM status icons
 
@@ -72,6 +72,12 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/status/STARTING.png")
     ImageResource vmStatusStarting();
 
+    @Source("images/status/rebooting.png")
+    ImageResource rebooting();
+
+    @Source("images/status/waitforlaunch.png")
+    ImageResource waitforlaunch();
+
     @Source("images/status/STOPPED.png")
     ImageResource vmStatusStopped();
 
@@ -81,8 +87,8 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/status/WAITING.png")
     ImageResource vmStatusWaiting();
 
-    @Source("images/status/vm_freeze.png")
-    ImageResource frozenImage();
+    @Source("images/status/suspended.png")
+    ImageResource vmStatusSuspended();
 
     @Source("images/status/vm_migration.png")
     ImageResource migrationImage();

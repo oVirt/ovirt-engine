@@ -333,7 +333,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
         shutdownCell.setColumnId("shutdownButton"); //$NON-NLS-1$
 
         ImageButtonCell<UserPortalItemModel> suspendCell = new VmButtonsImageButtonCell(
-                applicationResources.pauseIcon(), applicationResources.pauseDisabledIcon()) {
+                applicationResources.suspendIcon(), applicationResources.suspendDisabledIcon()) {
             @Override
             protected String getTitle(UserPortalItemModel value) {
                 return constants.suspendVmLabel();

@@ -44,9 +44,13 @@ public class VmStatusCell extends AbstractCell<VM> {
                 statusImage = resources.vmStatusRunning();
             }
             break;
+        case SavingState:
+            tooltip = constants.vmStatusSaving();
+            statusImage = resources.vmStatusWait();
+            break;
         case RestoringState:
             tooltip = constants.restoring();
-            statusImage = resources.vmStatusStarting();
+            statusImage = resources.vmStatusWait();
             break;
         case PoweringUp:
             tooltip = constants.poweringUp();
@@ -58,10 +62,12 @@ public class VmStatusCell extends AbstractCell<VM> {
             break;
         case RebootInProgress:
             tooltip = constants.rebooting();
-            statusImage = resources.vmStatusStarting();
+            statusImage = resources.rebootInProgress();
             break;
-        case SavingState:
         case WaitForLaunch:
+            tooltip = constants.waitForLaunchStatus();
+            statusImage = resources.waitForLaunch();
+            break;
         case ImageLocked:
             tooltip = constants.imageLocked();
             statusImage = resources.vmStatusWait();
@@ -77,9 +83,10 @@ public class VmStatusCell extends AbstractCell<VM> {
             break;
         case Paused:
             tooltip = constants.paused();
-            statusImage = resources.frozenImage();
+            statusImage = resources.pauseImage();
             break;
         case Unknown:
+        case Unassigned:
             tooltip = constants.unknown();
             statusImage = resources.questionMarkImage();
             break;
@@ -89,7 +96,7 @@ public class VmStatusCell extends AbstractCell<VM> {
             break;
         default:
             tooltip = constants.down();
-            statusImage = resources.stopImage();
+            statusImage = resources.downStatusImage();
             break;
         }
 

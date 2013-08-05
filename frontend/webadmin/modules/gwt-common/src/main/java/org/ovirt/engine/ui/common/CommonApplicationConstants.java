@@ -1510,6 +1510,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Rebooting")
     String rebooting();
 
+    @DefaultStringValue("Wait For Launch")
+    String waitForLaunchStatus();
+
     @DefaultStringValue("Image Locked")
     String imageLocked();
 
@@ -1533,6 +1536,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Restoring")
     String restoring();
+
+    @DefaultStringValue("Saving")
+    String vmStatusSaving();
 
     @DefaultStringValue("Powering Down")
     String poweringDown();

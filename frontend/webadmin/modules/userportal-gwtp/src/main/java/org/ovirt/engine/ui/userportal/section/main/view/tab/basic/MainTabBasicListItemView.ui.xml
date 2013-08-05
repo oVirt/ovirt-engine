@@ -144,7 +144,7 @@
 				</g:layer>
 				
 				<g:layer top='25px' height='81px' left='43px' width='73px'>
-					<i:VmPausedImage ui:field="vmPausedImage" addStyleNames="{style.vmPausedImage}" resource='{resources.pausedIcon}'/>
+					<i:VmPausedImage ui:field="vmPausedImage" addStyleNames="{style.vmPausedImage}" resource='{resources.suspendedIcon}'/>
 				</g:layer>
 				
 				<g:layer top='55px' height='60px' left='5px' width='150px'>

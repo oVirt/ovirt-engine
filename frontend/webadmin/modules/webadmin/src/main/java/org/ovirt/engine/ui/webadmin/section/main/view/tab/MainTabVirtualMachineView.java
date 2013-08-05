@@ -195,7 +195,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         });
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(),
-                resources.pauseVmImage(), resources.pauseVmDisabledImage()) {
+                resources.suspendVmImage(), resources.suspendVmDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getPauseCommand();

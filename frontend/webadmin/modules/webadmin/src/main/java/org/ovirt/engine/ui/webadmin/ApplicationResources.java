@@ -118,11 +118,11 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/pause.gif")
     ImageResource pauseImage();
 
-    @Source("images/icn_pause_disabled.png")
-    ImageResource pauseVmDisabledImage();
+    @Source("images/icn_suspend_disabled.png")
+    ImageResource suspendVmDisabledImage();
 
-    @Source("images/icn_pause.png")
-    ImageResource pauseVmImage();
+    @Source("images/icn_suspend_enabled.png")
+    ImageResource suspendVmImage();
 
     @Source("images/play.gif")
     ImageResource playImage();
@@ -345,8 +345,17 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/vmStatus/starting.png")
     ImageResource vmStatusStarting();
 
+    @Source("images/vmStatus/rebootInProgress.png")
+    ImageResource rebootInProgress();
+
     @Source("images/vmStatus/wait.png")
     ImageResource vmStatusWait();
+
+    @Source("images/vmStatus/waitForLaunch.png")
+    ImageResource waitForLaunch();
+
+    @Source("images/vmStatus/down.png")
+    ImageResource downStatusImage();
 
     @Source("images/vmStatus/stopping.png")
     ImageResource vmStatusPoweringDown();
@@ -357,11 +366,8 @@ public interface ApplicationResources extends CommonApplicationResources {
     @Source("images/vmStatus/vm_run_runonce.png")
     ImageResource runOnceUpImage();
 
-    @Source("images/vmStatus/paused.png")
+    @Source("images/vmStatus/suspened.png")
     ImageResource suspendedImage();
-
-    @Source("images/vmStatus/vm_freeze.png")
-    ImageResource frozenImage();
 
     @Source("images/double_arrow.png")
     ImageResource doubleArrowImage();

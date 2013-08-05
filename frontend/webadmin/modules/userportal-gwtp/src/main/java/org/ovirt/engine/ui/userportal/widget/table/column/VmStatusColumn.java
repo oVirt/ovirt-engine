@@ -26,24 +26,28 @@ public class VmStatusColumn extends UserPortalImageResourceColumn<UserPortalItem
         case MigratingTo:
             return getApplicationResources().migrationImage();
         case WaitForLaunch:
+            return getApplicationResources().waitforlaunch();
         case ImageLocked:
         case PreparingForHibernate:
         case SavingState:
             return getApplicationResources().vmStatusWaiting();
         case PoweringUp:
-        case RebootInProgress:
-        case RestoringState:
             return getApplicationResources().vmStatusStarting();
+        case RebootInProgress:
+            return getApplicationResources().rebooting();
+        case RestoringState:
+            return getApplicationResources().vmStatusWaiting();
         case Paused:
-            return getApplicationResources().frozenImage();
-        case Suspended:
             return getApplicationResources().vmStatusPaused();
+        case Suspended:
+            return getApplicationResources().vmStatusSuspended();
         case NotResponding:
+        case Unassigned:
         case Unknown:
             return getApplicationResources().vmStatusUnknown();
-        case Unassigned:
         case ImageIllegal:
         case Down:
+            return getApplicationResources().vmStatusStopped();
         case PoweringDown:
             return getApplicationResources().vmStatusStopping();
         default:

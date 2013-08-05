@@ -178,7 +178,7 @@ public class MainTabBasicListItemView extends AbstractView implements MainTabBas
     @Override
     public HasClickHandlers addSuspendButton() {
         MainTabBasicListItemActionButton button = new MainTabBasicListItemActionButton(
-                constants.suspendVm(), resources.pauseIcon(), resources.pauseDisabledIcon(),
+                constants.suspendVm(), resources.suspendIcon(), resources.suspendDisabledIcon(),
                 style.suspendButtonAdditionalStyle());
         this.suspendButton = button;
         addButtonToPanel(button);

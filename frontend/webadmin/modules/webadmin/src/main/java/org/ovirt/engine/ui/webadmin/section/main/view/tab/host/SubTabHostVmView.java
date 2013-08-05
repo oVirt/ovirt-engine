@@ -121,7 +121,7 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
 
         // add action buttons
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.suspendVm(),
-                resources.pauseVmImage(), resources.pauseVmDisabledImage()) {
+                resources.suspendVmImage(), resources.suspendVmDisabledImage()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getPauseCommand();
