@@ -72,16 +72,8 @@ public class SetupNetworksHelper {
             if (addInterfaceToProcessedList(iface)) {
                 if (isBond(iface)) {
                     extractBondIfModified(iface, name);
-                } else {
-                    if (StringUtils.isNotBlank(iface.getBondName())) {
-                        extractBondSlave(iface);
-                    }
-
-                    // validate the nic exists on host
-                    String nameWithoutVlanId = NetworkUtils.StripVlan(name);
-                    if (!getExistingIfaces().containsKey(nameWithoutVlanId)) {
-                        addViolation(VdcBllMessages.NETWORK_INTERFACES_DONT_EXIST, nameWithoutVlanId);
-                    }
+                } else if (StringUtils.isNotBlank(iface.getBondName())) {
+                    extractBondSlave(iface);
                 }
 
                 // validate and extract to network map
@@ -92,6 +84,7 @@ public class SetupNetworksHelper {
             }
         }
 
+        validateInterfacesExist();
         validateBondSlavesCount();
         extractRemovedNetworks();
         extractRemovedBonds();
@@ -99,6 +92,18 @@ public class SetupNetworksHelper {
         validateMTU();
 
         return translateViolations();
+    }
+
+    /**
+     * Validates that all interfaces exist on the host, except bonds that may be created.
+     */
+    private void validateInterfacesExist() {
+        for (VdsNetworkInterface iface : params.getInterfaces()) {
+            String nameWithoutVlanId = NetworkUtils.StripVlan(iface.getName());
+            if (!getExistingIfaces().containsKey(nameWithoutVlanId) && !bonds.containsKey(nameWithoutVlanId)) {
+                addViolation(VdcBllMessages.NETWORK_INTERFACES_DONT_EXIST, nameWithoutVlanId);
+            }
+        }
     }
 
     /**

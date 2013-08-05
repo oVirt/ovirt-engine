@@ -1178,6 +1178,22 @@ public class SetupNetworksHelperTest {
                 nic2.getName());
     }
 
+    @Test
+    public void nicDoesntExist() {
+        VdsNetworkInterface nic = createNic("eth0", null);
+        SetupNetworksHelper helper = createHelper(createParametersForNics(nic));
+        validateAndExpectViolation(helper, VdcBllMessages.NETWORK_INTERFACES_DONT_EXIST, nic.getName());
+    }
+
+    @Test
+    public void bondDoesntExist() {
+        VdsNetworkInterface bond = createBond(BOND_NAME, null);
+        List<VdsNetworkInterface> ifacesToBond = createNics(null);
+        mockExistingIfaces(ifacesToBond.toArray(new VdsNetworkInterface[ifacesToBond.size()]));
+        SetupNetworksHelper helper = createHelper(createParametersForBond(bond, ifacesToBond));
+        validateAndExpectNoViolations(helper);
+    }
+
     /* --- Helper methods for tests --- */
 
     private void validateAndExpectNoViolations(SetupNetworksHelper helper) {
