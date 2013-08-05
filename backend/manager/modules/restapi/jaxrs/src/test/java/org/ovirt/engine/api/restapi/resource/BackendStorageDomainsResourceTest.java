@@ -558,6 +558,13 @@ public class BackendStorageDomainsResourceTest
                                            GUIDS[0].toString(),
                                            false));
 
+        setUpActionExpectations(VdcActionType.RemoveStorageServerConnection,
+                                   StorageServerConnectionParametersBase.class,
+                                   new String[] { },
+                                   new Object[] { },
+                                   true,
+                                   true, null, false);
+
         setUpGetEntityExpectations(VdcQueryType.GetExistingStorageDomainList,
                                    GetExistingStorageDomainListParameters.class,
                                    new String[] { "VdsId", "StorageType", "StorageDomainType", "Path" },
