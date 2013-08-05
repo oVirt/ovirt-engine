@@ -96,6 +96,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableOnVmStatusField
     private int niceLevel;
 
+    @EditableOnVmStatusField
+    private int cpuShares;
+
     @EditableField
     private int priority;
 
@@ -221,6 +224,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             boolean failBack,
             BootSequence defaultBootSequence,
             int niceLevel,
+            int cpuShares,
             int priority,
             boolean autoStartup,
             boolean stateless,
@@ -256,6 +260,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.failBack = failBack;
         this.defaultBootSequence = defaultBootSequence;
         this.niceLevel = niceLevel;
+        this.cpuShares = cpuShares;
         this.priority = priority;
         this.autoStartup = autoStartup;
         this.stateless = stateless;
@@ -591,6 +596,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + osId;
         result = prime * result + memSizeMb;
         result = prime * result + niceLevel;
+        result = prime * result + cpuShares;
         result = prime * result + numOfSockets;
         result = prime * result + numOfMonitors;
         result = prime * result + ((origin == null) ? 0 : origin.hashCode());
@@ -656,7 +662,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && migrationSupport == other.migrationSupport
                 && ObjectUtils.objectsEqual(tunnelMigration, other.tunnelMigration)
                 && ObjectUtils.objectsEqual(vncKeyboardLayout, other.vncKeyboardLayout)
-                && ObjectUtils.objectsEqual(createdByUserId, other.createdByUserId));
+                && ObjectUtils.objectsEqual(createdByUserId, other.createdByUserId)
+                && cpuShares == other.cpuShares);
     }
 
     public Guid getQuotaId() {
@@ -762,5 +769,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public void setCreatedByUserId(Guid createdByUserId) {
         this.createdByUserId = createdByUserId;
+    }
+
+    public int getCpuShares() {
+        return cpuShares;
+    }
+
+    public void setCpuShares(int cpuShares) {
+        this.cpuShares = cpuShares;
     }
 }

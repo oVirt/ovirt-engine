@@ -324,6 +324,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setStoragePoolName(rs.getString("storage_pool_name"));
             entity.setTransparentHugePages(rs.getBoolean("transparent_hugepages"));
             entity.setNiceLevel(rs.getInt("nice_level"));
+            entity.setCpuShares(rs.getInt("cpu_shares"));
             entity.setHibernationVolHandle(rs.getString("hibernation_vol_handle"));
             entity.setDefaultBootSequence(BootSequence.forValue(rs.getInt("default_boot_sequence")));
             entity.setDefaultDisplayType(DisplayType.forValue(rs.getInt("default_display_type")));

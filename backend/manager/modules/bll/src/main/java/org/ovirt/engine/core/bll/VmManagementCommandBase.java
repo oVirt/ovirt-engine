@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -19,6 +20,12 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
 public class VmManagementCommandBase<T extends VmManagementParametersBase> extends VmCommand<T> {
+
+    /**
+     * This is the maximum value we can pass to cpuShares according to
+     * the virsh man page.
+     */
+    public static final int MAXIMUM_CPU_SHARES = 262144;
 
     public VmManagementCommandBase(T parameters) {
         super(parameters);
@@ -200,5 +207,9 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     protected boolean isVmWithSameNameExists(String name) {
         return VmHandler.isVmWithSameNameExistStatic(name);
+    }
+
+    protected boolean isCpuSharesValid(VM vmData) {
+        return (vmData.getCpuShares() >= 0 && vmData.getCpuShares() <= MAXIMUM_CPU_SHARES);
     }
 }

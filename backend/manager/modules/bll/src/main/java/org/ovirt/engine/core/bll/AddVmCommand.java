@@ -395,6 +395,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return false;
         }
 
+        if (!isCpuSharesValid(vmFromParams)) {
+            return failCanDoAction(VdcBllMessages.QOS_CPU_SHARES_OUT_OF_RANGE);
+        }
+
         return true;
     }
 

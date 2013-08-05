@@ -66,6 +66,7 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
                 .addValue("fail_back", vm.isFailBack())
                 .addValue("vm_type", vm.getVmType())
                 .addValue("nice_level", vm.getNiceLevel())
+                .addValue("cpu_shares", vm.getCpuShares())
                 .addValue("default_boot_sequence",
                         vm.getDefaultBootSequence())
                 .addValue("default_display_type", vm.getDefaultDisplayType())

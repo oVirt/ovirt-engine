@@ -420,6 +420,7 @@ Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000),
     v_fail_back BOOLEAN ,
     v_vm_type INTEGER ,
  v_nice_level INTEGER,
+ v_cpu_shares INTEGER,
     v_default_boot_sequence INTEGER,
  v_default_display_type INTEGER,
  v_priority INTEGER,
@@ -442,8 +443,8 @@ Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000),
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_static(description, free_text_comment, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid,domain,creation_date,num_of_monitors, single_qxl_pci, allow_console_reconnect,is_initialized,num_of_sockets,cpu_per_socket,usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds, fail_back, default_boot_sequence, vm_type, nice_level, default_display_type, priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem, entity_type, quota_id, cpu_pinning, is_smartcard_enabled,is_delete_protected,host_cpu_flags, tunnel_migration, vnc_keyboard_layout, is_run_and_pause, created_by_user_id)
-	VALUES(v_description, v_free_text_comment, v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_domain, v_creation_date, v_num_of_monitors,v_single_qxl_pci, v_allow_console_reconnect, v_is_initialized, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone, v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back, v_default_boot_sequence, v_vm_type, v_nice_level, v_default_display_type, v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem, 'VM', v_quota_id, v_cpu_pinning, v_is_smartcard_enabled,v_is_delete_protected,v_host_cpu_flags, v_tunnel_migration, v_vnc_keyboard_layout, v_is_run_and_pause, v_created_by_user_id);
+INSERT INTO vm_static(description, free_text_comment, mem_size_mb, os, vds_group_id, vm_guid, VM_NAME, vmt_guid,domain,creation_date,num_of_monitors, single_qxl_pci, allow_console_reconnect,is_initialized,num_of_sockets,cpu_per_socket,usb_policy, time_zone,auto_startup,is_stateless,dedicated_vm_for_vds, fail_back, default_boot_sequence, vm_type, nice_level, cpu_shares, default_display_type, priority,iso_path,origin,initrd_url,kernel_url,kernel_params,migration_support,predefined_properties,userdefined_properties,min_allocated_mem, entity_type, quota_id, cpu_pinning, is_smartcard_enabled,is_delete_protected,host_cpu_flags, tunnel_migration, vnc_keyboard_layout, is_run_and_pause, created_by_user_id)
+	VALUES(v_description, v_free_text_comment, v_mem_size_mb, v_os, v_vds_group_id, v_vm_guid, v_vm_name, v_vmt_guid, v_domain, v_creation_date, v_num_of_monitors,v_single_qxl_pci, v_allow_console_reconnect, v_is_initialized, v_num_of_sockets, v_cpu_per_socket, v_usb_policy, v_time_zone, v_auto_startup,v_is_stateless,v_dedicated_vm_for_vds,v_fail_back, v_default_boot_sequence, v_vm_type, v_nice_level, v_cpu_shares, v_default_display_type, v_priority,v_iso_path,v_origin,v_initrd_url,v_kernel_url,v_kernel_params,v_migration_support,v_predefined_properties,v_userdefined_properties,v_min_allocated_mem, 'VM', v_quota_id, v_cpu_pinning, v_is_smartcard_enabled,v_is_delete_protected,v_host_cpu_flags, v_tunnel_migration, v_vnc_keyboard_layout, v_is_run_and_pause, v_created_by_user_id);
 -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
 DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vm_guid;
 INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id) VALUES (v_vm_guid, (SELECT storage_pool_id FROM vds_groups vg WHERE vg.vds_group_id = v_vds_group_id));
@@ -538,6 +539,7 @@ Create or replace FUNCTION UpdateVmStatic(v_description VARCHAR(4000) ,
     v_fail_back BOOLEAN ,
     v_vm_type INTEGER ,
     v_nice_level INTEGER,
+    v_cpu_shares INTEGER,
     v_default_boot_sequence INTEGER,
  v_default_display_type INTEGER,
  v_priority INTEGER,
@@ -572,6 +574,7 @@ BEGIN
       usb_policy = v_usb_policy,time_zone = v_time_zone,auto_startup = v_auto_startup,
       is_stateless = v_is_stateless,dedicated_vm_for_vds = v_dedicated_vm_for_vds,
       fail_back = v_fail_back,vm_type = v_vm_type,
+      cpu_shares = v_cpu_shares,
       _update_date = LOCALTIMESTAMP,default_boot_sequence = v_default_boot_sequence,
       default_display_type = v_default_display_type,
       priority = v_priority,iso_path = v_iso_path,origin = v_origin,
@@ -883,9 +886,6 @@ BEGIN
       WHERE RUN_ON_VDS = v_vds_id;
 END; $procedure$
 LANGUAGE plpgsql;
-
-
-
 
 
 

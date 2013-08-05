@@ -218,6 +218,7 @@ public final class VdsProperties {
     public static final String virtioConsole = "console";
     public static final String cpuType = "cpuType";
     public static final String niceLevel = "nice";
+    public static final String cpuShares = "cpuShares";
     public static final String hiberVolHandle = "hiberVolHandle";
     public static final String pauseCode = "pauseCode";
     public static final String KeyboardLayout = "keyboardLayout";

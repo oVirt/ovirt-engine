@@ -49,6 +49,7 @@ public class VmTemplate extends VmBase {
 
     public VmTemplate() {
         setNiceLevel(0);
+        setCpuShares(0);
         diskTemplateMap = new HashMap<Guid, DiskImage>();
     }
 
@@ -57,7 +58,7 @@ public class VmTemplate extends VmBase {
     public VmTemplate(int childCount, Date creationDate, String description, int memSizeMb, String name,
             int numOfSockets, int cpuPerSocket, int osId, Guid vdsGroupId, Guid vmtGuid, String domain,
             int numOfMonitors, boolean singleQxlPci, int status, int usbPolicy, String timeZone, int niceLevel,
-            boolean failBack, BootSequence defaultBootSequence, VmType vmType,
+            int cpuShares, boolean failBack, BootSequence defaultBootSequence, VmType vmType,
             boolean smartcardEnabled, boolean deleteProtected, Boolean tunnelMigration, String vncKeyboardLayout,
             int minAllocatedMem, boolean stateless, boolean runAndPause, Guid createdByUserId) {
         super(
@@ -79,6 +80,7 @@ public class VmTemplate extends VmBase {
                 failBack,
                 defaultBootSequence,
                 niceLevel,
+                cpuShares,
                 0,
                 false,
                 stateless,

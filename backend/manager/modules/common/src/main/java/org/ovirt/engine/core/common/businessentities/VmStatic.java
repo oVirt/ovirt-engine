@@ -48,6 +48,7 @@ public class VmStatic extends VmBase {
         setNumOfMonitors(1);
         initialized = false;
         setNiceLevel(0);
+        setCpuShares(0);
         setDefaultBootSequence(BootSequence.C);
         defaultDisplayType = DisplayType.qxl;
         setVmType(VmType.Desktop);
@@ -72,6 +73,7 @@ public class VmStatic extends VmBase {
                 vmStatic.isFailBack(),
                 vmStatic.getDefaultBootSequence(),
                 vmStatic.getNiceLevel(),
+                vmStatic.getCpuShares(),
                 vmStatic.getPriority(),
                 vmStatic.isAutoStartup(),
                 vmStatic.isStateless(),

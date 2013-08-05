@@ -28,6 +28,7 @@ public class RunVmParams extends VmOperationParameterBase {
     private String kernel_params;
     private VmPayload payload;
     private boolean balloonEnabled;
+    private int cpuShares;
 
     public RunVmParams() {
     }
@@ -213,5 +214,12 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public void setBalloonEnabled(boolean isBalloonEnabled) {
         this.balloonEnabled = isBalloonEnabled;
+    }
+    public int getCpuShares() {
+        return cpuShares;
+    }
+
+    public void setCpuShares(int cpuShares) {
+        this.cpuShares = cpuShares;
     }
 }

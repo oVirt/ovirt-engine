@@ -768,7 +768,10 @@ public enum VdcBllMessages {
     ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE(ErrorType.BAD_PARAMETERS),
 
     // memory QOS features
-    QOS_BALLOON_NOT_SUPPORTED(ErrorType.BAD_PARAMETERS);
+    QOS_BALLOON_NOT_SUPPORTED(ErrorType.BAD_PARAMETERS),
+
+    // CPU QoS features
+    QOS_CPU_SHARES_OUT_OF_RANGE(ErrorType.BAD_PARAMETERS);
 
     private ErrorType messageType;
 

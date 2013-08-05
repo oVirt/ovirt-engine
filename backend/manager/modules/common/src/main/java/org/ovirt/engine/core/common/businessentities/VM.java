@@ -884,6 +884,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         this.vmStatic.setNiceLevel(value);
     }
 
+    public int getCpuShares() {
+        return this.vmStatic.getCpuShares();
+    }
+
+    public void setCpuShares(int value) {
+        this.vmStatic.setCpuShares(value);
+    }
+
     public void setDbGeneration(long value) {
         this.vmStatic.setDbGeneration(value);
     }

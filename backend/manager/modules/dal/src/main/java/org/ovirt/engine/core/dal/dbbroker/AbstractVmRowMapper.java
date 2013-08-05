@@ -30,6 +30,7 @@ public abstract class AbstractVmRowMapper<T extends VmBase> implements RowMapper
         entity.setFailBack(rs.getBoolean("fail_back"));
         entity.setDefaultBootSequence(BootSequence.forValue(rs.getInt("default_boot_sequence")));
         entity.setNiceLevel(rs.getInt("nice_level"));
+        entity.setCpuShares(rs.getInt("cpu_shares"));
         entity.setPriority(rs.getInt("priority"));
         entity.setAutoStartup(rs.getBoolean("auto_startup"));
         entity.setStateless(rs.getBoolean("is_stateless"));

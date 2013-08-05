@@ -349,6 +349,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
         }
 
+        if (!isCpuSharesValid(vmFromParams)) {
+            return failCanDoAction(VdcBllMessages.QOS_CPU_SHARES_OUT_OF_RANGE);
+        }
+
         return true;
     }
 
