@@ -19,9 +19,6 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 
-import sun.misc.Signal;
-import sun.misc.SignalHandler;
-
 /**
  * Main class of event notification service. Initiate the service and handles termination signals
  */
@@ -55,9 +52,9 @@ public class Notifier {
     public static void main(String[] args) {
         initLogging();
         NotifierSignalHandler handler = new NotifierSignalHandler();
-        Signal.handle(new Signal("HUP"), handler);
         handler.addScheduledExecutorService(notifyScheduler);
         handler.addScheduledExecutorService(monitorScheduler);
+        Runtime.getRuntime().addShutdownHook(handler);
 
         NotificationService notificationService = null;
         EngineMonitorService engineMonitorService = null;
@@ -139,13 +136,14 @@ public class Notifier {
      * Class designed to handle a proper shutdown in case of an external signal which was registered was caught by the
      * program.
      */
-    public static class NotifierSignalHandler implements SignalHandler {
+    public static class NotifierSignalHandler extends Thread {
 
         private List<ScheduledFuture<?>> serviceHandler = new ArrayList<ScheduledFuture<?>>();
         private List<ScheduledExecutorService> scheduler = new ArrayList<ScheduledExecutorService>();
 
-        public void handle(Signal sig) {
-            log.info("Preparing for shutdown after receiving signal " + sig);
+        @Override
+        public void run() {
+            log.info("Preparing for shutdown after receiving signal " );
             if (serviceHandler.size() > 0) {
                 for (ScheduledFuture<?> scheduled : serviceHandler) {
                     scheduled.cancel(true);
