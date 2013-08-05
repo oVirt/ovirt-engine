@@ -106,6 +106,10 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     @Override
+    public void onModification() {
+    }
+
+    @Override
     public void onRemoval() {
     }
 

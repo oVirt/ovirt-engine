@@ -60,6 +60,12 @@ public class UpdateProviderCommand<P extends ProviderParameters> extends Command
     @Override
     protected void executeCommand() {
         getProviderDao().update(getProvider());
+
+        ProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(getProvider());
+        if (providerProxy != null) {
+            providerProxy.onModification();
+        }
+
         setSucceeded(true);
     }
 

@@ -123,6 +123,10 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
     }
 
     @Override
+    public void onModification() {
+    }
+
+    @Override
     public void onRemoval() {
     }
 

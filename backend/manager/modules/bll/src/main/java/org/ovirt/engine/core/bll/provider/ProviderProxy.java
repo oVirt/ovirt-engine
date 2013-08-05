@@ -26,6 +26,12 @@ public interface ProviderProxy {
     void onAddition();
 
     /**
+     * Callback executed when the provider is modified.<br>
+     * Useful to add provider-specific operations when the provider is modified.
+     */
+    void onModification();
+
+    /**
      * Callback executed when the provider is removed.<br>
      * Useful to add provider-specific operations when the provider is removed.
      */

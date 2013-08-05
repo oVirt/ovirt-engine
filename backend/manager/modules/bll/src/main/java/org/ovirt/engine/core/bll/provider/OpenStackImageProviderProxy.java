@@ -124,6 +124,21 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
     }
 
     @Override
+    public void onModification() {
+        List<StorageDomain> storageDomains =
+                getDbFacade().getStorageDomainDao().getAllByConnectionId(provider.getId());
+
+        // updating storage domain information
+        for (StorageDomain storageDomainEntry : storageDomains) {
+            StorageDomainStatic domainStaticEntry =
+                    getDbFacade().getStorageDomainStaticDao().get(storageDomainEntry.getId());
+            domainStaticEntry.setStorageName(provider.getName());
+            domainStaticEntry.setDescription(provider.getDescription());
+            getDbFacade().getStorageDomainStaticDao().update(domainStaticEntry);
+        }
+    }
+
+    @Override
     public void onRemoval() {
         List<StorageDomain> storageDomains = getDbFacade()
                 .getStorageDomainDao().getAllByConnectionId(provider.getId());
