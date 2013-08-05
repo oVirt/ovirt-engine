@@ -5,10 +5,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
 
@@ -52,6 +55,26 @@ public class PolicyUnitDaoTest extends BaseDAOTestCase {
         dummyPolicyUnit = new PolicyUnit();
         dummyPolicyUnit.setId(Guid.newGuid());
         dummyPolicyUnit.setName("Dummy policy unit");
+        dummyPolicyUnit.setPolicyUnitType(PolicyUnitType.Filter);
+        dummyPolicyUnit.setParameterRegExMap(new LinkedHashMap<String, String>());
     }
 
+    @Test
+    public void testSave() {
+        dao.save(dummyPolicyUnit);
+        PolicyUnit result = dao.get(dummyPolicyUnit.getId());
+        assertTrue(result.equals(dummyPolicyUnit));
+    }
+
+    @Test
+    public void testUpdate() {
+        PolicyUnit policyUnitToUpdate = dao.get(FixturesTool.POLICY_UNIT_MIGRATION);
+        Map<String, String> map = new LinkedHashMap<String, String>();
+        map.put("A", "B");
+        policyUnitToUpdate.setParameterRegExMap(map);
+        dao.update(policyUnitToUpdate);
+
+        PolicyUnit result = dao.get(policyUnitToUpdate.getId());
+        assertTrue(result.equals(policyUnitToUpdate));
+    }
 }

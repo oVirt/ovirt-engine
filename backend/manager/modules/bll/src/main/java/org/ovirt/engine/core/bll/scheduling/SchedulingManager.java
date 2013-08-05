@@ -134,7 +134,11 @@ public class SchedulingManager {
     protected void loadPolicyUnits() {
         List<PolicyUnit> allPolicyUnits = getPolicyUnitDao().getAll();
         for (PolicyUnit policyUnit : allPolicyUnits) {
-            policyUnits.put(policyUnit.getId(), PolicyUnitImpl.getPolicyUnitImpl(policyUnit));
+            if (policyUnit.isInternal()) {
+                policyUnits.put(policyUnit.getId(), PolicyUnitImpl.getPolicyUnitImpl(policyUnit));
+            } else {
+                policyUnits.put(policyUnit.getId(), new PolicyUnitImpl(policyUnit));
+            }
         }
     }
 
