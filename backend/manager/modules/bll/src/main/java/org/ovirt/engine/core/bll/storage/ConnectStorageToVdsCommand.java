@@ -41,10 +41,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
     }
 
     protected Pair<Boolean, Integer> connect(Guid vdsId) {
-        java.util.HashMap<String, String> result = (java.util.HashMap<String, String>) Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
+        java.util.HashMap<String, String> result = (java.util.HashMap<String, String>) runVdsCommand(
                         VDSCommandType.ConnectStorageServer,
                         new StorageServerConnectionManagementVDSParameters(vdsId, Guid.Empty,
                                 getParameters().getStorageServerConnection().getstorage_type(),
