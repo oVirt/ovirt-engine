@@ -131,6 +131,17 @@ public class PolicyUnitImpl extends PolicyUnit {
         policyUnit.setParameterRegExMap(parameterRegExMap);
     }
 
+    @Override
+    public final boolean isEnabled() {
+        return policyUnit.isEnabled();
+    }
+
+    @Override
+    public final void setEnabled(boolean enabled) {
+        // TODO Auto-generated method stub
+        policyUnit.setEnabled(enabled);
+    }
+
     public final PolicyUnit getPolicyUnit() {
         return policyUnit;
     }

@@ -27,7 +27,8 @@ Create or replace FUNCTION InsertPolicyUnit(
     v_name VARCHAR(128),
     v_is_internal BOOLEAN,
     v_type SMALLINT,
-    v_custom_properties_regex text)
+    v_custom_properties_regex text,
+    v_enabled BOOLEAN)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -36,24 +37,27 @@ BEGIN
         name,
         is_internal,
         type,
-        custom_properties_regex)
+        custom_properties_regex,
+        enabled)
     VALUES(
         v_id,
         v_name,
         v_is_internal,
         v_type,
-        v_custom_properties_regex);
+        v_custom_properties_regex,
+        v_enabled);
 END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION UpdatePolicyUnit(
     v_id UUID,
-    v_custom_properties_regex text)
+    v_custom_properties_regex text,
+    v_enabled BOOLEAN)
 RETURNS VOID
 AS $procedure$
 BEGIN
     UPDATE policy_units
-    SET    custom_properties_regex = v_custom_properties_regex
+    SET    custom_properties_regex = v_custom_properties_regex, enabled = v_enabled
     WHERE  id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
