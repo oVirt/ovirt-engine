@@ -31,7 +31,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
-import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -56,6 +57,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<Guid, StorageDomain>();
     private boolean _addVmsSucceded = true;
+    private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -357,7 +359,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         int maxVmNameLengthWindows = Config.<Integer> GetValue(ConfigValues.MaxVmNameLengthWindows);
         int maxVmNameLengthNonWindows = Config.<Integer> GetValue(ConfigValues.MaxVmNameLengthNonWindows);
 
-        int maxLength = OsRepositoryImpl.INSTANCE.isWindows(osId) ? maxVmNameLengthWindows : maxVmNameLengthNonWindows;
+        int maxLength = osRepository.isWindows(osId) ? maxVmNameLengthWindows : maxVmNameLengthNonWindows;
         Integer maxVmsInPool = Config.GetValue(ConfigValues.MaxVmsInPool);
         maxLength -= (String.valueOf(maxVmsInPool).length() + 1);
 

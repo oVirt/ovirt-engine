@@ -30,7 +30,8 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
@@ -47,6 +48,7 @@ public class VmDeviceUtils {
     private final static String UHCI_MODEL = "ich9-uhci";
     private final static int SLOTS_PER_CONTROLLER = 6;
     private final static int COMPANION_USB_CONTROLLERS = 3;
+    private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     /**
      * Update the vm devices according to changes made in vm static for existing VM
@@ -200,7 +202,7 @@ public class VmDeviceUtils {
         }
         if (createDevice) {
             String soundDevice =
-                    OsRepositoryImpl.INSTANCE.getSoundDevice(newVmBase.getOsId(), compatibilityVersion);
+                    osRepository.getSoundDevice(newVmBase.getOsId(), compatibilityVersion);
             addManagedDevice(new VmDeviceId(Guid.newGuid(), vmId),
                     VmDeviceGeneralType.SOUND,
                     VmDeviceType.getSoundDeviceType(soundDevice),
@@ -372,7 +374,7 @@ public class VmDeviceUtils {
     }
 
     private static void addSoundCard(VmBase vmBase, Version vdsGroupCompatibilityVersion) {
-        String soundDevice = OsRepositoryImpl.INSTANCE.getSoundDevice(vmBase.getOsId(), vdsGroupCompatibilityVersion);
+        String soundDevice = osRepository.getSoundDevice(vmBase.getOsId(), vdsGroupCompatibilityVersion);
         addManagedDevice(new VmDeviceId(Guid.newGuid(), vmBase.getId()),
                 VmDeviceGeneralType.SOUND,
                 VmDeviceType.getSoundDeviceType(soundDevice),

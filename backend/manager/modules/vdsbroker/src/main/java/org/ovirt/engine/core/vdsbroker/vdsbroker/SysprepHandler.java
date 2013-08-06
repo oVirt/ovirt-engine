@@ -12,7 +12,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigUtil;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.dal.dbbroker.generic.DomainsPasswordMap;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.log.Log;
@@ -22,6 +23,7 @@ public final class SysprepHandler {
     private static final Map<String, String> userPerDomain = new HashMap<String, String>();
     private static Map<String, String> passwordPerDomain = new HashMap<String, String>();
     public static final Map<String, Integer> timeZoneIndex = new HashMap<String, Integer>();
+    private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     // we get a string like "(GMT-04:30) Afghanistan Standard Time"
     // we use regex to extract the time only and replace it to number
@@ -65,8 +67,8 @@ public final class SysprepHandler {
 
     public static String GetSysPrep(VM vm, String hostName, String domain, SysPrepParams sysPrepParams) {
         String sysPrepContent = "";
-        sysPrepContent = LoadFile(OsRepositoryImpl.INSTANCE.getSysprepPath(vm.getVmOsId(), null));
-        sysPrepContent = replace(sysPrepContent, "$ProductKey$", OsRepositoryImpl.INSTANCE.getProductKey(vm.getVmOsId(), null));
+        sysPrepContent = LoadFile(osRepository.getSysprepPath(vm.getVmOsId(), null));
+        sysPrepContent = replace(sysPrepContent, "$ProductKey$", osRepository.getProductKey(vm.getVmOsId(), null));
 
         if (sysPrepContent.length() > 0) {
 
@@ -137,7 +139,7 @@ public final class SysprepHandler {
             vm.setTimeZone(Config.<String> GetValue(ConfigValues.DefaultWindowsTimeZone));
         }
 
-        if (OsRepositoryImpl.INSTANCE.isTimezoneValueInteger(vm.getStaticData().getOsId(),null)) {
+        if (osRepository.isTimezoneValueInteger(vm.getStaticData().getOsId(),null)) {
             // send correct time zone as sysprep expect to get it (a wierd number)
             timeZone = getTimezoneIndexByKey(vm.getTimeZone());
         } else {

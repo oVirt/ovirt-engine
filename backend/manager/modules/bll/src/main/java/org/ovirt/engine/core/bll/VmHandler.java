@@ -36,8 +36,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
@@ -57,7 +58,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class VmHandler {
 
     private static ObjectIdentityChecker mUpdateVmsStatic;
-
+    private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
     private static final Log log = LogFactory.getLog(VmHandler.class);
 
     /**
@@ -293,7 +294,7 @@ public class VmHandler {
                 final Map<String, String> spiceDriversInGuest =
                         Config.<Map<String, String>> GetValue(ConfigValues.SpiceDriverNameInGuest);
                 final String spiceDriverInGuest =
-                        spiceDriversInGuest.get(OsRepositoryImpl.INSTANCE.getOsFamily(vm.getOs()).toLowerCase());
+                        spiceDriversInGuest.get(osRepository.getOsFamily(vm.getOs()).toLowerCase());
 
                 for (final String part : parts) {
                     for (String agentName : possibleAgentAppNames) {
@@ -400,7 +401,7 @@ public class VmHandler {
             reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_DISPLAY_TYPE.toString());
             return false;
         }
-        if (!OsRepositoryImpl.INSTANCE.isSingleQxlDeviceEnabled(osId)) {
+        if (!osRepository.isSingleQxlDeviceEnabled(osId)) {
             reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_SINGLE_DEVICE_OS_TYPE.toString());
             return false;
         }
@@ -449,7 +450,7 @@ public class VmHandler {
                 retVal = false;
             }
         } else if (UsbPolicy.ENABLED_LEGACY.equals(usbPolicy)) {
-            if (OsRepositoryImpl.INSTANCE.isLinux(osId)) {
+            if (osRepository.isLinux(osId)) {
                 messages.add(VdcBllMessages.USB_LEGACY_NOT_SUPPORTED_ON_LINUX_VMS.toString());
                 retVal = false;
             }
@@ -459,7 +460,7 @@ public class VmHandler {
 
     public static void updateImportedVmUsbPolicy(VmBase vmBase) {
         // Enforce disabled USB policy for Linux OS with legacy policy.
-        if (OsRepositoryImpl.INSTANCE.isLinux(vmBase.getOsId()) && vmBase.getUsbPolicy().equals(UsbPolicy.ENABLED_LEGACY)) {
+        if (osRepository.isLinux(vmBase.getOsId()) && vmBase.getUsbPolicy().equals(UsbPolicy.ENABLED_LEGACY)) {
             vmBase.setUsbPolicy(UsbPolicy.DISABLED);
         }
     }

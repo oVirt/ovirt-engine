@@ -19,7 +19,8 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
@@ -33,6 +34,7 @@ public abstract class VmInfoBuilderBase {
     protected VM vm;
     // IDE supports only 4 slots , slot 2 is preserved by VDSM to the CDROM
     protected int[] ideIndexSlots = new int[] { 0, 1, 3 };
+    protected OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     private static class DiskImageByBootComparator implements Comparator<Disk>, Serializable {
         private static final long serialVersionUID = 4732164571328497830L;
@@ -105,7 +107,7 @@ public abstract class VmInfoBuilderBase {
             keyboardLayout = Config.<String> GetValue(ConfigValues.VncKeyboardLayout);
         }
         createInfo.put(VdsProperties.KeyboardLayout, keyboardLayout);
-        if (OsRepositoryImpl.INSTANCE.isLinux(vm.getVmOsId())) {
+        if (osRepository.isLinux(vm.getVmOsId())) {
             createInfo.put(VdsProperties.PitReinjection, "false");
         }
 
@@ -183,7 +185,7 @@ public abstract class VmInfoBuilderBase {
             int offset = 0;
             String javaZoneId = null;
 
-            if (OsRepositoryImpl.INSTANCE.isWindows(vm.getOs())) {
+            if (osRepository.isWindows(vm.getOs())) {
                 // convert to java & calculate offset
                 javaZoneId = WindowsJavaTimezoneMapping.windowsToJava.get(timeZone);
             } else {
@@ -204,7 +206,7 @@ public abstract class VmInfoBuilderBase {
         }
 
         // else fallback to engine config default for given OS type
-        if (OsRepositoryImpl.INSTANCE.isWindows(vm.getOs())) {
+        if (osRepository.isWindows(vm.getOs())) {
             return Config.<String> GetValue(ConfigValues.DefaultWindowsTimeZone);
         } else {
             return "Etc/GMT";

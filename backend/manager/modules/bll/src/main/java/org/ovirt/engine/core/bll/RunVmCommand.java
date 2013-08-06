@@ -64,7 +64,8 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
-import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
@@ -99,6 +100,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     /** This flag is used to indicate that the disks might be dirty since the memory
      *  from the active snapshot was restored so the memory should not be used */
     private boolean memoryFromSnapshotIrrelevant;
+    private OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
     public static final String ISO_PREFIX = "iso://";
 
@@ -621,7 +623,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (getParameters().getInitializationType() == null) {
                 // if vm not initialized, use sysprep/cloud-init
                 if (!getVm().isInitialized()) {
-                    getVm().setInitializationType(OsRepositoryImpl.INSTANCE.isWindows(getVm().getVmOsId()) ?
+                    getVm().setInitializationType(osRepository.isWindows(getVm().getVmOsId()) ?
                             InitializationType.Sysprep :
                             InitializationType.CloudInit);
                 }
@@ -686,7 +688,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         String selectedToolsVersion = "";
         String selectedToolsClusterVersion = "";
         Guid isoDomainId = getIsoDomainListSyncronizer().findActiveISODomain(getVm().getStoragePoolId());
-        if (OsRepositoryImpl.INSTANCE.isWindows(getVm().getVmOsId()) && null != isoDomainId) {
+        if (osRepository.isWindows(getVm().getVmOsId()) && null != isoDomainId) {
 
             // get cluster version of the vm tools
             Version vmToolsClusterVersion = null;

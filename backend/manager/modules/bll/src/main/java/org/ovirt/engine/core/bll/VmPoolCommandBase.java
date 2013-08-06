@@ -26,7 +26,8 @@ import org.ovirt.engine.core.common.businessentities.VmPoolMap;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.osinfo.OsRepositoryImpl;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.dao.VmPoolDAO;
 
 public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends CommandBase<T> {
     private static final RunVmValidator runVmValidator = new RunVmValidator();
+    private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
     private VmPool mVmPool;
 
     protected VmPool getVmPool() {
@@ -224,7 +226,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         VmHandler.updateNetworkInterfacesFromDb(vm);
 
         RunVmParams runVmParams = new RunVmParams(vmId);
-        runVmParams.setUseVnc(OsRepositoryImpl.INSTANCE.isLinux(vm.getVmOsId()) || vm.getVmType() == VmType.Server);
+        runVmParams.setUseVnc(osRepository.isLinux(vm.getVmOsId()) || vm.getVmType() == VmType.Server);
 
         return getRunVmValidator().canRunVm(vm,
                 messages,

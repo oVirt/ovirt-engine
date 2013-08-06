@@ -194,6 +194,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
 
         IsoDomainListSyncronizer.getInstance();
 
+        initOsRepository();
+        initSearchDependencies();
         InitHandlers();
 
         final String AppErrorsFileName = "bundles/AppErrors.properties";
@@ -223,9 +225,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                     sessionTimoutInterval,
                     sessionTimeOutInvalidationInterval, TimeUnit.MINUTES);
         }
-
-        initOsRepository();
-        initSearchDependencies();
 
         // Set start-up time
         _startedAt = DateTime.getNow();
@@ -281,7 +280,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     private void initSearchDependencies() {
-        SimpleDependecyInjector.getInstance().bind(new OsValueAutoCompleter(OsRepositoryImpl.INSTANCE.getUniqueOsNames()));
+        SimpleDependecyInjector.getInstance().bind(new OsValueAutoCompleter(
+                SimpleDependecyInjector.getInstance().get(OsRepository.class).getUniqueOsNames()));
     }
 
     private void initJobRepository() {
