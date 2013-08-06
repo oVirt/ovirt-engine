@@ -716,8 +716,8 @@ public class IsoDomainListSyncronizer {
 
         // Get translated error by error code ,if no translation found (should not happened) ,
         // will set the error code instead.
-        logable.addCustomValue("isoDomains", problematicRepoFilesList);
-        AuditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_FILE_LIST_FAILED);
+        logable.addCustomValue("imageDomains", problematicRepoFilesList);
+        AuditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_FAILED);
     }
 
     /**
@@ -725,8 +725,8 @@ public class IsoDomainListSyncronizer {
      */
     private static void addToAuditLogSuccessMessage(String IsoDomain, String imageType) {
         AuditLogableBase logable = new AuditLogableBase();
-        logable.addCustomValue("isoDomains", String.format("%s (%s file type)", IsoDomain, imageType));
-        AuditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_FILE_LIST_SUCCEEDED);
+        logable.addCustomValue("imageDomains", String.format("%s (%s file type)", IsoDomain, imageType));
+        AuditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_SUCCEEDED);
     }
 
 

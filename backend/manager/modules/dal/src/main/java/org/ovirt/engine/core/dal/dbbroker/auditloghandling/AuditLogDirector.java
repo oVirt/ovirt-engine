@@ -431,7 +431,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.IRS_FAILURE, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.IRS_DISK_SPACE_LOW_ERROR, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.IRS_DISK_SPACE_LOW, AuditLogSeverity.WARNING);
-        severities.put(AuditLogType.REFRESH_REPOSITORY_FILE_LIST_SUCCEEDED, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_SUCCEEDED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.SYSTEM_DEACTIVATED_STORAGE_DOMAIN, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_PROBLEMATIC_FROM_NON_OPERATIONAL,
                 AuditLogSeverity.NORMAL);
@@ -439,7 +439,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.CONNECT_STORAGE_SERVERS_FAILED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.CONNECT_STORAGE_POOL_FAILED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.STORAGE_DOMAIN_ERROR, AuditLogSeverity.ERROR);
-        severities.put(AuditLogType.REFRESH_REPOSITORY_FILE_LIST_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.STORAGE_ALERT_VG_METADATA_CRITICALLY_FULL, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.STORAGE_ALERT_SMALL_VG_METADATA, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.STORAGE_ACTIVATE_ASYNC, AuditLogSeverity.NORMAL);
