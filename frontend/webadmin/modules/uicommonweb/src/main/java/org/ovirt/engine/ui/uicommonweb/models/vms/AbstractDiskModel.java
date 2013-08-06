@@ -489,7 +489,7 @@ public abstract class AbstractDiskModel extends DiskModel
             getIsShareable().setEntity(false);
         }
         else {
-            getIsShareable().setIsChangable(getVm() != null && getVm().isDown());
+            getIsShareable().setIsChangable(isEditEnabled());
         }
     }
 
