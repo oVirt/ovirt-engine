@@ -16,6 +16,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -977,7 +978,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
 
         public String getIsoPrefix() {
             synchronized (syncObj) {
-                if (mIsoPrefix == null || mIsoPrefix.length() == 0) {
+                if (StringUtils.isEmpty(mIsoPrefix)) {
                     try {
                         StoragePoolInfoReturnForXmlRpc returnValue = getIrsProxy().getStoragePoolInfo(
                                 _storagePoolId.toString());
@@ -1477,14 +1478,10 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     }
 
     protected IrsProxyData getCurrentIrsProxyData() {
-        IrsProxyData returnValue;
-        if (_irsProxyData.containsKey(getParameters().getStoragePoolId())) {
-            returnValue = _irsProxyData.get(getParameters().getStoragePoolId());
-        } else {
+        if (!_irsProxyData.containsKey(getParameters().getStoragePoolId())) {
             _irsProxyData.put(getParameters().getStoragePoolId(), new IrsProxyData(getParameters().getStoragePoolId()));
-            returnValue = _irsProxyData.get(getParameters().getStoragePoolId());
         }
-        return returnValue;
+        return _irsProxyData.get(getParameters().getStoragePoolId());
     }
 
     private int _failoverCounter;
