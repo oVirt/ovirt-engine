@@ -85,6 +85,8 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         } catch (InitializationException e) {
             log.error("Initialization of device custom properties failed.",e);
         }
+
+        SchedulingManager.getInstance().init();
     }
 
 }
