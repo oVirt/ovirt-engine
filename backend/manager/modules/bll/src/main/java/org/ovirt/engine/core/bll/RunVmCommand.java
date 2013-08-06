@@ -89,7 +89,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private static final RunVmValidator runVmValidator = new RunVmValidator();
     private String cdImagePath = "";
-    private String floppyImagePath = "";
     private boolean mResume;
     /** Note: this field should not be used directly, use {@link #isVmRunningStateless()} instead */
     private Boolean cachedVmIsRunningStateless;
@@ -134,9 +133,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         RunVmParams runVmParameters = getParameters();
         if (!StringUtils.isEmpty(runVmParameters.getDiskPath())) {
             cdImagePath = cdPathWindowsToLinux(runVmParameters.getDiskPath());
-        }
-        if (!StringUtils.isEmpty(runVmParameters.getFloppyPath())) {
-            floppyImagePath = cdPathWindowsToLinux(runVmParameters.getFloppyPath());
         }
 
         if (getVm() != null) {
@@ -456,6 +452,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         getVm().setLastStartTime(new Date());
 
+        if (!StringUtils.isEmpty(getParameters().getFloppyPath())) {
+            getVm().setFloppyPath(cdPathWindowsToLinux(getParameters().getFloppyPath()));
+        }
+
         // Set path for initrd and kernel image.
         if (!StringUtils.isEmpty(getVm().getInitrdUrl())) {
             getVm().setInitrdUrl(getIsoPrefixFilePath(getVm().getInitrdUrl()));
@@ -597,7 +597,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             handleMemoryAdjustments();
             VmHandler.updateDisksFromDb(getVm());
             getVm().setCdPath(cdImagePath);
-            getVm().setFloppyPath(floppyImagePath);
             getVm().setKvmEnable(getParameters().getKvmEnable());
             getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
             getVm().setAcpiEnable(getParameters().getAcpiEnable());
@@ -625,7 +624,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             }
 
             // if we attach floppy we don't need the sysprep
-            if (!StringUtils.isEmpty(getVm().getFloppyPath())) {
+            if (!StringUtils.isEmpty(getParameters().getFloppyPath())) {
                 getVmStaticDAO().update(getVm().getStaticData());
             }
             // get what cpu flags should be passed to vdsm according to cluster
