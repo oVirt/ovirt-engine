@@ -281,7 +281,7 @@ public class VmDeviceCommonUtils {
     public static boolean isSpecialDevice(String device, VmDeviceGeneralType type) {
         return (VmDeviceGeneralType.SOUND == type || VmDeviceType.USB.getName().equals(device)
                 || (VmDeviceType.SMARTCARD.getName().equals(device) && VmDeviceGeneralType.SMARTCARD == type)
-                || (VmDeviceType.SPICEVMC.getName().equals(device) && VmDeviceGeneralType.CHANNEL == type)
+                || (VmDeviceType.SPICEVMC.getName().equals(device) && VmDeviceGeneralType.REDIR == type)
                 || (VmDeviceType.MEMBALLOON.getName().equals(device) && VmDeviceGeneralType.BALLOON == type))
                 || (VmDeviceType.WATCHDOG.getName().equals(device) && VmDeviceGeneralType.WATCHDOG == type);
     }

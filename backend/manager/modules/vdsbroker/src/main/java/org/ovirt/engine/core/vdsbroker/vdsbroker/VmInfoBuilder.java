@@ -302,7 +302,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
         if (containsVirtioScsiDisk) {
             Map<String, Object> struct = new HashMap<String, Object>();
-            struct.put(VdsProperties.Type, VmDeviceType.CONTROLLER.getName());
+            struct.put(VdsProperties.Type, VmDeviceGeneralType.CONTROLLER.getValue());
             struct.put(VdsProperties.Device, VdsProperties.Scsi);
             struct.put(VdsProperties.Model, VdsProperties.VirtioScsi);
             devices.add(struct);
@@ -643,7 +643,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 DbFacade.getInstance()
                         .getVmDeviceDao()
                         .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
-                                VmDeviceGeneralType.CHANNEL,
+                                VmDeviceGeneralType.REDIR,
                                 VmDeviceType.SPICEVMC.getName());
         for (VmDevice vmDevice : vmDevices) {
             Map struct = new HashMap();
@@ -675,7 +675,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         for (VmDevice vmDevice : vmDevices) {
             Map struct = new HashMap();
             struct.put(VdsProperties.Type, vmDevice.getType().getValue());
-            struct.put(VdsProperties.Device, vmDevice.getType());
+            struct.put(VdsProperties.Device, vmDevice.getDevice());
             addDevice(struct, vmDevice, null);
         }
     }
