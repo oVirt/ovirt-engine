@@ -51,23 +51,15 @@ public class LdapGroup extends IVdcQueryable {
         status = value;
     }
 
-    public LdapGroup(Guid id, String name) {
+    public LdapGroup(Guid id, String name, String domain) {
         this.id = id;
         this.name = name;
-    }
-
-    public LdapGroup(Guid id, String name, String domain) {
-        this(id, name);
         this.domain = domain;
     }
 
-    public LdapGroup(Guid id, String name, String domain, String distinguishedName) {
+    public LdapGroup(Guid id, String name, String domain, String distinguishedName, List<String> memberOf) {
         this(id, name, domain);
         this.distinguishedName = distinguishedName;
-    }
-
-    public LdapGroup(Guid id, String name, String domain, String distinguishedName, List<String> memberOf) {
-        this(id, name, domain, distinguishedName);
         this.setMemberOf(memberOf);
     }
 
