@@ -187,6 +187,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
 
         list.add(new NetworkGeneralModel());
+        list.add(new NetworkProfileListModel());
         list.add(new NetworkClusterListModel());
         list.add(new NetworkHostListModel());
         list.add(new NetworkVmListModel());

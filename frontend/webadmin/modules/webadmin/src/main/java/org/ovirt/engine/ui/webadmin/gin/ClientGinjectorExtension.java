@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.auth.LoggedInGatekeeper;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
@@ -73,6 +74,7 @@ import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
@@ -349,6 +351,8 @@ public interface ClientGinjectorExtension {
 
     DetailModelProvider<NetworkListModel, NetworkGeneralModel> getSubTabNetworkGeneralModelProvider();
 
+    SearchableDetailModelProvider<VnicProfile, NetworkListModel, NetworkProfileListModel> getSubTabNetworkProfileModelProvider();
+
     SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> getSubTabNetworkClusterModelProvider();
 
     SearchableDetailModelProvider<PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel> getSubTabNetworkHostModelProvider();
@@ -358,7 +362,6 @@ public interface ClientGinjectorExtension {
     SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VmTemplate>, NetworkListModel, NetworkTemplateListModel> getSubTabNetworkTemplateModelProvider();
 
     SearchableDetailModelProvider<permissions, NetworkListModel, PermissionListModel> getSubTabNetworkPermissionModelProvider();
-
 
     // Provider
 

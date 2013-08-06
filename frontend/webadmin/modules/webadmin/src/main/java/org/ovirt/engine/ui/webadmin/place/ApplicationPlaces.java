@@ -284,6 +284,9 @@ public class ApplicationPlaces {
     // Network
     public static final String networkGeneralSubTabPlace = networkMainTabPlace + SUB_TAB_PREFIX + "general"; //$NON-NLS-1$
 
+    public static final String networkProfileSubTabPlace = networkMainTabPlace + SUB_TAB_PREFIX
+            + "profiles"; //$NON-NLS-1$
+
     public static final String networkClusterSubTabPlace = networkMainTabPlace + SUB_TAB_PREFIX
             + "clusters"; //$NON-NLS-1$
 

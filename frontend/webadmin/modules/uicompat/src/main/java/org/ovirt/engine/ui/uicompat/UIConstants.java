@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.uicompat;
 
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
-import com.google.gwt.i18n.client.Constants.DefaultStringValue;
-
 public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("OK")
@@ -67,6 +65,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Clusters")
     String clustersTitle();
+
+    @DefaultStringValue("Profiles")
+    String profilesTitle();
 
     @DefaultStringValue("New Cluster - Guide Me")
     String newClusterGuideMeTitle();
@@ -278,6 +279,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Remove Network Interface(s)")
     String removeNetworkInterfacesTitle();
+
+    @DefaultStringValue("Remove VM Interface Profile(s)")
+    String removeVnicProfileTitle();
 
     @DefaultStringValue("Copy Template")
     String copyTemplateTitle();
@@ -809,6 +813,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Network Interface(s)")
     String networkInterfacesMsg();
+
+    @DefaultStringValue("VM Interface Profile(s)")
+    String vnicProfilesMsg();
 
     @DefaultStringValue("Virtual Machine(s)")
     String virtualMachinesMsg();
@@ -2045,4 +2052,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Content must be Base64")
     String cloudInitBase64Message();
+
+    @DefaultStringValue("VM Interface Profile")
+    String vnicProfileTitle();
 }

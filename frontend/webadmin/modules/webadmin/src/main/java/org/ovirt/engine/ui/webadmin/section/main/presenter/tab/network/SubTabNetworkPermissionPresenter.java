@@ -36,7 +36,7 @@ public class SubTabNetworkPermissionPresenter extends AbstractSubTabPresenter<Ne
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
             SearchableDetailModelProvider<permissions, NetworkListModel, PermissionListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.networkPermissionSubTabLabel(), 5, modelProvider);
+        return new ModelBoundTabData(applicationConstants.networkPermissionSubTabLabel(), 6, modelProvider);
     }
 
     @Inject

@@ -38,7 +38,7 @@ public class SubTabNetworkClusterPresenter extends AbstractSubTabPresenter<Netwo
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
             SearchableDetailModelProvider<PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.networkClusterSubTabLabel(), 1, modelProvider);
+        return new ModelBoundTabData(applicationConstants.networkClusterSubTabLabel(), 2, modelProvider);
     }
 
     @Inject

@@ -1055,6 +1055,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("General")
     String networkGeneralSubTabLabel();
 
+    @DefaultStringValue("Profiles")
+    String networkProfileSubTabLabel();
+
+    @DefaultStringValue("Permissions")
+    String profilePermissions();
+
     @DefaultStringValue("Clusters")
     String networkClusterSubTabLabel();
 
@@ -1079,6 +1085,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Used Storage/Total")
     String usedStorageTotalQuotaStorage();
+
+    // Network Profile
+    @DefaultStringValue("Name")
+    String nameNetworkProfile();
+
+    @DefaultStringValue("Port Mirroring")
+    String portMirroringNetworkProfile();
 
     // Cluster
     @DefaultStringValue("Name")
@@ -1784,6 +1797,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("host's default")
     String defaultMtu();
+
+    @DefaultStringValue("New")
+    String newNetworkProfile();
+
+    @DefaultStringValue("Edit")
+    String editNetworkProfile();
+
+    @DefaultStringValue("Remove")
+    String removeNetworkProfile();
 
     // Cluster host
     @DefaultStringValue("Name")
@@ -2804,6 +2826,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Allow all users to use this Network")
     String networkPublicUseLabel();
+
+    @DefaultStringValue("Allow all users to use this Profile")
+    String profilePublicUseLabel();
 
     @DefaultStringValue("Some hosts in this cluster have the console address overridden and some not. For details please see the Hosts subtab")
     String consolePartiallyOverridden();

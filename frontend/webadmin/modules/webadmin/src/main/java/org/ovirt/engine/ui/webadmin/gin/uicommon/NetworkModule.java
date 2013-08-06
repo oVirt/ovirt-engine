@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.utils.PairQueryable;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -31,6 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkClusterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkHostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
+import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
@@ -42,6 +44,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostSetupN
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -104,6 +107,43 @@ public class NetworkModule extends AbstractGinModule {
     }
 
     // Searchable Detail Models
+
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<VnicProfile, NetworkListModel, NetworkProfileListModel> getNetworkProfileListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<VnicProfilePopupPresenterWidget> newProfilePopupProvider,
+            final Provider<VnicProfilePopupPresenterWidget> editProfilePopupProvider,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<VnicProfile, NetworkListModel, NetworkProfileListModel>(eventBus,
+                defaultConfirmPopupProvider,
+                NetworkListModel.class,
+                NetworkProfileListModel.class) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(NetworkProfileListModel source,
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
+                if (lastExecutedCommand == getModel().getNewCommand()) {
+                    return newProfilePopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getEditCommand()) {
+                    return editProfilePopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(NetworkProfileListModel source,
+                    UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getRemoveCommand()) { //$NON-NLS-1$
+                    return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
+                }
+            }
+
+        };
+    }
 
     @Provides
     @Singleton

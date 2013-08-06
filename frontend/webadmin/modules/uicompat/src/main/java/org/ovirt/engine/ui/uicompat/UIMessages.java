@@ -230,6 +230,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Vnic {0} from VM {1}")
     String vnicFromVm(String vnic, String vm);
 
+    @DefaultMessage("VM Interface Profile {0} from Network {1}")
+    String vnicProfileFromNetwork(String vnicProfile, String network);
+
     @DefaultMessage("Vnic {0} from Template {1}")
     String vnicFromTemplate(String vnic, String template);
 

@@ -9,8 +9,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import java.util.MissingResourceException;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.TimeZoneType;
@@ -60,6 +60,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
@@ -3150,6 +3151,36 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetVmGuestAgentInterfacesByVmId, new IdQueryParameters(vmId), aQuery);
+    }
+
+    public static void getAllVnicProfiles(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source == null)
+                {
+                    return new ArrayList<VnicProfile>();
+                }
+                return source;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetAllVnicProfiles, new VdcQueryParametersBase(), aQuery);
+    }
+
+    public static void getVnicProfilesByNetworkId(AsyncQuery aQuery, Guid networkId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source == null)
+                {
+                    return new ArrayList<VnicProfile>();
+                }
+                return source;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetVnicProfilesByNetworkId, new IdQueryParameters(networkId), aQuery);
     }
 
     private static ArrayList<VDSGroup> getClusterByServiceList(ArrayList<VDSGroup> list,

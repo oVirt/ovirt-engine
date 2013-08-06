@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
@@ -372,6 +373,9 @@ public class PermissionListModel extends SearchableListModel
         }
         if (getEntity() instanceof Network) {
             return VdcObjectType.Network;
+        }
+        if (getEntity() instanceof VnicProfile){
+            return VdcObjectType.VnicProfile;
         }
         return VdcObjectType.Unknown;
     }

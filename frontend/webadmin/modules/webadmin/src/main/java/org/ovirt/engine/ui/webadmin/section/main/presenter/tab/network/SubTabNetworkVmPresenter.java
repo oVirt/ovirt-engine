@@ -38,7 +38,7 @@ public class SubTabNetworkVmPresenter extends AbstractSubTabPresenter<NetworkVie
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
             SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.networkVmSubTabLabel(), 3, modelProvider);
+        return new ModelBoundTabData(applicationConstants.networkVmSubTabLabel(), 4, modelProvider);
     }
 
     @Inject
