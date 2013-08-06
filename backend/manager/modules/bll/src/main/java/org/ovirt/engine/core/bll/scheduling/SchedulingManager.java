@@ -76,15 +76,15 @@ public class SchedulingManager {
     private SchedulingManager() {
         policyMap = new ConcurrentHashMap<Guid, ClusterPolicy>();
         policyUnits = new ConcurrentHashMap<Guid, PolicyUnitImpl>();
-
-        init();
     }
 
-    private void init() {
+    public void init() {
+        log.info("Initializing Scheduling manager");
         loadPolicyUnits();
         loadClusterPolicies();
         ExternalSchedulerDiscoveryThread discoveryThread = new ExternalSchedulerDiscoveryThread();
         discoveryThread.start();
+        log.info("Initialized Scheduling manager");
     }
 
     public void reloadPolicyUnits() {
