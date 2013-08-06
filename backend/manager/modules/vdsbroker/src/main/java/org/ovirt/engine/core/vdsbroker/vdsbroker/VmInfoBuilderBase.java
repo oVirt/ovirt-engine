@@ -92,8 +92,10 @@ public abstract class VmInfoBuilderBase {
         }
         createInfo.put(VdsProperties.niceLevel,
                 String.valueOf(vm.getNiceLevel()));
-        createInfo.put(VdsProperties.cpuShares,
-                String.valueOf(vm.getCpuShares()));
+        if (vm.getCpuShares() > 0) {
+            createInfo.put(VdsProperties.cpuShares,
+                    String.valueOf(vm.getCpuShares()));
+        }
         if (!StringUtils.isEmpty(vm.getHibernationVolHandle())) {
             createInfo.put(VdsProperties.hiberVolHandle,
                     vm.getHibernationVolHandle());
