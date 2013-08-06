@@ -14,7 +14,6 @@ public class AddProviderModel extends ProviderModel {
         setHashName("add_provider"); //$NON-NLS-1$
 
         getType().setSelectedItem(Linq.firstOrDefault((Iterable<ProviderType>) getType().getItems()));
-        getRequiresAuthentication().setEntity(false);
 
         getNeutronAgentModel().init(provider); // this is okay because AdditionalProperties == null at this point
     }

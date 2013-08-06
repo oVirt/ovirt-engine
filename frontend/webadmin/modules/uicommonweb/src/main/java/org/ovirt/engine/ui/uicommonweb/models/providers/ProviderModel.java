@@ -138,6 +138,11 @@ public class ProviderModel extends Model {
         return type == ProviderType.OPENSTACK_NETWORK || type == ProviderType.OPENSTACK_IMAGE;
     }
 
+    private boolean isTypeRequiresAuthentication() {
+        ProviderType type = (ProviderType) getType().getSelectedItem();
+        return type == ProviderType.FOREMAN;
+    }
+
     private String getDefaultUrl(ProviderType type) {
         if (type == null) {
             return new String();
@@ -194,6 +199,10 @@ public class ProviderModel extends Model {
                 boolean isNeutron = isTypeOpenStackNetwork();
                 getApiVersion().setIsAvailable(isNeutron);
                 getNeutronAgentModel().setIsAvailable(isNeutron);
+
+                boolean requiresAuth = isTypeRequiresAuthentication();
+                getRequiresAuthentication().setEntity(Boolean.valueOf(requiresAuth));
+                getRequiresAuthentication().setIsChangable(!requiresAuth);
             }
         });
 
