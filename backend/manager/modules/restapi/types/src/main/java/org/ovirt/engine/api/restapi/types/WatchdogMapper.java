@@ -11,13 +11,13 @@ public class WatchdogMapper {
     public static VmWatchdog map(WatchDog model, VmWatchdog template) {
         VmWatchdog entity = template == null ? new VmWatchdog() : template;
         if (model.isSetAction()) {
-            WatchdogAction wdAction = WatchdogAction.fromValue(model.getAction().toUpperCase());
+            WatchdogAction wdAction = WatchdogAction.fromValue(model.getAction());
             if (wdAction != null) {
                 entity.setAction(map(wdAction, null));
             }
         }
         if (model.isSetModel()) {
-            WatchdogModel wdModel = WatchdogModel.fromValue(model.getModel().toUpperCase());
+            WatchdogModel wdModel = WatchdogModel.fromValue(model.getModel());
             if (wdModel != null) {
                 entity.setModel(map(wdModel, null));
             }

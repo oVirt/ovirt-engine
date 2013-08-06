@@ -2,9 +2,11 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.WatchDog;
 import org.ovirt.engine.api.model.WatchDogs;
-import org.ovirt.engine.api.resource.DeviceResource;
+import org.ovirt.engine.api.resource.WatchdogResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
+import org.ovirt.engine.api.restapi.types.WatchdogAction;
+import org.ovirt.engine.api.restapi.types.WatchdogModel;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
@@ -17,12 +19,11 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class BackendWatchdogsResource extends AbstractBackendDevicesResource<WatchDog, WatchDogs, VmWatchdog>
-        implements WatchdogsResource {
+public class BackendWatchdogsResource extends AbstractBackendDevicesResource<WatchDog, WatchDogs, VmWatchdog> implements WatchdogsResource {
 
     @Override
     @SingleEntityResource
-    public DeviceResource<WatchDog> getDeviceSubResource(String id) {
+    public WatchdogResource getDeviceSubResource(String id) {
         return inject(new BackendWatchdogResource(asGuidOr404(id), this,
                 updateType,
                 getUpdateParametersProvider(),
@@ -62,8 +63,11 @@ public class BackendWatchdogsResource extends AbstractBackendDevicesResource<Wat
     @Override
     protected VdcActionParametersBase getAddParameters(VmWatchdog entity, WatchDog device) {
         WatchdogParameters watchdogParameters = new WatchdogParameters();
-        watchdogParameters.setAction(entity.getAction());
-        watchdogParameters.setModel(entity.getModel());
+        validateEnums(WatchDog.class, device);
+        watchdogParameters.setAction(getMapper(WatchdogAction.class, VmWatchdogAction.class).map(WatchdogAction.fromValue(device.getAction()),
+                null));
+        watchdogParameters.setModel(getMapper(WatchdogModel.class, VmWatchdogType.class).map(WatchdogModel.fromValue(device.getModel()),
+                null));
         watchdogParameters.setId(parentId);
         watchdogParameters.setVm(isVm(parentId));
         return watchdogParameters;
@@ -86,6 +90,7 @@ public class BackendWatchdogsResource extends AbstractBackendDevicesResource<Wat
         return new ParametersProvider<WatchDog, VmWatchdog>(){
 
             public VdcActionParametersBase getParameters(WatchDog model, VmWatchdog entity) {
+                validateEnums(WatchDog.class, model);
                 WatchdogParameters params = new WatchdogParameters();
                 params.setModel(VmWatchdogType.getByName(model.getModel()));
                 params.setAction(VmWatchdogAction.getByName(model.getAction()));

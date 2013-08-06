@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
+import org.apache.commons.lang.StringUtils;
+
 public enum WatchdogAction {
     NONE,
     RESET,
@@ -12,7 +14,7 @@ public enum WatchdogAction {
 
     public static WatchdogAction fromValue(String value) {
         try {
-            return valueOf(value);
+            return valueOf(StringUtils.upperCase(value));
         } catch (IllegalArgumentException e) {
             return null;
         }

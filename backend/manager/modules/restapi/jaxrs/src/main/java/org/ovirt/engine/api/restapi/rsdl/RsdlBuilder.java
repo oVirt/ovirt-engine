@@ -510,6 +510,9 @@ public class RsdlBuilder {
             if (prefix.contains("disks")) {
                 return "Disk";
             }
+            if (prefix.contains("watchdogs")) {
+                return "WatchDog";
+            }
         }
         return s;
     }

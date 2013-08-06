@@ -31,7 +31,7 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
         watchdogDevice.setSpecParams(getSpecParams());
         getVmDeviceDao().save(watchdogDevice);
         setSucceeded(true);
-        setActionReturnValue(watchdogDevice.getId());
+        setActionReturnValue(watchdogDevice.getId().getDeviceId());
     }
 
     @Override
