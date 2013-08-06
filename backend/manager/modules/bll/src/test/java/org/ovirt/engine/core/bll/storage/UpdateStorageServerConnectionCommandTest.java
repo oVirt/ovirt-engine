@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -315,13 +316,14 @@ public class UpdateStorageServerConnectionCommandTest {
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(newNFSConnection.getconnection());
         domain1.setStatus(StorageDomainStatus.Active);
+        domain1.setStorageDomainSharedStatus(StorageDomainSharedStatus.Active);
         domains.add(domain1);
         parameters.setStorageServerConnection(newNFSConnection);
         when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
         doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
         doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_MAINTENANCE);
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_STATUS);
     }
 
     @Test
@@ -375,6 +377,7 @@ public class UpdateStorageServerConnectionCommandTest {
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(iscsiConnection.getconnection());
         domain1.setStatus(StorageDomainStatus.Active);
+        domain1.setStorageDomainSharedStatus(StorageDomainSharedStatus.Active);
         domain1.setId(storageDomainId);
         domain1.setStorageName("storagedomain4");
         domains.add(domain1);
@@ -383,7 +386,7 @@ public class UpdateStorageServerConnectionCommandTest {
                 thenReturn(Collections.singletonList
                         (new StoragePoolIsoMap(storageDomainId, Guid.newGuid(), StorageDomainStatus.Active)));
         List<String> messages = CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_MAINTENANCE);
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_STATUS);
         assertTrue(messages.contains("$vmNames vm1"));
         assertTrue(messages.contains("$domainNames storagedomain4"));
     }
@@ -450,6 +453,7 @@ public class UpdateStorageServerConnectionCommandTest {
         StorageDomain domain1 = new StorageDomain();
         domain1.setStorage(iscsiConnection.getconnection());
         domain1.setStatus(StorageDomainStatus.Active);
+        domain1.setStorageDomainSharedStatus(StorageDomainSharedStatus.Active);
         domain1.setId(storageDomainId);
         domain1.setStorageName("storagedomain4");
         domains.add(domain1);
@@ -459,9 +463,57 @@ public class UpdateStorageServerConnectionCommandTest {
                         (new StoragePoolIsoMap(storageDomainId, Guid.newGuid(), StorageDomainStatus.Active)));
         List<String> messages =
                 CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                        VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_MAINTENANCE);
+                        VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_STATUS);
         assertTrue(messages.contains("$domainNames storagedomain4"));
     }
+
+    @Test
+    public void updateConnectionOfUnattachedBlockDomain() {
+        StorageServerConnections iscsiConnection = createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "user1", "mypassword123");
+        List<LUNs> luns = new ArrayList<>();
+        LUNs lun1 = new LUNs();
+        lun1.setLUN_id("3600144f09dbd05000000517e730b1212");
+        lun1.setStorageDomainName("storagedomain4");
+        Guid storageDomainId = Guid.newGuid();
+        lun1.setStorageDomainId(storageDomainId);
+        lun1.setvolume_group_id(Guid.newGuid().toString());
+        luns.add(lun1);
+        parameters.setStorageServerConnection(iscsiConnection);
+        when(storageConnDao.get(iscsiConnection.getid())).thenReturn(iscsiConnection);
+        doReturn(luns).when(command).getLuns();
+        List<StorageDomain> domains = new ArrayList<>();
+        StorageDomain domain1 = new StorageDomain();
+        domain1.setStorage(iscsiConnection.getconnection());
+        domain1.setStatus(StorageDomainStatus.Unknown);
+        domain1.setStorageDomainSharedStatus(StorageDomainSharedStatus.Unattached);
+        domain1.setId(storageDomainId);
+        domain1.setStorageName("storagedomain4");
+        domains.add(domain1);
+        when(storageDomainDAO.get(storageDomainId)).thenReturn(domain1);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
+    public void updateConnectionOfUnattachedFileDomain() {
+        StorageServerConnections newNFSConnection = createNFSConnection(
+                "multipass.my.domain.tlv.company.com:/export/allstorage/data2",
+                StorageType.NFS,
+                NfsVersion.V4,
+                300,
+                0);
+        List<StorageDomain> domains = new ArrayList<StorageDomain>();
+        StorageDomain domain1 = new StorageDomain();
+        domain1.setStorage(newNFSConnection.getconnection());
+        domain1.setStatus(StorageDomainStatus.Unknown);
+        domain1.setStorageDomainSharedStatus(StorageDomainSharedStatus.Unattached);
+        domains.add(domain1);
+        parameters.setStorageServerConnection(newNFSConnection);
+        when(storageConnDao.get(newNFSConnection.getid())).thenReturn(oldNFSConnection);
+        doReturn(domains).when(command).getStorageDomainsByConnId(newNFSConnection.getid());
+        doReturn(false).when(command).isConnWithSameDetailsExists(newNFSConnection);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
 
     @Test
     public void updateConnectionNoDomain() {

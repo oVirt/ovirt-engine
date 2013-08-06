@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
@@ -125,7 +126,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             boolean isConnectionEditable = isDomainInEditState(domains.get(0));
             if (!isConnectionEditable) {
                 addCanDoActionMessage(String.format("$domainNames %1$s", domains.get(0).getStorageName()));
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_MAINTENANCE);
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_STATUS);
             }
             return isConnectionEditable;
         }
@@ -148,14 +149,20 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                 Guid storageDomainId = lun.getStorageDomainId();
                 if (storageDomainId != null) {
                     StorageDomain domain = getStorageDomainDao().get(storageDomainId);
-                    for (StoragePoolIsoMap map : getStoragePoolIsoMap(domain)) {
-                        if (!map.getstatus().equals(StorageDomainStatus.Maintenance)) {
-                            String domainName = domain.getStorageName();
-                            problematicDomainNames.add(domainName);
-                        } else {
-                            domains.add(domain);
+                    if (!domain.getStorageDomainSharedStatus().equals(StorageDomainSharedStatus.Unattached)) {
+                        for (StoragePoolIsoMap map : getStoragePoolIsoMap(domain)) {
+                            if (!map.getstatus().equals(StorageDomainStatus.Maintenance)) {
+                                String domainName = domain.getStorageName();
+                                problematicDomainNames.add(domainName);
+                            } else {
+                                domains.add(domain);
+                            }
                         }
                     }
+                    else { //unattached domain, edit allowed
+                        domains.add(domain);
+                    }
+
                 }
             }
             if (!problematicVMNames.isEmpty()) {
@@ -165,14 +172,14 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                 } else {
                     addCanDoActionMessage(String.format("$vmNames %1$s", prepareEntityNamesForMessage(problematicVMNames)));
                     addCanDoActionMessage(String.format("$domainNames %1$s", prepareEntityNamesForMessage(problematicDomainNames)));
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_MAINTENANCE);
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS_AND_DOMAINS_STATUS);
                 }
                 return false;
             }
 
             if (!problematicDomainNames.isEmpty()) {
                 addCanDoActionMessage(String.format("$domainNames %1$s", prepareEntityNamesForMessage(problematicDomainNames)));
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_MAINTENANCE);
+                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_STATUS);
                 return false;
             }
         }
@@ -185,7 +192,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     protected boolean isDomainInEditState(StorageDomain storageDomain) {
         boolean isEditable = (storageDomain.getStorageDomainType() == StorageDomainType.Data || storageDomain.getStorageDomainType() == StorageDomainType.Master)
-                && storageDomain.getStatus() == StorageDomainStatus.Maintenance;
+                && (storageDomain.getStatus() == StorageDomainStatus.Maintenance || storageDomain.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached);
         return isEditable;
     }
 
