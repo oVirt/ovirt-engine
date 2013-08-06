@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -14,6 +15,7 @@ public class RdpConsoleModel extends ConsoleModel {
 
     private IRdp privaterdp;
     private ClientConsoleMode clientConsoleMode;
+    private boolean useFQDNIfAvailable;
 
     private final ConsoleUtils consoleUtils;
 
@@ -43,6 +45,14 @@ public class RdpConsoleModel extends ConsoleModel {
         }
     }
 
+    private void setUseFqdnIfAvailable(boolean value) {
+        useFQDNIfAvailable = value;
+    }
+
+    private boolean getUseFqdnIfAvailable() {
+        return useFQDNIfAvailable;
+    }
+
     private void setrdp(IRdp value) {
         privaterdp = value;
     }
@@ -52,6 +62,7 @@ public class RdpConsoleModel extends ConsoleModel {
         this.consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
         setRdpImplementation(
                 ClientConsoleMode.valueOf((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ClientModeRdpDefault)));
+        setUseFqdnIfAvailable((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.UseFqdnForRdpIfAvailable));
     }
 
     @Override
@@ -59,7 +70,21 @@ public class RdpConsoleModel extends ConsoleModel {
         if (getEntity() != null) {
             getLogger().debug("Connecting to RDP console..."); //$NON-NLS-1$
 
-            getrdp().setAddress(getEntity().getVmHost().split("[ ]", -1)[0]); //$NON-NLS-1$
+            boolean haveFqdn = false;
+            if (getUseFqdnIfAvailable()) {
+                getLogger().debug("RDP connection is using FQDN if available"); //$NON-NLS-1$
+                if (!StringHelper.isNullOrEmpty(getEntity().getVmFQDN())) {
+                    getLogger().debug("RDP connection is using FQDN because it is available"); //$NON-NLS-1$
+                    haveFqdn = true;
+                    getrdp().setAddress(getEntity().getVmFQDN());
+                }
+            }
+
+            if (!haveFqdn) {
+                getLogger().debug("RDP connection is not using FQDN"); //$NON-NLS-1$
+                getrdp().setAddress(getEntity().getVmHost().split("[ ]", -1)[0]); //$NON-NLS-1$
+            }
+
             getrdp().setGuestID(getEntity().getId().toString());
 
             // Try to connect.

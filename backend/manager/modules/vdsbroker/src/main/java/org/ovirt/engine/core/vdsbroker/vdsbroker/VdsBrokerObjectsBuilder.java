@@ -193,6 +193,17 @@ public class VdsBrokerObjectsBuilder {
 
         initAppsList(xmlRpcStruct, vm);
         vm.setGuestOs(AssignStringValue(xmlRpcStruct, VdsProperties.guest_os));
+        if (xmlRpcStruct.containsKey(VdsProperties.VM_FQDN)) {
+            vm.setVmFQDN(AssignStringValue(xmlRpcStruct, VdsProperties.VM_FQDN));
+            String fqdn = vm.getVmFQDN().trim();
+            if ("localhost".equalsIgnoreCase(fqdn) || "localhost.localdomain".equalsIgnoreCase(fqdn)) {
+                vm.setVmFQDN(null);
+            }
+            else {
+                vm.setVmFQDN(fqdn);
+            }
+        }
+
         vm.setVmIp(AssignStringValue(xmlRpcStruct, VdsProperties.VM_IP));
         if (vm.getVmIp() != null) {
             if (vm.getVmIp().startsWith("127.0.")) {

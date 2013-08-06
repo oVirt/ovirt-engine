@@ -27,6 +27,7 @@ public enum ConfigurationValues {
     SpiceProxyDefault(ConfigAuthType.User),
     ClientModeSpiceDefault(ConfigAuthType.User),
     ClientModeRdpDefault(ConfigAuthType.User),
+    UseFqdnForRdpIfAvailable(ConfigAuthType.User),
     WebSocketProxy(ConfigAuthType.User),
     WebSocketProxyTicketValiditySeconds(ConfigAuthType.User),
     HighUtilizationForEvenlyDistribute(ConfigAuthType.User),

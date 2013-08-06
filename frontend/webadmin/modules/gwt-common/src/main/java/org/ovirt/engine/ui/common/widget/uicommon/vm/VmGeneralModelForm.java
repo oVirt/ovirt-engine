@@ -35,6 +35,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     TextBoxLabel domain = new TextBoxLabel();
     TextBoxLabel compatibilityVersion = new TextBoxLabel();
     TextBoxLabel vmId = new TextBoxLabel();
+    TextBoxLabel fqdn = new TextBoxLabel();
 
     BooleanLabel isHighlyAvailable;
 
@@ -44,7 +45,7 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     private final Driver driver = GWT.create(Driver.class);
 
     public VmGeneralModelForm(ModelProvider<VmGeneralModel> modelProvider, CommonApplicationConstants constants) {
-        super(modelProvider, 3, 7);
+        super(modelProvider, 3, 8);
         isHighlyAvailable = new BooleanLabel(constants.yes(), constants.no());
 
         driver.initialize(this);
@@ -85,6 +86,14 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
             @Override
             public boolean getIsAvailable() {
                 return getModel().getHasDomain();
+            }
+        });
+
+        formBuilder.addFormItem(new FormItem(constants.fqdn(), fqdn, 7, 2) {
+            @Override
+            public boolean getIsAvailable() {
+                String fqdn = getModel().getFqdn();
+                return !(fqdn == null || fqdn.isEmpty());
             }
         });
 

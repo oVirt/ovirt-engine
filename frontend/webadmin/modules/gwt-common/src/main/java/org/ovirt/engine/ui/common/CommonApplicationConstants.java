@@ -1563,4 +1563,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Network")
     String networkProfilePopup();
+
+    @DefaultStringValue("FQDN")
+    String fqdn();
 }

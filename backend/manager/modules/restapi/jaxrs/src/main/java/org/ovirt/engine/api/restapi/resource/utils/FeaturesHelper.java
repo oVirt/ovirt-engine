@@ -68,6 +68,7 @@ public class FeaturesHelper {
             addVnicProfilesFeature(features);
             addStorageDomainImageFeature(features);
             addGlusterHooksFeature(features);
+            addFeatureReportVmFQDN(features);
         }
         return features;
     }
@@ -356,6 +357,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Attach/Detach storage server connections (to/from a storage domain)");
         feature.setDescription("Ability to attach/detach storage server connections to/from a specific storage domain (common use case: disaster recovery).");
+        features.getFeature().add(feature);
+    }
+
+    private void addFeatureReportVmFQDN(Features features) {
+        Feature feature = new Feature();
+        feature.setName("VM FQDN");
+        feature.setDescription("Ability to report the fully qualified domain name (FQDN) of a Virtual Machine");
         features.getFeature().add(feature);
     }
 }

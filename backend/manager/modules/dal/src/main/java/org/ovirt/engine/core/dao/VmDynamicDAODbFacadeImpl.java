@@ -87,6 +87,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("status", vm.getStatus())
                 .addValue("vm_host", vm.getVmHost())
                 .addValue("vm_ip", vm.getVmIp())
+                .addValue("vm_fqdn", vm.getVmFQDN())
                 .addValue("last_start_time", vm.getLastStartTime())
                 .addValue("vm_pid", vm.getVmPid())
                 .addValue("display", vm.getDisplay())
@@ -138,6 +139,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
                 entity.setVmHost(rs.getString("vm_host"));
                 entity.setVmIp(rs.getString("vm_ip"));
+                entity.setVmFQDN(rs.getString("vm_fqdn"));
                 entity.setLastStartTime(DbFacadeUtils.fromDate(rs
                         .getTimestamp("last_start_time")));
                 entity.setVmPid((Integer) rs.getObject("vm_pid"));

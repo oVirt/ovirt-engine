@@ -361,14 +361,26 @@ public class VmMapper {
                 model.setHost(new Host());
                 model.getHost().setId(entity.getRunOnVds().toString());
             }
-            if (entity.getVmIp()!=null && !entity.getVmIp().isEmpty()) {
+            final boolean hasIps = entity.getVmIp() != null && !entity.getVmIp().isEmpty();
+            final boolean hasFqdn = entity.getVmFQDN() != null && !entity.getVmFQDN().isEmpty();
+            if (hasIps || hasFqdn) {
                 model.setGuestInfo(new GuestInfo());
-                model.getGuestInfo().setIps(new IPs());
-                for (String item : entity.getVmIp().split(" ")) {
-                    if (!item.equals("")) {
-                        IP ip = new IP();
-                        ip.setAddress(item.trim());
-                        model.getGuestInfo().getIps().getIPs().add(ip);
+
+                if (hasFqdn) {
+                    model.getGuestInfo().setFqdn(entity.getVmFQDN());
+                }
+
+                if (hasIps){
+                    IPs ips = new IPs();
+                    for (String item : entity.getVmIp().split(" ")) {
+                        if (!item.equals("")) {
+                            IP ip = new IP();
+                            ip.setAddress(item.trim());
+                            ips.getIPs().add(ip);
+                        }
+                    }
+                    if (!ips.getIPs().isEmpty()) {
+                        model.getGuestInfo().setIps(ips);
                     }
                 }
             }

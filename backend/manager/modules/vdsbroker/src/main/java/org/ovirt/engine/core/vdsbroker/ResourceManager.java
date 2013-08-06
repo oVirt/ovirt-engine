@@ -276,6 +276,7 @@ public class ResourceManager {
         vm.setConsoleUserId(null);
         vm.setGuestOs(null);
         vm.setVmIp(null);
+        vm.setVmFQDN(null);
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         for (VmNetworkInterface ifc : interfaces) {
             NetworkStatistics statistics = ifc.getStatistics();

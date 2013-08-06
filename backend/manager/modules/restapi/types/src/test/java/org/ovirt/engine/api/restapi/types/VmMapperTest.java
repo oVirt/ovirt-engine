@@ -160,6 +160,18 @@ public class VmMapperTest extends
     }
 
     @Test
+    public void testGuestFQDN() {
+        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
+        VmDynamic vmDynamic = new VmDynamic();
+        vmDynamic.setStatus(VMStatus.Up);
+        vmDynamic.setVmFQDN("localhost.localdomain");
+        vm.setDynamicData(vmDynamic);
+        OsTypeMockUtils.mockOsTypes();
+        VM map = VmMapper.map(vm, null);
+        assertNotNull(map.getGuestInfo().getFqdn());
+        assertEquals(map.getGuestInfo().getFqdn(), "localhost.localdomain");
+    }
+    @Test
     public void testGustIps() {
         org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
         VmDynamic vmDynamic = new VmDynamic();

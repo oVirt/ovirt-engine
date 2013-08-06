@@ -13,6 +13,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private Guid id;
     private VMStatus status;
     private String vmIp;
+    private String vmFQDN;
     private String vmHost;
     private Integer vmPid;
     private Date lastStartTime;
@@ -84,6 +85,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + ((utcDiff == null) ? 0 : utcDiff.hashCode());
         result = prime * result + ((vmHost == null) ? 0 : vmHost.hashCode());
         result = prime * result + ((vmIp == null) ? 0 : vmIp.hashCode());
+        result = prime * result + ((vmFQDN == null) ? 0 : vmFQDN.hashCode());
         result = prime * result + ((lastStartTime == null) ? 0 : lastStartTime.hashCode());
         result = prime * result + ((vmPid == null) ? 0 : vmPid.hashCode());
         result = prime * result + (lastWatchdogEvent == null ? 0 : lastWatchdogEvent.hashCode());
@@ -135,6 +137,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(utcDiff, other.utcDiff)
                 && ObjectUtils.objectsEqual(vmHost, other.vmHost)
                 && ObjectUtils.objectsEqual(vmIp, other.vmIp)
+                && ObjectUtils.objectsEqual(vmFQDN, other.vmFQDN)
                 && ObjectUtils.objectsEqual(lastStartTime, other.lastStartTime)
                 && ObjectUtils.objectsEqual(vmPid, other.vmPid)
                 && ObjectUtils.objectsEqual(lastWatchdogEvent, other.lastWatchdogEvent)
@@ -301,6 +304,14 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setVmHost(String value) {
         this.vmHost = value;
+    }
+
+    public String getVmFQDN() {
+        return this.vmFQDN;
+    }
+
+    public void setVmFQDN(String fqdn) {
+        this.vmFQDN = fqdn;
     }
 
     public String getVmIp() {
