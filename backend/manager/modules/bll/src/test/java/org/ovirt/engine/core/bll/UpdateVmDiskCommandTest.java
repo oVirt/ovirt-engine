@@ -8,6 +8,8 @@ import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -24,15 +26,20 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -48,6 +55,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -79,6 +87,8 @@ public class UpdateVmDiskCommandTest {
     private SnapshotDao snapshotDao;
     @Mock
     private DiskImageDAO diskImageDao;
+    @Mock
+    private VmDeviceDAO vmDeviceDAO;
     @Mock
     private StoragePoolDAO storagePoolDao;
     @Mock
@@ -237,6 +247,40 @@ public class UpdateVmDiskCommandTest {
         assertEquals(!boot, command.canDoAction());
     }
 
+    @Test
+    public void clearAddressOnInterfaceChange() {
+        final UpdateVmDiskParameters parameters = createParameters();
+        // update new disk interface so it will be different than the old one
+        parameters.getDiskInfo().setDiskInterface(DiskInterface.VirtIO_SCSI);
+
+        // creating old disk with interface different than interface of disk from parameters
+        // have to return original disk on each request to dao,
+        // since the command updates retrieved instance of disk
+        when(diskDao.get(diskImageGuid)).thenAnswer(new Answer() {
+            @Override
+            public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
+            final DiskImage oldDisk = createDiskImage();
+            oldDisk.setDiskInterface(DiskInterface.VirtIO);
+            assert(oldDisk.getDiskInterface() != parameters.getDiskInfo().getDiskInterface());
+            return oldDisk;
+            }
+        });
+
+        initializeCommand(parameters);
+        mockVmStatusDown();
+
+        VmDeviceId vmDeviceId = new VmDeviceId(diskImageGuid, vmId);
+        VmDevice device = new VmDevice();
+        device.setId(vmDeviceId);
+
+        doReturn(device).when(vmDeviceDAO).get(vmDeviceId);
+
+        command.executeVmCommand();
+
+        // verify that device addressed was cleared exactly once
+        verify(vmDeviceDAO, times(1)).clearDeviceAddress(device.getDeviceId());
+    }
+
     private void initializeCommand() {
         initializeCommand(createParameters());
     }
@@ -259,7 +303,9 @@ public class UpdateVmDiskCommandTest {
         doReturn(vmStaticDAO).when(command).getVmStaticDAO();
         doReturn(baseDiskDao).when(command).getBaseDiskDao();
         doReturn(imageDao).when(command).getImageDao();
+        doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
         doNothing().when(command).updateVmDisksAndDevice();
+        doNothing().when(vmStaticDAO).incrementDbGeneration(any(Guid.class));
 
         ejbRule.mockResource(ContainerManagedResourceType.TRANSACTION_MANAGER, new DummyTransactionManager());
         DbFacadeLocator.setDbFacade(dbFacade);
@@ -280,9 +326,6 @@ public class UpdateVmDiskCommandTest {
         when(vmDAO.get(command.getParameters().getVmId())).thenReturn(null);
     }
 
-    /**
-     * Mock a VM in status Up
-     */
     protected VM mockVmStatusDown(VM... otherPluggedVMs) {
         VM vm = new VM();
         vm.setStatus(VMStatus.Down);
@@ -346,8 +389,7 @@ public class UpdateVmDiskCommandTest {
      * @return Valid parameters for the command.
      */
     protected UpdateVmDiskParameters createParameters() {
-        DiskImage diskInfo = new DiskImage();
-        diskInfo.setId(diskImageGuid);
+        DiskImage diskInfo = createDiskImage();
         return new UpdateVmDiskParameters(vmId, diskImageGuid, diskInfo);
     }
 
@@ -364,6 +406,7 @@ public class UpdateVmDiskCommandTest {
     private DiskImage createDiskImage() {
         DiskImage disk = new DiskImage();
         disk.setId(diskImageGuid);
+        disk.setSize(100000L);
         return disk;
     }
 
