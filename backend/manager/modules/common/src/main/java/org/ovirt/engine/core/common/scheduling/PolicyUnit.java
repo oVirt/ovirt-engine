@@ -33,6 +33,10 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
      * policy unit acceptable custom parameters; format <parameterName, regex>
      */
     private Map<String, String> parameterRegExMap;
+    /**
+     * only for external units, marks if it exists on disk
+     */
+    private boolean enabled = true;
 
     @Override
     public Object getQueryableId() {
@@ -81,6 +85,14 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
         this.parameterRegExMap = parameterRegExMap;
     }
 
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -90,6 +102,7 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
         result = prime * result + (internal ? 1231 : 1237);
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((parameterRegExMap == null) ? 0 : parameterRegExMap.hashCode());
+        result = prime * result + (enabled ? 1231 : 1237);
         return result;
     }
 
@@ -121,7 +134,9 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
             return false;
         if (policyUnitType != other.policyUnitType)
             return false;
+        if (enabled != other.enabled) {
+            return false;
+        }
         return true;
     }
-
 }
