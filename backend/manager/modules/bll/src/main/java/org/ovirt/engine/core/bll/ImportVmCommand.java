@@ -1065,6 +1065,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         tempVar.setStatus(VMStatus.ImageLocked);
         tempVar.setVmHost("");
         tempVar.setVmIp("");
+        tempVar.setVmFQDN("");
         tempVar.setAppList(getParameters().getVm().getDynamicData().getAppList());
         getVmDynamicDAO().save(tempVar);
         getCompensationContext().snapshotNewEntity(tempVar);

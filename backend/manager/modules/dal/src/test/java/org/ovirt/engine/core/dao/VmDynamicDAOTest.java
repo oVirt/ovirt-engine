@@ -119,6 +119,7 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
         VmDynamic existingVm2 = dao.get(new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356"));
         existingVm.setStatus(VMStatus.Down);
         existingVm2.setVmIp("111");
+        existingVm2.setVmFQDN("localhost.localdomain");
 
         dao.updateAll(Arrays.asList(new VmDynamic[] { existingVm, existingVm2 }));
 

@@ -420,6 +420,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.vmDynamic.setVmIp(value);
     }
 
+    public String getVmFQDN() {
+        return this.vmDynamic.getVmFQDN();
+    }
+
+    public void setVmFQDN(String fqdn) {
+        this.vmDynamic.setVmFQDN(fqdn);
+    }
+
     public String getVmHost() {
         String vmHost = this.vmDynamic.getVmHost();
         if (!StringHelper.isNullOrEmpty(this.getVmIp())) {
@@ -1188,6 +1196,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         setDisplaySecurePort(vm.getDisplaySecurePort());
         setVmHost(vm.getVmHost());
         setVmIp(vm.getVmIp());
+        setVmFQDN(vm.getVmFQDN());
 
         // if (!string.IsNullOrEmpty(vm.app_list))
         // {

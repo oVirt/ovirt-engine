@@ -2388,6 +2388,7 @@
   <xs:complexType name="GuestInfo">
     <xs:sequence>
       <xs:element ref="ips" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="fqdn" type="xs:string" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 

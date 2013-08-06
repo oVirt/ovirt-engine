@@ -269,6 +269,7 @@ SELECT
 	cast(c.cpu_user as smallint) as user_cpu_usage_percent,
 	c.disks_usage,
 	b.vm_ip,
+	b.vm_fqdn,
 	b.client_ip as vm_client_ip,
 	b.console_cur_user_name as current_user_name,
 	CASE

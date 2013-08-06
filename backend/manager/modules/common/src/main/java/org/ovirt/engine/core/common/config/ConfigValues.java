@@ -1513,6 +1513,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("60")
     AutoStartVmsRunnerIntervalInSeconds(538),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    UseFqdnForRdpIfAvailable(539),
+
     Invalid(65535);
 
     private int intValue;

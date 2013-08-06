@@ -175,6 +175,7 @@ public final class VdsProperties {
     // vm configuration (i.e. VmDynamic)
     public static final String guest_cur_user_name = "username";
     public static final String VM_IP = "guestIPs";
+    public static final String VM_FQDN = "guestFQDN";
     public static final String vm_usage_mem_percent = "memUsage";
     public static final String vm_host = "guestName";
     public static final String app_list = "appsList";

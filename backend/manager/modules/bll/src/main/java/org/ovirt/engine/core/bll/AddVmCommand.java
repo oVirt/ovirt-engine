@@ -696,6 +696,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         tempVar.setStatus(VMStatus.Down);
         tempVar.setVmHost("");
         tempVar.setVmIp("");
+        tempVar.setVmFQDN("");
         tempVar.setDisplayType(getParameters().getVmStaticData().getDefaultDisplayType());
         VmDynamic vmDynamic = tempVar;
         DbFacade.getInstance().getVmDynamicDao().save(vmDynamic);

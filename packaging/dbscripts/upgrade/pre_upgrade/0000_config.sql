@@ -561,6 +561,8 @@ select fn_db_add_config_value('AutoRecoveryAllowedTypes','{\"storage domains\":\
 select fn_db_add_config_value('ClientModeSpiceDefault','Auto','general');
 -- Rdp client mode default settings (Auto, Native, Plugin)
 select fn_db_add_config_value('ClientModeRdpDefault','Auto','general');
+-- Rdp client - Use FQDN reported by guest agent if available over IP and or generated hostname (VM Name + Domain)
+select fn_db_add_config_value('UseFqdnForRdpIfAvailable','true','general');
 -- Websocket proxy configuration (Off, Engine:port, Host:port or specific ip/hostname:port of websockets proxy)
 select fn_db_add_config_value('WebSocketProxy','Off','general');
 -- Websocket ticket validity in seconds

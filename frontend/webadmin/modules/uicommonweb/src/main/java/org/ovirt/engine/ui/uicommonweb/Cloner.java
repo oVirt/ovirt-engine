@@ -197,6 +197,7 @@ public final class Cloner
         vm.setId(instance.getId());
         vm.setVmHost(instance.getVmHost());
         vm.setVmIp(instance.getVmIp());
+        vm.setVmFQDN(instance.getVmFQDN());
         vm.setLastStartTime(instance.getLastStartTime());
         vm.setVmMemSizeMb(instance.getVmMemSizeMb());
         vm.setName(instance.getName());

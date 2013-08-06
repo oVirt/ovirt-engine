@@ -277,6 +277,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setVmtDescription(rs.getString("vmt_description"));
             entity.setStatus(VMStatus.forValue(rs.getInt("status")));
             entity.setVmIp(rs.getString("vm_ip"));
+            entity.setVmFQDN(rs.getString("vm_fqdn"));
             entity.setVmHost(rs.getString("vm_host"));
             entity.setVmPid((Integer) rs.getObject("vm_pid"));
             entity.setDbGeneration(rs.getLong("db_generation"));
