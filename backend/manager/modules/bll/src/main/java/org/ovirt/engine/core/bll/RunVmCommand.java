@@ -557,7 +557,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                                         AuditLogType.VDS_INITIATED_RUN_VM
                                         : getTaskIdList().size() > 0 ?
                                                 AuditLogType.USER_INITIATED_RUN_VM
-                                                : isRunAndPaused() ? AuditLogType.USER_INITIATED_RUN_VM_AND_PAUSE
+                                                : getVm().isRunAndPause() ? AuditLogType.USER_INITIATED_RUN_VM_AND_PAUSE
                                                         : AuditLogType.USER_STARTED_VM
                         : _isRerun ? AuditLogType.USER_INITIATED_RUN_VM_FAILED : AuditLogType.USER_FAILED_RUN_VM;
             }
@@ -1047,13 +1047,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return vmPool.getVmPoolType().equals(VmPoolType.Manual);
     }
 
-    private boolean isRunAndPaused() {
-        return getVm().isRunAndPause() && getVmDynamicDao().get(getVmId()).getStatus() == VMStatus.Paused;
-    }
-
     @Override
     public void reportCompleted() {
-        if (isRunAndPaused()) {
+        if (getVm().isRunAndPause() && getVmDynamicDao().get(getVmId()).getStatus() == VMStatus.Paused) {
             final ExecutionContext executionContext = getExecutionContext();
             executionContext.setShouldEndJob(true);
             ExecutionHandler.endJob(executionContext, true);
