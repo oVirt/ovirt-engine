@@ -489,11 +489,11 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private void updateSnapshotIdOnShareableChange(Disk oldDisk, Disk newDisk) {
-        if (isUpdatedToShareable(oldDisk, newDisk)) {
-            ((DiskImage) oldDisk).setVmSnapshotId(null);
-        } else if (isUpdatedToNonShareable(oldDisk, newDisk))  {
-            // If disk is not floating, then update its vm snapshot id to the active VM snapshot.
-            ((DiskImage) oldDisk).setVmSnapshotId(getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE));
+        if (oldDisk.isShareable() != newDisk.isShareable() && oldDisk.getDiskStorageType() == DiskStorageType.IMAGE) {
+            DiskImage oldDiskImage = (DiskImage) oldDisk;
+            Guid vmSnapshotId = isUpdatedToShareable(oldDisk, newDisk) ? null :
+                    getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
+            oldDiskImage.setVmSnapshotId(vmSnapshotId);
         }
     }
 
