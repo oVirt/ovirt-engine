@@ -88,7 +88,7 @@ public class VnicProfileValidatorTest {
     @Test
     public void vnicProfileNull() throws Exception {
         validator = new VnicProfileValidator(null);
-        assertThat(validator.vnicProfileIsSet(), failsWith(VdcBllMessages.VNIC_PROFILE_NOT_EXISTS));
+        assertThat(validator.vnicProfileIsSet(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS));
     }
 
     @Test
@@ -99,7 +99,7 @@ public class VnicProfileValidatorTest {
     @Test
     public void vnicProfileDoesNotExist() throws Exception {
         when(vnicProfileDao.get(any(Guid.class))).thenReturn(null);
-        assertThat(validator.vnicProfileExists(), failsWith(VdcBllMessages.VNIC_PROFILE_NOT_EXISTS));
+        assertThat(validator.vnicProfileExists(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS));
     }
 
     @Test
@@ -141,7 +141,7 @@ public class VnicProfileValidatorTest {
 
     @Test
     public void vnicProfileNameTakenByDifferentVnicProfile() throws Exception {
-        vnicProfileAvailableTest(failsWith(VdcBllMessages.VNIC_PROFILE_NAME_IN_USE),
+        vnicProfileAvailableTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NAME_IN_USE),
                 getSingletonNamedVnicProfileList(DEFAULT_VNIC_PROFILE_NAME, OTHER_GUID));
     }
 
@@ -158,7 +158,7 @@ public class VnicProfileValidatorTest {
     }
 
     private Matcher<ValidationResult> failsWithVnicProfileInUse() {
-        return failsWith(VdcBllMessages.VNIC_PROFILE_IN_USE);
+        return failsWith(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_IN_USE);
     }
 
     @Test
@@ -170,7 +170,8 @@ public class VnicProfileValidatorTest {
     @Test
     public void changingNetworkNotAllowed() throws Exception {
         mockVnicProfileNetworkChange(DEFAULT_GUID, OTHER_GUID);
-        assertThat(validator.networkNotChanged(), failsWith(VdcBllMessages.CANNOT_CHANGE_VNIC_PROFILE_NETWORK));
+        assertThat(validator.networkNotChanged(),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_VNIC_PROFILE_NETWORK));
     }
 
     @Test
@@ -254,7 +255,8 @@ public class VnicProfileValidatorTest {
 
     @Test
     public void vnicProfileForNonVmNetwork() {
-        vnicProfileForVmNetworkTest(false, failsWith(VdcBllMessages.CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK));
+        vnicProfileForVmNetworkTest(false,
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK));
     }
 
     private void vnicProfileForVmNetworkTest(boolean vmNetwork, Matcher<ValidationResult> matcher) {

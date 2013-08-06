@@ -1142,19 +1142,19 @@ public interface AppErrors extends ConstantsWithLookup {
     String NETWORK_NOT_EXISTS();
 
     @DefaultStringValue("Cannot ${action} ${type}. The specified VM network interface profile doesn't exist.")
-    String VNIC_PROFILE_NOT_EXISTS();
+    String ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS();
 
     @DefaultStringValue("Cannot ${action} ${type}. The VM network interface profile's name is already used by an existing profile for the same network.\n-Please choose a different name.")
-    String VNIC_PROFILE_NAME_IN_USE();
+    String ACTION_TYPE_FAILED_VNIC_PROFILE_NAME_IN_USE();
 
     @DefaultStringValue("Cannot ${action} ${type}. Several ${entities} (${ENTITIES_USING_VNIC_PROFILE_COUNTER}) are using this VM network interface profile:\n${ENTITIES_USING_VNIC_PROFILE}\n - Please remove it from all ${entities} that are using it and try again.")
-    String VNIC_PROFILE_IN_USE();
+    String ACTION_TYPE_FAILED_VNIC_PROFILE_IN_USE();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM network interface profile's network cannot be changed.")
-    String CANNOT_CHANGE_VNIC_PROFILE_NETWORK();
+    String ACTION_TYPE_FAILED_CANNOT_CHANGE_VNIC_PROFILE_NETWORK();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM network interface profiles can be added to a VM network only.")
-    String CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK();
+    String ACTION_TYPE_FAILED_CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK();
 
     @DefaultStringValue("Cannot ${action} ${type}. There is no VM network interface profile for the network the user can use.\n- Please use a VM network interface profile instead of a network name.")
     String ACTION_TYPE_FAILED_CANNOT_FIND_VNIC_PROFILE_FOR_NETWORK();

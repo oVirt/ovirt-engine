@@ -35,13 +35,13 @@ public class VnicProfileValidator {
 
     public ValidationResult vnicProfileIsSet() {
         return vnicProfile == null
-                ? new ValidationResult(VdcBllMessages.VNIC_PROFILE_NOT_EXISTS)
+                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS)
                 : ValidationResult.VALID;
     }
 
     public ValidationResult vnicProfileExists() {
         return getOldVnicProfile() == null
-                ? new ValidationResult(VdcBllMessages.VNIC_PROFILE_NOT_EXISTS)
+                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS)
                 : ValidationResult.VALID;
     }
 
@@ -52,7 +52,7 @@ public class VnicProfileValidator {
     public ValidationResult vnicProfileNameNotUsed() {
         for (VnicProfile profile : getVnicProfiles()) {
             if (profile.getName().equals(vnicProfile.getName()) && !profile.getId().equals(vnicProfile.getId())) {
-                return new ValidationResult(VdcBllMessages.VNIC_PROFILE_NAME_IN_USE);
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NAME_IN_USE);
             }
         }
 
@@ -64,7 +64,7 @@ public class VnicProfileValidator {
             return ValidationResult.VALID;
         }
 
-        return new ValidationResult(VdcBllMessages.CANNOT_CHANGE_VNIC_PROFILE_NETWORK);
+        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_VNIC_PROFILE_NETWORK);
     }
 
     public ValidationResult vnicProfileNotUsedByVms() {
@@ -78,7 +78,7 @@ public class VnicProfileValidator {
 
     public ValidationResult vnicProfileForVmNetworkOnly() {
         return getNetwork().isVmNetwork() ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK);
+                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_ADD_VNIC_PROFILE_TO_NON_VM_NETWORK);
     }
 
     protected ValidationResult vnicProfileNotUsed(List<? extends Nameable> entities, VdcBllMessages entitiesReplacement) {
@@ -88,7 +88,7 @@ public class VnicProfileValidator {
 
         Collection<String> replacements = ReplacementUtils.replaceWithNameable("ENTITIES_USING_VNIC_PROFILE", entities);
         replacements.add(entitiesReplacement.name());
-        return new ValidationResult(VdcBllMessages.VNIC_PROFILE_IN_USE, replacements);
+        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_IN_USE, replacements);
     }
 
     public ValidationResult portMirroringNotChangedIfUsedByVms() {
