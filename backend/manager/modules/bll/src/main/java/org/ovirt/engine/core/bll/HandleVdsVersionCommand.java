@@ -1,17 +1,15 @@
 package org.ovirt.engine.core.bll;
 
-import static org.ovirt.engine.core.common.businessentities.NonOperationalReason.VERSION_INCOMPATIBLE_WITH_CLUSTER;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
+import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -50,29 +48,31 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         // check that vdc support vds OR vds support vdc
         RpmVersion vdsVersion = vds.getVersion();
         Version vdsmVersion = new Version(vdsVersion.getMajor(),vdsVersion.getMinor());
-        boolean vdsmVersionSupported =
-                Config.<HashSet<Version>> GetValue(ConfigValues.SupportedVDSMVersions).contains(vdsmVersion);
-        if (!vdsmVersionSupported && !StringUtils.isEmpty(vds.getSupportedEngines())) {
-            try {
-                vdsmVersionSupported = vds.getSupportedENGINESVersionsSet().contains(partialVdcVersion);
-            } catch (RuntimeException e) {
-                log.error(e.getMessage());
-            }
-        }
 
         // move to non operational if vds-vdc version not supported OR cluster
         // version is not supported
-        if (!vdsmVersionSupported
-                || !VersionSupport.checkClusterVersionSupported(cluster.getcompatibility_version(), vds)) {
-            Map<String, String> customLogValues = new HashMap<String, String>();
-            customLogValues.put("CompatibilityVersion", cluster.getcompatibility_version().toString());
-            customLogValues.put("VdsSupportedVersions", vds.getSupportedClusterLevels());
-            SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVdsId(),
-                    VERSION_INCOMPATIBLE_WITH_CLUSTER,
-                    customLogValues);
-            tempVar.setSaveToDb(true);
-            Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext());
+        if (!Config.<HashSet<Version>> GetValue(ConfigValues.SupportedVDSMVersions).contains(vdsmVersion)) {
+            reportNonOperationReason(NonOperationalReason.VERSION_INCOMPATIBLE_WITH_CLUSTER,
+                                     Config.<HashSet<Version>> GetValue(ConfigValues.SupportedVDSMVersions).toString(),
+                                     vdsmVersion.toString());
+        }
+        else if (!VersionSupport.checkClusterVersionSupported(cluster.getcompatibility_version(), vds)) {
+            reportNonOperationReason(NonOperationalReason.CLUSTER_VERSION_INCOMPATIBLE_WITH_CLUSTER,
+                                     cluster.getcompatibility_version().toString(),
+                                     vds.getSupportedClusterLevels().toString());
         }
         setSucceeded(true);
+    }
+
+    private void reportNonOperationReason(NonOperationalReason reason, String compatibleVersions,
+                                          String vdsSupportedVersions) {
+        Map<String, String> customLogValues = new HashMap<>();
+        customLogValues.put("CompatibilityVersion", compatibleVersions);
+        customLogValues.put("VdsSupportedVersions", vdsSupportedVersions);
+        SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVdsId(),
+                reason,
+                customLogValues);
+        tempVar.setSaveToDb(true);
+        Backend.getInstance().runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext());
     }
 }
