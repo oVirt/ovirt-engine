@@ -272,7 +272,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             @Override
             public Object runInTransaction() {
                 getVmStaticDAO().incrementDbGeneration(getVm().getId());
-                clearAddressOnInterfaceChange(disk, getNewDisk());
+                clearAddressOnInterfaceChange();
                 getBaseDiskDao().update(disk);
                 if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                     DiskImage diskImage = (DiskImage) disk;
@@ -288,11 +288,11 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 return null;
             }
 
-            private void clearAddressOnInterfaceChange(Disk diskToUpdate, Disk diskWithUserChanges) {
+            private void clearAddressOnInterfaceChange() {
                 // clear the disk address if the type has changed
-                if (diskToUpdate.getDiskInterface() != diskWithUserChanges.getDiskInterface()) {
-                    getVmDeviceDao().clearDeviceAddress(getVmDeviceDao().get(new VmDeviceId(diskToUpdate.getId(),
-                            getVmId())).getDeviceId());
+                if (getOldDisk().getDiskInterface() != getNewDisk().getDiskInterface()) {
+                    VmDeviceId deviceId = new VmDeviceId(getOldDisk().getId(), getVmId());
+                    getVmDeviceDao().clearDeviceAddress(getVmDeviceDao().get(deviceId).getDeviceId());
                 }
             }
         });
