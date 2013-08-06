@@ -1308,7 +1308,7 @@ public class UnitVmModel extends Model {
         getCpuSharesAmountSelection().setItems(Arrays.asList(CpuSharesAmount.values()));
         getCpuSharesAmountSelection().getEntityChangedEvent().addListener(this);
         getCpuSharesAmountSelection().getSelectedItemChangedEvent().addListener(this);
-        getCpuSharesAmountSelection().setSelectedItem(CpuSharesAmount.MEDIUM);
+        getCpuSharesAmountSelection().setSelectedItem(CpuSharesAmount.DISABLED);
 
         setIsSoundcardEnabled(new NotChangableForVmInPoolEntityModel());
         getIsSoundcardEnabled().setEntity(false);
@@ -2381,7 +2381,7 @@ public class UnitVmModel extends Model {
     }
 
     public static enum CpuSharesAmount {
-        LOW(512), MEDIUM(1024), HIGH(2048), CUSTOM(-1);
+        DISABLED(0), LOW(512), MEDIUM(1024), HIGH(2048), CUSTOM(-1);
 
         private int value;
         private CpuSharesAmount(int value) {
