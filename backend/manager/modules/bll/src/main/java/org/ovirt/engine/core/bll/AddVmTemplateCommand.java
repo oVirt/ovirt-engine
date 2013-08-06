@@ -579,6 +579,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // if the template is for public use, set EVERYONE as a TEMPLATE_USER.
         if (getParameters().isPublicUse()) {
             addPermissionForTemplate(permissionsToAdd, MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID, PredefinedRoles.TEMPLATE_USER);
+        } else {
+            addPermissionForTemplate(permissionsToAdd, getCurrentUser().getUserId(), PredefinedRoles.TEMPLATE_USER);
         }
 
         copyVmPermissions(permissionsToAdd);
