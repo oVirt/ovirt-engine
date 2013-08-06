@@ -1497,6 +1497,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     ExternalSchedulerEnabled(534),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("1000")
+    MaxSchedulerWeight(535),
+
     Invalid(65535);
 
     private int intValue;

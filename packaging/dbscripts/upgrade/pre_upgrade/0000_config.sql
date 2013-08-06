@@ -363,6 +363,7 @@ select fn_db_add_config_value('GlusterFsStorageEnabled','false','3.0');
 select fn_db_add_config_value('GlusterFsStorageEnabled','false','3.1');
 select fn_db_add_config_value('GlusterFsStorageEnabled','false','3.2');
 select fn_db_add_config_value('GlusterFsStorageEnabled','true','3.3');
+select fn_db_add_config_value('MaxSchedulerWeight','1000','general');
 select fn_db_add_config_value('MTUOverrideSupported','false','3.0');
 select fn_db_add_config_value('MTUOverrideSupported','true','3.1');
 select fn_db_add_config_value('MTUOverrideSupported','true','3.2');

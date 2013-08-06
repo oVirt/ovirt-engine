@@ -71,14 +71,15 @@ public class SlaValidator {
 
     public static Integer getEffectiveCpuCores(VDS vds) {
         VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vds.getVdsGroupId());
+        return getEffectiveCpuCores(vds, vdsGroup != null ? vdsGroup.getCountThreadsAsCores() : false);
+    }
 
+    public static Integer getEffectiveCpuCores(VDS vds, boolean countThreadsAsCores) {
         if (vds.getCpuThreads() != null
-                && vdsGroup != null
-                && Boolean.TRUE.equals(vdsGroup.getCountThreadsAsCores())) {
+                && countThreadsAsCores) {
             return vds.getCpuThreads();
         } else {
             return vds.getCpuCores();
         }
     }
-
 }

@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -26,9 +27,18 @@ public class PowerSavingPolicyUnit extends EvenDistributionPolicyUnit {
 
     @Override
     public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
+        VDSGroup vdsGroup = null;
         List<Pair<Guid, Integer>> scores = new ArrayList<Pair<Guid, Integer>>();
         for (VDS vds : hosts) {
-            scores.add(new Pair<Guid, Integer>(vds.getId(), 100 - vds.getUsageCpuPercent()));
+            int score = MaxSchedulerWeight - 1;
+            if (vds.getVmCount() > 0) {
+                if (vdsGroup == null) {
+                    vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(hosts.get(0).getVdsGroupId());
+                }
+                score -=
+                        calcEvenDistributionScore(vds, vm, vdsGroup != null ? vdsGroup.getCountThreadsAsCores() : false);
+            }
+            scores.add(new Pair<Guid, Integer>(vds.getId(), score));
         }
         return scores;
     }
