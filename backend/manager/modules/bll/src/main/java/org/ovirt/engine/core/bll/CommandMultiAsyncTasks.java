@@ -133,6 +133,7 @@ public class CommandMultiAsyncTasks {
             for (CommandAsyncTask task : CurrentActionTypeTasks) {
                 if (task.getLastTaskStatus().getStatus() == AsyncTaskStatusEnum.finished) {
                     task.clearAsyncTask();
+                    _listTasks.remove(task.getVdsmTaskId());
                 }
             }
         }
