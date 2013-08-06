@@ -102,7 +102,7 @@ class Plugin(plugin.PluginBase):
                     osetupcons.FileLocations.OVIRT_ENGINE_YUM_VERSIONLOCK,
                     'w'
                 ) as f:
-                    f.write('\n'.join(content)+'\n')
+                    f.write('\n'.join(content) + '\n')
 
         def abort(self):
             if (
