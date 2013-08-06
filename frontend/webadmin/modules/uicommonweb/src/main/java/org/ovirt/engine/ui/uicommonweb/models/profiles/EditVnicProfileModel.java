@@ -22,7 +22,7 @@ public class EditVnicProfileModel extends VnicProfileModel {
         getPortMirroring().setEntity(getProfile().isPortMirroring());
     }
 
-    protected VnicProfile getProfile() {
+    public VnicProfile getProfile() {
         return profile;
     }
 

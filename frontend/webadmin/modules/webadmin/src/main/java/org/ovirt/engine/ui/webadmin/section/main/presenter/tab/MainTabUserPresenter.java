@@ -43,7 +43,7 @@ public class MainTabUserPresenter extends AbstractMainTabWithDetailsPresenter<Db
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
             MainModelProvider<DbUser, UserListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.userMainTabLabel(), 12, modelProvider);
+        return new ModelBoundTabData(applicationConstants.userMainTabLabel(), 13, modelProvider);
     }
 
     @Inject

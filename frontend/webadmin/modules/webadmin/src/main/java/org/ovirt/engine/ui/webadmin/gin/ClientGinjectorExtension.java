@@ -80,6 +80,9 @@ import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolVmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileTemplateListModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
@@ -154,6 +157,8 @@ public interface ClientGinjectorExtension {
     MainModelProvider<VDS, HostListModel> getMainTabHostModelProvider();
 
     MainModelProvider<NetworkView, NetworkListModel> getMainTabNetworkModelProvider();
+
+    MainModelProvider<VnicProfile, VnicProfileListModel> getMainTabVnicProfileModelProvider();
 
     MainModelProvider<org.ovirt.engine.core.common.businessentities.Provider, ProviderListModel> getMainTabProviderModelProvider();
 
@@ -368,5 +373,12 @@ public interface ClientGinjectorExtension {
     DetailModelProvider<ProviderListModel, ProviderGeneralModel> getSubTabProviderGeneralModelProvider();
 
     SearchableDetailModelProvider<NetworkView, ProviderListModel, ProviderNetworkListModel> getSubTabProviderNetworkModelProvider();
+
+    // Profile
+    SearchableDetailModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel> getSubTabVnicProfileVmModelProvider();
+
+    SearchableDetailModelProvider<VmTemplate, VnicProfileListModel, VnicProfileTemplateListModel> getSubTabVnicProfileTemplateModelProvider();
+
+    SearchableDetailModelProvider<permissions, VnicProfileListModel, PermissionListModel> getSubTabVnicProfilePermissionModelProvider();
 
 }

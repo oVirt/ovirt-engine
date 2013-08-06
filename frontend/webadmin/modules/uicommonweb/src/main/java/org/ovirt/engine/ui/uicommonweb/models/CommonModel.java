@@ -33,6 +33,7 @@ import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolListModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
@@ -436,6 +437,7 @@ public class CommonModel extends ListModel
         reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled() && !getHasSelectedTags());
         networkList.setIsAvailable(!getHasSelectedTags());
         providerList.setIsAvailable(!getHasSelectedTags());
+        profileList.setIsAvailable(!getHasSelectedTags());
 
         // Switch the selected item as neccessary.
         ListModel oldSelectedItem = getSelectedItem();
@@ -597,6 +599,9 @@ public class CommonModel extends ListModel
 
         providerList.setIsAvailable(model.getType() == SystemTreeItemType.Providers
                 || model.getType() == SystemTreeItemType.Provider);
+
+        profileList.setIsAvailable(model.getType() == SystemTreeItemType.Network
+                || model.getType() == SystemTreeItemType.DataCenter);
 
         // Select a default item depending on system tree selection.
         ListModel oldSelectedItem = getSelectedItem();
@@ -776,6 +781,7 @@ public class CommonModel extends ListModel
     private SearchableListModel diskList;
     private SearchableListModel networkList;
     private SearchableListModel providerList;
+    private SearchableListModel profileList;
 
     private void initItems()
     {
@@ -820,6 +826,9 @@ public class CommonModel extends ListModel
 
         providerList = new ProviderListModel();
         list.add(providerList);
+
+        profileList = new VnicProfileListModel();
+        list.add(profileList);
 
         setItems(list);
 
@@ -1069,6 +1078,10 @@ public class CommonModel extends ListModel
                 {
                     prefix.argvalue = "Pools: datacenter = " + model.getTitle(); //$NON-NLS-1$
                 }
+                else if (profileList.isSearchStringMatch(source))
+                {
+                    prefix.argvalue = "VnicProfile: datacenter = " + model.getTitle(); //$NON-NLS-1$
+                }
             }
                 break;
             case Clusters: {
@@ -1268,6 +1281,10 @@ public class CommonModel extends ListModel
                 else if (templateList.isSearchStringMatch(source))
                 {
                     prefix.argvalue = "Template : Vnic.network_name = " + model.getTitle() + " datacenter = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, model).getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
+                }
+                else if (profileList.isSearchStringMatch(source))
+                {
+                    prefix.argvalue = "VnicProfile : network_name = " + model.getTitle() + " datacenter = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, model).getTitle(); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
                 break;

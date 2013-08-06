@@ -67,7 +67,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     String clustersTitle();
 
     @DefaultStringValue("Profiles")
-    String profilesTitle();
+    String networkProfilesTitle();
 
     @DefaultStringValue("New Cluster - Guide Me")
     String newClusterGuideMeTitle();
@@ -435,6 +435,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Providers")
     String providersTitle();
+
+    @DefaultStringValue("VNIC Profiles")
+    String vnicProfilesTitle();
 
     @DefaultStringValue("VMs")
     String vmsTitle();

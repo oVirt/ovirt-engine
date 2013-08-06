@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
@@ -1158,6 +1159,22 @@ public final class Linq
         @Override
         public int compare(Provider p1, Provider p2) {
             return LexoNumericComparator.comp(p1.getName(), p2.getName());
+        }
+    }
+
+    public final static class VmComparator implements Comparator<VM>, Serializable {
+
+        @Override
+        public int compare(VM v1, VM v2) {
+            return LexoNumericComparator.comp(v1.getName(), v2.getName());
+        }
+    }
+
+    public final static class VmTemplateComparator implements Comparator<VmTemplate>, Serializable {
+
+        @Override
+        public int compare(VmTemplate t1, VmTemplate t2) {
+            return LexoNumericComparator.comp(t1.getName(), t2.getName());
         }
     }
 

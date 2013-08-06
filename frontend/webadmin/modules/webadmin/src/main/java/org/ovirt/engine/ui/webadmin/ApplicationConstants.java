@@ -67,6 +67,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Networks")
     String networkMainTabLabel();
 
+    @DefaultStringValue("VM Interface Profiles")
+    String vnicProfilesMainTabLabel();
+
     @DefaultStringValue("Storage")
     String storageMainTabLabel();
 
@@ -1092,6 +1095,24 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Port Mirroring")
     String portMirroringNetworkProfile();
+
+    @DefaultStringValue("Virtual Machines")
+    String vnicProfileVmSubTabLabel();
+
+    @DefaultStringValue("Templates")
+    String vnicProfileTemplateSubTabLabel();
+
+    @DefaultStringValue("Permissions")
+    String vnicProfilePermissionSubTabLabel();
+
+    @DefaultStringValue("New")
+    String newVnicProfile();
+
+    @DefaultStringValue("Edit")
+    String editVnicProfile();
+
+    @DefaultStringValue("Remove")
+    String removeVnicProfile();
 
     // Cluster
     @DefaultStringValue("Name")

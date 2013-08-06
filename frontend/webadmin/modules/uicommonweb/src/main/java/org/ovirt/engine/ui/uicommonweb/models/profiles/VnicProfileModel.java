@@ -239,7 +239,7 @@ public abstract class VnicProfileModel extends Model {
         return getName().getIsValid() && getCustomPropertySheet().validate();
     }
 
-    protected abstract VnicProfile getProfile();
+    public abstract VnicProfile getProfile();
 
     protected abstract void initCustomProperties();
 

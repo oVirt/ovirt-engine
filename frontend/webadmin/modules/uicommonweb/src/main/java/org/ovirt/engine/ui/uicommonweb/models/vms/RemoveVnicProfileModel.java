@@ -102,6 +102,7 @@ public class RemoveVnicProfileModel extends ConfirmationModel {
     private void cancel()
     {
         sourceListModel.setWindow(null);
+        sourceListModel.setConfirmWindow(null);
     }
 
     @Override

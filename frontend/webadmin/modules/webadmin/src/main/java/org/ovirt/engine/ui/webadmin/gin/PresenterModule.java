@@ -108,6 +108,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePre
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabTemplatePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabUserPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVirtualMachinePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVnicProfilePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.ClusterSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGeneralPresenter;
@@ -158,6 +159,10 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.PoolSubTabPa
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.SubTabPoolVmPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile.SubTabVnicProfilePermissionPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile.SubTabVnicProfileTemplatePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile.SubTabVnicProfileVmPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile.VnicProfileSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.ProviderSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.SubTabProviderGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.SubTabProviderNetworkPresenter;
@@ -309,6 +314,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabStorageView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabTemplateView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabUserView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVirtualMachineView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVnicProfileView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVolumeView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.ClusterSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterGeneralView;
@@ -359,6 +365,10 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.pool.PoolSubTabPanelVi
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.pool.SubTabPoolGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.pool.SubTabPoolPermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.pool.SubTabPoolVmView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.profile.SubTabVnicProfilePermissionView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.profile.SubTabVnicProfileTemplateView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.profile.SubTabVnicProfileVmView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.profile.VnicProfileSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.provider.ProviderSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.provider.SubTabProviderGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.provider.SubTabProviderNetworkView;
@@ -474,6 +484,10 @@ public class PresenterModule extends BasePresenterModule {
                 MainTabNetworkPresenter.ViewDef.class,
                 MainTabNetworkView.class,
                 MainTabNetworkPresenter.ProxyDef.class);
+        bindPresenter(MainTabVnicProfilePresenter.class,
+                MainTabVnicProfilePresenter.ViewDef.class,
+                MainTabVnicProfileView.class,
+                MainTabVnicProfilePresenter.ProxyDef.class);
         bindPresenter(MainTabProviderPresenter.class,
                 MainTabProviderPresenter.ViewDef.class,
                 MainTabProviderView.class,
@@ -909,6 +923,24 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabProviderNetworkPresenter.ViewDef.class,
                 SubTabProviderNetworkView.class,
                 SubTabProviderNetworkPresenter.ProxyDef.class);
+
+        // Profile
+        bindPresenter(VnicProfileSubTabPanelPresenter.class,
+                VnicProfileSubTabPanelPresenter.ViewDef.class,
+                VnicProfileSubTabPanelView.class,
+                VnicProfileSubTabPanelPresenter.ProxyDef.class);
+        bindPresenter(SubTabVnicProfilePermissionPresenter.class,
+                SubTabVnicProfilePermissionPresenter.ViewDef.class,
+                SubTabVnicProfilePermissionView.class,
+                SubTabVnicProfilePermissionPresenter.ProxyDef.class);
+        bindPresenter(SubTabVnicProfileVmPresenter.class,
+                SubTabVnicProfileVmPresenter.ViewDef.class,
+                SubTabVnicProfileVmView.class,
+                SubTabVnicProfileVmPresenter.ProxyDef.class);
+        bindPresenter(SubTabVnicProfileTemplatePresenter.class,
+                SubTabVnicProfileTemplatePresenter.ViewDef.class,
+                SubTabVnicProfileTemplateView.class,
+                SubTabVnicProfileTemplatePresenter.ProxyDef.class);
 
         // Main section: popups
 

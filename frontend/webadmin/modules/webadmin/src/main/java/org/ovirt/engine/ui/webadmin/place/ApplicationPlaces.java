@@ -39,6 +39,8 @@ public class ApplicationPlaces {
 
     public static final String networkMainTabPlace = "networks"; //$NON-NLS-1$
 
+    public static final String vnicProfileMainTabPlace = "vnicProfiles"; //$NON-NLS-1$
+
     public static final String providerMainTabPlace = "providers"; //$NON-NLS-1$
 
     // Main section: sub tabs
@@ -309,6 +311,15 @@ public class ApplicationPlaces {
     public static final String providerNetworkSubTabPlace = providerMainTabPlace + SUB_TAB_PREFIX
             + "networks"; //$NON-NLS-1$
 
+    // Vnic Profile
+    public static final String vnicProfilePermissionSubTabPlace = vnicProfileMainTabPlace + SUB_TAB_PREFIX
+            + "permissions"; //$NON-NLS-1$
+
+    public static final String vnicProfileVmSubTabPlace = vnicProfileMainTabPlace + SUB_TAB_PREFIX
+            + "virtual_machines"; //$NON-NLS-1$
+
+    public static final String vnicProfileTemplateSubTabPlace = vnicProfileMainTabPlace + SUB_TAB_PREFIX
+            + "templates"; //$NON-NLS-1$
 
     // Default places
 

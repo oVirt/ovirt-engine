@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.webadmin.gin.uicommon.StorageModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.TemplateModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.UserModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.VirtualMachineModule;
+import org.ovirt.engine.ui.webadmin.gin.uicommon.VnicProfileModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.VolumeModule;
 import org.ovirt.engine.ui.webadmin.uicommon.WebAdminConfigurator;
 import org.ovirt.engine.ui.webadmin.uicommon.model.AlertFirstRowModelProvider;
@@ -64,6 +65,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         install(new DiskModule());
         install(new NetworkModule());
         install(new ProviderModule());
+        install(new VnicProfileModule());
 
         // SystemTreeModel
         bind(SystemTreeModelProvider.class).asEagerSingleton();

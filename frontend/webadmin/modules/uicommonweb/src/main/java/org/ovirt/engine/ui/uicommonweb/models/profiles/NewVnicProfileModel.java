@@ -16,7 +16,7 @@ public class NewVnicProfileModel extends VnicProfileModel {
         getPortMirroring().setEntity(false);
     }
 
-    protected VnicProfile getProfile() {
+    public VnicProfile getProfile() {
         // no profile for new
         return null;
     }

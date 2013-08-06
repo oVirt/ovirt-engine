@@ -11,6 +11,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeSub
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.NetworkSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.pool.PoolSubTabPanelPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.profile.VnicProfileSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.provider.ProviderSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.QuotaSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.StorageSubTabPanelPresenter;
@@ -57,6 +58,11 @@ public enum EntityType {
             NetworkSubTabPanelPresenter.TYPE_RequestTabs,
             NetworkSubTabPanelPresenter.TYPE_ChangeTab,
             NetworkSubTabPanelPresenter.TYPE_SetTabContent) {
+    },
+    VnicProfile(ApplicationPlaces.vnicProfileMainTabPlace,
+            VnicProfileSubTabPanelPresenter.TYPE_RequestTabs,
+            VnicProfileSubTabPanelPresenter.TYPE_ChangeTab,
+            VnicProfileSubTabPanelPresenter.TYPE_SetTabContent) {
     },
     Storage(ApplicationPlaces.storageMainTabPlace,
             StorageSubTabPanelPresenter.TYPE_RequestTabs,

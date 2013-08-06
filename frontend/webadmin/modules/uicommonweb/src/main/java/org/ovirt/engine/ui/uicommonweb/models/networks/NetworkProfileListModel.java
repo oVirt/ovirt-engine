@@ -26,7 +26,7 @@ public class NetworkProfileListModel extends SearchableListModel
     private UICommand removeCommand;
 
     public NetworkProfileListModel() {
-        setTitle(ConstantsManager.getInstance().getConstants().profilesTitle());
+        setTitle(ConstantsManager.getInstance().getConstants().vnicProfilesTitle());
         setHashName("profiles"); //$NON-NLS-1$
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$

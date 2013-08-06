@@ -2,12 +2,11 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
-import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.AbstractMainTabWithDetailsPresenter;
@@ -24,55 +23,44 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class MainTabEventPresenter extends AbstractMainTabWithDetailsPresenter<AuditLog, EventListModel, MainTabEventPresenter.ViewDef, MainTabEventPresenter.ProxyDef> {
+public class MainTabVnicProfilePresenter extends AbstractMainTabWithDetailsPresenter<VnicProfile, VnicProfileListModel, MainTabVnicProfilePresenter.ViewDef, MainTabVnicProfilePresenter.ProxyDef> {
 
     @GenEvent
-    public class EventSelectionChange {
+    public class VnicProfileSelectionChange {
 
-        List<AuditLog> selectedItems;
+        List<VnicProfile> selectedItems;
 
     }
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.eventMainTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<MainTabEventPresenter> {
+    @NameToken(ApplicationPlaces.vnicProfileMainTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<MainTabVnicProfilePresenter> {
     }
 
-    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<AuditLog> {
+    public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<VnicProfile> {
     }
 
     @TabInfo(container = MainTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            MainModelProvider<AuditLog, EventListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.eventMainTabLabel(), 14, modelProvider, Align.RIGHT);
+            MainModelProvider<VnicProfile, VnicProfileListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.vnicProfilesMainTabLabel(), 12,
+                modelProvider);
     }
 
     @Inject
-    public MainTabEventPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, MainModelProvider<AuditLog, EventListModel> modelProvider) {
+    public MainTabVnicProfilePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+            PlaceManager placeManager, MainModelProvider<VnicProfile, VnicProfileListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 
     @Override
-    protected void onReveal() {
-        super.onReveal();
-
-        setSubTabPanelVisible(false);
+    protected void fireTableSelectionChangeEvent() {
+        VnicProfileSelectionChangeEvent.fire(this, getSelectedItems());
     }
 
     @Override
     protected PlaceRequest getMainTabRequest() {
-        return PlaceRequestFactory.get(ApplicationPlaces.eventMainTabPlace);
+        return PlaceRequestFactory.get(ApplicationPlaces.vnicProfileMainTabPlace);
     }
-
-    @Override
-    protected void fireTableSelectionChangeEvent() {
-        EventSelectionChangeEvent.fire(this, getSelectedItems());
-    }
-
-    @Override
-    protected void handlePlaceTransition() {
-        // No-op, Event main tab has no sub tabs
-    }
-
 }
+
