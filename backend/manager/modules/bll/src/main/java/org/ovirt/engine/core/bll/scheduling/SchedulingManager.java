@@ -82,8 +82,13 @@ public class SchedulingManager {
         log.info("Initializing Scheduling manager");
         loadPolicyUnits();
         loadClusterPolicies();
-        ExternalSchedulerDiscoveryThread discoveryThread = new ExternalSchedulerDiscoveryThread();
-        discoveryThread.start();
+        if(Config.GetValue(ConfigValues.ExternalSchedulerEnabled)) {
+            log.info("Starting external scheduler dicovery thread");
+            ExternalSchedulerDiscoveryThread discoveryThread = new ExternalSchedulerDiscoveryThread();
+            discoveryThread.start();
+        } else {
+            log.info("External scheduler disabled, discovery skipped");
+        }
         log.info("Initialized Scheduling manager");
     }
 
