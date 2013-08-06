@@ -19,6 +19,7 @@ public enum NonOperationalReason {
     EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER(11),
     UNTRUSTED(12),
     UNINITIALIZED(13),
+    CLUSTER_VERSION_INCOMPATIBLE_WITH_CLUSTER(14),
     ;
 
     private final int value;
