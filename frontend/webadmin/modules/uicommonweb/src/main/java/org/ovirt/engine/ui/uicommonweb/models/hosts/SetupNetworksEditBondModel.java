@@ -26,24 +26,22 @@ public class SetupNetworksEditBondModel extends SetupNetworksBondModel {
         List<KeyValuePairCompat<String, EntityModel>> items =
                 (List<KeyValuePairCompat<String, EntityModel>>) getBondingOptions().getItems();
         boolean found = false;
-        KeyValuePairCompat<String, EntityModel> customKey = null;
+        KeyValuePairCompat<String, EntityModel> customItem = null;
         for (KeyValuePairCompat<String, EntityModel> pair : items) {
             String key = pair.getKey();
             if (key.equals(bondOptions)) {
                 getBondingOptions().setSelectedItem(pair);
                 found = true;
                 break;
-            } else {
-                if ("custom".equals(key)) { //$NON-NLS-1$
-                    customKey = pair;
-                }
+            } else if ("custom".equals(key)) { //$NON-NLS-1$
+                customItem = pair;
             }
         }
         if (!found) {
             EntityModel value = new EntityModel();
             value.setEntity(bondOptions);
-            customKey.setValue(value);
-            getBondingOptions().setSelectedItem(customKey);
+            customItem.setValue(value);
+            getBondingOptions().setSelectedItem(customItem);
         }
     }
 
