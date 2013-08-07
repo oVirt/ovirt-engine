@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
@@ -24,7 +25,7 @@ public class PowerSavingPolicyUnit extends EvenDistributionPolicyUnit {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(List<VDS> hosts, Map<String, Object> parameters) {
+    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
         List<Pair<Guid, Integer>> scores = new ArrayList<Pair<Guid, Integer>>();
         for (VDS vds : hosts) {
             scores.add(new Pair<Guid, Integer>(vds.getId(), 100 - vds.getUsageCpuPercent()));

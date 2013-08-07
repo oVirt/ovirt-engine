@@ -156,7 +156,7 @@ public class SchedulingManager {
             updateInitialHostList(vdsList, hostBlackList, true);
             updateInitialHostList(vdsList, hostWhiteList, false);
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
-            Map<String, Object> parameters = createClusterPolicyParameters(cluster, vm);
+            Map<String, String> parameters = createClusterPolicyParameters(cluster);
             if (destHostId != null) {
                 if (checkDestinationHost(vm,
                         vdsList,
@@ -173,6 +173,7 @@ public class SchedulingManager {
             vdsList =
                     runFilters(policy.getFilters(),
                             vdsList,
+                            vm,
                             parameters,
                             policy.getFilterPositionMap(),
                             messages,
@@ -183,7 +184,7 @@ public class SchedulingManager {
             if (policy.getFunctions() == null || policy.getFunctions().isEmpty()) {
                 return vdsList.get(0).getId();
             }
-            Guid bestHost = runFunctions(policy.getFunctions(), vdsList, parameters);
+            Guid bestHost = runFunctions(policy.getFunctions(), vdsList, vm, parameters);
             if (bestHost != null) {
                 getVdsDynamicDao().updatePartialVdsDynamicCalc(
                         bestHost,
@@ -208,7 +209,7 @@ public class SchedulingManager {
         updateInitialHostList(vdsList, vdsBlackList, true);
         updateInitialHostList(vdsList, vdsWhiteList, false);
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
-        Map<String, Object> parameters = createClusterPolicyParameters(cluster, vm);
+        Map<String, String> parameters = createClusterPolicyParameters(cluster);
         if (destVdsId != null) {
             if (checkDestinationHost(vm,
                     vdsList,
@@ -225,6 +226,7 @@ public class SchedulingManager {
         vdsList =
                 runFilters(policy.getFilters(),
                         vdsList,
+                        vm,
                         parameters,
                         policy.getFilterPositionMap(),
                         messages,
@@ -240,7 +242,7 @@ public class SchedulingManager {
             Guid destVdsId,
             List<String> messages,
             ClusterPolicy policy,
-            Map<String, Object> parameters,
+            Map<String, String> parameters,
             VdsFreeMemoryChecker memoryChecker) {
         List<VDS> destVdsList = new ArrayList<VDS>();
         for (VDS vds : vdsList) {
@@ -252,6 +254,7 @@ public class SchedulingManager {
         destVdsList =
                 runFilters(policy.getFilters(),
                         destVdsList,
+                        vm,
                         parameters,
                         policy.getFilterPositionMap(),
                         messages,
@@ -259,11 +262,8 @@ public class SchedulingManager {
         return destVdsList != null && destVdsList.size() == 1;
     }
 
-    protected Map<String, Object> createClusterPolicyParameters(VDSGroup cluster, VM vm) {
-        Map<String, Object> parameters = new HashMap<String, Object>();
-        if (vm != null) {
-            parameters.put(PolicyUnitImpl.VM, vm);
-        }
+    protected Map<String, String> createClusterPolicyParameters(VDSGroup cluster) {
+        Map<String, String> parameters = new HashMap<String, String>();
         if (cluster.getClusterPolicyProperties() != null) {
             parameters.putAll(cluster.getClusterPolicyProperties());
         }
@@ -285,7 +285,8 @@ public class SchedulingManager {
 
     private List<VDS> runFilters(ArrayList<Guid> filters,
             List<VDS> hostList,
-            Map<String, Object> parameters,
+            VM vm,
+            Map<String, String> parameters,
             Map<Guid, Integer> filterPositionMap,
             List<String> messages, VdsFreeMemoryChecker memoryChecker) {
         if (filters != null) {
@@ -296,7 +297,7 @@ public class SchedulingManager {
                 }
                 PolicyUnitImpl filterPolicyUnit = policyUnits.get(filter);
                 filterPolicyUnit.setMemoryChecker(memoryChecker);
-                hostList = filterPolicyUnit.filter(hostList, parameters, messages);
+                hostList = filterPolicyUnit.filter(hostList, vm, parameters, messages);
             }
         }
         return hostList;
@@ -325,10 +326,11 @@ public class SchedulingManager {
 
     protected Guid runFunctions(ArrayList<Pair<Guid, Integer>> functions,
             List<VDS> hostList,
-            Map<String, Object> parameters) {
+            VM vm,
+            Map<String, String> parameters) {
         Map<Guid, Integer> hostCostTable = new HashMap<Guid, Integer>();
         for (Pair<Guid, Integer> pair : functions) {
-            List<Pair<Guid, Integer>> scoreResult = policyUnits.get(pair.getFirst()).score(hostList, parameters);
+            List<Pair<Guid, Integer>> scoreResult = policyUnits.get(pair.getFirst()).score(hostList, vm, parameters);
             for (Pair<Guid, Integer> result : scoreResult) {
                 Guid hostId = result.getFirst();
                 if (hostCostTable.get(hostId) == null) {

@@ -34,7 +34,7 @@ public class EvenDistributionPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<Pair<Guid, Integer>> score(List<VDS> hosts, Map<String, Object> parameters) {
+    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
         List<Pair<Guid, Integer>> scores = new ArrayList<Pair<Guid, Integer>>();
         for (VDS vds : hosts) {
             scores.add(new Pair<Guid, Integer>(vds.getId(), vds.getUsageCpuPercent()));
