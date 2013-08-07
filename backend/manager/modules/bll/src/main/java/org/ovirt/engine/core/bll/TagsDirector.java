@@ -302,6 +302,9 @@ public class TagsDirector {
 
     private void RecursiveGetTagsAndChildrenByRegExp(String tagNameRegExp, StringBuilder sb, tags tag, TagReturnValueIndicator indicator ) {
         if ((tag.getChildren() != null) && (tag.getChildren().size() > 0)) {
+            // The following line replaces '\\' in the expression that may be added by handling a '_' character with empty string.
+            // since we have here both String and RegExp , each backslash char is represented by four backslash chars , so for marching 2 we will need 8
+            tagNameRegExp=tagNameRegExp.replaceAll("\\\\\\\\", "");
             for (tags child : tag.getChildren()) {
                 if (Regex.IsMatch(child.gettag_name(), tagNameRegExp))
                 // the tag matches the regular expression -> add it and all its
