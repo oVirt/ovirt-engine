@@ -8,9 +8,9 @@ import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
+import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -18,9 +18,6 @@ import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
@@ -103,35 +100,14 @@ public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
 
     @Override
     public void endWithFailure() {
-        deleteImageGroup();
         enclosingCommand.getReturnValue().setSucceeded(true);
     }
 
     @Override
     public void compensate() {
-        deleteImageGroup();
-    }
-
-    protected void deleteImageGroup() {
-        VDSReturnValue vdsReturnValue =
-                Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.DeleteImageGroup,
-                    new DeleteImageGroupVDSCommandParameters(
-                            enclosingCommand.getParameters().getStoragePoolId(),
-                            enclosingCommand.getParameters().getStorageDomainId(),
-                            enclosingCommand.getParameters().getImageGroupID(),
-                            true, true));
-
-        AsyncTaskCreationInfo taskCreationInfo = vdsReturnValue.getCreationInfo();
-        enclosingCommand.getReturnValue().getInternalVdsmTaskIdList().add(enclosingCommand.createTask(
-                Guid.Empty,
-                taskCreationInfo,
-                enclosingCommand.getActionType(),
-                VdcObjectType.Disk,
-                new Guid[] { enclosingCommand.getParameters().getImageGroupID() })
-        );
-
-        Guid vdsmTaskId = taskCreationInfo.getVdsmTaskId();
-        enclosingCommand.getReturnValue().getVdsmTaskIdList().add(vdsmTaskId);
+        VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RemoveDisk,
+                new RemoveDiskParameters(enclosingCommand.getParameters().getImageGroupID()));
+        enclosingCommand.getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
     }
 
     @Override
@@ -141,7 +117,7 @@ public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
 
     @Override
     public AsyncTaskType getRevertTaskType() {
-        return null; // No implementation - handled by the command
+        return AsyncTaskType.deleteImage;
     }
 
 }
