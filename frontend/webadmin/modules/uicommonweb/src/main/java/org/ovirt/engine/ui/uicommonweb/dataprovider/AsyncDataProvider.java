@@ -3119,14 +3119,14 @@ public final class AsyncDataProvider {
         list.add(new KeyValuePairCompat<String, EntityModel>("mode=1 miimon=100", entityModel)); //$NON-NLS-1$
         entityModel = new EntityModel();
         entityModel.setEntity("(Mode 2) Load balance (balance-xor)"); //$NON-NLS-1$
-        list.add(new KeyValuePairCompat<String, EntityModel>("mode=2", entityModel)); //$NON-NLS-1$
+        list.add(new KeyValuePairCompat<String, EntityModel>("mode=2 miimon=100", entityModel)); //$NON-NLS-1$
         entityModel = new EntityModel();
         entityModel.setEntity("(Mode 4) Dynamic link aggregation (802.3ad)"); //$NON-NLS-1$
-        defaultItem.argvalue = new KeyValuePairCompat<String, EntityModel>("mode=4", entityModel); //$NON-NLS-1$
+        defaultItem.argvalue = new KeyValuePairCompat<String, EntityModel>("mode=4 miimon=100", entityModel); //$NON-NLS-1$
         list.add(defaultItem.argvalue);
         entityModel = new EntityModel();
         entityModel.setEntity("(Mode 5) Adaptive transmit load balancing (balance-tlb)"); //$NON-NLS-1$
-        list.add(new KeyValuePairCompat<String, EntityModel>("mode=5", entityModel)); //$NON-NLS-1$
+        list.add(new KeyValuePairCompat<String, EntityModel>("mode=5 miimon=100", entityModel)); //$NON-NLS-1$
         entityModel = new EntityModel();
         entityModel.setEntity(""); //$NON-NLS-1$
         list.add(new KeyValuePairCompat<String, EntityModel>("custom", entityModel)); //$NON-NLS-1$
