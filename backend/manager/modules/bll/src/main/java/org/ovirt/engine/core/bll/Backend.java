@@ -674,6 +674,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         OsRepositoryImpl.INSTANCE.init(OsInfoPreferencesLoader.INSTANCE.getPreferences());
         OsRepository osRepository = OsRepositoryImpl.INSTANCE;
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+        DbFacade.getInstance().populateDwhOsInfo(osRepository.getOsNames());
     }
 
    @Override

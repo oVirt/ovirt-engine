@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dal.dbbroker;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -956,5 +957,24 @@ public class DbFacade {
      */
     public VmNicDao getVmNicDao() {
         return getDao(VmNicDao.class);
+    }
+
+    /**
+     * This call will populate a translation table of OS Ids to they're name
+     * The translation table shall be in use by DWH
+     *
+     * @param osIdToName OS id to OS Name map
+     */
+    public void populateDwhOsInfo(Map<Integer,String> osIdToName) {
+        // first clear the table
+        new SimpleJdbcCall(jdbcTemplate).withProcedureName("clear_osinfo").execute();
+        // batch populate
+        List<MapSqlParameterSource> executions = new ArrayList<MapSqlParameterSource>();
+        for (Map.Entry<Integer,String> e : osIdToName.entrySet()) {
+            executions.add(getCustomMapSqlParameterSource()
+                    .addValue("os_id", e.getKey())
+                    .addValue("os_name", e.getValue()));
+        }
+        getCallsHandler().executeStoredProcAsBatch("insert_osinfo", executions);
     }
 }
