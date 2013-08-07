@@ -152,8 +152,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionGroup___CONFIGURE_SCSI_GENERIC_IO();
 
-	String ActionGroup___PORT_MIRRORING();
-
 	String ActionGroup___CONFIGURE_DISK_STORAGE();
 
 	String ActionGroup___DELETE_DISK();

@@ -104,9 +104,6 @@ public enum ActionGroup {
     DELETE_DISK(1104, RoleType.USER, VdcObjectType.Disk, true, ApplicationMode.VirtOnly),
     CONFIGURE_SCSI_GENERIC_IO(1105, RoleType.ADMIN, VdcObjectType.Disk, true, ApplicationMode.VirtOnly),
 
-    // Network
-    PORT_MIRRORING(1200, RoleType.ADMIN, VdcObjectType.Network, true, ApplicationMode.VirtOnly),
-
     // VNIC Profiles
     CONFIGURE_NETWORK_VNIC_PROFILE(1203, RoleType.ADMIN, VdcObjectType.VnicProfile, true, ApplicationMode.VirtOnly),
     CREATE_NETWORK_VNIC_PROFILE(1204, RoleType.ADMIN, VdcObjectType.VnicProfile, true, ApplicationMode.VirtOnly),

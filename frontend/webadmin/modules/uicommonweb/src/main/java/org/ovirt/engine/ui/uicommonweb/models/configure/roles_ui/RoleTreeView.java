@@ -188,18 +188,7 @@ public class RoleTreeView
                                                                 new RoleNode(ActionGroup.CONFIGURE_TEMPLATE_NETWORK,
                                                                         ConstantsManager.getInstance()
                                                                                 .getConstants()
-                                                                                .allowToConfigureTemlateNetworkRoleTreeTooltip()) }),
-                                                new RoleNode(ConstantsManager.getInstance()
-                                                        .getConstants()
-                                                        .administrationOperationsRoleTree(),
-                                                        ConstantsManager.getInstance()
-                                                                .getConstants()
-                                                                .notePermissionsContainingTheseOperationsShouldAssociateNetworkOrEqualRoleTreeTooltip(),
-                                                        new RoleNode[] {
-                                                                new RoleNode(ActionGroup.PORT_MIRRORING,
-                                                                        ConstantsManager.getInstance()
-                                                                                .getConstants()
-                                                                                .allowVmNetworkPortMirroringRoleTreeTooltip()) }) }),
+                                                                                .allowToConfigureTemlateNetworkRoleTreeTooltip()) }) }),
                                 new RoleNode(ConstantsManager.getInstance().getConstants().storageDomainRoleTree(),
                                         new RoleNode(ConstantsManager.getInstance()
                                                 .getConstants()

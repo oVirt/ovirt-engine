@@ -160,8 +160,6 @@ public class PermitMapper {
             return PermitType.CONFIGURE_DISK_STORAGE;
         case DELETE_DISK:
             return PermitType.DELETE_DISK;
-        case PORT_MIRRORING:
-            return PermitType.PORT_MIRRORING;
         case CONFIGURE_NETWORK_VNIC_PROFILE:
             return PermitType.CONFIGURE_NETWORK_VNIC_PROFILE;
         case CREATE_NETWORK_VNIC_PROFILE:
@@ -298,8 +296,6 @@ public class PermitMapper {
             return ActionGroup.CONFIGURE_DISK_STORAGE;
         case DELETE_DISK:
             return ActionGroup.DELETE_DISK;
-        case PORT_MIRRORING:
-            return ActionGroup.PORT_MIRRORING;
         case CONFIGURE_NETWORK_VNIC_PROFILE:
             return ActionGroup.CONFIGURE_NETWORK_VNIC_PROFILE;
         case CREATE_NETWORK_VNIC_PROFILE:
