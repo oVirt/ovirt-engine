@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -50,16 +51,18 @@ public class VmBasicDiskListModel extends SearchableListModel
                 {
                     List<DiskImage> disks =
                             (List<DiskImage>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                    Collections.sort(disks, new Linq.DiskByAliasComparer());
+                    ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
+                    diskList.addAll(disks);
+                    Collections.sort(diskList, new Linq.DiskByAliasComparer());
 
                     SearchableListModel searchableListModel = (SearchableListModel) model;
-                    searchableListModel.setItems(disks);
+                    searchableListModel.setItems(diskList);
                 }
             };
 
             IdQueryParameters queryParameters = new IdQueryParameters(vm.getId());
             queryParameters.setRefresh(getIsQueryFirstTime());
-            Frontend.RunQuery(VdcQueryType.GetAllDisksPartialDataByVmId, queryParameters,
+            Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, queryParameters,
                     _asyncQuery);
         }
         else if (getEntity() instanceof VmPool)
@@ -86,18 +89,19 @@ public class VmBasicDiskListModel extends SearchableListModel
                             {
                                 List<DiskImage> disks =
                                         (List<DiskImage>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                                Collections.sort(disks, new Linq.DiskByAliasComparer());
+                                ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
+                                diskList.addAll(disks);
+                                Collections.sort(diskList, new Linq.DiskByAliasComparer());
 
                                 SearchableListModel searchableListModel = (SearchableListModel) model1;
-                                searchableListModel.setItems(disks);
+                                searchableListModel.setItems(diskList);
                             }
                         };
                         IdQueryParameters queryParameters = new IdQueryParameters(vm.getId());
                         queryParameters.setRefresh(getIsQueryFirstTime());
-                        Frontend.RunQuery(VdcQueryType.GetAllDisksPartialDataByVmId, queryParameters,
+                        Frontend.RunQuery(VdcQueryType.GetAllDisksByVmId, queryParameters,
                                 _asyncQuery1);
                     }
-
                 }
             };
 

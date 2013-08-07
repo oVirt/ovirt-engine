@@ -102,19 +102,4 @@ public interface DiskDao extends ReadDao<Disk, Guid>, SearchDAO<Disk> {
      * @return the Disk
      */
     Disk get(Guid id, Guid userID, boolean isFiltered);
-
-    /**
-     * Retrieves all disks for the specified virtual machine id, with optional filtering. Only data for the UI basic
-     * screen is returned
-     * @param id
-     *            the VM id
-     * @param onlyPluggedDisks
-     *            whether to returned only the disks plugged to the VM or not
-     * @param userID
-     *            the ID of the user requesting the information
-     * @param isFiltered
-     *            Whether the results should be filtered according to the user's permissions
-     * @return the list of disks
-     */
-    List<Disk> getAllForVmPartialData(Guid vmId, boolean onlyPluggedDisks, Guid userID, boolean isFiltered);
 }
