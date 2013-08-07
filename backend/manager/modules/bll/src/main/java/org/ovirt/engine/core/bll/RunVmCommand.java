@@ -88,7 +88,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         implements QuotaVdsDependent {
 
     private static final RunVmValidator runVmValidator = new RunVmValidator();
-    private String cdImagePath = "";
     private boolean mResume;
     /** Note: this field should not be used directly, use {@link #isVmRunningStateless()} instead */
     private Boolean cachedVmIsRunningStateless;
@@ -131,9 +130,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private void initRunVmCommand() {
         RunVmParams runVmParameters = getParameters();
-        if (!StringUtils.isEmpty(runVmParameters.getDiskPath())) {
-            cdImagePath = cdPathWindowsToLinux(runVmParameters.getDiskPath());
-        }
 
         if (getVm() != null) {
             refreshBootParameters(runVmParameters);
@@ -309,31 +305,42 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         return getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS);
     }
 
-    /**
-     * Handles the cd attachment. Set the VM CDPath to the ISO Path stored in the database (default) Call
-     * GuestToolsVersionTreatment to override CDPath by guest tools if needed. If the CD symbol ('D') is contained in
-     * the Boot Sequence (at any place) set again the CDPath to the ISO Path that was stored in the database, and we
-     * assume that this CD is bootable. So , priorities are (from low to high) : 1)Default 2)Tools 3)Boot Sequence
-     */
     private void attachCd() {
-        Guid storagePoolId = getVm().getStoragePoolId();
-
         // if iso domain found
-        if (getIsoDomainListSyncronizer().findActiveISODomain(storagePoolId) != null) {
-            if (StringUtils.isEmpty(getVm().getCdPath())) {
-                getVm().setCdPath(getVm().getIsoPath());
-                guestToolsVersionTreatment();
-                if (getVm().getBootSequence() != null && getVm().getBootSequence().containsSubsequence(BootSequence.D)) {
-                    getVm().setCdPath(getVm().getIsoPath());
-                }
-                getVm().setCdPath(cdPathWindowsToLinux(getVm().getCdPath()));
-            }
-        } else if (!StringUtils.isEmpty(getVm().getIsoPath())) {
+        if (getIsoDomainListSyncronizer().findActiveISODomain(getVm().getStoragePoolId()) != null) {
+            getVm().setCdPath(cdPathWindowsToLinux(chooseCd()));
+        }
+        else if (!StringUtils.isEmpty(getVm().getIsoPath())) {
             getVm().setCdPath("");
             setSucceeded(false);
             throw new VdcBLLException(VdcBllErrors.NO_ACTIVE_ISO_DOMAIN_IN_DATA_CENTER);
         }
+    }
 
+    /**
+     * Returns the CD path in the following order (from high to low):
+     * (1) The path given in the parameters
+     * (2) The ISO path stored in the database if the boot sequence contains CD ROM
+     * (3) Guest agent tools iso
+     * (4) The ISO path stored in the database
+     *
+     * Note that in (2) we assume that the CD is bootable
+     */
+    private String chooseCd() {
+        if (!StringUtils.isEmpty(getParameters().getDiskPath())) {
+            return getParameters().getDiskPath();
+        }
+
+        if (getVm().getBootSequence() != null && getVm().getBootSequence().containsSubsequence(BootSequence.D)) {
+            return getVm().getIsoPath();
+        }
+
+        String guestToolPath = guestToolsVersionTreatment();
+        if (guestToolPath != null) {
+            return guestToolPath;
+        }
+
+        return getVm().getIsoPath();
     }
 
     protected IsoDomainListSyncronizer getIsoDomainListSyncronizer() {
@@ -596,7 +603,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         } else {
             handleMemoryAdjustments();
             VmHandler.updateDisksFromDb(getVm());
-            getVm().setCdPath(cdImagePath);
             getVm().setKvmEnable(getParameters().getKvmEnable());
             getVm().setRunAndPause(getParameters().getRunAndPause() == null ? getVm().isRunAndPause() : getParameters().getRunAndPause());
             getVm().setAcpiEnable(getParameters().getAcpiEnable());
@@ -675,13 +681,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
      * If vds version greater then vm's and vm not running with cd and there is appropriate RhevAgentTools image -
      * add it to vm as cd.
      */
-    private void guestToolsVersionTreatment() {
+    private String guestToolsVersionTreatment() {
         boolean attachCd = false;
         String selectedToolsVersion = "";
         String selectedToolsClusterVersion = "";
         Guid isoDomainId = getIsoDomainListSyncronizer().findActiveISODomain(getVm().getStoragePoolId());
-        if (OsRepositoryImpl.INSTANCE.isWindows(getVm().getVmOsId())
-                && null != isoDomainId && StringUtils.isEmpty(cdImagePath)) {
+        if (OsRepositoryImpl.INSTANCE.isWindows(getVm().getVmOsId()) && null != isoDomainId) {
 
             // get cluster version of the vm tools
             Version vmToolsClusterVersion = null;
@@ -743,8 +748,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     new IrsBaseVDSCommandParameters(getVm().getStoragePoolId())).getReturnValue();
             rhevToolsPath = isoDir + File.separator + rhevToolsPath;
 
-            getVm().setCdPath(cdPathWindowsToLinux(rhevToolsPath));
+            return rhevToolsPath;
         }
+        return null;
     }
 
     @Override
