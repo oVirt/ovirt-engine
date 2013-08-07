@@ -1475,43 +1475,66 @@ INNER JOIN network
 ON network.id = network_cluster.network_id
 AND network.name = vm_interface_view.network_name;
 
--- Permissions on Networks
--- The user has permissions on the Network directly
-CREATE OR REPLACE VIEW user_network_permissions_view_base (entity_id, granted_id)
+-- Permissions on VNIC Profiles
+-- The user has permissions on the Profile directly
+CREATE OR REPLACE VIEW user_vnic_profile_permissions_view_base (entity_id, granted_id)
 AS
 SELECT     object_id, ad_element_id
 FROM       internal_permissions_view
-WHERE      object_type_id = 20 AND role_type = 2
--- Or the user has permissions on the Network's Data-Center directly
+WHERE      object_type_id = 27 AND role_type = 2
+-- Or the user has permissions on the Network in which the profile belongs to
 UNION ALL
-SELECT     network.id, ad_element_id
-FROM       network
-INNER JOIN internal_permissions_view ON object_id = storage_pool_id
-WHERE      object_type_id = 14  AND allows_viewing_children AND role_type = 2
+SELECT     vnic_profiles.id, ad_element_id
+FROM       vnic_profiles
+INNER JOIN internal_permissions_view ON object_id = network_id
+WHERE      object_type_id = 20 AND allows_viewing_children AND role_type = 2
+-- Or the user has permissions on the Profile-Network's Data-Center directly
+UNION ALL
+SELECT     vnic_profiles.id, ad_element_id
+FROM       vnic_profiles
+INNER JOIN network ON network.id = network_id
+INNER JOIN internal_permissions_view ON object_id = network.storage_pool_id
+WHERE      object_type_id = 14 AND role_type = 2 AND allows_viewing_children
 -- Or the user has permissions on the Cluster the networks are assigned to
 UNION ALL
-SELECT     network_id, ad_element_id
-FROM       network_cluster
+SELECT     vnic_profiles.id, ad_element_id
+FROM       vnic_profiles
+INNER JOIN network_cluster ON network_cluster.network_id = vnic_profiles.network_id
 INNER JOIN internal_permissions_view ON object_id = network_cluster.cluster_id
-WHERE      object_type_id = 9 AND allows_viewing_children AND role_type = 2
--- Or the user has permissions on the VM with the network attached
+WHERE      object_type_id = 9 AND role_type = 2 AND allows_viewing_children
+--Or the user has permissions on the VM with this profile
 UNION ALL
-SELECT     network_id, ad_element_id
-FROM       vm_interface_ext_view
-INNER JOIN internal_permissions_view ON object_id = vm_interface_ext_view.vm_guid
+SELECT DISTINCT vnic_profile_id, ad_element_id
+FROM       vm_interface
+INNER JOIN internal_permissions_view ON object_id = vm_guid
 WHERE object_type_id = 2 AND role_type = 2
--- Or the user has permissions on the Template with the network attached
+-- Or the user has permissions on the Template with the profile
 UNION ALL
-SELECT     network_id, ad_element_id
-FROM       vm_interface_ext_view
-INNER JOIN internal_permissions_view ON object_id = vm_interface_ext_view.vmt_guid
+SELECT DISTINCT    vnic_profile_id, ad_element_id
+FROM       vm_interface
+INNER JOIN internal_permissions_view ON object_id = vmt_guid
 WHERE object_type_id = 4 AND role_type = 2
 -- Or the user has permissions on system
 UNION ALL
-SELECT     network_id, ad_element_id
+SELECT     vnic_profiles.id, ad_element_id
 FROM       internal_permissions_view
-CROSS JOIN vm_interface_ext_view
+CROSS JOIN vnic_profiles
 WHERE      object_type_id = 1 AND allows_viewing_children AND role_type = 2;
+
+CREATE OR REPLACE VIEW user_vnic_profile_permissions_view (entity_id, user_id)
+AS
+SELECT       DISTINCT entity_id, user_id
+FROM         user_vnic_profile_permissions_view_base
+NATURAL JOIN user_flat_groups;
+
+-- Permissions on Networks
+CREATE OR REPLACE VIEW user_network_permissions_view_base (entity_id, granted_id)
+AS
+-- Or the user has permissions on one of the Network's VNIC Profiles
+SELECT     network.id, user_id
+FROM       network
+INNER JOIN vnic_profiles ON network_id = network.id
+INNER JOIN user_vnic_profile_permissions_view ON entity_id = vnic_profiles.id;
 
 CREATE OR REPLACE VIEW user_network_permissions_view (entity_id, user_id)
 AS

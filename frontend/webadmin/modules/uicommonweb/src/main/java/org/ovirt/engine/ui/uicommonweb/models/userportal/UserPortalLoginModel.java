@@ -317,9 +317,9 @@ public class UserPortalLoginModel extends LoginModel
                             // ALL Everyone/UserPoralBasedVM permissions and
                             // ALL Everyone/QuotaConsumer persmissions
                             // ALL Everyone/NetworkUser persmissions
-                            if (isEveyoneUserPortalBasedVmPermission(permission)
+                            if (isEveryoneUserPortalBasedVmPermission(permission)
                                     || isEveryoneQuotaConsumerPermission(permission)
-                                    || isEveyoneNetworUserPermission(permission)) {
+                                    || isEveryoneVnicProfileUserPermission(permission)) {
                                 continue;
                             }
                             if (!roleIdList.contains(permission.getrole_id()))
@@ -341,15 +341,16 @@ public class UserPortalLoginModel extends LoginModel
 
                     }
 
-                    private boolean isEveyoneNetworUserPermission(permissions permission) {
+                    private boolean isEveryoneVnicProfileUserPermission(permissions permission) {
                         return permission.getad_element_id().equals(ApplicationGuids.everyone.asGuid()) &&
-                                permission.getrole_id().equals(ApplicationGuids.networkUser.asGuid());
+                                permission.getrole_id().equals(ApplicationGuids.vnicProfileUser.asGuid());
                     }
 
-                    private boolean isEveyoneUserPortalBasedVmPermission(permissions permission) {
+                    private boolean isEveryoneUserPortalBasedVmPermission(permissions permission) {
                         return permission.getad_element_id().equals(ApplicationGuids.everyone.asGuid())
                                 &&
-                                permission.getrole_id().equals(ApplicationGuids.userTemplateBasedVM.asGuid());
+                                permission.getrole_id()
+                                        .equals(ApplicationGuids.userTemplateBasedVM.asGuid());
                     }
 
                     private boolean isEveryoneQuotaConsumerPermission(permissions permission) {

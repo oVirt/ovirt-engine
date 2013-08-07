@@ -1013,3 +1013,99 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+----------------------------------------------------------------------
+--  Vnic Profile
+----------------------------------------------------------------------
+
+Create or replace FUNCTION GetVnicProfileByVnicProfileId(v_id UUID)
+RETURNS SETOF vnic_profiles
+   AS $procedure$
+BEGIN
+
+   RETURN QUERY SELECT *
+   FROM vnic_profiles
+   WHERE id = v_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION InsertVnicProfile(v_id UUID,
+  v_name VARCHAR(50),
+  v_network_id UUID,
+  v_port_mirroring BOOLEAN,
+  v_custom_properties TEXT,
+  v_description TEXT)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+
+   INSERT INTO vnic_profiles(id, name, network_id, port_mirroring, custom_properties, description)
+       VALUES(v_id, v_name, v_network_id, v_port_mirroring, v_custom_properties, v_description);
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION UpdateVnicProfile(v_id UUID,
+  v_name VARCHAR(50),
+  v_network_id UUID,
+  v_port_mirroring BOOLEAN,
+  v_custom_properties TEXT,
+  v_description TEXT)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+
+   UPDATE vnic_profiles
+   SET id = v_id, name = v_name, network_id = v_network_id,
+   port_mirroring = v_port_mirroring, custom_properties = v_custom_properties,
+   description = v_description,_update_date = LOCALTIMESTAMP
+   WHERE id = v_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION DeleteVnicProfile(v_id UUID)
+RETURNS VOID
+   AS $procedure$
+   DECLARE
+   v_val UUID;
+BEGIN
+
+    DELETE FROM vnic_profiles
+    WHERE id = v_id;
+
+    -- Delete the vnic profiles permissions
+    DELETE FROM permissions WHERE object_id = v_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetAllFromVnicProfiles()
+RETURNS SETOF vnic_profiles
+   AS $procedure$
+BEGIN
+
+   RETURN QUERY SELECT *
+   FROM vnic_profiles;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetVnicProfilesByNetworkId(v_network_id UUID)
+RETURNS SETOF vnic_profiles
+   AS $procedure$
+BEGIN
+
+   RETURN QUERY SELECT *
+   FROM vnic_profiles
+   WHERE network_id = v_network_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+

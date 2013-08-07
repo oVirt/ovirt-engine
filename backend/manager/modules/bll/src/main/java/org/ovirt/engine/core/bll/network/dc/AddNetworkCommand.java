@@ -26,7 +26,7 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     protected void executeCommand() {
         getNetwork().setId(Guid.newGuid());
         getNetworkDAO().save(getNetwork());
-        NetworkHelper.addPermissions(getCurrentUser().getUserId(), getNetwork().getId(), getParameters().isPublicUse());
+        NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getUserId(), getNetwork().getId());
         getReturnValue().setActionReturnValue(getNetwork().getId());
         setSucceeded(true);
     }

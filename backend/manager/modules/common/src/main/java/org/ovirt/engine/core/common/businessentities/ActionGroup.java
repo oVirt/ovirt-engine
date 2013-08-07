@@ -107,6 +107,11 @@ public enum ActionGroup {
     // Network
     PORT_MIRRORING(1200, RoleType.ADMIN, VdcObjectType.Network, true, ApplicationMode.VirtOnly),
 
+    // VNIC Profiles
+    CONFIGURE_NETWORK_VNIC_PROFILE(1203, RoleType.ADMIN, VdcObjectType.VnicProfile, true, ApplicationMode.VirtOnly),
+    CREATE_NETWORK_VNIC_PROFILE(1204, RoleType.ADMIN, VdcObjectType.VnicProfile, true, ApplicationMode.VirtOnly),
+    DELETE_NETWORK_VNIC_PROFILE(1205, RoleType.ADMIN, VdcObjectType.VnicProfile, true, ApplicationMode.VirtOnly),
+
     // Login action group
     LOGIN(1300, RoleType.USER, VdcObjectType.Bottom, false),
 

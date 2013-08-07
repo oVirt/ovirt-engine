@@ -891,6 +891,37 @@
         </row>
     </table>
 
+    <table name="vnic_profiles">
+        <column>id</column>
+        <column>name</column>
+        <column>network_id</column>
+        <column>port_mirroring</column>
+        <column>custom_properties</column>
+        <column>description</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
+            <value>engine_profile</value>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
+            <value>false</value>
+            <value>{ "prop1" : "true", "prop2" : "123456" }</value>
+            <value>vnic profile description</value>
+            <value>2013-07-02 08:38:36</value>
+            <value>2013-07-02 08:38:36</value>
+        </row>
+        <row>
+            <value>a667da39-27b0-47ec-a5fa-d4293a62b222</value>
+            <value>engine_profile_pm</value>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
+            <value>true</value>
+            <value>{}</value>
+            <null/>
+            <value>2013-07-02 08:38:36</value>
+            <value>2013-07-02 08:38:36</value>
+        </row>
+    </table>
+
     <table name="network_cluster">
         <column>network_id</column>
         <column>cluster_id</column>

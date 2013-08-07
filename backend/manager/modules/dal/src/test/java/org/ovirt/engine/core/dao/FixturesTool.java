@@ -357,6 +357,25 @@ public class FixturesTool {
      */
     public static final Guid VDS_NETWORK_INTERFACE = new Guid("ba31682e-6ae7-4f9d-8c6f-04c93acca9db");
 
+    /**
+     * Predefined VnicProfile with the following properties :
+     * <ul>
+     * <li>name: engine_profile</li>
+     * <li>network_id: 58d5c1c6-cb15-4832-b2a4-023770607188</li>
+     * <li>port_mirroring: false</li>
+     * </ul>
+     */
+    public static final Guid VM_NETWORK_INTERFACE_PROFILE = new Guid("fd81f1e1-785b-4579-ab75-1419ebb87052");
+
+    /**
+     * Predefined VnicProfile with the following properties :
+     * <ul>
+     * <li>name: engine_profile_pm</li>
+     * <li>network_id: 58d5c1c6-cb15-4832-b2a4-023770607188</li>
+     * <li>port_mirroring: true</li>
+     * </ul>
+     */
+    public static final Guid VM_NETWORK_INTERFACE_PM_PROFILE = new Guid("a667da39-27b0-47ec-a5fa-d4293a62b222");
 
     public static final String MAC_ADDRESS = "00:1a:4a:16:87:db";
 

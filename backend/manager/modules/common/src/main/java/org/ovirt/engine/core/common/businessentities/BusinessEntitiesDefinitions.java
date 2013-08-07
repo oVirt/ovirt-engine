@@ -35,6 +35,7 @@ public final class BusinessEntitiesDefinitions {
 
     // Network Interface
     public static final int NETWORK_NAME_SIZE = 50; // vm_interface
+    public static final int VNIC_PROFILE_NAME_SIZE = 50;
     public static final int NETWORK_MIN_LEGAL_PORT = 1;
     public static final int NETWORK_MAX_LEGAL_PORT = 65535;
     public static final int HOST_NIC_NAME_LENGTH = 15;

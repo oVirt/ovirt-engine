@@ -42,6 +42,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -577,6 +578,10 @@ public class AuditLogableBase extends TimeoutBase {
 
     protected VmStatisticsDAO getVmStatisticsDAO() {
         return getDbFacade().getVmStatisticsDao();
+    }
+
+    protected VnicProfileDao getVnicProfileDao() {
+        return getDbFacade().getVnicProfileDao();
     }
 
     public VdsGroupDAO getVdsGroupDAO() {

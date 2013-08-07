@@ -116,7 +116,8 @@ $function$
 		Quota = 17,
 		GlusterVolume = 18,
         Disk = 19,
-        Network = 20
+        Network = 20,
+        VNICProfile = 27
 */
 DECLARE
 	v_entity_type int4 := v_object_type;
@@ -127,6 +128,7 @@ DECLARE
 	v_storage_id uuid;
     v_vm_id uuid;
     v_storage_pool_id uuid;
+    v_profile_network_id uuid;
 
 BEGIN
 
@@ -271,6 +273,26 @@ BEGIN
             SELECT system_root_id AS id
             UNION
             SELECT v_storage_pool_id AS id
+            UNION
+            SELECT v_entity_id AS id;
+
+	WHEN v_entity_type = 27 THEN -- VNICProfile
+
+        SELECT INTO v_profile_network_id
+                    vnic_profiles.network_id
+        FROM vnic_profiles
+        WHERE vnic_profiles.id = v_entity_id;
+        SELECT INTO v_storage_pool_id
+                    network.storage_pool_id
+        FROM network
+        WHERE network.id = v_profile_network_id;
+
+        RETURN QUERY
+            SELECT system_root_id AS id
+            UNION
+            SELECT v_storage_pool_id AS id
+            UNION
+            SELECT v_profile_network_id AS id
             UNION
             SELECT v_entity_id AS id;
 
@@ -453,7 +475,8 @@ $function$
         Quota = 17,
         GlusterVolume = 18,
         Disk = 19,
-        Network = 20
+        Network = 20,
+        VNICProfile = 27
 */
 DECLARE
     v_entity_type int4 := v_object_type;
@@ -496,6 +519,8 @@ BEGIN
         result := ( SELECT concat(gluster_command,'-',stage,'-',name) FROM gluster_hooks where id = v_entity_id );
     WHEN v_entity_type = 25 THEN
         result := ( SELECT service_name FROM gluster_services where id = v_entity_id );
+    WHEN v_entity_type = 27 THEN
+        result := ( SELECT name FROM vnic_profiles where id = v_entity_id );
     ELSE
         result := 'Unknown type ' ||  v_entity_type;
     END CASE;

@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -60,7 +61,10 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         net.setDataCenterId(getStoragePool().getId());
         net.setVmNetwork(true);
         getNetworkDAO().save(net);
-        NetworkHelper.addPermissions(getCurrentUser().getUserId(), net.getId(), true);
+        NetworkHelper.addPermissionsOnNetwork(getCurrentUser().getUserId(), net.getId());
+        VnicProfile profile = NetworkHelper.createVnicProfile(net);
+        getVnicProfileDao().save(profile);
+        NetworkHelper.addPermissionsOnVnicProfile(getCurrentUser().getUserId(), profile.getId(), true);
     }
 
     @Override

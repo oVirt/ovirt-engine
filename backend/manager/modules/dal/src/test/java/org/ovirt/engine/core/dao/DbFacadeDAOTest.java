@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.config.Config;
@@ -311,4 +312,13 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         String name = network.getName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(NETWORK_ID, VdcObjectType.Network)));
     }
+
+    @Test
+    public void testGetEntityNameByIdAndTypeForVNICProfile() {
+        VnicProfile vnicProfile = dbFacade.getVnicProfileDao().get(FixturesTool.VM_NETWORK_INTERFACE_PROFILE);
+        assertNotNull(vnicProfile);
+        String name = vnicProfile.getName();
+        assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(FixturesTool.VM_NETWORK_INTERFACE_PROFILE, VdcObjectType.VnicProfile)));
+    }
+
 }

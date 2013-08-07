@@ -98,6 +98,10 @@ public enum PermitType {
 
     // Vm Interface action groups
     PORT_MIRRORING,
+    CONFIGURE_NETWORK_VNIC_PROFILE,
+    CREATE_NETWORK_VNIC_PROFILE,
+    DELETE_NETWORK_VNIC_PROFILE,
+
 
     // Login action group
     LOGIN,
