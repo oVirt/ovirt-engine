@@ -269,8 +269,8 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
                             "name ASC"));
                     put(SearchObjects.VM_NETWORK_INTERFACE_OBJ_NAME, new EntitySearchInfo(null,
                             new NetworkInterfaceConditionFieldAutoCompleter(),
-                            "vm_interface",
-                            "vm_interface",
+                            "vm_interface_view",
+                            "vm_interface_view",
                             "name",
                             "vm_id ASC"));
                     put(SearchObjects.NETWORK_CLUSTER_OBJ_NAME,
