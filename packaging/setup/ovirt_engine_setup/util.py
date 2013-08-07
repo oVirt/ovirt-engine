@@ -67,4 +67,15 @@ def parsePort(port):
     return port
 
 
+@util.export
+def escape(s, chars):
+    ret = ''
+    for c in s:
+        if c in chars:
+            ret += '\\' + c
+        else:
+            ret += c
+    return ret
+
+
 # vim: expandtab tabstop=4 shiftwidth=4

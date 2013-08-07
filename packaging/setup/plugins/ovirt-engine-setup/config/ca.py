@@ -19,7 +19,6 @@
 """CA plugin."""
 
 
-import re
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -31,6 +30,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import util as osetuputil
 
 
 @util.export
@@ -100,15 +100,17 @@ class Plugin(plugin.PluginBase):
                         osetupcons.FileLocations.
                         OVIRT_ENGINE_PKI_ENGINE_TRUST_STORE
                     ),
-                    trust_store_password=re.escape(
-                        osetupcons.Const.PKI_PASSWORD
+                    trust_store_password=osetuputil.escape(
+                        osetupcons.Const.PKI_PASSWORD,
+                        '"\\$',
                     ),
                     engine_store=(
                         osetupcons.FileLocations.
                         OVIRT_ENGINE_PKI_ENGINE_STORE
                     ),
-                    engine_store_password=re.escape(
-                        osetupcons.Const.PKI_PASSWORD
+                    engine_store_password=osetuputil.escape(
+                        osetupcons.Const.PKI_PASSWORD,
+                        '"\\$',
                     ),
                     engine_store_alias='1',
                 ),

@@ -30,6 +30,7 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import util as osetuputil
 
 
 @util.export
@@ -63,7 +64,10 @@ class Plugin(plugin.PluginBase):
                     port=self.environment[osetupcons.DBEnv.PORT],
                     database=self.environment[osetupcons.DBEnv.DATABASE],
                     user=self.environment[osetupcons.DBEnv.USER],
-                    password=self.environment[osetupcons.DBEnv.PASSWORD],
+                    password=osetuputil.escape(
+                        self.environment[osetupcons.DBEnv.PASSWORD],
+                        ':\\',
+                    ),
                 ),
             )
 
