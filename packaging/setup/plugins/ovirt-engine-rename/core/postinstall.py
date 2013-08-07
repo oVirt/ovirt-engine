@@ -49,7 +49,8 @@ class Plugin(plugin.PluginBase):
     def _setup(self):
         self.environment[
             osetupcons.RenameEnv.FILES_TO_BE_MODIFIED
-        ].append(osetupcons.FileLocations.
+        ].append(
+            osetupcons.FileLocations.
             OVIRT_SETUP_POST_INSTALL_CONFIG
         )
 

@@ -58,12 +58,12 @@ class Plugin(plugin.PluginBase):
         return os.path.join(
             entry['dir'],
             '10-engine-setup.conf'
-            ).format(
-                engine_sysconf=(
-                    osetupcons.FileLocations.
-                    OVIRT_ENGINE_SYSCONFDIR
-                ),
-            )
+        ).format(
+            engine_sysconf=(
+                osetupcons.FileLocations.
+                OVIRT_ENGINE_SYSCONFDIR
+            ),
+        )
 
     def _content_with_renamed_fqdn(self, config):
         with open(config, 'r') as f:

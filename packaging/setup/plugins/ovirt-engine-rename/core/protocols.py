@@ -51,7 +51,8 @@ class Plugin(plugin.PluginBase):
     def _setup(self):
         self.environment[
             osetupcons.RenameEnv.FILES_TO_BE_MODIFIED
-        ].append(osetupcons.FileLocations.
+        ].append(
+            osetupcons.FileLocations.
             OVIRT_ENGINE_SERVICE_CONFIG_PROTOCOLS
         )
 

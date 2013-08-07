@@ -100,10 +100,12 @@ class Plugin(plugin.PluginBase):
         )
     )
     def _late_setup(self):
-        apache_ca_fp = self._cert_fingerprint(osetupcons.FileLocations.
+        apache_ca_fp = self._cert_fingerprint(
+            osetupcons.FileLocations.
             OVIRT_ENGINE_PKI_APACHE_CA_CERT
         )
-        ca_fp = self._cert_fingerprint(osetupcons.FileLocations.
+        ca_fp = self._cert_fingerprint(
+            osetupcons.FileLocations.
             OVIRT_ENGINE_PKI_ENGINE_CA_CERT
         )
         if (apache_ca_fp != ca_fp):
