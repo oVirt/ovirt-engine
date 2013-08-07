@@ -1983,8 +1983,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 .getEntity());
         getcurrentVm().setVncKeyboardLayout((String) model.getVncKeyboardLayout().getSelectedItem());
 
-        if (model.getCpuSharesAmount().getIsAvailable()) {
-            getcurrentVm().setCpuShares(Integer.parseInt(model.getCpuSharesAmount().getEntity().toString()));
+        if (model.getCpuSharesAmount().getIsAvailable()
+                && !model.getCpuSharesAmount().getEntity().toString().equals("")) {  // $NON-NLS-1$
+            try {
+                getcurrentVm().setCpuShares(Integer.parseInt(model.getCpuSharesAmount().getEntity().toString()));
+            } catch (NumberFormatException ignored) {}
         }
 
         if ((Boolean) model.getIsAutoAssign().getEntity()) {
