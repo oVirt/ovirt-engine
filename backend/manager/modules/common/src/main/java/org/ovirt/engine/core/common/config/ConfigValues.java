@@ -1457,9 +1457,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("100")
     ExternalSchedulerConnectionTimeout(532),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("120000")
+    ExternalSchedulerResponseTimeout(533),
+
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("false")
-    ExternalSchedulerEnabled(533),
+    ExternalSchedulerEnabled(534),
 
     Invalid(65535);
 

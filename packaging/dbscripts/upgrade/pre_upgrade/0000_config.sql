@@ -591,6 +591,7 @@ select fn_db_add_config_value('AverageToBurstRatio','0.2','general');
 select fn_db_add_config_value('ExternalSchedulerServiceURL','http://localhost:18781/','general');
 select fn_db_add_config_value('ExternalSchedulerConnectionTimeout','100','general');
 select fn_db_add_config_value('ExternalSchedulerEnabled','false','general');
+select fn_db_add_config_value('ExternalSchedulerResponseTimeout','120000','general');
 
 ------------------------------------------------------------------------------------
 --                  Update with override section
