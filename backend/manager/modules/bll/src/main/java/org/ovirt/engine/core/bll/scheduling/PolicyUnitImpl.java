@@ -6,14 +6,17 @@ import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationDomainPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.NonePolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.NoneBalancePolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.NoneWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PinToHostPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingBalancePolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingWeightPolicyUnit;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -44,11 +47,26 @@ public class PolicyUnitImpl extends PolicyUnit {
         case "Network":
             return new NetworkPolicyUnit(policyUnit);
         case "None":
-            return new NonePolicyUnit(policyUnit);
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+                return new NoneWeightPolicyUnit(policyUnit);
+            }
+            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
+                return new NoneBalancePolicyUnit(policyUnit);
+            }
         case "PowerSaving":
-            return new PowerSavingPolicyUnit(policyUnit);
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+                return new PowerSavingWeightPolicyUnit(policyUnit);
+            }
+            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
+                return new PowerSavingBalancePolicyUnit(policyUnit);
+            }
         case "EvenDistribution":
-            return new EvenDistributionPolicyUnit(policyUnit);
+            if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
+                return new EvenDistributionWeightPolicyUnit(policyUnit);
+            }
+            else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
+                return new EvenDistributionBalancePolicyUnit(policyUnit);
+            }
         default:
             throw new NotImplementedException("policyUnit: " + policyUnit.getName());
         }
