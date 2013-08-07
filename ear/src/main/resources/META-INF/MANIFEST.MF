@@ -17,4 +17,5 @@ Dependencies: asm.asm,
  org.ovirt.engine.core.dependencies,
  org.ovirt.engine.core.searchbackend,
  org.ovirt.engine.core.utils,
- com.woorea.openstack.sdk services
+ com.woorea.openstack.sdk services,
+ org.yaml.snakeyaml
