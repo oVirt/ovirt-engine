@@ -34,6 +34,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
         config = new XmlRpcClientConfigImpl();
         config.setEnabledForExtensions(true);
         config.setConnectionTimeout((Integer) Config.GetValue(ConfigValues.ExternalSchedulerConnectionTimeout));
+        config.setReplyTimeout((Integer) Config.GetValue(ConfigValues.ExternalSchedulerResponseTimeout));
         try {
             config.setServerURL(new URL(extSchedUrl));
         } catch (MalformedURLException e) {
