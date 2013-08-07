@@ -840,7 +840,7 @@ class ConfigEnv(object):
     @osetupattrs(
         answerfile=True,
         summary=True,
-        description=_('Host fqdn'),
+        description=_('Host FQDN'),
         postinstallfile=True,
     )
     def FQDN(self):
