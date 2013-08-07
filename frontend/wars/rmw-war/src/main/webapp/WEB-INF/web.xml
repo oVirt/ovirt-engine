@@ -21,8 +21,8 @@
 			<servlet-class>org.ovirt.engine.core.status.HealthStatus</servlet-class>
 		</servlet>
 		<servlet>
-			<servlet-name>RedirectServlet</servlet-name>
-			<servlet-class>org.ovirt.engine.core.redirect.RedirectServlet</servlet-class>
+			<servlet-name>ReportsRedirectServlet</servlet-name>
+			<servlet-class>org.ovirt.engine.core.redirect.ReportsRedirectServlet</servlet-class>
 		</servlet>
 		<servlet>
 			<servlet-name>ValidateSession</servlet-name>
@@ -48,8 +48,8 @@
 	      <url-pattern>/HealthStatus.aspx</url-pattern>
 	    </servlet-mapping>
 	    <servlet-mapping>
-	      <servlet-name>RedirectServlet</servlet-name>
-	      <url-pattern>/RedirectServlet</url-pattern>
+	      <servlet-name>ReportsRedirectServlet</servlet-name>
+	      <url-pattern>/ReportsRedirectServlet</url-pattern>
 	    </servlet-mapping>
 	    <servlet-mapping>
 	      <servlet-name>ValidateSession</servlet-name>
