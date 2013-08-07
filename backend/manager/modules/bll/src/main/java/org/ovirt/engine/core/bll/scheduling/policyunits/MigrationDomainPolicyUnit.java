@@ -18,8 +18,7 @@ public class MigrationDomainPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(List<VDS> hosts, Map<String, Object> parameters, List<String> messages) {
-        VM vm = (VM) parameters.get(PolicyUnitImpl.VM);
+    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, List<String> messages) {
         List<VDS> toRemoveHostList = new ArrayList<VDS>();
         for (VDS host : hosts) {
             if ((!host.getVdsGroupId().equals(vm.getVdsGroupId())) || (host.getStatus() != VDSStatus.Up)) {

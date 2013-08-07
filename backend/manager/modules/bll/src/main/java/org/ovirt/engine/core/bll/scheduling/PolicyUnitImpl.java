@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.PinToHostPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.PowerSavingPolicyUnit;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -24,8 +25,6 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class PolicyUnitImpl extends PolicyUnit {
-    public static final String VM = "vm";
-
     public static PolicyUnitImpl getPolicyUnitImpl(PolicyUnit policyUnit) {
         switch (policyUnit.getName()) {
         case "Migration":
@@ -59,12 +58,12 @@ public class PolicyUnitImpl extends PolicyUnit {
         this.policyUnit = policyUnit;
     }
 
-    public List<VDS> filter(List<VDS> hosts, Map<String, Object> parameters, List<String> messages) {
+    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, List<String> messages) {
         log.error("policy unit:" + getName() + "filter is not implemented");
         return hosts;
     }
 
-    public List<Pair<Guid, Integer>> score(List<VDS> hosts, Map<String, Object> parameters) {
+    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
         log.error("policy unit:" + getPolicyUnit().getName() + "function is not implemented");
         List<Pair<Guid, Integer>> pairs = new ArrayList<Pair<Guid, Integer>>();
         for (VDS vds : hosts) {

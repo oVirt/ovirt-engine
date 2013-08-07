@@ -15,8 +15,7 @@ public class MigrationPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(List<VDS> hosts, Map<String, Object> parameters, List<String> messages) {
-        VM vm = (VM) parameters.get(PolicyUnitImpl.VM);
+    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, List<String> messages) {
         if (vm.getRunOnVds() != null) {
             for (VDS host : hosts) {
                 if (host.getId().equals(vm.getRunOnVds())) {

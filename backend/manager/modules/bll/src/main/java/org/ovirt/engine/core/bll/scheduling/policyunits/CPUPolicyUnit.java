@@ -18,8 +18,7 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
     }
 
     @Override
-    public List<VDS> filter(List<VDS> hosts, Map<String, Object> parameters, List<String> messages) {
-        VM vm = (VM) parameters.get(PolicyUnitImpl.VM);
+    public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, List<String> messages) {
         List<VDS> list = new ArrayList<VDS>();
         for (VDS vds : hosts) {
             Integer cores = SlaValidator.getInstance().getEffectiveCpuCores(vds);
