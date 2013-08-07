@@ -944,8 +944,8 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Name")
     String nameNetworkIntefacePopup();
 
-    @DefaultStringValue("Network")
-    String networkNetworkIntefacePopup();
+    @DefaultStringValue("Profile")
+    String profileNetworkIntefacePopup();
 
     @DefaultStringValue("Type")
     String typeNetworkIntefacePopup();

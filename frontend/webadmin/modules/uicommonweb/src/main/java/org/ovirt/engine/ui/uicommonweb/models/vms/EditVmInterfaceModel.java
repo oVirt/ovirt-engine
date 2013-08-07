@@ -33,7 +33,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
             ArrayList<VmNetworkInterface> vmNicList,
             VmNetworkInterface nic,
             EntityModel sourceModel) {
-        super(vmStatic, clusterCompatibilityVersion, vmNicList, nic, sourceModel);
+        super(vmStatic, vm.getStoragePoolId(), clusterCompatibilityVersion, vmNicList, nic, sourceModel);
         this.vm = vm;
     }
 
@@ -62,7 +62,7 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
         getEnableMac().setIsChangable(!plug);
         getMAC().setIsChangable((Boolean) getEnableMac().getEntity() && !plug);
 
-        updateNetworkChangability();
+        updateProfileChangability();
         updateLinkChangability();
     }
 
@@ -85,9 +85,9 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
     }
 
     @Override
-    protected void updateNetworkChangability() {
-        super.updateNetworkChangability();
-        if (!getNetwork().getIsChangable()) {
+    protected void updateProfileChangability() {
+        super.updateProfileChangability();
+        if (!getProfile().getIsChangable()) {
             return;
         }
 
@@ -95,19 +95,19 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
 
         if (isVmUp() && isPlugged) {
             if (!hotUpdateSupported) {
-                getNetwork().setChangeProhibitionReason(ConstantsManager.getInstance()
+                getProfile().setChangeProhibitionReason(ConstantsManager.getInstance()
                         .getMessages()
-                        .hotNetworkUpdateNotSupported(getClusterCompatibilityVersion().toString()));
+                        .hotProfileUpdateNotSupported(getClusterCompatibilityVersion().toString()));
             } else if (selectedNetworkExternal()) {
-                getNetwork().setChangeProhibitionReason(ConstantsManager.getInstance()
+                getProfile().setChangeProhibitionReason(ConstantsManager.getInstance()
                         .getConstants()
                         .hotNetworkUpdateNotSupportedExternalNetworks());
             } else {
                 return;
             }
 
-            getNetwork().setIsChangable(false);
-            getNetworkBehavior().initSelectedNetwork(getNetwork(), getNic());
+            getProfile().setIsChangable(false);
+            getProfileBehavior().initSelectedProfile(getProfile(), getNic());
         }
     }
 

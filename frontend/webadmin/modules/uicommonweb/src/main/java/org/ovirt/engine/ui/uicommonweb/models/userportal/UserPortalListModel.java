@@ -72,7 +72,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmNetworkCreatingManager;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -995,9 +995,9 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
     public void postVmNameUniqueCheck(UserPortalListModel userPortalListModel)
     {
-        final VmNetworkCreatingManager defaultNetworkCreatingManager = new VmNetworkCreatingManager(new VmNetworkCreatingManager.PostNetworkCreatedCallback() {
+        final VmInterfaceCreatingManager defaultNetworkCreatingManager = new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
             @Override
-            public void networkCreated(Guid vmId) {
+            public void vnicCreated(Guid vmId) {
                 if (getWindow() != null) {
                     getWindow().stopProgress();
                 }

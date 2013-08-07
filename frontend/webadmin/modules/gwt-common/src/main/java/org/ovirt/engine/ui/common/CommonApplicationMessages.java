@@ -4,6 +4,7 @@ import com.google.gwt.i18n.client.Messages.DefaultMessage;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
 import com.google.gwt.i18n.client.Messages;
+import com.google.gwt.safehtml.shared.SafeHtml;
 
 public interface CommonApplicationMessages extends Messages {
 
@@ -105,9 +106,15 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("default: {0}")
     String defaultTimeZoneCaption(String currentDefault);
 
-    @DefaultMessage("VM has {0} Nics. Assign them to the Cluster''s Logical network(s).")
-    String assignNicsToNetworksPlural(int numOfNics);
+    @DefaultMessage("VM has {0} Nics. Assign them to Profiles.")
+    String assignNicsToProfilesPlural(int numOfNics);
 
-    @DefaultMessage("VM has 1 Nic. Assign it to the Cluster''s Logical network(s).")
-    String assignNicsToNetworksSingular();
+    @DefaultMessage("VM has 1 Nic. Assign it to a Profile.")
+    String assignNicsToProfilesSingular();
+
+    @DefaultMessage("{0} ({1})")
+    SafeHtml profileAndNetwork(String profileName, String networkName);
+
+    @DefaultMessage("{0}/{1}")
+    SafeHtml profileAndNetworkSelected(String profileName, String networkName);
 }

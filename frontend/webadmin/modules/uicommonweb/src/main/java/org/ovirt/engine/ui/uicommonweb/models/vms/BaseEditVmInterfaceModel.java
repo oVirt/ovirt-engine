@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -22,11 +23,12 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
     VmNetworkInterface nic;
 
     protected BaseEditVmInterfaceModel(VmBase vm,
+            Guid dcId,
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             VmNetworkInterface nic,
             EntityModel sourceModel) {
-        super(vm, clusterCompatibilityVersion, vmNicList, sourceModel, new EditNetworkBehavior());
+        super(vm, dcId, clusterCompatibilityVersion, vmNicList, sourceModel, new EditProfileBehavior());
         this.nic = nic;
         setTitle(ConstantsManager.getInstance().getConstants().editNetworkInterfaceTitle());
         setHashName("edit_network_interface_vms"); //$NON-NLS-1$
@@ -58,7 +60,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
         initLinked();
 
-        initNetworks();
+        initProfiles();
 
         // Plug should be the last one updated, cause it controls the changeability of the other editor
         getPlugged().setEntity(getNic().isPlugged());

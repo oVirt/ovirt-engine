@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -9,7 +10,9 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -37,7 +40,7 @@ public abstract class VmInterfaceModel extends Model
     protected static String ENGINE_NETWORK_NAME;
 
     private EntityModel privateName;
-    private ListModel privateNetwork;
+    private ListModel privateProfile;
     private EntityModel linked;
     private EntityModel linked_IsSelected;
     private EntityModel unlinked_IsSelected;
@@ -58,15 +61,19 @@ public abstract class VmInterfaceModel extends Model
     private final EntityModel sourceModel;
     private final Version clusterCompatibilityVersion;
 
-    private NetworkBehavior networkBehavior;
+    private ProfileBehavior profileBehavior;
+
+    private Guid dcId;
 
     protected VmInterfaceModel(VmBase vm,
+            Guid dcId,
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             EntityModel sourceModel,
-            NetworkBehavior networkBehavior)
+            ProfileBehavior profileBehavior)
     {
-        this.networkBehavior = networkBehavior;
+        this.dcId = dcId;
+        this.profileBehavior = profileBehavior;
         // get management network name
         ENGINE_NETWORK_NAME =
                 (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
@@ -85,7 +92,7 @@ public abstract class VmInterfaceModel extends Model
                         clusterCompatibilityVersion.toString());
 
         setName(new EntityModel());
-        setNetwork(new ListModel() {
+        setProfile(new ListModel() {
             @Override
             public void setSelectedItem(Object value) {
                 super.setSelectedItem(value);
@@ -153,14 +160,14 @@ public abstract class VmInterfaceModel extends Model
         privateName = value;
     }
 
-    public ListModel getNetwork()
+    public ListModel getProfile()
     {
-        return privateNetwork;
+        return privateProfile;
     }
 
-    private void setNetwork(ListModel value)
+    private void setProfile(ListModel value)
     {
-        privateNetwork = value;
+        privateProfile = value;
     }
 
     public EntityModel getLinked()
@@ -353,7 +360,7 @@ public abstract class VmInterfaceModel extends Model
             getMAC().validateEntity(new IValidation[] { new NotEmptyValidation(), new MacAddressValidation() });
         }
 
-        return getName().getIsValid() && getNetwork().getIsValid() && getNicType().getIsValid()
+        return getName().getIsValid() && getNicType().getIsValid()
                 && getMAC().getIsValid();
     }
 
@@ -375,8 +382,8 @@ public abstract class VmInterfaceModel extends Model
 
         // Save changes.
         nic.setName((String) getName().getEntity());
-        Network network = (Network) getNetwork().getSelectedItem();
-        nic.setNetworkName(network != null ? network.getName() : null);
+        VnicProfileView profile = (VnicProfileView) getProfile().getSelectedItem();
+        nic.setVnicProfileId(profile != null ? profile.getId() : null);
         nic.setLinked((Boolean) getLinked().getEntity());
         if (getNicType().getSelectedItem() == null)
         {
@@ -424,23 +431,22 @@ public abstract class VmInterfaceModel extends Model
 
     protected abstract VdcActionType getVdcActionType();
 
-    protected void initNetworks() {
+    protected void initProfiles() {
         AsyncQuery _asyncQuery = new AsyncQuery();
-        _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model1, Object result1)
             {
-                getNetwork().setItems((List<Network>) result1);
-                networkBehavior.initSelectedNetwork(getNetwork(), getNic());
-                updateNetworkChangability();
+                getProfile().setItems((List<VnicProfileView>) result1);
+                profileBehavior.initSelectedProfile(getProfile(), getNic());
+                updateProfileChangability();
 
                 // fetch completed
                 okCommand.setIsExecutionAllowed(true);
             }
         };
 
-        networkBehavior.initNetworks(hotUpdateSupported, getVm().getVdsGroupId(), _asyncQuery);
+        profileBehavior.initProfiles(hotUpdateSupported, getVm().getVdsGroupId(), dcId, _asyncQuery);
     }
 
     protected void initCommands() {
@@ -487,9 +493,9 @@ public abstract class VmInterfaceModel extends Model
     protected abstract VdcActionParametersBase createVdcActionParameters(VmNetworkInterface nicToSave);
 
     protected void updateLinkChangability() {
-        boolean isNullNetworkSelected = getNetwork().getSelectedItem() == null;
+        boolean isNullProfileSelected = getProfile().getSelectedItem() == null;
 
-        if (isNullNetworkSelected) {
+        if (isNullProfileSelected) {
             getLinked().setIsChangable(false);
             return;
         }
@@ -500,16 +506,22 @@ public abstract class VmInterfaceModel extends Model
         getLinked().setIsChangable(true);
     }
 
-    protected void updateNetworkChangability() {
-        getNetwork().setIsChangable(true);
+    protected void updateProfileChangability() {
+        getProfile().setIsChangable(true);
     }
 
     protected boolean selectedNetworkExternal() {
-        Network network = (Network) getNetwork().getSelectedItem();
+
+        VnicProfileView profile = (VnicProfileView) getProfile().getSelectedItem();
+        Network network = null;
+
+        if (profile != null && profile.getId() != null) {
+            network = getProfileBehavior().findNetworkById(profile.getId());
+        }
         return network != null && network.isExternal();
     }
 
-    public NetworkBehavior getNetworkBehavior() {
-        return networkBehavior;
+    public ProfileBehavior getProfileBehavior() {
+        return profileBehavior;
     }
 }

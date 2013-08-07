@@ -147,7 +147,7 @@ public class VmGuideModel extends GuideModel
         }
 
         VmInterfaceModel model =
-                NewVmInterfaceModel.createInstance(getEntity().getStaticData(),
+                NewVmInterfaceModel.createInstance(getEntity().getStaticData(), getEntity().getStoragePoolId(),
                         getEntity().getVdsGroupCompatibilityVersion(),
                         nics,
                         this);

@@ -119,6 +119,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
 
         VmInterfaceModel model =
                 NewTemplateInterfaceModel.createInstance(getEntityStronglyTyped(),
+                        getEntityStronglyTyped().getStoragePoolId(),
                         cluster.getcompatibility_version(),
                         (ArrayList<VmNetworkInterface>) getItems(),
                         this);
@@ -134,10 +135,13 @@ public class TemplateInterfaceListModel extends SearchableListModel
             return;
         }
 
-        VmInterfaceModel model = EditTemplateInterfaceModel.createInstance(getEntityStronglyTyped(),
-                cluster.getcompatibility_version(),
-                (ArrayList<VmNetworkInterface>) getItems(),
-                (VmNetworkInterface) getSelectedItem(), this);
+        VmInterfaceModel model =
+                EditTemplateInterfaceModel.createInstance(getEntityStronglyTyped(),
+                        getEntityStronglyTyped().getStoragePoolId(),
+                        cluster.getcompatibility_version(),
+                        (ArrayList<VmNetworkInterface>) getItems(),
+                        (VmNetworkInterface) getSelectedItem(),
+                        this);
         setWindow(model);
     }
 

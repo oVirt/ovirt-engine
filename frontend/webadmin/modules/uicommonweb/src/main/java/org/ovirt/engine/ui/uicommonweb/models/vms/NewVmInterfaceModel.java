@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -18,19 +19,21 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 public class NewVmInterfaceModel extends VmInterfaceModel {
 
     public static NewVmInterfaceModel createInstance(VmBase vm,
+            Guid dcId,
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             EntityModel sourceModel) {
-        NewVmInterfaceModel instance = new NewVmInterfaceModel(vm, clusterCompatibilityVersion, vmNicList, sourceModel);
+        NewVmInterfaceModel instance = new NewVmInterfaceModel(vm, dcId, clusterCompatibilityVersion, vmNicList, sourceModel);
         instance.init();
         return instance;
     }
 
     protected NewVmInterfaceModel(VmBase vm,
+            Guid dcId,
             Version clusterCompatibilityVersion,
             ArrayList<VmNetworkInterface> vmNicList,
             EntityModel sourceModel) {
-        super(vm, clusterCompatibilityVersion, vmNicList, sourceModel, new NewNetworkBehavior());
+        super(vm, dcId, clusterCompatibilityVersion, vmNicList, sourceModel, new NewProfileBehavior());
         setTitle(ConstantsManager.getInstance().getConstants().newNetworkInterfaceTitle());
         setHashName("new_network_interface_vms"); //$NON-NLS-1$
     }
@@ -63,7 +66,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
         initLinked();
 
-        initNetworks();
+        initProfiles();
         initCommands();
     }
 

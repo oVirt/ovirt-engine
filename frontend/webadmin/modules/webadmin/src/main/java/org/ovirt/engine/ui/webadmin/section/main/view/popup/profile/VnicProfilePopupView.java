@@ -95,7 +95,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     }
 
     private void localize(ApplicationConstants constants) {
-        networkEditor.setLabel(constants.networkNetworkIntefacePopup());
+        networkEditor.setLabel(constants.profileNetworkIntefacePopup());
         nameEditor.setLabel(constants.nameNetworkIntefacePopup());
         portMirroringEditor.setLabel(constants.portMirroringNetworkIntefacePopup());
         publicUseEditor.setLabel(constants.profilePublicUseLabel());

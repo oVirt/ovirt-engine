@@ -33,8 +33,8 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
-import org.ovirt.engine.ui.common.widget.network.LogicalNetworksEditor;
 import org.ovirt.engine.ui.common.widget.parser.MemorySizeParser;
+import org.ovirt.engine.ui.common.widget.profile.ProfilesInstanceTypeEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -174,7 +174,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField
     @Path(value = "nicsWithLogicalNetworks.selectedItem")
     @WithElementId("networksEditor")
-    public LogicalNetworksEditor logicalNetworksEditor;
+    public ProfilesInstanceTypeEditor profilesInstanceTypeEditor;
 
     @UiField
     @Ignore
@@ -804,7 +804,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             public String renderNullSafe(Object object) {
                 TimeZoneModel timeZone = (TimeZoneModel) object;
                 if (timeZone.isDefault()) {
-                    return messages.defaultTimeZoneCaption(timeZone.getDisplayValue());//$NON-NLS-1$
+                    return messages.defaultTimeZoneCaption(timeZone.getDisplayValue());
                 } else {
                     return timeZone.getDisplayValue();
                 }
@@ -1259,7 +1259,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Override
     public UnitVmModel flush() {
         priorityEditor.flush();
-        logicalNetworksEditor.flush();
+        profilesInstanceTypeEditor.flush();
         return driver.flush();
     }
 

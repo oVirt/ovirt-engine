@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.common.widget.network;
+package org.ovirt.engine.ui.common.widget.profile;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.IsEditor;
@@ -21,9 +21,9 @@ import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.widget.editor.TakesConstrainedValueEditor;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.NicWithLogicalNetworks;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
 
-public class LogicalNetworksEditor extends Composite implements IsEditor<TakesValueEditor<Object>>, TakesValue<Object>, HasElementId, HasConstrainedValue<Object> {
+public class ProfilesInstanceTypeEditor extends Composite implements IsEditor<TakesValueEditor<Object>>, TakesValue<Object>, HasElementId, HasConstrainedValue<Object> {
 
     @Override
     public HandlerRegistration addValueChangeHandler(ValueChangeHandler<Object> handler) {
@@ -31,7 +31,7 @@ public class LogicalNetworksEditor extends Composite implements IsEditor<TakesVa
         return null;
     }
 
-    interface WidgetUiBinder extends UiBinder<Widget, LogicalNetworksEditor> {
+    interface WidgetUiBinder extends UiBinder<Widget, ProfilesInstanceTypeEditor> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
@@ -45,11 +45,11 @@ public class LogicalNetworksEditor extends Composite implements IsEditor<TakesVa
 
     protected static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
 
-    private List<LogicalNetworkEditor> editors;
+    private List<ProfileInstanceTypeEditor> editors;
 
-    public LogicalNetworksEditor() {
+    public ProfilesInstanceTypeEditor() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
-        editors = new ArrayList<LogicalNetworkEditor>();
+        editors = new ArrayList<ProfileInstanceTypeEditor>();
     }
 
     @Override
@@ -71,10 +71,10 @@ public class LogicalNetworksEditor extends Composite implements IsEditor<TakesVa
         editors.clear();
         contentPanel.clear();
         for (Object value : values) {
-            LogicalNetworkEditor networkEditor = new LogicalNetworkEditor();
+            ProfileInstanceTypeEditor networkEditor = new ProfileInstanceTypeEditor();
             networkEditor.setElementId(elementId);
             editors.add(networkEditor);
-            networkEditor.setValue((NicWithLogicalNetworks) value);
+            networkEditor.setValue((VnicInstanceType) value);
             contentPanel.add(networkEditor);
         }
 
@@ -83,9 +83,9 @@ public class LogicalNetworksEditor extends Composite implements IsEditor<TakesVa
         }
 
         if (values.size() == 1) {
-            headerLabel.setText(messages.assignNicsToNetworksSingular());
+            headerLabel.setText(messages.assignNicsToProfilesSingular());
         } else {
-            headerLabel.setText(messages.assignNicsToNetworksPlural(values.size()));
+            headerLabel.setText(messages.assignNicsToProfilesPlural(values.size()));
         }
 
     }
@@ -97,8 +97,8 @@ public class LogicalNetworksEditor extends Composite implements IsEditor<TakesVa
 
     @Override
     public ListModel getValue() {
-        List<NicWithLogicalNetworks> values = new ArrayList<NicWithLogicalNetworks>();
-        for (LogicalNetworkEditor editor : editors) {
+        List<VnicInstanceType> values = new ArrayList<VnicInstanceType>();
+        for (ProfileInstanceTypeEditor editor : editors) {
             values.add(editor.getValue());
         }
 

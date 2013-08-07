@@ -11,10 +11,10 @@ public class UnitVmModelNetworkAsyncCallbacks {
     public static abstract class BaseNetworkFrontendActionAsyncCallback implements IFrontendActionAsyncCallback {
 
         private final UnitVmModel unitVmModel;
-        protected final VmNetworkCreatingManager networkCreatingManager;
+        protected final VmInterfaceCreatingManager networkCreatingManager;
 
         public BaseNetworkFrontendActionAsyncCallback(final UnitVmModel unitVmModel,
-                                                      final VmNetworkCreatingManager networkCreatingManager) {
+                                                      final VmInterfaceCreatingManager networkCreatingManager) {
             this.unitVmModel = unitVmModel;
             this.networkCreatingManager = networkCreatingManager;
         }
@@ -24,25 +24,25 @@ public class UnitVmModelNetworkAsyncCallbacks {
             VdcReturnValueBase returnValue = result.getReturnValue();
             if (returnValue != null && returnValue.getSucceeded()) {
                 doNetworkOperation(returnValue,
-                        (List<NicWithLogicalNetworks>) unitVmModel.getNicsWithLogicalNetworks().getItems()
+                        (List<VnicInstanceType>) unitVmModel.getNicsWithLogicalNetworks().getItems()
                 );
             } else {
                 networkCreatingManager.getCallback().queryFailed();
             }
         }
 
-        protected  abstract void doNetworkOperation(VdcReturnValueBase returnValue, List<NicWithLogicalNetworks> nicWithLogicalNetworks);
+        protected  abstract void doNetworkOperation(VdcReturnValueBase returnValue, List<VnicInstanceType> nicWithLogicalNetworks);
     }
 
     public static class NetworkCreateOrUpdateFrontendActionAsyncCallback extends BaseNetworkFrontendActionAsyncCallback {
 
         public NetworkCreateOrUpdateFrontendActionAsyncCallback(final UnitVmModel unitVmModel,
-                                                                final VmNetworkCreatingManager networkCreatingManager) {
+                                                                final VmInterfaceCreatingManager networkCreatingManager) {
             super(unitVmModel, networkCreatingManager);
         }
 
         @Override
-        protected void doNetworkOperation(VdcReturnValueBase returnValue, List<NicWithLogicalNetworks> nicWithLogicalNetworks) {
+        protected void doNetworkOperation(VdcReturnValueBase returnValue, List<VnicInstanceType> nicWithLogicalNetworks) {
             networkCreatingManager.updateOrCreateIfNothingToUpdate((Guid) returnValue.getActionReturnValue(), nicWithLogicalNetworks);
         }
 
@@ -50,13 +50,13 @@ public class UnitVmModelNetworkAsyncCallbacks {
 
     public static class NetworkCreateFrontendAsyncCallback extends BaseNetworkFrontendActionAsyncCallback {
         public NetworkCreateFrontendAsyncCallback(final UnitVmModel unitVmModel,
-                                                  final VmNetworkCreatingManager networkCreatingManager) {
+                                                  final VmInterfaceCreatingManager networkCreatingManager) {
             super(unitVmModel, networkCreatingManager);
         }
 
         @Override
-        protected void doNetworkOperation(VdcReturnValueBase returnValue, List<NicWithLogicalNetworks> nicWithLogicalNetworks) {
-            networkCreatingManager.createNetworks((Guid) returnValue.getActionReturnValue(), nicWithLogicalNetworks);
+        protected void doNetworkOperation(VdcReturnValueBase returnValue, List<VnicInstanceType> nicWithLogicalNetworks) {
+            networkCreatingManager.createVnics((Guid) returnValue.getActionReturnValue(), nicWithLogicalNetworks);
         }
     }
 
@@ -65,15 +65,15 @@ public class UnitVmModelNetworkAsyncCallbacks {
         private final Guid idToUpdate;
 
         public NetworkUpdateFrontendAsyncCallback(final UnitVmModel unitVmModel,
-                                                  final VmNetworkCreatingManager networkCreatingManager,
+                                                  final VmInterfaceCreatingManager networkCreatingManager,
                                                   final Guid idToUpdate) {
             super(unitVmModel, networkCreatingManager);
             this.idToUpdate = idToUpdate;
         }
 
         @Override
-        protected void doNetworkOperation(VdcReturnValueBase returnValue, List<NicWithLogicalNetworks> nicWithLogicalNetworks) {
-            networkCreatingManager.updateNetworks(idToUpdate, nicWithLogicalNetworks);
+        protected void doNetworkOperation(VdcReturnValueBase returnValue, List<VnicInstanceType> nicWithLogicalNetworks) {
+            networkCreatingManager.updateVnics(idToUpdate, nicWithLogicalNetworks);
         }
     }
 

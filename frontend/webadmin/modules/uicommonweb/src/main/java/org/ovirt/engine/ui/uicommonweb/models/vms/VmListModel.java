@@ -1908,10 +1908,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private void onSave()
     {
-        final VmNetworkCreatingManager defaultNetworkCreatingManager =
-                new VmNetworkCreatingManager(new VmNetworkCreatingManager.PostNetworkCreatedCallback() {
+        final VmInterfaceCreatingManager defaultNetworkCreatingManager =
+                new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
                     @Override
-                    public void networkCreated(Guid vmId) {
+                    public void vnicCreated(Guid vmId) {
                         getWindow().stopProgress();
                         cancel();
                         updateActionAvailability();
@@ -2011,10 +2011,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     return;
                 }
 
-                VmNetworkCreatingManager addVmFromScratchNetworkManager =
-                        new VmNetworkCreatingManager(new VmNetworkCreatingManager.PostNetworkCreatedCallback() {
+                VmInterfaceCreatingManager addVmFromScratchNetworkManager =
+                        new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
                             @Override
-                            public void networkCreated(Guid vmId) {
+                            public void vnicCreated(Guid vmId) {
                                 getWindow().stopProgress();
                                 cancel();
                                 setGuideContext(vmId);

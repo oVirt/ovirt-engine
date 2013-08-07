@@ -61,6 +61,7 @@ import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
@@ -656,7 +657,10 @@ public final class AsyncDataProvider {
             {
                 if (source != null)
                 {
-                    ArrayList<VDSGroup> list = getClusterByServiceList((ArrayList<VDSGroup>) source, supportsVirtService, supportsGlusterService);
+                    ArrayList<VDSGroup> list =
+                            getClusterByServiceList((ArrayList<VDSGroup>) source,
+                                    supportsVirtService,
+                                    supportsGlusterService);
                     Collections.sort(list, new NameableComparator());
                     return list;
                 }
@@ -3181,6 +3185,24 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetVnicProfilesByNetworkId, new IdQueryParameters(networkId), aQuery);
+    }
+
+    public static void getVnicProfilesByDcId(AsyncQuery aQuery, Guid dcId) {
+        // do not replace a converter = just add if none provided
+        if (aQuery.converterCallback == null) {
+            aQuery.converterCallback = new IAsyncConverter() {
+                @Override
+                public Object Convert(Object source, AsyncQuery _asyncQuery)
+                {
+                    if (source == null)
+                    {
+                        return new ArrayList<VnicProfileView>();
+                    }
+                    return source;
+                }
+            };
+        }
+        Frontend.RunQuery(VdcQueryType.GetVnicProfilesByDataCenterId, new IdQueryParameters(dcId), aQuery);
     }
 
     private static ArrayList<VDSGroup> getClusterByServiceList(ArrayList<VDSGroup> list,

@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -1000,7 +1000,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }), id);
     }
 
-    protected void initNetworkInterfaces(final NetworkBehavior behavior, final List<VmNetworkInterface> argNics) {
+    protected void initNetworkInterfaces(final ProfileBehavior behavior, final List<VmNetworkInterface> argNics) {
         boolean hotUpdateSupported =
                 (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
                         getModel().getSelectedCluster().getcompatibility_version().toString());
@@ -1009,9 +1009,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                List<Network> networks = (List<Network>) returnValue;
+                List<VnicProfileView> profiles = (List<VnicProfileView>) returnValue;
 
-                List<NicWithLogicalNetworks> nicsWithLogicalNetwork = new ArrayList<NicWithLogicalNetworks>();
+                List<VnicInstanceType> vnicInstanceTypes = new ArrayList<VnicInstanceType>();
 
                 List<VmNetworkInterface> nics = argNics;
 
@@ -1023,21 +1023,21 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 }
 
                 for (VmNetworkInterface nic : nics) {
-                    final NicWithLogicalNetworks nicWithLogicalNetwork = new NicWithLogicalNetworks(nic);
-                    nicWithLogicalNetwork.setItems(networks);
-                    behavior.initSelectedNetwork(nicWithLogicalNetwork,
-                            nicWithLogicalNetwork.getNetworkInterface());
-                    nicsWithLogicalNetwork.add(nicWithLogicalNetwork);
+                    final VnicInstanceType vnicInstanceType = new VnicInstanceType(nic);
+                    vnicInstanceType.setItems(profiles);
+                    behavior.initSelectedProfile(vnicInstanceType,
+                            vnicInstanceType.getNetworkInterface());
+                    vnicInstanceTypes.add(vnicInstanceType);
                 }
 
-                getModel().getNicsWithLogicalNetworks().setItems(nicsWithLogicalNetwork);
-                getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrDefault(nicsWithLogicalNetwork));
+                getModel().getNicsWithLogicalNetworks().setItems(vnicInstanceTypes);
+                getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrDefault(vnicInstanceTypes));
 
             }
 
         });
 
-        behavior.initNetworks(hotUpdateSupported, getModel().getSelectedCluster().getId(), query);
+        behavior.initProfiles(hotUpdateSupported, getModel().getSelectedCluster().getId(), getModel().getSelectedDataCenter().getId(), query);
     }
 
     public void updateSingleQxl(boolean visible) {

@@ -26,9 +26,9 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 @SuppressWarnings("unused")
 public class ExistingVmModelBehavior extends VmModelBehaviorBase
 {
-    private final NetworkBehavior behavior = new NewNetworkBehavior();
+    private final ProfileBehavior behavior = new NewProfileBehavior();
 
-    private EditNetworkBehavior networkBehavior = new EditNetworkBehavior();
+    private EditProfileBehavior networkBehavior = new EditProfileBehavior();
 
     protected VM vm;
 

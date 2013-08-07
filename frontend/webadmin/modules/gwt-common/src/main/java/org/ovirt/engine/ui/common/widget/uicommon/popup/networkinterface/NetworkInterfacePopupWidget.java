@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.networkinterface;
 
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -12,8 +12,8 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.profile.ProfileEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceModel;
 
@@ -63,10 +63,10 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @WithElementId("name")
     EntityModelTextBoxEditor nameEditor;
 
-    @UiField(provided = true)
-    @Path("network.selectedItem")
-    @WithElementId("network")
-    ListModelListBoxEditor<Object> networkEditor;
+    @UiField
+    @Path(value = "profile.selectedItem")
+    @WithElementId("profile")
+    public ProfileEditor profileEditor;
 
     @UiField(provided = true)
     @Path("nicType.selectedItem")
@@ -117,6 +117,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     @Path(value = "unlinked_IsSelected.entity")
     public EntityModelRadioButtonEditor unlinkedEditor;
 
+    public final static CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
     public final static CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
     public final static CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
 
@@ -142,7 +143,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
 
     private void localize(CommonApplicationConstants constants) {
         nameEditor.setLabel(constants.nameNetworkIntefacePopup());
-        networkEditor.setLabel(constants.networkNetworkIntefacePopup());
+        profileEditor.setLabel(constants.profileNetworkIntefacePopup());
         nicTypeEditor.setLabel(constants.typeNetworkIntefacePopup());
         enableManualMacCheckbox.setLabel(constants.specipyCustMacNetworkIntefacePopup());
 
@@ -169,13 +170,6 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
 
     @SuppressWarnings({ "rawtypes", "unchecked" })
     private void initManualWidgets() {
-        networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((Network) object).getName();
-            }
-        });
-
         nicTypeEditor = new ListModelListBoxEditor<Object>(new EnumRenderer());
 
         pluggedEditor = new EntityModelRadioButtonEditor("cardStatus"); //$NON-NLS-1$

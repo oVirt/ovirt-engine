@@ -139,7 +139,7 @@ public class VmInterfaceListModel extends SearchableListModel
         }
 
         VmInterfaceModel model =
-                NewVmInterfaceModel.createInstance(getEntity().getStaticData(),
+                NewVmInterfaceModel.createInstance(getEntity().getStaticData(), getEntity().getStoragePoolId(),
                         getEntity().getVdsGroupCompatibilityVersion(), (ArrayList<VmNetworkInterface>) getItems(), this);
         setWindow(model);
     }

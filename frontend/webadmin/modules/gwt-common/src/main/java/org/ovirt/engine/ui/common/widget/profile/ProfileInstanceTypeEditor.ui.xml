@@ -2,10 +2,11 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.profile">
 
 	<g:FlowPanel>
-		<e:ListModelListBoxEditor ui:field="logicalNetworkEditor" />
+		<p:ProfileEditor ui:field="profileEditor" />
 	</g:FlowPanel>
 
 </ui:UiBinder>
