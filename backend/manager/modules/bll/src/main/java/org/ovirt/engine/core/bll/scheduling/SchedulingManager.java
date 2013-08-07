@@ -500,13 +500,19 @@ public class SchedulingManager {
     }
 
     private void sumScoreResults(Map<Guid, Integer> hostCostTable, List<Pair<Guid, Integer>> externalScores) {
-        for (Pair<Guid, Integer> pair : externalScores) {
-            Guid hostId = pair.getFirst();
-            if (hostCostTable.get(hostId) == null) {
-                hostCostTable.put(hostId, 0);
+        if (externalScores == null) {
+            // the external scheduler proxy may return null if error happens, in this case the external scores will
+            // remain empty
+            log.warn("External scheduler proxy returned null score");
+        } else {
+            for (Pair<Guid, Integer> pair : externalScores) {
+                Guid hostId = pair.getFirst();
+                if (hostCostTable.get(hostId) == null) {
+                    hostCostTable.put(hostId, 0);
+                }
+                hostCostTable.put(hostId,
+                        hostCostTable.get(hostId) + pair.getSecond());
             }
-            hostCostTable.put(hostId,
-                    hostCostTable.get(hostId) + pair.getSecond());
         }
     }
 
