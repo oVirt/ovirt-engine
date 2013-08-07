@@ -4,22 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
-public class NonePolicyUnit extends EvenDistributionPolicyUnit {
+public class NoneBalancePolicyUnit extends PolicyUnitImpl {
 
-    public NonePolicyUnit(PolicyUnit policyUnit) {
+    public NoneBalancePolicyUnit(PolicyUnit policyUnit) {
         super(policyUnit);
-    }
-
-    @Override
-    public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        return super.score(hosts, vm, parameters);
     }
 
     @Override
