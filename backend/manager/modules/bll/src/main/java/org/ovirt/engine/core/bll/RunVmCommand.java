@@ -223,7 +223,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             try {
                 VmHandler.UpdateVmGuestAgentVersion(getVm());
                 incrementVdsPendingVmsCount();
-                attachCd();
                 if (connectLunDisks(getVdsId())) {
                     status = createVm();
                     ExecutionHandler.setAsyncJob(getExecutionContext(), true);
@@ -305,18 +304,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private boolean isStatelessSnapshotExistsForVm() {
         return getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS);
-    }
-
-    private void attachCd() {
-        // if iso domain found
-        if (getIsoDomainListSyncronizer().findActiveISODomain(getVm().getStoragePoolId()) != null) {
-            getVm().setCdPath(cdPathWindowsToLinux(chooseCd()));
-        }
-        else if (!StringUtils.isEmpty(getVm().getIsoPath())) {
-            getVm().setCdPath("");
-            setSucceeded(false);
-            throw new VdcBLLException(VdcBllErrors.NO_ACTIVE_ISO_DOMAIN_IN_DATA_CENTER);
-        }
     }
 
     /**
@@ -460,6 +447,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         refreshBootParameters(getParameters());
 
         getVm().setLastStartTime(new Date());
+
+        getVm().setCdPath(cdPathWindowsToLinux(chooseCd()));
 
         if (!StringUtils.isEmpty(getParameters().getFloppyPath())) {
             getVm().setFloppyPath(cdPathWindowsToLinux(getParameters().getFloppyPath()));
@@ -801,6 +790,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             }
 
             getVm().setVmPayload(getParameters().getVmPayload());
+        }
+
+        // if there is a CD path as part of the VM definition and there is no active ISO domain,
+        // we don't run the VM
+        if (!vm.isAutoStartup() && !StringUtils.isEmpty(getVm().getIsoPath())
+                && getIsoDomainListSyncronizer().findActiveISODomain(getVm().getStoragePoolId()) == null) {
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }
 
         return true;
