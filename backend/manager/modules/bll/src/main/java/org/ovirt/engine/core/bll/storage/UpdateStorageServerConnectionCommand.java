@@ -38,7 +38,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 @LockIdNameAttribute
-public class UpdateStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends StorageServerConnectionCommandBase<T> {
+public class UpdateStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends ConnectStorageToVdsCommand<T> {
     private List<StorageDomain> domains = new ArrayList<>();
     private List<LUNs> luns = new ArrayList<>();
 
@@ -289,12 +289,8 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     }
 
     protected boolean connectToStorage() {
-        StorageServerConnectionManagementVDSParameters newConnectionParametersForVdsm =
-                createParametersForVdsm(getParameters().getVdsId(),
-                        Guid.Empty,
-                        getParameters().getStorageServerConnection().getstorage_type(),
-                        getParameters().getStorageServerConnection());
-        return runVdsCommand(VDSCommandType.ConnectStorageServer, newConnectionParametersForVdsm).getSucceeded();
+         Pair<Boolean, Integer> result = connectHostToStorage();
+         return result.getFirst();
     }
 
     protected void disconnectFromStorage() {

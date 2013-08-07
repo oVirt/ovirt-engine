@@ -40,6 +40,12 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         getReturnValue().setFault(fault);
     }
 
+    protected Pair<Boolean, Integer> connectHostToStorage() {
+            Guid vdsId = getVds().getId();
+            Pair<Boolean, Integer> result = connect(vdsId);
+            return result;
+    }
+
     protected Pair<Boolean, Integer> connect(Guid vdsId) {
         java.util.HashMap<String, String> result = (java.util.HashMap<String, String>) runVdsCommand(
                         VDSCommandType.ConnectStorageServer,

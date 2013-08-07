@@ -62,12 +62,6 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
         return getStorageConnDao().get(connectionId);
     }
 
-    protected Pair<Boolean, Integer> connectHostToStorage() {
-        Guid vdsId = getVds().getId();
-        Pair<Boolean, Integer> result = connect(vdsId);
-        return result;
-    }
-
     protected void saveConnection(StorageServerConnections connection) {
         getDbFacade().getStorageServerConnectionDao().save(connection);
     }
