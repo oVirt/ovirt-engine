@@ -8,9 +8,12 @@ import org.apache.commons.lang.StringUtils;
 public class SearchQueryFotmatter implements LdapQueryFormatter<LdapQueryExecution> {
 
     private final EnumMap<SearchLangageLDAPTokens, String> tokensToLDAPKeys;
+    private LdapFilterSearchEnginePreProcessor preProcessor;
 
-    public SearchQueryFotmatter(EnumMap<SearchLangageLDAPTokens, String> tokensToLDAPKeys) {
+    public SearchQueryFotmatter(EnumMap<SearchLangageLDAPTokens, String> tokensToLDAPKeys,
+            LdapFilterSearchEnginePreProcessor p) {
         this.tokensToLDAPKeys = tokensToLDAPKeys;
+        this.preProcessor = p;
     }
 
     /**
@@ -23,6 +26,7 @@ public class SearchQueryFotmatter implements LdapQueryFormatter<LdapQueryExecuti
     public LdapQueryExecution format(LdapQueryMetadata queryMetadata) {
 
         String filter = (String) queryMetadata.getQueryData().getFilterParameters()[0];
+        filter = preProcessor.preProcess(filter);
         for (Entry<SearchLangageLDAPTokens, String> tokenEntry : tokensToLDAPKeys.entrySet()) {
             filter = StringUtils.replace(filter, tokenEntry.getKey().name(), tokenEntry.getValue());
         }
