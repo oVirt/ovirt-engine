@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,7 +10,9 @@ import java.util.Map;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -122,6 +125,7 @@ public class HostSetupNetworksModel extends EntityModel {
     private NetworkOperation currentCandidate;
     private NetworkItemModel<?> currentOp1;
     private NetworkItemModel<?> currentOp2;
+    private String nextBondName;
 
     private final UICommand okCommand;
     public static final String NIC = "nic"; //$NON-NLS-1$
@@ -384,7 +388,7 @@ public class HostSetupNetworksModel extends EntityModel {
         } else if (operation == NetworkOperation.BOND_WITH || operation == NetworkOperation.JOIN_BONDS) {
             final SetupNetworksBondModel bondPopup;
             if (operation == NetworkOperation.BOND_WITH) {
-                bondPopup = new SetupNetworksAddBondModel(getFreeBonds());
+                bondPopup = new SetupNetworksAddBondModel(getFreeBonds(), nextBondName);
             } else {
                 bondPopup =
                         new SetupNetworksJoinBondsModel(getFreeBonds(),
@@ -585,6 +589,18 @@ public class HostSetupNetworksModel extends EntityModel {
 
                 if (!networkModel.isInSync() && networkModel.isManaged()) {
                     netToBeforeSyncParams.put(networkName, new NetworkParameters(nic));
+                }
+            }
+
+            // calculate the next available bond name
+            List<String> bondNames = new ArrayList<String>(bondToNic.keySet());
+            Collections.sort(bondNames, new LexoNumericComparator());
+            nextBondName = BusinessEntitiesDefinitions.BOND_NAME_PREFIX + 0;
+            for (int i=0; i<bondNames.size(); ++i) {
+                if (nextBondName.equals(bondNames.get(i))) {
+                    nextBondName = BusinessEntitiesDefinitions.BOND_NAME_PREFIX + (i + 1);
+                } else {
+                    break;
                 }
             }
         }
