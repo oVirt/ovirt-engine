@@ -124,6 +124,14 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             }
         });
 
+        addValueChangeHandler(new ValueChangeHandler<T>() {
+            @Override
+            public void onValueChange(ValueChangeEvent<T> event) {
+                // if the value has been changed using the mouse
+                setValue(event.getValue());
+            }
+        });
+
     }
 
     private void switchSuggestions() {
