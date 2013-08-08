@@ -128,7 +128,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                                 : image.getStorageIds().get(0);
                 ArrayList<Guid> storageIds = new ArrayList<Guid>();
                 storageIds.add(destStorageId);
-                image.setStorageIds(storageIds);
                 diskInfoDestinationMap.put(image.getId(), image);
             }
         }
