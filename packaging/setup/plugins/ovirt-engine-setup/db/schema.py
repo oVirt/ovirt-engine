@@ -52,7 +52,7 @@ class Plugin(plugin.PluginBase):
             pass
 
         def abort(self):
-            self._parent.logger.warning(_('Rolling back upgrade'))
+            self._parent.logger.info(_('Rolling back database schema'))
             try:
                 dbovirtutils = database.OvirtUtils(plugin=self._parent)
                 self._parent.logger.info(
