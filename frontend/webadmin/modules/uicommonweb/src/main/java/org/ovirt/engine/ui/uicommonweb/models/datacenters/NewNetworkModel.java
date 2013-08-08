@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -138,19 +139,29 @@ public class NewNetworkModel extends NetworkModel {
             }
         };
 
+        final AddNetworkStoragePoolParameters parameters =
+                new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork());
+
+        boolean hasProfiles = false;
+        for (VnicProfileModel profileModel : ((List<VnicProfileModel>) getProfiles().getItems())) {
+            if (!StringHelper.isNullOrEmpty(profileModel.getProfile().getName())) {
+                hasProfiles = true;
+                break;
+            }
+        }
+
+        parameters.setVnicProfileRequired(!hasProfiles);
+
         // New network
         if ((Boolean) getExport().getEntity()) {
             Provider externalProvider = (Provider) getExternalProviders().getSelectedItem();
             ProviderNetwork providerNetwork = new ProviderNetwork();
             providerNetwork.setProviderId(externalProvider.getId());
             getNetwork().setProvidedBy(providerNetwork);
-            final AddNetworkStoragePoolParameters parameters =
-                    new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork());
+
             Frontend.RunAction(VdcActionType.AddNetworkOnProvider,
                     parameters, addNetworkCallback, null);
         } else {
-            final AddNetworkStoragePoolParameters parameters =
-                    new AddNetworkStoragePoolParameters(getSelectedDc().getId(), getNetwork());
             Frontend.RunAction(VdcActionType.AddNetwork,
                     parameters,
                     addNetworkCallback,
