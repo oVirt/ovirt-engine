@@ -219,16 +219,16 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         proceedLUNInDb(lun,storageType,"");
     }
 
-    protected static LunDAO getLunDao() {
+    protected LunDAO getLunDao() {
         return DbFacade.getInstance().getLunDao();
     }
 
     public static void proceedLUNInDb(final LUNs lun, StorageType storageType, String volumeGroupId) {
-        if (getLunDao().get(lun.getLUN_id()) == null) {
+        if (DbFacade.getInstance().getLunDao().get(lun.getLUN_id()) == null) {
             lun.setvolume_group_id(volumeGroupId);
-            getLunDao().save(lun);
+            DbFacade.getInstance().getLunDao().save(lun);
         } else if (!volumeGroupId.isEmpty()){
-            getLunDao().updateLUNsVolumeGroupId(lun.getLUN_id(), volumeGroupId);
+            DbFacade.getInstance().getLunDao().updateLUNsVolumeGroupId(lun.getLUN_id(), volumeGroupId);
         }
 
         for (StorageServerConnections connection : lun.getLunConnections()) {

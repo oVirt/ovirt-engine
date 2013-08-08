@@ -1,17 +1,18 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import java.util.List;
-
-import javax.ws.rs.core.Response;
-
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnections;
 import org.ovirt.engine.api.resource.StorageDomainServerConnectionResource;
 import org.ovirt.engine.api.resource.StorageDomainServerConnectionsResource;
+import org.ovirt.engine.core.common.action.AttachDetachStorageConnectionParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+
+import javax.ws.rs.core.Response;
+import java.util.List;
 
 public class BackendStorageDomainServerConnectionsResource extends AbstractBackendCollectionResource<StorageConnection, StorageServerConnections> implements StorageDomainServerConnectionsResource {
 
@@ -52,8 +53,19 @@ public class BackendStorageDomainServerConnectionsResource extends AbstractBacke
     }
 
     @Override
-    protected Response performRemove(String id) {
-        throw new UnsupportedOperationException();
+    public Response add(StorageConnection storageConnection) {
+        validateParameters(storageConnection, "id");
+
+        return performAction(VdcActionType.AttachStorageConnectionToStorageDomain,
+                new AttachDetachStorageConnectionParameters(storageDomainId, storageConnection.getId()));
+    }
+
+    @Override
+    public Response performRemove(String id) {
+        AttachDetachStorageConnectionParameters params =
+                new AttachDetachStorageConnectionParameters(storageDomainId, id);
+
+        return performAction(VdcActionType.DetachStorageConnectionFromStorageDomain, params);
     }
 
     @Override

@@ -1027,8 +1027,14 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_NOT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Storage connection is not attached to the specified domain.")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_FOR_DOMAIN_NOT_EXIST();
+
     @DefaultStringValue("Cannot ${action} ${type}. No active data Storage Domain with enough storage was found in the Data Center.")
     String ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Action is supported only for iSCSI storage domains.")
+    String ACTION_TYPE_FAILED_ACTION_IS_SUPPORTED_ONLY_FOR_ISCSI_DOMAINS();
 
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection id is empty.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_EMPTY();
@@ -1036,11 +1042,17 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection already exists.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_ALREADY_EXISTS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Storage connection is already attached to the specified domain.")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_FOR_DOMAIN_ALREADY_EXISTS();
+
     @DefaultStringValue("Cannot ${action} ${type}. Storage connection parameters can be edited only for NFS, Posix, local or iSCSI data domains.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE();
 
     @DefaultStringValue("Cannot ${action} ${type}. The data domains ${domainNames} should be in maintenance or unattached.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_DOMAINS_STATUS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Storage connection and domain type don't match.")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_NOT_SAME_STORAGE_TYPE();
 
     @DefaultStringValue("Cannot ${action} ${type}. VMs ${vmNames} should be down.")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_RUNNING_VMS();

@@ -56,6 +56,7 @@ public final class BusinessEntitiesDefinitions {
     public static final int LUN_VOLUME_GROUP_ID = 50;
     public static final int LUN_VENDOR_ID = 50;
     public static final int LUN_PRODUCT_ID = 50;
+    public static final String DUMMY_LUN_ID_PREFIX = "DUMMY_LUN_";
 
     // Roles (roles)
     public static final int ROLE_NAME_SIZE = 126;

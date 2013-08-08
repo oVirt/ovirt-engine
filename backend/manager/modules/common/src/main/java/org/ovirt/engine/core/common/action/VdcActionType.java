@@ -228,6 +228,8 @@ public enum VdcActionType {
     ExtendImageSize(1013, false, QuotaDependency.STORAGE),
     ImportRepoImage(1014, ActionGroup.CREATE_DISK, QuotaDependency.STORAGE),
     ExportRepoImage(1015, QuotaDependency.NONE),
+    AttachStorageConnectionToStorageDomain(1016, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    DetachStorageConnectionFromStorageDomain(1017, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
 
     // Event Notification
     AddEventSubscription(1100, false, QuotaDependency.NONE),

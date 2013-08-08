@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -26,10 +27,17 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
     @Override
     protected void executeQueryCommand() {
         List<LUNs> luns = getLunsForVgId(getVgId());
+        List<LUNs> nonDummyLuns = new ArrayList<LUNs>(luns.size());
         StorageType storageType = getStorageType(luns);
         Map<String, LUNs> lunsFromDeviceMap = getLunsFromDeviceMap(storageType);
 
         for (LUNs lun : luns) {
+            // Filter dummy luns
+            if (lun.getLUN_id().startsWith(BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX)) {
+                continue;
+            }
+            nonDummyLuns.add(lun);
+
             // Update LUN's connections
             for (LUN_storage_server_connection_map map : getLunConnections(lun.getLUN_id())) {
                 addConnection(lun, getConnection(map.getstorage_server_connection()));
@@ -42,7 +50,7 @@ public class GetLunsByVgIdQuery<P extends GetLunsByVgIdParameters> extends Queri
             }
         }
 
-        setReturnValue(luns);
+        setReturnValue(nonDummyLuns);
     }
 
     private StorageType getStorageType(List<LUNs> luns) {

@@ -62,6 +62,7 @@ public class FeaturesHelper {
             addConsoleFeature(features);
             addFeatureStorageServerConnections(features);
             addFeatureStorageServerConnectionsForDomain(features);
+            addFeatureAttachDetachStorageServerConnectionsForDomain(features);
             addSingleQxlPciFeature(features);
             addFeatureAddVmFromOvf(features);
             addVnicProfilesFeature(features);
@@ -348,6 +349,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Gluster Hooks management");
         feature.setDescription("Ability to manage gluster hooks in cluster");
+        features.getFeature().add(feature);
+    }
+
+    private void addFeatureAttachDetachStorageServerConnectionsForDomain(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Attach/Detach storage server connections (to/from a storage domain)");
+        feature.setDescription("Ability to attach/detach storage server connections to/from a specific storage domain (common use case: disaster recovery).");
         features.getFeature().add(feature);
     }
 }

@@ -1361,6 +1361,26 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
+- name: /api/storagedomains/{storagedomain:id}/storageconnections/{storageconnection:id}|rel=delete
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers: {}
+- name: /api/storagedomains/{storagedomain:id}/storageconnections|rel=add
+  request:
+    body:
+      parameterType: StorageConnection
+      signatures:
+      - mandatoryArguments: {storageconnection.id: 'xs:string'}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}|rel=delete
   description: get the details of the specified cluster in the system
   request:

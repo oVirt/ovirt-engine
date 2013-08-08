@@ -16,6 +16,8 @@ import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -44,29 +46,41 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
     private static final String PORT = "123456";
     private static final String[] IQNS = new String[] { ADDRESS + ":1", ADDRESS + ":2", ADDRESS + ":3" };
     private static final String PHYSICAL_DEVICE_FIELD = "sda";
-
+    private static final String DUMMY_LUN_ID = BusinessEntitiesDefinitions.DUMMY_LUN_ID_PREFIX+"89871115-e64d-4754-bacd-556cc249761b";
     private VDSBrokerFrontend vdsBrokerFrontendMock;
+    @Mock
+    StorageServerConnectionLunMapDAO storageServerConnectionLunMapDAO;
+    @Mock
+    StorageServerConnectionDAO storageServerConnectionDAO;
 
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
         prepareMocks();
+        setUpStorageServerConnectionLunMapDAO();
+        setUpStorageServerConnectionDAO();
     }
 
     @Test
     public void testQuery() {
+        commonTestFlow(false);
+    }
+
+    @Test
+    public void testQueryDummyLun() {
+        commonTestFlow(true);
+    }
+
+    private void commonTestFlow(boolean withDummyLun) {
         when(getQueryParameters().getVgId()).thenReturn(VG_ID);
         when(getQueryParameters().getVdsId()).thenReturn(VDS_ID);
 
-        expectGetLunsForVg(VG_ID);
+        expectGetLunsForVg(VG_ID,withDummyLun);
         expectGetDeviceList();
 
-        StorageServerConnectionLunMapDAO lunMapDAO = setUpStorageServerConnectionLunMapDAO();
-        StorageServerConnectionDAO cnxDAO = setUpStorageServerConnectionDAO();
-
-        expectGetLunsMap(lunMapDAO);
-        expectGetConnections(cnxDAO);
+        expectGetLunsMap(storageServerConnectionLunMapDAO);
+        expectGetConnections(storageServerConnectionDAO);
 
         getQuery().setInternalExecution(true);
         getQuery().executeCommand();
@@ -81,21 +95,21 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
     }
 
     protected StorageServerConnectionDAO setUpStorageServerConnectionDAO() {
-        StorageServerConnectionDAO dao = mock(StorageServerConnectionDAO.class);
-        when(getDbFacadeMockInstance().getStorageServerConnectionDao()).thenReturn(dao);
-        return dao;
+        storageServerConnectionDAO = mock(StorageServerConnectionDAO.class);
+        when(getDbFacadeMockInstance().getStorageServerConnectionDao()).thenReturn(storageServerConnectionDAO);
+        return storageServerConnectionDAO;
     }
 
     protected StorageServerConnectionLunMapDAO setUpStorageServerConnectionLunMapDAO() {
-        StorageServerConnectionLunMapDAO dao = mock(StorageServerConnectionLunMapDAO.class);
-        when(getDbFacadeMockInstance().getStorageServerConnectionLunMapDao()).thenReturn(dao);
-        return dao;
+        storageServerConnectionLunMapDAO = mock(StorageServerConnectionLunMapDAO.class);
+        when(getDbFacadeMockInstance().getStorageServerConnectionLunMapDao()).thenReturn(storageServerConnectionLunMapDAO);
+        return storageServerConnectionLunMapDAO;
     }
 
-    protected void expectGetLunsForVg(String vgId) {
+    protected void expectGetLunsForVg(String vgId, boolean withDummyLun) {
         LunDAO dao = mock(LunDAO.class);
         when(getDbFacadeMockInstance().getLunDao()).thenReturn(dao);
-        when(dao.getAllForVolumeGroup(vgId)).thenReturn(setUpLuns());
+        when(dao.getAllForVolumeGroup(vgId)).thenReturn(setUpLuns(withDummyLun));
     }
 
     protected void expectGetDeviceList() {
@@ -127,18 +141,23 @@ public class GetLunsByVgIdTest extends AbstractQueryTest<GetLunsByVgIdParameters
         }
     }
 
-    protected List<LUNs> setUpLuns() {
+    protected List<LUNs> setUpLuns(boolean withDummyLun) {
         List<LUNs> luns = new ArrayList<LUNs>();
         for (int i = 0; i < GUIDS.length; i++) {
             LUNs lun = new LUNs();
             lun.setLUN_id(GUIDS[i].toString());
             luns.add(lun);
         }
+        if (withDummyLun) {
+            LUNs dummyLun = new LUNs();
+            dummyLun.setLUN_id(DUMMY_LUN_ID);
+            luns.add(dummyLun);
+        }
         return luns;
     }
 
     protected List<LUNs> setUpLunsFromDeviceList() {
-        List<LUNs> luns = setUpLuns();
+        List<LUNs> luns = setUpLuns(false);
         for (int i = 0; i < luns.size(); i++) {
             HashMap<String, Boolean> pathsDictionary = new HashMap<String, Boolean>();
             pathsDictionary.put(PHYSICAL_DEVICE_FIELD, true);
