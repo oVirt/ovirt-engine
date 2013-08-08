@@ -3443,11 +3443,13 @@ actions:
 - name: /api/storageconnections/{storageconnection:id}|rel=delete
   request:
     body:
+      required: false
       parameterType: Host
       signatures:
       - mandatoryArguments: {}
         optionalArguments:  {host.id|name: 'xs:string'}
-    urlparams: {}
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
