@@ -841,7 +841,9 @@ public class SyntaxChecker implements ISyntaxChecker {
                             StringFormat.format(" ORDER BY %1$s", conditionFieldAC.getSortableDbField(obj.getBody()));
                     break;
                 case SORT_DIRECTION:
-                    sortByPhrase = StringFormat.format("%1$s %2$s", sortByPhrase, obj.getBody());
+                    // Forcing any sorting using DESC to show NULL values last (NULLS FIRST is the default)
+                    String direction = (obj.getBody().equalsIgnoreCase("desc")) ? "DESC NULLS LAST" : obj.getBody();
+                    sortByPhrase = StringFormat.format("%1$s %2$s", sortByPhrase, direction);
                     break;
                 default:
                     break;
