@@ -12,6 +12,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -25,9 +27,13 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.TreeSet;
 
+import javax.xml.parsers.FactoryConfigurationError;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.ldap.LdapProviderType;
@@ -156,7 +162,25 @@ public class ManageDomains {
         }
     }
 
+    /**
+     * Initializes logging configuration
+     */
+    private static void initLogging() {
+        String cfgFile = System.getProperty("log4j.configuration");
+        if (StringUtils.isNotBlank(cfgFile)) {
+            try {
+                URL url = new URL(cfgFile);
+                LogManager.resetConfiguration();
+                DOMConfigurator.configure(url);
+            } catch (FactoryConfigurationError | MalformedURLException ex) {
+                System.out.println("Cannot configure logging: " + ex.getMessage());
+            }
+        }
+    }
+
     public static void main(String[] args) {
+        initLogging();
+
         ManageDomains util;
         util = new ManageDomains();
 
