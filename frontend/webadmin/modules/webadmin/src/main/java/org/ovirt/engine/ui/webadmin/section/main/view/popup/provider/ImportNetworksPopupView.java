@@ -218,7 +218,10 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
 
     @Override
     public void edit(ImportNetworksModel model) {
-        splitTable.edit(model.getProviderNetworks(), model.getImportedNetworks(), null, model.getCancelImportCommand());
+        splitTable.edit(model.getProviderNetworks(),
+                model.getImportedNetworks(),
+                model.getAddImportCommand(),
+                model.getCancelImportCommand());
         dcColumn.edit(model.getDataCenters());
         driver.edit(model);
     }

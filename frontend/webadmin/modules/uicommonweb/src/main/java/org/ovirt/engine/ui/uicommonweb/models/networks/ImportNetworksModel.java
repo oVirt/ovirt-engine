@@ -50,6 +50,7 @@ public class ImportNetworksModel extends Model {
     private final ListModel providerNetworks = new ListModel();
     private final ListModel importedNetworks = new ListModel();
 
+    private UICommand addImportCommand = new UICommand(null, this);
     private UICommand cancelImportCommand = new UICommand(null, this);
 
     Map<Guid, Collection<VDSGroup>> dcClusters;
@@ -70,6 +71,10 @@ public class ImportNetworksModel extends Model {
         return providers;
     }
 
+    public UICommand getAddImportCommand() {
+        return addImportCommand;
+    }
+
     public UICommand getCancelImportCommand() {
         return cancelImportCommand;
     }
@@ -80,14 +85,15 @@ public class ImportNetworksModel extends Model {
         setTitle(ConstantsManager.getInstance().getConstants().importNetworksTitle());
         setHashName("import_networks"); //$NON-NLS-1$
 
-        UICommand tempVar = new UICommand(CMD_IMPORT, this);
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().importNetworksButton());
-        tempVar.setIsDefault(true);
-        getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand(CMD_CANCEL, this);
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
-        getCommands().add(tempVar2);
+        UICommand importCommand = new UICommand(CMD_IMPORT, this);
+        importCommand.setIsExecutionAllowed(false);
+        importCommand.setTitle(ConstantsManager.getInstance().getConstants().importNetworksButton());
+        importCommand.setIsDefault(true);
+        getCommands().add(importCommand);
+        UICommand cancelCommand = new UICommand(CMD_CANCEL, this);
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        getCommands().add(cancelCommand);
 
         providers.getSelectedItemChangedEvent().addListener(new IEventListener() {
 
@@ -251,8 +257,16 @@ public class ImportNetworksModel extends Model {
         });
     }
 
+    private void addImport() {
+        getDefaultCommand().setIsExecutionAllowed(true);
+    }
+
     private void cancelImport() {
-        for (ExternalNetwork externalNetwork : (List<ExternalNetwork>) getImportedNetworks().getSelectedItems()) {
+        List<ExternalNetwork> selectedNetworks = (List<ExternalNetwork>) getImportedNetworks().getSelectedItems();
+        Collection<ExternalNetwork> importedNetworks = (Collection<ExternalNetwork>) getImportedNetworks().getItems();
+        getDefaultCommand().setIsExecutionAllowed(selectedNetworks.size() < importedNetworks.size());
+
+        for (ExternalNetwork externalNetwork : selectedNetworks) {
             externalNetwork.setDisplayName(externalNetwork.getNetwork().getName());
         }
     }
@@ -265,6 +279,8 @@ public class ImportNetworksModel extends Model {
             onImport();
         } else if (StringHelper.stringsEqual(command.getName(), CMD_CANCEL)) {
             cancel();
+        } else if (getAddImportCommand().equals(command)) {
+            addImport();
         } else if (getCancelImportCommand().equals(command)) {
             cancelImport();
         }
