@@ -239,6 +239,13 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
         getEditCommand().setIsExecutionAllowed(selectedItems.size() == 1);
         getRemoveCommand().setIsExecutionAllowed(selectedItems.size() > 0 && !anyEngine);
+
+        // System tree dependent actions.
+        boolean isAvailable =
+                !(getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Network);
+
+        getNewCommand().setIsAvailable(isAvailable);
+        getRemoveCommand().setIsAvailable(isAvailable);
     }
 
     @Override

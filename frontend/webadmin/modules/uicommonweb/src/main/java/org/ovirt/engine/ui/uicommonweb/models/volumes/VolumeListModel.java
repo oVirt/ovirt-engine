@@ -38,6 +38,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
@@ -339,28 +340,36 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             getStartCommand().setIsExecutionAllowed(false);
             getRebalanceCommand().setIsExecutionAllowed(false);
             getOptimizeForVirtStoreCommand().setIsExecutionAllowed(false);
-            return;
+        }
+        else {
+            getRemoveVolumeCommand().setIsExecutionAllowed(true);
+            getStopCommand().setIsExecutionAllowed(true);
+            getStartCommand().setIsExecutionAllowed(true);
+            getRebalanceCommand().setIsExecutionAllowed(true);
+            getOptimizeForVirtStoreCommand().setIsExecutionAllowed(true);
+
+            for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> cast(getSelectedItems()))
+            {
+                if (volume.getStatus() == GlusterStatus.UP)
+                {
+                    getRemoveVolumeCommand().setIsExecutionAllowed(false);
+                    getStartCommand().setIsExecutionAllowed(false);
+                }
+                else if (volume.getStatus() == GlusterStatus.DOWN)
+                {
+                    getStopCommand().setIsExecutionAllowed(false);
+                    getRebalanceCommand().setIsExecutionAllowed(false);
+                }
+            }
         }
 
-        getRemoveVolumeCommand().setIsExecutionAllowed(true);
-        getStopCommand().setIsExecutionAllowed(true);
-        getStartCommand().setIsExecutionAllowed(true);
-        getRebalanceCommand().setIsExecutionAllowed(true);
-        getOptimizeForVirtStoreCommand().setIsExecutionAllowed(true);
+        // System tree dependent actions.
+        boolean isAvailable =
+                !(getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Volume);
 
-        for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> cast(getSelectedItems()))
-        {
-            if (volume.getStatus() == GlusterStatus.UP)
-            {
-                getRemoveVolumeCommand().setIsExecutionAllowed(false);
-                getStartCommand().setIsExecutionAllowed(false);
-            }
-            else if (volume.getStatus() == GlusterStatus.DOWN)
-            {
-                getStopCommand().setIsExecutionAllowed(false);
-                getRebalanceCommand().setIsExecutionAllowed(false);
-            }
-        }
+        getCreateVolumeCommand().setIsAvailable(isAvailable);
+        getRemoveVolumeCommand().setIsAvailable(isAvailable);
+
     }
 
     private void cancel() {

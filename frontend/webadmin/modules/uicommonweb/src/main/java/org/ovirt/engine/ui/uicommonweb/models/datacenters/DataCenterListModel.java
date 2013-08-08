@@ -850,6 +850,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         getNewCommand().setIsAvailable(isAvailable);
         getRemoveCommand().setIsAvailable(isAvailable);
+        getForceRemoveCommand().setIsAvailable(isAvailable);
     }
 
     @Override

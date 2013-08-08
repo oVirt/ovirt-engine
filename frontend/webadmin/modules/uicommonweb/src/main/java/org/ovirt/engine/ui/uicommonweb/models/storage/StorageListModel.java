@@ -1140,6 +1140,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         getNewDomainCommand().setIsAvailable(isAvailable);
         getRemoveCommand().setIsAvailable(isAvailable);
+        getDestroyCommand().setIsAvailable(isAvailable);
     }
 
     private boolean isEditAvailable(StorageDomain storageDomain) {
@@ -2234,7 +2235,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
     private UICommand createCancelCommand(String commandName) {
         UICommand command;
-        command = new UICommand(commandName, this); //$NON-NLS-1$
+        command = new UICommand(commandName, this);
         command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         command.setIsCancel(true);
         return command;
