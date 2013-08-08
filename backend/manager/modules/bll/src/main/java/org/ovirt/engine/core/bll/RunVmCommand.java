@@ -191,7 +191,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected String cdPathWindowsToLinux(String url) {
-        return ImagesHandler.cdPathWindowsToLinux(url, getVm().getStoragePoolId());
+        return ImagesHandler.cdPathWindowsToLinux(url, getVm().getStoragePoolId(), getVdsId());
     }
 
     private void resumeVm() {

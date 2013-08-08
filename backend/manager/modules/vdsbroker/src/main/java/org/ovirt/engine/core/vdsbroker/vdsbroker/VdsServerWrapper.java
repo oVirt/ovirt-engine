@@ -17,6 +17,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRp
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
@@ -1252,5 +1253,12 @@ public class VdsServerWrapper implements IVdsServer {
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }
+    }
+
+    @Override
+    public StoragePoolInfoReturnForXmlRpc getStoragePoolInfo(String spUUID) {
+        Map<String, Object> xmlRpcReturnValue = vdsServer.getStoragePoolInfo(spUUID);
+        StoragePoolInfoReturnForXmlRpc wrapper = new StoragePoolInfoReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
     }
 }

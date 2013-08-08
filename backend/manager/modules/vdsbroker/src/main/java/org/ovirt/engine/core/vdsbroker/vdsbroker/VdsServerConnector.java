@@ -244,4 +244,6 @@ public interface VdsServerConnector {
     public Map<String,Object> glusterHookRemove(String glusterCommand, String stage, String hookName);
 
     public Map<String, Object> glusterServicesAction(String[] serviceNames, String action);
+
+    public Map<String, Object> getStoragePoolInfo(String spUUID);
 }

@@ -14,7 +14,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
 
     public ChangeDiskCommand(T parameters) {
         super(parameters);
-        mCdImagePath = ImagesHandler.cdPathWindowsToLinux(parameters.getCdImagePath(), getVm().getStoragePoolId());
+        mCdImagePath = ImagesHandler.cdPathWindowsToLinux(parameters.getCdImagePath(), getVm().getStoragePoolId(), getVm().getRunOnVds());
     }
 
     public String getDiskName() {

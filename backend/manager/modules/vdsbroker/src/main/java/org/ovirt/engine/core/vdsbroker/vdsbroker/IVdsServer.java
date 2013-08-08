@@ -15,6 +15,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRp
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 
 
 public interface IVdsServer {
@@ -257,4 +258,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc glusterHookRemove(String glusterCommand, String stage, String hookName);
 
     GlusterServicesReturnForXmlRpc glusterServicesAction(Guid serverId, String [] serviceList, String actionType);
+
+    StoragePoolInfoReturnForXmlRpc getStoragePoolInfo(String spUUID);
 }

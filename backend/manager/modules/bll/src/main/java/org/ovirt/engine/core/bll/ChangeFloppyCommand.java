@@ -12,7 +12,7 @@ public class ChangeFloppyCommand<T extends ChangeDiskCommandParameters> extends 
 
     public ChangeFloppyCommand(T parameters) {
         super(parameters);
-        mCdImagePath = ImagesHandler.cdPathWindowsToLinux(parameters.getCdImagePath(), getVm().getStoragePoolId());
+        mCdImagePath = ImagesHandler.cdPathWindowsToLinux(parameters.getCdImagePath(), getVm().getStoragePoolId(), getVm().getRunOnVds());
     }
 
     public String getDiskName() {

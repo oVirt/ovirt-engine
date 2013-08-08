@@ -16,7 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
@@ -164,7 +163,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
 
         private Guid _storagePoolId = Guid.Empty;
-        private String mIsoPrefix = "";
 
         public IrsProxyData(Guid storagePoolId) {
             _storagePoolId = storagePoolId;
@@ -974,27 +972,6 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 }
             }
             return spmStatus;
-        }
-
-        public String getIsoPrefix() {
-            synchronized (syncObj) {
-                if (StringUtils.isEmpty(mIsoPrefix)) {
-                    try {
-                        StoragePoolInfoReturnForXmlRpc returnValue = getIrsProxy().getStoragePoolInfo(
-                                _storagePoolId.toString());
-                        if (returnValue.mStoragePoolInfo.containsKey(IrsProperties.isoPrefix)) {
-                            mIsoPrefix = returnValue.mStoragePoolInfo.get(IrsProperties.isoPrefix).toString();
-                        }
-                    } catch (Exception ex) {
-                        log.errorFormat("IrsBroker::IsoPrefix Failed to get IRS statistics.");
-                    }
-                }
-                return mIsoPrefix;
-            }
-        }
-
-        public void setIsoPrefix(String value) {
-            mIsoPrefix = value;
         }
 
         public String getIsoDirectory() {

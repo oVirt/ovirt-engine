@@ -39,8 +39,8 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VdsAndPoolIDVDSParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -367,10 +367,10 @@ public final class ImagesHandler {
         return snapshots;
     }
 
-    public static String cdPathWindowsToLinux(String windowsPath, Guid storagePoolId) {
+    public static String cdPathWindowsToLinux(String windowsPath, Guid storagePoolId, Guid vdsId) {
         return cdPathWindowsToLinux(windowsPath, (String) Backend.getInstance()
                 .getResourceManager()
-                .RunVdsCommand(VDSCommandType.IsoPrefix, new IrsBaseVDSCommandParameters(storagePoolId))
+                .RunVdsCommand(VDSCommandType.IsoPrefix, new VdsAndPoolIDVDSParametersBase(vdsId, storagePoolId))
                 .getReturnValue());
     }
 
