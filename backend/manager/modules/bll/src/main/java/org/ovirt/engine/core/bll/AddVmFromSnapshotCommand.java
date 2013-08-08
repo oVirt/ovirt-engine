@@ -247,7 +247,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 getVm().getStaticData(),
                 true,
                 devices,
-                newDiskImages,
+                getSrcDiskIdToTargetDiskIdMapping(),
                 _vmInterfaces,
                 getParameters().isSoundDeviceEnabled(),
                 getParameters().isConsoleEnabled());

@@ -226,17 +226,16 @@ public class VmDeviceUtils {
      * Copy related data from the given VM/VmBase/VmDevice list to the destination VM/VmTemplate.
      */
     public static void copyVmDevices(Guid srcId,
-            Guid dstId,
-            VM vm,
-            VmBase vmBase,
-            boolean isVm,
-            List<VmDevice> devicesDataToUse,
-            List<DiskImage> disks,
-            List<VmNic> ifaces,
-            boolean soundDeviceEnabled,
-            boolean isConsoleEnabled) {
+                                     Guid dstId,
+                                     VM vm,
+                                     VmBase vmBase,
+                                     boolean isVm,
+                                     List<VmDevice> devicesDataToUse,
+                                     Map<Guid, Guid> srcDiskToTargetDiskMapping,
+                                     List<VmNic> ifaces,
+                                     boolean soundDeviceEnabled,
+                                     boolean isConsoleEnabled) {
         Guid id;
-        int diskCount = 0;
         int ifaceCount = 0;
         String isoPath=vmBase.getIsoPath();
         // indicates that VM should have CD either from its own (iso_path) or from the snapshot it was cloned from.
@@ -265,9 +264,7 @@ public class VmDeviceUtils {
             switch(device.getType()) {
                 case DISK:
                     if (VmDeviceType.DISK.getName().equals(device.getDevice())) {
-                        if (diskCount < disks.size()) {
-                            id = (disks.get(diskCount++)).getId();
-                        }
+                            id = srcDiskToTargetDiskMapping.get(device.getDeviceId());
                     } else if (VmDeviceType.CDROM.getName().equals(device.getDevice())) {
                         // check here is source VM had CD (Vm from snapshot)
                         String srcCdPath = (String) device.getSpecParams().get(VdsProperties.Path);
@@ -384,28 +381,23 @@ public class VmDeviceUtils {
                 null);
     }
 
-    /**
-     * Copies relevant entries on "Vm from Template" or "Template from VM" creation.
-     *
-     * @param srcId
-     * @param dstId
-     * @param disks
-     *            The disks which were saved for the destination VM.
-     */
     public static void copyVmDevices(Guid srcId,
-            Guid dstId,
-            List<DiskImage> disks,
-            List<VmNic> ifaces,
-            boolean soundDeviceEnabled,
-            boolean isConsoleEnabled) {
+                                     Guid dstId,
+                                     Map<Guid, Guid> srcDiskToTargetDiskMapping,
+                                     List<VmNic> ifaces,
+                                     boolean soundDeviceEnabled,
+                                     boolean isConsoleEnabled) {
         VM vm = DbFacade.getInstance().getVmDao().get(dstId);
         VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
         boolean isVm = (vmBase != null);
+
         if (!isVm) {
             vmBase = DbFacade.getInstance().getVmTemplateDao().get(dstId);
         }
+
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
-        copyVmDevices(srcId, dstId, vm, vmBase, isVm, devices, disks, ifaces, soundDeviceEnabled,  isConsoleEnabled);
+        copyVmDevices(srcId, dstId, vm, vmBase, isVm, devices, srcDiskToTargetDiskMapping,
+                ifaces, soundDeviceEnabled, isConsoleEnabled);
     }
 
     private static void addVideoDevice(VmBase vm) {

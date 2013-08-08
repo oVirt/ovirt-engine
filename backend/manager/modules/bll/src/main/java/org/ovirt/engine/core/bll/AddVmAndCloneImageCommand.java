@@ -69,7 +69,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
                 diskImage.getId(),
                 diskImage.getImageId(), parentCommandType);
         VdcReturnValueBase result = executeChildCopyingCommand(parameters);
-        handleCopyResult(newDiskImage, parameters, result);
+        handleCopyResult(diskImage, newDiskImage, result);
     }
 
     @Override
@@ -160,24 +160,21 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
 
     /**
      * Handle the result of copying the image
-     *
+     * @param srcDiskImage
+     *            disk image that represents the source image
      * @param copiedDiskImage
-     *            disk image that represents the copied image at VDSM
-     * @param parameters
-     *            parameters for the child command that executes the copy at VDSM
+     *            disk image that represents the copied image
      * @param result
      *            result of execution of child command
      */
-    protected void handleCopyResult(DiskImage copiedDiskImage,
-            VdcActionParametersBase parameters,
-            VdcReturnValueBase result) {
+    private void handleCopyResult(DiskImage srcDiskImage, DiskImage copiedDiskImage, VdcReturnValueBase result) {
         // If a copy cannot be made, abort
         if (!result.getSucceeded()) {
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
         } else {
             ImagesHandler.addDiskImageWithNoVmDevice(copiedDiskImage);
             getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
-            newDiskImages.add(copiedDiskImage);
+            getSrcDiskIdToTargetDiskIdMapping().put(srcDiskImage.getId(), copiedDiskImage.getId());
         }
     }
 

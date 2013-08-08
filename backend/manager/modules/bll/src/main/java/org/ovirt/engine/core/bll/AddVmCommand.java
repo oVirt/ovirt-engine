@@ -81,10 +81,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     private String cachedDiskSharedLockMessage;
 
-    /**
-     * A list of the new disk images which were saved for the VM.
-     */
-    protected List<DiskImage> newDiskImages = new ArrayList<DiskImage>();
+    private Map<Guid, Guid> srcDiskIdToTargetDiskIdMapping = new HashMap<>();
 
     public AddVmCommand(T parameters) {
         super(parameters);
@@ -554,7 +551,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     @Override
                     public Void runInTransaction() {
                         copyVmDevices();
-                        addDiskPermissions(newDiskImages);
+                        addDiskPermissions();
                         addVmPayload();
                         updateSmartCardDevices();
                         addVmWatchdog();
@@ -605,7 +602,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected void copyVmDevices() {
         VmDeviceUtils.copyVmDevices(getVmTemplateId(),
                 getVmId(),
-                newDiskImages,
+                srcDiskIdToTargetDiskIdMapping,
                 _vmInterfaces,
                 getParameters().isSoundDeviceEnabled(),
                 getParameters().isConsoleEnabled());
@@ -731,7 +728,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     throw new VdcBLLException(result.getFault().getError());
                 } else {
                     getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
-                    newDiskImages.add((DiskImage) result.getActionReturnValue());
+                    DiskImage newImage = (DiskImage) result.getActionReturnValue();
+                    srcDiskIdToTargetDiskIdMapping.put(dit.getId(), newImage.getId());
                 }
             }
         }
@@ -853,13 +851,14 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     }
 
-    protected void addDiskPermissions(List<DiskImage> newDiskImages) {
-        permissions[] permsArray = new permissions[newDiskImages.size()];
-        for (int i = 0; i < newDiskImages.size(); i++) {
+    protected void addDiskPermissions() {
+        List<Guid> newDiskImageIds = new ArrayList<>(srcDiskIdToTargetDiskIdMapping.values());
+        permissions[] permsArray = new permissions[newDiskImageIds.size()];
+        for (int i = 0; i < newDiskImageIds.size(); i++) {
             permsArray[i] =
                     new permissions(getCurrentUser().getUserId(),
                             PredefinedRoles.DISK_OPERATOR.getId(),
-                            newDiskImages.get(i).getId(),
+                            newDiskImageIds.get(i),
                             VdcObjectType.Disk);
         }
         MultiLevelAdministrationHandler.addPermission(permsArray);
@@ -922,5 +921,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
         list.add(new QuotaSanityParameter(getQuotaId(), null));
         return list;
+    }
+
+    public Map<Guid, Guid> getSrcDiskIdToTargetDiskIdMapping() {
+        return srcDiskIdToTargetDiskIdMapping;
     }
 }

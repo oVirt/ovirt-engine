@@ -70,9 +70,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private boolean isVmInDb;
 
     /**
-     * A list of the new disk images which were saved for the Template.
+     * A mapping between source disk id and target disk id.
+     * This mapping is used when creating new devices for this template.
      */
-    private final List<DiskImage> newDiskImages = new ArrayList<DiskImage>();
+    private Map<Guid, Guid> srcDiskToTargetDiskMapping = new HashMap<>();
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -214,7 +215,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 if (isVmInDb) {
                     VmDeviceUtils.copyVmDevices(getVmId(),
                             getVmTemplateId(),
-                            newDiskImages,
+                            srcDiskToTargetDiskMapping,
                             vmInterfaces,
                             getParameters().isSoundDeviceEnabled(),
                             getParameters().isConsoleEnabled());
@@ -226,7 +227,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             getVmTemplate(),
                             true,
                             Collections.<VmDevice> emptyList(),
-                            newDiskImages,
+                            srcDiskToTargetDiskMapping,
                             vmInterfaces,
                             getParameters().isSoundDeviceEnabled(),
                             getParameters().isConsoleEnabled());
@@ -460,7 +461,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
 
             getReturnValue().getVdsmTaskIdList().addAll(retValue.getInternalVdsmTaskIdList());
-            newDiskImages.add((DiskImage) retValue.getActionReturnValue());
+            DiskImage newImage = (DiskImage) retValue.getActionReturnValue();
+            srcDiskToTargetDiskMapping.put(diskImage.getId(), newImage.getId());
         }
     }
 
