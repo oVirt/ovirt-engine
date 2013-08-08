@@ -368,6 +368,14 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
         };
         nicTable.addColumn(networkColumn, constants.networkNameInterface(), "150px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<VmNetworkInterface> profileColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+            @Override
+            public String getValue(VmNetworkInterface object) {
+                return object.getVnicProfileName();
+            }
+        };
+        nicTable.addColumn(profileColumn, constants.profileNameInterface(), "150px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
             protected VmInterfaceType getRawValue(VmNetworkInterface object) {

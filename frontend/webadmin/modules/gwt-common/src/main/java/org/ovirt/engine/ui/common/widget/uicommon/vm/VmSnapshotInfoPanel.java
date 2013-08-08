@@ -208,6 +208,14 @@ public class VmSnapshotInfoPanel extends TabLayoutPanel {
         };
         nicsTable.addColumn(networkNameColumn, constants.networkNameInterface(), "80px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<VmNetworkInterface> profileNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+            @Override
+            public String getValue(VmNetworkInterface object) {
+                return object.getVnicProfileName();
+            }
+        };
+        nicsTable.addColumn(profileNameColumn, constants.profileNameInterface(), "80px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<VmNetworkInterface> typeColumn = new EnumColumn<VmNetworkInterface, VmInterfaceType>() {
             @Override
             protected VmInterfaceType getRawValue(VmNetworkInterface object) {

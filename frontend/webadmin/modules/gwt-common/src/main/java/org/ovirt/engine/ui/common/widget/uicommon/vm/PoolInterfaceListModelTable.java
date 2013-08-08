@@ -63,6 +63,15 @@ public class PoolInterfaceListModelTable<T extends SearchableListModel> extends 
         };
         getTable().addColumn(networkNameColumn, constants.networkNameInterface());
 
+        TextColumnWithTooltip<VmNetworkInterface> profileNameColumn = new TextColumnWithTooltip<VmNetworkInterface>() {
+            @Override
+            public String getValue(VmNetworkInterface object) {
+                return object.getVnicProfileName();
+            }
+        };
+
+        getTable().addColumn(profileNameColumn, constants.profileNameInterface());
+
         BooleanColumn<VmNetworkInterface> linkStateColumn =
                 new BooleanColumn<VmNetworkInterface>(constants.linkedNetworkInteface(),
                         constants.unlinkedNetworkInteface()) {
