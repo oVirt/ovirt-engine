@@ -84,6 +84,15 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         };
         getTable().addColumn(ipColumn, constants.ipVm(), "120px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<VM> fqdnColumn = new TextColumnWithTooltip<VM>() {
+            @Override
+            public String getValue(VM object) {
+                return object.getVmFQDN();
+            }
+
+        };
+        getTable().addColumn(fqdnColumn, constants.fqdn(), "120px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<VM> clusterColumn = new TextColumnWithTooltip<VM>() {
             @Override
             public String getValue(VM object) {

@@ -80,6 +80,8 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
 
         getTable().ensureColumnPresent(ipColumn, constants.ipVm(), true, "150px"); //$NON-NLS-1$
 
+        getTable().ensureColumnPresent(fqdnColumn, constants.fqdn(), true, "150px"); //$NON-NLS-1$
+
         getTable().ensureColumnPresent(nicActivateStatusColumn, constants.vnicStatusNetworkVM(), true, "150px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(vnicNameColumn, constants.vnicNetworkVM(), true, "150px"); //$NON-NLS-1$
@@ -116,6 +118,15 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
                 @Override
                 public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
                     return object.getSecond().getVmIp();
+                }
+            };
+
+    private final TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>> fqdnColumn =
+            new TextColumnWithTooltip<PairQueryable<VmNetworkInterface, VM>>() {
+                @Override
+                public String getValue(PairQueryable<VmNetworkInterface, VM> object) {
+                    setTitle(object.getSecond().getVmFQDN());
+                    return object.getSecond().getVmFQDN();
                 }
             };
 

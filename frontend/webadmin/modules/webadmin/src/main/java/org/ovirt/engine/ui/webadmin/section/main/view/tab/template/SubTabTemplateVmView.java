@@ -58,6 +58,14 @@ public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM
         };
         getTable().addColumn(ipColumn, constants.ipVm(), "200px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<VM> fqdnColumn = new TextColumnWithTooltip<VM>() {
+            @Override
+            public String getValue(VM object) {
+                return object.getVmFQDN();
+            }
+        };
+        getTable().addColumn(fqdnColumn, constants.fqdn(), "200px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
             protected VMStatus getRawValue(VM object) {

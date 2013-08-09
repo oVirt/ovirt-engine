@@ -76,6 +76,14 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
         };
         getTable().addColumn(ipColumn, constants.ipVm(), "140px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<VM> fqdnColumn = new TextColumnWithTooltip<VM>() {
+            @Override
+            public String getValue(VM object) {
+                return object.getVmFQDN();
+            }
+        };
+        getTable().addColumn(fqdnColumn, constants.fqdn(), "140px"); //$NON-NLS-1$
+
         PercentColumn<VM> memColumn = new PercentColumn<VM>() {
             @Override
             public Integer getProgressValue(VM object) {

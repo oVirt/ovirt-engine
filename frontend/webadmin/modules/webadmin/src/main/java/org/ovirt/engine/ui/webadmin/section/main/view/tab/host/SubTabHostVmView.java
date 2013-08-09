@@ -73,6 +73,14 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
         };
         getTable().addColumn(ipColumn, constants.ipVm(), "200px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<VM> fqdnColumn = new TextColumnWithTooltip<VM>() {
+            @Override
+            public String getValue(VM object) {
+                return object.getVmFQDN();
+            }
+        };
+        getTable().addColumn(fqdnColumn, constants.fqdn(), "200px"); //$NON-NLS-1$
+
         PercentColumn<VM> memColumn = new PercentColumn<VM>() {
             @Override
             public Integer getProgressValue(VM object) {
