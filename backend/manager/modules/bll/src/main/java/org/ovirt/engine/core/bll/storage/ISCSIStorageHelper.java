@@ -6,6 +6,8 @@ import java.util.Map;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -60,6 +62,13 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             isSuccess = returnValue.getSucceeded();
             if (isSuccess && VDSCommandType.forValue(type) == VDSCommandType.ConnectStorageServer) {
                 isSuccess = isConnectSucceeded((Map<String, String>) returnValue.getReturnValue(), list);
+
+                if (isSuccess) {
+                    // Synchronize LUN details comprising the storage domain with the DB
+                    StorageDomainParametersBase parameters = new StorageDomainParametersBase(storageDomain.getId());
+                    parameters.setVdsId(vdsId);
+                    Backend.getInstance().runInternalAction(VdcActionType.SyncLunsInfoForIscsiStorageDomain, parameters);
+                }
             }
         }
         return isSuccess;

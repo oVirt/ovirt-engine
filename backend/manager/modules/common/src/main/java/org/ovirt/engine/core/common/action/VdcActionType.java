@@ -230,6 +230,7 @@ public enum VdcActionType {
     ExportRepoImage(1015, QuotaDependency.NONE),
     AttachStorageConnectionToStorageDomain(1016, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
     DetachStorageConnectionFromStorageDomain(1017, ActionGroup.MANIPULATE_STORAGE_DOMAIN, QuotaDependency.NONE),
+    SyncLunsInfoForIscsiStorageDomain(1018, false, QuotaDependency.NONE),
 
     // Event Notification
     AddEventSubscription(1100, false, QuotaDependency.NONE),
