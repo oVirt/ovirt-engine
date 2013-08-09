@@ -57,6 +57,7 @@ import org.ovirt.otopi.dialog.SoftError;
 import org.ovirt.ovirt_host_deploy.constants.GlusterEnv;
 import org.ovirt.ovirt_host_deploy.constants.OpenStackEnv;
 import org.ovirt.ovirt_host_deploy.constants.VdsmEnv;
+import org.ovirt.ovirt_host_deploy.constants.VirtEnv;
 
 /**
  * Host deploy implementation.
@@ -427,6 +428,16 @@ public class VdsDeploy implements SSHDialog.Sink {
             _parser.cliEnvironmentSet(
                 VdsmEnv.CERTIFICATE_ENROLLMENT,
                 org.ovirt.ovirt_host_deploy.constants.Const.CERTIFICATE_ENROLLMENT_INLINE
+            );
+            return null;
+        }},
+        new Callable<Object>() { public Object call() throws Exception {
+            VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(
+                _vds.getVdsGroupId()
+            );
+            _parser.cliEnvironmentSet(
+                VirtEnv.ENABLE,
+                vdsGroup.supportsVirtService()
             );
             return null;
         }},
