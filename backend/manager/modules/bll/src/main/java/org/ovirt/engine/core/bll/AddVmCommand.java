@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -46,9 +45,9 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -817,24 +816,28 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected void addVmPermission() {
+        UniquePermissionsSet permissionsToAdd = new UniquePermissionsSet();
         if ((getParameters()).isMakeCreatorExplicitOwner()) {
-            permissions perms = new permissions(getCurrentUser().getUserId(), PredefinedRoles.VM_OPERATOR.getId(),
+            permissionsToAdd.addPermission(getCurrentUser().getUserId(), PredefinedRoles.VM_OPERATOR.getId(),
                     getVmId(), VdcObjectType.VM);
-            MultiLevelAdministrationHandler.addPermission(perms);
-            getCompensationContext().snapshotNewEntity(perms);
         }
 
         if (getParameters().isCopyTemplatePermissions() && !getVmTemplateId().equals(VmTemplateHandler.BlankVmTemplateId)) {
-            copyTemplatePermissions();
+            copyTemplatePermissions(permissionsToAdd);
+        }
+
+        if (!permissionsToAdd.isEmpty()) {
+            List<permissions> permissionsList = permissionsToAdd.asPermissionList();
+            MultiLevelAdministrationHandler.addPermission(permissionsList.toArray(new permissions[permissionsList.size()]));
+
+            getCompensationContext().snapshotNewEntities(permissionsList);
         }
     }
 
-    private void copyTemplatePermissions() {
+    private void copyTemplatePermissions(UniquePermissionsSet permissionsToAdd) {
         PermissionDAO dao = getDbFacade().getPermissionDao();
 
         List<permissions> templatePermissions = dao.getAllForEntity(getVmTemplateId(), getCurrentUser().getUserId(), false);
-
-        List<permissions> vmPermissions = new ArrayList<permissions>();
 
         for (permissions templatePermission : templatePermissions) {
             boolean templateOwnerRole = templatePermission.getrole_id().equals(PredefinedRoles.TEMPLATE_OWNER.getId());
@@ -844,15 +847,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 continue;
             }
 
-            vmPermissions.add(new permissions(getCurrentUser().getUserId(), templatePermission.getrole_id(),
-                    getVmId(), VdcObjectType.VM));
-
+            permissionsToAdd.addPermission(templatePermission.getad_element_id(), templatePermission.getrole_id(),
+                    getVmId(), VdcObjectType.VM);
         }
 
-        if (vmPermissions.size() > 0) {
-            MultiLevelAdministrationHandler.addPermission(vmPermissions.toArray(new permissions[vmPermissions.size()]));
-            getCompensationContext().snapshotNewEntities(vmPermissions);
-        }
     }
 
     protected void addDiskPermissions(List<DiskImage> newDiskImages) {

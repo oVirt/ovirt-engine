@@ -1128,6 +1128,7 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
                     VmManagementParametersBase param = new VmManagementParametersBase(gettempVm());
                     param.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
                     param.setMakeCreatorExplicitOwner(true);
+                    param.setCopyTemplatePermissions((Boolean) model.getCopyPermissions().getEntity());
 
                     param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                     param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());

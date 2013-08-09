@@ -167,4 +167,6 @@ public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
                 && ObjectUtils.objectsEqual(roleId, other.roleId));
     }
 
+
+
 }

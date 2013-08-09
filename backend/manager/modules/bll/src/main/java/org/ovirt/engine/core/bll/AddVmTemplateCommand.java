@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
@@ -43,21 +42,21 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -574,16 +573,23 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     private void addPermission() {
-        addPermissionForTemplate(getCurrentUser().getUserId(), PredefinedRoles.TEMPLATE_OWNER);
+        UniquePermissionsSet permissionsToAdd = new UniquePermissionsSet();
+
+        addPermissionForTemplate(permissionsToAdd, getCurrentUser().getUserId(), PredefinedRoles.TEMPLATE_OWNER);
         // if the template is for public use, set EVERYONE as a TEMPLATE_USER.
         if (getParameters().isPublicUse()) {
-            addPermissionForTemplate(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID, PredefinedRoles.TEMPLATE_USER);
+            addPermissionForTemplate(permissionsToAdd, MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID, PredefinedRoles.TEMPLATE_USER);
         }
 
-        copyVmPermissions();
+        copyVmPermissions(permissionsToAdd);
+
+        if (!permissionsToAdd.isEmpty()) {
+            List<permissions> permissionsList = permissionsToAdd.asPermissionList();
+            MultiLevelAdministrationHandler.addPermission(permissionsList.toArray(new permissions[permissionsList.size()]));
+        }
     }
 
-    private void copyVmPermissions() {
+    private void copyVmPermissions(UniquePermissionsSet permissionsToAdd) {
         if (!isVmInDb || !getParameters().isCopyVmPermissions()) {
             return;
         }
@@ -592,25 +598,15 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         List<permissions> vmPermissions = dao.getAllForEntity(getVmId(), getCurrentUser().getUserId(), false);
 
-        List<permissions> templatePermissions = new ArrayList<permissions>();
-
         for (permissions vmPermission : vmPermissions) {
-            templatePermissions.add(new permissions(getCurrentUser().getUserId(), vmPermission.getrole_id(),
-                    getParameters().getVmTemplateId(), VdcObjectType.VmTemplate));
+            permissionsToAdd.addPermission(vmPermission.getad_element_id(), vmPermission.getrole_id(),
+                    getParameters().getVmTemplateId(), VdcObjectType.VmTemplate);
         }
 
-        if (templatePermissions.size() > 0) {
-            MultiLevelAdministrationHandler.addPermission(templatePermissions.toArray(new permissions[templatePermissions.size()]));
-        }
     }
 
-    private void addPermissionForTemplate(Guid userId, PredefinedRoles role) {
-        permissions perms = new permissions();
-        perms.setad_element_id(userId);
-        perms.setObjectType(VdcObjectType.VmTemplate);
-        perms.setObjectId(getParameters().getVmTemplateId());
-        perms.setrole_id(role.getId());
-        MultiLevelAdministrationHandler.addPermission(perms);
+    private void addPermissionForTemplate(UniquePermissionsSet permissionsToAdd, Guid userId, PredefinedRoles role) {
+        permissionsToAdd.addPermission(userId, role.getId(), getParameters().getVmTemplateId(), VdcObjectType.VmTemplate);
     }
 
     @Override

@@ -2090,6 +2090,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     params.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
                     params.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
                     params.setBalloonEnabled(balloonEnabled(model));
+                    params.setCopyTemplatePermissions((Boolean) model.getCopyPermissions().getEntity());
 
                     ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                     parameters.add(params);
