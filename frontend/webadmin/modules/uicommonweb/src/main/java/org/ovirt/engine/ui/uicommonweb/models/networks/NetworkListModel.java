@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.NewNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.RemoveNetworksModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class NetworkListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
@@ -88,6 +89,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
     }
 
     public void edit() {
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
         final Network network = (Network) getSelectedItem();
 
         if (getWindow() != null)
@@ -99,6 +101,13 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         setWindow(networkModel);
 
         initDcList(networkModel);
+
+        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Network)
+        {
+            networkModel.getName().setIsChangable(false);
+            networkModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
+        }
+
 
     }
 

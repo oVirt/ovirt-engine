@@ -49,6 +49,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 @SuppressWarnings("unused")
 public class ClusterListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
@@ -336,6 +337,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             return;
         }
 
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
         final ClusterModel clusterModel = new ClusterModel();
         clusterModel.setEntity(cluster);
         clusterModel.init(true);
@@ -425,9 +427,10 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             }
         }));
 
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster) {
+        if (getSystemTreeSelectedItem() != null && (getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster ||
+                getSystemTreeSelectedItem().getType() == SystemTreeItemType.Cluster_Gluster)) {
             clusterModel.getName().setIsChangable(false);
-            clusterModel.getName().setInfo("Cannot edit Cluster's Name in tree context"); //$NON-NLS-1$
+            clusterModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
         }
 
         UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$

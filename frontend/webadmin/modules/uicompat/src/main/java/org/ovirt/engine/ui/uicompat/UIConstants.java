@@ -2046,4 +2046,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("VM Interface Profile")
     String vnicProfileTitle();
+
+    @DefaultStringValue("Cannot edit name in tree context")
+    String cannotEditNameInTreeContext();
+
 }

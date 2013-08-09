@@ -705,6 +705,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             return;
         }
 
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -744,9 +745,17 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
                 command.setIsCancel(true);
                 hostModel.getCommands().add(command);
+
+                if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
+                    hostModel.getName().setIsChangable(false);
+                    hostModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
+                }
+
             }
         };
         AsyncDataProvider.getDataCenterList(_asyncQuery);
+
+
     }
 
     public void onSaveFalse()

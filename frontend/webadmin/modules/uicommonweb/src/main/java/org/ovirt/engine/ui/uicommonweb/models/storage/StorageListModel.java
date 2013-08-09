@@ -68,6 +68,7 @@ import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Task;
 import org.ovirt.engine.ui.uicompat.TaskContext;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 @SuppressWarnings("unused")
 public class StorageListModel extends ListWithDetailsModel implements ITaskTarget, ISupportSystemTreeContext
@@ -341,6 +342,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             return;
         }
 
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
         StorageModel model = new StorageModel(new NewEditStorageModelBehavior());
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().editDomainTitle());
@@ -406,16 +408,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         model.initialize();
 
-        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
+        if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Storage)
         {
-            switch (getSystemTreeSelectedItem().getType())
-            {
-            case Storage: {
-                model.getName().setIsChangable(false);
-                model.getName().setInfo("Cannot edit Storage Domains's Name in this tree context"); //$NON-NLS-1$
-            }
-                break;
-            }
+            model.getName().setIsChangable(false);
+            model.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
         }
 
 
