@@ -1237,7 +1237,11 @@ public class CommonModel extends ListModel
             case VMs: {
                 if (vmList.isSearchStringMatch(source))
                 {
-                    prefix.argvalue = "Vms: cluster = " + SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster, model).getTitle(); //$NON-NLS-1$
+                    SystemTreeItemModel ancestor = SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster, model);
+                    if (ancestor == null) {
+                        ancestor = SystemTreeItemModel.findAncestor(SystemTreeItemType.Cluster_Gluster, model);
+                    }
+                    prefix.argvalue = "Vms: cluster = " + ancestor.getTitle(); //$NON-NLS-1$
                 }
             }
                 break;
