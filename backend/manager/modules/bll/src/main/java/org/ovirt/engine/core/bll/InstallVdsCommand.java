@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -16,6 +18,8 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -25,6 +29,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 
+@LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsCommand<T> {
 
@@ -99,6 +104,17 @@ public class InstallVdsCommand<T extends InstallVdsParameters> extends VdsComman
         } else {
             installHost();
         }
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(
+            getParameters().getVdsId().toString(),
+            LockMessagesMatchUtil.makeLockingPair(
+                LockingGroup.VDS,
+                VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED
+            )
+        );
     }
 
     private void installHost() {
