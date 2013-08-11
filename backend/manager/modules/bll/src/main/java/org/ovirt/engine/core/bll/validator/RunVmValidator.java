@@ -105,40 +105,38 @@ public class RunVmValidator {
      *            The VM's image disks
      * @return <code>true</code> if the VM can be run, <code>false</code> if not
      */
-    public boolean validateStorageDomains(VM vm,
-            List<String> message,
-            boolean isInternalExecution,
+    public ValidationResult validateStorageDomains(VM vm, boolean isInternalExecution,
             List<DiskImage> vmImages) {
         if (!vm.isAutoStartup() || !isInternalExecution) {
             Set<Guid> storageDomainIds = ImagesHandler.getAllStorageIdsForImageIds(vmImages);
             MultipleStorageDomainsValidator storageDomainValidator =
                     new MultipleStorageDomainsValidator(vm.getStoragePoolId(), storageDomainIds);
-            if (!validate(storageDomainValidator.allDomainsExistAndActive(), message)) {
-                return false;
+
+            ValidationResult result = storageDomainValidator.allDomainsExistAndActive();
+            if (!result.isValid()) {
+                return result;
             }
 
-            if (!vm.isAutoStartup()
-                    && !validate(storageDomainValidator.allDomainsWithinThresholds(), message)) {
-                return false;
+            result = !vm.isAutoStartup() ? storageDomainValidator.allDomainsWithinThresholds()
+                    : ValidationResult.VALID;
+            if (!result.isValid()) {
+                return result;
             }
         }
 
-        return true;
+        return ValidationResult.VALID;
     }
 
     /**
      * Check isValid only if VM is not HA VM
      */
-    public boolean validateImagesForRunVm(List<String> message, List<DiskImage> vmDisks) {
-        DiskImagesValidator diskImagesValidator = new DiskImagesValidator(vmDisks);
-        return validate(diskImagesValidator.diskImagesNotLocked(), message);
+    public ValidationResult validateImagesForRunVm(List<DiskImage> vmDisks) {
+        return new DiskImagesValidator(vmDisks).diskImagesNotLocked();
     }
 
     @SuppressWarnings("unchecked")
-    public ValidationResult validateIsoPath(boolean isAutoStartup,
-            Guid storagePoolId,
-            String diskPath,
-            String floppyPath) {
+    public ValidationResult validateIsoPath(boolean isAutoStartup, Guid storagePoolId,
+            String diskPath, String floppyPath) {
         if (isAutoStartup) {
             return ValidationResult.VALID;
         }
@@ -210,17 +208,16 @@ public class RunVmValidator {
                 .getReturnValue()).booleanValue();
     }
 
-    public boolean validateVdsStatus(VM vm, List<String> messages) {
+    public ValidationResult validateVdsStatus(VM vm) {
         if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null) {
-            VDS vds = getVdsDao().get(
-                    new Guid(vm.getRunOnVds().toString()));
+            VDS vds = getVdsDao().get(new Guid(vm.getRunOnVds().toString()));
             if (vds.getStatus() != VDSStatus.Up) {
-                messages.add(VdcBllMessages.VAR__HOST_STATUS__UP.toString());
-                messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL.toString());
-                return false;
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
+                        VdcBllMessages.VAR__HOST_STATUS__UP.toString());
             }
         }
-        return true;
+
+        return ValidationResult.VALID;
     }
 
     public ValidationResult validateStatelessVm(VM vm, List<Disk> plugDisks, Boolean stateless) {
@@ -357,71 +354,32 @@ public class RunVmValidator {
             List<Guid> vdsBlackList,
             Guid destVds,
             VDSGroup vdsGroup) {
-        if (!validateVmProperties(vm, messages)) {
+
+        if (!validateVmProperties(vm, messages) ||
+                !validate(validateBootSequence(vm, bootSequence, vmDisks), messages) ||
+                !validate(new VmValidator(vm).vmNotLocked(), messages) ||
+                !validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()), messages) ||
+                !validate(validateVmStatusUsingMatrix(vm), messages) ||
+                !validate(validateIsoPath(vm.isAutoStartup(), vm.getStoragePoolId(), diskPath, floppyPath), messages)  ||
+                !validate(vmDuringInitialization(vm), messages) ||
+                !validate(validateVdsStatus(vm), messages) ||
+                !validate(validateStatelessVm(vm, vmDisks, runAsStateless), messages)) {
             return false;
         }
-        ValidationResult result = validateBootSequence(vm, bootSequence, vmDisks);
-        if (!result.isValid()) {
-            messages.add(result.getMessage().toString());
-            return false;
-        }
-        result = new VmValidator(vm).vmNotLocked();
-        if (!result.isValid()) {
-            messages.add(result.getMessage().toString());
-            return false;
-        }
-        result = getSnapshotValidator().vmNotDuringSnapshot(vm.getId());
-        if (!result.isValid()) {
-            messages.add(result.getMessage().toString());
-            return false;
-        }
+
         List<DiskImage> images = ImagesHandler.filterImageDisks(vmDisks, true, false);
-        if (!images.isEmpty()) {
-            result = new StoragePoolValidator(storagePool).isUp();
-            if (!result.isValid()) {
-                messages.add(result.getMessage().toString());
-                return false;
-            }
-            if (!validateStorageDomains(vm, messages, isInternalExecution, images)) {
-                return false;
-            }
-            if (!validateImagesForRunVm(messages, images)) {
-                return false;
-            }
-            result = validateIsoPath(vm.isAutoStartup(), vm.getStoragePoolId(), diskPath, floppyPath);
-            if (!result.isValid()) {
-                messages.add(result.getMessage().toString());
-                return false;
-            }
-            result = vmDuringInitialization(vm);
-            if (!result.isValid()) {
-                messages.add(result.getMessage().toString());
-                return false;
-            }
-            if (!validateVdsStatus(vm, messages)) {
-                return false;
-            }
-            result = validateStatelessVm(vm, vmDisks, runAsStateless);
-            if (!result.isValid()) {
-                messages.add(result.getMessage().toString());
-                return false;
-            }
-        }
-        if (!SchedulingManager.getInstance().canSchedule(vdsGroup,
-                vm,
-                vdsBlackList,
-                null,
-                destVds,
-                messages)) {
+        if (!images.isEmpty() && (
+                !validate(new StoragePoolValidator(storagePool).isUp(), messages) ||
+                !validate(validateStorageDomains(vm, isInternalExecution, images), messages) ||
+                !validate(validateImagesForRunVm(images), messages))) {
             return false;
         }
-        result = validateVmStatusUsingMatrix(vm);
-        if (!result.isValid()) {
-            messages.add(result.getMessage().toString());
+
+        if (!SchedulingManager.getInstance().canSchedule(
+                vdsGroup, vm, vdsBlackList, null, destVds, messages)) {
             return false;
         }
 
         return true;
     }
-
 }
