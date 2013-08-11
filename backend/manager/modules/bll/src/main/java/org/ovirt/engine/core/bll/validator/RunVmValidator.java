@@ -68,28 +68,25 @@ public class RunVmValidator {
         Guid storagePoolId = vm.getStoragePoolId();
         // Block from running a VM with no HDD when its first boot device is
         // HD and no other boot devices are configured
-        if (boot_sequence == BootSequence.C && vmDisks.size() == 0) {
+        if (boot_sequence == BootSequence.C && vmDisks.isEmpty()) {
             return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_DISK_WITHOUT_DISK);
-        } else {
-            // If CD appears as first and there is no ISO in storage
-            // pool/ISO inactive -
-            // you cannot run this VM
-
-            if (boot_sequence == BootSequence.CD
-                    && getIsoDomainListSyncronizer().findActiveISODomain(storagePoolId) == null) {
-                return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
-            } else {
-                // if there is network in the boot sequence, check that the
-                // vm has network,
-                // otherwise the vm cannot be run in vdsm
-                if (boot_sequence == BootSequence.N
-                        && getVmNicDao().getAllForVm(vm.getId()).size() == 0) {
-                    return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK);
-                }
-            }
         }
-        return ValidationResult.VALID;
 
+        // If CD appears as first and there is no ISO in storage
+        // pool/ISO inactive - you cannot run this VM
+        if (boot_sequence == BootSequence.CD
+                && getIsoDomainListSyncronizer().findActiveISODomain(storagePoolId) == null) {
+            return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
+        }
+
+        // if there is network in the boot sequence, check that the
+        // vm has network, otherwise the vm cannot be run in vdsm
+        if (boot_sequence == BootSequence.N
+                && getVmNicDao().getAllForVm(vm.getId()).isEmpty()) {
+            return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_NETWORK_WITHOUT_NETWORK);
+        }
+
+        return ValidationResult.VALID;
     }
 
     /**
@@ -172,19 +169,19 @@ public class RunVmValidator {
     }
 
     public ValidationResult vmDuringInitialization(VM vm) {
-        boolean isVmDuringInit = isVmDuringInitiating(vm);
-        if (vm.isRunning() || vm.getStatus() == VMStatus.NotResponding || isVmDuringInit) {
+        if (vm.isRunning() || vm.getStatus() == VMStatus.NotResponding ||
+                isVmDuringInitiating(vm)) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
         }
         return ValidationResult.VALID;
     }
 
     protected boolean isVmDuringInitiating(VM vm) {
-        return ((Boolean) getBackend()
+        return (Boolean) getBackend()
                 .getResourceManager()
                 .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
                         new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
-                .getReturnValue()).booleanValue();
+                .getReturnValue();
     }
 
     public ValidationResult validateVdsStatus(VM vm) {
@@ -200,8 +197,8 @@ public class RunVmValidator {
     }
 
     public ValidationResult validateStatelessVm(VM vm, List<Disk> plugDisks, Boolean stateless) {
-        boolean isStatelessVm = stateless != null ? stateless : vm.isStateless();
-        if (!isStatelessVm) {
+        // if the VM is not stateless, there is nothing to check
+        if (stateless != null ? !stateless : !vm.isStateless()) {
             return ValidationResult.VALID;
         }
 
