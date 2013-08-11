@@ -160,8 +160,9 @@ public class NetworkProfileListModel extends SearchableListModel
     }
 
     private void updateActionAvailability() {
-        NetworkView profile = getEntity();
+        NetworkView network = getEntity();
 
+        getNewCommand().setIsExecutionAllowed(network != null && network.isVmNetwork());
         getEditCommand().setIsExecutionAllowed((getSelectedItems() != null && getSelectedItems().size() == 1));
         getRemoveCommand().setIsExecutionAllowed((getSelectedItems() != null && getSelectedItems().size() > 0));
     }
