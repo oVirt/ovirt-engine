@@ -77,6 +77,10 @@ DECLARE
          RAISE EXCEPTION 'Materialized view % already exists.',
            v_matview;
      END IF;
+     IF current_user != 'engine' THEN
+         RAISE EXCEPTION 'Materialized view % should be created with user ''engine''.',
+           v_matview;
+     END IF;
 
      EXECUTE 'REVOKE ALL ON ' || v_view_name || ' FROM PUBLIC';
 
