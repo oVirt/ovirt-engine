@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class VdcLoginReturnValueBase extends VdcReturnValueBase implements Serializable {
     private static final long serialVersionUID = 9209472242567186348L;
 
-    private LoginResult _loginResult = LoginResult.forValue(0);
+    private LoginResult _loginResult;
 
     public LoginResult getLoginResult() {
         return _loginResult;
@@ -16,5 +16,6 @@ public class VdcLoginReturnValueBase extends VdcReturnValueBase implements Seria
     }
 
     public VdcLoginReturnValueBase() {
+        _loginResult = LoginResult.Autheticated;
     }
 }

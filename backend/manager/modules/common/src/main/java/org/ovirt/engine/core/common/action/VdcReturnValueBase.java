@@ -11,32 +11,38 @@ public class VdcReturnValueBase implements Serializable {
     private static final long serialVersionUID = 6063371142273092365L;
 
     private boolean canDoAction;
-    private ArrayList<String> canDoActionMessages = new ArrayList<String>();
+    private ArrayList<String> canDoActionMessages;
     private boolean succeeded;
     private boolean isSyncronious;
     private Object returnValue;
-    private String description = "";
+    private String description;
     /**
-     * Holds the ids of the async task place holders in the database.
-     * On server restart this list  used to clean up and fail all the tasks
-     * that have place holders but don't have a vdsm task id.
+     * Holds the ids of the async task place holders in the database. On server restart this list used to clean up and
+     * fail all the tasks that have place holders but don't have a vdsm task id.
      */
-    private ArrayList<Guid> taskPlaceHolderIdList = new ArrayList<Guid>();
+    private ArrayList<Guid> taskPlaceHolderIdList;
     /**
      * The list of vdsm task ids associated with a command
      */
-    private ArrayList<Guid> vdsmTaskIdList = new ArrayList<Guid>();
+    private ArrayList<Guid> vdsmTaskIdList;
     /**
      * The list of vdsm task ids associated directly with a command
      */
-    private ArrayList<Guid> internalVdsmTaskIdList = new ArrayList<Guid>();
-    private boolean endActionTryAgain = true;
-    private ArrayList<String> executeFailedMessages = new ArrayList<String>();
+    private ArrayList<Guid> internalVdsmTaskIdList;
+    private boolean endActionTryAgain;
+    private ArrayList<String> executeFailedMessages;
     private VdcFault fault;
     private String correlationId;
     private Guid jobId;
 
     public VdcReturnValueBase() {
+        canDoActionMessages = new ArrayList<String>();
+        description = "";
+        taskPlaceHolderIdList = new ArrayList<Guid>();
+        vdsmTaskIdList = new ArrayList<Guid>();
+        internalVdsmTaskIdList = new ArrayList<Guid>();
+        endActionTryAgain = true;
+        executeFailedMessages = new ArrayList<String>();
     }
 
     public VdcFault getFault() {
