@@ -9,7 +9,7 @@ public enum CopyVolumeType {
     LeafVol(8); // collapse without marking as template
 
     private int intValue;
-    private static Map<Integer, CopyVolumeType> mappings = new HashMap<Integer, CopyVolumeType>();
+    private static final Map<Integer, CopyVolumeType> mappings = new HashMap<Integer, CopyVolumeType>();
 
     static {
         for (CopyVolumeType action : values()) {

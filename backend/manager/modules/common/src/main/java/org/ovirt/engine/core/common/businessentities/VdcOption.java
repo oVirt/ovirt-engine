@@ -10,9 +10,10 @@ public class VdcOption implements Serializable {
     private int id;
     private String name;
     private String value;
-    private String version = "general";
+    private String version;
 
     public VdcOption() {
+        version = "general";
     }
 
     @Override

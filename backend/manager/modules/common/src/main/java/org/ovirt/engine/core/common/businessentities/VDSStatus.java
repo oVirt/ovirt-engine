@@ -18,7 +18,7 @@ public enum VDSStatus implements Identifiable {
     Initializing(12),
     Connecting(13);
 
-    private static HashMap<Integer, VDSStatus> mappings = new HashMap<Integer, VDSStatus>();
+    private static final HashMap<Integer, VDSStatus> mappings = new HashMap<Integer, VDSStatus>();
     private int intValue;
 
     static {

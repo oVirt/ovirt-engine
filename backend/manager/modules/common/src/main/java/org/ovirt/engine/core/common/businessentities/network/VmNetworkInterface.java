@@ -12,9 +12,10 @@ public class VmNetworkInterface extends VmNic {
     private String vnicProfileName;
     private boolean portMirroring;
     private String vmName;
-    private boolean plugged = true;
+    private boolean plugged;
 
     public VmNetworkInterface() {
+        plugged = true;
     }
 
     @Override

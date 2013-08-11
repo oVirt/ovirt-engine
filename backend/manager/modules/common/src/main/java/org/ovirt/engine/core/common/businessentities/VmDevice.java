@@ -48,28 +48,28 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     /**
      * The device special parameters.
      */
-    private Map<String, Object> specParams = null;
+    private Map<String, Object> specParams;
 
     /**
      * The device managed/unmanaged flag
      */
-    private boolean isManaged = false;
+    private boolean isManaged;
 
     /**
      * The device plugged flag
      */
-    private Boolean isPlugged = false;
+    private Boolean isPlugged;
 
     /**
      * The device read-only flag
      */
 
-    private boolean isReadOnly = false;
+    private boolean isReadOnly;
 
     /**
      * The device alias.
      */
-    private String alias = "";
+    private String alias;
 
     /**
      * Map of custom properties
@@ -77,6 +77,8 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     private Map<String,String> customProperties;
 
     public VmDevice() {
+        isPlugged = Boolean.FALSE;
+        alias = "";
     }
 
     public VmDevice(VmDeviceId id, VmDeviceGeneralType type, String device, String address,
@@ -87,7 +89,6 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
             boolean isReadOnly,
             String alias,
             Map<String, String> customProperties) {
-        super();
         this.id = id;
         this.type = type;
         this.device = device;

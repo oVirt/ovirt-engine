@@ -8,7 +8,7 @@ public enum VmTemplateStatus implements Identifiable {
     Illegal(2);
 
     private int intValue;
-    private static java.util.HashMap<Integer, VmTemplateStatus> mappings = new HashMap<Integer, VmTemplateStatus>();
+    private static final java.util.HashMap<Integer, VmTemplateStatus> mappings = new HashMap<Integer, VmTemplateStatus>();
 
     static {
         for (VmTemplateStatus status : values()) {

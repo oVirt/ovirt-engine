@@ -9,13 +9,13 @@ public class QuotaUsagePerUser extends IVdcQueryable implements Serializable {
     private String quotaName;
     private double storageLimit;
     private double storageTotalUsage;
-    private double storageUsageForUserGB = 0;
+    private double storageUsageForUserGB;
     private int vcpuLimit;
     private int vcpuTotalUsage;
-    private int vcpuUsageForUser = 0;
+    private int vcpuUsageForUser;
     private long memoryLimit;
     private long memoryTotalUsage;
-    private long memoryUsageForUser = 0;
+    private long memoryUsageForUser;
 
     public QuotaUsagePerUser(){
 

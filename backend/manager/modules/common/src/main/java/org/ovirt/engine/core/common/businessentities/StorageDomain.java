@@ -14,6 +14,8 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
         staticData = new StorageDomainStatic();
         dynamicData = new StorageDomainDynamic();
         setStoragePoolIsoMapData(new StoragePoolIsoMap());
+        totalDiskSize = 0;
+        storageDomainSharedStatus = StorageDomainSharedStatus.Unattached;
     }
 
     //this member is in use only by the Frontend project
@@ -180,7 +182,7 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
         }
     }
 
-    private Integer totalDiskSize = 0; // GREGM prevents NPEs
+    private Integer totalDiskSize;
 
     public Integer getTotalDiskSize() {
         UpdateTotalDiskSize();
@@ -220,7 +222,7 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntity<Guid>
         getStorageStaticData().setStorageType(storageType);
     }
 
-    private StorageDomainSharedStatus storageDomainSharedStatus = StorageDomainSharedStatus.Unattached;
+    private StorageDomainSharedStatus storageDomainSharedStatus;
 
     public StorageDomainSharedStatus getStorageDomainSharedStatus() {
         return storageDomainSharedStatus;

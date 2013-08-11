@@ -26,16 +26,17 @@ public class tags implements Serializable {
 
     private Boolean readonly;
 
-    private TagsType type = TagsType.GeneralTag;
+    private TagsType type;
 
     private List<tags> _children;
 
     public tags() {
         _children = new java.util.ArrayList<tags>();
+        type = TagsType.GeneralTag;
     }
 
     public tags(String description, Guid parent_id, Boolean isReadonly, Guid tag_id, String tag_name) {
-        _children = new java.util.ArrayList<tags>();
+        this();
         this.description = description;
         this.parent = parent_id;
         this.readonly = isReadonly;

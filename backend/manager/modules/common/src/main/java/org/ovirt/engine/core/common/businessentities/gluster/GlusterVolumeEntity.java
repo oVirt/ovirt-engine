@@ -52,7 +52,7 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
     private String name;
 
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.TYPE.NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
-    private GlusterVolumeType volumeType = GlusterVolumeType.DISTRIBUTE;
+    private GlusterVolumeType volumeType;
 
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.REPLICA_COUNT.NOT_NULL", groups = { CreateReplicatedVolume.class })
     private Integer replicaCount;
@@ -61,21 +61,27 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
     private Integer stripeCount;
 
     @Valid
-    private Map<String, GlusterVolumeOptionEntity> options = new LinkedHashMap<String, GlusterVolumeOptionEntity>();
+    private Map<String, GlusterVolumeOptionEntity> options;
 
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICKS.NOT_NULL", groups = {CreateEntity.class, CreateReplicatedVolume.class, CreateStripedVolume.class})
     @Valid
-    private List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+    private List<GlusterBrickEntity> bricks;
 
-    private GlusterStatus status = GlusterStatus.DOWN;
+    private GlusterStatus status;
 
     // Gluster and NFS are enabled by default
-    private Set<AccessProtocol> accessProtocols = new LinkedHashSet<AccessProtocol>(Arrays.asList(new AccessProtocol[] {
-            AccessProtocol.GLUSTER, AccessProtocol.NFS }));
+    private Set<AccessProtocol> accessProtocols;
 
-    private Set<TransportType> transportTypes = new LinkedHashSet<TransportType>();
+    private Set<TransportType> transportTypes;
 
     public GlusterVolumeEntity() {
+        options = new LinkedHashMap<String, GlusterVolumeOptionEntity>();
+        bricks = new ArrayList<GlusterBrickEntity>();
+        status = GlusterStatus.DOWN;
+        accessProtocols = new LinkedHashSet<AccessProtocol>(Arrays.asList(new AccessProtocol[]{
+                AccessProtocol.GLUSTER, AccessProtocol.NFS}));
+        transportTypes = new LinkedHashSet<TransportType>();
+        volumeType = GlusterVolumeType.DISTRIBUTE;
     }
 
     @Override

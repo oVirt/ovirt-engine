@@ -8,11 +8,11 @@ import org.ovirt.engine.core.compat.Guid;
 public class LdapGroup extends IVdcQueryable {
     private static final long serialVersionUID = 6717840754119287059L;
 
-    private Guid id = Guid.Empty;
+    private Guid id;
 
     private String name;
 
-    private LdapRefStatus status = LdapRefStatus.Inactive;
+    private LdapRefStatus status;
 
     private String domain;
 
@@ -52,7 +52,7 @@ public class LdapGroup extends IVdcQueryable {
     }
 
     public LdapGroup(Guid id, String name, String domain) {
-        this.id = id;
+        this (id);
         this.name = name;
         this.domain = domain;
     }

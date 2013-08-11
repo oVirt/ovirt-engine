@@ -16,7 +16,7 @@ public class LdapUser extends IVdcQueryable implements Serializable {
     // TODO - DesktopDevice ?? (Miki)
 
     private static final long serialVersionUID = 6800096193162766377L;
-    private Guid mUserId = Guid.Empty;
+    private Guid mUserId;
     private String mUserName;
     private String mPassword;
     private String mDomainControler;

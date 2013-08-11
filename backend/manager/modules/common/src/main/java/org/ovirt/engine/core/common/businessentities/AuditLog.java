@@ -30,30 +30,37 @@ public class AuditLog extends IVdcQueryable implements Serializable {
     private String storageDomainName;
     private Guid vdsGroupId;
     private String vdsGroupName;
-    private int logType = AuditLogType.UNASSIGNED.getValue();
-    private int severity = AuditLogSeverity.NORMAL.getValue();
-    private boolean processed = false;
+    private int logType;
+    private int severity;
+    private boolean processed;
     private String correlationId;
     private Guid jobId;
     private Guid glusterVolumeId;
     private String glusterVolumeName;
-    private String origin = "oVirt";
-    private int customEventId = -1;
-    private int eventFloodInSec = 30;
-    private String customData = "";
-    private boolean external = false;
-    private boolean deleted = false;
+    private String origin;
+    private int customEventId;
+    private int eventFloodInSec;
+    private String customData;
+    private boolean external;
+    private boolean deleted;
     private String storagePoolType;
     private String compatibilityVersion;
     private String quotaEnforcementType;
     private String callStack;
 
     public AuditLog() {
+        logType = AuditLogType.UNASSIGNED.getValue();
+        severity = AuditLogSeverity.NORMAL.getValue();
+        origin = "oVirt";
+        customEventId = -1;
+        eventFloodInSec = 30;
+        customData = "";
     }
 
     public AuditLog(AuditLogType al_type, AuditLogSeverity al_severity, String al_msg, Guid al_user_id,
             String al_user_name, Guid al_vm_id, String al_vm_name, Guid al_vds_id, String al_vds_name,
             Guid al_vmt_id, String al_vmt_name) {
+        this();
         logTime = new Date();
         logType = al_type.getValue();
         severity = al_severity.getValue();
@@ -83,18 +90,17 @@ public class AuditLog extends IVdcQueryable implements Serializable {
             int customEventId,
             int eventFloogInSec,
             String customData) {
-        logTime = new Date();
-        logType = al_type.getValue();
-        severity = al_severity.getValue();
-        message = al_msg;
-        userId = al_user_id;
-        userName = al_user_name;
-        vmId = al_vm_id;
-        vmName = al_vm_name;
-        vdsId = al_vds_id;
-        vdsName = al_vds_name;
-        vmTemplateId = al_vmt_id;
-        vmTemplateName = al_vmt_name;
+        this(al_type,
+                al_severity,
+                al_msg,
+                al_user_id,
+                al_user_name,
+                al_vm_id,
+                al_vm_name,
+                al_vds_id,
+                al_vds_name,
+                al_vmt_id,
+                al_vmt_name);
         this.origin = origin;
         this.customEventId = customEventId;
         this.eventFloodInSec = eventFloogInSec;

@@ -9,7 +9,7 @@ public class DiskImageBase extends Disk {
     private static final long serialVersionUID = 4913899921353163969L;
 
     @Valid
-    private Image image = new Image();
+    private Image image;
 
     /** Transient field for GUI presentation purposes. */
     private String quotaName;
@@ -21,6 +21,7 @@ public class DiskImageBase extends Disk {
     private QuotaEnforcementTypeEnum quotaEnforcementType;
 
     public DiskImageBase() {
+        image = new Image();
         getImage().setSize(0);
         getImage().setVolumeType(VolumeType.Sparse);
     }

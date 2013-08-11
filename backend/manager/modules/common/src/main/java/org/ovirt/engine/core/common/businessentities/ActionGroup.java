@@ -123,11 +123,11 @@ public enum ActionGroup {
     private RoleType roleType;
     private VdcObjectType vdcObjectType;
     private boolean allowsViewingChildren;
-    private int applicationMode = ApplicationMode.AllModes.getValue();
-    private static HashMap<Integer, ActionGroup> map = new HashMap<Integer, ActionGroup>(ActionGroup.values().length);
-    private static HashMap<VdcObjectType, ArrayList<ActionGroup>> entityToActionGroupsMapping =
+    private int applicationMode;
+    private static final HashMap<Integer, ActionGroup> map = new HashMap<Integer, ActionGroup>(ActionGroup.values().length);
+    private static final HashMap<VdcObjectType, ArrayList<ActionGroup>> entityToActionGroupsMapping =
             new HashMap<VdcObjectType, ArrayList<ActionGroup>>();
-    private static List<ActionGroup> userActionsGroup = new ArrayList<ActionGroup>();
+    private static final List<ActionGroup> userActionsGroup = new ArrayList<ActionGroup>();
 
     static {
         initEntitiesMap();
@@ -141,10 +141,7 @@ public enum ActionGroup {
     }
 
     private ActionGroup(int value, RoleType type, VdcObjectType objectType, boolean allowsViewingChildren) {
-        id = value;
-        roleType = type;
-        vdcObjectType = objectType;
-        this.allowsViewingChildren = allowsViewingChildren;
+        this(value, type, objectType, allowsViewingChildren, ApplicationMode.AllModes);
     }
 
     private ActionGroup(int value,
@@ -152,7 +149,10 @@ public enum ActionGroup {
             VdcObjectType objectType,
             boolean allowsViewingChildren,
             ApplicationMode applicationMode) {
-        this(value, type, objectType, allowsViewingChildren);
+        id = value;
+        roleType = type;
+        vdcObjectType = objectType;
+        this.allowsViewingChildren = allowsViewingChildren;
         this.applicationMode = applicationMode.getValue();
     }
 

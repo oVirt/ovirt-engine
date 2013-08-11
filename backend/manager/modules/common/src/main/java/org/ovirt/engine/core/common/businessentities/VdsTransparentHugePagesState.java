@@ -10,7 +10,7 @@ public enum VdsTransparentHugePagesState {
     Always(2);
 
     private int intValue;
-    private static java.util.HashMap<Integer, VdsTransparentHugePagesState> mappings =
+    private static final java.util.HashMap<Integer, VdsTransparentHugePagesState> mappings =
             new HashMap<Integer, VdsTransparentHugePagesState>();
 
     static {

@@ -12,7 +12,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class StorageDomainStatic implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 8635263021145935458L;
 
-    private Guid id = Guid.Empty;
+    private Guid id;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.STORAGE_SIZE)
     private String storage;
@@ -20,7 +20,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
     // TODO storage name needs to be made unique
     @ValidName(message = "VALIDATION.STORAGE_DOMAIN.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.STORAGE_NAME_SIZE)
-    private String name = "";
+    private String name;
 
     @ValidDescription(message = "VALIDATION.STORAGE_DOMAIN.DESCRIPTION.INVALID", groups = { CreateEntity.class,
             UpdateEntity.class })
@@ -31,21 +31,27 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
 
     private String comment;
 
-    private StorageDomainType storageType = StorageDomainType.Master;
+    private StorageDomainType storageType;
 
-    private StorageType storagePoolType = StorageType.UNKNOWN;
+    private StorageType storagePoolType;
 
     private StorageServerConnections connection;
 
-    private StorageFormatType storageFormat = StorageFormatType.V1;
+    private StorageFormatType storageFormat;
 
-    private boolean autoRecoverable = true;
+    private boolean autoRecoverable;
 
     private String storagePoolName;
 
     private transient long lastTimeUsedAsMaster;
 
     public StorageDomainStatic() {
+        id = Guid.Empty;
+        storageType = StorageDomainType.Master;
+        storagePoolType = StorageType.UNKNOWN;
+        storageFormat = StorageFormatType.V1;
+        autoRecoverable = true;
+        name = "";
     }
 
     @Override

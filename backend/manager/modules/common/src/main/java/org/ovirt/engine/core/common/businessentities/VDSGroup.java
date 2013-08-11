@@ -29,7 +29,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
             groups = {
             CreateEntity.class, UpdateEntity.class })
     @ValidI18NName(message = "VALIDATION.VDS_GROUP.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
-    private String name = ""; // GREGM Prevents NPE
+    private String name;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String description;
@@ -44,11 +44,11 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     @Size(max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
     private String storagePoolName;
 
-    private int max_vds_memory_over_commit = 0;
+    private int max_vds_memory_over_commit;
 
-    private boolean enableBallooning = false;
+    private boolean enableBallooning;
 
-    private boolean countThreadsAsCores = false;
+    private boolean countThreadsAsCores;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_VERSION_SIZE)
     private String compatibility_version;
@@ -60,15 +60,15 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     @NotNull(message = "VALIDATION.VDS_GROUP.MigrateOnError.NOT_NULL")
     private MigrateOnErrorOptions migrateOnError;
 
-    private boolean virtService = true;
+    private boolean virtService;
 
-    private boolean glusterService = false;
+    private boolean glusterService;
 
-    private boolean tunnelMigration = false;
+    private boolean tunnelMigration;
 
     private String emulatedMachine;
 
-    private boolean trustedService = false;
+    private boolean trustedService;
 
     private Guid clusterPolicyId;
 
@@ -78,6 +78,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     public VDSGroup() {
         migrateOnError = MigrateOnErrorOptions.YES;
+        name = "";
+        virtService = true;
     }
 
     @Override

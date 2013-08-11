@@ -20,7 +20,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
 
     private Guid id;
 
-    private VDSStatus status = VDSStatus.Unassigned;
+    private VDSStatus status;
 
     private Integer cpu_cores;
 
@@ -28,7 +28,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
 
     private String cpu_model;
 
-    private BigDecimal cpu_speed_mh = BigDecimal.valueOf(0.0);
+    private BigDecimal cpu_speed_mh;
 
     private String if_total_speed;
 
@@ -54,7 +54,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
 
     private String buildName;
 
-    private VDSStatus previous_status = VDSStatus.Unassigned;
+    private VDSStatus previous_status;
 
     private String cpu_flags;
 
@@ -83,7 +83,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
 
     private String iScsiInitiatorName;
 
-    private VdsTransparentHugePagesState transparentHugePagesState = VdsTransparentHugePagesState.Never;
+    private VdsTransparentHugePagesState transparentHugePagesState;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
     private Map<String, List<Map<String, String>>> HBAs; /* Store the list of HBAs */
@@ -118,7 +118,7 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
     private String hwFamily;
 
-    private NonOperationalReason nonOperationalReason = NonOperationalReason.NONE;
+    private NonOperationalReason nonOperationalReason;
 
     private Integer pending_vmem_size;
 
@@ -152,6 +152,10 @@ public class VdsDynamic implements BusinessEntity<Guid> {
     public VdsDynamic() {
         rpmVersion = new RpmVersion();
         libvirt_version = new RpmVersion();
+        status = VDSStatus.Unassigned;
+        previous_status = VDSStatus.Unassigned;
+        nonOperationalReason = NonOperationalReason.NONE;
+        cpu_speed_mh = BigDecimal.valueOf(0.0);
         mem_commited = 0;
         reserved_mem = 1024;
         pending_vcpus_count = 0;

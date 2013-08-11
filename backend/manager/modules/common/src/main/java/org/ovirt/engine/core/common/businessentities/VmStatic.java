@@ -14,7 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmStatic extends VmBase {
     private static final long serialVersionUID = -2753306386502558044L;
 
-    private Guid vmtGuid = Guid.Empty;
+    private Guid vmtGuid;
 
     private boolean initialized;
 
@@ -42,7 +42,7 @@ public class VmStatic extends VmBase {
     private String cpuPinning;
 
     @EditableField
-    private boolean useHostCpuFlags = false;
+    private boolean useHostCpuFlags;
 
     public VmStatic() {
         setNumOfMonitors(1);
@@ -52,6 +52,7 @@ public class VmStatic extends VmBase {
         setDefaultBootSequence(BootSequence.C);
         defaultDisplayType = DisplayType.qxl;
         setVmType(VmType.Desktop);
+        vmtGuid = Guid.Empty;
     }
 
     public VmStatic(VmStatic vmStatic) {

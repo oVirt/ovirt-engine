@@ -8,7 +8,7 @@ public enum QuotaEnforcementTypeEnum implements Identifiable {
     HARD_ENFORCEMENT(2);
 
     private final int enforcementType;
-    private static java.util.HashMap<Integer, QuotaEnforcementTypeEnum> mappings =
+    private static final java.util.HashMap<Integer, QuotaEnforcementTypeEnum> mappings =
             new HashMap<Integer, QuotaEnforcementTypeEnum>();
 
     static {

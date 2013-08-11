@@ -12,7 +12,7 @@ public class EndedTasksInfo implements java.io.Serializable {
         privateTasksInfo = value;
     }
 
-    private boolean _commandShouldBeLogged = true;
+    private boolean _commandShouldBeLogged;
 
     public boolean getCommandShouldBeLogged() {
         return _commandShouldBeLogged;
@@ -23,5 +23,6 @@ public class EndedTasksInfo implements java.io.Serializable {
     }
 
     public EndedTasksInfo() {
+        _commandShouldBeLogged = true;
     }
 }

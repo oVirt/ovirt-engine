@@ -10,7 +10,7 @@ public enum ImageStatus implements Identifiable {
     ILLEGAL(4);
 
     private int intValue;
-    private static Map<Integer, ImageStatus> mappings = new HashMap<Integer, ImageStatus>();
+    private static final Map<Integer, ImageStatus> mappings = new HashMap<Integer, ImageStatus>();
 
     static {
         for (ImageStatus imageStatus : values()) {

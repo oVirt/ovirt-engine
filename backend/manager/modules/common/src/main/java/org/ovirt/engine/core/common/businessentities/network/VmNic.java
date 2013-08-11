@@ -30,10 +30,11 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
      * Link State of the Nic. <BR>
      * <code>true</code> if UP and <code>false</code> if DOWN.
      */
-    private boolean linked = true;
+    private boolean linked;
 
     public VmNic() {
         super(new VmNetworkStatistics(), VmInterfaceType.pv.getValue());
+        linked = true;
     }
 
     public void setVmId(Guid vmId) {

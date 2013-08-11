@@ -10,9 +10,17 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatistics> {
     private static final long serialVersionUID = -7480866662740734452L;
 
-    private Double cpu_sysField = 0.0;
+    private Double cpu_sysField;
     // NOT PERSISTED
     private VmBalloonInfo vmBalloonInfo;
+
+    public VmStatistics() {
+        cpu_sysField = 0.0;
+        cpu_userField = 0.0;
+        elapsed_timeField = 0.0;
+        roundedElapsedTimeField = 0.0;
+        vm_guidField = Guid.Empty;
+    }
 
     @Override
     public int hashCode() {
@@ -63,7 +71,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         this.cpu_sysField = value;
     }
 
-    private Double cpu_userField = 0.0;
+    private Double cpu_userField;
 
     public Double getcpu_user() {
         return this.cpu_userField;
@@ -73,7 +81,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         this.cpu_userField = value;
     }
 
-    private Double elapsed_timeField = 0.0;
+    private Double elapsed_timeField;
 
     public Double getelapsed_time() {
         return this.elapsed_timeField;
@@ -84,7 +92,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         setRoundedElapsedTime(value);
     }
 
-    private Double roundedElapsedTimeField = 0.0;
+    private Double roundedElapsedTimeField;
 
     public Double getRoundedElapsedTime() {
         return this.roundedElapsedTimeField;
@@ -155,7 +163,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         this.usage_network_percentField = value;
     }
 
-    private Guid vm_guidField = Guid.Empty;
+    private Guid vm_guidField;
 
     private ArrayList<VmNetworkInterface> interfaceStatisticsField;
 

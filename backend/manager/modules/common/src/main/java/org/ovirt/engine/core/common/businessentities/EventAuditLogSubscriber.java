@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import org.ovirt.engine.core.compat.Guid;
 
@@ -8,31 +9,10 @@ public class EventAuditLogSubscriber implements Serializable {
     private static final long serialVersionUID = 2766057261065080144L;
 
     public EventAuditLogSubscriber() {
-    }
-
-    public EventAuditLogSubscriber(int event_type, Guid subscriber_id, String event_up_name, int method_id,
-            String method_address, String tag_name, long audit_log_id, Guid user_id, String user_name, Guid vm_id,
-            String vm_name, Guid vm_template_id, String vm_template_name, Guid vds_id, String vds_name,
-            Guid storage_pool_id, String storage_pool_name, Guid storage_domain_id, String storage_domain_name,
-            java.util.Date log_time, int severity, String message) {
-        this.event_typeField = event_type;
-        this.subscriber_idField = subscriber_id;
-        this.event_up_nameField = this.getevent_up_name();
-        this.method_idField = method_id;
-        this.method_addressField = method_address;
-        this.tag_nameField = tag_name;
-        this.audit_log_idField = audit_log_id;
-        this.user_idField = user_id;
-        this.user_nameField = user_name;
-        this.vm_idField = vm_id;
-        this.vm_nameField = vm_name;
-        this.vm_template_idField = vm_template_id;
-        this.vm_template_nameField = vm_template_name;
-        this.vds_idField = vds_id;
-        this.vds_nameField = vds_name;
-        this.log_timeField = log_time;
-        this.severityField = severity;
-        this.messageField = message;
+        subscriber_idField = Guid.Empty;
+        storage_pool_idField = Guid.Empty;
+        storage_domain_idField = Guid.Empty;
+        log_timeField = new Date(0);
     }
 
     private int event_typeField;
@@ -45,7 +25,7 @@ public class EventAuditLogSubscriber implements Serializable {
         this.event_typeField = value;
     }
 
-    private Guid subscriber_idField = Guid.Empty;
+    private Guid subscriber_idField;
 
     public Guid getsubscriber_id() {
         return this.subscriber_idField;
@@ -185,7 +165,7 @@ public class EventAuditLogSubscriber implements Serializable {
         this.vds_nameField = value;
     }
 
-    private Guid storage_pool_idField = Guid.Empty;
+    private Guid storage_pool_idField;
 
     public Guid getstorage_pool_id() {
         return this.storage_pool_idField;
@@ -205,7 +185,7 @@ public class EventAuditLogSubscriber implements Serializable {
         this.storage_pool_nameField = value;
     }
 
-    private Guid storage_domain_idField = Guid.Empty;
+    private Guid storage_domain_idField;
 
     public Guid getstorage_domain_id() {
         return this.storage_domain_idField;
@@ -225,13 +205,13 @@ public class EventAuditLogSubscriber implements Serializable {
         this.storage_domain_nameField = value;
     }
 
-    private java.util.Date log_timeField = new java.util.Date(0);
+    private Date log_timeField;
 
-    public java.util.Date getlog_time() {
+    public Date getlog_time() {
         return this.log_timeField;
     }
 
-    public void setlog_time(java.util.Date value) {
+    public void setlog_time(Date value) {
         this.log_timeField = value;
     }
 

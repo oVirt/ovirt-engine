@@ -12,9 +12,13 @@ import org.ovirt.engine.core.compat.Guid;
 public class AsyncTasks implements Serializable {
     private static final long serialVersionUID = 5913365704117183118L;
 
-
-
     public AsyncTasks() {
+        actionType = VdcActionType.Unknown;
+        result = AsyncTaskResultEnum.success;
+        status = AsyncTaskStatusEnum.unknown;
+        vdsmTaskId = Guid.Empty;
+        commandId = Guid.Empty;
+        rootCommandId = Guid.Empty;
     }
 
     public AsyncTasks(VdcActionType action_type, AsyncTaskResultEnum result, AsyncTaskStatusEnum status, Guid vdsmTaskId,
@@ -40,7 +44,7 @@ public class AsyncTasks implements Serializable {
         this.taskType = taskType;
     }
 
-    private VdcActionType actionType = VdcActionType.forValue(0);
+    private VdcActionType actionType;
 
     public VdcActionType getaction_type() {
         return this.actionType;
@@ -50,7 +54,7 @@ public class AsyncTasks implements Serializable {
         this.actionType = value;
     }
 
-    private AsyncTaskResultEnum result = AsyncTaskResultEnum.forValue(0);
+    private AsyncTaskResultEnum result;
 
 
     private Date startTime;
@@ -72,7 +76,7 @@ public class AsyncTasks implements Serializable {
         this.result = value;
     }
 
-    private AsyncTaskStatusEnum status = AsyncTaskStatusEnum.forValue(0);
+    private AsyncTaskStatusEnum status;
 
     public AsyncTaskStatusEnum getstatus() {
         return this.status;
@@ -82,7 +86,7 @@ public class AsyncTasks implements Serializable {
         this.status = value;
     }
 
-    private Guid vdsmTaskId = Guid.Empty;
+    private Guid vdsmTaskId;
 
     public Guid getVdsmTaskId() {
         return this.vdsmTaskId;
@@ -132,7 +136,7 @@ public class AsyncTasks implements Serializable {
         this.stepId = stepId;
     }
 
-    private Guid commandId = Guid.Empty;
+    private Guid commandId;
 
     public Guid getRootCommandId() {
         return rootCommandId;
@@ -150,7 +154,7 @@ public class AsyncTasks implements Serializable {
         this.commandId = commandId;
     }
 
-    private Guid rootCommandId = Guid.Empty;
+    private Guid rootCommandId;
 
     public Guid getStoragePoolId() {
         return storagePoolId;

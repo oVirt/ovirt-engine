@@ -22,11 +22,11 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmTemplate extends VmBase {
     private static final long serialVersionUID = -5238366659716600486L;
 
-    private List<VmNetworkInterface> interfaces = new ArrayList<VmNetworkInterface>();
+    private List<VmNetworkInterface> interfaces;
 
     private int childCount;
 
-    private VmTemplateStatus status = VmTemplateStatus.OK;
+    private VmTemplateStatus status;
 
     private String vdsGroupName;
 
@@ -36,20 +36,24 @@ public class VmTemplate extends VmBase {
 
     private String storagePoolName;
 
-    private HashMap<Guid, DiskImage> diskImageMap = new HashMap<Guid, DiskImage>();
+    private HashMap<Guid, DiskImage> diskImageMap;
 
-    private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
+    private ArrayList<DiskImage> diskList;
 
-    private HashMap<Guid, DiskImage> diskTemplateMap = new HashMap<Guid, DiskImage>();
+    private HashMap<Guid, DiskImage> diskTemplateMap;
 
     private double bootDiskSizeGB;
 
-    private double actualDiskSize = 0;
+    private double actualDiskSize;
 
     public VmTemplate() {
         setNiceLevel(0);
         setCpuShares(0);
         diskTemplateMap = new HashMap<Guid, DiskImage>();
+        interfaces = new ArrayList<VmNetworkInterface>();
+        status = VmTemplateStatus.OK;
+        diskImageMap = new HashMap<Guid, DiskImage>();
+        diskList = new ArrayList<DiskImage>();
     }
 
     private boolean disabled;
@@ -98,6 +102,9 @@ public class VmTemplate extends VmBase {
                 createdByUserId);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
+        interfaces = new ArrayList<VmNetworkInterface>();
+        diskImageMap = new HashMap<Guid, DiskImage>();
+        diskList = new ArrayList<DiskImage>();
 
         this.childCount = childCount;
         setName(name);

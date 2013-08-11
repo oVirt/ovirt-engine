@@ -9,6 +9,7 @@ public class VmPoolMap implements Serializable {
     private static final long serialVersionUID = 5876397644156138863L;
 
     public VmPoolMap() {
+        this (Guid.Empty, null);
     }
 
     public VmPoolMap(Guid vm_guid, Guid vm_pool_id) {
@@ -16,7 +17,7 @@ public class VmPoolMap implements Serializable {
         this.vmPoolId = vm_pool_id;
     }
 
-    private Guid vmId = Guid.Empty;
+    private Guid vmId;
 
     public Guid getvm_guid() {
         return this.vmId;

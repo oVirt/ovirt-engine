@@ -9,6 +9,8 @@ public class event_notification_hist implements Serializable {
     private static final long serialVersionUID = 5812544412663001644L;
 
     public event_notification_hist() {
+        sentAt = new java.util.Date(0);
+        subscriberId = Guid.Empty;
     }
 
     private long auditLogId;
@@ -51,7 +53,7 @@ public class event_notification_hist implements Serializable {
         this.reason = value;
     }
 
-    private java.util.Date sentAt = new java.util.Date(0);
+    private java.util.Date sentAt;
 
     public java.util.Date getsent_at() {
         return this.sentAt;
@@ -71,7 +73,7 @@ public class event_notification_hist implements Serializable {
         this.status = value;
     }
 
-    private Guid subscriberId = Guid.Empty;
+    private Guid subscriberId;
 
     public Guid getsubscriber_id() {
         return this.subscriberId;

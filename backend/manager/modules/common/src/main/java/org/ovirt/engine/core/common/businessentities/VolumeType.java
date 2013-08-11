@@ -8,7 +8,7 @@ public enum VolumeType {
     Sparse(2);
 
     private int intValue;
-    private static java.util.HashMap<Integer, VolumeType> mappings = new HashMap<Integer, VolumeType>();
+    private static final java.util.HashMap<Integer, VolumeType> mappings = new HashMap<Integer, VolumeType>();
 
     static {
         for (VolumeType volumeType : values()) {

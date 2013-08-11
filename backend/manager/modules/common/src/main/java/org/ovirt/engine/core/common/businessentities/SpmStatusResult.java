@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public class SpmStatusResult implements Serializable {
     private static final long serialVersionUID = -2043744550859733845L;
-    private SpmStatus privateSpmStatus = SpmStatus.forValue(0);
+    private SpmStatus privateSpmStatus;
 
     public SpmStatus getSpmStatus() {
         return privateSpmStatus;
@@ -35,5 +35,6 @@ public class SpmStatusResult implements Serializable {
     }
 
     public SpmStatusResult() {
+        privateSpmStatus = SpmStatus.SPM;
     }
 }

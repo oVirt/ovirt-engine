@@ -6,12 +6,14 @@ import org.ovirt.engine.core.compat.Guid;
 public class DiskLunMap implements BusinessEntity<DiskLunMapId> {
     private static final long serialVersionUID = -6528043171116600954L;
 
-    private DiskLunMapId id = new DiskLunMapId();
+    private DiskLunMapId id;
 
     public DiskLunMap() {
+        id = new DiskLunMapId();
     }
 
     public DiskLunMap(Guid diskId, String lunId) {
+        this();
         getId().setDiskId(diskId);
         getId().setLunId(lunId);
     }

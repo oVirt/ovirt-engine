@@ -11,11 +11,10 @@ public enum VmPauseStatus {
     EPERM(4),
     NOERR(5);
 
-    private static Map<Integer, VmPauseStatus> mappings = new HashMap<Integer, VmPauseStatus>();
+    private static final Map<Integer, VmPauseStatus> mappings = new HashMap<Integer, VmPauseStatus>();
     private int value;
 
     static {
-        mappings = new HashMap<Integer, VmPauseStatus>();
         mappings.put(0, NONE);
         mappings.put(1, EOTHER);
         mappings.put(2, EIO);

@@ -33,10 +33,10 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable, Com
 
     private String comment;
 
-    private VmPoolType type = VmPoolType.Automatic;
+    private VmPoolType type;
 
     @Size(max = BusinessEntitiesDefinitions.VM_POOL_PARAMS)
-    private String parameters = "";
+    private String parameters;
 
     private Guid vdsGroupId;
 
@@ -44,23 +44,30 @@ public class VmPool extends IVdcQueryable implements Serializable, Nameable, Com
 
     private int defaultTimeInDays;
 
-    private TimeSpan defaultStartTime = new TimeSpan();
+    private TimeSpan defaultStartTime;
 
-    private TimeSpan defaultEndTime = new TimeSpan();
+    private TimeSpan defaultEndTime;
 
     private String vdsGroupName;
 
-    private int vmPoolAssignedCount = 1;
+    private int vmPoolAssignedCount;
 
-    private int vmPoolRunningCount = 1;
+    private int vmPoolRunningCount;
 
     @Min(value = 1, message = "VALIDATION.VM_POOLS.NUMBER_OF_MAX_ASSIGNED_VMS_OUT_OF_RANGE")
     @Max(value = Short.MAX_VALUE, message = "VALIDATION.VM_POOLS.NUMBER_OF_MAX_ASSIGNED_VMS_OUT_OF_RANGE")
-    private int maxAssignedVmsPerUser = 1;
+    private int maxAssignedVmsPerUser;
 
     public static final char MASK_CHARACTER = '?';
 
     public VmPool() {
+        parameters = "";
+        defaultStartTime = new TimeSpan();
+        defaultEndTime = new TimeSpan();
+        vmPoolAssignedCount = 1;
+        vmPoolRunningCount = 1;
+        maxAssignedVmsPerUser = 1;
+        type = VmPoolType.Automatic;
     }
 
     @Override

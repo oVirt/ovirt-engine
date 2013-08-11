@@ -69,17 +69,19 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * Should disk errors be propagated to the guest?
      */
-    private PropagateErrors propagateErrors = PropagateErrors.Off;
+    private PropagateErrors propagateErrors;
 
     private boolean boot;
 
     private ScsiGenericIO sgio;
 
-    private DiskAlignment alignment = DiskAlignment.Unknown;
+    private DiskAlignment alignment;
 
     private Date lastAlignmentScan;
 
     public BaseDisk() {
+        propagateErrors = PropagateErrors.Off;
+        alignment = DiskAlignment.Unknown;
     }
 
     @Override

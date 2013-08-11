@@ -10,9 +10,10 @@ import org.ovirt.engine.core.compat.StringFormat;
 public class event_subscriber extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = 5899827011779820180L;
 
-    private event_subscriber_id id = new event_subscriber_id();
+    private event_subscriber_id id;
 
     public event_subscriber() {
+        id = new event_subscriber_id();
     }
 
     @Override
@@ -47,6 +48,7 @@ public class event_subscriber extends IVdcQueryable implements Serializable {
     }
 
     public event_subscriber(String event_up_name, int method_id, Guid subscriber_id, String tagName) {
+        this();
         this.id.eventUpName = event_up_name;
         this.id.methodId = method_id;
         this.methodAddress = "";
@@ -56,11 +58,8 @@ public class event_subscriber extends IVdcQueryable implements Serializable {
 
     public event_subscriber(String event_up_name, int method_id, String method_address, Guid subscriber_id,
             String tagName) {
-        this.id.eventUpName = event_up_name;
-        this.id.methodId = method_id;
+        this (event_up_name, method_id, subscriber_id, tagName);
         this.methodAddress = method_address;
-        this.id.subscriberId = subscriber_id;
-        this.id.tagName = tagName;
     }
 
     public String getevent_up_name() {

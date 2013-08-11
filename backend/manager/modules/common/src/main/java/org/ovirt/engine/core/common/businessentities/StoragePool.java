@@ -14,11 +14,11 @@ import org.ovirt.engine.core.compat.Version;
 public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, Nameable, Commented {
     private static final long serialVersionUID = 6162262095329980112L;
 
-    private Guid id = Guid.Empty;
+    private Guid id;
 
     @ValidName(message = "VALIDATION.DATA_CENTER.NAME.INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     @Size(min = 1, max = BusinessEntitiesDefinitions.DATACENTER_NAME_SIZE)
-    private String name = ""; // GREGM prevents NPE
+    private String name;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     @Pattern(regexp = ValidationUtils.ONLY_ASCII_OR_NONE,
@@ -29,28 +29,35 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, 
     private String comment;
 
     /** Pool's storage type */
-    private StorageType storageType = StorageType.UNKNOWN;
+    private StorageType storageType;
 
-    private StorageFormatType storagePoolFormatType = null;
+    private StorageFormatType storagePoolFormatType;
 
-    private StoragePoolStatus status = StoragePoolStatus.Uninitialized;
+    private StoragePoolStatus status;
 
     private int masterDomainVersion;
 
-    private Guid spmVdsId = Guid.Empty;
+    private Guid spmVdsId;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_VERSION_SIZE)
     private String compatibilityVersion;
 
     private String LVER;
 
-    private RecoveryMode recovery_mode = RecoveryMode.forValue(0);
+    private RecoveryMode recovery_mode;
 
     private Version version;
 
-    private QuotaEnforcementTypeEnum quotaEnforcementType = QuotaEnforcementTypeEnum.DISABLED;
+    private QuotaEnforcementTypeEnum quotaEnforcementType;
 
     public StoragePool() {
+        id = Guid.Empty;
+        storageType = StorageType.UNKNOWN;
+        status = StoragePoolStatus.Uninitialized;
+        spmVdsId = Guid.Empty;
+        recovery_mode = RecoveryMode.Manual;
+        quotaEnforcementType = QuotaEnforcementTypeEnum.DISABLED;
+        name = "";
         description = "";
         comment = "";
         masterDomainVersion = 0;

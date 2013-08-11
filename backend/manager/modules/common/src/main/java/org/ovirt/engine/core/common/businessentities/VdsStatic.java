@@ -32,10 +32,10 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NAME_SIZE)
     @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS_WITH_DOT, message = "VALIDATION_VDS_NAME_INVALID", groups = {
             CreateEntity.class, UpdateEntity.class })
-    private String name = "";
+    private String name;
 
     @EditableField
-    private String comment = "";
+    private String comment;
 
     @EditableField
     @HostnameOrIp(message = "VALIDATION.VDS.POWER_MGMT.ADDRESS.HOSTNAME_OR_IP", groups = PowerManagementCheck.class)
@@ -82,7 +82,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     private Boolean serverSslEnabled;
 
-    private VDSType vdsType = VDSType.VDS;
+    private VDSType vdsType;
 
     private Integer vdsStrength;
 
@@ -153,7 +153,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @Max(BusinessEntitiesDefinitions.HOST_MAX_SPM_PRIORITY)
     private int vdsSpmPriority;
 
-    private boolean autoRecoverable = true;
+    private boolean autoRecoverable;
 
     @EditableField
     @Size(max = BusinessEntitiesDefinitions.SSH_KEY_FINGERPRINT_SIZE)
@@ -175,34 +175,30 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.vdsSpmPriority = HOST_DEFAULT_SPM_PRIORITY;
         this.sshPort = DEFAULT_SSH_PORT;
         this.sshUsername = DEFAULT_SSH_USERNAME;
+        name = "";
+        comment = "";
+        vdsType = VDSType.VDS;
+        autoRecoverable = true;
     }
 
     public VdsStatic(String host_name, String ip, String uniqueId, int port, int ssh_port, String ssh_username, Guid vds_group_id, Guid vds_id,
             String vds_name, boolean server_SSL_enabled, VDSType vds_type) {
-        serverSslEnabled = false;
-        vdsStrength = 100;
+        this();
         this.hostname = host_name;
         this.managementIp = ip;
         this.uniqueId = uniqueId;
         this.port = port;
         if (ssh_port > 0) {
             this.sshPort = ssh_port;
-        } else {
-            this.sshPort = DEFAULT_SSH_PORT;
         }
         if (ssh_username != null) {
             this.sshUsername = ssh_username;
-        } else {
-            this.sshUsername = DEFAULT_SSH_USERNAME;
         }
         this.vdsGroupId = vds_group_id;
         this.id = vds_id;
         this.name = vds_name;
         this.serverSslEnabled = server_SSL_enabled;
         this.setVdsType(vds_type);
-        this.setPmOptions("");
-        this.setPmSecondaryOptions("");
-        this.vdsSpmPriority = HOST_DEFAULT_SPM_PRIORITY;
     }
 
     public boolean isServerSslEnabled() {

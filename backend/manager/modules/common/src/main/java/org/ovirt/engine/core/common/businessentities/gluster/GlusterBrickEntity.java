@@ -36,13 +36,14 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntity<
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICK.BRICK_DIR.NOT_NULL", groups = { CreateEntity.class })
     private String brickDirectory;
 
-    private GlusterStatus status = GlusterStatus.DOWN;
+    private GlusterStatus status;
 
     private Integer brickOrder;
 
     private BrickDetails brickDetails;
 
     public GlusterBrickEntity() {
+        status = GlusterStatus.DOWN;
     }
 
     public Guid getVolumeId() {

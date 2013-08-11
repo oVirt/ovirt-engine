@@ -8,6 +8,7 @@ public class StorageServerConnections implements Serializable {
     private static final long serialVersionUID = 5444293590307760809L;
 
     public StorageServerConnections() {
+        storageType = StorageType.UNKNOWN;
     }
 
     public StorageServerConnections(String connection,
@@ -110,7 +111,7 @@ public class StorageServerConnections implements Serializable {
         this.password = value;
     }
 
-    private StorageType storageType = StorageType.forValue(0);
+    private StorageType storageType;
 
     public StorageType getstorage_type() {
         return this.storageType;

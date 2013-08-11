@@ -9,10 +9,12 @@ import org.ovirt.engine.core.compat.Guid;
 public class TagsVmPoolMap implements Serializable {
     private static final long serialVersionUID = 1110697686039279639L;
 
-    private TagsVmPoolMapId id = new TagsVmPoolMapId();
-    private Date created = new Date();
+    private TagsVmPoolMapId id;
+    private Date created;
 
     public TagsVmPoolMap() {
+        id = new TagsVmPoolMapId();
+        created = new Date();
     }
 
     public Guid gettag_id() {

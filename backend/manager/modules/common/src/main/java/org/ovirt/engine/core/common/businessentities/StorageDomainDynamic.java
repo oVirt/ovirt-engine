@@ -7,6 +7,7 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
     private static final long serialVersionUID = -5305319985243261293L;
 
     public StorageDomainDynamic() {
+        this (0, Guid.Empty, 0);
     }
 
     public StorageDomainDynamic(Integer availableDiskSize, Guid id, Integer usedDiskSize) {
@@ -15,7 +16,7 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         this.usedDiskSize = usedDiskSize;
     }
 
-    private Integer availableDiskSize = 0;
+    private Integer availableDiskSize;
 
     public Integer getAvailableDiskSize() {
         return availableDiskSize;
@@ -25,7 +26,7 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         this.availableDiskSize = availableDiskSize;
     }
 
-    private Guid id = Guid.Empty;
+    private Guid id;
 
     @Override
     public Guid getId() {
@@ -37,7 +38,7 @@ public class StorageDomainDynamic implements BusinessEntity<Guid> {
         this.id = id;
     }
 
-    private Integer usedDiskSize = 0;
+    private Integer usedDiskSize;
 
     public Integer getUsedDiskSize() {
         return usedDiskSize;

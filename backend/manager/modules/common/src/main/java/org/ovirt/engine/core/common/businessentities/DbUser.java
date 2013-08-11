@@ -14,7 +14,7 @@ public class DbUser extends IVdcQueryable {
      * This is the identifier assigned by the engine to this user for internal
      * use only.
      */
-    private Guid id = Guid.Empty;
+    private Guid id;
 
     /**
      * This is the identifier assigned by the external directory to this user.
@@ -25,25 +25,25 @@ public class DbUser extends IVdcQueryable {
     private String domain;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.USER_LOGIN_NAME_SIZE)
-    private String loginName = "";
+    private String loginName;
 
     @Size(max = BusinessEntitiesDefinitions.USER_FIRST_NAME_SIZE)
-    private String firstName = "";
+    private String firstName;
 
     @Size(max = BusinessEntitiesDefinitions.USER_LAST_NAME_SIZE)
-    private String lastName = "";
+    private String lastName;
 
     @Size(max = BusinessEntitiesDefinitions.USER_DEPARTMENT_SIZE)
-    private String department = "";
+    private String department;
 
     @Size(max = BusinessEntitiesDefinitions.USER_ROLE_SIZE)
-    private String role = "";
+    private String role;
 
     @Size(max = BusinessEntitiesDefinitions.USER_EMAIL_SIZE)
     private String email;
 
     @Size(max = BusinessEntitiesDefinitions.USER_NOTE_SIZE)
-    private String note = "";
+    private String note;
 
     /**
      * The status of the user in the directory, 0 for inactive and any other
@@ -72,7 +72,13 @@ public class DbUser extends IVdcQueryable {
     private String groupIds;
 
     public DbUser() {
-        // Nothing.
+        id = Guid.Empty;
+        loginName = "";
+        firstName = "";
+        lastName = "";
+        department = "";
+        role = "";
+        note = "";
     }
 
     public DbUser(LdapUser ldapUser) {
@@ -87,6 +93,8 @@ public class DbUser extends IVdcQueryable {
         status = LdapRefStatus.Active.getValue();
         groupNames = ldapUser.getGroup();
         groupIds = ldapUser.getGroupIds();
+        role = "";
+        note = "";
     }
 
     public Guid getId() {

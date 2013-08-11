@@ -32,6 +32,8 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         mVdsStatic = new VdsStatic();
         mVdsDynamic = new VdsDynamic();
         mVdsStatistics = new VdsStatistics();
+        storagePoolId = Guid.Empty;
+        _spm_status = VdsSpmStatus.None;
         mInterfaceList = new java.util.ArrayList<VdsNetworkInterface>();
         mNetworkList = new java.util.ArrayList<Network>();
     }
@@ -817,7 +819,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         this.cpuOverCommitDurationMinutes = value;
     }
 
-    private Guid storagePoolId = Guid.Empty;
+    private Guid storagePoolId;
 
     @Override
     public Guid getStoragePoolId() {
@@ -1191,7 +1193,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntity<G
         return getId();
     }
 
-    private VdsSpmStatus _spm_status = VdsSpmStatus.forValue(0);
+    private VdsSpmStatus _spm_status;
 
     public VdsSpmStatus getSpmStatus() {
         return _spm_status;

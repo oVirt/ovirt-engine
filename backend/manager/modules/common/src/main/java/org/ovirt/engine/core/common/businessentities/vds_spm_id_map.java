@@ -9,6 +9,7 @@ public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
     private static final long serialVersionUID = 308472653338744675L;
 
     public vds_spm_id_map() {
+        storage_pool_idField = Guid.Empty;
     }
 
     public vds_spm_id_map(Guid storage_pool_id, Guid vds_id, int vds_spm_id) {
@@ -17,7 +18,7 @@ public class vds_spm_id_map implements Serializable, BusinessEntity<Guid> {
         this.vds_spm_idField = vds_spm_id;
     }
 
-    private Guid storage_pool_idField = Guid.Empty;
+    private Guid storage_pool_idField;
 
     public Guid getstorage_pool_id() {
         return this.storage_pool_idField;

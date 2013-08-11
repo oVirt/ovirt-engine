@@ -8,12 +8,14 @@ import org.ovirt.engine.core.compat.Guid;
 public class RoleGroupMap implements Serializable {
     private static final long serialVersionUID = -230507879656573010L;
 
-    private RoleGroupMapId id = new RoleGroupMapId();
+    private RoleGroupMapId id;
 
     public RoleGroupMap() {
+        id = new RoleGroupMapId();
     }
 
     public RoleGroupMap(ActionGroup actionGroup, Guid roleId) {
+        this();
         this.id.actionGroup = actionGroup.getId();
         this.id.roleId = roleId;
     }

@@ -7,7 +7,7 @@ public enum VmType implements Identifiable {
     Server(1);
 
     private int intValue;
-    private static java.util.HashMap<Integer, VmType> mappings = new HashMap<Integer, VmType>();
+    private static final java.util.HashMap<Integer, VmType> mappings = new HashMap<Integer, VmType>();
 
     static {
         for (VmType vmType : values()) {

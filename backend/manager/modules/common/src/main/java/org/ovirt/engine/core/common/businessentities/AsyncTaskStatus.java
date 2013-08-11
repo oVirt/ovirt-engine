@@ -8,13 +8,16 @@ public class AsyncTaskStatus implements Serializable {
     private static final long serialVersionUID = -7569773307084259828L;
 
     public AsyncTaskStatus() {
+        this(AsyncTaskStatusEnum.unknown);
     }
 
     public AsyncTaskStatus(AsyncTaskStatusEnum status) {
         setStatus(status);
+        setResult(AsyncTaskResultEnum.success);
+        setMessage("");
     }
 
-    private AsyncTaskStatusEnum privateStatus = AsyncTaskStatusEnum.forValue(0);
+    private AsyncTaskStatusEnum privateStatus;
 
     public AsyncTaskStatusEnum getStatus() {
         return privateStatus;
@@ -24,7 +27,7 @@ public class AsyncTaskStatus implements Serializable {
         privateStatus = value;
     }
 
-    private AsyncTaskResultEnum privateResult = AsyncTaskResultEnum.forValue(0);
+    private AsyncTaskResultEnum privateResult;
 
     public AsyncTaskResultEnum getResult() {
         return privateResult;
@@ -44,7 +47,7 @@ public class AsyncTaskStatus implements Serializable {
         privateException = value;
     }
 
-    private String _message = "";
+    private String _message;
 
     public String getMessage() {
         if (getTaskIsRunning() || getTaskEndedSuccessfully()) {

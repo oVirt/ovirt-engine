@@ -41,7 +41,7 @@ public class Job extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * The status of the job
      */
-    private JobExecutionStatus status = JobExecutionStatus.STARTED;
+    private JobExecutionStatus status;
 
     /**
      * The user id which invoked the job
@@ -51,7 +51,7 @@ public class Job extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * Determines whether the Job should be presented
      */
-    private boolean isVisible = true;
+    private boolean isVisible;
 
     /**
      * The start time of the Job
@@ -76,12 +76,12 @@ public class Job extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * A flag defining if this Job were invoked from external plug-in
      */
-    private boolean external = false;
+    private boolean external;
 
     /**
      * A flag indicating if the Job is auto cleared from the table after the configured time for succeeded/failed jobs
      */
-    private boolean autoCleared = true;
+    private boolean autoCleared;
 
     /**
      * A collection which holds the entities associated with the Job
@@ -91,7 +91,7 @@ public class Job extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * A collection which stores the steps of the Job
      */
-    private List<Step> steps = new ArrayList<Step>();
+    private List<Step> steps;
 
     /**
      * Define if the Job should be ended when the {@Code CommandBase.ExecuteAction()} ends
@@ -99,6 +99,10 @@ public class Job extends IVdcQueryable implements BusinessEntity<Guid> {
     transient private boolean isAsyncJob;
 
     public Job() {
+        status = JobExecutionStatus.STARTED;
+        autoCleared = true;
+        isVisible = true;
+        steps = new ArrayList<Step>();
     }
 
     public List<Step> getSteps() {

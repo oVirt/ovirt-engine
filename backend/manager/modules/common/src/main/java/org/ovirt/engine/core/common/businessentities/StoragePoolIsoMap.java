@@ -8,15 +8,17 @@ public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
     private static final long serialVersionUID = -2829958589095415567L;
 
     public StoragePoolIsoMap() {
+        id = new StoragePoolIsoMapId();
     }
 
     public StoragePoolIsoMap(Guid storage_id, Guid storage_pool_id, StorageDomainStatus status) {
+        this();
         setstorage_id(storage_id);
         setstorage_pool_id(storage_pool_id);
         this.setstatus(status);
     }
 
-    private StoragePoolIsoMapId id = new StoragePoolIsoMapId();
+    private StoragePoolIsoMapId id;
 
     @Override
     public StoragePoolIsoMapId getId() {
@@ -44,7 +46,7 @@ public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
         this.id.setStoragePoolId(value);
     }
 
-    private Integer persistentStorageDomainStatus = null;
+    private Integer persistentStorageDomainStatus;
 
     public StorageDomainStatus getstatus() {
         if (persistentStorageDomainStatus == null) {

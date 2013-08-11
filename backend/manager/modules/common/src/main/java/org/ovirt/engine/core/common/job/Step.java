@@ -52,7 +52,7 @@ public class Step extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * The status of the step
      */
-    private JobExecutionStatus status = JobExecutionStatus.STARTED;
+    private JobExecutionStatus status;
 
     /**
      * The start time of the step
@@ -72,19 +72,22 @@ public class Step extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * A flag defining if this step were invoked from external plug-in
      */
-    private boolean external = false;
+    private boolean external;
 
     /**
      * An external system referenced by the step (e.g. VDSM)
      */
-    private ExternalSystem externalSystem = new ExternalSystem();
+    private ExternalSystem externalSystem;
 
     /**
      * The successors steps
      */
-    private List<Step> steps = new ArrayList<Step>();
+    private List<Step> steps;
 
     public Step() {
+        status = JobExecutionStatus.STARTED;
+        externalSystem = new ExternalSystem();
+        steps = new ArrayList<Step>();
     }
 
     public Step(StepEnum stepType) {
@@ -92,6 +95,9 @@ public class Step extends IVdcQueryable implements BusinessEntity<Guid> {
         this.parentStepId = null;
         this.stepType = stepType;
         this.startTime = new Date();
+        status = JobExecutionStatus.STARTED;
+        externalSystem = new ExternalSystem();
+        steps = new ArrayList<Step>();
     }
 
     public Step(StepEnum stepType, String description) {
@@ -218,8 +224,8 @@ public class Step extends IVdcQueryable implements BusinessEntity<Guid> {
     }
 
     /**
-     * Set completion status to the step which its current status isn't completed yet.
-     * The step status won't be changed if the status to update matches the current status.
+     * Set completion status to the step which its current status isn't completed yet. The step status won't be changed
+     * if the status to update matches the current status.
      *
      * @param exitStatus
      *            The completion status of the step

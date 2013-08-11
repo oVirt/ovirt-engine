@@ -25,7 +25,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private static final long serialVersionUID = 1078548170257965614L;
 
     @EditableField
-    private String name = "";
+    private String name;
 
     @EditableField
     private ArrayList<DiskImage> images;
@@ -33,11 +33,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableField
     private List<VmNetworkInterface> interfaces;
 
-    private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
-    private Map<Guid, VmDevice> managedDeviceMap = new HashMap<Guid, VmDevice>();
-    private List<VmDevice> unmanagedDeviceList = new ArrayList<VmDevice>();
+    private ArrayList<DiskImage> diskList;
+    private Map<Guid, VmDevice> managedDeviceMap;
+    private List<VmDevice> unmanagedDeviceList;
 
-    private Guid id = Guid.Empty;
+    private Guid id;
 
     @EditableOnVmStatusField
     private Guid vdsGroupId;
@@ -46,7 +46,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private int osId;
 
     @EditableField
-    private Date creationDate = new Date(0);
+    private Date creationDate;
 
     @EditableField
     @Size(max = BusinessEntitiesDefinitions.VM_DESCRIPTION_SIZE)
@@ -61,10 +61,10 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private int memSizeMb;
 
     @EditableOnVmStatusField
-    private int numOfSockets = 1;
+    private int numOfSockets;
 
     @EditableOnVmStatusField
-    private int cpuPerSocket = 1;
+    private int cpuPerSocket;
 
     @EditableOnVmStatusField
     @IntegerContainedInConfigValueList(configValue = ConfigValues.ValidNumOfMonitors,
@@ -72,7 +72,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private int numOfMonitors;
 
     @EditableOnVmStatusField
-    private boolean singleQxlPci = false;
+    private boolean singleQxlPci;
 
     @EditableField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_DOMAIN_SIZE)
@@ -83,15 +83,15 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private String timeZone;
 
     @EditableField
-    private VmType vmType = VmType.Desktop;
+    private VmType vmType;
 
     @EditableOnVmStatusField
-    private UsbPolicy usbPolicy = UsbPolicy.DISABLED;
+    private UsbPolicy usbPolicy;
 
     private boolean failBack;
 
     @EditableField
-    private BootSequence defaultBootSequence = BootSequence.C;
+    private BootSequence defaultBootSequence;
 
     @EditableOnVmStatusField
     private int niceLevel;
@@ -119,7 +119,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     @EditableOnVmStatusField
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    private String isoPath = "";
+    private String isoPath;
 
     private OriginType origin;
 
@@ -164,6 +164,20 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private Date exportDate;
 
     public VmBase() {
+        name = "";
+        diskList = new ArrayList<DiskImage>();
+        managedDeviceMap = new HashMap<Guid, VmDevice>();
+        unmanagedDeviceList = new ArrayList<VmDevice>();
+        id = Guid.Empty;
+        creationDate = new Date(0);
+        numOfSockets = 1;
+        cpuPerSocket = 1;
+        usbPolicy = UsbPolicy.DISABLED;
+        isoPath = "";
+        defaultBootSequence = BootSequence.C;
+        migrationSupport = MigrationSupport.MIGRATABLE;
+        vmType = VmType.Desktop;
+        defaultDisplayType = DisplayType.qxl;
     }
 
     @EditableField
@@ -184,13 +198,13 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     @EditableField
     @OvfExportOnlyField(valueToIgnore = "MIGRATABLE", exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
-    private MigrationSupport migrationSupport = MigrationSupport.MIGRATABLE;
+    private MigrationSupport migrationSupport;
 
     @EditableField
     private Guid dedicatedVmForVds;
 
     @EditableOnVmStatusField
-    protected DisplayType defaultDisplayType = DisplayType.qxl;
+    protected DisplayType defaultDisplayType;
 
     @EditableOnVmStatusField
     @NullOrStringContainedInConfigValueList(configValue = ConfigValues.VncKeyboardLayoutValidValues,
@@ -202,7 +216,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private int minAllocatedMem;
 
     @EditableField
-    private boolean runAndPause = false;
+    private boolean runAndPause;
 
     private Guid createdByUserId;
 
@@ -241,7 +255,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             int minAllocatedMem,
             boolean runAndPause,
             Guid createdByUserId) {
-        super();
+        this();
         this.id = id;
         this.vdsGroupId = vdsGroupId;
         this.osId = osId;
@@ -276,6 +290,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.minAllocatedMem = minAllocatedMem;
         this.runAndPause = runAndPause;
         this.createdByUserId = createdByUserId;
+        defaultDisplayType = DisplayType.qxl;
         setQuotaId(quotaId);
     }
 

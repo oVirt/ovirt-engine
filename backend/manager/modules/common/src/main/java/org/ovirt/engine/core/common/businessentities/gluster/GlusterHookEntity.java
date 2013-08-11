@@ -40,13 +40,15 @@ public class GlusterHookEntity extends IVdcQueryable implements BusinessEntity<G
 
     private String content;
 
-    private Integer conflictStatus = 0;
+    private Integer conflictStatus;
 
-    private List<GlusterServerHook> serverHooks = new ArrayList<GlusterServerHook>();
+    private List<GlusterServerHook> serverHooks;
 
     public GlusterHookEntity() {
         super();
         id = Guid.newGuid();
+        conflictStatus = 0;
+        serverHooks = new ArrayList<GlusterServerHook>();
     }
 
     @Override

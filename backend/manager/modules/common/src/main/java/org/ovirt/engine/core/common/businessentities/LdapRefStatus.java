@@ -7,7 +7,7 @@ public enum LdapRefStatus implements Identifiable {
     Active(1);
 
     private int intValue;
-    private static java.util.HashMap<Integer, LdapRefStatus> mappings = new HashMap<Integer, LdapRefStatus>();
+    private static final java.util.HashMap<Integer, LdapRefStatus> mappings = new HashMap<Integer, LdapRefStatus>();
 
     static {
         for (LdapRefStatus status : values()) {

@@ -9,9 +9,10 @@ public class TagsUserMap implements Serializable {
     private static final long serialVersionUID = 8616194965200914499L;
 
     private Guid tagId;
-    private Guid userId = Guid.Empty;
+    private Guid userId;
 
     public TagsUserMap() {
+        this (null, Guid.Empty);
     }
 
     public TagsUserMap(Guid tag_id, Guid user_id) {

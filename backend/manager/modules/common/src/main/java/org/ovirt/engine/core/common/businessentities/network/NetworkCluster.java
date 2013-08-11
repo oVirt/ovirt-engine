@@ -7,22 +7,22 @@ import org.ovirt.engine.core.compat.Guid;
 public class NetworkCluster extends IVdcQueryable implements BusinessEntity<NetworkClusterId> {
     private static final long serialVersionUID = -4900811332744926545L;
 
-    private NetworkClusterId id = new NetworkClusterId();
-    private NetworkStatus status = NetworkStatus.NON_OPERATIONAL;
+    private NetworkClusterId id;
+    private NetworkStatus status;
     private boolean display;
 
     /**
      * A cluster network can be tagged as monitored. Monitored network have implications on automated actions taken on a
      * host during monitoring.
      */
-    private boolean required = true;
+    private boolean required;
     private boolean migration;
 
     public NetworkCluster() {
+        this (null, null, NetworkStatus.NON_OPERATIONAL, false, true, false);
     }
 
     public NetworkCluster(boolean required) {
-        this();
         this.required = required;
     }
 
@@ -32,11 +32,12 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
             boolean display,
             boolean required,
             boolean migration) {
+        this(required);
+        id = new NetworkClusterId();
         id.setClusterId(clusterId);
         id.setNetworkId(networkId);
         this.status = status;
         this.display = display;
-        this.required = required;
         this.migration = migration;
     }
 

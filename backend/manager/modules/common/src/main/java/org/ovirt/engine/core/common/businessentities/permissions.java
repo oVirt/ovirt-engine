@@ -9,10 +9,10 @@ import org.ovirt.engine.core.compat.Guid;
 public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 7249605272394212576L;
 
-    private Guid adElementId = Guid.Empty;
-    private Guid id = Guid.Empty;
+    private Guid adElementId;
+    private Guid id;
     private ArrayList<tags> tags;
-    private Guid roleId = Guid.Empty;
+    private Guid roleId;
     private Guid objectId;
     private String objectName;
     private VdcObjectType objectType;
@@ -21,7 +21,7 @@ public class permissions extends IVdcQueryable implements BusinessEntity<Guid> {
     private RoleType roleType;
 
     public permissions() {
-        this.id = Guid.newGuid();
+        this (Guid.Empty, Guid.Empty, null, null);
     }
 
     public permissions(Guid adElementId, Guid roleId, Guid objectId, VdcObjectType objectType) {

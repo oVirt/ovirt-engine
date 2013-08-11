@@ -10,8 +10,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     private static final long serialVersionUID = 7789482445091432555L;
 
-    private Guid id = Guid.Empty;
-    private VMStatus status = VMStatus.Down;
+    private Guid id;
+    private VMStatus status;
     private String vmIp;
     private String vmHost;
     private Integer vmPid;
@@ -27,9 +27,9 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     private String appList;
     private Integer display;
     private Boolean acpiEnabled;
-    private SessionState session = SessionState.Unknown;
+    private SessionState session;
     private String displayIp;
-    private DisplayType displayType = DisplayType.vnc;
+    private DisplayType displayType;
     private Boolean kvmEnable;
     private Integer displaySecurePort;
     private Integer utcDiff;
@@ -37,16 +37,16 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     private String clientIp;
     private Integer guestRequestedMemory;
     private String hibernationVolHandle;
-    private BootSequence bootSequence = BootSequence.C;
-    private VmExitStatus exitStatus = VmExitStatus.Normal;
-    private VmPauseStatus pauseStatus = VmPauseStatus.NONE;
+    private BootSequence bootSequence;
+    private VmExitStatus exitStatus;
+    private VmPauseStatus pauseStatus;
     private String hash;
     private int guestAgentNicsHash;
     private String mExitMessage;
     private ArrayList<DiskImageDynamic> disks;
-    private boolean win2kHackEnabled = false;
-    private Long lastWatchdogEvent = null;
-    private String lastWatchdogAction = null;
+    private boolean win2kHackEnabled;
+    private Long lastWatchdogEvent;
+    private String lastWatchdogAction;
     private boolean runOnce;
 
     @Override
@@ -191,6 +191,10 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
     }
 
     public VmDynamic() {
+        id = Guid.Empty;
+        status = VMStatus.Down;
+        displayType = DisplayType.vnc;
+        pauseStatus = VmPauseStatus.NONE;
         exitStatus = VmExitStatus.Normal;
         win2kHackEnabled = false;
         acpiEnabled = true;

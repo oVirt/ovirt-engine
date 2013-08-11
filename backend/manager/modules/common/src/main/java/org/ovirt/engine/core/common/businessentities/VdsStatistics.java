@@ -16,13 +16,13 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     private Integer usage_mem_percent;
     private Integer usage_cpu_percent;
     private Integer usage_network_percent;
-    private Long mem_available = 0L;
-    private Long memFree = 0L;
-    private Long mem_shared = 0L;
-    private Long swap_free = 0L;
-    private Long swap_total = 0L;
+    private Long mem_available;
+    private Long memFree;
+    private Long mem_shared;
+    private Long swap_free;
+    private Long swap_total;
     private Integer ksm_cpu_percent;
-    private Long ksm_pages = 0L;
+    private Long ksm_pages;
     private Boolean ksm_state;
 
     public VdsStatistics() {
@@ -30,6 +30,12 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.cpu_load = BigDecimal.ZERO;
         this.cpu_sys = BigDecimal.ZERO;
         this.cpu_user = BigDecimal.ZERO;
+        mem_available = 0L;
+        memFree = 0L;
+        mem_shared = 0L;
+        swap_free = 0L;
+        swap_total = 0L;
+        ksm_pages = 0L;
     }
 
     @Override

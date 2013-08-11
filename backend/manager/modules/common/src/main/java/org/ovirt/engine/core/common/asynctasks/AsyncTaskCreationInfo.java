@@ -6,16 +6,17 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class AsyncTaskCreationInfo implements Serializable {
 
-    private Guid vdsmTaskID = Guid.Empty;
-    private Guid privateStoragePoolID = Guid.Empty;
-    private AsyncTaskType privateTaskType = AsyncTaskType.forValue(0);
+    private Guid vdsmTaskID;
+    private Guid privateStoragePoolID;
+    private AsyncTaskType privateTaskType;
 
     /**
      * The id of the step which monitors the task execution
      */
-    private Guid stepId = null;
+    private Guid stepId;
 
     public AsyncTaskCreationInfo() {
+        this(Guid.Empty, AsyncTaskType.unknown, Guid.Empty);
     }
 
     public AsyncTaskCreationInfo(Guid vdsmTaskID, AsyncTaskType taskType, Guid storagePoolID) {

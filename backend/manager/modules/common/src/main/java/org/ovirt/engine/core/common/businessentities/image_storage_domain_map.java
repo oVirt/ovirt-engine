@@ -6,13 +6,15 @@ import org.ovirt.engine.core.compat.Guid;
 public class image_storage_domain_map implements BusinessEntity<ImageStorageDomainMapId> {
     private static final long serialVersionUID = 8459502119344718863L;
 
-    private ImageStorageDomainMapId id = new ImageStorageDomainMapId();
+    private ImageStorageDomainMapId id;
 
 
     public image_storage_domain_map() {
+        id = new ImageStorageDomainMapId();
     }
 
     public image_storage_domain_map(Guid image_id, Guid storage_domain_id) {
+        this();
         this.id.setImageId(image_id);
         this.id.setStorageDomainId(storage_domain_id);
     }

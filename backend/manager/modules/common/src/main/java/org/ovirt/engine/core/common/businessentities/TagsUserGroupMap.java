@@ -10,9 +10,10 @@ public class TagsUserGroupMap implements Serializable {
 
     private Guid tagId;
 
-    private Guid groupId = Guid.Empty;
+    private Guid groupId;
 
     public TagsUserGroupMap() {
+        this (Guid.Empty, null);
     }
 
     public TagsUserGroupMap(Guid group_id, Guid tag_id) {

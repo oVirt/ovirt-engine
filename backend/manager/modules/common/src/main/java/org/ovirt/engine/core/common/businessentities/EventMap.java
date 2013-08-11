@@ -5,13 +5,14 @@ import java.io.Serializable;
 public class EventMap implements Serializable {
     private static final long serialVersionUID = 3159004698645803750L;
 
-    private EventMapId id = new EventMapId();
+    private EventMapId id;
 
     private int eventDownId;
 
     private int eventUpId;
 
     public EventMap() {
+        id = new EventMapId();
     }
 
     public int getEventDownId() {

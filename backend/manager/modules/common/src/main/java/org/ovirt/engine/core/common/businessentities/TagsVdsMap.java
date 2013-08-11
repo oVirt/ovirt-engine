@@ -8,12 +8,14 @@ import org.ovirt.engine.core.compat.Guid;
 public class TagsVdsMap implements Serializable {
     private static final long serialVersionUID = 6203389145081594705L;
 
-    private TagsVdsMapId id = new TagsVdsMapId();
+    private TagsVdsMapId id;
 
     public TagsVdsMap() {
+        id = new TagsVdsMapId();
     }
 
     public TagsVdsMap(Guid tag_id, Guid vds_id) {
+        this();
         this.id.tagId = tag_id;
         this.id.vdsId = vds_id;
     }

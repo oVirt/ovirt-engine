@@ -13,28 +13,28 @@ public class Image implements BusinessEntity<Guid> {
 
     private static final long serialVersionUID = -7058426105212449257L;
 
-    private Guid id = Guid.Empty;
+    private Guid id;
 
     private boolean active;
 
-    private Date creationDate = new Date();
+    private Date creationDate;
 
-    private Date lastModified = new Date(0);
+    private Date lastModified;
 
-    private Guid parentId = Guid.Empty;
+    private Guid parentId;
 
-    private Guid templateImageId = Guid.Empty;
+    private Guid templateImageId;
 
     private Guid snapshotId;
 
     private Guid diskId;
 
-    private ImageStatus status = ImageStatus.Unassigned;
+    private ImageStatus status;
 
     @NotNull(message = "VALIDATION.VOLUME_TYPE.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
-    private VolumeType volumeType = VolumeType.Sparse;
+    private VolumeType volumeType;
 
-    private long size = 0L;
+    private long size;
 
     @NotNull(message = "VALIDATION.VOLUME_FORMAT.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private VolumeFormat volumeFormat;
@@ -45,6 +45,13 @@ public class Image implements BusinessEntity<Guid> {
     private Guid quotaId;
 
     public Image() {
+        id = Guid.Empty;
+        creationDate = new Date();
+        lastModified = new Date(0);
+        parentId = Guid.Empty;
+        templateImageId = Guid.Empty;
+        status = ImageStatus.Unassigned;
+        volumeType = VolumeType.Sparse;
     }
 
     @Override

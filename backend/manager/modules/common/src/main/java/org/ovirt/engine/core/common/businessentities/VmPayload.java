@@ -12,9 +12,9 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 
 public class VmPayload implements Serializable {
     private static final long serialVersionUID = -3665087594884425768L;
-    private static String SpecParamsPayload = "vmPayload";
-    private static String SpecParamsVolumeIdType = "volId";
-    private static String SpecParamsFileType = "file";
+    private static final String SpecParamsPayload = "vmPayload";
+    private static final String SpecParamsVolumeIdType = "volId";
+    private static final String SpecParamsFileType = "file";
 
     private VmDeviceType type;
     private String volumeId;

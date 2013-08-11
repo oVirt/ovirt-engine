@@ -23,7 +23,7 @@ public enum VMStatus implements Identifiable {
     PreparingForHibernate(17);
 
     private int value;
-    private static HashMap<Integer, VMStatus> valueToStatus = new HashMap<Integer, VMStatus>();
+    private static final HashMap<Integer, VMStatus> valueToStatus = new HashMap<Integer, VMStatus>();
 
     static {
         for (VMStatus status : values()) {

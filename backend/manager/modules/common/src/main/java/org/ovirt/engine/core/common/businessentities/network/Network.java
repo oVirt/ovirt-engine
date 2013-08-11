@@ -52,14 +52,14 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
     @Max(value = 4094, message = "NETWORK_VLAN_OUT_OF_RANGE", groups = { CreateEntity.class, UpdateEntity.class })
     private Integer vlanId;
 
-    private boolean stp = false;
+    private boolean stp;
 
     @NotNull(message = "VALIDATION.STORAGE_POOL.ID.NOT_NULL", groups = { CreateEntity.class, UpdateEntity.class })
     private Guid dataCenterId;
 
     private NetworkCluster cluster;
 
-    private boolean vmNetwork = true;
+    private boolean vmNetwork;
 
     private ProviderNetwork providedBy;
 
@@ -69,10 +69,12 @@ public class Network extends IVdcQueryable implements Serializable, BusinessEnti
     private int mtu;
 
     public Network() {
+        vmNetwork = true;
     }
 
     public Network(String addr, String description, Guid id, String name, String subnet, String gateway, Integer type,
             Integer vlan_id, boolean stp, int mtu, boolean vmNetwork) {
+        this();
         this.addr = addr;
         this.description = description;
         this.id = id;

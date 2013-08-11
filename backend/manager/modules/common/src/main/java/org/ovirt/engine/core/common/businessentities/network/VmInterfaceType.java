@@ -18,7 +18,7 @@ public enum VmInterfaceType {
     private int value;
     private String description;
     private int speed;
-    private static Map<Integer, VmInterfaceType> mappings = new HashMap<Integer, VmInterfaceType>();
+    private static final Map<Integer, VmInterfaceType> mappings = new HashMap<Integer, VmInterfaceType>();
 
     static {
         for (VmInterfaceType vmInterfaceType : values()) {

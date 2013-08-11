@@ -10,7 +10,7 @@ public enum VolumeFormat {
     RAW(5);
 
     private int intValue;
-    private static java.util.HashMap<Integer, VolumeFormat> mappings = new HashMap<Integer, VolumeFormat>();
+    private static final java.util.HashMap<Integer, VolumeFormat> mappings = new HashMap<Integer, VolumeFormat>();
 
     static {
         for (VolumeFormat volumeFormat : values()) {

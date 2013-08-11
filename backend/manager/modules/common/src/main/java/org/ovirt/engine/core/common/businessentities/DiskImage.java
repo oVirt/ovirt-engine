@@ -28,13 +28,14 @@ public class DiskImage extends DiskImageBase implements IImage {
     private ArrayList<String> storagePath;
     private int readRateKbPerSec;
     private int writeRateKbPerSec;
-    private ArrayList<DiskImage> snapshots = new ArrayList<DiskImage>();
+    private ArrayList<DiskImage> snapshots;
     private double actualDiskWithSnapthotsSize;
 
     public DiskImage() {
         setParentId(Guid.Empty);
         setCreationDate(new Date());
         setLastModifiedDate(getCreationDate());
+        snapshots = new ArrayList<DiskImage>();
     }
 
     public Guid getImageId() {

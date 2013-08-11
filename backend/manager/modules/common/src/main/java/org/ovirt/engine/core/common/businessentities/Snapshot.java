@@ -73,14 +73,15 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
     /**
      * The volume that contains the memory state of the VM
      */
-    private String memoryVolume = "";
+    private String memoryVolume;
 
     public Snapshot() {
-        vmConfigurationAvailable = true;
+        this(true);
     }
 
     public Snapshot(boolean vmConfigurationAvailable) {
         this.vmConfigurationAvailable = vmConfigurationAvailable;
+        this.memoryVolume = "";
     }
 
     public Snapshot(Guid id,

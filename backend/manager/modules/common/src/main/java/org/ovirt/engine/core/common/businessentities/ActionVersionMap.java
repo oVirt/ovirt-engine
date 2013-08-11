@@ -9,13 +9,15 @@ public class ActionVersionMap implements Serializable {
     private static final long serialVersionUID = -212222175662336097L;
 
     public ActionVersionMap() {
+        this(false);
     }
 
     public ActionVersionMap(boolean nullValue) {
         this.nullValue = nullValue;
+        this.actionType = VdcActionType.Unknown.getValue();
     }
 
-    private int actionType = VdcActionType.Unknown.getValue();
+    private int actionType;
 
     public VdcActionType getaction_type() {
         return VdcActionType.forValue(actionType);

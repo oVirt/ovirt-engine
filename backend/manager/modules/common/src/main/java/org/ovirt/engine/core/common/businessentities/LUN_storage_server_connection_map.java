@@ -8,14 +8,16 @@ public class LUN_storage_server_connection_map implements Serializable, Business
     private static final long serialVersionUID = -4203034156149786569L;
 
     public LUN_storage_server_connection_map() {
+        id = new LUN_storage_server_connection_map_id();
     }
 
     public LUN_storage_server_connection_map(String lUN_id, String storage_server_connection) {
+        this();
         this.id.lunId = lUN_id;
         this.id.storageServerConnection = storage_server_connection;
     }
 
-    private LUN_storage_server_connection_map_id id = new LUN_storage_server_connection_map_id();
+    private LUN_storage_server_connection_map_id id;
 
     @Override
     public LUN_storage_server_connection_map_id getId() {

@@ -18,7 +18,7 @@ public enum StorageType implements Identifiable {
     // this member is indicating whether then enum value represents an actual storage type
     private boolean isConcreteStorageType;
 
-    private static java.util.HashMap<Integer, StorageType> mappings = new HashMap<Integer, StorageType>();
+    private static final java.util.HashMap<Integer, StorageType> mappings = new HashMap<Integer, StorageType>();
 
     static {
         for (StorageType storageType : values()) {

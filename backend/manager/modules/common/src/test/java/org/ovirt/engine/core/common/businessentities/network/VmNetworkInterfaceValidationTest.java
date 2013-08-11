@@ -25,7 +25,7 @@ public class VmNetworkInterfaceValidationTest {
 
     private static final String VALID_MAC_ADDRESS = "01:23:45:67:89:ab";
 
-    private Random random = new Random();
+    private static final Random random = new Random();
 
     @Test
     public void nameIsNullForCreate() throws Exception {

@@ -28,16 +28,15 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
     @EditableField
     private VmPayload vmPayload;
     @EditableField
-    private boolean balloonEnabled = true;
+    private boolean balloonEnabled;
 
     @Valid
-    private List<Snapshot> snapshots = new ArrayList<Snapshot>();
-    private boolean runOnce = false;
+    private List<Snapshot> snapshots;
+    private boolean runOnce;
 
-    private InitializationType initializationType = InitializationType.None;
+    private InitializationType initializationType;
 
-    private Map<VmDevice, Map<String, String>> runtimeDeviceCustomProperties =
-            new HashMap<VmDevice, Map<String, String>>();
+    private Map<VmDevice, Map<String, String>> runtimeDeviceCustomProperties;
 
     public String getUserDefinedProperties() {
         return vmStatic.getUserDefinedProperties();
@@ -85,6 +84,12 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         this.setCdPath("");
         this.setFloppyPath("");
         this.setDiskSize(0);
+        balloonEnabled = true;
+        snapshots = new ArrayList<Snapshot>();
+        initializationType = InitializationType.None;
+        runtimeDeviceCustomProperties = new HashMap<VmDevice, Map<String, String>>();
+        vmtCreationDate = new Date(0);
+        storagePoolId = Guid.Empty;
     }
 
     public VmPauseStatus getVmPauseStatus() {
@@ -748,7 +753,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         this.vmtOsId = value;
     }
 
-    private Date vmtCreationDate = new Date(0);
+    private Date vmtCreationDate;
 
     public Date getVmtCreationDate() {
         return this.vmtCreationDate;
@@ -932,7 +937,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         return this.vmStatic.getExportDate();
     }
 
-    private Guid storagePoolId = Guid.Empty;
+    private Guid storagePoolId;
 
     @Override
     public Guid getStoragePoolId() {
@@ -970,12 +975,12 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         vmStatic.setImages(value);
     }
 
-    private Map<Guid, Disk> diskMap = new HashMap<Guid, Disk>();
+    private Map<Guid, Disk> diskMap;
 
     // even this field has no setter, it can not have the final modifier because the GWT serialization mechanism
     // ignores the final fields
-    private String cdPath = "";
-    private String floppyPath = "";
+    private String cdPath;
+    private String floppyPath;
 
     /**
      * Vitaly change. guest last logout time treatment. If vm stoped without logging out - set last logout time now
@@ -1011,7 +1016,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
                 && SimpleDependecyInjector.getInstance().get(OsRepository.class).isLinux(getVmOsId());
     }
 
-    private double _actualDiskWithSnapthotsSize = 0;
+    private double _actualDiskWithSnapthotsSize;
 
     public double getActualDiskWithSnapshotsSize() {
         if (_actualDiskWithSnapthotsSize == 0 && getDiskMap() != null) {

@@ -11,7 +11,7 @@ public enum VdcRole {
     PowerUser(2);
 
     private int intValue;
-    private static java.util.HashMap<Integer, VdcRole> mappings = new HashMap<Integer, VdcRole>();
+    private static final java.util.HashMap<Integer, VdcRole> mappings = new HashMap<Integer, VdcRole>();
 
     static {
         for (VdcRole vdcRole : values()) {

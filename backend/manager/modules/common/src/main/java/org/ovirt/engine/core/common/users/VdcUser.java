@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class VdcUser implements Serializable {
     private static final long serialVersionUID = -5689096270467866486L;
 
-    private Guid mUserId = Guid.Empty;
+    private Guid mUserId;
     private String mUserName;
     private String mPassword;
     private String mDomainControler;
@@ -25,7 +25,7 @@ public class VdcUser implements Serializable {
 
     private String mFirstName;
     private String mSurName;
-    private boolean mIsAdmin = false;
+    private boolean mIsAdmin;
 
     public VdcUser(LdapUser ldapUser) {
         this(ldapUser, false);
@@ -44,6 +44,7 @@ public class VdcUser implements Serializable {
     }
 
     public VdcUser() {
+        mUserId = Guid.Empty;
     }
 
     public VdcUser(Guid userId, String userName, String domain) {
