@@ -5,12 +5,13 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 public class SetVdsStatusVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    private VDSStatus _status = VDSStatus.forValue(0);
-    private NonOperationalReason nonOperationalReason = NonOperationalReason.NONE;
+    private VDSStatus _status;
+    private NonOperationalReason nonOperationalReason;
 
     public SetVdsStatusVDSCommandParameters(Guid vdsId, VDSStatus status) {
         super(vdsId);
         _status = status;
+        nonOperationalReason = NonOperationalReason.NONE;
     }
 
     public SetVdsStatusVDSCommandParameters(Guid vdsId, VDSStatus status, NonOperationalReason nonOperationalReason) {
@@ -23,6 +24,8 @@ public class SetVdsStatusVDSCommandParameters extends VdsIdVDSCommandParametersB
     }
 
     public SetVdsStatusVDSCommandParameters() {
+        _status = VDSStatus.Unassigned;
+        nonOperationalReason = NonOperationalReason.NONE;
     }
 
     public NonOperationalReason getNonOperationalReason() {

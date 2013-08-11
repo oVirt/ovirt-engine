@@ -8,7 +8,7 @@ public class GetImageDomainsListVDSCommandParameters extends IrsBaseVDSCommandPa
         setImageGroupId(imageGroupId);
     }
 
-    private Guid privateImageGroupId = Guid.Empty;
+    private Guid privateImageGroupId;
 
     public Guid getImageGroupId() {
         return privateImageGroupId;
@@ -19,6 +19,7 @@ public class GetImageDomainsListVDSCommandParameters extends IrsBaseVDSCommandPa
     }
 
     public GetImageDomainsListVDSCommandParameters() {
+        privateImageGroupId = Guid.Empty;
     }
 
     @Override

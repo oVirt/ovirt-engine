@@ -7,14 +7,16 @@ import org.ovirt.engine.core.compat.Guid;
  */
 public class StorageDomainIdParametersBase extends IrsBaseVDSCommandParameters {
 
-    private Guid privateStorageDomainId = Guid.Empty;
+    private Guid privateStorageDomainId;
 
     protected StorageDomainIdParametersBase(Guid storagePoolId) {
         super(storagePoolId);
+        privateStorageDomainId = Guid.Empty;
     }
 
     protected StorageDomainIdParametersBase() {
         super();
+        privateStorageDomainId = Guid.Empty;
     }
 
     public Guid getStorageDomainId() {

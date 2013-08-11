@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
  * Parameters used to fine tune MoM policy
  */
 public class MomPolicyVDSParameters extends VdsIdVDSCommandParametersBase {
-    private boolean enableBalloon = false;
+    private boolean enableBalloon;
 
     public MomPolicyVDSParameters(VDS vds, boolean enableBalloon) {
         super(vds.getId());

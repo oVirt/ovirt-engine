@@ -6,7 +6,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    private Guid privateStoragePoolId = Guid.Empty;
+    private Guid privateStoragePoolId;
 
     public Guid getStoragePoolId() {
         return privateStoragePoolId;
@@ -16,7 +16,7 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
         privateStoragePoolId = value;
     }
 
-    private StorageType privateStorageType = StorageType.forValue(0);
+    private StorageType privateStorageType;
 
     public StorageType getStorageType() {
         return privateStorageType;
@@ -36,7 +36,7 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
         privateStoragePoolName = value;
     }
 
-    private Guid privateMasterDomainId = Guid.Empty;
+    private Guid privateMasterDomainId;
 
     public Guid getMasterDomainId() {
         return privateMasterDomainId;
@@ -78,6 +78,9 @@ public class CreateStoragePoolVDSCommandParameters extends VdsIdVDSCommandParame
     }
 
     public CreateStoragePoolVDSCommandParameters() {
+        privateStoragePoolId = Guid.Empty;
+        privateStorageType = StorageType.UNKNOWN;
+        privateMasterDomainId = Guid.Empty;
     }
 
     @Override

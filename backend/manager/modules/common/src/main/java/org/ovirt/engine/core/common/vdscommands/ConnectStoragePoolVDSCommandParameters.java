@@ -21,9 +21,10 @@ public class ConnectStoragePoolVDSCommandParameters extends DisconnectStoragePoo
     }
 
     public ConnectStoragePoolVDSCommandParameters() {
+        privateMasterDomainId = Guid.Empty;
     }
 
-    private Guid privateMasterDomainId = Guid.Empty;
+    private Guid privateMasterDomainId;
 
     public Guid getMasterDomainId() {
         return privateMasterDomainId;

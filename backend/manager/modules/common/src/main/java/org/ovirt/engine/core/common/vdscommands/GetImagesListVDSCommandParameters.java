@@ -8,7 +8,7 @@ public class GetImagesListVDSCommandParameters extends IrsBaseVDSCommandParamete
         setStorageDomainId(sdUUID);
     }
 
-    private Guid storageDomainId = Guid.Empty;
+    private Guid storageDomainId;
 
     public Guid getStorageDomainId() {
         return storageDomainId;
@@ -19,6 +19,7 @@ public class GetImagesListVDSCommandParameters extends IrsBaseVDSCommandParamete
     }
 
     public GetImagesListVDSCommandParameters() {
+        storageDomainId = Guid.Empty;
     }
 
     @Override

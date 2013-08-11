@@ -7,13 +7,14 @@ public class IsVmDuringInitiatingVDSCommandParameters extends VDSParametersBase 
         _vmId = vmId;
     }
 
-    private Guid _vmId = Guid.Empty;
+    private Guid _vmId;
 
     public Guid getVmId() {
         return _vmId;
     }
 
     public IsVmDuringInitiatingVDSCommandParameters() {
+        _vmId = Guid.Empty;
     }
 
     @Override

@@ -8,7 +8,7 @@ public class SPMTaskGuidBaseVDSCommandParameters extends IrsBaseVDSCommandParame
         setTaskId(taskId);
     }
 
-    private Guid privateTaskId = Guid.Empty;
+    private Guid privateTaskId;
 
     public Guid getTaskId() {
         return privateTaskId;
@@ -19,6 +19,7 @@ public class SPMTaskGuidBaseVDSCommandParameters extends IrsBaseVDSCommandParame
     }
 
     public SPMTaskGuidBaseVDSCommandParameters() {
+        privateTaskId = Guid.Empty;
     }
 
     @Override

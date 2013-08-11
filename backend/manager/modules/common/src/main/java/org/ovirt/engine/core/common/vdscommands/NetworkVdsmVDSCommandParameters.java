@@ -21,11 +21,12 @@ public class NetworkVdsmVDSCommandParameters extends VdsIdVDSCommandParametersBa
     private String gateway;
     private boolean stp;
     private String bondingOptions;
-    private NetworkBootProtocol bootProtocol = NetworkBootProtocol.NONE;
+    private NetworkBootProtocol bootProtocol;
     private boolean vmNetwork;
     private Network network;
 
     public NetworkVdsmVDSCommandParameters() {
+        bootProtocol = NetworkBootProtocol.NONE;
     }
 
     public NetworkVdsmVDSCommandParameters(Guid vdsId, String networkName, Integer vlanId, String bondName,

@@ -17,7 +17,7 @@ public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupId
     }
 
     private long _imageSizeInBytes;
-    private VolumeType _imageType = VolumeType.forValue(0);
+    private VolumeType _imageType;
 
     public long getImageSizeInBytes() {
         return _imageSizeInBytes;
@@ -27,7 +27,7 @@ public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupId
         return _imageType;
     }
 
-    private VolumeFormat privateVolumeFormat = VolumeFormat.forValue(0);
+    private VolumeFormat privateVolumeFormat;
 
     public VolumeFormat getVolumeFormat() {
         return privateVolumeFormat;
@@ -37,7 +37,7 @@ public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupId
         privateVolumeFormat = value;
     }
 
-    private Guid privateNewImageID = Guid.Empty;
+    private Guid privateNewImageID;
 
     public Guid getNewImageID() {
         return privateNewImageID;
@@ -58,6 +58,9 @@ public class CreateImageVDSCommandParameters extends StoragePoolDomainAndGroupId
     }
 
     public CreateImageVDSCommandParameters() {
+        _imageType = VolumeType.Unassigned;
+        privateVolumeFormat = VolumeFormat.UNUSED0;
+        privateNewImageID = Guid.Empty;
     }
 
     @Override

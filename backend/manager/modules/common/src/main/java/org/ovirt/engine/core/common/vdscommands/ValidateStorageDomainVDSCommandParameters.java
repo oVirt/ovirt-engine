@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.compat.Guid;
 
 public class ValidateStorageDomainVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    private Guid privateStorageDomainId = Guid.Empty;
+    private Guid privateStorageDomainId;
 
     public Guid getStorageDomainId() {
         return privateStorageDomainId;
@@ -19,6 +19,7 @@ public class ValidateStorageDomainVDSCommandParameters extends VdsIdVDSCommandPa
     }
 
     public ValidateStorageDomainVDSCommandParameters() {
+        privateStorageDomainId = Guid.Empty;
     }
 
     @Override

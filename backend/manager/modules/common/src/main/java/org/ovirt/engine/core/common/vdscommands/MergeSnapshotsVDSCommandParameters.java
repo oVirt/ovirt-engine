@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MergeSnapshotsVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
-    private Guid _imageId2 = Guid.Empty;
+    private Guid _imageId2;
 
     public MergeSnapshotsVDSCommandParameters(Guid storagePoolId, Guid storageDomainId,
             Guid vmId, Guid imageGroupId, Guid imageId, Guid imageId2, boolean postZero) {
@@ -17,7 +17,7 @@ public class MergeSnapshotsVDSCommandParameters extends AllStorageAndImageIdVDSC
         return _imageId2;
     }
 
-    private Guid privateVmId = Guid.Empty;
+    private Guid privateVmId;
 
     public Guid getVmId() {
         return privateVmId;
@@ -38,6 +38,8 @@ public class MergeSnapshotsVDSCommandParameters extends AllStorageAndImageIdVDSC
     }
 
     public MergeSnapshotsVDSCommandParameters() {
+        _imageId2 = Guid.Empty;
+        privateVmId = Guid.Empty;
     }
 
     @Override

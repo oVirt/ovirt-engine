@@ -9,13 +9,14 @@ public class AllStorageAndImageIdVDSCommandParametersBase extends StoragePoolDom
         _imageId = imageId;
     }
 
-    private Guid _imageId = Guid.Empty;
+    private Guid _imageId;
 
     public Guid getImageId() {
         return _imageId;
     }
 
     public AllStorageAndImageIdVDSCommandParametersBase() {
+        _imageId = Guid.Empty;
     }
 
     @Override

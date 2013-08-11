@@ -8,7 +8,7 @@ public class HSMGetIsoListParameters extends VdsIdVDSCommandParametersBase {
         setStoragePoolId(storagePoolId);
     }
 
-    private Guid privateStoragePoolId = Guid.Empty;
+    private Guid privateStoragePoolId;
 
     public Guid getStoragePoolId() {
         return privateStoragePoolId;
@@ -19,6 +19,7 @@ public class HSMGetIsoListParameters extends VdsIdVDSCommandParametersBase {
     }
 
     public HSMGetIsoListParameters() {
+        privateStoragePoolId = Guid.Empty;
     }
 
     @Override

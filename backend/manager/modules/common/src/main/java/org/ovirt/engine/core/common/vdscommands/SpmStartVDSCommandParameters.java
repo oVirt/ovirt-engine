@@ -23,7 +23,7 @@ public class SpmStartVDSCommandParameters extends FenceSpmStorageVDSCommandParam
         this.storagePoolFormatType = storagePoolFormatType;
     }
 
-    private RecoveryMode privateRecoveryMode = RecoveryMode.forValue(0);
+    private RecoveryMode privateRecoveryMode;
 
     public RecoveryMode getRecoveryMode() {
         return privateRecoveryMode;
@@ -44,6 +44,7 @@ public class SpmStartVDSCommandParameters extends FenceSpmStorageVDSCommandParam
     }
 
     public SpmStartVDSCommandParameters() {
+        privateRecoveryMode = RecoveryMode.Manual;
     }
 
     @Override

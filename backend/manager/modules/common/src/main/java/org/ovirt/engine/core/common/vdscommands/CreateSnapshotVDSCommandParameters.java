@@ -14,8 +14,8 @@ public class CreateSnapshotVDSCommandParameters extends CreateImageVDSCommandPar
         setSourceImageGroupId(sourceImageGroupId);
     }
 
-    private Guid _imageId = Guid.Empty;
-    private Guid privateSourceImageGroupId = Guid.Empty;
+    private Guid _imageId;
+    private Guid privateSourceImageGroupId;
 
     public Guid getImageId() {
         return _imageId;
@@ -30,6 +30,8 @@ public class CreateSnapshotVDSCommandParameters extends CreateImageVDSCommandPar
     }
 
     public CreateSnapshotVDSCommandParameters() {
+        _imageId = Guid.Empty;
+        privateSourceImageGroupId = Guid.Empty;
     }
 
     @Override

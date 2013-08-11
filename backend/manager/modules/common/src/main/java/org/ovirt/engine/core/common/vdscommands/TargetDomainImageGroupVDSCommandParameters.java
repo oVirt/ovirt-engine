@@ -4,7 +4,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class TargetDomainImageGroupVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
 
-    private Guid privateDstDomainId = Guid.Empty;
+    private Guid privateDstDomainId;
 
     public TargetDomainImageGroupVDSCommandParameters(Guid storagePoolId,
             Guid storageDomainId,
@@ -15,6 +15,7 @@ public class TargetDomainImageGroupVDSCommandParameters extends StoragePoolDomai
     }
 
     public TargetDomainImageGroupVDSCommandParameters() {
+        privateDstDomainId = Guid.Empty;
     }
 
     public Guid getDstDomainId() {
@@ -30,4 +31,3 @@ public class TargetDomainImageGroupVDSCommandParameters extends StoragePoolDomai
         return String.format("%s, dstDomainId = %s", super.toString(), getDstDomainId());
     }
 }
-

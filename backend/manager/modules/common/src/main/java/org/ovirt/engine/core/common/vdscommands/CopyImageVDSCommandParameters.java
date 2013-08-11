@@ -23,7 +23,7 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         setPreallocate(preallocate);
     }
 
-    private Guid privatedstImageGroupId = Guid.Empty;
+    private Guid privatedstImageGroupId;
 
     public Guid getdstImageGroupId() {
         return privatedstImageGroupId;
@@ -33,7 +33,7 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privatedstImageGroupId = value;
     }
 
-    private Guid privateVmId = Guid.Empty;
+    private Guid privateVmId;
 
     public Guid getVmId() {
         return privateVmId;
@@ -43,7 +43,7 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateVmId = value;
     }
 
-    private Guid privateDstImageId = Guid.Empty;
+    private Guid privateDstImageId;
 
     public Guid getDstImageId() {
         return privateDstImageId;
@@ -63,7 +63,7 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateImageDescription = value;
     }
 
-    private Guid privateDstStorageDomainId = Guid.Empty;
+    private Guid privateDstStorageDomainId;
 
     public Guid getDstStorageDomainId() {
         return privateDstStorageDomainId;
@@ -73,7 +73,7 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateDstStorageDomainId = value;
     }
 
-    private CopyVolumeType privateCopyVolumeType = CopyVolumeType.forValue(0);
+    private CopyVolumeType privateCopyVolumeType;
 
     public CopyVolumeType getCopyVolumeType() {
         return privateCopyVolumeType;
@@ -83,7 +83,7 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateCopyVolumeType = value;
     }
 
-    private VolumeFormat privateVolumeFormat = VolumeFormat.forValue(0);
+    private VolumeFormat privateVolumeFormat;
 
     public VolumeFormat getVolumeFormat() {
         return privateVolumeFormat;
@@ -93,7 +93,7 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
         privateVolumeFormat = value;
     }
 
-    private VolumeType privatePreallocate = VolumeType.forValue(0);
+    private VolumeType privatePreallocate;
 
     public VolumeType getPreallocate() {
         return privatePreallocate;
@@ -124,6 +124,12 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
     }
 
     public CopyImageVDSCommandParameters() {
+        privatedstImageGroupId = Guid.Empty;
+        privateDstImageId = Guid.Empty;
+        privateDstStorageDomainId = Guid.Empty;
+        privateVmId = Guid.Empty;
+        privateVolumeFormat = VolumeFormat.UNUSED0;
+        privatePreallocate = VolumeType.Unassigned;
     }
 
     @Override

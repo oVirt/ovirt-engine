@@ -9,7 +9,7 @@ public class GetDeviceListVDSCommandParameters extends VdsIdVDSCommandParameters
         setStorageType(storageType);
     }
 
-    private StorageType privateStorageType = StorageType.forValue(0);
+    private StorageType privateStorageType;
 
     public StorageType getStorageType() {
         return privateStorageType;
@@ -20,6 +20,7 @@ public class GetDeviceListVDSCommandParameters extends VdsIdVDSCommandParameters
     }
 
     public GetDeviceListVDSCommandParameters() {
+        privateStorageType = StorageType.UNKNOWN;
     }
 
     @Override

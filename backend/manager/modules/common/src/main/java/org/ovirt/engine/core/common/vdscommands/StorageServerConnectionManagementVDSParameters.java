@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageServerConnectionManagementVDSParameters extends GetStorageConnectionsListVDSCommandParameters {
-    private StorageType privateStorageType = StorageType.forValue(0);
+    private StorageType privateStorageType;
 
     public StorageType getStorageType() {
         return privateStorageType;
@@ -35,6 +35,7 @@ public class StorageServerConnectionManagementVDSParameters extends GetStorageCo
     }
 
     public StorageServerConnectionManagementVDSParameters() {
+        privateStorageType = StorageType.UNKNOWN;
     }
 
     @Override

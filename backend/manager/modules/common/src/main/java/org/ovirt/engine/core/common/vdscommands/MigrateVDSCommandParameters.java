@@ -7,7 +7,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private String _srcHost;
     private Guid _dstVdsId;
     private String _dstHost;
-    private MigrationMethod _migrationMethod = MigrationMethod.forValue(0);
+    private MigrationMethod _migrationMethod;
     private Boolean tunnelMigration;
     private String dstQemu;
 
@@ -47,6 +47,7 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     }
 
     public MigrateVDSCommandParameters() {
+        _migrationMethod = MigrationMethod.OFFLINE;
     }
 
     @Override

@@ -16,7 +16,7 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
         privateVdsSpmId = value;
     }
 
-    private Guid privateStoragePoolId = Guid.Empty;
+    private Guid privateStoragePoolId;
 
     public Guid getStoragePoolId() {
         return privateStoragePoolId;
@@ -36,7 +36,7 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
         privateStoragePoolName = value;
     }
 
-    private Guid privateMasterDomainId = Guid.Empty;
+    private Guid privateMasterDomainId;
 
     public Guid getMasterDomainId() {
         return privateMasterDomainId;
@@ -79,13 +79,15 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
     }
 
     public ReconstructMasterVDSCommandParameters() {
+        privateStoragePoolId = Guid.Empty;
+        privateMasterDomainId = Guid.Empty;
     }
 
     @Override
     public String toString() {
         return String.format("%s, vdsSpmId = %d, storagePoolId = %s, "
-            + "storagePoolName = %s, masterDomainId = %s, masterVersion = %s, "
-            + "domainsList = [%s]",
+                + "storagePoolName = %s, masterDomainId = %s, masterVersion = %s, "
+                + "domainsList = [%s]",
                 super.toString(),
                 getVdsSpmId(),
                 getStoragePoolId(),

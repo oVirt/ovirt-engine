@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VdsAndPoolIDVDSParametersBase extends VdsIdVDSCommandParametersBase {
-    private Guid storagePoolId = Guid.Empty;
+    private Guid storagePoolId;
 
     public VdsAndPoolIDVDSParametersBase(Guid vdsId, Guid storagePoolId) {
         super(vdsId);
@@ -11,6 +11,7 @@ public class VdsAndPoolIDVDSParametersBase extends VdsIdVDSCommandParametersBase
     }
 
     public VdsAndPoolIDVDSParametersBase() {
+        storagePoolId = Guid.Empty;
     }
 
     public Guid getStoragePoolId() {

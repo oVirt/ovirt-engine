@@ -3,14 +3,16 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.compat.Guid;
 
 public class IrsBaseVDSCommandParameters extends VDSParametersBase {
-    private Guid storagePoolId = Guid.Empty;
+    private Guid storagePoolId;
     private boolean ignoreFailoverLimit;
 
     public IrsBaseVDSCommandParameters(Guid storagePoolId) {
         setStoragePoolId(storagePoolId);
     }
 
-    public IrsBaseVDSCommandParameters() { }
+    public IrsBaseVDSCommandParameters() {
+        storagePoolId = Guid.Empty;
+    }
 
     public Guid getStoragePoolId() {
         return storagePoolId;

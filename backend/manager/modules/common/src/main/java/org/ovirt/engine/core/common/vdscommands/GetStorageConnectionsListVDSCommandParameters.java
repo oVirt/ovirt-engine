@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.compat.Guid;
 
 public class GetStorageConnectionsListVDSCommandParameters extends VdsIdVDSCommandParametersBase {
-    private Guid privateStoragePoolId = Guid.Empty;
+    private Guid privateStoragePoolId;
 
     public Guid getStoragePoolId() {
         return privateStoragePoolId;
@@ -19,6 +19,7 @@ public class GetStorageConnectionsListVDSCommandParameters extends VdsIdVDSComma
     }
 
     public GetStorageConnectionsListVDSCommandParameters() {
+        privateStoragePoolId = Guid.Empty;
     }
 
     @Override

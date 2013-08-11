@@ -23,8 +23,8 @@ public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase 
     private String _type;
     private String _user;
     private String _password;
-    private String _options = "";
-    private FenceActionType _action = FenceActionType.forValue(0);
+    private String _options;
+    private FenceActionType _action;
 
     public Guid getTargetVdsID() {
         return _targetVdsId;
@@ -59,6 +59,8 @@ public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase 
     }
 
     public FenceVdsVDSCommandParameters() {
+        _options = "";
+        _action = FenceActionType.Restart;
     }
 
     @Override

@@ -14,7 +14,7 @@ public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSComman
         setPath(path);
     }
 
-    private Guid privateStoragePoolId = Guid.Empty;
+    private Guid privateStoragePoolId;
 
     public Guid getStoragePoolId() {
         return privateStoragePoolId;
@@ -24,7 +24,7 @@ public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSComman
         privateStoragePoolId = value;
     }
 
-    private StorageType privateStorageType = StorageType.forValue(0);
+    private StorageType privateStorageType;
 
     public StorageType getStorageType() {
         return privateStorageType;
@@ -34,7 +34,7 @@ public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSComman
         privateStorageType = value;
     }
 
-    private StorageDomainType privateStorageDomainType = StorageDomainType.forValue(0);
+    private StorageDomainType privateStorageDomainType;
 
     public StorageDomainType getStorageDomainType() {
         return privateStorageDomainType;
@@ -55,6 +55,9 @@ public class HSMGetStorageDomainsListVDSCommandParameters extends VdsIdVDSComman
     }
 
     public HSMGetStorageDomainsListVDSCommandParameters() {
+        privateStoragePoolId = Guid.Empty;
+        privateStorageType = StorageType.UNKNOWN;
+        privateStorageDomainType = StorageDomainType.Master;
     }
 
     @Override

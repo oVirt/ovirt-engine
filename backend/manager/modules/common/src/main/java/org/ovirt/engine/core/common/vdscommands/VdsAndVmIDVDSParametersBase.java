@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VdsAndVmIDVDSParametersBase extends VdsIdVDSCommandParametersBase {
-    private Guid _vmId = Guid.Empty;
+    private Guid _vmId;
 
     public VdsAndVmIDVDSParametersBase(Guid vdsId, Guid vmId) {
         super(vdsId);
@@ -15,6 +15,7 @@ public class VdsAndVmIDVDSParametersBase extends VdsIdVDSCommandParametersBase {
     }
 
     public VdsAndVmIDVDSParametersBase() {
+        _vmId = Guid.Empty;
     }
 
     @Override
