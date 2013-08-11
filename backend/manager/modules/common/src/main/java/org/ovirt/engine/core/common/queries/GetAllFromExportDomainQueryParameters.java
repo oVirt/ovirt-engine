@@ -4,7 +4,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class GetAllFromExportDomainQueryParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = 5436719744430725750L;
-    private Guid privateStoragePoolId = Guid.Empty;
+    private Guid privateStoragePoolId;
 
     public Guid getStoragePoolId() {
         return privateStoragePoolId;
@@ -14,7 +14,7 @@ public class GetAllFromExportDomainQueryParameters extends VdcQueryParametersBas
         privateStoragePoolId = value;
     }
 
-    private Guid privateStorageDomainId = Guid.Empty;
+    private Guid privateStorageDomainId;
 
     public Guid getStorageDomainId() {
         return privateStorageDomainId;
@@ -40,5 +40,6 @@ public class GetAllFromExportDomainQueryParameters extends VdcQueryParametersBas
     }
 
     public GetAllFromExportDomainQueryParameters() {
+        this (Guid.Empty, Guid.Empty);
     }
 }

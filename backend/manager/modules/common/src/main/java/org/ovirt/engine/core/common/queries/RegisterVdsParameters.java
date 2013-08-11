@@ -80,7 +80,7 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
         privateVdsGroupId = value;
     }
 
-    private VDSType privateVdsType = VDSType.forValue(0);
+    private VDSType privateVdsType;
 
     public VDSType getVdsType() {
         return privateVdsType;
@@ -113,5 +113,6 @@ public class RegisterVdsParameters extends VdcQueryParametersBase implements Ser
     }
 
     public RegisterVdsParameters() {
+        privateVdsType = VDSType.VDS;
     }
 }

@@ -3,11 +3,11 @@ package org.ovirt.engine.core.common.queries;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.compat.Guid;
 
-
 public class GetImagesListByStoragePoolIdParameters extends GetImagesListParametersBase {
     private static final long serialVersionUID = 6098440434536241071L;
 
     public GetImagesListByStoragePoolIdParameters() {
+        setStoragePoolId(Guid.Empty);
     }
 
     public GetImagesListByStoragePoolIdParameters(Guid storagePoolId) {
@@ -19,7 +19,7 @@ public class GetImagesListByStoragePoolIdParameters extends GetImagesListParamet
         setStoragePoolId(storagePoolId);
     }
 
-    private Guid storagePoolId = Guid.Empty;
+    private Guid storagePoolId;
 
     public Guid getStoragePoolId() {
         return storagePoolId;

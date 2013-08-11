@@ -9,7 +9,7 @@ public class GlusterHookQueryParameters extends VdcQueryParametersBase {
 
     private Guid hookId;
 
-    private boolean includeServerHooks = false;
+    private boolean includeServerHooks;
 
     public GlusterHookQueryParameters() {
     }

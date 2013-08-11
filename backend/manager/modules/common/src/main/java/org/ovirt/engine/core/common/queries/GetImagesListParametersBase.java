@@ -6,9 +6,10 @@ import org.ovirt.engine.core.common.businessentities.ImageFileType;
 public abstract class GetImagesListParametersBase extends VdcQueryParametersBase {
     private static final long serialVersionUID = 2562476365144558247L;
     private boolean forceRefresh;
-    private ImageFileType imageType = ImageFileType.All;
+    private ImageFileType imageType;
 
     public GetImagesListParametersBase() {
+        this (ImageFileType.All);
     }
 
     public GetImagesListParametersBase(ImageFileType imageType) {

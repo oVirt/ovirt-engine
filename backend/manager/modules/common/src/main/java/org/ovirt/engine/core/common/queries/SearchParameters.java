@@ -8,22 +8,24 @@ public class SearchParameters extends VdcQueryParametersBase implements Serializ
     private static final long serialVersionUID = 2275481072329075722L;
 
     private String _searchPattern;
-    private SearchType _searchType = SearchType.forValue(0);
-    private int _maxCount = -1;
-    private long searchFrom = 0;
-    private boolean caseSensitive = true;
+    private SearchType _searchType;
+    private int _maxCount;
+    private long searchFrom;
+    private boolean caseSensitive;
 
     public SearchParameters() {
+        this (null, SearchType.VM, true);
     }
 
     public SearchParameters(String searchPattern, SearchType searchType) {
-        _searchType = searchType;
-        _searchPattern = searchPattern;
+        this (searchPattern, searchType, true);
     }
 
     public SearchParameters(String searchPattern, SearchType searchType, boolean caseSensitive) {
-        this(searchPattern, searchType);
+        _searchType = searchType;
+        _searchPattern = searchPattern;
         this.caseSensitive = caseSensitive;
+        _maxCount = -1;
     }
 
     public String getSearchPattern() {

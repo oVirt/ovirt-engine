@@ -17,15 +17,16 @@ public class VdcQueryParametersBase implements Serializable {
     /**
      * The boolean flag which provides if the session should be refreshed
      */
-    private boolean refresh = true;
+    private boolean refresh;
 
     /**
      * The boolean flag which specifies if the query should be filtered
      * (e.g., according to user permissions as opposed to the default, which is running as admin)
      */
-    private boolean isFiltered = false;
+    private boolean isFiltered;
 
     public VdcQueryParametersBase() {
+        refresh = true;
     }
 
     public String getSessionId() {

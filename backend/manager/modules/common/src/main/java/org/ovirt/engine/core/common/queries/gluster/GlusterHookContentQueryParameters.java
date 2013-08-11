@@ -15,7 +15,7 @@ public class GlusterHookContentQueryParameters extends VdcQueryParametersBase {
     @NotNull(message = "VALIDATION.GLUSTER.GLUSTER_HOOK_ID.NOT_NULL")
     private Guid glusterHookId;
 
-    private Guid glusterServerId = null;
+    private Guid glusterServerId;
 
     public GlusterHookContentQueryParameters() {
     }

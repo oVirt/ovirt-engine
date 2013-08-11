@@ -5,7 +5,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class StorageDomainAndPoolQueryParameters extends StorageDomainQueryParametersBase {
     private static final long serialVersionUID = -1397159559995940530L;
 
-    private Guid privateStoragePoolId = Guid.Empty;
+    private Guid privateStoragePoolId;
 
     public Guid getStoragePoolId() {
         return privateStoragePoolId;
@@ -21,5 +21,6 @@ public class StorageDomainAndPoolQueryParameters extends StorageDomainQueryParam
     }
 
     public StorageDomainAndPoolQueryParameters() {
+        privateStoragePoolId = Guid.Empty;
     }
 }

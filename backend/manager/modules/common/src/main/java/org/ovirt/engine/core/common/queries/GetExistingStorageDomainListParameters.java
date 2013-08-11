@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class GetExistingStorageDomainListParameters extends VdsIdParametersBase {
     private static final long serialVersionUID = 7478078947370484916L;
-    private StorageType privateStorageType = StorageType.forValue(0);
+    private StorageType privateStorageType;
 
     public StorageType getStorageType() {
         return privateStorageType;
@@ -17,7 +17,7 @@ public class GetExistingStorageDomainListParameters extends VdsIdParametersBase 
         privateStorageType = value;
     }
 
-    private StorageDomainType privateStorageDomainType = StorageDomainType.forValue(0);
+    private StorageDomainType privateStorageDomainType;
 
     public StorageDomainType getStorageDomainType() {
         return privateStorageDomainType;
@@ -62,5 +62,6 @@ public class GetExistingStorageDomainListParameters extends VdsIdParametersBase 
     }
 
     public GetExistingStorageDomainListParameters() {
+        this(null, StorageType.UNKNOWN, StorageDomainType.Master, null);
     }
 }

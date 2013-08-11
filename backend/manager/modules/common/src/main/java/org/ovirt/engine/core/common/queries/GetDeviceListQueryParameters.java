@@ -5,7 +5,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class GetDeviceListQueryParameters extends VdsIdParametersBase {
     private static final long serialVersionUID = -3909252459169512472L;
-    private StorageType privateStorageType = StorageType.forValue(0);
+    private StorageType privateStorageType;
 
     public StorageType getStorageType() {
         return privateStorageType;
@@ -21,5 +21,6 @@ public class GetDeviceListQueryParameters extends VdsIdParametersBase {
     }
 
     public GetDeviceListQueryParameters() {
+        privateStorageType = StorageType.UNKNOWN;
     }
 }

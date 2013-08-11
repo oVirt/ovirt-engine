@@ -12,14 +12,16 @@ public class GetPermissionsForObjectParameters extends VdcQueryParametersBase {
      * True to get only the direct permission of an object. False - get implicit permissions on an object example -
      * implicit VM permissions will return the VM, its Cluster, its Datacenter and System permissions.
      */
-    private boolean directOnly = true;
+    private boolean directOnly;
 
     private VdcObjectType vdcObjectType;
 
     public GetPermissionsForObjectParameters() {
+        directOnly = true;
     }
 
     public GetPermissionsForObjectParameters(Guid objectId) {
+        this();
         this.objectId = objectId;
     }
 

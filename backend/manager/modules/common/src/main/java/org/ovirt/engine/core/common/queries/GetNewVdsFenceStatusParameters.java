@@ -22,7 +22,7 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
         _vds_id = value;
     }
 
-    private Guid _storagePoolId = Guid.Empty;
+    private Guid _storagePoolId;
 
     public Guid getStoragePoolId() {
         return _storagePoolId;

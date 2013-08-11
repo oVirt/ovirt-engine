@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.common.queries;
 
-
 public class GetConfigurationValueParameters extends VdcQueryParametersBase {
     private static final long serialVersionUID = -5889171970595969719L;
 
@@ -8,7 +7,7 @@ public class GetConfigurationValueParameters extends VdcQueryParametersBase {
         _configValue = cVal;
     }
 
-    private ConfigurationValues _configValue = ConfigurationValues.forValue(0);
+    private ConfigurationValues _configValue;
 
     public ConfigurationValues getConfigValue() {
         return _configValue;
@@ -30,6 +29,7 @@ public class GetConfigurationValueParameters extends VdcQueryParametersBase {
     }
 
     public GetConfigurationValueParameters() {
+        _configValue = ConfigurationValues.MaxNumOfVmCpus;
     }
 
     @Override
