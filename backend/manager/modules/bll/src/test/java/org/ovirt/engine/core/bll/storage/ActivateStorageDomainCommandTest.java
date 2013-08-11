@@ -3,9 +3,13 @@ package org.ovirt.engine.core.bll.storage;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,10 +20,13 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
+import org.ovirt.engine.core.dao.VdsDAO;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ActivateStorageDomainCommandTest {
@@ -27,6 +34,8 @@ public class ActivateStorageDomainCommandTest {
     StorageDomainDAO storageDomainDAO;
     @Mock
     StoragePoolDAO storagePoolDAO;
+    @Mock
+    VdsDAO vdsDAO;
 
     private ActivateStorageDomainCommand<StorageDomainPoolParametersBase> cmd;
 
@@ -101,6 +110,21 @@ public class ActivateStorageDomainCommandTest {
         noIllegalStatusMessage();
     }
 
+    @Test
+    public void nonActiveVdsDisallowed() {
+        testNonActiveVdsExecution(StorageDomainStatus.Maintenance);
+        canDoActionFails();
+        assertTrue(cmd.getReturnValue().getCanDoActionMessages().contains(
+                VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_IN_POOL.name()));
+    }
+
+    private void testNonActiveVdsExecution(StorageDomainStatus status) {
+        createStorageDomain(status);
+        createUpStoragePool();
+        createNonUpVds();
+        createCommand();
+    }
+
     private void testInternalExecution(StorageDomainStatus status) {
         testExecution(status);
         setIsInternal();
@@ -109,6 +133,7 @@ public class ActivateStorageDomainCommandTest {
     private void testExecution(StorageDomainStatus status) {
         createStorageDomain(status);
         createUpStoragePool();
+        createUpVds();
         createCommand();
     }
 
@@ -127,6 +152,16 @@ public class ActivateStorageDomainCommandTest {
         when(storagePoolDAO.get(any(Guid.class))).thenReturn(pool);
     }
 
+    private void createUpVds() {
+        List<VDS> vdss = new ArrayList<VDS>();
+        vdss.add(new VDS());
+        when(vdsDAO.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(vdss);
+    }
+
+    private void createNonUpVds() {
+        when(vdsDAO.getAllForStoragePoolAndStatus(any(Guid.class), eq(VDSStatus.Up))).thenReturn(new ArrayList<VDS>());
+    }
+
     private void createCommand() {
         StorageDomainPoolParametersBase params = new StorageDomainPoolParametersBase();
         params.setStorageDomainId(Guid.newGuid());
@@ -134,6 +169,7 @@ public class ActivateStorageDomainCommandTest {
         cmd = spy(new ActivateStorageDomainCommand<StorageDomainPoolParametersBase>(params));
         doReturn(storageDomainDAO).when(cmd).getStorageDomainDAO();
         doReturn(storagePoolDAO).when(cmd).getStoragePoolDAO();
+        doReturn(vdsDAO).when(cmd).getVdsDAO();
     }
 
     private void canDoActionSucceeds() {

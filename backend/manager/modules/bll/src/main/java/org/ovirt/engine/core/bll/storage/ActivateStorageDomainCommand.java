@@ -58,7 +58,8 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                                                   VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL)
                 && checkStorageDomain()
                 && storageDomainStatusIsValid()
-                && (getStorageDomain().getStorageDomainType() == StorageDomainType.Master || checkMasterDomainIsUp());
+                && (getStorageDomain().getStorageDomainType() == StorageDomainType.Master || checkMasterDomainIsUp())
+                && checkForActiveVds() != null;
         return returnValue;
     }
 

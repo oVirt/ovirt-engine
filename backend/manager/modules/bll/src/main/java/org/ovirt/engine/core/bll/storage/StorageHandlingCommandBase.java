@@ -94,19 +94,24 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     protected boolean initializeVds() {
         boolean returnValue = true;
         if (getVds() == null) {
-            List<VDS> hosts = getVdsDAO().getAllForStoragePoolAndStatus(getStoragePool().getId(),
-                    VDSStatus.Up);
-            if (!hosts.isEmpty()) {
-                // select random host to avoid executing almost every time through the same one
-                // (as the db query will return the hosts in the same order on most times).
-                setVds(RandomUtils.instance().pickRandom(hosts));
-            }
+            // select random host to avoid executing almost every time through the same one
+            // (as the db query will return the hosts in the same order on most times).
+            setVds(checkForActiveVds());
             if (getVds() == null) {
                 returnValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
             }
         }
         return returnValue;
+    }
+
+    protected VDS checkForActiveVds() {
+        List<VDS> hosts = getVdsDAO().getAllForStoragePoolAndStatus(getStoragePool().getId(),
+                VDSStatus.Up);
+        if (!hosts.isEmpty()) {
+            return RandomUtils.instance().pickRandom(hosts);
+        }
+        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NO_VDS_IN_POOL);
+        return null;
     }
 
     protected boolean checkStoragePool() {
