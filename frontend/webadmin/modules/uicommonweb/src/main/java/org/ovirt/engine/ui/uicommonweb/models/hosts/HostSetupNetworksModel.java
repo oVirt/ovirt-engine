@@ -259,111 +259,68 @@ public class HostSetupNetworksModel extends EntityModel {
                 }
             };
         } else if (item instanceof LogicalNetworkModel) {
+            /*****************
+             * Network Dialog
+             *****************/
             final LogicalNetworkModel logicalNetwork = (LogicalNetworkModel) item;
             final VdsNetworkInterface entity =
                     logicalNetwork.hasVlan() ? logicalNetwork.getVlanNic().getEntity()
                             : logicalNetwork.getAttachedToNic().getEntity();
 
+            final HostInterfaceModel networkDialogModel;
             if (logicalNetwork.isManagement()) {
-                /*****************
-                 * Management Network Dialog
-                 *****************/
-                editPopup = new HostManagementNetworkModel(true);
-                final HostManagementNetworkModel mgmntDialogModel = (HostManagementNetworkModel) editPopup;
-                mgmntDialogModel.setTitle(ConstantsManager.getInstance().getConstants().editManagementNetworkTitle());
-                mgmntDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetwork.getName()));
-                mgmntDialogModel.setEntity(logicalNetwork.getEntity());
-                mgmntDialogModel.getAddress().setEntity(entity.getAddress());
-                mgmntDialogModel.getSubnet().setEntity(entity.getSubnet());
-                mgmntDialogModel.getGateway().setEntity(entity.getGateway());
-                mgmntDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(entity.getAddress()));
-                mgmntDialogModel.setNoneBootProtocolAvailable(false);
-                mgmntDialogModel.getBondingOptions().setIsAvailable(false);
-                mgmntDialogModel.getInterface().setIsAvailable(false);
-                mgmntDialogModel.setBootProtocol(entity.getBootProtocol());
-
-                mgmntDialogModel.getIsToSync().setIsChangable(!logicalNetwork.isInSync());
-                mgmntDialogModel.getIsToSync()
-                        .setEntity(HostSetupNetworksModel.this.networksToSync.contains(logicalNetwork.getName()));
-
-                // OK Target
-                okTarget = new BaseCommandTarget() {
-                    @Override
-                    public void executeCommand(UICommand command) {
-                        if (!mgmntDialogModel.validate()) {
-                            return;
-                        }
-                        entity.setBootProtocol(mgmntDialogModel.getBootProtocol());
-                        if (mgmntDialogModel.getIsStaticAddress()) {
-                            entity.setAddress((String) mgmntDialogModel.getAddress().getEntity());
-                            entity.setSubnet((String) mgmntDialogModel.getSubnet().getEntity());
-                            entity.setGateway((String) mgmntDialogModel.getGateway().getEntity());
-                        }
-
-                        if ((Boolean) mgmntDialogModel.getIsToSync().getEntity()) {
-                            HostSetupNetworksModel.this.networksToSync.add(logicalNetwork.getName());
-                        } else {
-                            HostSetupNetworksModel.this.networksToSync.remove(logicalNetwork.getName());
-                        }
-
-                        sourceListModel.setConfirmWindow(null);
-                    }
-                };
+                networkDialogModel = new HostManagementNetworkModel(true);
+                networkDialogModel.setTitle(ConstantsManager.getInstance().getConstants().editManagementNetworkTitle());
+                networkDialogModel.setEntity(logicalNetwork.getEntity());
+                networkDialogModel.setNoneBootProtocolAvailable(false);
+                networkDialogModel.getInterface().setIsAvailable(false);
             } else {
-                /*****************
-                 * Network Dialog
-                 *****************/
-                editPopup = new HostInterfaceModel(true);
-                final HostInterfaceModel networkDialogModel = (HostInterfaceModel) editPopup;
+                networkDialogModel = new HostInterfaceModel(true);
                 networkDialogModel.setTitle(ConstantsManager.getInstance()
                         .getMessages()
                         .editNetworkTitle(logicalNetwork.getName()));
-                networkDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetwork.getName()));
-
-                networkDialogModel.getAddress().setEntity(entity.getAddress());
-                networkDialogModel.getSubnet().setEntity(entity.getSubnet());
-                networkDialogModel.getGateway().setEntity(entity.getGateway());
-                networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(entity.getAddress()));
+                networkDialogModel.getName().setIsAvailable(false);
+                networkDialogModel.getNetwork().setIsChangable(false);
+                networkDialogModel.getNetwork().setSelectedItem(logicalNetwork.getEntity());
                 networkDialogModel.getGateway()
                         .setIsAvailable((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MultipleGatewaysSupported,
                                 getEntity().getVdsGroupCompatibilityVersion().getValue()));
-
-                networkDialogModel.getName().setIsAvailable(false);
-                networkDialogModel.getBondingOptions().setIsAvailable(false);
-
-                networkDialogModel.getNetwork().setIsChangable(false);
-                networkDialogModel.getNetwork().setSelectedItem(logicalNetwork.getEntity());
-
-                networkDialogModel.setBootProtocol(entity.getBootProtocol());
-
-                networkDialogModel.getIsToSync().setIsChangable(!logicalNetwork.isInSync());
-                networkDialogModel.getIsToSync()
-                        .setEntity(HostSetupNetworksModel.this.networksToSync.contains(logicalNetwork.getName()));
-
-                // OK Target
-                okTarget = new BaseCommandTarget() {
-                    @Override
-                    public void executeCommand(UICommand command) {
-                        if (!networkDialogModel.validate()) {
-                            return;
-                        }
-                        entity.setBootProtocol(networkDialogModel.getBootProtocol());
-                        if (networkDialogModel.getIsStaticAddress()) {
-                            entity.setAddress((String) networkDialogModel.getAddress().getEntity());
-                            entity.setSubnet((String) networkDialogModel.getSubnet().getEntity());
-                            entity.setGateway((String) networkDialogModel.getGateway().getEntity());
-                        }
-
-                        if ((Boolean) networkDialogModel.getIsToSync().getEntity()) {
-                            HostSetupNetworksModel.this.networksToSync.add(logicalNetwork.getName());
-                        } else {
-                            HostSetupNetworksModel.this.networksToSync.remove(logicalNetwork.getName());
-                        }
-
-                        sourceListModel.setConfirmWindow(null);
-                    }
-                };
             }
+            networkDialogModel.setOriginalNetParams(netToBeforeSyncParams.get(logicalNetwork.getName()));
+            networkDialogModel.getAddress().setEntity(entity.getAddress());
+            networkDialogModel.getSubnet().setEntity(entity.getSubnet());
+            networkDialogModel.getGateway().setEntity(entity.getGateway());
+            networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(entity.getAddress()));
+            networkDialogModel.getBondingOptions().setIsAvailable(false);
+            networkDialogModel.setBootProtocol(entity.getBootProtocol());
+            networkDialogModel.getIsToSync().setIsChangable(!logicalNetwork.isInSync());
+            networkDialogModel.getIsToSync()
+                    .setEntity(networksToSync.contains(logicalNetwork.getName()));
+            editPopup = networkDialogModel;
+
+            // OK Target
+            okTarget = new BaseCommandTarget() {
+                @Override
+                public void executeCommand(UICommand command) {
+                    if (!networkDialogModel.validate()) {
+                        return;
+                    }
+                    entity.setBootProtocol(networkDialogModel.getBootProtocol());
+                    if (networkDialogModel.getIsStaticAddress()) {
+                        entity.setAddress((String) networkDialogModel.getAddress().getEntity());
+                        entity.setSubnet((String) networkDialogModel.getSubnet().getEntity());
+                        entity.setGateway((String) networkDialogModel.getGateway().getEntity());
+                    }
+
+                    if ((Boolean) networkDialogModel.getIsToSync().getEntity()) {
+                        networksToSync.add(logicalNetwork.getName());
+                    } else {
+                        networksToSync.remove(logicalNetwork.getName());
+                    }
+
+                    sourceListModel.setConfirmWindow(null);
+                }
+            };
         }
 
         // ok command

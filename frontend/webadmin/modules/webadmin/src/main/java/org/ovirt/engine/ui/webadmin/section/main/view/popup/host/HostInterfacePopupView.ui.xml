@@ -9,6 +9,10 @@
 	xmlns:w="urn:import:org.ovirt.engine.ui.webadmin.widget">
 
 	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostInterfacePopupView.Style">
+		.checkCon{
+			width: 370px;
+			padding: 5px;
+		}
 		.syncInfo {
 			width: 100%;
 		}
@@ -21,6 +25,7 @@
 					<g:VerticalPanel ui:field="mainPanel" >
 						<e:EntityModelLabelEditor ui:field="nameEditor" />
 						<e:ListModelListBoxEditor ui:field="networkEditor" />
+						<e:ListModelListBoxEditor ui:field="interfaceEditor" />
 						<e:ListModelListBoxEditor ui:field="bondingModeEditor" />
 						<e:EntityModelTextBoxEditor ui:field="customEditor" visible="false" />
 						<e:EntityModelLabelEditor ui:field="bootProtocolLabel" />

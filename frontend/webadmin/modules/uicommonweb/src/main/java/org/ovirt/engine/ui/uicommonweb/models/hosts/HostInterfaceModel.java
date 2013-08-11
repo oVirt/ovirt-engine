@@ -32,100 +32,124 @@ public class HostInterfaceModel extends EntityModel
         setupNetworkMode = value;
     }
 
-    private EntityModel privateAddress;
+    private ListModel networkInterface;
+
+    public ListModel getInterface()
+    {
+        return networkInterface;
+    }
+
+    private void setInterface(ListModel value)
+    {
+        networkInterface = value;
+    }
+
+    private EntityModel address;
 
     public EntityModel getAddress()
     {
-        return privateAddress;
+        return address;
     }
 
     private void setAddress(EntityModel value)
     {
-        privateAddress = value;
+        address = value;
     }
 
-    private EntityModel privateSubnet;
+    private EntityModel subnet;
 
     public EntityModel getSubnet()
     {
-        return privateSubnet;
+        return subnet;
     }
 
     private void setSubnet(EntityModel value)
     {
-        privateSubnet = value;
+        subnet = value;
     }
 
-    private ListModel privateNetwork;
+    private EntityModel gateway;
+
+    public EntityModel getGateway()
+    {
+        return gateway;
+    }
+
+    private void setGateway(EntityModel value)
+    {
+        gateway = value;
+    }
+
+    private ListModel network;
 
     public ListModel getNetwork()
     {
-        return privateNetwork;
+        return network;
     }
 
     private void setNetwork(ListModel value)
     {
-        privateNetwork = value;
+        network = value;
     }
 
-    private EntityModel privateCheckConnectivity;
+    private EntityModel checkConnectivity;
 
     public EntityModel getCheckConnectivity()
     {
-        return privateCheckConnectivity;
+        return checkConnectivity;
     }
 
     private void setCheckConnectivity(EntityModel value)
     {
-        privateCheckConnectivity = value;
+        checkConnectivity = value;
     }
 
-    private ListModel privateBondingOptions;
+    private ListModel bondingOptions;
 
     public ListModel getBondingOptions()
     {
-        return privateBondingOptions;
+        return bondingOptions;
     }
 
     private void setBondingOptions(ListModel value)
     {
-        privateBondingOptions = value;
+        bondingOptions = value;
     }
 
-    private ArrayList<VdsNetworkInterface> privateNetworks;
+    private ArrayList<VdsNetworkInterface> networks;
 
     public ArrayList<VdsNetworkInterface> getNetworks()
     {
-        return privateNetworks;
+        return networks;
     }
 
     public void setNetworks(ArrayList<VdsNetworkInterface> value)
     {
-        privateNetworks = value;
+        networks = value;
     }
 
-    private EntityModel privateName;
+    private EntityModel name;
 
     public EntityModel getName()
     {
-        return privateName;
+        return name;
     }
 
     public void setName(EntityModel value)
     {
-        privateName = value;
+        name = value;
     }
 
-    private EntityModel privateCommitChanges;
+    private EntityModel commitChanges;
 
     public EntityModel getCommitChanges()
     {
-        return privateCommitChanges;
+        return commitChanges;
     }
 
     public void setCommitChanges(EntityModel value)
     {
-        privateCommitChanges = value;
+        commitChanges = value;
     }
 
     private NetworkBootProtocol bootProtocol = NetworkBootProtocol.values()[0];
@@ -183,26 +207,16 @@ public class HostInterfaceModel extends EntityModel
         return getBootProtocol() == NetworkBootProtocol.STATIC_IP;
     }
 
-    private boolean privatebondingOptionsOverrideNotification;
-
-    private boolean getbondingOptionsOverrideNotification()
-    {
-        return privatebondingOptionsOverrideNotification;
-    }
-
-    private void setbondingOptionsOverrideNotification(boolean value)
-    {
-        privatebondingOptionsOverrideNotification = value;
-    }
+    private boolean bondingOptionsOverrideNotification;
 
     public boolean getBondingOptionsOverrideNotification()
     {
-        return getbondingOptionsOverrideNotification();
+        return bondingOptionsOverrideNotification;
     }
 
     public void setBondingOptionsOverrideNotification(boolean value)
     {
-        setbondingOptionsOverrideNotification(value);
+        bondingOptionsOverrideNotification = value;
         onPropertyChanged(new PropertyChangedEventArgs("BondingOptionsOverrideNotification")); //$NON-NLS-1$
     }
 
@@ -222,18 +236,6 @@ public class HostInterfaceModel extends EntityModel
         this.originalNetParams = originalNetParams;
     }
 
-    private EntityModel gateway;
-
-    public EntityModel getGateway()
-    {
-        return gateway;
-    }
-
-    private void setGateway(EntityModel value)
-    {
-        gateway = value;
-    }
-
     private boolean staticIpChangeAllowed = true;
 
     public void setStaticIpChangeAllowed(boolean staticIpChangeAllowed) {
@@ -248,21 +250,15 @@ public class HostInterfaceModel extends EntityModel
     public HostInterfaceModel(boolean compactMode)
     {
         setSetupNetworkMode(compactMode);
+        setInterface(new ListModel());
+        setNetwork(new ListModel());
+        setName(new EntityModel());
         setAddress(new EntityModel());
         setSubnet(new EntityModel());
         setGateway(new EntityModel());
-        getGateway().setIsAvailable(false);
-        setNetwork(new ListModel());
-        getNetwork().getSelectedItemChangedEvent().addListener(this);
-        setName(new EntityModel());
-        EntityModel tempVar = new EntityModel();
-        tempVar.setEntity(false);
-        setCommitChanges(tempVar);
-
         setCheckConnectivity(new EntityModel());
-        getCheckConnectivity().setEntity(false);
-
         setBondingOptions(new ListModel());
+        setCommitChanges(new EntityModel());
 
         setIsToSync(new EntityModel(){
             @Override
@@ -278,13 +274,21 @@ public class HostInterfaceModel extends EntityModel
 
         });
 
-        // call the Network_ValueChanged method to set all
-        // properties according to default value of Network:
-        network_SelectedItemChanged(null);
+        getCommitChanges().setEntity(false);
+        getCheckConnectivity().setEntity(false);
+
+        getInterface().setIsAvailable(false);
+        setBootProtocolsAvailable(true);
+        getGateway().setIsAvailable(false);
+        getAddress().setIsChangable(false);
+        getSubnet().setIsChangable(false);
+        getGateway().setIsChangable(false);
+
+        getNetwork().getSelectedItemChangedEvent().addListener(this);
     }
 
     private void revertChanges() {
-        if (originalNetParams!=null){
+        if (originalNetParams != null) {
             setBootProtocol(originalNetParams.getBootProtocol());
             getAddress().setEntity(originalNetParams.getAddress());
             getSubnet().setEntity(originalNetParams.getSubnet());
@@ -365,6 +369,7 @@ public class HostInterfaceModel extends EntityModel
             }
         }
 
-        return getNetwork().getIsValid() && getAddress().getIsValid() && getSubnet().getIsValid() && getGateway().getIsValid();
+        return getNetwork().getIsValid() && getAddress().getIsValid() && getSubnet().getIsValid()
+                && getGateway().getIsValid();
     }
 }

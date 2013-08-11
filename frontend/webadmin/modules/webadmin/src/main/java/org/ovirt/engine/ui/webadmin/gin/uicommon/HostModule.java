@@ -205,21 +205,21 @@ public class HostModule extends AbstractGinModule {
                     // Resolve by dialog model
                     if (windowModel instanceof HostBondInterfaceModel) {
                         return setupNetworksBondPopupProvider.get();
-                    } else if (windowModel instanceof HostInterfaceModel) {
-                        HostInterfaceModel hostInterfaceModel = (HostInterfaceModel) windowModel;
-
-                        if (hostInterfaceModel.isSetupNetworkMode()){
-                            return setupNetworksInterfacePopupProvider.get();
-                        }else{
-                            return hostInterfacePopupProvider.get();
-                        }
                     } else if (windowModel instanceof HostManagementNetworkModel) {
                         HostManagementNetworkModel hostManagementNetworkModel  = (HostManagementNetworkModel) windowModel;
 
                         if (hostManagementNetworkModel.isSetupNetworkMode()){
                             return setupNetworksManagementPopupProvider.get();
-                        }else{
+                        } else {
                             return hostManagementPopupProvider.get();
+                        }
+                    } else if (windowModel instanceof HostInterfaceModel) {
+                        HostInterfaceModel hostInterfaceModel = (HostInterfaceModel) windowModel;
+
+                        if (hostInterfaceModel.isSetupNetworkMode()){
+                            return setupNetworksInterfacePopupProvider.get();
+                        } else {
+                            return hostInterfacePopupProvider.get();
                         }
                     }
                 }

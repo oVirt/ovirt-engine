@@ -231,10 +231,10 @@ public class NetworkModule extends AbstractGinModule {
                 // Resolve by dialog model
                 if (windowModel instanceof HostBondInterfaceModel) {
                     return setupNetworksBondPopupProvider.get();
-                } else if (windowModel instanceof HostInterfaceModel) {
-                    return setupNetworksInterfacePopupProvider.get();
                 } else if (windowModel instanceof HostManagementNetworkModel) {
                     return setupNetworksManagementPopupProvider.get();
+                } else if (windowModel instanceof HostInterfaceModel) {
+                    return setupNetworksInterfacePopupProvider.get();
                 }
 
                 // Resolve by last executed command

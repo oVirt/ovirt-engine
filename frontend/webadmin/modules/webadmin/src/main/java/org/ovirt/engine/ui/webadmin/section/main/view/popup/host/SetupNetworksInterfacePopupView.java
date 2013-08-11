@@ -17,6 +17,7 @@ public class SetupNetworksInterfacePopupView extends HostInterfacePopupView impl
             ApplicationResources resources,
             ApplicationConstants constants,
             ApplicationTemplates templates) {
+
         super(eventBus, resources, constants, templates);
     }
 

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -55,6 +56,10 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
     @UiField(provided = true)
     @Path(value = "network.selectedItem")
     ListModelListBoxEditor<Object> networkEditor;
+
+    @UiField(provided = true)
+    @Path(value = "interface.selectedItem")
+    ListModelListBoxEditor<Object> interfaceEditor;
 
     @UiField(provided = true)
     @Path(value = "bondingOptions.selectedItem")
@@ -124,13 +129,24 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public HostInterfacePopupView(EventBus eventBus, ApplicationResources resources, final ApplicationConstants constants, final ApplicationTemplates templates) {
+    public HostInterfacePopupView(EventBus eventBus,
+            ApplicationResources resources,
+            final ApplicationConstants constants,
+            final ApplicationTemplates templates) {
+
         super(eventBus, resources);
 
         networkEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             protected String renderNullSafe(Object object) {
                 return ((Network) object).getName();
+            }
+
+        });
+        interfaceEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            protected String renderNullSafe(Object object) {
+                return ((VdsNetworkInterface) object).getName();
             }
 
         });
@@ -157,12 +173,14 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
 
         // Set Styles
+        checkConnectivity.setContentWidgetStyleName(style.checkCon());
         isToSync.setContentWidgetStyleName(style.syncInfo());
         mainPanel.getElement().setPropertyString("width", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
 
         // Localize
         nameEditor.setLabel(constants.nameHostPopup() + ":"); //$NON-NLS-1$
         networkEditor.setLabel(constants.networkHostPopup() + ":"); //$NON-NLS-1$
+        interfaceEditor.setLabel(constants.intefaceHostPopup() + ":"); //$NON-NLS-1$
         bondingModeEditor.setLabel(constants.bondingModeHostPopup() + ":"); //$NON-NLS-1$
         bootProtocolLabel.setLabel(constants.bootProtocolHostPopup() +":"); //$NON-NLS-1$
         bootProtocolLabel.asEditor().getSubEditor().setValue("   "); //$NON-NLS-1$
@@ -181,22 +199,23 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
     @Override
     public void edit(final HostInterfaceModel object) {
         driver.edit(object);
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
 
+        object.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 HostInterfaceModel model = (HostInterfaceModel) sender;
-                if ("BootProtocolsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+                String propertyName = ((PropertyChangedEventArgs) args).propertyName;
+                if ("BootProtocolsAvailable".equals(propertyName)) { //$NON-NLS-1$
                     boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
                     bootProtocolLabel.setEnabled(bootProtocolsAvailable);
                     bootProtocol.setEnabled(bootProtocolsAvailable);
                     bootProtocol.setEnabled(NetworkBootProtocol.NONE, object.getNoneBootProtocolAvailable());
                     checkConnectivity.setEnabled(bootProtocolsAvailable);
                 }
-                if ("NoneBootProtocolAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+                if ("NoneBootProtocolAvailable".equals(propertyName)) { //$NON-NLS-1$
                     bootProtocol.setEnabled(NetworkBootProtocol.NONE, model.getNoneBootProtocolAvailable());
                 }
-                if ("Message".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+                if ("Message".equals(propertyName)) { //$NON-NLS-1$
                     message.setText(model.getMessage());
                 }
             }
@@ -249,12 +268,9 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         networkEditor.setFocus(true);
     }
 
-    @Override
-    public void setMessage(String message) {
-    }
-
     interface Style extends CssResource {
 
+        String checkCon();
         String syncInfo();
     }
 
