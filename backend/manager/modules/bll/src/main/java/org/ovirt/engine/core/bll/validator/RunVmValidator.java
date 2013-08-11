@@ -127,8 +127,9 @@ public class RunVmValidator {
     /**
      * Check isValid only if VM is not HA VM
      */
-    public ValidationResult validateImagesForRunVm(List<DiskImage> vmDisks) {
-        return new DiskImagesValidator(vmDisks).diskImagesNotLocked();
+    public ValidationResult validateImagesForRunVm(VM vm, List<DiskImage> vmDisks) {
+        return !vm.isAutoStartup() ?
+                new DiskImagesValidator(vmDisks).diskImagesNotLocked() : ValidationResult.VALID;
     }
 
     public ValidationResult validateIsoPath(VM vm, String diskPath, String floppyPath) {
@@ -249,6 +250,11 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult validateStoragePoolUp(VM vm, StoragePool storagePool) {
+        return !vm.isAutoStartup() ?
+                new StoragePoolValidator(storagePool).isUp() : ValidationResult.VALID;
+    }
+
     /**
      * map the VM number of pluggable and snapable disks from their domain.
      * @param vm
@@ -345,9 +351,9 @@ public class RunVmValidator {
 
         List<DiskImage> images = ImagesHandler.filterImageDisks(vmDisks, true, false);
         if (!images.isEmpty() && (
-                !validate(new StoragePoolValidator(storagePool).isUp(), messages) ||
+                !validate(validateStoragePoolUp(vm, storagePool), messages) ||
                 !validate(validateStorageDomains(vm, isInternalExecution, images), messages) ||
-                !validate(validateImagesForRunVm(images), messages))) {
+                !validate(validateImagesForRunVm(vm, images), messages))) {
             return false;
         }
 
