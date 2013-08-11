@@ -22,19 +22,19 @@ public class VdcActionParametersBase implements java.io.Serializable {
     private VdcUser parametersCurrentUser;
     private TransactionScopeOption transctionOption;
 
-    private transient CommandExecutionReason executionReason = CommandExecutionReason.REGULAR_FLOW;
+    private transient CommandExecutionReason executionReason;
 
     /**
      * Indicates if the command should use the compensation mechanism or not.
      */
-    private boolean compensationEnabled = false;
+    private boolean compensationEnabled;
 
-    private VdcActionType parentCommand = VdcActionType.Unknown;
+    private VdcActionType parentCommand;
 
     /**
      * Used to determine the correct command to construct for these parameters.
      */
-    private VdcActionType commandType = VdcActionType.Unknown;
+    private VdcActionType commandType;
 
     private transient VdcActionParametersBase parentParameters;
     // this flag marks if the command ran with MultipleAction for ProcessExceptionToClient
@@ -44,11 +44,11 @@ public class VdcActionParametersBase implements java.io.Serializable {
 
     private List<VdcActionParametersBase> imagesParameters;
 
-    private boolean taskGroupSuccess = true;
+    private boolean taskGroupSuccess;
 
     private List<Guid> vdsmTaskIds;
 
-    private int executionIndex = 0;
+    private int executionIndex;
 
     /**
      * A cross system identifier of the executed action
@@ -58,14 +58,18 @@ public class VdcActionParametersBase implements java.io.Serializable {
     @Size(min = 1, max = BusinessEntitiesDefinitions.CORRELATION_ID_SIZE, groups = PreRun.class)
     private String correlationId;
 
-    private Guid jobId = null;
-    private Guid stepId = null;
+    private Guid jobId;
+    private Guid stepId;
 
     public VdcActionParametersBase() {
         shouldbelogged = true;
         transctionOption = TransactionScopeOption.Required;
         setTaskGroupSuccess(true);
         setParentCommand(VdcActionType.Unknown);
+        executionReason = CommandExecutionReason.REGULAR_FLOW;
+        compensationEnabled = false;
+        parentCommand = VdcActionType.Unknown;
+        commandType = VdcActionType.Unknown;
     }
 
     public Guid getCommandId() {
@@ -90,7 +94,6 @@ public class VdcActionParametersBase implements java.io.Serializable {
     public VdcUser getParametersCurrentUser() {
         return parametersCurrentUser;
     }
-
 
     public void setParametersCurrentUser(VdcUser value) {
         parametersCurrentUser = value;
@@ -148,7 +151,7 @@ public class VdcActionParametersBase implements java.io.Serializable {
         return parentParameters;
     }
 
-    public void setParentParameters (VdcActionParametersBase parameters) {
+    public void setParentParameters(VdcActionParametersBase parameters) {
         parentParameters = parameters;
     }
 
@@ -334,7 +337,7 @@ public class VdcActionParametersBase implements java.io.Serializable {
         builder.append("commandId: "); //$NON-NLS-1$
         builder.append(getCommandId());
         builder.append(", user: "); //$NON-NLS-1$
-        if(getParametersCurrentUser() != null) {
+        if (getParametersCurrentUser() != null) {
             builder.append(getParametersCurrentUser().getUserName());
         }
         builder.append(", commandType: "); //$NON-NLS-1$

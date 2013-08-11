@@ -5,10 +5,11 @@ import org.ovirt.engine.core.compat.Guid;
 public class ReconstructMasterParameters extends StorageDomainPoolParametersBase {
     private static final long serialVersionUID = -640521915810322901L;
 
-    private Guid privateNewMasterDomainId = Guid.Empty;
+    private Guid privateNewMasterDomainId;
     private boolean canChooseInactiveDomainAsMaster;
 
     public ReconstructMasterParameters() {
+        privateNewMasterDomainId = Guid.Empty;
     }
 
     public ReconstructMasterParameters(Guid storagePoolId, Guid storageDomainId, boolean isInactive) {
@@ -24,6 +25,7 @@ public class ReconstructMasterParameters extends StorageDomainPoolParametersBase
 
     public ReconstructMasterParameters(Guid storagePoolId, Guid newMasterDomainId) {
         this(storagePoolId, Guid.Empty, false);
+        privateNewMasterDomainId = Guid.Empty;
         this.privateNewMasterDomainId = newMasterDomainId;
     }
 

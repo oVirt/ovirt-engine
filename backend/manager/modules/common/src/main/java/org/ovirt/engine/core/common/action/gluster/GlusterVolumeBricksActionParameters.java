@@ -8,8 +8,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class GlusterVolumeBricksActionParameters extends GlusterVolumeBricksParameters {
 
     private static final long serialVersionUID = -2254020786236387303L;
-    private int replicaCount = 0;
-    private int stripeCount = 0;
+    private int replicaCount;
+    private int stripeCount ;
 
     public GlusterVolumeBricksActionParameters() {
     }

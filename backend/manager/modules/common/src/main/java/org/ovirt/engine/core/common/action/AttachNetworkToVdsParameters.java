@@ -28,9 +28,10 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
     @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT")
     private String gateway;
     private String bondingOptions;
-    private NetworkBootProtocol bootProtocol = NetworkBootProtocol.NONE;
+    private NetworkBootProtocol bootProtocol;
 
     public AttachNetworkToVdsParameters() {
+        bootProtocol = NetworkBootProtocol.NONE;
     }
 
     public AttachNetworkToVdsParameters(Guid vdsId, Network net, VdsNetworkInterface iface) {
@@ -38,6 +39,7 @@ public class AttachNetworkToVdsParameters extends VdsActionParameters {
         setCheckConnectivity(false);
         setNetwork(net);
         setInterface(iface);
+        bootProtocol = NetworkBootProtocol.NONE;
     }
 
     public boolean getCheckConnectivity() {

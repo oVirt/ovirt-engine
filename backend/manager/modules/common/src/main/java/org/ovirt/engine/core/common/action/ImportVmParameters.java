@@ -12,11 +12,13 @@ public class ImportVmParameters extends MoveVmParameters implements Serializable
 
     @Valid
     private VM _vm;
-    private Guid _sourceDomainId = Guid.Empty;
-    private Guid _destDomainId = Guid.Empty;
+    private Guid _sourceDomainId;
+    private Guid _destDomainId;
     private Guid _vdsGroupId;
 
     public ImportVmParameters() {
+        _sourceDomainId = Guid.Empty;
+        _destDomainId = Guid.Empty;
     }
 
     public ImportVmParameters(VM vm, Guid sourceStorageDomainId, Guid destStorageDomainId, Guid storagePoolId,

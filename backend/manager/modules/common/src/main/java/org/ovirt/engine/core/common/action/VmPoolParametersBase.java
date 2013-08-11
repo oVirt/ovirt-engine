@@ -8,6 +8,7 @@ public class VmPoolParametersBase extends VdcActionParametersBase implements jav
 
     public VmPoolParametersBase(Guid vmPoolId) {
         _vmPoolId = vmPoolId;
+        privateStorageDomainId = Guid.Empty;
     }
 
     public Guid getVmPoolId() {
@@ -18,7 +19,7 @@ public class VmPoolParametersBase extends VdcActionParametersBase implements jav
         _vmPoolId = value;
     }
 
-    private Guid privateStorageDomainId = Guid.Empty;
+    private Guid privateStorageDomainId;
 
     public Guid getStorageDomainId() {
         return privateStorageDomainId;
@@ -29,5 +30,6 @@ public class VmPoolParametersBase extends VdcActionParametersBase implements jav
     }
 
     public VmPoolParametersBase() {
+        privateStorageDomainId = Guid.Empty;
     }
 }

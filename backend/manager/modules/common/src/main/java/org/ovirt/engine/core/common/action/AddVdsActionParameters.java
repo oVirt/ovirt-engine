@@ -8,13 +8,14 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
 
     public AddVdsActionParameters(VdsStatic vdsStatic, String password) {
         super(vdsStatic, password);
+        glusterPeerProbeNeeded = true;
     }
 
     private Guid vdsId;
 
     private boolean privateAddPending;
 
-    private boolean glusterPeerProbeNeeded = true;
+    private boolean glusterPeerProbeNeeded;
     private Guid providerId;
     private String networkMappings;
 
@@ -27,6 +28,7 @@ public class AddVdsActionParameters extends VdsOperationActionParameters {
     }
 
     public AddVdsActionParameters() {
+        glusterPeerProbeNeeded = true;
     }
 
     public void setVdsForUniqueId(Guid serverForUniqueId) {

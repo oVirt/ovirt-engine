@@ -8,7 +8,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class VmTemplateImportExportParameters extends VmTemplateParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = -3811237640112907464L;
-    private Guid privateStorageDomainId = Guid.Empty;
+    private Guid privateStorageDomainId;
 
     public Guid getStorageDomainId() {
         return privateStorageDomainId;
@@ -18,7 +18,7 @@ public class VmTemplateImportExportParameters extends VmTemplateParametersBase i
         privateStorageDomainId = value;
     }
 
-    private Guid privateStoragePoolId = Guid.Empty;
+    private Guid privateStoragePoolId;
 
     public Guid getStoragePoolId() {
         return privateStoragePoolId;
@@ -45,5 +45,7 @@ public class VmTemplateImportExportParameters extends VmTemplateParametersBase i
     }
 
     public VmTemplateImportExportParameters() {
+        privateStorageDomainId = Guid.Empty;
+        privateStoragePoolId = Guid.Empty;
     }
 }

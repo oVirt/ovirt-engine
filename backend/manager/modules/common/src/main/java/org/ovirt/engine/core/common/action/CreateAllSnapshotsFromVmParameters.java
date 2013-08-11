@@ -16,12 +16,15 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
     @NotEmpty(groups = { CreateEntity.class },
             message = "VALIDATION.DISK_IMAGE.DESCRIPTION.NOT_EMPTY")
     @ValidDescription(message = "VALIDATION.DISK_IMAGE.DESCRIPTION.INVALID", groups = { CreateEntity.class })
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE, groups = { CreateEntity.class},
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE, groups = { CreateEntity.class },
             message = "VALIDATION_DISK_IMAGE_DESCRIPTION_MAX")
     private String description;
 
-    private boolean needsLocking = true;
-    /** Used to store the vm status when the command start, will be used to check if the vm went down during the execution */
+    private boolean needsLocking;
+    /**
+     * Used to store the vm status when the command start, will be used to check if the vm went down during the
+     * execution
+     */
     private VMStatus initialVmStatus;
 
     /** Used to indicate the type of snapshot to take */
@@ -31,11 +34,13 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
     private boolean saveMemory;
 
     public CreateAllSnapshotsFromVmParameters() {
+        needsLocking = true;
     }
 
     public CreateAllSnapshotsFromVmParameters(Guid vmId, String description) {
         super(vmId);
         this.description = description;
+        needsLocking = true;
     }
 
     public CreateAllSnapshotsFromVmParameters(Guid vmId, String description, boolean saveMemory) {
@@ -61,6 +66,7 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
 
     /**
      * This method is for internal use only, disregard in API.
+     *
      * @param snapshotType
      */
     public void setSnapshotType(SnapshotType snapshotType) {

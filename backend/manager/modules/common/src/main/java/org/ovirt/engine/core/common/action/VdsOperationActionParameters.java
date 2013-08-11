@@ -21,7 +21,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
     /**
      * reboot the installed Host when done
      */
-    private boolean rebootAfterInstallation = true;
+    private boolean rebootAfterInstallation;
 
     private AuthenticationMethod authMethod;
 
@@ -60,15 +60,16 @@ public class VdsOperationActionParameters extends VdsActionParameters {
         vdsStatic = vdsStaticVal;
         password = passwordVal;
         authMethod = AuthenticationMethod.Password;
+        rebootAfterInstallation = true;
     }
 
     public VdsOperationActionParameters(VdsStatic vdsStatic) {
         this(vdsStatic, null);
-        authMethod = AuthenticationMethod.Password;
     }
 
     public VdsOperationActionParameters() {
         authMethod = AuthenticationMethod.Password;
+        rebootAfterInstallation = true;
     }
 
     public VdsStatic getVdsStaticData() {

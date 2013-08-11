@@ -20,9 +20,9 @@ public class SetNonOperationalVdsParameters extends MaintenanceVdsParameters {
         privateSaveToDb = value;
     }
 
-    private NonOperationalReason nonOperationalReason = NonOperationalReason.forValue(0);
+    private NonOperationalReason nonOperationalReason;
 
-    private Guid privateStorageDomainId = Guid.Empty;
+    private Guid privateStorageDomainId;
 
     public Guid getStorageDomainId() {
         return privateStorageDomainId;
@@ -44,9 +44,12 @@ public class SetNonOperationalVdsParameters extends MaintenanceVdsParameters {
         setNonOperationalReason(reason);
         this.customLogValues =
                 (Map<String, String>) (customLogValues == null ? Collections.emptyMap() : customLogValues);
+        privateStorageDomainId = Guid.Empty;
     }
 
     public SetNonOperationalVdsParameters() {
+        nonOperationalReason = NonOperationalReason.NONE;
+        privateStorageDomainId = Guid.Empty;
     }
 
     public void setNonOperationalReason(NonOperationalReason nonOperationalReason) {

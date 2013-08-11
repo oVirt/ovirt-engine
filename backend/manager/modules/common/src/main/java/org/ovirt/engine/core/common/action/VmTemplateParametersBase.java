@@ -8,14 +8,14 @@ import org.ovirt.engine.core.compat.Guid;
 public class VmTemplateParametersBase extends VdcActionParametersBase implements java.io.Serializable {
     private static final long serialVersionUID = -8930994274659598061L;
     private boolean removeTemplateFromDb;
-    private Guid vmTemplateId = Guid.Empty;
+    private Guid vmTemplateId;
     private Guid quotaId;
     private boolean privateCheckDisksExists;
-    private VmWatchdog watchdog = null;
+    private VmWatchdog watchdog;
     /*
      * see VmManagementParametersBase#updateWatchdog for details
      */
-    private boolean updateWatchdog = false;
+    private boolean updateWatchdog;
 
 
     public boolean getCheckDisksExists() {
@@ -45,6 +45,7 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
     }
 
     public VmTemplateParametersBase() {
+        vmTemplateId = Guid.Empty;
     }
 
     public void setRemoveTemplateFromDb(boolean removeTemplateFromDb) {

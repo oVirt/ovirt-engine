@@ -5,7 +5,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class CreateSnapshotFromTemplateParameters extends ImagesActionsParametersBase {
     private static final long serialVersionUID = -3841623510039174546L;
 
-    private Guid privateVmId = Guid.Empty;
+    private Guid privateVmId;
     private Guid destStorageDomainId;
 
     public CreateSnapshotFromTemplateParameters(Guid imageId, Guid vmId) {
@@ -14,6 +14,7 @@ public class CreateSnapshotFromTemplateParameters extends ImagesActionsParameter
     }
 
     public CreateSnapshotFromTemplateParameters() {
+        privateVmId = Guid.Empty;
     }
 
     public void setDestStorageDomainId(Guid destSorageDomainId) {

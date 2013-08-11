@@ -6,10 +6,11 @@ public class StoragePoolParametersBase extends VdcActionParametersBase {
     private static final long serialVersionUID = 8118928386101354539L;
 
     private Guid vdsId;
-    private Guid storagePoolId = Guid.Empty;
+    private Guid storagePoolId;
     private boolean forceDelete;
 
     public StoragePoolParametersBase() {
+        storagePoolId = Guid.Empty;
     }
 
     public StoragePoolParametersBase(Guid storagePoolId) {

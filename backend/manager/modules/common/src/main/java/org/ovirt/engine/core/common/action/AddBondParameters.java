@@ -27,15 +27,17 @@ public class AddBondParameters extends BondParametersBase {
     @Pattern(regexp = ValidationUtils.IP_PATTERN, message = "NETWORK_ADDR_IN_GATEWAY_BAD_FORMAT")
     private String gateway;
     private String bondingOptions;
-    private NetworkBootProtocol privateBootProtocol = NetworkBootProtocol.NONE;
+    private NetworkBootProtocol privateBootProtocol;
 
     public AddBondParameters() {
+        privateBootProtocol = NetworkBootProtocol.NONE;
     }
 
     public AddBondParameters(Guid vdsId, String bondName, Network network, String[] nics) {
         super(vdsId, bondName);
         setNics(nics);
         setNetwork(network);
+        privateBootProtocol = NetworkBootProtocol.NONE;
     }
 
     public AddBondParameters(Guid vdsId, String bondName, Network network, String[] nics, int vladId) {

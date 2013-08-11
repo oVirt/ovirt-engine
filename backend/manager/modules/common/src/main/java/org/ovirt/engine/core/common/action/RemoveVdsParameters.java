@@ -5,7 +5,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class RemoveVdsParameters extends VdsActionParameters {
     private static final long serialVersionUID = 3959465593772384532L;
 
-    private boolean forceAction = false;
+    private boolean forceAction;
 
     public RemoveVdsParameters(Guid vdsId) {
         super(vdsId);

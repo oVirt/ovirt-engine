@@ -7,7 +7,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class SetStoragePoolStatusParameters extends StoragePoolParametersBase {
     private static final long serialVersionUID = 264321499194008199L;
-    private StoragePoolStatus privateStatus = StoragePoolStatus.forValue(0);
+    private StoragePoolStatus privateStatus;
 
     public StoragePoolStatus getStatus() {
         return privateStatus;
@@ -17,7 +17,7 @@ public class SetStoragePoolStatusParameters extends StoragePoolParametersBase {
         privateStatus = value;
     }
 
-    private AuditLogType privateAuditLogType = AuditLogType.forValue(0);
+    private AuditLogType privateAuditLogType;
 
     public AuditLogType getAuditLogType() {
         return privateAuditLogType;
@@ -27,7 +27,7 @@ public class SetStoragePoolStatusParameters extends StoragePoolParametersBase {
         privateAuditLogType = value;
     }
 
-    private VdcBllErrors privateError = VdcBllErrors.forValue(0);
+    private VdcBllErrors privateError;
 
     public VdcBllErrors getError() {
         return privateError;
@@ -41,8 +41,12 @@ public class SetStoragePoolStatusParameters extends StoragePoolParametersBase {
         super(storagePoolId);
         setStatus(status);
         setAuditLogType(auditLogType);
+        privateError = VdcBllErrors.Done;
     }
 
     public SetStoragePoolStatusParameters() {
+        privateStatus = StoragePoolStatus.Uninitialized;
+        privateAuditLogType = AuditLogType.UNASSIGNED;
+        privateError = VdcBllErrors.Done;
     }
 }

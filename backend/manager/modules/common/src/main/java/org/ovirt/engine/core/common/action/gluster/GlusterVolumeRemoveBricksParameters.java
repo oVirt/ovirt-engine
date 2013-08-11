@@ -19,7 +19,7 @@ public class GlusterVolumeRemoveBricksParameters extends GlusterVolumeParameters
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.BRICKS.NOT_NULL")
     private List<GlusterBrickEntity> bricks;
 
-    private int replicaCount = 0;
+    private int replicaCount;
 
     public GlusterVolumeRemoveBricksParameters() {
     }

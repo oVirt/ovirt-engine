@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
-
-public class AddExternalJobParameters extends VdcActionParametersBase{
+public class AddExternalJobParameters extends VdcActionParametersBase {
 
     /**
      *
@@ -9,7 +8,7 @@ public class AddExternalJobParameters extends VdcActionParametersBase{
     private static final long serialVersionUID = 1L;
 
     private String description;
-    private boolean isAutoCleared = true;
+    private boolean isAutoCleared;
 
     public AddExternalJobParameters(String description, boolean isAutoCleared) {
         super();
@@ -20,6 +19,7 @@ public class AddExternalJobParameters extends VdcActionParametersBase{
     public AddExternalJobParameters(String description) {
         super();
         this.description = description;
+        isAutoCleared = true;
     }
 
     public String getDescription() {

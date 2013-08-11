@@ -4,10 +4,11 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class TryBackToAllSnapshotsOfVmParameters extends VmOperationParameterBase implements java.io.Serializable {
     private static final long serialVersionUID = 1862924807826485840L;
-    private Guid dstSnapshotId = Guid.Empty;
+    private Guid dstSnapshotId;
     private boolean restoreMemory;
 
     public TryBackToAllSnapshotsOfVmParameters() {
+        dstSnapshotId = Guid.Empty;
     }
 
     public TryBackToAllSnapshotsOfVmParameters(Guid vmId, Guid dstSnapshotId) {

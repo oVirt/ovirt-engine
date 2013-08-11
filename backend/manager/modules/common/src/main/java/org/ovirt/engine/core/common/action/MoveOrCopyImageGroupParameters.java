@@ -8,17 +8,21 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBase {
     private static final long serialVersionUID = -5874446297123213719L;
-    private ImageOperation operation = ImageOperation.Unassigned;
+    private ImageOperation operation;
     private boolean useCopyCollapse;
-    private VolumeFormat volumeFormat = VolumeFormat.UNUSED0;
-    private VolumeType volumeType = VolumeType.Unassigned;
-    private CopyVolumeType copyVolumeType = CopyVolumeType.SharedVol;
+    private VolumeFormat volumeFormat;
+    private VolumeType volumeType;
+    private CopyVolumeType copyVolumeType;
     private boolean addImageDomainMapping;
     private boolean forceOverride;
     private Guid sourceDomainId;
     private Guid destImageGroupId;
 
     public MoveOrCopyImageGroupParameters() {
+        operation = ImageOperation.Unassigned;
+        volumeFormat = VolumeFormat.UNUSED0;
+        volumeType = VolumeType.Unassigned;
+        copyVolumeType = CopyVolumeType.SharedVol;
     }
 
     public MoveOrCopyImageGroupParameters(Guid imageId,
@@ -29,10 +33,13 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
         setSourceDomainId(sourceDomainId);
         setStorageDomainId(destDomainId);
         setOperation(operation);
+        volumeFormat = VolumeFormat.UNUSED0;
+        volumeType = VolumeType.Unassigned;
+        copyVolumeType = CopyVolumeType.SharedVol;
     }
 
     public MoveOrCopyImageGroupParameters(Guid containerId, Guid imageGroupId, Guid leafSnapshotID,
-                                          Guid storageDomainId, ImageOperation operation) {
+            Guid storageDomainId, ImageOperation operation) {
         super(leafSnapshotID, containerId);
         setStorageDomainId(storageDomainId);
         setImageGroupID(imageGroupId);
@@ -43,6 +50,7 @@ public class MoveOrCopyImageGroupParameters extends ImagesContainterParametersBa
         setForceOverride(false);
         setDestinationImageId(leafSnapshotID);
         setDestImageGroupId(imageGroupId);
+        copyVolumeType = CopyVolumeType.SharedVol;
     }
 
     public MoveOrCopyImageGroupParameters(Guid containerId,

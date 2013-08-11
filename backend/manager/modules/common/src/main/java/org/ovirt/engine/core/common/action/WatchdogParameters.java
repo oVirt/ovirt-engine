@@ -9,10 +9,15 @@ public class WatchdogParameters extends VdcActionParametersBase {
     /**
      * true if the watchog must be set in the VM, false if it must be set in a template
      */
-    boolean vm = true;
-    Guid id = Guid.Empty;
+    boolean vm;
+    Guid id;
     VmWatchdogAction action;
     VmWatchdogType model;
+
+    public WatchdogParameters() {
+        vm = true;
+        id = Guid.Empty;
+    }
 
     public VmWatchdogAction getAction() {
         return action;

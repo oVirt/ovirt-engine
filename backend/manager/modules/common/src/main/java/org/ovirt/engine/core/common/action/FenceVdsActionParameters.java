@@ -11,12 +11,13 @@ public class FenceVdsActionParameters extends VdsActionParameters {
         _action = action;
     }
 
-    private FenceActionType _action = FenceActionType.forValue(0);
+    private FenceActionType _action;
 
     public FenceActionType getAction() {
         return _action;
     }
 
     public FenceVdsActionParameters() {
+        _action = FenceActionType.Restart;
     }
 }

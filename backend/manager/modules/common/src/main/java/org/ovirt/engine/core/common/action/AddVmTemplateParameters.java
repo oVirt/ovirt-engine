@@ -19,10 +19,11 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
     private static final long serialVersionUID = 2114985552063499069L;
 
     public AddVmTemplateParameters() {
+        privateVmTemplateID = Guid.Empty;
     }
 
     private VmStatic _masterVm;
-    private Guid privateVmTemplateID = Guid.Empty;
+    private Guid privateVmTemplateID;
     private Guid destinationStorageDomainId;
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
 
@@ -34,12 +35,12 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
             message = "ACTION_TYPE_FAILED_DESCRIPTION_MAY_NOT_CONTAIN_SPECIAL_CHARS")
     private String _description;
 
-    private boolean publicUse = false;
+    private boolean publicUse;
 
-    private boolean copyVmPermissions = false;
+    private boolean copyVmPermissions;
     /*
-     * This parameter is used to decide if to create sound device or not
-     * if it is null then legacy logic will be used: create device for desktop type
+     * This parameter is used to decide if to create sound device or not if it is null then legacy logic will be used:
+     * create device for desktop type
      */
     private Boolean soundDeviceEnabled;
 
@@ -49,12 +50,14 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
         _masterVm = masterVm;
         _name = name;
         _description = description;
+        privateVmTemplateID = Guid.Empty;
     }
 
     public AddVmTemplateParameters(VM vm, String name, String description) {
         _masterVm = vm.getStaticData();
         _name = name;
         _description = description;
+        privateVmTemplateID = Guid.Empty;
     }
 
     public VmStatic getMasterVm() {

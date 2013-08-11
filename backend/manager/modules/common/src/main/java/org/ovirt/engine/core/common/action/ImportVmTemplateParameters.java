@@ -23,7 +23,7 @@ public class ImportVmTemplateParameters extends MoveOrCopyParameters implements 
         this.setVdsGroupId(vdsGroupId);
     }
 
-    private Guid privateSourceDomainId = Guid.Empty;
+    private Guid privateSourceDomainId;
 
     public Guid getSourceDomainId() {
         return privateSourceDomainId;
@@ -33,7 +33,7 @@ public class ImportVmTemplateParameters extends MoveOrCopyParameters implements 
         privateSourceDomainId = value;
     }
 
-    private Guid privateDestDomainId = Guid.Empty;
+    private Guid privateDestDomainId;
 
     public Guid getDestDomainId() {
         return privateDestDomainId;
@@ -75,5 +75,7 @@ public class ImportVmTemplateParameters extends MoveOrCopyParameters implements 
     }
 
     public ImportVmTemplateParameters() {
+        privateSourceDomainId = Guid.Empty;
+        privateDestDomainId = Guid.Empty;
     }
 }

@@ -6,26 +6,30 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.compat.Guid;
 
-
 public class ImagesActionsParametersBase extends StorageDomainParametersBase {
     private static final long serialVersionUID = -5791892465249711608L;
 
-    private Guid imageId = Guid.Empty;
-    private Guid destinationImageId = Guid.Empty;
+    private Guid imageId;
+    private Guid destinationImageId;
     private String diskAlias;
     private String description;
     private Date oldLastModifiedValue;
     private Guid vmSnapshotId;
-    private Guid imageGroupID = Guid.Empty;
+    private Guid imageGroupID;
     private boolean importEntity;
 
     public ImagesActionsParametersBase() {
+        imageId = Guid.Empty;
+        destinationImageId = Guid.Empty;
+        imageGroupID = Guid.Empty;
     }
 
     public ImagesActionsParametersBase(Guid imageId) {
         super(Guid.Empty);
         setEntityInfo(new EntityInfo(VdcObjectType.Disk, imageId));
         this.imageId = imageId;
+        destinationImageId = Guid.Empty;
+        imageGroupID = Guid.Empty;
     }
 
     public Guid getImageId() {

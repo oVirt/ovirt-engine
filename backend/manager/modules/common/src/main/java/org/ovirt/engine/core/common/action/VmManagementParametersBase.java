@@ -18,42 +18,44 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     @Valid
     private VmStatic _vmStatic;
     private boolean makeCreatorExplicitOwner;
-    private Guid privateStorageDomainId = Guid.Empty;
+    private Guid privateStorageDomainId;
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private VmPayload payload;
     private boolean clearPayload;
-    private boolean balloonEnabled = true;
-    private VM vm = null;
-    private VmWatchdog watchdog = null;
-    private boolean copyTemplatePermissions = false;
+    private boolean balloonEnabled;
+    private VM vm;
+    private VmWatchdog watchdog;
+    private boolean copyTemplatePermissions;
 
     /*
      * This parameter is needed at update to make sure that when we get a null watchdog from rest-api it is not meant to
      * be removing the watchdog, rest-api will simply call watchdog commands directly. Default is false so to avoid
      * breaking rest-api.
      */
-    private boolean updateWatchdog = false;
+    private boolean updateWatchdog;
     /*
-     * This parameter is used to decide if to create sound device or not
-     * if it is null then:
-     * for add vm legacy logic will be used: create device for desktop type
-     * for update the current configuration will remain
+     * This parameter is used to decide if to create sound device or not if it is null then: for add vm legacy logic
+     * will be used: create device for desktop type for update the current configuration will remain
      */
     private Boolean soundDeviceEnabled;
     /*
-     * This parameter is used to decide if to create console device or not
-     * if it is null then:
-     * for add vm don't add console device
-     * for update the current configuration will remain
+     * This parameter is used to decide if to create console device or not if it is null then: for add vm don't add
+     * console device for update the current configuration will remain
      */
-    private Boolean consoleEnabled = false;
+    private Boolean consoleEnabled;
 
     public VmManagementParametersBase() {
+        privateStorageDomainId = Guid.Empty;
+        consoleEnabled = Boolean.FALSE;
+        balloonEnabled = true;
     }
 
     public VmManagementParametersBase(VmStatic vmStatic) {
         super(vmStatic.getId());
         _vmStatic = vmStatic;
+        privateStorageDomainId = Guid.Empty;
+        consoleEnabled = Boolean.FALSE;
+        balloonEnabled = true;
     }
 
     public VmManagementParametersBase(VM vm) {

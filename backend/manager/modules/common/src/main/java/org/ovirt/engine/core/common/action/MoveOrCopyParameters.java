@@ -18,7 +18,7 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
         setForceOverride(false);
     }
 
-    private Guid privateContainerId = Guid.Empty;
+    private Guid privateContainerId;
 
     public Guid getContainerId() {
         return privateContainerId;
@@ -59,6 +59,7 @@ public class MoveOrCopyParameters extends StorageDomainParametersBase implements
     }
 
     public MoveOrCopyParameters() {
+        privateContainerId = Guid.Empty;
     }
 
     public void setImageToDestinationDomainMap(Map<Guid, Guid> map) {

@@ -15,7 +15,7 @@ public class LoginUserParameters extends VdcActionParametersBase implements java
 
     private String _clientType;
 
-    private VdcActionType _actionType = VdcActionType.forValue(0);
+    private VdcActionType _actionType;
 
     public LoginUserParameters(String userName, String userPassword, String domain, String os, String browser,
             String clientType) {

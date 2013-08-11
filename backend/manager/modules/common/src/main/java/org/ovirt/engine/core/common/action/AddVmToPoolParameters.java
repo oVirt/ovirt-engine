@@ -4,7 +4,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class AddVmToPoolParameters extends VmPoolParametersBase {
     private static final long serialVersionUID = 1019066360476623259L;
-    private Guid _vmId = Guid.Empty;
+    private Guid _vmId;
 
     public AddVmToPoolParameters(Guid vmPoolId, Guid vmId) {
         super(vmPoolId);
@@ -16,5 +16,6 @@ public class AddVmToPoolParameters extends VmPoolParametersBase {
     }
 
     public AddVmToPoolParameters() {
+        _vmId = Guid.Empty;
     }
 }
