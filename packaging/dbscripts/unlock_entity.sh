@@ -33,6 +33,20 @@ DEBUG () {
     fi
 }
 
+caution() {
+    if [ ! -n "${QUERY}" ]; then
+        echo "Caution, this operation may lead to data corruption and should be used with care. Please contact support prior to running this command"
+        echo "Are you sure you want to proceed? [y/n]"
+        read answer
+
+        if [ "${answer}" = "n" ]; then
+           echo "Please contact support for further assistance."
+           popd>/dev/null
+           exit 1
+        fi
+    fi
+}
+
 while getopts :ht:s:d:u:p:l:f:qrv option; do
     case $option in
         t) TYPE=$OPTARG;;
@@ -52,19 +66,9 @@ done
 shift $(( OPTIND - 1 ))
 IDS="$@"
 
-if [ ! -n "${QUERY}" ]; then
-    echo "Caution, this operation may lead to data corruption and should be used with care. Please contact support prior to running this command"
-    echo "Are you sure you want to proceed? [y/n]"
-    read answer
-
-    if [ "${answer}" = "n" ]; then
-       echo "Please contact support for further assistance."
-       popd>/dev/null
-       exit 1
-    fi
-fi
 
 if [[ -n "${TYPE}" && -n "${IDS}" ]]; then
+    caution
     for ID in ${IDS} ; do
         unlock_entity "${TYPE}" "${ID}" "$(whoami)" ${RECURSIVE}
     done
