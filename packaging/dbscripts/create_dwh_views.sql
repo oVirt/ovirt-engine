@@ -271,6 +271,10 @@ SELECT
 	b.vm_ip,
 	b.client_ip as vm_client_ip,
 	b.console_cur_user_name as current_user_name,
+	CASE
+		WHEN b.guest_cur_user_name IS NULL THEN FALSE
+		ELSE TRUE
+	END as user_logged_in_to_guest,
 	b.run_on_vds as currently_running_on_host
 FROM vm_dynamic b, vm_statistics c
 where
