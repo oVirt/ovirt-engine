@@ -134,62 +134,41 @@ public class RunVmValidator {
         return new DiskImagesValidator(vmDisks).diskImagesNotLocked();
     }
 
-    @SuppressWarnings("unchecked")
-    public ValidationResult validateIsoPath(boolean isAutoStartup, Guid storagePoolId,
-            String diskPath, String floppyPath) {
-        if (isAutoStartup) {
+    public ValidationResult validateIsoPath(VM vm, String diskPath, String floppyPath) {
+        if (vm.isAutoStartup() || (StringUtils.isEmpty(diskPath) && StringUtils.isEmpty(floppyPath))) {
             return ValidationResult.VALID;
         }
 
-        Guid storageDomainId = getIsoDomainListSyncronizer().findActiveISODomain(storagePoolId);
-
-        if (!StringUtils.isEmpty(diskPath)) {
-            if (storageDomainId == null) {
-                return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
-            }
-            boolean retValForIso = false;
-            VdcQueryReturnValue ret =
-                    getBackend().runInternalQuery(VdcQueryType.GetImagesList,
-                            new GetImagesListParameters(storageDomainId, ImageFileType.ISO));
-            if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {
-                List<RepoImage> repoFileNameList = (List<RepoImage>) ret.getReturnValue();
-                if (repoFileNameList != null) {
-                    for (RepoImage isoFileMetaData : (List<RepoImage>) ret.getReturnValue()) {
-                        if (isoFileMetaData.getRepoImageId().equals(diskPath)) {
-                            retValForIso = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (!retValForIso) {
-                return new ValidationResult(VdcBllMessages.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
-            }
+        Guid storageDomainId = getIsoDomainListSyncronizer().findActiveISODomain(vm.getStoragePoolId());
+        if (storageDomainId == null) {
+            return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_FROM_CD_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }
 
-        if (!StringUtils.isEmpty(floppyPath)) {
-            boolean retValForFloppy = false;
-            VdcQueryReturnValue ret =
-                    getBackend().runInternalQuery(VdcQueryType.GetImagesList,
-                            new GetImagesListParameters(storageDomainId, ImageFileType.Floppy));
-            if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {
-                List<RepoImage> repoFileNameList = (List<RepoImage>) ret.getReturnValue();
-                if (repoFileNameList != null) {
+        if (!StringUtils.isEmpty(diskPath) && !isRepoImageExists(diskPath, storageDomainId, ImageFileType.ISO)) {
+            return new ValidationResult(VdcBllMessages.ERROR_CANNOT_FIND_ISO_IMAGE_PATH);
+        }
 
-                    for (RepoImage isoFileMetaData : (List<RepoImage>) ret.getReturnValue()) {
-                        if (isoFileMetaData.getRepoImageId().equals(floppyPath)) {
-                            retValForFloppy = true;
-                            break;
-                        }
-                    }
-                }
-            }
-            if (!retValForFloppy) {
-                return new ValidationResult(VdcBllMessages.ERROR_CANNOT_FIND_FLOPPY_IMAGE_PATH);
-            }
+        if (!StringUtils.isEmpty(floppyPath) && !isRepoImageExists(floppyPath, storageDomainId, ImageFileType.Floppy)) {
+            return new ValidationResult(VdcBllMessages.ERROR_CANNOT_FIND_FLOPPY_IMAGE_PATH);
         }
 
         return ValidationResult.VALID;
+    }
+
+    @SuppressWarnings("unchecked")
+    private boolean isRepoImageExists(String repoImagePath, Guid storageDomainId, ImageFileType imageFileType) {
+        VdcQueryReturnValue ret = getBackend().runInternalQuery(
+                VdcQueryType.GetImagesList,
+                new GetImagesListParameters(storageDomainId, imageFileType));
+
+        if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {
+            for (RepoImage isoFileMetaData : (List<RepoImage>) ret.getReturnValue()) {
+                if (repoImagePath.equals(isoFileMetaData.getRepoImageId())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public ValidationResult vmDuringInitialization(VM vm) {
@@ -360,7 +339,7 @@ public class RunVmValidator {
                 !validate(new VmValidator(vm).vmNotLocked(), messages) ||
                 !validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()), messages) ||
                 !validate(validateVmStatusUsingMatrix(vm), messages) ||
-                !validate(validateIsoPath(vm.isAutoStartup(), vm.getStoragePoolId(), diskPath, floppyPath), messages)  ||
+                !validate(validateIsoPath(vm, diskPath, floppyPath), messages)  ||
                 !validate(vmDuringInitialization(vm), messages) ||
                 !validate(validateVdsStatus(vm), messages) ||
                 !validate(validateStatelessVm(vm, vmDisks, runAsStateless), messages)) {
