@@ -14,7 +14,7 @@ public class RpmVersion extends Version {
 
     private static final long serialVersionUID = 5938069430310131270L;
     private static final String RPM_REGEX = "([^ ]+)\\-([0-9][^ \\-]*\\-[0-9\\.]+)\\.(.*)";
-    private static Pattern rpmCompiled = Pattern.compile(RPM_REGEX);
+    private static final Pattern rpmCompiled = Pattern.compile(RPM_REGEX);
     private String rpmName;
 
     public RpmVersion() {

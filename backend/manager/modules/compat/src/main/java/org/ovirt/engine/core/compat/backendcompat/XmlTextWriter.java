@@ -11,9 +11,10 @@ import javax.xml.stream.XMLStreamWriter;
 public class XmlTextWriter {
 
     private XMLStreamWriter writer;
-    private StringWriter stream = new StringWriter();
+    private StringWriter stream;
 
     public XmlTextWriter() {
+        stream = new StringWriter();
         try {
             XMLOutputFactory factory = XMLOutputFactory.newInstance();
             writer = factory.createXMLStreamWriter(stream);

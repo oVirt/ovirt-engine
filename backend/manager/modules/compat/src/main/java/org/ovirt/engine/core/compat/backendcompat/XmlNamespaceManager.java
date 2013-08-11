@@ -10,10 +10,10 @@ import javax.xml.namespace.NamespaceContext;
 
 public class XmlNamespaceManager implements NamespaceContext {
 
-    private Map<String, String> prefixToUri = new HashMap<String, String>();
+    private Map<String, String> prefixToUri;
 
     public XmlNamespaceManager(Object nameTable) {
-        // JTODO What can we do about name table ?
+        prefixToUri = new HashMap<String, String>();
     }
 
     public void AddNamespace(String prefix, String uri) {

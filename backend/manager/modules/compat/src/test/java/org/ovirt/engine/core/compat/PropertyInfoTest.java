@@ -13,10 +13,11 @@ import org.junit.Test;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
 
 public class PropertyInfoTest {
-    private String someValue = "Anakin";
+    private String someValue;
 
     @Test
     public void testGetAvailableValues() {
+        setSomeValue("Anakin");
         Map<String, String> values = new HashMap<String, String>();
         Set<String> properties = new HashSet<String>(Arrays.asList("somevalue"));
         TypeCompat.getPropertyValues(this, properties, values);
