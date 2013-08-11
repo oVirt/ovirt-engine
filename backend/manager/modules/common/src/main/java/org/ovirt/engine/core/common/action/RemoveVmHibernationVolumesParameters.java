@@ -1,6 +1,5 @@
-package org.ovirt.engine.core.common;
+package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
 
