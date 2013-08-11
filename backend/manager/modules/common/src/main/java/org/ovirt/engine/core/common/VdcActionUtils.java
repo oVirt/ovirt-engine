@@ -18,7 +18,7 @@ import org.ovirt.engine.core.compat.NotImplementedException;
 
 public final class VdcActionUtils {
 
-    private static java.util.Map<java.lang.Class<?>, java.util.Map<Enum<?>, java.util.HashSet<VdcActionType>>>
+    private static final java.util.Map<java.lang.Class<?>, java.util.Map<Enum<?>, java.util.HashSet<VdcActionType>>>
             _matrix =
             new java.util.HashMap<java.lang.Class<?>, java.util.Map<Enum<?>, java.util.HashSet<VdcActionType>>>();
 

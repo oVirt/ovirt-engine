@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.errors;
 public class VDSError {
 
     private String message;
-    private VdcBllErrors code = VdcBllErrors.forValue(0);
+    private VdcBllErrors code;
     private java.util.ArrayList<Object> args;
 
     public VDSError(VdcBllErrors code, String message) {
@@ -37,5 +37,6 @@ public class VDSError {
     }
 
     public VDSError() {
+        code = VdcBllErrors.forValue(0);
     }
 }

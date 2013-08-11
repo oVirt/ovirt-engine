@@ -28,7 +28,7 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
     /**
      * policy unit that is implemented in the system, or loaded externally.
      */
-    private boolean internal = true;
+    private boolean internal;
     /**
      * specifies policy unit type (filter, weight or load balance)
      */
@@ -40,7 +40,12 @@ public class PolicyUnit extends IVdcQueryable implements BusinessEntity<Guid>, S
     /**
      * only for external units, marks if it exists on disk
      */
-    private boolean enabled = true;
+    private boolean enabled;
+
+    public PolicyUnit() {
+        internal = true;
+        enabled = true;
+    }
 
     @Override
     public Object getQueryableId() {

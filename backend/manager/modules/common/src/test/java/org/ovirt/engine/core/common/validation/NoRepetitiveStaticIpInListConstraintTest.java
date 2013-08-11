@@ -9,6 +9,7 @@ import javax.validation.Validator;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -20,7 +21,12 @@ public class NoRepetitiveStaticIpInListConstraintTest {
     private static final String IP_1 = "10.10.10.10";
     private static final String IP_2 = "11.11.11.11";
 
-    private Validator validator = ValidationUtils.getValidator();
+    private Validator validator;
+
+    @Before
+    public void initValidator() {
+        validator = ValidationUtils.getValidator();
+    }
 
     @Test
     public void twoNetworkInterfacesWithSameIp() {

@@ -17,13 +17,14 @@ import org.junit.runners.Parameterized;
 @RunWith(Parameterized.class)
 public class IPAddressPatternTest {
 
-    private Validator validator = ValidationUtils.getValidator();
+    private Validator validator;
     private String address;
     private boolean expectedResult;
 
     public IPAddressPatternTest(String address, Boolean expectedResult) {
         this.address = address;
         this.expectedResult = expectedResult;
+        validator = ValidationUtils.getValidator();
     }
 
     @Test

@@ -813,7 +813,7 @@ public enum AuditLogType {
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are supressed.
     private int duplicateEventsIntervalValue;
-    private static java.util.HashMap<Integer, AuditLogType> mappings = new HashMap<Integer, AuditLogType>();
+    private static final java.util.HashMap<Integer, AuditLogType> mappings = new HashMap<Integer, AuditLogType>();
 
     static {
         for (AuditLogType logType : values()) {

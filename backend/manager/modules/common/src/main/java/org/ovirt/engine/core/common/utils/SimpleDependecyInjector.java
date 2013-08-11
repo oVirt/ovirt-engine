@@ -21,14 +21,14 @@ public class SimpleDependecyInjector {
 
     private static final SimpleDependecyInjector instance = new SimpleDependecyInjector();
 
-    private Map<String, Object> map = new ConcurrentHashMap<String, Object>();
+    private Map<String, Object> map;
 
     public static SimpleDependecyInjector getInstance() {
         return instance;
     }
 
     private SimpleDependecyInjector() {
-        // hide ctr
+        map = new ConcurrentHashMap<String, Object>();
     }
 
     /**

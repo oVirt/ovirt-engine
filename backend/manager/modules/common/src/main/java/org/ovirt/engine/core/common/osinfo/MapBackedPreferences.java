@@ -8,8 +8,8 @@ import java.util.prefs.AbstractPreferences;
 public class MapBackedPreferences extends AbstractPreferences implements Serializable {
 
     private static final long serialVersionUID = -6359144559146465048L;
-    HashMap<String, String> preferencesStore = new HashMap<String, String>();
-    ArrayList<String> childNodes = new ArrayList<String>();
+    HashMap<String, String> preferencesStore;
+    ArrayList<String> childNodes;
 
     /**
      * Creates a preference node with the specified parent and the specified
@@ -19,6 +19,8 @@ public class MapBackedPreferences extends AbstractPreferences implements Seriali
      */
     public MapBackedPreferences(AbstractPreferences parent, String name) {
         super(parent, name);
+        preferencesStore = new HashMap<String, String>();
+        childNodes = new ArrayList<String>();
     }
 
     @Override

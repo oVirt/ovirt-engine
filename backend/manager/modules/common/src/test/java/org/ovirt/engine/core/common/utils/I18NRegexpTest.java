@@ -15,34 +15,34 @@ public class I18NRegexpTest {
     private static final String REGEXP = ValidationUtils.NO_SPECIAL_CHARACTERS_I18N;
 
     @DataPoint
-    public static CorrectString englishText = new CorrectString("SomeText_-");
+    public static final CorrectString englishText = new CorrectString("SomeText_-");
 
     @DataPoint
-    public static CorrectString slovakText = new CorrectString("ňejakýReťazeč_-");
+    public static final CorrectString slovakText = new CorrectString("ňejakýReťazeč_-");
 
     @DataPoint
-    public static CorrectString hungarianText = new CorrectString("körülröföghetetlenség_-");
+    public static final CorrectString hungarianText = new CorrectString("körülröföghetetlenség_-");
 
     @DataPoint
-    public static CorrectString hebrewText = new CorrectString("שלוםעולם_-");
+    public static final CorrectString hebrewText = new CorrectString("שלוםעולם_-");
 
     @DataPoint
-    public static CorrectString chineseText = new CorrectString("你好世界_-");
+    public static final CorrectString chineseText = new CorrectString("你好世界_-");
 
     @DataPoint
-    public static CorrectString dotSign = new CorrectString(".");
+    public static final CorrectString dotSign = new CorrectString(".");
 
     @DataPoint
-    public static IncorrectString atSign = new IncorrectString("@");
+    public static final IncorrectString atSign = new IncorrectString("@");
 
     @DataPoint
-    public static IncorrectString spaceSign = new IncorrectString(" ");
+    public static final IncorrectString spaceSign = new IncorrectString(" ");
 
     @DataPoint
-    public static IncorrectString slashSign = new IncorrectString("\\");
+    public static final IncorrectString slashSign = new IncorrectString("\\");
 
     @DataPoint
-    public static IncorrectString apostropheSign = new IncorrectString("'");
+    public static final IncorrectString apostropheSign = new IncorrectString("'");
 
     @Theory
     public void allCharsetCanPass(CorrectString correct) {

@@ -428,7 +428,7 @@ public enum VdcBllErrors {
     SESSION_ERROR(9999), ;
 
     private int intValue;
-    private static java.util.HashMap<Integer, VdcBllErrors> mappings = new HashMap<Integer, VdcBllErrors>();
+    private static final java.util.HashMap<Integer, VdcBllErrors> mappings = new HashMap<Integer, VdcBllErrors>();
 
     static {
         for (VdcBllErrors error : values()) {
