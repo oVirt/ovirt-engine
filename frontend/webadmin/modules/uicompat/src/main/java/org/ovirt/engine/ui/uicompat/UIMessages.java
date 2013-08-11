@@ -291,4 +291,6 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("{0} ({1})")
     String commonMessageWithBrackets(String subject, String inBrackets);
 
+    @DefaultMessage("This Network QoS is used by {0} Vnic Profiles.\nAre you sure you want to remove this Network QoS?\n\n Profiles using this QoS:\n")
+    String removeNetworkQoSMessage(int numOfProfiles);
 }
