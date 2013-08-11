@@ -67,6 +67,7 @@ EventsResource {
     @Override
     public Response add(Event event) {
         validateParameters(event, "origin", "severity", "customId", "description");
+        validateEnums(Event.class, event);
         return performCreate(VdcActionType.AddExternalEvent,
                                new AddExternalEventParameters(map(event)),
                                new QueryIdResolver<Long>(VdcQueryType.GetAuditLogById, GetAuditLogByIdParameters.class));
