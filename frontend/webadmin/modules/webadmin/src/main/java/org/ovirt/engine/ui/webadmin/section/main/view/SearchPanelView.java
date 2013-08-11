@@ -252,7 +252,11 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
 
     @Override
     public HasKeyDownHandlers getSearchInputHandlers() {
-        return searchStringInput;
+        // Workaround GWT bug 3533. SuggestBox mistakenly fires key-downs twice. The workaround is
+        // to set the key-down handler on the SuggestBox's internal ValueBox.
+        // TODO: fix when https://code.google.com/p/google-web-toolkit/issues/detail?id=3533 is fixed,
+        // i.e. no longer return getValueBox() -- just return searchStringInput. current target GWT 2.6.
+        return searchStringInput.getValueBox();
     }
 
     @Override
