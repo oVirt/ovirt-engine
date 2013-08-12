@@ -92,6 +92,8 @@ import org.ovirt.engine.api.model.VmStates;
 import org.ovirt.engine.api.model.VmStatus;
 import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.model.VmTypes;
+import org.ovirt.engine.api.model.SnapshotStatus;
+import org.ovirt.engine.api.model.SnapshotStatuses;
 import org.ovirt.engine.api.model.WatchdogActions;
 import org.ovirt.engine.api.model.WatchdogModels;
 import org.ovirt.engine.api.resource.CapabilitiesResource;
@@ -227,6 +229,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addWatchdogActions(version, WatchdogAction.values());
         addWatchdogModels(version, WatchdogModel.values());
         addConfigurationTypes(version, ConfigurationType.values());
+        addSnapshotStatuses(version, SnapshotStatus.values());
 
         // External tasks types
         addStepEnumTypes(version, StepEnum.values());
@@ -243,6 +246,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         LinkHelper.<VersionCaps>addLinks(getUriInfo(), version);
 
         return version;
+    }
+
+    private void addSnapshotStatuses(VersionCaps version, SnapshotStatus[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_2)) {
+            version.setSnapshotStatuses(new SnapshotStatuses());
+            for (SnapshotStatus mode : values) {
+                version.getSnapshotStatuses().getSnapshotStatuses().add(mode.value());
+            }
+        }
     }
 
     private void addCpuModes(VersionCaps version, CpuMode[] values) {

@@ -603,6 +603,7 @@
           <xs:element ref="brick_states" minOccurs="0"/>
           <xs:element ref="reported_device_types" minOccurs="0"/>
           <xs:element ref="ip_versions" minOccurs="0"/>
+          <xs:element ref="snapshot_statuses" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -967,6 +968,21 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="WatchdogModels"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+
+  <xs:element name="snapshot_statuses" type="SnapshotStatuses"/>
+
+  <xs:complexType name="SnapshotStatuses">
+    <xs:sequence>
+      <xs:element name="snapshot_status" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="SnapshotStatuses"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
