@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common;
 
 import com.google.gwt.i18n.client.Constants;
-import com.google.gwt.i18n.client.Constants.DefaultStringValue;
 
 public interface CommonApplicationConstants extends Constants {
 
@@ -1230,9 +1229,10 @@ public interface CommonApplicationConstants extends Constants {
     String cpuPinningLabel();
 
     @DefaultStringValue("Format: v#p[_v#p]\n" +
-            "Examples:0#0 => pin vCPU 0 to pCPU 0\n" +
-            "               0#0_1#3 => pin vCPU 0 to pCPU 0 and pin vCPU 1 to pCPU 3\n" +
-            "               1#1-4,^2 => pin vCPU 1 to pCPU set 1 to 4, excluding 2")
+            "Examples:\n" +
+            "0#0 => pin vCPU 0 to pCPU 0\n" +
+            "0#0_1#3 => pin vCPU 0 to pCPU 0 and pin vCPU 1 to pCPU 3\n" +
+            "1#1-4,^2 => pin vCPU 1 to pCPU set 1 to 4, excluding 2")
     String cpuPinningLabelExplanation();
 
     @DefaultStringValue("Migration is NOT currently supported using SPICE Native USB redirection on cluster version lower than 3.2")
