@@ -159,4 +159,13 @@ public class FeatureSupported {
     public static boolean momPolicyOnHost(Version version) {
         return supportedInConfig(ConfigValues.MomPoliciesOnHostSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> iff Network QoS is supported for the cluster version.
+     */
+    public static boolean networkQoS(Version version) {
+        return supportedInConfig(ConfigValues.NetworkQosSupported, version);
+    }
 }

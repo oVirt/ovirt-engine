@@ -1501,6 +1501,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("1000")
     MaxSchedulerWeight(535),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    NetworkQosSupported(536),
+
     Invalid(65535);
 
     private int intValue;
