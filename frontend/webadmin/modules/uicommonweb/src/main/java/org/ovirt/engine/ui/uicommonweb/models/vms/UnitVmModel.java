@@ -1919,6 +1919,10 @@ public class UnitVmModel extends Model {
             Guid selectedCluster) {
 
         StoragePool dataCenter = getDataCenterAccordingSystemTree(model, dataCenters);
+
+        // the dataCenters are the entities just downloaded from server while the dataCenter can be a cached one from the system tree
+        dataCenter = dataCenter == null ? null : findDataCenterById(dataCenters, dataCenter.getId());
+
         List<VDSGroup> possibleClusters = getClusterAccordingSystemTree(model, clusters);
         if (dataCenter == null || possibleClusters == null) {
             getDataCenterWithClustersList().setIsChangable(false);
