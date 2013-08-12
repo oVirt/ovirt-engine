@@ -1,7 +1,8 @@
 package org.ovirt.engine.core.common.job;
 
 public enum ExternalSystemType {
-    VDSM;
+    VDSM,
+    GLUSTER;
 
     static public ExternalSystemType safeValueOf(String value) {
         if (value == null) {

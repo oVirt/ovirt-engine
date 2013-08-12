@@ -45,5 +45,11 @@ public interface StepDao extends GenericDao<Step, Guid> {
      */
     void updateJobStepsCompleted(Guid jobId, JobExecutionStatus status, Date endTime);
 
-}
+    /**
+     * Retrieve all steps associated with the given external id
+     * @param externalId
+     * @return
+     */
+    List<Step> getStepsByExternalId(Guid externalId);
+ }
 

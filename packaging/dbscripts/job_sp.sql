@@ -497,7 +497,20 @@ BEGIN
         FROM   step
         WHERE  job_id = v_job_id
         AND    external_id is not null
-        AND    external_system_type = 'VDSM');
+        AND    external_system_type in ('VDSM','GLUSTER'));
 END; $procedure$
 LANGUAGE plpgsql;
 
+----------------------------------------------------
+-- Gets Step entities list from Step table by external id
+----------------------------------------------------
+Create or replace FUNCTION GetStepsByExternalTaskId(v_external_id UUID)
+RETURNS SETOF step STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT step.*
+    FROM step
+    WHERE external_id = v_external_id
+    ORDER BY parent_step_id nulls first, step_number;
+END; $procedure$
+LANGUAGE plpgsql;

@@ -100,4 +100,11 @@ public class StepDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Step, Guid> i
             return step;
         }
     }
+
+    @Override
+    public List<Step> getStepsByExternalId(Guid externalId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("external_id", externalId);
+        return getCallsHandler().executeReadList("GetStepsByExternalTaskId", createEntityRowMapper(), parameterSource);
+    }
+
 }

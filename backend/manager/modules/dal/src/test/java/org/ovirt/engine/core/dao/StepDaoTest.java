@@ -21,11 +21,14 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     private static final int TOTAL_STEPS_OF_MULTI_STEP_JOB = 8;
     private static final Guid EXISTING_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5111");
     private static final Guid EXISTING_STEP_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509111111");
-    private static final int TOTAL_STEPS = 11;
+    private static final int TOTAL_STEPS = 12;
     private static final Guid EXISTING_STEP_WITH_SUB_STEPS = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5223");
     private static final int TOTAL_STEPS_OF_PARENT_STEP = 3;
     private static final Guid IN_PROGRESS_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5333");
     private static final Guid IN_PROGRESS_STEP_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509111333");
+    private static final Guid IN_PROGRESS_REBALANCING_GLUSTER_VOLUME_TASK_ID = new Guid("44f714ed-2818-4350-b94a-8c3927e53f7c");
+    private static final Guid REBALANCING_GLUSTER_VOLUME_STEP_ID = new Guid("cd75984e-1fd4-48fb-baf8-e45800a61a66");
+    private static final int TOTAL_STEPS_OF_REBALANCING_GLUSTER_VOLUME = 1;
 
     @Override
     @Before
@@ -102,5 +105,15 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
         Step afterUpdate = dao.get(IN_PROGRESS_STEP_ID);
         assertEquals("Compare step to itself after update in DB", step, afterUpdate);
 
+    }
+
+    @Test
+    public void getStepsByExternalId(){
+        List<Step> steps = dao.getStepsByExternalId(IN_PROGRESS_REBALANCING_GLUSTER_VOLUME_TASK_ID);
+        assertEquals("Verify Rebalancing Gluster Volume Job has steps", TOTAL_STEPS_OF_REBALANCING_GLUSTER_VOLUME, steps.size());
+        Step step = steps.get(0);
+        assertTrue("Verify the Step Type status",StepEnum.REBALANCING_VOLUME == step.getStepType());
+        assertTrue("Verify the Step status",JobExecutionStatus.STARTED == step.getStatus());
+        assertEquals("Invalid Step", REBALANCING_GLUSTER_VOLUME_STEP_ID, step.getId());
     }
 }

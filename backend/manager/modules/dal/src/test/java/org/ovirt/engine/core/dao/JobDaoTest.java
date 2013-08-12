@@ -24,7 +24,7 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     private static final Guid NO_VDSM_TASKS_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5333");
     private static final String EXISTING_CORRELATION_ID = "54947df8-job1";
     private static final int NUMBER_OF_JOBS_FOR_EXISTING_CORRELATION_ID = 1;
-    private static final int TOTAL_JOBS = 4;
+    private static final int TOTAL_JOBS = 5;
 
     @Override
     @Before

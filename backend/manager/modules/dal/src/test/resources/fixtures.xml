@@ -4609,6 +4609,20 @@
             <value>false</value>
             <value>true</value>
        </row>
+       <row>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb0001</value>
+            <value>STARTED</value>
+            <value>9bf7c640-b620-456f-a550-0348f3665333</value>
+            <value>StartRebalanceGlusterVolume</value>
+            <value>Starting Rebalance on Gluster Volume V2</value>
+            <value>true</value>
+            <value>2012-02-08 10:00:00</value>
+            <value>2012-02-08 10:11:00</value>
+            <null/>
+            <value>54947df8-job5</value>
+            <value>false</value>
+            <value>true</value>
+       </row>
     </table>
 
     <table name="job_subject_entity">
@@ -4824,6 +4838,22 @@
             <value>54947df8-job4</value>
             <null/>
             <null/>
+            <value>false</value>
+        </row>
+        <!-- Steps for Job 54947df8-0e9e-4471-a2f9-9af509fb0001 -->
+        <row>
+            <value>cd75984e-1fd4-48fb-baf8-e45800a61a66</value>
+            <null/>
+            <value>54947df8-0e9e-4471-a2f9-9af509fb0001</value>
+            <value>REBALANCING_VOLUME</value>
+            <value>Rebalancing V2 volume of Default.( STARTED  )</value>
+            <value>0</value>
+            <value>STARTED</value>
+            <value>2012-02-08 10:11:00</value>
+            <null/>
+            <value>54947df8-job5</value>
+             <value>44f714ed-2818-4350-b94a-8c3927e53f7c</value>
+            <value>GLUSTER</value>
             <value>false</value>
         </row>
     </table>
