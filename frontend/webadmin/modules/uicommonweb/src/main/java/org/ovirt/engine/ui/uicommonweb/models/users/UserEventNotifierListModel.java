@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.EventNotificationMethods;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -25,6 +26,8 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.Translator;
 
 @SuppressWarnings("unused")
@@ -284,17 +287,40 @@ public class UserEventNotifierListModel extends SearchableListModel
 
         if (toRemoveList.size() > 0)
         {
+            EventSubscriptionFrontendActionAsyncCallback callback = new EventSubscriptionFrontendActionAsyncCallback(toAddList, toRemoveList);
             for (VdcActionParametersBase param : toRemoveList)
             {
-                Frontend.RunAction(VdcActionType.RemoveEventSubscription, param);
+                Frontend.RunAction(VdcActionType.RemoveEventSubscription, param, callback);
             }
-        }
-
-        if (toAddList.size() > 0)
+        } else if (toAddList.size() > 0)
         {
             Frontend.RunMultipleAction(VdcActionType.AddEventSubscription, toAddList);
         }
         cancel();
+    }
+
+    private final class EventSubscriptionFrontendActionAsyncCallback implements IFrontendActionAsyncCallback {
+        private ArrayList<VdcActionParametersBase> toAddList;
+        ArrayList<VdcActionParametersBase> toRemoveList;
+        private int sucessCount = 0;
+
+        EventSubscriptionFrontendActionAsyncCallback(ArrayList<VdcActionParametersBase> toAddList, ArrayList<VdcActionParametersBase> toRemoveList) {
+            this.toAddList = toAddList;
+            this.toRemoveList = toRemoveList;
+        }
+
+        @Override
+        public void executed(FrontendActionAsyncResult result) {
+            VdcReturnValueBase returnValue = result.getReturnValue();
+            if (returnValue != null && returnValue.getSucceeded()) {
+                sucessCount++;
+                // we wait until all subscribed events have been removed and then
+                // invoke the AddEventSubscription action
+                if (toAddList.size() > 0 && sucessCount == toRemoveList.size()) {
+                    Frontend.RunMultipleAction(VdcActionType.AddEventSubscription, toAddList);
+                }
+            }
+        }
     }
 
     public void cancel()
