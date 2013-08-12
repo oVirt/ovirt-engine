@@ -24,8 +24,9 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
-import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -319,7 +320,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                                 VmDeviceGeneralType.INTERFACE,
                                 VmDeviceType.BRIDGE.getName()));
 
-        for (VmNetworkInterface vmInterface : vm.getInterfaces()) {
+        for (VmNic vmInterface : vm.getInterfaces()) {
             // get vm device for this disk from DB
             VmDevice vmDevice =
                     devicesByDeviceId.get(new VmDeviceId(vmInterface.getId(), vmInterface.getVmId()));
@@ -512,13 +513,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     }
 
     private void addNetworkInterfaceProperties(Map<String, Object> struct,
-            VmNetworkInterface vmInterface,
+            VmNic vmInterface,
             VmDevice vmDevice,
             String nicModel,
             Version clusterVersion) {
         struct.put(VdsProperties.Type, vmDevice.getType().getValue());
         struct.put(VdsProperties.Device, vmDevice.getDevice());
-        struct.put(VdsProperties.NETWORK, StringUtils.defaultString(vmInterface.getNetworkName()));
 
         if (FeatureSupported.networkLinking(clusterVersion)) {
             struct.put(VdsProperties.LINK_ACTIVE, String.valueOf(vmInterface.isLinked()));
@@ -530,28 +530,44 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
         struct.put(VdsProperties.DeviceId, String.valueOf(vmDevice.getId().getDeviceId()));
         struct.put(VdsProperties.NIC_TYPE, nicModel);
-        if (vmInterface.isPortMirroring()) {
-            List<String> networks = new ArrayList<String>();
-            if (vmInterface.getNetworkName() != null) {
-                networks.add(vmInterface.getNetworkName());
+
+        addProfileDataToNic(struct, vm, vmDevice, vmInterface);
+        addNetworkFiltersToNic(struct, clusterVersion);
+    }
+
+    public static void addProfileDataToNic(Map<String, Object> struct,
+            VM vm,
+            VmDevice vmDevice,
+            VmNic nic) {
+        VnicProfile vnicProfile = null;
+        Network network = null;
+        if (nic.getVnicProfileId() != null) {
+            vnicProfile = DbFacade.getInstance().getVnicProfileDao().get(nic.getVnicProfileId());
+            if (vnicProfile != null) {
+                network = DbFacade.getInstance().getNetworkDao().get(vnicProfile.getNetworkId());
             }
-            struct.put(VdsProperties.PORT_MIRRORING, networks);
+        }
+
+        struct.put(VdsProperties.NETWORK, network == null ? "" : network.getName());
+
+        if (vnicProfile != null && vnicProfile.isPortMirroring()) {
+            struct.put(VdsProperties.PORT_MIRRORING, network == null
+                    ? Collections.<String> emptyList() : Collections.singletonList(network.getName()));
         }
 
         addCustomPropertiesForDevice(struct,
                 vm,
                 vmDevice,
-                clusterVersion,
-                getVnicCustomProperties(vmInterface.getVnicProfileId()));
-        addNetworkFiltersToNic(struct, clusterVersion);
+                vm.getVdsGroupCompatibilityVersion(),
+                getVnicCustomProperties(vnicProfile));
+
     }
 
-    private Map<String, String> getVnicCustomProperties(Guid vnicProfileId) {
+    public static Map<String, String> getVnicCustomProperties(VnicProfile vnicProfile) {
         Map<String, String> customProperties = null;
 
-        if (vnicProfileId != null) {
-            VnicProfile profile = DbFacade.getInstance().getVnicProfileDao().get(vnicProfileId);
-            customProperties = profile == null ? null : profile.getCustomProperties();
+        if (vnicProfile != null) {
+            customProperties = vnicProfile.getCustomProperties();
         }
 
         return customProperties == null ? new HashMap<String, String>() : customProperties;
