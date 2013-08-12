@@ -15,6 +15,18 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
  */
 public class JsonObjectDeserializerTest {
 
+    private static enum Color {
+        UNKNOWN,
+        BLUE,
+        RED
+    };
+
+    private static enum Kind {
+        UNKNOWN,
+        PERSON,
+        ANIMAL
+    };
+
     @Test
     public void testSerialize() {
         JsonSerializablePojo serializablePojo = new JsonSerializablePojo();
@@ -89,6 +101,18 @@ public class JsonObjectDeserializerTest {
         final HashMap<String, Boolean> map =
                 new JsonObjectDeserializer().deserialize(json, HashMap.class);
         Assert.assertTrue(map.get("success"));
+    }
+
+    @Test
+    public void testEnumDeserialization() {
+        Color color = new JsonObjectDeserializer().deserialize("\"RED\"", Color.class);
+        assertEquals(Color.RED, color);
+    }
+
+    @Test
+    public void testEnumDeserializationLiteralDoesNotExist() {
+        Kind kind = new JsonObjectDeserializer().deserialize("\"RED\"", Kind.class);
+        assertEquals(null, kind);
     }
 
 }

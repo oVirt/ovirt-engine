@@ -47,6 +47,7 @@ public class JsonObjectDeserializer implements Deserializer {
 
         formattedMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         formattedMapper.enableDefaultTyping();
+        formattedMapper.setDeserializerProvider(new JsonObjectDeserializerProvider());
     }
 
     @Override
