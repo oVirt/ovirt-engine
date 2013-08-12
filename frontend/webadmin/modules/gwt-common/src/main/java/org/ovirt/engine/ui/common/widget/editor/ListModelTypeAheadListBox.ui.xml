@@ -5,6 +5,12 @@
 	<ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBox.Style">
+        @external gwt-SuggestBoxPopup .suggestPopupMiddleCenterInner;
+
+        .gwt-SuggestBoxPopup .suggestPopupMiddleCenterInner {
+            height: 100%;
+        }
+
 		.mainStyle,.enabledMainPanel,.disabledMainPanel {
 			display: inline-block;
 			height: 17px;

@@ -8,12 +8,12 @@ import com.google.gwt.event.dom.client.MouseUpEvent;
 import com.google.gwt.event.dom.client.MouseUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.user.client.ui.MenuBar;
+import com.google.gwt.user.client.ui.MenuItem;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor.SuggestBoxRenderer;
-
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.BlurEvent;
@@ -148,6 +148,8 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             suggestBox.setText(null);
             suggestBox.showSuggestionList();
 
+            selectInMenu(getValue());
+
             Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
                 public void execute () {
                     setFocus(true);
@@ -155,6 +157,42 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             });
         }
     }
+
+    private void selectInMenu(T toSelect) {
+        if (!(getSuggestionMenu() instanceof MenuBar)) {
+            // can not select if the it is not a menu bar
+            return;
+        }
+
+        MenuBar menuBar = (MenuBar) getSuggestionMenu();
+        List<MenuItem> items = getItems(menuBar);
+        if (items == null) {
+            return;
+        }
+
+        String selectedReplacementString = renderer.getReplacementString(toSelect);
+        if (selectedReplacementString == null) {
+            return;
+        }
+
+        int selectedItemIndex = -1;
+        for (T acceptableValue : acceptableValues) {
+            selectedItemIndex ++;
+            String acceptableValueReplacement = renderer.getReplacementString(acceptableValue);
+            if (acceptableValueReplacement != null && acceptableValueReplacement.equals(selectedReplacementString)) {
+                if (items.size() > selectedItemIndex) {
+                    menuBar.selectItem(items.get(selectedItemIndex));
+                }
+
+                break;
+            }
+        }
+    }
+
+    // extremely ugly - there is just no better way how to find the items as MenuItems
+    private native List<MenuItem> getItems(MenuBar menuBar) /*-{
+        return menuBar.@com.google.gwt.user.client.ui.MenuBar::getItems()();
+    }-*/;
 
     private void adjustSelectedValue() {
         if (acceptableValues.size() == 0) {
