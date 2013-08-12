@@ -13,6 +13,7 @@ public class Action {
     }
 
     private String name;
+    private String description;
     private Request request;
 
 
@@ -27,5 +28,13 @@ public class Action {
     }
     public void setRequest(Request request) {
         this.request = request;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

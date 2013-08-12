@@ -4,6 +4,7 @@
 !!org.ovirt.engine.api.restapi.rsdl.MetaData
 actions:
 - name: /api/vms|rel=get
+  description: get all the virtual machines in the system
   request:
     body:
       parameterType: null
@@ -15,6 +16,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/vms/{vm:id}|rel=get
+  description: get the virtual machine in the system for the given virtual machine id
   request:
     body:
       parameterType: null
@@ -23,6 +25,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/vms/{vm:id}|rel=delete
+  description: deletes the virtual machine in the system for the given virtual machine id
   request:
     body:
       required: false
@@ -30,12 +33,14 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.force: 'xs:boolean', action.vm.disks.detach_only: 'xs:boolean'}
+        description: deletes the virtual machine in the system for the given virtual machine id with optional arguments where the vm can be forced to be removed and option to just detach the disks associated with the vm.
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Content-Type: {value: application/xml|json, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}|rel=update
+  description: update the virtual machine in the system for the given virtual machine id
   request:
     body:
       parameterType: VM
@@ -79,11 +84,13 @@ actions:
           vm.tunnel_migration: xs:boolean
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
+        description: update the virtual machine in the system for the given virtual machine id with the values specified in the request
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/applications|rel=get
+  description: get all the applications installed on the vm identified by the given id
   request:
     body:
       parameterType: null
@@ -92,6 +99,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/vms/{vm:id}/applications/{application:id}|rel=get
+  description: get the application installed on the specified vm
   request:
     body:
       parameterType: null
@@ -100,6 +108,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/vms|rel=add
+  description: add a virtual machine to the system
   request:
     body:
       parameterType: VM
@@ -147,6 +156,7 @@ actions:
           vm.initialization.configuration.type: 'xs:string'
           vm.initialization.configuration.data: 'xs:string'
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
+        description: add a virtual machine to the system from scratch
       # the following signature is for clone VM from a Snapshot - requires the Snapshot ID
       - mandatoryArguments: {vm.name: 'xs:string', vm.template.id|name: 'xs:string', vm.cluster.id|name: 'xs:string',
           vm.snapshots.snapshot--COLLECTION: {snapshot.id: 'xs:string'}}
@@ -187,6 +197,7 @@ actions:
           vm.tunnel_migration: xs:boolean
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.file.name: 'xs:string', payload.file.content: 'xs:string'}
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
+        description: add a virtual machine to the system by cloning from a snapshot
       # the following signature is for adding VM from a configuration - requires the configuration type and the configuration data
       - mandatoryArguments: {vm.initialization.configuration.type: 'xs:string', vm.initialization.configuration.data: 'xs:string'}
         optionalArguments:
@@ -229,12 +240,14 @@ actions:
                 vm.initialization.configuration.type: 'xs:string'
                 vm.initialization.configuration.data: 'xs:string'
                 vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
+        description: add a virtual machine to the system from a configuration - requires the configuration type and the configuration data
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Expect: {value: 201-created, required: false}
 - name: /api/vms/{vm:id}/shutdown|rel=shutdown
+  description: shutdown a virtual machine in the system identified by the given id
   request:
     body:
       parameterType: Action
@@ -244,6 +257,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/stop|rel=stop
+  description: stop a virtual machine in the system identified by the given id
   request:
     body:
       parameterType: Action
@@ -253,6 +267,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/start|rel=start
+  description: start a virtual machine in the system identified by the given id
   request:
     body:
       parameterType: Action
@@ -264,12 +279,14 @@ actions:
           action.vm.display.type: 'xs:string', action.vm.stateless: 'xs:boolean', action.vm.os.cmdline: 'xs:string',
           action.vm.domain.user.username: 'xs:string', action.pause: 'xs:boolean',
           action.vm.os.boot--COLLECTION: {boot.dev: 'xs:string'}, action.vm.domain.user.password: 'xs:string'}
+        description: start a virtual machine in the system identified by the given id with the options specified in the request body
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
 - name: /api/vms/{vm:id}/suspend|rel=suspend
+  description: suspend a virtual machine in the system identified by the given id
   request:
     body:
       parameterType: Action
@@ -279,6 +296,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/export|rel=export
+  description: export a virtual machine in the system identified by the given id to the export domain
   request:
     body:
       parameterType: Action
@@ -287,11 +305,13 @@ actions:
         optionalArguments: {action.async: 'xs:boolean', action.exclusive: 'xs:boolean',
           action.discard_snapshots: 'xs:boolean', action.storage_domain.id|name: 'xs:string',
           action.grace_period.expiry: 'xs:long'}
+        description: export a virtual machine in the system identified by the given id to the export domain with the options specified in the request body
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/detach|rel=detach
+  description: detach a virtual machine in the system identified by the given id from the storage domain
   request:
     body:
       parameterType: Action
@@ -301,6 +321,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/migrate|rel=migrate
+  description: migrate a virtual machine in the system identified by the given id to another host
   request:
     body:
       parameterType: Action
@@ -308,32 +329,38 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.host.id|name: 'xs:string', action.async: 'xs:boolean',
           action.force: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: migrate a virtual machine in the system identified by the given id to another host with options specified in the request body
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/move|rel=move #deprecated, replaced by '/api/vms/{vm:id}/disks/{disk:id}/move|rel=move'
+  description: This action is deprecated. Move a virtual machine's disk
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.storage_domain.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: This action is deprecated. Move a virtual machine's disk to the target storage domain
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/ticket|rel=ticket
+  description: Create a ticket for connecting to the VM using the display protocol.
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.ticket.value: 'xs:string'}
+        description: Create a ticket for connecting to the VM using the display protocol.
     urlparams: {}
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/cdroms|rel=get
+  description: get all the cdroms for a virtual machine
   request:
     body:
       parameterType: null
@@ -342,6 +369,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vms/{vm:id}/cdroms/{cdrom:id}|rel=get
+  description: get the cdrom for a virtual machine identified by the given id
   request:
     body:
       parameterType: null
@@ -349,6 +377,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vms/{vm:id}/cdroms/{cdrom:id}|rel=delete
+  description: delete the cdrom for a virtual machine identified by the given id
   request:
     body:
       parameterType: null
@@ -358,12 +387,14 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/cdroms/{cdrom:id}|rel=update
+  description: update the cdrom for a virtual machine identified by the given id
   request:
     body:
       parameterType: CdRom
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {cdrom.file.id: 'xs:string'}
+        description: update the cdrom for a virtual machine identified by the given id with a new file
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
       current: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
@@ -371,17 +402,20 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/cdroms|rel=add
+  description: add a cdrom to a virtual machine identified by the given id
   request:
     body:
       parameterType: CdRom
       signatures:
       - mandatoryArguments: {cdrom.file.id: 'xs:string'}
+        description: add a cdrom to a virtual machine identified by the given id and attach a file to the cdrom
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/watchdogs|rel=get
+  description: get all the watchdogs for the virtual machine identified by the given id
   request:
     body:
       parameterType: null
@@ -390,6 +424,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vms/{vm:id}/wacthdogs/{watchdog:id}|rel=get
+  description: get the watchdog identified by the id for a given virtual machine
   request:
     body:
       parameterType: null
@@ -397,6 +432,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vms/{vm:id}/watchdogs/{watchdog:id}|rel=delete
+  description: delete the watchdog for the virtual machine identified by the given id
   request:
     body:
       parameterType: null
@@ -406,28 +442,33 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/watchdogs/{watchdog:id}|rel=update
+  description: update the watchdog for the virtual machine identified by the given id
   request:
     body:
       parameterType: WatchDog
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {watchdog.action: 'xs:string', watchdog.model: 'xs:string'}
+        description: update the watchdog for the virtual machine identified by the given id with a new action and model as specified in the request data
     urlparams:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/watchdogs|rel=add
+  description: add a watchdog to the virtual machine identified by the given id
   request:
     body:
       parameterType: WatchDog
       signatures:
       - mandatoryArguments: {watchdog.action: 'xs:string', watchdog.model: 'xs:string'}
+        description: add a watchdog to the virtual machine identified by the given id
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/disks|rel=get
+  description: get all disks for a given virtual machine
   request:
     body:
       parameterType: null
@@ -436,6 +477,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vms/{vm:id}/disks/{disk:id}|rel=get
+  description: get the details of a disk for a given virtual machine
   request:
     body:
       parameterType: null
@@ -443,6 +485,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vms/{vm:id}/disks/{disk:id}|rel=delete
+  description: delete or detach a disk for a given virtual machine
   request:
     body:
       required: false
@@ -450,11 +493,13 @@ actions:
       signatures:
       - mandatoryArguments: {action.detach: 'xs:boolean'}
         optionalArguments: {}
+        description: delete or detach a disk for a given virtual machine based on detach flag provided
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/disks/{disk:id}|rel=update
+  description: update the parameters of the disk attached to the virtual machine
   request:
     body:
       parameterType: Disk
@@ -471,11 +516,13 @@ actions:
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
           disk.sgio: xs:string
+        description: update the size, boot flag and other parameters of the disk attached to the virtual machine
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/disks|rel=add
+  description: add a new or existing disk to the virtual machine
   request:
     body:
       parameterType: Disk
@@ -491,6 +538,7 @@ actions:
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
+        description: add a new disk to the virtual machine allocating space from the storage domain
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
       - mandatoryArguments: {disk.interface: 'xs:string', disk.format: 'xs:string', disk.lun_storage.type: 'xs:string',
           disk.lun_storage.logical_unit--COLLECTION: {logical_unit.id: 'xs:string', logical_unit.address: 'xs:string', logical_unit.port: 'xs:int', logical_unit.target: 'xs:string'}}
@@ -503,14 +551,17 @@ actions:
           disk.wipe_after_delete: xs:boolean
           disk.sgio: xs:string
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
+        description: add a new direct lun disk to the virtual machine, this operation does not require size but needs lun connection details
       - mandatoryArguments: {disk.id: 'xs:string'}
         optionalArguments: {disk.active: 'xs:boolean'}
+        description: attach a disk to the virtual machine
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/disks/{disk:id}/activate|rel=activate
+  description: activate a disk attached to a virtual machine
   request:
     body:
       parameterType: Action
@@ -520,6 +571,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/disks/{disk:id}/deactivate|rel=deactivate
+  description: deactivate a disk attached to a virtual machine
   request:
     body:
       parameterType: Action
@@ -529,18 +581,21 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/disks/{disk:id}/move|rel=move
+  description: move a disk attached to a virtual machine to a different storage domain. If the virtual machine is running this will trigger a live storage migration
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: move a disk attached to a virtual machine to a different storage domain. If the virtual machine is running this will trigger a live storage migration
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
 - name: /api/vms/{vm:id}/nics|rel=get
+  description: get all the network interfaces for a given virtual machine
   request:
     body:
       parameterType: null
@@ -549,6 +604,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vms/{vm:id}/nics/{nic:id}|rel=get
+  description: get the details of a network interface for a given virtual machine
   request:
     body:
       parameterType: null
@@ -556,6 +612,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vms/{vm:id}/nics/{nic:id}|rel=delete
+  description: remove the network interface from the given virtual machine
   request:
     body:
       parameterType: null
@@ -565,20 +622,24 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/nics/{nic:id}|rel=update
+  description: update the network interface for the given virtual machine
   request:
     body:
       parameterType: NIC
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
+        description: update the network interface for the given virtual machine
       - mandatoryArguments: {}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}, nic.plugged: 'xs:boolean'}
         deprecated: true
+        description: update the network interface for the given virtual machine with port mirroring options
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/nics/{nic:id}/activate|rel=activate #deprecated, replaced by 'add/edit'
+  description: Deprecated, replaced by add/edit
   request:
     body:
       parameterType: Action
@@ -588,6 +649,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/nics/{nic:id}/deactivate|rel=deactivate #deprecated, replaced by 'add/edit'
+  description: Deprecated, replaced by add/edit
   request:
     body:
       parameterType: Action
@@ -597,21 +659,25 @@ actions:
       Correlation-Id: {value: 'any string', required: false}
     urlparams: {}
 - name: /api/vms/{vm:id}/nics|rel=add
+  description: add a new network interface to the given virtual machine
   request:
     body:
       parameterType: NIC
       signatures:
       - mandatoryArguments: {nic.name: 'xs:string'}
         optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
+        description: add a new network interface to the given virtual machine with vnic profile id
       - mandatoryArguments: {nic.name: 'xs:string'}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}, nic.plugged: 'xs:boolean'}
         deprecated: true
+        description: add a new network interface to the given virtual machine with port mirroring options
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/permissions|rel=get
+  description: get all the permissions for a given virtual machine
   request:
     body:
       parameterType: null
@@ -620,6 +686,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vms/{vm:id}/permissions/{permission:id}|rel=get
+  description: get details of a permission for a given virtual machine
   request:
     body:
       parameterType: null
@@ -627,6 +694,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vms/{vm:id}/permissions/{permission:id}|rel=delete
+  description: delete a permission for a given virtual machine
   request:
     body:
       parameterType: null
@@ -636,20 +704,24 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/permissions|rel=add
+  description: add a new permission for a given virtual machine
   request:
     body:
       parameterType: Permission
       signatures:
       - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new user level permission for a given virtual machine
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new group level permission for a given virtual machine
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/statistics|rel=get
+  description: get the memory and cpu statistics for a given virtual machine
   request:
     body:
       parameterType: null
@@ -658,6 +730,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vms/{vm:id}/statistics/{statistic:id}|rel=get
+  description: get the detail statistics for a given virtual machine
   request:
     body:
       parameterType: null
@@ -665,6 +738,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vms/{vm:id}/snapshots|rel=get
+  description: get all snapshots for a given virtual machine
   request:
     body:
       parameterType: null
@@ -674,6 +748,7 @@ actions:
     headers:
       All-Content: {value: true|false, required: false}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}|rel=get
+  description: get the details of a snapshot for a given virtual machine
   request:
     body:
       parameterType: null
@@ -682,6 +757,7 @@ actions:
     headers:
       All-Content: {value: true|false, required: false}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}|rel=delete
+  description: delete the snapshot for a given virtual machine
   request:
     body:
       parameterType: null
@@ -691,6 +767,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/snapshots|rel=add
+  description: create a new snapshot for a given virtual machine
   request:
     body:
       parameterType: Snapshot
@@ -698,34 +775,40 @@ actions:
       - mandatoryArguments: {snapshot.description: 'xs:string'}
         optionalArguments:
           snapshot.persist_memorystate: xs:boolean
+        description: create a new snapshot for a given virtual machine
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}/restore|rel=restore
+  description: restore the virtual machine from a given snapshot
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.restore_memory: 'xs:boolean'}
+        description: restore the virtual machine from a given snapshot
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}/preview|rel=preview
+  description: temporarily restores the virtual machine to the state from a given snapshot
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.restore_memory: 'xs:boolean'}
+        description: temporarily restores the virtual machine to the state from a given snapshot
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}/commit|rel=commit
+  description: commit the virtual machine to the current state which has been restored from a snapshot
   request:
     body:
       parameterType: Action
@@ -735,6 +818,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}/undo|rel=undo
+  description: undo a create snapshot operation on a virtual machine
   request:
     body:
       parameterType: Action
@@ -744,6 +828,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}/cdroms|rel=get
+  description: get the list of cdroms attached to the virtual machine at the time the snapshot was created
   request:
     body:
       parameterType: null
@@ -751,6 +836,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}/cdroms/{cdrom:id}|rel=get
+  description: get the details of a cdrom attached to the virtual machine at the time the snapshot was created
   request:
     body:
       parameterType: null
@@ -758,6 +844,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}/disks|rel=get
+  description: get the list of disks attached to the virtual machine at the time the snapshot was created
   request:
     body:
       parameterType: null
@@ -765,6 +852,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}/disks/{disk:id}|rel=get
+  description: get the details of a disk attached to the virtual machine at the time the snapshot was created
   request:
     body:
       parameterType: null
@@ -772,6 +860,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}/nics|rel=get
+  description: get the list of network interfaces attached to the virtual machine at the time the snapshot was created
   request:
     body:
       parameterType: null
@@ -779,6 +868,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vms/{vm:id}/snapshots/{snapshot:id}/nics/{nic:id}|rel=get
+  description: get the details of a network interface attached to the virtual machine at the time the snapshot was created
   request:
     body:
       parameterType: null
@@ -786,6 +876,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vms/{vm:id}/tags|rel=get
+  description: get the list of tags added to the virtual machine
   request:
     body:
       parameterType: null
@@ -794,6 +885,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vms/{vm:id}/tags/{tag:id}|rel=get
+  description: get the details of the tag added to the virtual machine
   request:
     body:
       parameterType: null
@@ -801,6 +893,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vms/{vm:id}/tags/{tag:id}|rel=delete
+  description: delete a tag added to the virtual machine
   request:
     body:
       parameterType: null
@@ -810,17 +903,20 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vms/{vm:id}/tags|rel=add
+  description: add a new tag to the virtual machine
   request:
     body:
       parameterType: Tag
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
+        description: add a new tag to the virtual machine
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/disks|rel=get
+  description: get a list of disks in the system
   request:
     body:
       parameterType: null
@@ -831,6 +927,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/disks/{disk:id}|rel=get
+  description: get the details of a disk in the system
   request:
     body:
       parameterType: null
@@ -838,6 +935,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/disks/{disk:id}|rel=delete
+  description: delete the specified disk in the system
   request:
     body:
       parameterType: null
@@ -847,6 +945,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/disks|rel=add
+  description: add a new disk the system
   request:
     body:
       parameterType: Disk
@@ -862,6 +961,7 @@ actions:
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
+        description: add a new disk the system with specified size, space will be allocated from the storage domain for the disk
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
       - mandatoryArguments: {disk.interface: 'xs:string', disk.format: 'xs:string', disk.lun_storage.type: 'xs:string',
           disk.lun_storage.logical_unit--COLLECTION: {logical_unit.id: 'xs:string', logical_unit.address: 'xs:string', logical_unit.port: 'xs:int', logical_unit.target: 'xs:string'}}
@@ -874,12 +974,14 @@ actions:
           disk.wipe_after_delete: xs:boolean
           disk.sgio: xs:string
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
+        description: add a new lun disk the system, this operation does not require size but requires lun connection details
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/disks/{disk:id}/statistics|rel=get
+  description: get the disk statistics for the specified disk in the system
   request:
     body:
       parameterType: null
@@ -888,6 +990,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/disks/{disk:id}/statistics/{statistic:id}|rel=get
+  description: get the disk statistics for the specified disk in the system
   request:
     body:
       parameterType: null
@@ -895,6 +998,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/disks/{disk:id}/permissions|rel=get
+  description: get the list of permission for the disk in the system. Disk inherits permissions from the VM it is attached to and from the storage domain it resides on (if there is one)
   request:
     body:
       parameterType: null
@@ -903,6 +1007,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/disks/{disk:id}/permissions/{permission:id}|rel=get
+  description: get the details of the permission for the specified disk in the system
   request:
     body:
       parameterType: null
@@ -910,6 +1015,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/capabilities|rel=get
+  description: get the capabilities of the system listing the features that are supported for all versions of cluster/data center
   request:
     body:
       parameterType: null
@@ -917,6 +1023,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/capabilities/{version:id}|rel=get
+  description: get the capabilities of the system for the specified version, lists the features that are supported for the provided version of the cluster/data center
   request:
     body:
       parameterType: null
@@ -924,6 +1031,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/storagedomains|rel=get
+  description: get storage domains in the system
   request:
     body:
       parameterType: null
@@ -935,6 +1043,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/storagedomains/{storagedomain:id}|rel=get
+  description: get the details of the specified storage domain in the system
   request:
     body:
       parameterType: null
@@ -943,35 +1052,41 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/storagedomains/{storagedomain:id}|rel=delete
+  description: delete the specified storage domain in the system
   request:
     body:
       parameterType: StorageDomain
       signatures:
       - mandatoryArguments: {storagedomain.host.id|name: 'xs:string'}
         optionalArguments: {storagedomain.format: 'xs:boolean'}
+        description: delete the specified storage domain in the system with options to format the storage domain
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/storagedomains/{storagedomain:id}|rel=update
+  description: update the storage domain
   request:
     body:
       parameterType: StorageDomain
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {storagedomain.name: 'xs:string'}
+        description: update the storage domain
       - mandatoryArguments: {storagedomain.host.id|name: 'xs:string', storagedomain.storage.logical_unit--COLLECTION: {logical_unit.address: 'xs:string',
             logical_unit.port: 'xs:int', logical_unit.target: 'xs:string', logical_unit.username: 'xs:string', logical_unit.password: 'xs:string',
             logical_unit.serial: 'xs:string', logical_unit.vendor_id: 'xs:string', logical_unit.product_id: 'xs:string',
             logical_unit.lun_mapping: 'xs:int', logical_unit.portal: 'xs:string', logical_unit.paths: 'xs:int', logical_unit.id: 'xs:string'}}
         optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.override_luns: 'xs:boolean'}
+        description: update the storage domain
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/storagedomains|rel=add
+  description: add a new storage domain to the system
   request:
     body:
       parameterType: StorageDomain
@@ -984,19 +1099,23 @@ actions:
             logical_unit.serial: 'xs:string', logical_unit.vendor_id: 'xs:string', logical_unit.product_id: 'xs:string',
             logical_unit.lun_mapping: 'xs:int', logical_unit.portal: 'xs:string', logical_unit.paths: 'xs:int', logical_unit.id: 'xs:string'}}
         optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.override_luns: 'xs:boolean', storagedomain.storage_format: 'xs:string'}
+        description: add a new storage domain to the system using a direct lun
       - mandatoryArguments: {storagedomain.host.id|name: 'xs:string',
           storagedomain.type: 'xs:string', storagedomain.storage.type: 'xs:string',
           storagedomain.format: 'xs:boolean',storagedomain.storage.address: 'xs:string', 
           storagedomain.storage.path: 'xs:string'}
         optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage_format: 'xs:string'}
+        description: add a new storage domain to the system using the storage on the given host and path
       - mandatoryArguments: {storagedomain.host.id|name: 'xs:string',
           storagedomain.type: 'xs:string', storagedomain.storage.type: 'xs:string',
           storagedomain.format: 'xs:boolean', storagedomain.storage.path: 'xs:string'}
         optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage_format: 'xs:string'}
+        description: add a new storage domain to the system using the storage on the localhost at the given path
       - mandatoryArguments: {storagedomain.host.id|name: 'xs:string',
           storagedomain.type: 'xs:string', storagedomain.storage.type: 'xs:string',
           storagedomain.format: 'xs:boolean', storagedomain.storage.path: 'xs:string', storagedomain.storage.vfs_type: 'xs:string'}
         optionalArguments: {storagedomain.name: 'xs:string', storagedomain.comment: 'xs:string', storagedomain.storage.address: 'xs:string', storagedomain.storage.mount_options: 'xs:string', storagedomain.storage_format: 'xs:string'}
+        description: add a new storage domain to the system using the gluster or posixfs storage
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
@@ -1004,6 +1123,7 @@ actions:
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/storagedomains/{storagedomain:id}/files|rel=get
+  description: get the files stored in the iso storage domain
   request:
     body:
       parameterType: null
@@ -1014,6 +1134,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/files/{file:id}|rel=get
+  description: get the details of the specified file stored in the iso storage domain
   request:
     body:
       parameterType: null
@@ -1047,6 +1168,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/storagedomains/{storagedomain:id}/permissions|rel=get
+  description: get the list of permissions for the storage domain
   request:
     body:
       parameterType: null
@@ -1055,6 +1177,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/permissions/{permission:id}|rel=get
+  description: get the details of the specified permission for the storage domain
   request:
     body:
       parameterType: null
@@ -1062,6 +1185,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/permissions/{permission:id}|rel=delete
+  description: delete the specified permission on the storage domain
   request:
     body:
       parameterType: null
@@ -1071,20 +1195,24 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/storagedomains/{storagedomain:id}/permissions|rel=add
+  description: add a new user or group level permission on the storage domain
   request:
     body:
       parameterType: Permission
       signatures:
       - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new user level permission on the storage domain
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new group level permission on the storage domain
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/storagedomains/{storagedomain:id}/templates/{template:id}|rel=delete
+  description: delete the specified template from the export or data domain
   request:
     body:
       parameterType: null
@@ -1094,6 +1222,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/storagedomains/{storagedomain:id}/templates|rel=get
+  description: get the list of templates in the export or data domain
   request:
     body:
       parameterType: null
@@ -1102,6 +1231,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/templates/{template:id}|rel=get
+  description: get the details of the specified template in the export or data domain
   request:
     body:
       parameterType: null
@@ -1109,17 +1239,20 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/templates/{template:id}/import|rel=import
+  description: import the template from the export or data domain
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
         optionalArguments: {action.storage_domain.id|name: 'xs:string', action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.template.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}}
+        description: import the template from the export or data domain into the specified cluster
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/storagedomains/{storagedomain:id}/templates/{template:id}/disks|rel=get
+  description: get the list of disks attached to the template in the export or data domain
   request:
     body:
       parameterType: null
@@ -1127,6 +1260,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/templates/{template:id}/disks/{disk:id}|rel=get
+  description: get the details of the specified disk attached to the template in the export or data domain
   request:
     body:
       parameterType: null
@@ -1134,6 +1268,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/vms|rel=get
+  description: get the list of virtual machines in the storage domain
   request:
     body:
       parameterType: null
@@ -1142,6 +1277,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/vms/{vm:id}|rel=delete
+  description: delete the specified virtual machine from the storage domain
   request:
     body:
       parameterType: null
@@ -1151,6 +1287,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/storagedomains/{storagedomain:id}/vms/{vm:id}|rel=get
+  description: get the details of the specified virtual machine in the storage domain
   request:
     body:
       parameterType: null
@@ -1158,17 +1295,20 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/vms/{vm:id}/import|rel=import
+  description: import the specified virtual machine in the storage domain into the system
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.cluster.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean',action.storage_domain.id|name: 'xs:string', action.vm.snapshots.collapse_snapshots: 'xs:boolean', action.clone: 'xs:boolen', action.exclusive: 'xs:boolen', action.vm.name: 'xs:string', action.vm.disks.disk--COLLECTION: {disk.id: 'xs:string'}}
+        description: import the specified virtual machine in the storage domain into the specified cluster
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters|rel=get
+  description: get the list of clusters in the system
   request:
     body:
       parameterType: null
@@ -1180,6 +1320,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/storagedomains/{storagedomain:id}/vms/{vm:id}/disks|rel=get
+  description: get the list of disks attached to the virtual machine in the storage domain
   request:
     body:
       parameterType: null
@@ -1187,6 +1328,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/vms/{vm:id}/disks/{disk:id}|rel=get
+  description: get the details of the specified disk attached to the virtual machine in the storage domain
   request:
     body:
       parameterType: null
@@ -1194,6 +1336,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/clusters/{cluster:id}|rel=get
+  description: get the details of the specified cluster in the system
   request:
     body:
       parameterType: null
@@ -1202,6 +1345,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/storagedomains/{storagedomain:id}/storageconnections|rel=get
+  description: get the list of storage connections in the storage domain. allow sediting just the connection details without editing the storage domain itself. multiple storage domains could use a single storage connection in the case of iSCSI.
   request:
     body:
       parameterType: null
@@ -1210,6 +1354,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/storageconnections/{storageconnection:id}|rel=get
+  description: get the details of the specified storage connection in the storage domain. allow sediting just the connection details without editing the storage domain itself. multiple storage domains could use a single storage connection in the case of iSCSI.
   request:
     body:
       parameterType: null
@@ -1217,6 +1362,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/clusters/{cluster:id}|rel=delete
+  description: get the details of the specified cluster in the system
   request:
     body:
       parameterType: null
@@ -1226,6 +1372,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}|rel=update
+  description: update the specified cluster in the system
   request:
     body:
       parameterType: Cluster
@@ -1235,11 +1382,13 @@ actions:
         cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy: 'xs:string',
         cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int', cluster.scheduling_policy.thresholds.duration: 'xs:int',
         cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean'}
+        description: update the specified cluster in the system. The capabilities like virt servicem luster service, tarnsparent huge pages etc can be changed.
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters|rel=add
+  description: add a new cluster to the system
   request:
     body:
       parameterType: Cluster
@@ -1249,12 +1398,14 @@ actions:
         cluster.scheduling_policy.policy: 'xs:string', cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int',
         cluster.scheduling_policy.thresholds.duration: 'xs:int', cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean',
         cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean'}
+        description: add a new cluster to the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/networks|rel=get
+  description: get the list of networks in the cluster
   request:
     body:
       parameterType: null
@@ -1263,6 +1414,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/clusters/{cluster:id}/networks/{network:id}|rel=get
+  description: get the detials of the specified network in the cluster
   request:
     body:
       parameterType: null
@@ -1270,6 +1422,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/clusters/{cluster:id}/networks/{network:id}|rel=delete
+  description: delete the specified network in the cluster
   request:
     body:
       parameterType: null
@@ -1279,29 +1432,34 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/networks/{network:id}|rel=update
+  description: update the specified network in the cluster
   request:
     body:
       parameterType: Network
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {network.display: 'xs:boolean', network.usages.usage--COLLECTION: {usage: 'xs:string'}}
+        description: update the specified network in the cluster with network usage. Display is provided here for backwards compatibility.
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/networks|rel=add
+  description: add a new network to the cluster
   request:
     body:
       parameterType: Network
       signatures:
       - mandatoryArguments: {network.id|name: 'xs:string'}
         optionalArguments: {network.usages.usage--COLLECTION: {usage: 'xs:string'}}
+        description: add a new network to the cluster
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/permissions|rel=get
+  description: get the list of permissions on the cluster
   request:
     body:
       parameterType: null
@@ -1310,6 +1468,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/clusters/{cluster:id}/permissions/{permission:id}|rel=get
+  description: get the details of the permission on the cluster
   request:
     body:
       parameterType: null
@@ -1317,6 +1476,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/clusters/{cluster:id}/permissions/{permission:id}|rel=delete
+  description: delete the permission on the cluster
   request:
     body:
       parameterType: null
@@ -1326,20 +1486,24 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/permissions|rel=add
+  description: add a new permission on the cluster
   request:
     body:
       parameterType: Permission
       signatures:
       - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new user level permission on the cluster
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new group level permission on the cluster
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}|rel=update
+  description: update the specified data center in the system
   request:
     body:
       parameterType: DataCenter
@@ -1354,11 +1518,13 @@ actions:
           datacenter.version.minor: xs:int
           datacenter.description: xs:string
           datacenter.storage_format: xs:string
+        description: update the specified data center in the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters|rel=get
+  description: get a list of data centers in the system
   request:
     body:
       parameterType: null
@@ -1370,6 +1536,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/datacenters/{datacenter:id}|rel=get
+  description: get the details of the specified data center in the system
   request:
     body:
       parameterType: null
@@ -1378,6 +1545,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/datacenters/{datacenter:id}|rel=delete
+  description: delete the specified data center in the system
   request:
     body:
       required: false
@@ -1385,12 +1553,14 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.force: 'xs:boolean'}
+        description: delete the specified data center in the system
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters|rel=add
+  description: add a new data center to the system
   request:
     body:
       parameterType: DataCenter
@@ -1400,12 +1570,14 @@ actions:
           datacenter.description: xs:string
           datacenter.comment: xs:string
           datacenter.storage_format: xs:string
+        description: add a new data center to the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/permissions|rel=get
+  description: get the list of permissions on the data center
   request:
     body:
       parameterType: null
@@ -1413,6 +1585,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/permissions/{permission:id}|rel=get
+  description: get details of the specified permission on the data center
   request:
     body:
       parameterType: null
@@ -1420,6 +1593,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/permissions/{permission:id}|rel=delete
+  description: delete the specified permission on the data center
   request:
     body:
       parameterType: null
@@ -1429,20 +1603,24 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/permissions|rel=add
+  description: add a new permission on the data center
   request:
     body:
       parameterType: Permission
       signatures:
       - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new user level permission on the data center
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new role permission on the data center
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/storagedomains|rel=get
+  description: get the list of storage domains in a data center
   request:
     body:
       parameterType: null
@@ -1451,6 +1629,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}|rel=get
+  description: get details of the specified storage domain in a data center
   request:
     body:
       parameterType: null
@@ -1458,6 +1637,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}|rel=delete
+  description: delete the specified storage domain in a data center
   request:
     body:
       parameterType: null
@@ -1467,18 +1647,21 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/storagedomains|rel=add
+  description: add a new storage domain to the data center
   request:
     body:
       parameterType: StorageDomain
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
         optionalArguments: {}
+        description: add a new storage domain to the data center
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/activate|rel=activate
+  description: activate the specified storage domain in the data center
   request:
     body:
       parameterType: Action
@@ -1488,6 +1671,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/deactivate|rel=deactivate
+  description: deactivate the specified storage domain in the data center
   request:
     body:
       parameterType: Action
@@ -1497,6 +1681,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/clusters|rel=get
+  description: get the list of clusters in the data center
   request:
     body:
       parameterType: null
@@ -1506,6 +1691,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}|rel=get
+  description: get the details of the specified cluster in the data center
   request:
     body:
       parameterType: null
@@ -1514,6 +1700,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}|rel=delete
+  description: delete specified cluster from the data center
   request:
     body:
       parameterType: null
@@ -1523,6 +1710,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}|rel=update
+  description: update specified cluster in the data center
   request:
     body:
       parameterType: Cluster
@@ -1532,11 +1720,13 @@ actions:
         cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy: 'xs:string',
         cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int', cluster.scheduling_policy.thresholds.duration: 'xs:int',
         cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean'}
+        description: update specified cluster in the data center
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/clusters|rel=add
+  description: add a new cluster to the data center
   request:
     body:
       parameterType: Cluster
@@ -1546,12 +1736,14 @@ actions:
         cluster.scheduling_policy.policy: 'xs:string', cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int',
         cluster.scheduling_policy.thresholds.duration: 'xs:int', cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean',
         cluster.tunnel_migration: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean'}
+        description: add a new cluster to the data center
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks|rel=get
+  description: get the list of networks for a cluster in a data center
   request:
     body:
       parameterType: null
@@ -1560,6 +1752,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=get
+  description: get the details of the specified network in a cluster in the specified data center
   request:
     body:
       parameterType: null
@@ -1567,6 +1760,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=delete
+  description: delete the specified network in a cluster in the specified data center
   request:
     body:
       parameterType: null
@@ -1576,29 +1770,34 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks/{network:id}|rel=update
+  description: update the specified network in a cluster in the specified data center
   request:
     body:
       parameterType: Network
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {network.display: 'xs:boolean', network.usages.usage--COLLECTION: {usage: 'xs:string'}}
+        description: update the specified network in a cluster in the specified data center. Display is provided here for backwards compatibility.
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/networks|rel=add
+  description: add a new network to a cluster in the specified data center.
   request:
     body:
       parameterType: Network
       signatures:
       - mandatoryArguments: {network.id|name: 'xs:string'}
         optionalArguments: {network.usages.usage--COLLECTION: {usage: 'xs:string'}}
+        description: add a new network to a cluster in the specified data center.
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions|rel=get
+  description: get the list of permissions on the cluster in the specified data center.
   request:
     body:
       parameterType: null
@@ -1607,6 +1806,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions/{permission:id}|rel=get
+  description: get the details of the specified permission on the cluster in the specified data center.
   request:
     body:
       parameterType: null
@@ -1614,6 +1814,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions/{permission:id}|rel=delete
+  description: delete the specified permission on the cluster in the specified data center.
   request:
     body:
       parameterType: null
@@ -1623,20 +1824,24 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/clusters/{cluster:id}/permissions|rel=add
+  description: add a new permission on the cluster in the specified data center.
   request:
     body:
       parameterType: Permission
       signatures:
       - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new user level permission on the cluster in the specified data center.
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new group level permission on the cluster in the specified data center.
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/domains|rel=get
+  description: get a list of domains in the system
   request:
     body:
       parameterType: null
@@ -1645,6 +1850,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/domains/{domain:id}|rel=get
+  description: get the details of the specified domain in the system
   request:
     body:
       parameterType: null
@@ -1652,6 +1858,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/domains/{domain:id}/groups|rel=get
+  description: get the list of groups in the specified domain
   request:
     body:
       parameterType: null
@@ -1662,6 +1869,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/domains/{domain:id}/groups/{group:id}|rel=get
+  description: get the details of the specified group in the domain
   request:
     body:
       parameterType: null
@@ -1669,6 +1877,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/domains/{domain:id}/users|rel=get
+  description: get the list of users in the domain
   request:
     body:
       parameterType: null
@@ -1679,6 +1888,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/domains/{domain:id}/users/{user:id}|rel=get
+  description: get the details of the specified user in the domain
   request:
     body:
       parameterType: null
@@ -1686,6 +1896,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/events|rel=get
+  description: get the list of events in the system
   request:
     body:
       parameterType: null
@@ -1697,6 +1908,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/events/{event:id}|rel=get
+  description: get the details of the specified event in the system
   request:
     body:
       parameterType: null
@@ -1704,6 +1916,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/groups|rel=get
+  description: get the list of groups in the system
   request:
     body:
       parameterType: null
@@ -1714,6 +1927,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/events/{event:id}|rel=delete
+  description: delete the specified event from the system
   request:
     body:
       parameterType: null
@@ -1721,6 +1935,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/events|rel=add
+  description: add a new event to the system
   request:
     body:
       parameterType: Event
@@ -1729,12 +1944,14 @@ actions:
         optionalArguments:  {event.flood_rate: 'xs:int', event.host.id: 'xs:string',event.user.id: 'xs:string',
                            event.vm.id: 'xs:string',event.storage_domain.id: 'xs:string',event.template.id: 'xs:string',
                            event.cluster.id: 'xs:string',event.data_center.id: 'xs:string'}
+        description: add a new event to the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/groups/{group:id}|rel=get
+  description: get the details of the specified group in the system
   request:
     body:
       parameterType: null
@@ -1742,6 +1959,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/groups/{group:id}|rel=delete
+  description: delete the specified group in the system
   request:
     body:
       parameterType: null
@@ -1751,16 +1969,19 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/groups|rel=add
+  description: add a new group to the system
   request:
     body:
       parameterType: Group
       signatures:
       - mandatoryArguments: {group.name: 'xs:string'}
+        description: add a new group to the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/groups/{group:id}/permissions|rel=get
+  description: get list of permissions for the group in the system
   request:
     body:
       parameterType: null
@@ -1769,6 +1990,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/groups/{group:id}/permissions/{permission:id}|rel=get
+  description: get the details of the specified permission for the group in the system
   request:
     body:
       parameterType: null
@@ -1776,6 +1998,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/groups/{group:id}/permissions/{permission:id}|rel=delete
+  description: delete the specified permission from the group in the system
   request:
     body:
       parameterType: null
@@ -1785,30 +2008,39 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/groups/{group:id}/permissions|rel=add
+  description: add a new permission to the group in the system
   request:
     body:
       parameterType: Permission
       signatures:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.data_center.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new permission on the data center to the group in the system
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.cluster.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new permission on the cluster to the group in the system
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.host.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new permission on the host to the group in the system
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.storage_domain.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new permission on the storage domain to the group in the system
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.vm.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new permission on the vm to the group in the system
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.vmpool.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new permission on the vm pool to the group in the system
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.template.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new permission on the template to the group in the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/groups/{group:id}/roles|rel=get
+  description: get the list of roles assigned to the specified group
   request:
     body:
       parameterType: null
@@ -1817,6 +2049,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/groups/{group:id}/roles/{role:id}|rel=get
+  description: get the details of the specified role assigned to a group
   request:
     body:
       parameterType: null
@@ -1824,6 +2057,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/groups/{group:id}/roles/{role:id}|rel=delete
+  description: delete the specified role assigned to a group
   request:
     body:
       parameterType: null
@@ -1833,6 +2067,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/groups/{group:id}/roles|rel=add
+  description: add a new role to the specified group
   request:
     body:
       parameterType: Role
@@ -1844,6 +2079,7 @@ actions:
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/groups/{group:id}/roles/{role:id}/permits|rel=get
+  description: get the permits for the specified role in a group
   request:
     body:
       parameterType: null
@@ -1852,6 +2088,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/groups/{group:id}/roles/{role:id}/permits/{permit:id}|rel=get
+  description: get details of the specified permit for a role in a group
   request:
     body:
       parameterType: null
@@ -1859,6 +2096,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/groups/{group:id}/roles/{role:id}/permits/{permit:id}|rel=delete
+  description: delete the specified permit for a role in a group
   request:
     body:
       parameterType: null
@@ -1868,6 +2106,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/groups/{group:id}/roles/{role:id}/permits|rel=add
+  description: add a new permit for a role in a group
   request:
     body:
       parameterType: Permit
@@ -1880,6 +2119,7 @@ actions:
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/groups/{group:id}/tags|rel=get
+  description: get the list of tags attached to a given group
   request:
     body:
       parameterType: null
@@ -1888,6 +2128,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/groups/{group:id}/tags/{tag:id}|rel=get
+  description: get details of the specified tag attached to a given group
   request:
     body:
       parameterType: null
@@ -1895,6 +2136,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/groups/{group:id}/tags/{tag:id}|rel=delete
+  description: delete the specified tag attached to a given group
   request:
     body:
       parameterType: null
@@ -1904,6 +2146,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/groups/{group:id}/tags|rel=add
+  description: add a new tag to a given group
   request:
     body:
       parameterType: Tag
@@ -1916,6 +2159,7 @@ actions:
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts|rel=get
+  description: get the list of hosts in the system
   request:
     body:
       parameterType: null
@@ -1927,6 +2171,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/hosts/{host:id}|rel=get
+  description: get the details of the specified host in the system
   request:
     body:
       parameterType: null
@@ -1936,6 +2181,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/hosts/{host:id}|rel=delete
+  description: delete the specified host in the system
   request:
     body:
       required: false
@@ -1943,12 +2189,14 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.force: 'xs:boolean'}
+        description: delete the specified host in the system
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Content-Type: {value: application/xml|json, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}|rel=update
+  description: update the specified host in the system
   request:
     body:
       parameterType: Host
@@ -1961,6 +2209,7 @@ actions:
           host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'},
           host.power_management.pm_proxy--COLLECTION: {propietary : 'xs:string'}, host.power_management.agents.agent--COLLECTION:{type: 'xs:string',
           address: 'xs:string', user_name: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}}
+        description: update the specified host in the system. This is deprecated and is provided only for backwards compatibility
       - mandatoryArguments: {}
         optionalArguments: {host.name: 'xs:string', host.comment: 'xs:string', host.address: 'xs:string', host.ssh.password: 'xs:string',
           host.ssh.port: 'xs:int', host.ssh.fingerprint: 'xs:string', host.ssh.authentication_type: 'xs:string', host.display.address: 'xs:string',
@@ -1970,12 +2219,14 @@ actions:
           option.value: 'xs:string'},  host.power_management.pm_proxy--COLLECTION: {propietary : 'xs:string'},
           host.power_management.agents.agent--COLLECTION:{type: 'xs:string', address: 'xs:string', user_name: 'xs:string', password: 'xs:string',
           options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}}
+        description: update the specified host in the system
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts|rel=add
+  description: add a new host to the system
   request:
     body:
       parameterType: Host
@@ -1987,6 +2238,7 @@ actions:
           host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'},
           host.power_management.pm_proxy--COLLECTION: {propietary : 'xs:string'}, host.power_management.agents.agent--COLLECTION:{type: 'xs:string',
           address: 'xs:string', user_name: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}, host.reboot_after_installation: 'xs:boolean', host.override_iptables: 'xs:boolean'}
+        description: add a new host to the system providing the host root password. This has been deprecated and provided for backwards compatibility
       - mandatoryArguments: {host.name: 'xs:string', host.address: 'xs:string', host.ssh.password: 'xs:string', host.cluster.id|name: 'xs:string'}
         optionalArguments: {host.comment: 'xs:string', host.ssh.port: 'xs:int', host.ssh.fingerprint: 'xs:string', host.ssh.authentication_type: 'xs:string', host.port: 'xs:int',
           host.display.address: 'xs:string', host.storage_manager.priority: 'xs:int', host.power_management.type: 'xs:string',
@@ -1994,12 +2246,14 @@ actions:
           host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'},
           host.power_management.pm_proxy--COLLECTION: {propietary : 'xs:string'}, host.power_management.agents.agent--COLLECTION:{type: 'xs:string', address: 'xs:string',
           user_name: 'xs:string', password: 'xs:string', options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}}, host.reboot_after_installation: 'xs:boolean', host.override_iptables: 'xs:boolean'}
+        description: add a new host to the system providing the ssh password or fingerprint
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/activate|rel=activate
+  description: activate the specified host in the system
   request:
     body:
       parameterType: Action
@@ -2009,6 +2263,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/forceselectspm|rel=forceselectspm
+  description: force the specified to be selected as storage pool manager
   request:
     body:
       parameterType: Action
@@ -2018,6 +2273,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/approve|rel=approve
+  description: approve specified host to be added to the engine
   request:
     body:
       parameterType: Action
@@ -2025,11 +2281,13 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.cluster.id|name: 'xs:string', action.async: 'xs:boolean',
           action.grace_period.expiry: 'xs:long'}
+        description: approve specified host to be added to the engine. this occurs when the host registers itself with the engine
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/commitnetconfig|rel=commitnetconfig
+  description: commit the changes made to network configuration of the host
   request:
     body:
       parameterType: Action
@@ -2039,6 +2297,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/deactivate|rel=deactivate
+  description: deactivate the specified host
   request:
     body:
       parameterType: Action
@@ -2048,17 +2307,20 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/fence|rel=fence
+  description: initiate the fence operation on the host which has become non-responsive after multiple retries to connect to it
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.fence_type: 'xs:string'}
         optionalArguments: {}
+        description: initiate the fence operation on the host which has become non-responsive after multiple retries to connect to it
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/install|rel=install
+  description: install vdsm and other packages required to get the host ready to be used in the engine
   request:
     body:
       parameterType: Action
@@ -2066,33 +2328,40 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {action.root_password: 'xs:string', action.image: 'xs:string'}
         deprecated: true
+        description: install vdsm and other packages required to get the host ready to be used in the engine providing the root password. This has been deprecated
       - mandatoryArguments: {}
         optionalArguments: {action.ssh.password: 'xs:string', action.image: 'xs:string'}
+        description: install vdsm and other packages required to get the host ready to be used in the engine providing thre ssh password
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/iscsidiscover|rel=iscsidiscover
+  description: initiate the command to discover the iscsi targets and map the targets to the storage server connections
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.iscsi.address: 'xs:string'}
+        description: initiate the command to discover the iscsi targets and map the targets to the storage server connections
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/iscsilogin|rel=iscsilogin
+  description: login to the specified iscsi target at the specified address
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.iscsi.address: 'xs:string', action.iscsi.target: 'xs:string'}
+        description: login to the specified iscsi target at the specified address
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/nics|rel=get
+  description: get the list of network interfaces for the host
   request:
     body:
       parameterType: null
@@ -2101,6 +2370,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/hosts/{host:id}/nics/{nic:id}|rel=get
+  description: get the details of the specified network interface for the host
   request:
     body:
       parameterType: null
@@ -2108,6 +2378,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/hosts/{host:id}/nics/{nic:id}|rel=delete
+  description: delete the specified network interface for the host
   request:
     body:
       parameterType: null
@@ -2117,6 +2388,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/nics/{nic:id}|rel=update
+  description: update the specified network interface for the host
   request:
     body:
       parameterType: HostNIC
@@ -2134,12 +2406,14 @@ actions:
           hostnic.ip.address: xs:string
           hostnic.ip.netmask: xs:string
           hostnic.ip.mtu: xs:int
+        description: update the specified network interface for the host
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/nics|rel=add
+  description: add a new network interface for the host
   request:
     body:
       parameterType: HostNIC
@@ -2148,12 +2422,14 @@ actions:
         optionalArguments:
           hostnic.bonding.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string',
             type: 'xs:string'}
+        description: add a new network interface for the host
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/nics/setupnetworks|rel=setupnetworks
+  description: initiate the command to setup networks for the network interface card of the specified host
   request:
     body:
       parameterType: Action
@@ -2168,33 +2444,39 @@ actions:
           action.checkConnectivity: xs:boolean
           action.connectivityTimeout: xs:int
           action.force: xs:boolean
+        description: initiate the command to setup networks for the network interface card of the specified host
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/nics/{nic:id}/attach|rel=attach
+  description: attach the network interface card to the specified host
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.network.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: attach the network interface card to the specified host
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/nics/{nic:id}/detach|rel=detach
+  description: detach the network interface card from the specified host
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.async: 'xs:boolean'}
+        description: detach the network interface card from the specified host
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/nics/{nic:id}/statistics|rel=get
+  description: get the statistics for the network interface card attached to the specified host
   request:
     body:
       parameterType: null
@@ -2203,6 +2485,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/hosts/{host:id}/nics/{nic:id}/statistics/{statistic:id}|rel=get
+  description: get the details of the specified statistics for the network interface card attached to the specified host
   request:
     body:
       parameterType: null
@@ -2210,6 +2493,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/hosts/{host:id}/permissions|rel=get
+  description: get the list of permissions for the host
   request:
     body:
       parameterType: null
@@ -2218,6 +2502,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/hosts/{host:id}/permissions/{permission:id}|rel=get
+  description: get the details of the specified permission for the host
   request:
     body:
       parameterType: null
@@ -2225,6 +2510,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/hosts/{host:id}/permissions/{permission:id}|rel=delete
+  description: delete the specified permission for the host
   request:
     body:
       parameterType: null
@@ -2234,20 +2520,24 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/permissions|rel=add
+  description: add a new permission for the host
   request:
     body:
       parameterType: Permission
       signatures:
       - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new user level permission for the host
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new group level permission for the host
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/statistics|rel=get
+  description: get the statistics for the host
   request:
     body:
       parameterType: null
@@ -2256,6 +2546,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/hosts/{host:id}/statistics/{statistic:id}|rel=get
+  description: get the details of the specified statistics for the host
   request:
     body:
       parameterType: null
@@ -2263,6 +2554,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/hosts/{host:id}/storage|rel=get
+  description: get the list of all logical units and volume groups for the host
   request:
     body:
       parameterType: null
@@ -2271,6 +2563,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/hosts/{host:id}/storage/{storag:id}|rel=get
+  description: get the details of the specified logical unit or volume group for the host
   request:
     body:
       parameterType: null
@@ -2278,6 +2571,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/hosts/{host:id}/tags|rel=get
+  description: get the list of all tags added to the host
   request:
     body:
       parameterType: null
@@ -2286,6 +2580,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/hosts/{host:id}/tags/{tag:id}|rel=get
+  description: get the details of the specified tag added to the host
   request:
     body:
       parameterType: null
@@ -2293,6 +2588,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/hosts/{host:id}/tags/{tag:id}|rel=delete
+  description: delete the specified tag added to the host
   request:
     body:
       parameterType: null
@@ -2302,6 +2598,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/hosts/{host:id}/tags|rel=add
+  description: add a new tag to the host
   request:
     body:
       parameterType: Tag
@@ -2313,6 +2610,7 @@ actions:
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/networks|rel=get
+  description: get the list of all networks in the system
   request:
     body:
       parameterType: null
@@ -2323,6 +2621,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/networks/{network:id}|rel=get
+  description: get the details of the specified network in the system
   request:
     body:
       parameterType: null
@@ -2330,6 +2629,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/networks/{network:id}|rel=delete
+  description: delete the specified network in the system
   request:
     body:
       parameterType: null
@@ -2339,6 +2639,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/networks/{network:id}|rel=update
+  description: update the specified network in the system
   request:
     body:
       parameterType: Network
@@ -2347,11 +2648,13 @@ actions:
         optionalArguments: {network.name: 'xs:string', network.description: 'xs:string', network.comment: 'xs:string', network.vlan.id: 'xs:string',
           network.ip.address: 'xs:string', network.ip.gateway: 'xs:string', network.ip.netmask: 'xs:string',
           network.display: 'xs:boolean', network.stp: 'xs:boolean', network.mtu: 'xs:int'}
+        description: update the specified network in the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/networks|rel=add
+  description: add a new network to the system
   request:
     body:
       parameterType: Network
@@ -2360,12 +2663,14 @@ actions:
         optionalArguments: {network.description: 'xs:string', network.comment: 'xs:string', network.vlan.id: 'xs:string',
           network.ip.address: 'xs:string', network.ip.gateway: 'xs:string', network.ip.netmask: 'xs:string',
           network.display: 'xs:boolean', network.stp: 'xs:boolean', network.mtu: 'xs:int', network.profile_required: 'xs:boolean'}
+        description: add a new network to the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/networks/{network:id}/permissions|rel=get
+  description: get the list of all permissions on a network in the system
   request:
     body:
       parameterType: null
@@ -2374,6 +2679,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/networks/{network:id}/permissions/{permission:id}|rel=get
+  description: get the details of the specified permission on a network in the system
   request:
     body:
       parameterType: null
@@ -2381,6 +2687,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/networks/{network:id}/permissions/{permission:id}|rel=delete
+  description: delete the specified permission on a network in the system
   request:
     body:
       parameterType: null
@@ -2390,20 +2697,24 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/networks/{network:id}/permissions|rel=add
+  description: add a new permission on a network in the system
   request:
     body:
       parameterType: Permission
       signatures:
       - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new user level permission on a network in the system
       - mandatoryArguments: {permission.group.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new group level permission on a network in the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/networks/{network:id}/vnicprofiles|rel=get
+  description: get the list of all virtual network interface card profiles for the network
   request:
     body:
       parameterType: null
@@ -2412,6 +2723,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/networks/{network:id}/vnicprofiles/{vnicprofile:id}|rel=get
+  description: get the details of the specified virtual network interface card profile for the network
   request:
     body:
       parameterType: null
@@ -2419,6 +2731,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/networks/{network:id}/vnicprofiles/{vnicprofile:id}|rel=delete
+  description: delete the specified virtual network interface card profile for the network
   request:
     body:
       parameterType: null
@@ -2428,6 +2741,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/networks/{network:id}/vnicprofiles|rel=add
+  description: add a new virtual network interface card profile for the network
   request:
     body:
       parameterType: VnicProfile
@@ -2435,12 +2749,14 @@ actions:
       - mandatoryArguments: {vnicprofile.name: 'xs:string'}
         optionalArguments: {vnicprofile.description: 'xs:string', vnicprofile.port_mirroring: 'xs:boolean',
         vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
+        description: add a new virtual network interface card profile for the network
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vnicprofiles|rel=get
+  description: get the list of all virtual network interface card profiles in the system
   request:
     body:
       parameterType: null
@@ -2449,6 +2765,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vnicprofiles/{vnicprofile:id}|rel=get
+  description: get the details of the specified virtual network interface card profile in the system
   request:
     body:
       parameterType: null
@@ -2456,6 +2773,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vnicprofiles/{vnicprofile:id}|rel=delete
+  description: delete the specified virtual network interface card profile in the system
   request:
     body:
       parameterType: null
@@ -2465,6 +2783,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vnicprofiles/{vnicprofile:id}|rel=update
+  description: update the specified virtual network interface card profile in the system
   request:
     body:
       parameterType: VnicProfile
@@ -2472,11 +2791,13 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {vnicprofile.name: 'xs:string', vnicprofile.description: 'xs:string', vnicprofile.port_mirroring: 'xs:boolean',
         vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
+        description: update the specified virtual network interface card profile in the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vnicprofiles|rel=add
+  description: add a new virtual network interface card profile to the system
   request:
     body:
       parameterType: VnicProfile
@@ -2484,12 +2805,14 @@ actions:
       - mandatoryArguments: {vnicprofile.network.id: 'xs:string', vnicprofile.name: 'xs:string'}
         optionalArguments: {vnicprofile.description: 'xs:string', vnicprofile.port_mirroring: 'xs:boolean',
         vnicprofile.custom_properties.custom_property--COLLECTION: {custom_property.name: 'xs:string', custom_property.value: 'xs:string'}}
+        description: add a new virtual network interface card profile to the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vnicprofiles/{vnicprofile:id}/permissions|rel=get
+  description: get the list of all permissions on the virtual network interface card profile in the system
   request:
     body:
       parameterType: null
@@ -2498,6 +2821,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vnicprofiles/{vnicprofile:id}/permissions/{permission:id}|rel=get
+  description: get details of the specified permission on the virtual network interface card profile in the system
   request:
     body:
       parameterType: null
@@ -2505,6 +2829,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vnicprofiles/{vnicprofiles:id}/permissions/{permission:id}|rel=delete
+  description: get details of the specified permission on the virtual network interface card profile in the system
   request:
     body:
       parameterType: null
@@ -2514,20 +2839,24 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vnicprofiles/{vnicprofile:id}/permissions|rel=add
+  description: add a new permission on the virtual network interface card profile in the system
   request:
     body:
       parameterType: Permission
       signatures:
       - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new user level permission on the virtual network interface card profile in the system
       - mandatoryArguments: {permission.group.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new group level permission on the virtual network interface card profile in the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/roles|rel=get
+  description: get the list of all roles in the system
   request:
     body:
       parameterType: null
@@ -2536,6 +2865,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/roles/{role:id}|rel=get
+  description: get the details of the specified role in the system
   request:
     body:
       parameterType: null
@@ -2543,6 +2873,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/roles/{role:id}|rel=delete
+  description: get the details of the specified role in the system
   request:
     body:
       parameterType: null
@@ -2552,29 +2883,34 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/roles|rel=add
+  description: add a new role to the system
   request:
     body:
       parameterType: Role
       signatures:
       - mandatoryArguments: {role.name: 'xs:string', role.permits.permit--COLLECTION: {permit.id: 'xs:string'}}
         optionalArguments: {role.description: 'xs:string', role.administrative: 'xs:boolean'}
+        description: add a new role to the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/roles/{role:id}|rel=update
+  description: update the specified role in the system
   request:
     body:
       parameterType: Role
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {role.permits.permit--COLLECTION: {permit.id: 'xs:string'}, role.description: 'xs:string'}
+        description: update the specified role in the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/roles/{role:id}/permits|rel=get
+  description: get the list of all permits for the specified role in the system
   request:
     body:
       parameterType: null
@@ -2583,6 +2919,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/roles/{role:id}/permits/{permit:id}|rel=get
+  description: get the details of the specified permit for the role in the system
   request:
     body:
       parameterType: null
@@ -2590,6 +2927,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/roles/{role:id}/permits/{permit:id}|rel=delete
+  description: delete the specified permit for the role in the system
   request:
     body:
       parameterType: null
@@ -2599,6 +2937,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/roles/{role:id}/permits|rel=add
+  description: add a new permit for the role in the system
   request:
     body:
       parameterType: Permit
@@ -2611,6 +2950,7 @@ actions:
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/tags|rel=get
+  description: get the list of tags in the system
   request:
     body:
       parameterType: null
@@ -2619,6 +2959,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/tags/{tag:id}|rel=get
+  description: get the details of the specified tag in the system
   request:
     body:
       parameterType: null
@@ -2626,6 +2967,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/tags/{tag:id}|rel=delete
+  description: delete the specified tag in the system
   request:
     body:
       parameterType: null
@@ -2635,17 +2977,20 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/tags/{tag:id}|rel=update
+  description: update the specified tag in the system
   request:
     body:
       parameterType: Tag
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {tag.name: 'xs:string', tag.description: 'xs:string', tag.parent.tag.name: 'xs:string'}
+        description: update the name, description or parent tag of the specified tag in the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/tags|rel=add
+  description: add a new tag to the system
   request:
     body:
       parameterType: Tag
@@ -2657,6 +3002,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/templates|rel=get
+  description: get the list of all templates in the system
   request:
     body:
       parameterType: null
@@ -2668,6 +3014,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/templates/{template:id}|rel=get
+  description: get the details of the specified template in the system
   request:
     body:
       parameterType: null
@@ -2676,6 +3023,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/templates/{template:id}|rel=delete
+  description: delete the specified template in the system
   request:
     body:
       parameterType: null
@@ -2685,6 +3033,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/templates/{template:id}|rel=update
+  description: update the specified template in the system
   request:
     body:
       parameterType: Template
@@ -2723,11 +3072,13 @@ actions:
           template.usb.enabled: xs:boolean
           template.usb.type: xs:string
           template.tunnel_migration: xs:boolean
+        description: update the specified template in the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/templates|rel=add
+  description: add a new template to the system
   request:
     body:
       parameterType: Template
@@ -2768,12 +3119,14 @@ actions:
           template.vm.disks.disk--COLLECTION: {disk.id: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
           template.permissions.clone: xs:boolean
           template.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
+        description: add a new template to the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/templates/{template:id}/export|rel=export
+  description: export the specified template to the export domain
   request:
     body:
       parameterType: Action
@@ -2781,11 +3134,13 @@ actions:
       - mandatoryArguments: {action.storage_domain.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.exclusive: 'xs:boolean',
           action.grace_period.expiry: 'xs:long'}
+        description: export the specified template to the export domain
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/templates/{template:id}/cdroms|rel=get
+  description: get the list of cdroms attached to the specified template
   request:
     body:
       parameterType: null
@@ -2794,6 +3149,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/templates/{template:id}/cdroms/{cdrom:id}|rel=get
+  description: get the details of the specified cdrom attached to the template
   request:
     body:
       parameterType: null
@@ -2801,6 +3157,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/templates/{template:id}/disks|rel=get
+  description: get the list of disks attached to the template
   request:
     body:
       parameterType: null
@@ -2809,6 +3166,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/templates/{template:id}/disks/{disk:id}|rel=get
+  description: get the details of the specified disk attached to the template
   request:
     body:
       parameterType: null
@@ -2816,6 +3174,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/templates/{template:id}/disks/{disk:id}|rel=delete
+  description: delete the specified disk attached to the template
   request:
     body:
       required: false
@@ -2829,18 +3188,21 @@ actions:
       Content-Type: {value: application/xml|json, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/templates/{template:id}/disks/{disk:id}/copy|rel=copy
+  description: copy the specified disk attached to the template to a specific storage domain
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
         optionalArguments: {action.async: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+        description: copy the specified disk attached to the template to a specific storage domain
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
 - name: /api/templates/{template:id}/nics|rel=get
+  description: get the list of network interface cards attached to the template
   request:
     body:
       parameterType: null
@@ -2849,21 +3211,25 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/templates/{template:id}/nics|rel=add
+  description: add a new network interface card to the template
   request:
     body:
       parameterType: NIC
       signatures:
       - mandatoryArguments: {nic.name: 'xs:string'}
         optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
+        description: add a new network interface card to the template using a virtual network interface card profile
       - mandatoryArguments: {nic.name: 'xs:string'}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
         deprecated: true
+        description: add a new network interface card to the template using a network with optional port mirroring options. This has been deprecated
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/templates/{template:id}/nics/{nic:id}|rel=get
+  description: get the details of the specified network interface card attached to the template
   request:
     body:
       parameterType: null
@@ -2871,6 +3237,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/templates/{template:id}/nics/{nic:id}|rel=delete
+  description: delete the specified network interface card attached to the template
   request:
     body:
       parameterType: null
@@ -2880,6 +3247,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/templates/{template:id}/nics/{nic:id}|rel=update
+  description: update the specified network interface card attached to the template
   request:
     body:
       parameterType: NIC
@@ -2894,6 +3262,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/templates/{template:id}/permissions|rel=get
+  description: get the list of all permissions for the specified template
   request:
     body:
       parameterType: null
@@ -2902,6 +3271,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/templates/{template:id}/permissions/{permission:id}|rel=get
+  description: get the details of the specified permission on the template
   request:
     body:
       parameterType: null
@@ -2909,6 +3279,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/templates/{template:id}/permissions/{permission:id}|rel=delete
+  description: delete the specified permission on the template
   request:
     body:
       parameterType: null
@@ -2918,20 +3289,24 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/templates/{template:id}/permissions|rel=add
+  description: add a new permission on the template
   request:
     body:
       parameterType: Permission
       signatures:
       - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new user level permission on the template
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new role permission on the template
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/users|rel=get
+  description: get the list of all users registered in the system
   request:
     body:
       parameterType: null
@@ -2942,6 +3317,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/users/{user:id}|rel=get
+  description: get the details of the specified user registered in the system
   request:
     body:
       parameterType: null
@@ -2951,17 +3327,20 @@ actions:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/users|rel=add
+  description: add a new user to the system
   request:
     body:
       parameterType: User
       signatures:
       - mandatoryArguments: {user.user_name: 'xs:string', user.domain.id|name: 'xs:string'}
+        description: add a new user to the specified domain with the specified user name
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/users/{user:id}|rel=delete
+  description: delete the from the domain
   request:
     body:
       parameterType: null
@@ -2971,6 +3350,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/users/{user:id}/permissions|rel=get
+  description: get the list of all permissions for the user
   request:
     body:
       parameterType: null
@@ -2979,6 +3359,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/users/{user:id}/permissions/{permission:id}|rel=get
+  description: get the details of the specified permission for the user
   request:
     body:
       parameterType: null
@@ -2986,6 +3367,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/users/{user:id}/permissions/{permission:id}|rel=delete
+  description: delete the specified permission for the user
   request:
     body:
       parameterType: null
@@ -2995,30 +3377,39 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/users/{user:id}/permissions|rel=add
+  description: add a new permission for the user
   request:
     body:
       parameterType: Permission
       signatures:
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.data_center.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new tole permission for the user on the data center
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.cluster.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new tole permission for the user on the cluster
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.host.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new tole permission for the user on the host
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.storage_domain.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new tole permission for the user on the storage domain
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.vm.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new tole permission for the user on the vm
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.vmpool.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new tole permission for the user on the vm pool
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.template.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new tole permission for the user on the template
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/users/{user:id}/roles|rel=get
+  description: get the list of roles assigned to the user
   request:
     body:
       parameterType: null
@@ -3027,6 +3418,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/users/{user:id}/roles/{role:id}|rel=get
+  description: get the details of the specified role assigned to the user
   request:
     body:
       parameterType: null
@@ -3034,6 +3426,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/users/{user:id}/roles/{role:id}|rel=delete
+  description: delete the specified role assigned to the user
   request:
     body:
       parameterType: null
@@ -3043,17 +3436,20 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/users/{user:id}/roles|rel=add
+  description: add a new role to the user
   request:
     body:
       parameterType: Role
       signatures:
       - mandatoryArguments: {role.id: 'xs:string'}
+        description: add a new role to the user
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/users/{user:id}/roles/{role:id}/permits|rel=get
+  description: get the list of permits for the role assigned to the user
   request:
     body:
       parameterType: null
@@ -3062,6 +3458,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/users/{user:id}/roles/{role:id}/permits/{permit:id}|rel=get
+  description: get the details of the specified permit for the role assigned to the user
   request:
     body:
       parameterType: null
@@ -3069,6 +3466,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/users/{user:id}/roles/{role:id}/permits/{permit:id}|rel=delete
+  description: delete the specified permit for the role assigned to the user
   request:
     body:
       parameterType: null
@@ -3078,18 +3476,21 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/users/{user:id}/roles/{role:id}/permits|rel=add
+  description: add a new permit for the role assigned to the user
   request:
     body:
       parameterType: Permit
       signatures:
       - mandatoryArguments: {permit.id|name: 'xs:string'}
         optionalArguments: {}
+        description: add a new permit for the role assigned to the user
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/users/{user:id}/tags|rel=get
+  description: get the list of tags attached to the user
   request:
     body:
       parameterType: null
@@ -3098,6 +3499,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/users/{user:id}/tags/{tag:id}|rel=get
+  description: get the details of the specified tag attached to the user
   request:
     body:
       parameterType: null
@@ -3105,6 +3507,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/users/{user:id}/tags/{tag:id}|rel=delete
+  description: delete the specified tag attached to the user
   request:
     body:
       parameterType: null
@@ -3114,17 +3517,20 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/users/{user:id}/tags|rel=add
+  description: add a new tag to the user
   request:
     body:
       parameterType: Tag
       signatures:
       - mandatoryArguments: {tag.id|name: 'xs:string'}
+        description: add a new tag to the user
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vmpools|rel=get
+  description: get the list of all virtual machine pools in the system
   request:
     body:
       parameterType: null
@@ -3136,6 +3542,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/vmpools/{vmpool:id}|rel=get
+  description: get the details of the specified virtual machine pool in the system
   request:
     body:
       parameterType: null
@@ -3144,6 +3551,7 @@ actions:
     headers:
       Filter: {value: true|false, required: false}
 - name: /api/vmpools/{vmpool:id}|rel=delete
+  description: delete the specified virtual machine pool in the system
   request:
     body:
       parameterType: null
@@ -3153,6 +3561,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vmpools/{vmpool:id}|rel=update
+  description: update the specified virtual machine pool in the system
   request:
     body:
       parameterType: VmPool
@@ -3160,11 +3569,13 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {vmpool.cluster.id|name: 'xs:string', vmpool.template.id|name: 'xs:string',
           vmpool.name: 'xs:string', vmpool.comment: 'xs:string', vmpool.size: 'xs:int', vmpool.max_user_vms: 'xs:int'}
+        description: update the specified virtual machine pool in the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vmpools/{vmpool:id}/allocatevm|rel=allocatevm
+  description: attach the user to a vm from the vmpool and run the vm
   request:
     body:
       parameterType: Action
@@ -3176,6 +3587,7 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vmpools|rel=add
+  description: add anew vm pool to the system
   request:
     body:
       parameterType: VmPool
@@ -3183,12 +3595,14 @@ actions:
       - mandatoryArguments: {vmpool.cluster.id|name: 'xs:string', vmpool.template.id|name: 'xs:string',
           vmpool.name: 'xs:string'}
         optionalArguments: {vmpool.comment: 'xs:string', vmpool.size: 'xs:int', vmpool.max_user_vms: 'xs:int'}
+        description: add a new vm pool to the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vmpools/{vmpool:id}/permissions|rel=get
+  description: get the list of permissions for the specified vm pool
   request:
     body:
       parameterType: null
@@ -3197,6 +3611,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/vmpools/{vmpool:id}/permissions/{permission:id}|rel=get
+  description: get the details of the specified permission on the vm pool
   request:
     body:
       parameterType: null
@@ -3204,6 +3619,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/vmpools/{vmpool:id}/permissions/{permission:id}|rel=delete
+  description: delete the specified permission on the vm pool
   request:
     body:
       parameterType: null
@@ -3213,20 +3629,24 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/vmpools/{vmpool:id}/permissions|rel=add
+  description: add a new permission on the vm pool
   request:
     body:
       parameterType: Permission
       signatures:
       - mandatoryArguments: {permission.user.id: 'xs:string', permission.role.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new user level permission on the vm pool
       - mandatoryArguments: {permission.role.id: 'xs:string', permission.group.id: 'xs:string'}
         optionalArguments: {}
+        description: add a new group level permission on the vm pool
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes|rel=get
+  description: get the list of gluster volumes attached to the cluster
   request:
     body:
       parameterType: null
@@ -3236,6 +3656,7 @@ actions:
       case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/clusters/{cluster:id}/glustervolumes|rel=add
+  description: add a new gluster volume to the cluster
   request:
     body:
       parameterType: GlusterVolume
@@ -3249,45 +3670,53 @@ actions:
           gluster_volume.replica_count: 'xs:unsignedShort'
           gluster_volume.stripe_count: 'xs:unsignedShort'
           gluster_volume.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'}
+        description: add a new gluster volume to the cluster at the specified gluster fs server
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/start|rel=start
+  description: start the gluster volume attached to the cluster
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.force: 'xs:boolean'}
+        description: start the gluster volume attached to the cluster with an optional argument to force the operation
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stop|rel=stop
+  description: stop the gluster volume attached to the cluster
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.force: 'xs:boolean'}
+        description: stop the gluster volume attached to the cluster with an optional argument to force the operation
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/rebalance|rel=rebalance
+  description: invoke the rebalance command on the gluster volume attached to the
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.fix_layout: 'xs:boolean', action.force: 'xs:boolean'}
+        description: invoke the rebalance command on the gluster volume attached to the with optional arguments to fix the lay and force the operation
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/setoption|rel=setoption
+  description: set an option for the gluster volume attached to the cluster
   request:
     body:
       parameterType: Action
@@ -3299,28 +3728,33 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetoption|rel=resetoption
+  description: reset an option for the gluster volume attached to the cluster
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.option.name: 'xs:string', action.force: 'xs:boolean'}
         optionalArguments: {}
+        description: reset an option for the gluster volume attached to the cluster with mandatory option to force the operation
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/resetalloptions|rel=resetalloptions
+  description: resets all options for the gluster volume attached to the cluster
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {}
+        description: resets all options for the gluster volume attached to the cluster
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=get
+  description: get the list of all bricks in the gluster volume attached to the cluster
   request:
     body:
       parameterType: null
@@ -3329,6 +3763,7 @@ actions:
     headers:
       All-Content: {value: true|false, required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=add
+  description: add a new brick to the gluster volume attached to the cluster
   request:
     body:
       parameterType: Bricks
@@ -3336,12 +3771,14 @@ actions:
       - mandatoryArguments:
           brick--COLLECTION: {brick.server_id: 'xs:string', brick.brick_dir: 'xs:string'}
         optionalArguments: {replica_count: 'xs:unsignedShort', stripe_count: 'xs:unsignedShort'}
+        description: add a new brick to the gluster volume attached to the cluster
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}|rel=get
+  description: get the details of the specified brick in the gluster volume attached to the cluster
   request:
     body:
       parameterType: null
@@ -3350,6 +3787,7 @@ actions:
     headers:
       All-Content: {value: true|false, required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks|rel=delete
+  description: get the list of all bricks in the gluster volume attached to the cluster
   request:
     body:
       parameterType: Bricks
@@ -3357,22 +3795,26 @@ actions:
       - mandatoryArguments:
           bricks--COLLECTION: {brick.id: 'xs:string'}
         optionalArguments: {}
+        description: get the list of all bricks in the gluster volume attached to the cluster
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/replace|rel=replace
+  description: replace the specified brick with a new brick directory in the gluster volume attached to the cluster
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.brick.server_id: 'xs:string', action.brick.brick_dir: 'xs:string'}
         optionalArguments: {action.force: 'xs:boolean'}
+        description: replace the specified brick with a new brick directory in the gluster volume attached to the cluster
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/statistics|rel=get
+  description: get the statistics for the specified brick in the gluster volume attached to the cluster
   request:
     body:
       parameterType: null
@@ -3381,6 +3823,7 @@ actions:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/bricks/{brick:id}/statistics/{statistic:id}|rel=get
+  description: get the details of the specified statistics for the brick in the gluster volume attached to the cluster
   request:
     body:
       parameterType: null
@@ -3388,6 +3831,7 @@ actions:
     urlparams: {}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/disks|rel=get
+  description: get the list of all disks in the storage domain
   request:
     body:
       parameterType: null
@@ -3399,6 +3843,7 @@ actions:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
+  description: get the details of the specified disk in the storage domain
   request:
     body:
       parameterType: null
@@ -3407,6 +3852,7 @@ actions:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
+  description: delete the specified disk in the storage domain
   request:
     body:
       parameterType: null
@@ -3416,6 +3862,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/storagedomains/{storagedomain:id}/disks|rel=add
+  description: add a new disk to the storage domain
   request:
     body:
       parameterType: Disk
@@ -3430,6 +3877,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+        description: add a new disk to the storage domain with the specified size allocating space from the storage domain
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
       - mandatoryArguments: {disk.interface: 'xs:string', disk.format: 'xs:string', disk.lun_storage.type: 'xs:string',
           disk.lun_storage.logical_unit--COLLECTION: {logical_unit.id: 'xs:string', logical_unit.address: 'xs:string', logical_unit.port: 'xs:int', logical_unit.target: 'xs:string'}}
@@ -3441,6 +3889,7 @@ actions:
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
           disk.sgio: xs:string
+        description: add a new lun disk to the storage domain
     urlparams:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
@@ -3448,6 +3897,7 @@ actions:
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks|rel=get
+  description: get the list of all disks in the storage domain in the data center
   request:
     body:
       parameterType: null
@@ -3459,6 +3909,7 @@ actions:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=get
+  description: get the details of the specified disk in the storage domain in the data center
   request:
     body:
       parameterType: null
@@ -3467,6 +3918,7 @@ actions:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
+  description: delete the specified disk from the storage domain in the data center
   request:
     body:
       parameterType: null
@@ -3476,6 +3928,7 @@ actions:
     headers:
       Correlation-Id: {value: 'any string', required: false}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks|rel=add
+  description: add a new disk to the storage domain in the data center
   request:
     body:
       parameterType: Disk
@@ -3490,6 +3943,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+        description: add a new disk with the specified size to the storage domain in the data center, allocating space from the storage domain
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
       - mandatoryArguments: {disk.interface: 'xs:string', disk.format: 'xs:string', disk.lun_storage.type: 'xs:string',
           disk.lun_storage.logical_unit--COLLECTION: {logical_unit.id: 'xs:string', logical_unit.address: 'xs:string', logical_unit.port: 'xs:int', logical_unit.target: 'xs:string'}}
@@ -3501,6 +3955,7 @@ actions:
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
           disk.sgio: xs:string
+        description: add a new lun disk to the storage domain in the data center
     urlparams:
       unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
@@ -3509,6 +3964,7 @@ actions:
       Correlation-Id: {value: 'any string', required: false}
 
 - name: /api/jobs|rel=get
+  description: get the list of all external jobs in the system
   request:
     body:
       parameterType: null
@@ -3518,6 +3974,7 @@ actions:
     headers: {}
 
 - name: /api/jobs/{job:id}|rel=get
+  description: get the details of the specified external job in the system
   request:
     body:
       parameterType: null
@@ -3526,12 +3983,14 @@ actions:
     headers: {}
 
 - name: /api/jobs|rel=add
+  description: add a new external job to the system
   request:
     body:
       parameterType: Job
       signatures:
       - mandatoryArguments: {job.description: 'xs:string'}
         optionalArguments: {job.auto_cleared: 'xs:boolean'}
+        description: add a new external job to the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -3539,30 +3998,35 @@ actions:
       Correlation-Id: {value: 'any string', required: false}
 
 - name: /api/jobs/{job:id}/end|rel=end
+  description: end the specified external job in the system
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {action.status.state: 'xs:string'}
         optionalArguments: {action.force: 'xs:boolean'}
+        description: end the specified external job in the system with an optional argument to force the operation
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 
 - name: /api/jobs/{job:id}/clear|rel=clear
+  description: clear the specified external job in the system
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {}
+        description: clear the specified external job in the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 
 - name: /api/jobs/{job:id}/steps|rel=get
+  description: get the list of all steps for the external job in the system
   request:
     body:
       parameterType: null
@@ -3572,6 +4036,7 @@ actions:
     headers: {}
 
 - name: /api/jobs/{job:id}/steps/{step:id}|rel=get
+  description: get the details of the specified step in the external job
   request:
     body:
       parameterType: null
@@ -3580,12 +4045,14 @@ actions:
     headers: {}
 
 - name: /api/jobs/{job:id}/steps|rel=add
+  description: add a new step to the external job
   request:
     body:
       parameterType: Step
       signatures:
       - mandatoryArguments: {step.type: 'xs:string' , step.description: 'xs:string'}
         optionalArguments: {step.job.id: 'xs:string', step.parent_step.id: 'xs:string'}
+        description: add a new step to the external job
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -3593,18 +4060,21 @@ actions:
       Correlation-Id: {value: 'any string', required: false}
 
 - name: /api/jobs/{job:id}/steps/{step:id}/end|rel=end
+  description: invoke the command to end the specified step of an external job
   request:
     body:
       parameterType: Action
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.force: 'xs:boolean', action.status.state: 'xs:string'}
+        description: invoke the command to end the specified step of an external job with an optional agrument to force the operation
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 
 - name: /api/storageconnections|rel=get
+  description: get the list of all storage connections in the system
   request:
     body:
       parameterType: null
@@ -3613,6 +4083,7 @@ actions:
     headers: {}
 
 - name: /api/storageconnections/{storageconnection:id}|rel=get
+  description: get the details of the specified storage connection in the system
   request:
     body:
       parameterType: null
@@ -3621,6 +4092,7 @@ actions:
     headers: {}
 
 - name: /api/storageconnections/{storageconnection:id}|rel=delete
+  description: delete the specified storage connection in the system
   request:
     body:
       required: false
@@ -3635,6 +4107,7 @@ actions:
       Correlation-Id: {value: 'any string', required: false}
 
 - name: /api/storageconnections/{storageconnection:id}|rel=update
+  description: update the specified storage connection in the system
   request:
     body:
       parameterType: StorageConnection
@@ -3642,32 +4115,41 @@ actions:
       - mandatoryArguments: {}
         optionalArguments:  {storage_connection.port: 'xs:int', storage_connection.username: 'xs:string', storage_connection.password: 'xs:string',
                              storage_connection.iqn: 'xs:string', storage_connection.address: 'xs:string' }
+        description: update the specified iSCSI storage connection in the system
       - mandatoryArguments: {}
         optionalArguments:  {storage_connection.nfs_timeo: 'xs:string', storage_connection.nfs_version: 'xs:string', storage_connection.nfs_retrans: 'xs:string',
                              storage_connection.address: 'xs:string', storage_connection.path: 'xs:string'}
+        description: update the specified nfs storage connection in the system
       - mandatoryArguments: {}
         optionalArguments:  {storage_connection.mount_options: 'xs:string', storage_connection.vfs_type: 'xs:string',
                              storage_connection.address: 'xs:string', storage_connection.path: 'xs:string'}
+        description: update the specified vfs storage connection in the system
       - mandatoryArguments: {}
         optionalArguments:  {storage_connection.path: 'xs:string'}
+        description: update the specified local storage connection in the system
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
 
 - name: /api/storageconnections|rel=add
+  description: add a new storage connection to the system
   request:
     body:
       parameterType: StorageConnection
       signatures:
       - mandatoryArguments: {storage_connection.address: 'xs:string', storage_connection.type: 'xs:string', storage_connection.iqn: 'xs:string', storage_connection.port: 'xs:int'}
         optionalArguments:  {storage_connection.username: 'xs:string', storage_connection.password: 'xs:string'}
+        description: add a iSCSI storage connection to the system
       - mandatoryArguments: {storage_connection.address: 'xs:string', storage_connection.type: 'xs:string', storage_connection.path: 'xs:string'}
         optionalArguments:  {storage_connection.nfs_timeo: 'xs:string', storage_connection.nfs_version: 'xs:string', storage_connection.nfs_retrans: 'xs:string'}
+        description: add a nfs storage connection to the system
       - mandatoryArguments: {storage_connection.type: 'xs:string', storage_connection.path: 'xs:string', storage_connection.vfs_type: 'xs:string'}
         optionalArguments:  {storage_connection.address: 'xs:string', storage_connection.mount_options: 'xs:string'}
+        description: add a vfs storage connection to the system
       - mandatoryArguments: {storage_connection.type: 'xs:string', storage_connection.path: 'xs:string'}
         optionalArguments:  {}
+        description: add a local storage connection to the system
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}

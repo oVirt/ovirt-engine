@@ -7,6 +7,7 @@ public class Signature implements Cloneable {
     private Map<Object, Object> mandatoryArguments = new HashMap<Object, Object>();
     private Map<Object, Object> optionalArguments = new HashMap<Object, Object>();
     private Boolean deprecated;
+    private String description;
 
     public Boolean getDeprecated() {
         return deprecated;
@@ -46,5 +47,13 @@ public class Signature implements Cloneable {
         clonedSignature.setMandatoryArguments(mandatoryArguments);
         clonedSignature.setOptionalArguments(optionalArguments);
         return clonedSignature;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
