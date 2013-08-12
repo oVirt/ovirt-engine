@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVDSClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -23,7 +24,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.gluster.RemoveGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
@@ -139,14 +139,14 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             }
         });
 
-        getParameters().setCompensationEnabled(true);
-        getParameters().setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-
         if (targetStoragePool != null
                 && (getSourceCluster().getStoragePoolId()== null || !targetStoragePool.getId().equals(getSourceCluster().getStoragePoolId()))) {
+            VdsActionParameters addVdsSpmIdParams = new VdsActionParameters(getVdsIdRef());
+            addVdsSpmIdParams.setSessionId(getParameters().getSessionId());
+            addVdsSpmIdParams.setCompensationEnabled(true);
             VdcReturnValueBase addVdsSpmIdReturn =
                     Backend.getInstance().runInternalAction(VdcActionType.AddVdsSpmId,
-                            getParameters(),
+                            addVdsSpmIdParams,
                             new CommandContext(getCompensationContext()));
             if (!addVdsSpmIdReturn.getSucceeded()) {
                 setSucceeded(false);
