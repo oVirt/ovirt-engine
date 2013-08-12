@@ -102,11 +102,19 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
+        after=(
+            osetupcons.Stages.DB_CONNECTION_SETUP,
+        ),
     )
     def _setup(self):
-        self._enabled = self.environment[
-            osetupcons.CoreEnv.ACTION
-        ] == osetupcons.Const.ACTION_UPGRADE
+        self._enabled = (
+            self.environment[
+                osetupcons.CoreEnv.ACTION
+            ] == osetupcons.Const.ACTION_UPGRADE and
+            not self.environment[
+                osetupcons.DBEnv.NEW_DATABASE
+            ]
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
