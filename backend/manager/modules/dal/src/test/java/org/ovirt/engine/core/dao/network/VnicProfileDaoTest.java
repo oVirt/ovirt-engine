@@ -28,6 +28,7 @@ public class VnicProfileDaoTest extends BaseDAOTestCase {
         vnicProfile.setId(Guid.newGuid());
         vnicProfile.setName("new_profile");
         vnicProfile.setNetworkId(FixturesTool.NETWORK_ENGINE);
+        vnicProfile.setNetworkQosId(FixturesTool.NETWORK_QOS);
         vnicProfile.setPortMirroring(false);
     }
 

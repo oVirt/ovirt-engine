@@ -88,6 +88,7 @@ public class VnicProfileViewDaoDbFacadeImpl extends DefaultReadDaoDbFacade<VnicP
         public VnicProfileView mapRow(ResultSet rs, int rowNum) throws SQLException {
             VnicProfileView entity = super.mapRow(rs, rowNum);
             entity.setNetworkName(rs.getString("network_name"));
+            entity.setNetworkQosName(rs.getString("network_qos_name"));
             entity.setDataCenterName(rs.getString("data_center_name"));
             entity.setCompatibilityVersion(new Version(rs.getString("compatibility_version")));
             return entity;

@@ -897,10 +897,56 @@
         </row>
     </table>
 
+    <table name="network_qos">
+        <column>id</column>
+        <column>name</column>
+        <column>storage_pool_id</column>
+        <column>inbound_average</column>
+        <column>inbound_peak</column>
+        <column>inbound_burst</column>
+        <column>outbound_average</column>
+        <column>outbound_peak</column>
+        <column>outbound_burst</column>
+        <row>
+            <value>ae956031-6be2-43d6-bb90-5191c9253314</value>
+            <value>qos_a</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <value>1000</value>
+            <value>2000</value>
+            <value>500</value>
+            <value>1000</value>
+            <value>2000</value>
+            <value>500</value>
+        </row>
+        <row>
+            <value>ae956031-6be2-43d6-bb90-5191c9253315</value>
+            <value>qos_b</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <value>1200</value>
+            <value>2400</value>
+            <value>500</value>
+            <value>1200</value>
+            <value>2400</value>
+            <value>500</value>
+        </row>
+        <row>
+            <value>ae956031-6be2-43d6-bb90-5191c9253316</value>
+            <value>qos_c</value>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <value>700</value>
+            <value>1400</value>
+            <value>500</value>
+            <value>700</value>
+            <value>1400</value>
+            <value>500</value>
+        </row>
+    </table>
+
     <table name="vnic_profiles">
         <column>id</column>
         <column>name</column>
         <column>network_id</column>
+        <column>network_qos_id</column>
         <column>port_mirroring</column>
         <column>custom_properties</column>
         <column>description</column>
@@ -910,6 +956,7 @@
             <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
             <value>engine_profile</value>
             <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
+            <value>ae956031-6be2-43d6-bb90-5191c9253314</value>
             <value>false</value>
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <value>vnic profile description</value>
@@ -920,6 +967,7 @@
             <value>a667da39-27b0-47ec-a5fa-d4293a62b222</value>
             <value>engine_profile_pm</value>
             <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
+            <value>ae956031-6be2-43d6-bb90-5191c9253315</value>
             <value>true</value>
             <null />
             <null />
@@ -930,6 +978,7 @@
             <value>d0f2ca62-f564-447c-aa55-ce2aa12ea798</value>
             <value>engine2_profile</value>
             <value>58d5c1c6-cb15-4832-b2a4-023770607189</value>
+            <null />
             <value>false</value>
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
             <value>2013-07-02 08:38:36</value>
@@ -939,6 +988,7 @@
             <value>471b199e-9454-47a1-85dd-4461f665abc5</value>
             <value>engine3_profile</value>
             <value>58d5c1c6-cb15-4832-b2a4-023770607190</value>
+            <null />
             <value>false</value>
             <value>{ "prop1" : "true" }</value>
             <value>2013-07-02 08:38:36</value>
@@ -948,6 +998,7 @@
             <value>2b75e023-a1fb-4dcb-9738-0ec7fe2d51c6</value>
             <value>engine4_profile</value>
             <value>58d5c1c6-cb15-4832-b2a4-023770607191</value>
+            <value>ae956031-6be2-43d6-bb90-5191c9253314</value>
             <value>false</value>
             <value>{}</value>
             <value>2013-07-02 08:38:36</value>
@@ -5102,51 +5153,6 @@
             <value>Service is stopped</value>
             <value>2012-12-28 09:27:18</value>
             <value>2012-12-31 11:54:27</value>
-        </row>
-    </table>
-
-    <table name="network_qos">
-        <column>id</column>
-        <column>name</column>
-        <column>storage_pool_id</column>
-        <column>inbound_average</column>
-        <column>inbound_peak</column>
-        <column>inbound_burst</column>
-        <column>outbound_average</column>
-        <column>outbound_peak</column>
-        <column>outbound_burst</column>
-        <row>
-            <value>ae956031-6be2-43d6-bb90-5191c9253314</value>
-            <value>qos_a</value>
-            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
-            <value>1000</value>
-            <value>2000</value>
-            <value>500</value>
-            <value>1000</value>
-            <value>2000</value>
-            <value>500</value>
-        </row>
-        <row>
-            <value>ae956031-6be2-43d6-bb90-5191c9253315</value>
-            <value>qos_b</value>
-            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
-            <value>1200</value>
-            <value>2400</value>
-            <value>500</value>
-            <value>1200</value>
-            <value>2400</value>
-            <value>500</value>
-        </row>
-        <row>
-            <value>ae956031-6be2-43d6-bb90-5191c9253316</value>
-            <value>qos_c</value>
-            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
-            <value>700</value>
-            <value>1400</value>
-            <value>500</value>
-            <value>700</value>
-            <value>1400</value>
-            <value>500</value>
         </row>
     </table>
 </dataset>

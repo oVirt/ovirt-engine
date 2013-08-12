@@ -27,6 +27,8 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
     private String name;
     @NotNull(groups = { CreateEntity.class, UpdateEntity.class })
     private Guid networkId;
+    private Guid networkQosId;
+
     private boolean portMirroring;
     private String description;
     private Map<String, String> customProperties;
@@ -74,6 +76,14 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
         this.networkId = networkId;
     }
 
+    public Guid getNetworkQosId() {
+        return networkQosId;
+    }
+
+    public void setNetworkQosId(Guid networkQosId) {
+        this.networkQosId = networkQosId;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -94,6 +104,7 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
         result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         result = prime * result + ((getNetworkId() == null) ? 0 : getNetworkId().hashCode());
+        result = prime * result + ((getNetworkQosId() == null) ? 0 : getNetworkQosId().hashCode());
         result = prime * result + (isPortMirroring() ? 1231 : 1237);
         result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
         return result;
@@ -123,6 +134,9 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
         if (!ObjectUtils.objectsEqual(getNetworkId(), other.getNetworkId())) {
             return false;
         }
+        if (!ObjectUtils.objectsEqual(getNetworkQosId(), other.getNetworkQosId())) {
+            return false;
+        }
         if (isPortMirroring() != other.isPortMirroring()) {
             return false;
         }
@@ -140,6 +154,8 @@ public class VnicProfile extends IVdcQueryable implements BusinessEntity<Guid>, 
                 .append(getId())
                 .append(", networkId=")
                 .append(getNetworkId())
+                .append(", networkQosId=")
+                .append(getNetworkQosId())
                 .append(", portMirroring=")
                 .append(isPortMirroring())
                 .append(", customProperties=")

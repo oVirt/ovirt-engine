@@ -2,11 +2,11 @@ package org.ovirt.engine.core.common.businessentities.network;
 
 import org.ovirt.engine.core.compat.Version;
 
-
 public class VnicProfileView extends VnicProfile {
 
     private static final long serialVersionUID = -7873671947250939737L;
     private String networkName;
+    private String networkQosName;
     private String dataCenterName;
     private Version compatibilityVersion;
 
@@ -16,6 +16,14 @@ public class VnicProfileView extends VnicProfile {
 
     public void setNetworkName(String networkName) {
         this.networkName = networkName;
+    }
+
+    public String getNetworkQosName() {
+        return networkQosName;
+    }
+
+    public void setNetworkQosName(String networkQosName) {
+        this.networkQosName = networkQosName;
     }
 
     public String getDataCenterName() {
@@ -41,6 +49,7 @@ public class VnicProfileView extends VnicProfile {
         result = prime * result + ((getCompatibilityVersion() == null) ? 0 : getCompatibilityVersion().hashCode());
         result = prime * result + ((getDataCenterName() == null) ? 0 : getDataCenterName().hashCode());
         result = prime * result + ((getNetworkName() == null) ? 0 : getNetworkName().hashCode());
+        result = prime * result + ((getNetworkQosName() == null) ? 0 : getNetworkQosName().hashCode());
         return result;
     }
 
@@ -77,7 +86,13 @@ public class VnicProfileView extends VnicProfile {
         } else if (!getNetworkName().equals(other.getNetworkName())) {
             return false;
         }
+        if (getNetworkQosName() == null) {
+            if (other.getNetworkQosName() != null) {
+                return false;
+            }
+        } else if (!getNetworkQosName().equals(other.getNetworkQosName())) {
+            return false;
+        }
         return true;
     }
 }
-
