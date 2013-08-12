@@ -1929,7 +1929,7 @@ public class UnitVmModel extends Model {
                 new ArrayList<DataCenterWithCluster>();
 
         for (VDSGroup cluster : possibleClusters) {
-            if (cluster.getStoragePoolId().equals(dataCenter.getId())) {
+            if (cluster.getStoragePoolId() != null && cluster.getStoragePoolId().equals(dataCenter.getId())) {
                 dataCentersWithClusters.add(new DataCenterWithCluster(dataCenter, cluster));
             }
         }
@@ -1945,6 +1945,10 @@ public class UnitVmModel extends Model {
 
         Map<Guid, List<VDSGroup>> dataCenterToCluster = new HashMap<Guid, List<VDSGroup>>();
         for (VDSGroup cluster : clusters) {
+            if (cluster.getStoragePoolId() == null) {
+                continue;
+            }
+
             if (!dataCenterToCluster.containsKey(cluster.getStoragePoolId())) {
                 dataCenterToCluster.put(cluster.getStoragePoolId(), new ArrayList<VDSGroup>());
             }
@@ -2006,6 +2010,10 @@ public class UnitVmModel extends Model {
     }
 
     private StoragePool findDataCenterById(List<StoragePool> list, Guid id) {
+        if (id == null) {
+            return null;
+        }
+
         for (StoragePool dc : list) {
             if (dc.getId().equals(id)) {
                 return dc;
