@@ -613,9 +613,7 @@ class CoreEnv(object):
     UNINSTALL_UNREMOVABLE_FILES = 'OVESETUP_CORE/uninstallUnremovableFiles'
     FILE_GROUP_PREFIX = 'OVESETUP_CORE_MODIFIED_FILE_GROUP/'
     LINES_GROUP_PREFIX = 'OVESETUP_CORE_MODIFIED_LINES_GROUP/'
-    UNINSTALL_ENABLED_FILE_GROUPS = 'OVESETUP_CORE/uninstallEnabledFileGroups'
     REGISTER_UNINSTALL_GROUPS = 'OVESETUP_CORE/registerUninstallGroups'
-    CONFIRM_UNINSTALL_GROUPS = 'OVESETUP_CORE/confirmUninstallGroups'
     UPGRADE_SUPPORTED_VERSIONS = 'OVESETUP_CORE/upgradeSupportedVersions'
     UPGRADE_FROM_LEGACY = 'OVESETUP_CORE/upgradeFromLegacy'
     ACTION = 'OVESETUP_CORE/action'
@@ -714,12 +712,6 @@ class DBEnv(object):
     STATEMENT = 'OVESETUP_DB/statement'
     PGPASS_FILE = 'OVESETUP_DB/pgPassFile'
     NEW_DATABASE = 'OVESETUP_DB/newDatabase'
-
-    @osetupattrs(
-        answerfile=True,
-    )
-    def REMOVE_EMPTY_DATABASE(self):
-        return 'OVESETUP_DB/cleanupRemove'
 
     @osetupattrs(
         answerfile=True,
@@ -983,6 +975,29 @@ class RenameEnv(object):
     FORCE_OVERWRITE = 'OSETUP_RENAME/forceOverwrite'
     FORCE_IGNORE_AIA_IN_CA = 'OSETUP_RENAME/forceIgnoreAIAInCA'
     FILES_TO_BE_MODIFIED = 'OVESETUP_CORE/filesToBeModified'
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
+class RemoveEnv(object):
+    @osetupattrs(
+        answerfile=True,
+    )
+    def ASK_GROUPS(self):
+        return 'OVESETUP_REMOVE/confirmUninstallGroups'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def REMOVE_GROUPS(self):
+        return 'OVESETUP_REMOVE/enabledFileGroups'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def REMOVE_DATABASE(self):
+        return 'OVESETUP_REMOVE/database'
 
 
 @util.export

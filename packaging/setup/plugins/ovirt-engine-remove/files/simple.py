@@ -95,11 +95,11 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.CoreEnv.UNINSTALL_ENABLED_FILE_GROUPS,
+            osetupcons.RemoveEnv.REMOVE_GROUPS,
             ''
         )
         self.environment.setdefault(
-            osetupcons.CoreEnv.CONFIRM_UNINSTALL_GROUPS,
+            osetupcons.RemoveEnv.ASK_GROUPS,
             True
         )
         self._infos = sorted(
@@ -116,7 +116,7 @@ class Plugin(plugin.PluginBase):
     )
     def _customization(self):
         interactive = self.environment[
-            osetupcons.CoreEnv.CONFIRM_UNINSTALL_GROUPS
+            osetupcons.RemoveEnv.ASK_GROUPS
         ]
         unremovable = {}
         already_asked = []
@@ -163,8 +163,8 @@ class Plugin(plugin.PluginBase):
                         )
                     if add_group:
                         self.environment[
-                            osetupcons.CoreEnv.
-                            UNINSTALL_ENABLED_FILE_GROUPS
+                            osetupcons.RemoveEnv.
+                            REMOVE_GROUPS
                         ] += ',' + group
 
             def getFiles(section):
@@ -197,7 +197,7 @@ class Plugin(plugin.PluginBase):
             for uninstall_group in [
                 x.strip()
                 for x in self.environment[
-                    osetupcons.CoreEnv.UNINSTALL_ENABLED_FILE_GROUPS
+                    osetupcons.RemoveEnv.REMOVE_GROUPS
                 ].split(',')
                 if x.strip()
             ]:
@@ -268,7 +268,7 @@ class Plugin(plugin.PluginBase):
         uninstalled_groups = set([
             x.strip()
             for x in self.environment[
-                osetupcons.CoreEnv.UNINSTALL_ENABLED_FILE_GROUPS
+                osetupcons.RemoveEnv.REMOVE_GROUPS
             ].split(',')
             if x.strip()
         ])

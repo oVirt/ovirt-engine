@@ -48,7 +48,7 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: 'ca_pki' in [
             x.strip()
             for x in self.environment[
-                osetupcons.CoreEnv.UNINSTALL_ENABLED_FILE_GROUPS
+                osetupcons.RemoveEnv.REMOVE_GROUPS
             ].split(',')
             if x
         ],

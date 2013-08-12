@@ -44,7 +44,7 @@ class Plugin(plugin.PluginBase):
     )
     def _init(self):
         self.environment.setdefault(
-            osetupcons.DBEnv.REMOVE_EMPTY_DATABASE,
+            osetupcons.RemoveEnv.REMOVE_DATABASE,
             None
         )
         self._bkpfile = None
@@ -54,13 +54,13 @@ class Plugin(plugin.PluginBase):
     )
     def _customization(self):
         if self.environment[
-            osetupcons.DBEnv.REMOVE_EMPTY_DATABASE
+            osetupcons.RemoveEnv.REMOVE_DATABASE
         ] is None:
             self.environment[
-                osetupcons.DBEnv.REMOVE_EMPTY_DATABASE
+                osetupcons.RemoveEnv.REMOVE_DATABASE
             ] = dialog.queryBoolean(
                 dialog=self.dialog,
-                name='OVESETUP_DB_REMOVE',
+                name='OVESETUP_REMOVE_DATABASE',
                 note=_(
                     'Do you want to remove Engine DB content? All data will '
                     'be lost (@VALUES@) [@DEFAULT@]: '
@@ -75,7 +75,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: (
             self.environment[osetupcons.DBEnv.PASSWORD] is not None and
-            self.environment[osetupcons.DBEnv.REMOVE_EMPTY_DATABASE]
+            self.environment[osetupcons.RemoveEnv.REMOVE_DATABASE]
         ),
         after=(
             osetupcons.Stages.DB_CREDENTIALS_AVAILABLE_LATE,
