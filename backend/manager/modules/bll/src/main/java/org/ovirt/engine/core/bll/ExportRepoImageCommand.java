@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 @SuppressWarnings("unused")
+@LockIdNameAttribute
 public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends CommandBase<T> {
 
     private DiskImage diskImage;
