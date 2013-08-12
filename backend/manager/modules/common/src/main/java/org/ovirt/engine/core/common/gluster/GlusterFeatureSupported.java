@@ -56,4 +56,14 @@ public class GlusterFeatureSupported {
     public static boolean glusterHostUuidSupported(Version version) {
         return supportedInConfig(ConfigValues.GlusterHostUUIDSupport, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if there's support for gluster task monitoring (rebalance, remove-brick),
+     *         <code>false</code> if it's not.
+     */
+    public static boolean glusterAsyncTasks(Version version) {
+        return supportedInConfig(ConfigValues.GlusterAysncTasksSupport, version);
+    }
 }

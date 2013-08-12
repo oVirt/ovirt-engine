@@ -1306,6 +1306,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     GlusterHostUUIDSupport(427),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    GlusterAysncTasksSupport(428),
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("AttestationService/resources/PollHosts")
     PollUri(427),
@@ -1338,6 +1342,10 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("20")
     AttestationSecondStageSize(434),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("30")
+    GlusterRefreshRateTasks(435),
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Auto")

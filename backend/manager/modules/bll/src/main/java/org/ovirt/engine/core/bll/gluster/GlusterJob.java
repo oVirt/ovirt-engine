@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
+import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -121,6 +122,10 @@ public abstract class GlusterJob {
 
     protected GlusterServerDao getGlusterServerDao() {
         return DbFacade.getInstance().getGlusterServerDao();
+    }
+
+    protected StepDao getStepDao() {
+        return DbFacade.getInstance().getStepDao();
     }
 
     /**

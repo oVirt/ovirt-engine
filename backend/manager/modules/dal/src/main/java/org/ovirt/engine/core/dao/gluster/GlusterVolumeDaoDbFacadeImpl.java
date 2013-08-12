@@ -178,6 +178,14 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     }
 
     @Override
+    public GlusterVolumeEntity getVolumeByGlusterTask(Guid taskId) {
+        GlusterVolumeEntity volume = getCallsHandler().executeRead(
+                "GetGlusterVolumeByGlusterTaskId", volumeRowMapper,
+                getCustomMapSqlParameterSource().addValue("task_id", taskId));
+        return volume;
+    }
+
+    @Override
     public void updateVolumeStatusByName(Guid clusterId, String volumeName, GlusterStatus status) {
         getCallsHandler().executeModification("UpdateGlusterVolumeStatusByName",
                 getCustomMapSqlParameterSource()
@@ -426,4 +434,6 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             removeTransportType(volumeId, transportType);
         }
     }
+
+
 }

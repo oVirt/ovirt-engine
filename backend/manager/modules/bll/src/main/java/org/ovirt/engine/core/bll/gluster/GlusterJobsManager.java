@@ -55,6 +55,15 @@ public class GlusterJobsManager {
                 getRefreshRate(ConfigValues.GlusterRefreshRateLight),
                 getRefreshRate(ConfigValues.GlusterRefreshRateLight),
                 TimeUnit.SECONDS);
+
+        scheduler.scheduleAFixedDelayJob(GlusterTasksSyncJob.getInstance(),
+                "gluster_async_task_poll_event",
+                new Class[0] ,
+                new Class [0],
+                getRefreshRate(ConfigValues.GlusterRefreshRateTasks),
+                getRefreshRate(ConfigValues.GlusterRefreshRateTasks),
+                TimeUnit.SECONDS);
+
     }
 
     private static boolean glusterModeSupported() {

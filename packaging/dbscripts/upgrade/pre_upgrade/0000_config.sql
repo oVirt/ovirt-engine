@@ -144,6 +144,7 @@ select fn_db_add_config_value('GlusterSupport', 'false', '3.0');
 select fn_db_add_config_value('GlusterVolumeOptionGroupVirtValue','virt','general');
 select fn_db_add_config_value('GlusterVolumeOptionOwnerUserVirtValue','36','general');
 select fn_db_add_config_value('GlusterVolumeOptionOwnerGroupVirtValue','36','general');
+select fn_db_add_config_value('GlusterRefreshRateTasks', '60', 'general');
 
 -- OpenStack related
 select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');

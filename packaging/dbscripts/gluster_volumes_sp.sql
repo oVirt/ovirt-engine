@@ -152,6 +152,15 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetGlusterVolumeByGlusterTaskId(v_task_id UUID)
+RETURNS SETOF gluster_volumes_view STABLE
+    AS $procedure$
+BEGIN
+    RETURN QUERY SELECT *
+    FROM gluster_volumes_view
+    WHERE task_id = v_task_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterBrickById(v_id UUID)
     RETURNS SETOF gluster_volume_bricks STABLE
