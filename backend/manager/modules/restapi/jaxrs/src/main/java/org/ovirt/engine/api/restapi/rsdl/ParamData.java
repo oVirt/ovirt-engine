@@ -6,15 +6,6 @@ public class ParamData {
     private String value;
     private String type;
     private Boolean required;
-    private Boolean deprecated;
-
-    public Boolean getDeprecated() {
-        return deprecated;
-    }
-
-    public void setDeprecated(Boolean deprecated) {
-        this.deprecated = deprecated;
-    }
     public Boolean getRequired() {
         return required;
     }
