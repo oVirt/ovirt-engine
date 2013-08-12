@@ -330,7 +330,6 @@ public class RunVmCommandTest {
         vm.setStatus(VMStatus.Down);
         doReturn(new StoragePool()).when(command).getStoragePool();
         doReturn(vm).when(command).getVm();
-        doReturn(true).when(command).validateNetworkInterfaces();
         doReturn(true).when(command).checkPayload(any(VmPayload.class), anyString());
         doReturn(new VDSGroup()).when(command).getVdsGroup();
         assertTrue(command.canDoAction());
@@ -375,6 +374,7 @@ public class RunVmCommandTest {
                 Matchers.anyListOf(Guid.class),
                 any(Guid.class),
                 any(VDSGroup.class))).thenReturn(true);
+        when(runVmValidator.validateNetworkInterfaces(any(VM.class))).thenReturn(ValidationResult.VALID);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }

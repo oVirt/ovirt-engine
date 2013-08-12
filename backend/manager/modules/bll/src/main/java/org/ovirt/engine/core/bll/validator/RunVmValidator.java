@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.validator;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -16,11 +17,13 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -30,6 +33,8 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -42,7 +47,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.customprop.ValidationError;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 
@@ -271,6 +278,10 @@ public class RunVmValidator {
         return map;
     }
 
+    protected NetworkDao getNetworkDao() {
+        return DbFacade.getInstance().getNetworkDao();
+    }
+
     protected VdsDAO getVdsDao() {
         return DbFacade.getInstance().getVdsDao();
     }
@@ -367,4 +378,94 @@ public class RunVmValidator {
 
         return true;
     }
+
+    /**
+     * @return true if all VM network interfaces are valid
+     */
+    public ValidationResult validateNetworkInterfaces(VM vm) {
+        Map<String, VmNetworkInterface> interfaceNetworkMap = Entities.vmInterfacesByNetworkName(vm.getInterfaces());
+        Set<String> interfaceNetworkNames = interfaceNetworkMap.keySet();
+        List<Network> clusterNetworks = getNetworkDao().getAllForCluster(vm.getVdsGroupId());
+        Set<String> clusterNetworksNames = Entities.objectNames(clusterNetworks);
+
+        ValidationResult validationResult = isVmInterfacesConfigured(vm);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        validationResult = isVmInterfacesAttachedToClusterNetworks(vm, clusterNetworksNames, interfaceNetworkNames);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        validationResult = isVmInterfacesAttachedToVmNetworks(clusterNetworks, interfaceNetworkNames);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * Checking that the interfaces are all configured, interfaces with no network are allowed only if network linking
+     * is supported.
+     *
+     * @return true if all VM network interfaces are attached to existing cluster networks, or to no network (when
+     *         network linking is supported).
+     */
+    protected ValidationResult isVmInterfacesConfigured(VM vm) {
+        for (VmNetworkInterface nic : vm.getInterfaces()) {
+            if (nic.getVnicProfileId() == null) {
+                return FeatureSupported.networkLinking(vm.getVdsGroupCompatibilityVersion()) ?
+                        ValidationResult.VALID:
+                            new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED);
+            }
+        }
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * @param clusterNetworksNames
+     *            cluster logical networks names
+     * @param interfaceNetworkNames
+     *            VM interface network names
+     * @return true if all VM network interfaces are attached to existing cluster networks
+     */
+    protected ValidationResult isVmInterfacesAttachedToClusterNetworks(VM vm,
+            final Set<String> clusterNetworkNames, final Set<String> interfaceNetworkNames) {
+
+        Set<String> result = new HashSet<String>(interfaceNetworkNames);
+        result.removeAll(clusterNetworkNames);
+        if (FeatureSupported.networkLinking(vm.getVdsGroupCompatibilityVersion())) {
+            result.remove(null);
+        }
+
+        // If after removing the cluster network names we still have objects, then we have interface on networks that
+        // aren't attached to the cluster
+        return result.isEmpty() ?
+                ValidationResult.VALID
+                : new ValidationResult(
+                        VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NOT_IN_CLUSTER,
+                        String.format("$networks %1$s", StringUtils.join(result, ",")));
+    }
+
+    /**
+     * @param clusterNetworks
+     *            cluster logical networks
+     * @param interfaceNetworkNames
+     *            VM interface network names
+     * @return true if all VM network interfaces are attached to VM networks
+     */
+    protected ValidationResult isVmInterfacesAttachedToVmNetworks(final List<Network> clusterNetworks,
+            Set<String> interfaceNetworkNames) {
+        List<String> nonVmNetworkNames =
+                NetworkUtils.filterNonVmNetworkNames(clusterNetworks, interfaceNetworkNames);
+
+        return nonVmNetworkNames.isEmpty() ?
+                ValidationResult.VALID
+                : new ValidationResult(
+                        VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK,
+                        String.format("$networks %1$s", StringUtils.join(nonVmNetworkNames, ",")));
+    }
+
 }
