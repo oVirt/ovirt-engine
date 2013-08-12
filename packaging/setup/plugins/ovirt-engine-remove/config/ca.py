@@ -45,13 +45,18 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
-        condition=lambda self: 'ca_pki' in [
-            x.strip()
-            for x in self.environment[
-                osetupcons.RemoveEnv.REMOVE_GROUPS
-            ].split(',')
-            if x
-        ],
+        condition=lambda self: (
+            self.environment[
+                osetupcons.RemoveEnv.REMOVE_ALL
+            ] or
+            'ca_pki' in [
+                x.strip()
+                for x in self.environment[
+                    osetupcons.RemoveEnv.REMOVE_GROUPS
+                ].split(',')
+                if x
+            ]
+        ),
         priority=plugin.Stages.PRIORITY_HIGH,
     )
     def _misc(self):

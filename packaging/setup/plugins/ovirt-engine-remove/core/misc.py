@@ -66,6 +66,33 @@ class Plugin(plugin.PluginBase):
             osetupcons.CoreEnv.REMOVE,
             None
         )
+        self.environment.setdefault(
+            osetupcons.RemoveEnv.REMOVE_ALL,
+            None
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.REMOVE_CUSTOMIZATION_COMMON,
+    )
+    def _customization(self):
+        if self.environment[
+            osetupcons.RemoveEnv.REMOVE_ALL
+        ] is None:
+            self.environment[
+                osetupcons.RemoveEnv.REMOVE_ALL
+            ] = dialog.queryBoolean(
+                dialog=self.dialog,
+                name='OVESETUP_REMOVE_ALL',
+                note=_(
+                    'Do you want to remove all components? '
+                    '(@VALUES@) [@DEFAULT@]: '
+                ),
+                prompt=True,
+                true=_('Yes'),
+                false=_('No'),
+                default=True,
+            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
