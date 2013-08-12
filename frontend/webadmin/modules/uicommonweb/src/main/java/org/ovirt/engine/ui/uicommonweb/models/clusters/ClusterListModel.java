@@ -13,9 +13,11 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -57,6 +59,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
 
     private UICommand privateNewCommand;
     private boolean clusterPolicyFirst;
+
 
     public UICommand getNewCommand()
     {
@@ -526,19 +529,14 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
     }
 
-    private void onSaveConfirmCV(ClusterModel model)
-    {
+    private void onSaveConfirmCV(ClusterModel model) {
         if (!((Version) model.getVersion().getSelectedItem()).equals(((VDSGroup) getSelectedItem()).getcompatibility_version())) {
-            ConfirmationModel confirmModel = new ConfirmationModel();
+            final ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance()
                     .getConstants()
                     .changeClusterCompatibilityVersionTitle());
             confirmModel.setHashName("change_cluster_compatibility_version"); //$NON-NLS-1$
-            confirmModel.setMessage(ConstantsManager.getInstance()
-                    .getConstants()
-                    .youAreAboutChangeClusterCompatibilityVersionMsg());
-
             UICommand tempVar = new UICommand("OnSaveConfirmCpuThreads", this); //$NON-NLS-1$
             tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar.setIsDefault(true);
@@ -547,6 +545,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
             tempVar2.setIsCancel(true);
             getConfirmWindow().getCommands().add(tempVar2);
+            checkForNonResponsiveHosts(confirmModel);
         } else {
             onSaveConfirmCpuThreads();
         }
@@ -1005,5 +1004,52 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
     @Override
     protected String getListName() {
         return "ClusterListModel"; //$NON-NLS-1$
+    }
+
+    /**
+     * Checks if in selected cluster are some non responsive hosts. If so, it adds warning about upgrading cluster level
+     * when some hosts are non responsive
+     */
+    @SuppressWarnings("unchecked")
+    private void checkForNonResponsiveHosts(final ConfirmationModel confirmModel) {
+        startProgress(null);
+        Frontend.RunQuery(VdcQueryType.GetHostsByClusterId,
+                new IdQueryParameters(((VDSGroup) getSelectedItem()).getId()),
+                new AsyncQuery(this, new INewAsyncCallback() {
+
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        ClusterListModel model = (ClusterListModel) target;
+                        ArrayList<VDS> hosts = null;
+                        if (returnValue instanceof ArrayList) {
+                            hosts = (ArrayList<VDS>) returnValue;
+                        } else if (returnValue instanceof VdcQueryReturnValue
+                                && ((VdcQueryReturnValue) returnValue).getReturnValue() instanceof ArrayList) {
+                            hosts = (ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        }
+
+                        boolean foundNRHosts = false;
+                        if (hosts != null) {
+                            for (VDS host : hosts) {
+                                if (VDSStatus.NonResponsive == host.getStatus()) {
+                                    foundNRHosts = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (foundNRHosts) {
+                            confirmModel.setMessage(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .youAreAboutChangeClusterCompatibilityVersionNonResponsiveHostsMsg());
+                        } else {
+                            confirmModel.setMessage(ConstantsManager.getInstance()
+                                    .getConstants()
+                                    .youAreAboutChangeClusterCompatibilityVersionMsg());
+                        }
+
+                        model.stopProgress();
+                    }
+                }));
     }
 }

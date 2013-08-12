@@ -641,6 +641,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("You are about to change the Cluster Compatibility Version. Are you sure you want to continue?")
     String youAreAboutChangeClusterCompatibilityVersionMsg();
 
+    @DefaultStringValue("You are about to change the Cluster Compatibility Version and the cluster contains some non"
+            + " responsive hosts. If these hosts do not support the selected compatibility level they may move to non"
+            + " operational after connectivity is restored.\n\nAre you sure you want to continue?")
+    String youAreAboutChangeClusterCompatibilityVersionNonResponsiveHostsMsg();
+
     @DefaultStringValue("Moving Quota to Enforce Mode\n" +
             "All the templates, virtual machines, and disks must be assigned into specific quota allocations otherwise will be unusable.\nUsers should be added as quota consumers.\n\n" +
             "Please consider using Audit mode until you define Quotas for the users.\n\n" +
