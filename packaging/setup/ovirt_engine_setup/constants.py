@@ -551,6 +551,9 @@ class Stages(object):
 
     UPGRADE_FROM_LEGACY_CONFIG = 'osetup.legacy.upgrade'
 
+    REMOVE_CUSTOMIZATION_COMMON = 'osetup.remove.customization.common'
+    REMOVE_CUSTOMIZATION_GROUPS = 'osetup.remove.customization.groups'
+
     RENAME_PKI_CONF_MISC = 'osetup.rename.pki.conf.misc'
 
 
@@ -998,6 +1001,12 @@ class RemoveEnv(object):
     )
     def REMOVE_DATABASE(self):
         return 'OVESETUP_REMOVE/database'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def REMOVE_ALL(self):
+        return 'OVESETUP_REMOVE/removeAll'
 
 
 @util.export

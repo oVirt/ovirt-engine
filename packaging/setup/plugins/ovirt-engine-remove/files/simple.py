@@ -113,6 +113,10 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.REMOVE_CUSTOMIZATION_GROUPS,
+        after=(
+            osetupcons.Stages.REMOVE_CUSTOMIZATION_COMMON,
+        ),
     )
     def _customization(self):
         interactive = self.environment[
@@ -140,7 +144,12 @@ class Plugin(plugin.PluginBase):
                     if msg == template:
                         msg = description
                     self._descriptions[group] = msg
-                    add_group = not config.getboolean(section, 'optional')
+                    add_group = (
+                        self.environment[
+                            osetupcons.RemoveEnv.REMOVE_ALL
+                        ] or
+                        not config.getboolean(section, 'optional')
+                    )
                     if (
                         not add_group and
                         interactive and

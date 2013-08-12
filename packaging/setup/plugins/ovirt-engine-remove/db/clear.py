@@ -51,8 +51,18 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        after=(
+            osetupcons.Stages.REMOVE_CUSTOMIZATION_COMMON,
+        ),
     )
     def _customization(self):
+        if self.environment[
+            osetupcons.RemoveEnv.REMOVE_ALL
+        ]:
+            self.environment[
+                osetupcons.RemoveEnv.REMOVE_DATABASE
+            ] = True
+
         if self.environment[
             osetupcons.RemoveEnv.REMOVE_DATABASE
         ] is None:
