@@ -126,7 +126,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromSnapshots() RETURNS SETOF snapshots
+Create or replace FUNCTION GetAllFromSnapshots() RETURNS SETOF snapshots STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -140,7 +140,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetSnapshotByVmIdAndType(
     v_vm_id UUID,
     v_snapshot_type VARCHAR(32))
-RETURNS SETOF snapshots
+RETURNS SETOF snapshots STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -158,7 +158,7 @@ Create or replace FUNCTION GetSnapshotByVmIdAndTypeAndStatus(
     v_vm_id UUID,
     v_snapshot_type VARCHAR(32),
     v_status VARCHAR(32))
-RETURNS SETOF snapshots
+RETURNS SETOF snapshots STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -182,7 +182,7 @@ Create or replace FUNCTION GetAllFromSnapshotsByVmId(
     v_vm_id UUID,
     v_user_id UUID,
     v_is_filtered BOOLEAN,
-    v_fill_configuration BOOLEAN) RETURNS SETOF GetAllFromSnapshotsByVmId_rs
+    v_fill_configuration BOOLEAN) RETURNS SETOF GetAllFromSnapshotsByVmId_rs STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -209,7 +209,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetSnapshotBySnapshotId(v_snapshot_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
-RETURNS SETOF snapshots
+RETURNS SETOF snapshots STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -228,7 +228,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetSnapshotIdsByVmIdAndType(
     v_vm_id UUID,
     v_snapshot_type VARCHAR(32))
-RETURNS SETOF idUuidType
+RETURNS SETOF idUuidType STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -247,7 +247,7 @@ Create or replace FUNCTION GetSnapshotIdsByVmIdAndTypeAndStatus(
     v_vm_id UUID,
     v_snapshot_type VARCHAR(32),
     v_status VARCHAR(32))
-RETURNS SETOF idUuidType
+RETURNS SETOF idUuidType STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -266,7 +266,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION CheckIfSnapshotExistsByVmIdAndType(
     v_vm_id UUID,
     v_snapshot_type VARCHAR(32))
-RETURNS SETOF booleanResultType
+RETURNS SETOF booleanResultType STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -284,7 +284,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION CheckIfSnapshotExistsByVmIdAndStatus(
     v_vm_id UUID,
     v_status VARCHAR(32))
-RETURNS SETOF booleanResultType
+RETURNS SETOF booleanResultType STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -302,7 +302,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION CheckIfSnapshotExistsByVmIdAndSnapshotId(
     v_vm_id UUID,
     v_snapshot_id UUID)
-RETURNS SETOF booleanResultType
+RETURNS SETOF booleanResultType STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -317,7 +317,7 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetNumOfSnapshotsByMemoryVolume(
     v_memory_volume VARCHAR(255))
-RETURNS SETOF BIGINT
+RETURNS SETOF BIGINT STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY

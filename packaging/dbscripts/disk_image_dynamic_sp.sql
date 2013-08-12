@@ -64,7 +64,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromdisk_image_dynamic() RETURNS SETOF disk_image_dynamic
+Create or replace FUNCTION GetAllFromdisk_image_dynamic() RETURNS SETOF disk_image_dynamic STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -78,7 +78,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getdisk_image_dynamicByimage_id(v_image_id UUID)
-RETURNS SETOF disk_image_dynamic
+RETURNS SETOF disk_image_dynamic STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *

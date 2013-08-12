@@ -13,7 +13,7 @@ END; $procedure$
 
 
 CREATE OR REPLACE FUNCTION get_entity_snapshot_by_id(v_id uuid)
-  RETURNS SETOF business_entity_snapshot AS
+  RETURNS SETOF business_entity_snapshot STABLE AS
 $procedure$
 BEGIN
       RETURN QUERY SELECT business_entity_snapshot.*
@@ -23,7 +23,7 @@ END; $procedure$
   LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION get_entity_snapshot_by_command_id(v_command_id uuid)
-  RETURNS SETOF business_entity_snapshot AS
+  RETURNS SETOF business_entity_snapshot STABLE AS
 $procedure$
 BEGIN
       RETURN QUERY SELECT business_entity_snapshot.*
@@ -38,7 +38,7 @@ DROP TYPE IF EXISTS get_all_commands_rs CASCADE;
 CREATE TYPE get_all_commands_rs  AS(command_id UUID, command_type varchar(256));
 
 CREATE OR REPLACE FUNCTION get_all_commands()
-  RETURNS SETOF get_all_commands_rs AS
+  RETURNS SETOF get_all_commands_rs STABLE AS
 $procedure$
 BEGIN
       RETURN QUERY SELECT distinct business_entity_snapshot.command_id, business_entity_snapshot.command_type

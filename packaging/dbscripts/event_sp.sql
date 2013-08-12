@@ -30,7 +30,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllFromevent_notification_hist()
-RETURNS SETOF event_notification_hist
+RETURNS SETOF event_notification_hist STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -72,7 +72,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getevent_subscriberBysubscriber_id(v_subscriber_id UUID)
-RETURNS SETOF event_subscriber
+RETURNS SETOF event_subscriber STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -83,7 +83,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetAllFromevent_audit_log_subscriber()
-RETURNS SETOF event_audit_log_subscriber_view
+RETURNS SETOF event_audit_log_subscriber_view STABLE
    AS $procedure$
    DECLARE
    v_last  BIGINT;
@@ -148,7 +148,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetEventNotificationMethodById(v_method_id INTEGER)
-RETURNS SETOF event_notification_methods
+RETURNS SETOF event_notification_methods STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -161,7 +161,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetEventMapByName(v_event_name VARCHAR(100))
-RETURNS SETOF event_map
+RETURNS SETOF event_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -178,7 +178,7 @@ LANGUAGE plpgsql;
 -------------------------------------------------------------------------------------
 
 
-Create or replace FUNCTION GetAllFromevent_audit_log_subscriber_only() RETURNS SETOF event_audit_log_subscriber_view
+Create or replace FUNCTION GetAllFromevent_audit_log_subscriber_only() RETURNS SETOF event_audit_log_subscriber_view STABLE
    AS $procedure$
    DECLARE
    v_last  BIGINT;

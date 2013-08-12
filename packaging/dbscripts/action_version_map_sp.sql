@@ -35,7 +35,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromaction_version_map() RETURNS SETOF action_version_map
+Create or replace FUNCTION GetAllFromaction_version_map() RETURNS SETOF action_version_map STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -47,7 +47,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getaction_version_mapByaction_type(v_action_type INTEGER) RETURNS SETOF action_version_map
+Create or replace FUNCTION Getaction_version_mapByaction_type(v_action_type INTEGER) RETURNS SETOF action_version_map STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *

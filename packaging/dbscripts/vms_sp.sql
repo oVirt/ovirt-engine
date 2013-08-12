@@ -31,7 +31,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetIdsForOvfDeletion(v_storage_pool_id UUID) RETURNS SETOF UUID
+Create or replace FUNCTION GetIdsForOvfDeletion(v_storage_pool_id UUID) RETURNS SETOF UUID STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT ovf.vm_guid as vm_guid
@@ -46,7 +46,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetOvfGeneration(v_vm_id UUID) RETURNS SETOF BIGINT
+Create or replace FUNCTION GetOvfGeneration(v_vm_id UUID) RETURNS SETOF BIGINT STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vm.ovf_generation
@@ -62,7 +62,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmTemplatesIdsForOvfUpdate(v_storage_pool_id UUID) RETURNS SETOF UUID
+Create or replace FUNCTION GetVmTemplatesIdsForOvfUpdate(v_storage_pool_id UUID) RETURNS SETOF UUID STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT templates.vmt_guid as vm_guid
@@ -80,7 +80,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmsIdsForOvfUpdate(v_storage_pool_id UUID) RETURNS SETOF UUID
+Create or replace FUNCTION GetVmsIdsForOvfUpdate(v_storage_pool_id UUID) RETURNS SETOF UUID STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vm.vm_guid as vm_guid
@@ -179,7 +179,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVmStatistics() RETURNS SETOF vm_statistics
+Create or replace FUNCTION GetAllFromVmStatistics() RETURNS SETOF vm_statistics STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_statistics.*
@@ -191,7 +191,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmStatisticsByVmGuid(v_vm_guid UUID) RETURNS SETOF vm_statistics
+Create or replace FUNCTION GetVmStatisticsByVmGuid(v_vm_guid UUID) RETURNS SETOF vm_statistics STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_statistics.*
@@ -366,7 +366,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVmDynamic() RETURNS SETOF vm_dynamic
+Create or replace FUNCTION GetAllFromVmDynamic() RETURNS SETOF vm_dynamic STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_dynamic.*
@@ -378,7 +378,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmDynamicByVmGuid(v_vm_guid UUID) RETURNS SETOF vm_dynamic
+Create or replace FUNCTION GetVmDynamicByVmGuid(v_vm_guid UUID) RETURNS SETOF vm_dynamic STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_dynamic.*
@@ -473,7 +473,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetDbGeneration(v_vm_guid UUID)
-RETURNS SETOF BIGINT
+RETURNS SETOF BIGINT STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT db_generation
@@ -616,7 +616,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVmStatic() RETURNS SETOF vm_static
+Create or replace FUNCTION GetAllFromVmStatic() RETURNS SETOF vm_static STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vm_static.*
@@ -630,7 +630,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmStaticByVmGuid(v_vm_guid UUID) RETURNS SETOF vm_static
+Create or replace FUNCTION GetVmStaticByVmGuid(v_vm_guid UUID) RETURNS SETOF vm_static STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vm_static.*
@@ -646,7 +646,7 @@ LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS GetNamesOfVmStaticDedicatedToVds_rs CASCADE;
 CREATE TYPE GetNamesOfVmStaticDedicatedToVds_rs AS (vm_name CHARACTER VARYING);
-Create or replace FUNCTION GetNamesOfVmStaticDedicatedToVds(v_vds_id UUID) RETURNS SETOF GetNamesOfVmStaticDedicatedToVds_rs
+Create or replace FUNCTION GetNamesOfVmStaticDedicatedToVds(v_vds_id UUID) RETURNS SETOF GetNamesOfVmStaticDedicatedToVds_rs STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY
@@ -661,7 +661,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVmStaticByStoragePoolId(v_sp_id uuid) RETURNS SETOF vm_static
+Create or replace FUNCTION GetAllFromVmStaticByStoragePoolId(v_sp_id uuid) RETURNS SETOF vm_static STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vm_static.*
@@ -678,7 +678,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmStaticByName(v_vm_name VARCHAR(255)) RETURNS SETOF vm_static
+Create or replace FUNCTION GetVmStaticByName(v_vm_name VARCHAR(255)) RETURNS SETOF vm_static STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vm_static.*
@@ -693,7 +693,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmStaticByVdsGroup(v_vds_group_id UUID) RETURNS SETOF vm_static
+Create or replace FUNCTION GetVmStaticByVdsGroup(v_vds_group_id UUID) RETURNS SETOF vm_static STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vm_static.*
@@ -708,7 +708,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmStaticWithFailbackByVdsId(v_vds_id UUID) RETURNS SETOF vm_static
+Create or replace FUNCTION GetVmStaticWithFailbackByVdsId(v_vds_id UUID) RETURNS SETOF vm_static STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vm_static.*
@@ -728,7 +728,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVms(v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms
+Create or replace FUNCTION GetAllFromVms(v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
@@ -747,7 +747,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmsByIds(v_vms_ids VARCHAR(5000)) RETURNS SETOF vms
+Create or replace FUNCTION GetVmsByIds(v_vms_ids VARCHAR(5000)) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vm.*
@@ -762,7 +762,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmByVmGuid(v_vm_guid UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms
+Create or replace FUNCTION GetVmByVmGuid(v_vm_guid UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
@@ -779,7 +779,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmByVmNameForDataCenter(v_data_center_id UUID, v_vm_name VARCHAR(255), v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms
+Create or replace FUNCTION GetVmByVmNameForDataCenter(v_data_center_id UUID, v_vm_name VARCHAR(255), v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
@@ -797,7 +797,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmsByVmtGuid(v_vmt_guid UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetVmsByVmtGuid(v_vmt_guid UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
@@ -812,7 +812,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmsByUserId(v_user_id UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetVmsByUserId(v_user_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY select vms.* from vms
@@ -827,7 +827,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmsByUserIdWithGroupsAndUserRoles(v_user_id UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetVmsByUserIdWithGroupsAndUserRoles(v_user_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
@@ -841,7 +841,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmsRunningOnVds(v_vds_id UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetVmsRunningOnVds(v_vds_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
@@ -852,7 +852,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmsMigratingToVds(v_vds_id UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetVmsMigratingToVds(v_vds_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT DISTINCT vms.*
@@ -864,7 +864,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmsRunningOnOrMigratingToVds(v_vds_id UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetVmsRunningOnOrMigratingToVds(v_vds_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
     -- use migrating_to_vds column when the VM is in status Migrating From
@@ -879,7 +879,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmsDynamicRunningOnVds(v_vds_id UUID) RETURNS SETOF vm_dynamic
+Create or replace FUNCTION GetVmsDynamicRunningOnVds(v_vds_id UUID) RETURNS SETOF vm_dynamic STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_dynamic.*
@@ -921,7 +921,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmsByAdGroupNames(v_ad_group_names VARCHAR(250)) RETURNS SETOF vms
+Create or replace FUNCTION GetVmsByAdGroupNames(v_ad_group_names VARCHAR(250)) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY select distinct vms.* from vms
@@ -933,7 +933,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmsByDiskId(v_disk_guid UUID) RETURNS SETOF vms_with_plug_info
+Create or replace FUNCTION GetVmsByDiskId(v_disk_guid UUID) RETURNS SETOF vms_with_plug_info STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT vms_with_plug_info.*
@@ -946,7 +946,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmByHibernationImageId(v_image_id VARCHAR(4000)) RETURNS SETOF vms
+Create or replace FUNCTION GetVmByHibernationImageId(v_image_id VARCHAR(4000)) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT vms.*
@@ -960,7 +960,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetActiveVmsByStorageDomainId(v_storage_domain_id UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetActiveVmsByStorageDomainId(v_storage_domain_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT vms.*
@@ -976,7 +976,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmsByStorageDomainId(v_storage_domain_id UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetVmsByStorageDomainId(v_storage_domain_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT vms.*
@@ -989,7 +989,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION getAllVmsRelatedToQuotaId(v_quota_id UUID) RETURNS SETOF vms
+Create or replace FUNCTION getAllVmsRelatedToQuotaId(v_quota_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vms.*
@@ -1026,7 +1026,7 @@ LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS GetOrderedVmGuidsForRunMultipleActions_rs CASCADE;
 CREATE TYPE GetOrderedVmGuidsForRunMultipleActions_rs AS (vm_guid UUID);
-Create or replace FUNCTION GetOrderedVmGuidsForRunMultipleActions(v_vm_guids VARCHAR(4000)) RETURNS SETOF GetOrderedVmGuidsForRunMultipleActions_rs
+Create or replace FUNCTION GetOrderedVmGuidsForRunMultipleActions(v_vm_guids VARCHAR(4000)) RETURNS SETOF GetOrderedVmGuidsForRunMultipleActions_rs STABLE
    AS $procedure$
    DECLARE
    v_ordered_guids GetOrderedVmGuidsForRunMultipleActions_rs;
@@ -1040,7 +1040,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmsByNetworkId(v_network_id UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetVmsByNetworkId(v_network_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -1056,7 +1056,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmsByVnicProfileId(v_vnic_profile_id UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetVmsByVnicProfileId(v_vnic_profile_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -1070,7 +1070,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmsByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetVmsByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vms.*
@@ -1081,7 +1081,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmsByVmPoolId(v_vm_pool_id UUID) RETURNS SETOF vms
+Create or replace FUNCTION GetVmsByVmPoolId(v_vm_pool_id UUID) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vms.*

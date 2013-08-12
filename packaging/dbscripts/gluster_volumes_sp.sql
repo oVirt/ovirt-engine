@@ -74,7 +74,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetGlusterVolumesByClusterGuid(v_cluster_id UUID)
-    RETURNS SETOF gluster_volumes_view
+    RETURNS SETOF gluster_volumes_view STABLE
     AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
@@ -87,7 +87,7 @@ Create or replace FUNCTION GetGlusterVolumesByOption(v_cluster_id UUID,
                                                        v_status VARCHAR(32),
                                                        v_option_key VARCHAR(8192),
                                                        v_option_val VARCHAR(8192))
-RETURNS SETOF gluster_volumes_view
+RETURNS SETOF gluster_volumes_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
@@ -104,7 +104,7 @@ Create or replace FUNCTION GetGlusterVolumesByStatusTypesAndOption(v_cluster_id 
                                                                   v_vol_types text,
                                                                   v_option_key VARCHAR(8192),
                                                                   v_option_val VARCHAR(8192))
-RETURNS SETOF gluster_volumes_view
+RETURNS SETOF gluster_volumes_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
@@ -119,7 +119,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetGlusterVolumesByStatusAndTypes(v_cluster_id UUID,
                                                          v_status VARCHAR(32),
                                                          v_vol_types text)
-RETURNS SETOF gluster_volumes_view
+RETURNS SETOF gluster_volumes_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
@@ -131,7 +131,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetGlusterVolumeById(v_volume_id UUID)
-    RETURNS SETOF gluster_volumes_view
+    RETURNS SETOF gluster_volumes_view STABLE
     AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
@@ -143,7 +143,7 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterVolumeByName(v_cluster_id UUID,
                                             v_vol_name VARCHAR(1000))
-RETURNS SETOF gluster_volumes_view
+RETURNS SETOF gluster_volumes_view STABLE
     AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
@@ -154,7 +154,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetGlusterBrickById(v_id UUID)
-    RETURNS SETOF gluster_volume_bricks
+    RETURNS SETOF gluster_volume_bricks STABLE
     AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
@@ -165,7 +165,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetBricksByGlusterVolumeGuid(v_volume_id UUID)
-    RETURNS SETOF gluster_volume_bricks
+    RETURNS SETOF gluster_volume_bricks STABLE
     AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
@@ -176,7 +176,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterVolumeBricksByServerGuid(v_server_id UUID)
-RETURNS SETOF gluster_volume_bricks
+RETURNS SETOF gluster_volume_bricks STABLE
 AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
@@ -187,7 +187,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetBrickByServerIdAndDirectory(v_server_id UUID, v_brick_dir VARCHAR(4096))
-    RETURNS SETOF gluster_volume_bricks
+    RETURNS SETOF gluster_volume_bricks STABLE
     AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
@@ -198,7 +198,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterOptionById(v_id UUID)
-    RETURNS SETOF gluster_volume_options
+    RETURNS SETOF gluster_volume_options STABLE
     AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
@@ -209,7 +209,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetOptionsByGlusterVolumeGuid(v_volume_id UUID)
-    RETURNS SETOF gluster_volume_options
+    RETURNS SETOF gluster_volume_options STABLE
     AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
@@ -220,7 +220,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAccessProtocolsByGlusterVolumeGuid(v_volume_id UUID)
-    RETURNS SETOF gluster_volume_access_protocols
+    RETURNS SETOF gluster_volume_access_protocols STABLE
        AS $procedure$
 BEGIN
        RETURN QUERY SELECT *
@@ -231,7 +231,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetTransportTypesByGlusterVolumeGuid(v_volume_id UUID)
-    RETURNS SETOF gluster_volume_transport_types
+    RETURNS SETOF gluster_volume_transport_types STABLE
        AS $procedure$
 BEGIN
        RETURN QUERY SELECT *

@@ -99,7 +99,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVdsStatistics() RETURNS SETOF vds_statistics
+Create or replace FUNCTION GetAllFromVdsStatistics() RETURNS SETOF vds_statistics STABLE
    AS $procedure$
 BEGIN
 BEGIN
@@ -116,7 +116,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsStatisticsByVdsId(v_vds_id UUID) RETURNS SETOF vds_statistics
+Create or replace FUNCTION GetVdsStatisticsByVdsId(v_vds_id UUID) RETURNS SETOF vds_statistics STABLE
    AS $procedure$
 BEGIN
 BEGIN
@@ -305,7 +305,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVdsDynamic() RETURNS SETOF vds_dynamic
+Create or replace FUNCTION GetAllFromVdsDynamic() RETURNS SETOF vds_dynamic STABLE
    AS $procedure$
 BEGIN
 BEGIN
@@ -321,7 +321,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsDynamicByVdsId(v_vds_id UUID) RETURNS SETOF vds_dynamic
+Create or replace FUNCTION GetVdsDynamicByVdsId(v_vds_id UUID) RETURNS SETOF vds_dynamic STABLE
    AS $procedure$
 BEGIN
 BEGIN
@@ -486,7 +486,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVdsStatic() RETURNS SETOF vds_static
+Create or replace FUNCTION GetAllFromVdsStatic() RETURNS SETOF vds_static STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vds_static.*
@@ -500,7 +500,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsStaticByVdsId(v_vds_id UUID) RETURNS SETOF vds_static
+Create or replace FUNCTION GetVdsStaticByVdsId(v_vds_id UUID) RETURNS SETOF vds_static STABLE
    AS $procedure$
 BEGIN
 BEGIN
@@ -515,7 +515,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsStaticByHostName(v_host_name VARCHAR(255)) RETURNS SETOF vds_static
+Create or replace FUNCTION GetVdsStaticByHostName(v_host_name VARCHAR(255)) RETURNS SETOF vds_static STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vds_static.*
@@ -530,7 +530,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsStaticByIp(v_ip VARCHAR(40)) RETURNS SETOF vds_static
+Create or replace FUNCTION GetVdsStaticByIp(v_ip VARCHAR(40)) RETURNS SETOF vds_static STABLE
    AS $procedure$
 BEGIN
 BEGIN
@@ -547,7 +547,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsByUniqueID(v_vds_unique_id VARCHAR(128)) RETURNS SETOF vds
+Create or replace FUNCTION GetVdsByUniqueID(v_vds_unique_id VARCHAR(128)) RETURNS SETOF vds STABLE
    AS $procedure$
 BEGIN
 BEGIN
@@ -565,7 +565,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsStaticByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vds_static
+Create or replace FUNCTION GetVdsStaticByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vds_static STABLE
    AS $procedure$
 BEGIN
 BEGIN
@@ -587,7 +587,7 @@ LANGUAGE plpgsql;
 
 
 
-CREATE OR REPLACE FUNCTION GetUpAndPrioritizedVds(v_storage_pool_id UUID) RETURNS SETOF vds
+CREATE OR REPLACE FUNCTION GetUpAndPrioritizedVds(v_storage_pool_id UUID) RETURNS SETOF vds STABLE
 AS $procedure$
 BEGIN
 BEGIN
@@ -606,7 +606,7 @@ END; $procedure$
 
 
 
-Create or replace FUNCTION GetAllFromVds(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds
+Create or replace FUNCTION GetAllFromVds(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds STABLE
    AS $procedure$
 BEGIN
 BEGIN
@@ -626,7 +626,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsByVdsId(v_vds_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds
+Create or replace FUNCTION GetVdsByVdsId(v_vds_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds STABLE
    AS $procedure$
 DECLARE
 v_columns text[];
@@ -655,7 +655,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsWithoutMigratingVmsByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vds
+Create or replace FUNCTION GetVdsWithoutMigratingVmsByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vds STABLE
    AS $procedure$
 BEGIN
 
@@ -764,7 +764,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsByType(v_vds_type INTEGER) RETURNS SETOF vds
+Create or replace FUNCTION GetVdsByType(v_vds_type INTEGER) RETURNS SETOF vds STABLE
    AS $procedure$
 BEGIN
 BEGIN
@@ -780,7 +780,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsByName(v_vds_name VARCHAR(255)) RETURNS SETOF vds
+Create or replace FUNCTION GetVdsByName(v_vds_name VARCHAR(255)) RETURNS SETOF vds STABLE
    AS $procedure$
 BEGIN
 BEGIN
@@ -796,7 +796,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsByHostName(v_host_name VARCHAR(255)) RETURNS SETOF vds
+Create or replace FUNCTION GetVdsByHostName(v_host_name VARCHAR(255)) RETURNS SETOF vds STABLE
    AS $procedure$
 BEGIN
 BEGIN
@@ -812,7 +812,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsByIp(v_ip VARCHAR(40)) RETURNS SETOF vds
+Create or replace FUNCTION GetVdsByIp(v_ip VARCHAR(40)) RETURNS SETOF vds STABLE
    AS $procedure$
 BEGIN
 BEGIN
@@ -829,7 +829,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsByVdsGroupId(v_vds_group_id UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vds
+Create or replace FUNCTION GetVdsByVdsGroupId(v_vds_group_id UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vds STABLE
    AS $procedure$
 BEGIN
 	-- this sp returns all vds for a given cluster
@@ -852,7 +852,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVdsByStoragePoolId(v_storage_pool_id UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vds
+Create or replace FUNCTION GetVdsByStoragePoolId(v_storage_pool_id UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vds STABLE
    AS $procedure$
 BEGIN
    BEGIN
@@ -869,7 +869,7 @@ LANGUAGE plpgsql;
 
 
 -- Returns all VDS for a given cluster and having given status
-CREATE OR REPLACE FUNCTION getVdsForVdsGroupWithStatus(v_vds_group_id UUID, v_status integer) RETURNS SETOF vds
+CREATE OR REPLACE FUNCTION getVdsForVdsGroupWithStatus(v_vds_group_id UUID, v_status integer) RETURNS SETOF vds STABLE
     AS $procedure$
 BEGIN
     BEGIN
@@ -882,7 +882,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 -- Returns all VDS for a given pool and having given status
-CREATE OR REPLACE FUNCTION getVdsByStoragePoolIdWithStatus(v_storage_pool_id UUID, v_status integer) RETURNS SETOF vds
+CREATE OR REPLACE FUNCTION getVdsByStoragePoolIdWithStatus(v_storage_pool_id UUID, v_status integer) RETURNS SETOF vds STABLE
     AS $procedure$
 BEGIN
     BEGIN
@@ -894,7 +894,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION getHostsForStorageOperation(v_storage_pool_id UUID, v_local_fs_only BOOLEAN) RETURNS SETOF vds
+CREATE OR REPLACE FUNCTION getHostsForStorageOperation(v_storage_pool_id UUID, v_local_fs_only BOOLEAN) RETURNS SETOF vds STABLE
    AS $procedure$
 BEGIN
     BEGIN
@@ -969,7 +969,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetVdsByNetworkId(v_network_id UUID) RETURNS SETOF vds
+Create or replace FUNCTION GetVdsByNetworkId(v_network_id UUID) RETURNS SETOF vds STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -988,7 +988,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVdsWithoutNetwork(v_network_id UUID) RETURNS SETOF vds
+Create or replace FUNCTION GetVdsWithoutNetwork(v_network_id UUID) RETURNS SETOF vds STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT vds.*

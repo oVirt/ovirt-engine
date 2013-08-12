@@ -122,7 +122,7 @@ LANGUAGE plpgsql;
 -- If the user has permissions on a cluster, he will see events from the cluster, the hosts and the VMS in the cluster
 -- because each event has the cluster id of the entity that generates the event and we check to see if the user has
 -- permissions on the cluster using the column vds_group_id. Same holds true for data center
-Create or replace FUNCTION GetAllFromAuditLog(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log
+Create or replace FUNCTION GetAllFromAuditLog(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -150,7 +150,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetAuditLogByAuditLogId(v_audit_log_id INTEGER) RETURNS SETOF audit_log
+Create or replace FUNCTION GetAuditLogByAuditLogId(v_audit_log_id INTEGER) RETURNS SETOF audit_log STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -159,7 +159,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetAuditLogByVMName(v_vm_name VARCHAR, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log
+Create or replace FUNCTION GetAuditLogByVMName(v_vm_name VARCHAR, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -173,7 +173,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetAuditLogByVMTemplateName(v_vm_template_name VARCHAR, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log
+Create or replace FUNCTION GetAuditLogByVMTemplateName(v_vm_template_name VARCHAR, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF audit_log STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -188,7 +188,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetAuditLogLaterThenDate(v_date TIMESTAMP WITH TIME ZONE)
-RETURNS SETOF audit_log
+RETURNS SETOF audit_log STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -257,7 +257,7 @@ v_event        - The event [USER_VDS_STOP | USER_VDS_START | USER_VDS_RESTART]
 v_wait_for_sec - Configurable time in seconds to wait from last operation.
 Returns : The number of seconds we have to wait (negative value means we can do the operation immediately)
 */
-Create or replace FUNCTION get_seconds_to_wait_before_pm_operation(v_vds_name varchar(255), v_event varchar(100), v_wait_for_sec INTEGER ) RETURNS INTEGER
+Create or replace FUNCTION get_seconds_to_wait_before_pm_operation(v_vds_name varchar(255), v_event varchar(100), v_wait_for_sec INTEGER ) RETURNS INTEGER STABLE
    AS $procedure$
 declare v_last_event_dt timestamp with time zone;
 declare v_now_dt timestamp with time zone;
@@ -277,7 +277,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetAuditLogByOriginAndCustomEventId(v_origin varchar(255), v_custom_event_id INTEGER) RETURNS SETOF audit_log
+Create or replace FUNCTION GetAuditLogByOriginAndCustomEventId(v_origin varchar(255), v_custom_event_id INTEGER) RETURNS SETOF audit_log STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *

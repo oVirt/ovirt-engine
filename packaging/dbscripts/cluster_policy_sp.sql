@@ -5,7 +5,7 @@
 -- All cluster policies
 -- 'Policys' typo is intentional, naming convention for DefaultGenericDaoDbFacade is: "GetAllFrom{0}s",
 -- where {0} is the business entity (ClusterPolicy).
-Create or replace FUNCTION GetAllFromClusterPolicys() RETURNS SETOF cluster_policies
+Create or replace FUNCTION GetAllFromClusterPolicys() RETURNS SETOF cluster_policies STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -14,7 +14,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 -- get cluster policy by id
-Create or replace FUNCTION GetClusterPolicyByClusterPolicyId(v_id UUID) RETURNS SETOF cluster_policies
+Create or replace FUNCTION GetClusterPolicyByClusterPolicyId(v_id UUID) RETURNS SETOF cluster_policies STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -88,7 +88,7 @@ LANGUAGE plpgsql;
 -- Cluster Policy Units
 
 -- Get all units per cluster policy id
-Create or replace FUNCTION GetAllFromClusterPolicyUnits() RETURNS SETOF cluster_policy_units
+Create or replace FUNCTION GetAllFromClusterPolicyUnits() RETURNS SETOF cluster_policy_units STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -98,7 +98,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 -- Get all units per cluster policy id
-Create or replace FUNCTION GetClusterPolicyUnitsByClusterPolicyId(v_id UUID) RETURNS SETOF cluster_policy_units
+Create or replace FUNCTION GetClusterPolicyUnitsByClusterPolicyId(v_id UUID) RETURNS SETOF cluster_policy_units STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY

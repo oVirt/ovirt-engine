@@ -5,7 +5,7 @@
 
 
 Create or replace FUNCTION GetTimeLeasedUsersVmsByGroupIdAndPoolId(v_groupId UUID,
- v_vm_pool_id UUID) RETURNS SETOF tags_vm_map
+ v_vm_pool_id UUID) RETURNS SETOF tags_vm_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY select tags_vm_map.* from tags_vm_map
@@ -106,7 +106,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromUsers(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF users
+Create or replace FUNCTION GetAllFromUsers(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF users STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT users.*
@@ -121,7 +121,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetUserByUserId(v_user_id UUID) RETURNS SETOF users
+Create or replace FUNCTION GetUserByUserId(v_user_id UUID) RETURNS SETOF users STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT users.*
@@ -134,7 +134,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetUserByExternalId(v_domain VARCHAR(255), v_external_id BYTEA) RETURNS SETOF users
+Create or replace FUNCTION GetUserByExternalId(v_domain VARCHAR(255), v_external_id BYTEA) RETURNS SETOF users STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT users.*
@@ -147,7 +147,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetUserByUserName(v_username VARCHAR(255)) RETURNS SETOF users
+Create or replace FUNCTION GetUserByUserName(v_username VARCHAR(255)) RETURNS SETOF users STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT users.*
@@ -159,7 +159,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetUsersByVmGuid(v_vm_guid UUID) RETURNS SETOF users
+Create or replace FUNCTION GetUsersByVmGuid(v_vm_guid UUID) RETURNS SETOF users STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT users.*

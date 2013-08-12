@@ -22,7 +22,7 @@ LANGUAGE plpgsql;
 -- Returns all the Quota storages in the storage pool if v_storage_id is null, if v_storage_id is not null then a specific quota storage will be returned.
 -- Empty quotas are returned only if v_allow_empty is set to TRUE
 Create or replace FUNCTION GetQuotaStorageByStorageGuid(v_storage_id UUID, v_id UUID, v_allow_empty BOOLEAN)
-RETURNS SETOF quota_storage_view
+RETURNS SETOF quota_storage_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -44,7 +44,7 @@ LANGUAGE plpgsql;
 
 -- Returns all the global quotas in the storage pool if v_storage_pool_id is null, if v_storage_id is not null then a specific quota storage will be returned.
 Create or replace FUNCTION GetQuotaByAdElementId(v_ad_element_id UUID, v_storage_pool_id UUID, v_recursive BOOLEAN)
-RETURNS SETOF quota_view
+RETURNS SETOF quota_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT * FROM quota_view WHERE quota_view.quota_id IN
@@ -60,7 +60,7 @@ LANGUAGE plpgsql;
 
 -- Returns all the quotas in a thin view (only basic quota meta data. no limits or consumption)
 Create or replace FUNCTION getAllThinQuota()
-RETURNS SETOF quota_view
+RETURNS SETOF quota_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -69,7 +69,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION getQuotaCount()
-RETURNS SETOF BIGINT
+RETURNS SETOF BIGINT STABLE
    AS $procedure$
 BEGIN
     RETURN QUERY SELECT count(*) as num_quota
@@ -78,7 +78,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetQuotaStorageByQuotaGuid(v_id UUID)
-RETURNS SETOF quota_storage_view
+RETURNS SETOF quota_storage_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -89,7 +89,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetQuotaVdsGroupByVdsGroupGuid(v_vds_group_id UUID, v_id UUID, v_allow_empty BOOLEAN)
-RETURNS SETOF quota_vds_group_view
+RETURNS SETOF quota_vds_group_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -111,7 +111,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetQuotaVdsGroupByQuotaGuid(v_id UUID)
-RETURNS SETOF quota_vds_group_view
+RETURNS SETOF quota_vds_group_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT quota_vds_group_view.*
@@ -160,7 +160,7 @@ LANGUAGE plpgsql;
 
 -- Returns all the Quota storages in the storage pool if v_storage_id is null, if v_storage_id is not null then a specific quota storage will be returned.
 Create or replace FUNCTION GetQuotaByStoragePoolGuid(v_storage_pool_id UUID)
-RETURNS SETOF quota_global_view
+RETURNS SETOF quota_global_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -171,7 +171,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetQuotaByQuotaGuid(v_id UUID)
-RETURNS SETOF quota_global_view
+RETURNS SETOF quota_global_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -182,7 +182,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetQuotaByQuotaName(v_quota_name VARCHAR)
-RETURNS SETOF quota_global_view
+RETURNS SETOF quota_global_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -192,7 +192,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetAllThinQuotasByStorageId(v_storage_id UUID, v_user_id UUID, v_is_filtered boolean)
-RETURNS SETOF quota_view
+RETURNS SETOF quota_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT DISTINCT
@@ -226,7 +226,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllThinQuotasByVDSGroupId(v_vds_group_id UUID, v_user_id UUID, v_is_filtered boolean)
-RETURNS SETOF quota_view
+RETURNS SETOF quota_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT DISTINCT
@@ -259,7 +259,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION IsQuotaInUse(v_quota_id UUID)
-RETURNS boolean
+RETURNS boolean STABLE
     AS $BODY$
 DECLARE
     result boolean := FALSE;

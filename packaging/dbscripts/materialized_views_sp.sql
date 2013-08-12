@@ -261,7 +261,7 @@ LANGUAGE plpgsql;
 
 -- Checks if  Materialized View should be refreshed
 CREATE OR REPLACE FUNCTION IsMaterializedViewRefreshed(v_matview NAME)
- RETURNS boolean
+ RETURNS boolean STABLE
 AS $procedure$
 DECLARE
      v_entry materialized_views%ROWTYPE;

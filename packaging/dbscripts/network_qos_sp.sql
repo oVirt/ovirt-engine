@@ -50,7 +50,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromNetworkQoss() RETURNS SETOF network_qos
+Create or replace FUNCTION GetAllFromNetworkQoss() RETURNS SETOF network_qos STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -59,7 +59,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetNetworkQosByNetworkQosId(v_id UUID) RETURNS SETOF network_qos
+Create or replace FUNCTION GetNetworkQosByNetworkQosId(v_id UUID) RETURNS SETOF network_qos STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
@@ -69,7 +69,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetAllNetworkQosForStoragePool(v_storage_pool_id UUID) RETURNS SETOF network_qos
+Create or replace FUNCTION GetAllNetworkQosForStoragePool(v_storage_pool_id UUID) RETURNS SETOF network_qos STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT *

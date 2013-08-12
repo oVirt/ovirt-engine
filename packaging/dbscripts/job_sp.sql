@@ -47,7 +47,7 @@ LANGUAGE plpgsql;
 -- Retrieves Job entity by its job-id from Job table
 ----------------------------------------------------
 Create or replace FUNCTION GetJobByJobId(v_job_id UUID)
-RETURNS SETOF job
+RETURNS SETOF job STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT job.*
@@ -60,7 +60,7 @@ LANGUAGE plpgsql;
 -- Retrieves All Job entitise from Job table
 --------------------------------------------
 Create or replace FUNCTION GetAllJobs()
-RETURNS SETOF job
+RETURNS SETOF job STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT job.*
@@ -73,7 +73,7 @@ LANGUAGE plpgsql;
 -- Retrieves All Job entities by offset and page size
 -----------------------------------------------------
 Create or replace FUNCTION GetJobsByOffsetAndPageSize(v_position INTEGER, v_page_size INTEGER)
-RETURNS SETOF job
+RETURNS SETOF job STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -94,7 +94,7 @@ LANGUAGE plpgsql;
 -- Retrieves All Job entities by Correlation-ID
 -----------------------------------------------
 Create or replace FUNCTION GetJobsByCorrelationId(v_correlation_id VARCHAR(50))
-RETURNS SETOF job
+RETURNS SETOF job STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT job.*
@@ -204,7 +204,7 @@ LANGUAGE plpgsql;
 -- Gets Job Subject Entity of a Job By Job-id
 ---------------------------------------------
 Create or replace FUNCTION GetJobSubjectEntityByJobId(v_job_id UUID)
-RETURNS SETOF job_subject_entity
+RETURNS SETOF job_subject_entity STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT job_subject_entity.*
@@ -218,7 +218,7 @@ LANGUAGE plpgsql;
 ------------------------------------------------
 Create or replace FUNCTION GetAllJobIdsByEntityId(
     v_entity_id UUID)
-RETURNS SETOF UUID
+RETURNS SETOF UUID STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT job_subject_entity.job_id
@@ -351,7 +351,7 @@ LANGUAGE plpgsql;
 -- Gets Step entity from Step table by Step-Id
 ----------------------------------------------
 Create or replace FUNCTION GetStepByStepId(v_step_id UUID)
-RETURNS SETOF step
+RETURNS SETOF step STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT step.*
@@ -364,7 +364,7 @@ LANGUAGE plpgsql;
 -- Gets Step entities list from Step table by Job-Id
 ----------------------------------------------------
 Create or replace FUNCTION GetStepsByJobId(v_job_id UUID)
-RETURNS SETOF step
+RETURNS SETOF step STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT step.*
@@ -378,7 +378,7 @@ LANGUAGE plpgsql;
 -- Gets Step entities list from Step table by parent-step-id
 ------------------------------------------------------------
 Create or replace FUNCTION GetStepsByParentStepId(v_parent_step_id UUID)
-RETURNS SETOF step
+RETURNS SETOF step STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT step.*
@@ -392,7 +392,7 @@ LANGUAGE plpgsql;
 -- Gets Step entity from Step table by Job-Id
 ---------------------------------------------
 Create or replace FUNCTION GetAllSteps()
-RETURNS SETOF step
+RETURNS SETOF step STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT step.*
@@ -488,7 +488,7 @@ LANGUAGE plpgsql;
 -------------------------------------
 Create or replace FUNCTION CheckIfJobHasTasks(
     v_job_id UUID)
-RETURNS SETOF booleanResultType
+RETURNS SETOF booleanResultType STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY

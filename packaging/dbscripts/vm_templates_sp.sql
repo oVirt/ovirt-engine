@@ -272,7 +272,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVmTemplates(v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_view
+Create or replace FUNCTION GetAllFromVmTemplates(v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_templates.*
@@ -289,7 +289,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmTemplatesByIds(v_vm_templates_ids VARCHAR(5000)) RETURNS SETOF vm_templates_view
+Create or replace FUNCTION GetVmTemplatesByIds(v_vm_templates_ids VARCHAR(5000)) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vm_templates.*
@@ -304,7 +304,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION getAllVmTemplatesRelatedToQuotaId(v_quota_id UUID) RETURNS SETOF vm_templates_view
+Create or replace FUNCTION getAllVmTemplatesRelatedToQuotaId(v_quota_id UUID) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
 	RETURN QUERY SELECT vm_templates.*
@@ -320,7 +320,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmTemplateByVmtGuid(v_vmt_guid UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_view
+Create or replace FUNCTION GetVmTemplateByVmtGuid(v_vmt_guid UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_templates.*
@@ -333,7 +333,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmTemplateByVmtName(v_vmt_name VARCHAR(255), v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_view
+Create or replace FUNCTION GetVmTemplateByVmtName(v_vmt_name VARCHAR(255), v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_templates.*
@@ -350,7 +350,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmTemplateByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vm_templates_view
+Create or replace FUNCTION GetVmTemplateByVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_templates.*
@@ -362,7 +362,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmTemplatesByImageId(v_image_guid UUID) RETURNS SETOF vm_templates_with_plug_info
+Create or replace FUNCTION GetVmTemplatesByImageId(v_image_guid UUID) RETURNS SETOF vm_templates_with_plug_info STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -372,7 +372,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmTemplatesByStorageDomainId(v_storage_domain_id UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_view
+Create or replace FUNCTION GetVmTemplatesByStorageDomainId(v_storage_domain_id UUID, v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT vm_templates.*
@@ -388,7 +388,7 @@ LANGUAGE plpgsql;
 
 
 --This SP returns all templates with permissions to run the given action by user
-Create or replace FUNCTION fn_perms_get_templates_with_permitted_action(v_user_id UUID, v_action_group_id integer) RETURNS SETOF vm_templates_view
+Create or replace FUNCTION fn_perms_get_templates_with_permitted_action(v_user_id UUID, v_action_group_id integer) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_templates_view.*
@@ -400,7 +400,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmTemplatesByNetworkId(v_network_id UUID) RETURNS SETOF vm_templates_view
+Create or replace FUNCTION GetVmTemplatesByNetworkId(v_network_id UUID) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -415,7 +415,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetVmTemplatesByVnicProfileId(v_vnic_profile_id UUID) RETURNS SETOF vm_templates_view
+Create or replace FUNCTION GetVmTemplatesByVnicProfileId(v_vnic_profile_id UUID) RETURNS SETOF vm_templates_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *

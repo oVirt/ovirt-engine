@@ -47,7 +47,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getimage_storage_domain_mapByimage_id(v_image_id UUID)
-RETURNS SETOF image_storage_domain_map
+RETURNS SETOF image_storage_domain_map STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -61,7 +61,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getimage_storage_domain_mapBystorage_domain_id(v_storage_domain_id UUID) RETURNS SETOF image_storage_domain_map
+Create or replace FUNCTION Getimage_storage_domain_mapBystorage_domain_id(v_storage_domain_id UUID) RETURNS SETOF image_storage_domain_map STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *

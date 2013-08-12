@@ -127,7 +127,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetAllFromVmDevice() RETURNS SETOF vm_device_view
+Create or replace FUNCTION GetAllFromVmDevice() RETURNS SETOF vm_device_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -137,7 +137,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmDeviceByDeviceId(v_device_id UUID, v_vm_id UUID)
-RETURNS SETOF vm_device_view
+RETURNS SETOF vm_device_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -149,7 +149,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmDeviceByVmId(v_vm_id UUID)
-RETURNS SETOF vm_device_view
+RETURNS SETOF vm_device_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -160,7 +160,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmDeviceByVmIdAndType(v_vm_id UUID, v_type varchar(30))
-RETURNS SETOF vm_device_view
+RETURNS SETOF vm_device_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -172,7 +172,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmDeviceByVmIdTypeAndDevice(v_vm_id UUID, v_type varchar(30), v_device varchar(30), v_user_id UUID, v_is_filtered BOOLEAN)
-RETURNS SETOF vm_device_view
+RETURNS SETOF vm_device_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -188,7 +188,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 create or replace FUNCTION GetVmUnmanagedDevicesByVmId(v_vm_id UUID)
-RETURNS SETOF vm_device_view
+RETURNS SETOF vm_device_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -199,7 +199,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION isMemBalloonEnabled(v_vm_id UUID)
-  RETURNS boolean AS
+  RETURNS boolean STABLE AS
 $BODY$
 declare
     result boolean := false;

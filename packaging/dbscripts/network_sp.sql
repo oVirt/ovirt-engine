@@ -91,7 +91,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromnetwork(v_user_id uuid, v_is_filtered boolean) RETURNS SETOF network
+Create or replace FUNCTION GetAllFromnetwork(v_user_id uuid, v_is_filtered boolean) RETURNS SETOF network STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -107,7 +107,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetnetworkByid(v_id UUID) RETURNS SETOF network
+Create or replace FUNCTION GetnetworkByid(v_id UUID) RETURNS SETOF network STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
@@ -123,7 +123,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetnetworkByName(v_networkName VARCHAR(50))
-RETURNS SETOF network
+RETURNS SETOF network STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -136,7 +136,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetNetworkByNameAndDataCenter(v_name VARCHAR(50), v_storage_pool_id UUID)
-RETURNS SETOF network
+RETURNS SETOF network STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT network.*
@@ -150,7 +150,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetNetworkByNameAndCluster(v_name VARCHAR(50), v_cluster_id UUID)
-RETURNS SETOF network
+RETURNS SETOF network STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT network.*
@@ -167,7 +167,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllNetworkByStoragePoolId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
-RETURNS SETOF network
+RETURNS SETOF network STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
@@ -189,7 +189,7 @@ CREATE TYPE networkViewClusterType AS(id uuid,name VARCHAR(50),description VARCH
 	    network_id UUID,cluster_id UUID, status INTEGER, is_display BOOLEAN,
 	    required BOOLEAN, migration BOOLEAN);
 Create or replace FUNCTION GetAllNetworkByClusterId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
-RETURNS SETOF networkViewClusterType
+RETURNS SETOF networkViewClusterType STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT
@@ -230,7 +230,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllNetworksByNetworkProviderId(v_id UUID)
-RETURNS SETOF network
+RETURNS SETOF network STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -244,7 +244,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllNetworkViewsByNetworkProviderId(v_id UUID)
-RETURNS SETOF network_view
+RETURNS SETOF network_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -345,7 +345,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getinterface_viewByvds_id(v_vds_id UUID, v_user_id UUID, v_is_filtered boolean)
-RETURNS SETOF vds_interface_view
+RETURNS SETOF vds_interface_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -360,7 +360,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getinterface_viewByAddr(v_cluster_id UUID, v_addr VARCHAR(50))
-RETURNS SETOF vds_interface_view
+RETURNS SETOF vds_interface_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT vds_interface_view.*
@@ -376,7 +376,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVdsManagedInterfaceByVdsId(v_vds_id UUID, v_user_id UUID, v_is_filtered boolean)
-RETURNS SETOF vds_interface_view
+RETURNS SETOF vds_interface_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -392,7 +392,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsInterfacesByNetworkId(v_network_id UUID) RETURNS SETOF vds_interface_view
+Create or replace FUNCTION GetVdsInterfacesByNetworkId(v_network_id UUID) RETURNS SETOF vds_interface_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT vds_interface_view.*
@@ -410,7 +410,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsInterfaceById(v_vds_interface_id UUID) RETURNS SETOF vds_interface_view
+Create or replace FUNCTION GetVdsInterfaceById(v_vds_interface_id UUID) RETURNS SETOF vds_interface_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -479,7 +479,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmInterfaceByVmInterfaceId(v_id UUID) RETURNS SETOF vm_interface
+Create or replace FUNCTION GetVmInterfaceByVmInterfaceId(v_id UUID) RETURNS SETOF vm_interface STABLE
 AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -489,7 +489,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetAllFromVmInterfaces() RETURNS SETOF vm_interface
+Create or replace FUNCTION GetAllFromVmInterfaces() RETURNS SETOF vm_interface STABLE
 AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -499,7 +499,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmInterfacesByVmId(v_vm_id UUID)
-RETURNS SETOF vm_interface
+RETURNS SETOF vm_interface STABLE
 AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -510,7 +510,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmInterfaceByTemplateId(v_template_id UUID)
-RETURNS SETOF vm_interface
+RETURNS SETOF vm_interface STABLE
 AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -521,7 +521,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmInterfacesByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface
+Create or replace FUNCTION GetVmInterfacesByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface STABLE
 AS $procedure$
 BEGIN
    RETURN QUERY SELECT vm_interface.*
@@ -534,7 +534,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmTemplateInterfacesByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface
+Create or replace FUNCTION GetVmTemplateInterfacesByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface STABLE
 AS $procedure$
 BEGIN
    RETURN QUERY SELECT vm_interface.*
@@ -547,7 +547,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetMacsByDataCenterId(v_data_center_id UUID) RETURNS SETOF varchar
+Create or replace FUNCTION GetMacsByDataCenterId(v_data_center_id UUID) RETURNS SETOF varchar STABLE
 AS $procedure$
 BEGIN
    RETURN QUERY SELECT mac_addr
@@ -564,7 +564,7 @@ LANGUAGE plpgsql;
 -- VM Interface View
 ----------------------------------------------------------------
 
-Create or replace FUNCTION GetAllFromVmNetworkInterfaceViews() RETURNS SETOF vm_interface_view
+Create or replace FUNCTION GetAllFromVmNetworkInterfaceViews() RETURNS SETOF vm_interface_view STABLE
 AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
@@ -575,7 +575,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmNetworkInterfaceViewByVmNetworkInterfaceViewId(v_id UUID)
-RETURNS SETOF vm_interface_view
+RETURNS SETOF vm_interface_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -587,7 +587,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetPluggedVmInterfacesByMac(v_mac_address VARCHAR(20))
-RETURNS SETOF vm_interface_view
+RETURNS SETOF vm_interface_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -599,7 +599,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmNetworkInterfaceViewByVmId(v_vm_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
-RETURNS SETOF vm_interface_view
+RETURNS SETOF vm_interface_view STABLE
 AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -613,7 +613,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmNetworkInterfaceViewByTemplateId(v_template_id UUID, v_user_id UUID, v_is_filtered boolean)
-RETURNS SETOF vm_interface_view
+RETURNS SETOF vm_interface_view STABLE
 AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -626,7 +626,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmInterfaceViewsByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface_view
+Create or replace FUNCTION GetVmInterfaceViewsByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface_view STABLE
 AS $procedure$
 BEGIN
    RETURN QUERY SELECT vm_interface_view.*
@@ -638,7 +638,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetVmTemplateInterfaceViewsByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface_view
+Create or replace FUNCTION GetVmTemplateInterfaceViewsByNetworkId(v_network_id UUID) RETURNS SETOF vm_interface_view STABLE
 AS $procedure$
 BEGIN
    RETURN QUERY SELECT vm_interface_view.*
@@ -654,7 +654,7 @@ LANGUAGE plpgsql;
 --
 
 
-Create or replace FUNCTION Getvm_interface_statisticsById(v_id UUID) RETURNS SETOF vm_interface_statistics
+Create or replace FUNCTION Getvm_interface_statisticsById(v_id UUID) RETURNS SETOF vm_interface_statistics STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
@@ -733,7 +733,7 @@ LANGUAGE plpgsql;
 -- [network_cluster] Table
 --
 Create or replace FUNCTION GetVmGuestAgentInterfacesByVmId(v_vm_id UUID, v_user_id UUID, v_filtered BOOLEAN)
-RETURNS SETOF vm_guest_agent_interfaces
+RETURNS SETOF vm_guest_agent_interfaces STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT *
@@ -910,7 +910,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromnetwork_cluster() RETURNS SETOF network_cluster
+Create or replace FUNCTION GetAllFromnetwork_cluster() RETURNS SETOF network_cluster STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -924,7 +924,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllFromnetwork_clusterByClusterId(v_cluster_id UUID)
-RETURNS SETOF network_cluster
+RETURNS SETOF network_cluster STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -939,7 +939,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllFromnetwork_clusterByNetworkId(v_network_id UUID)
-RETURNS SETOF network_cluster
+RETURNS SETOF network_cluster STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -954,7 +954,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getnetwork_clusterBycluster_idAndBynetwork_id(v_cluster_id UUID,
- v_network_id UUID) RETURNS SETOF network_cluster
+ v_network_id UUID) RETURNS SETOF network_cluster STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -966,7 +966,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetvmStaticByGroupIdAndNetwork(v_groupId UUID,
-     v_networkName VARCHAR(50)) RETURNS SETOF vm_static
+     v_networkName VARCHAR(50)) RETURNS SETOF vm_static STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT
@@ -1025,7 +1025,7 @@ LANGUAGE plpgsql;
 ----------------------------------------------------------------------
 
 Create or replace FUNCTION GetVnicProfileByVnicProfileId(v_id UUID)
-RETURNS SETOF vnic_profiles
+RETURNS SETOF vnic_profiles STABLE
    AS $procedure$
 BEGIN
 
@@ -1094,7 +1094,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllFromVnicProfiles()
-RETURNS SETOF vnic_profiles
+RETURNS SETOF vnic_profiles STABLE
    AS $procedure$
 BEGIN
 
@@ -1106,7 +1106,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVnicProfilesByNetworkId(v_network_id UUID)
-RETURNS SETOF vnic_profiles
+RETURNS SETOF vnic_profiles STABLE
    AS $procedure$
 BEGIN
 
@@ -1122,7 +1122,7 @@ LANGUAGE plpgsql;
 --  Vnic Profile View
 ----------------------------------------------------------------------
 Create or replace FUNCTION GetVnicProfileViewByVnicProfileViewId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
-RETURNS SETOF vnic_profiles_view
+RETURNS SETOF vnic_profiles_view STABLE
 AS $procedure$
 BEGIN
 
@@ -1138,7 +1138,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllFromVnicProfileViews(v_user_id uuid, v_is_filtered boolean)
-RETURNS SETOF vnic_profiles_view
+RETURNS SETOF vnic_profiles_view STABLE
 AS $procedure$
 BEGIN
 
@@ -1153,7 +1153,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVnicProfileViewsByNetworkId(v_network_id UUID, v_user_id uuid, v_is_filtered boolean)
-RETURNS SETOF vnic_profiles_view
+RETURNS SETOF vnic_profiles_view STABLE
 AS $procedure$
 BEGIN
 
@@ -1169,7 +1169,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVnicProfileViewsByDataCenterId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
-RETURNS SETOF vnic_profiles_view
+RETURNS SETOF vnic_profiles_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -1182,7 +1182,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetVnicProfileViewsByNetworkQosId(v_network_qos_id UUID) RETURNS SETOF vnic_profiles_view
+Create or replace FUNCTION GetVnicProfileViewsByNetworkQosId(v_network_qos_id UUID) RETURNS SETOF vnic_profiles_view STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT *

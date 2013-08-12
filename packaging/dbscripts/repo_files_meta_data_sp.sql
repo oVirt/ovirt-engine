@@ -36,7 +36,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetRepo_files_by_storage_domain(v_storage_domain_id UUID, v_file_type INTEGER DEFAULT NULL)
-RETURNS SETOF repo_file_meta_data
+RETURNS SETOF repo_file_meta_data STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT repo_file_meta_data.*
@@ -52,7 +52,7 @@ CREATE TYPE GetRepo_files_in_all_storage_pools_rs AS(storage_domain_id UUID, las
 
 Create or replace FUNCTION GetRepo_files_in_all_storage_pools(v_storage_domain_type INTEGER, v_storage_pool_status INTEGER,
    v_vds_status INTEGER, v_storage_domain_status INTEGER)
-RETURNS SETOF GetRepo_files_in_all_storage_pools_rs
+RETURNS SETOF GetRepo_files_in_all_storage_pools_rs STABLE
    AS $procedure$
 BEGIN
  RETURN QUERY SELECT distinct b.storage_domain_id,c.last_refreshed,b.file_type

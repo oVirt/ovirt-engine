@@ -102,7 +102,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVdsGroups(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds_groups_view
+Create or replace FUNCTION GetAllFromVdsGroups(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds_groups_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vds_groups_view.*
@@ -116,7 +116,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsGroupByVdsGroupId(v_vds_group_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds_groups_view
+Create or replace FUNCTION GetVdsGroupByVdsGroupId(v_vds_group_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds_groups_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vds_groups_view.*
@@ -132,7 +132,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsGroupByVdsGroupName(v_vds_group_name VARCHAR(40)) RETURNS SETOF vds_groups_view
+Create or replace FUNCTION GetVdsGroupByVdsGroupName(v_vds_group_name VARCHAR(40)) RETURNS SETOF vds_groups_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vds_groups_view.*
@@ -145,7 +145,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsGroupForUserByVdsGroupName(v_vds_group_name VARCHAR(40), v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds_groups_view
+Create or replace FUNCTION GetVdsGroupForUserByVdsGroupName(v_vds_group_name VARCHAR(40), v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds_groups_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vds_groups_view.*
@@ -160,7 +160,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsGroupsByStoragePoolId(v_storage_pool_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds_groups_view
+Create or replace FUNCTION GetVdsGroupsByStoragePoolId(v_storage_pool_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vds_groups_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vds_groups_view.*
@@ -178,7 +178,7 @@ LANGUAGE plpgsql;
 
 
 --This SP returns the VDS group if it has running vms
-Create or replace FUNCTION GetVdsGroupWithRunningVms(v_vds_group_id UUID) RETURNS SETOF vds_groups_view
+Create or replace FUNCTION GetVdsGroupWithRunningVms(v_vds_group_id UUID) RETURNS SETOF vds_groups_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vds_groups_view.*
@@ -190,7 +190,7 @@ LANGUAGE plpgsql;
 
 
 --This SP returns all clusters with permissions to run the given action by user
-Create or replace FUNCTION fn_perms_get_vds_groups_with_permitted_action(v_user_id UUID, v_action_group_id integer) RETURNS SETOF vds_groups_view
+Create or replace FUNCTION fn_perms_get_vds_groups_with_permitted_action(v_user_id UUID, v_action_group_id integer) RETURNS SETOF vds_groups_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vds_groups_view.*
@@ -207,7 +207,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetTrustedVdsGroups() RETURNS SETOF vds_groups_view
+Create or replace FUNCTION GetTrustedVdsGroups() RETURNS SETOF vds_groups_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vds_groups_view.*
@@ -217,7 +217,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 -- returns all clusters attached to a specific cluster policy (given as a parameter to the SP)
-Create or replace FUNCTION GetVdsGroupsByClusterPolicyId(v_cluster_policy_id UUID) RETURNS SETOF vds_groups_view
+Create or replace FUNCTION GetVdsGroupsByClusterPolicyId(v_cluster_policy_id UUID) RETURNS SETOF vds_groups_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vds_groups_view.*

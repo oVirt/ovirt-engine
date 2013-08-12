@@ -106,7 +106,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromBaseDisks() RETURNS SETOF base_disks
+Create or replace FUNCTION GetAllFromBaseDisks() RETURNS SETOF base_disks STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -120,7 +120,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetBaseDiskByBaseDiskId(v_disk_id UUID)
-RETURNS SETOF base_disks
+RETURNS SETOF base_disks STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY

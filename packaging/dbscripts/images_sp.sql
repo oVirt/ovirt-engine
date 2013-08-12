@@ -160,7 +160,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromImages() RETURNS SETOF images
+Create or replace FUNCTION GetAllFromImages() RETURNS SETOF images STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -174,7 +174,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetImageByImageId(v_image_guid UUID)
-RETURNS SETOF images
+RETURNS SETOF images STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY

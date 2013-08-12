@@ -53,7 +53,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromvds_spm_id_map() RETURNS SETOF vds_spm_id_map
+Create or replace FUNCTION GetAllFromvds_spm_id_map() RETURNS SETOF vds_spm_id_map STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vds_spm_id_map.*
@@ -67,7 +67,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getvds_spm_id_mapBystorage_pool_idAndByvds_spm_id(v_storage_pool_id UUID,
- v_vds_spm_id INTEGER) RETURNS SETOF vds_spm_id_map
+ v_vds_spm_id INTEGER) RETURNS SETOF vds_spm_id_map STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vds_spm_id_map.*
@@ -82,7 +82,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getvds_spm_id_mapBystorage_pool_id(v_storage_pool_id UUID) RETURNS SETOF vds_spm_id_map
+Create or replace FUNCTION Getvds_spm_id_mapBystorage_pool_id(v_storage_pool_id UUID) RETURNS SETOF vds_spm_id_map STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vds_spm_id_map.*
@@ -96,7 +96,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getvds_spm_id_mapByvds_id(v_vds_id UUID) RETURNS SETOF vds_spm_id_map
+Create or replace FUNCTION Getvds_spm_id_mapByvds_id(v_vds_id UUID) RETURNS SETOF vds_spm_id_map STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT vds_spm_id_map.*

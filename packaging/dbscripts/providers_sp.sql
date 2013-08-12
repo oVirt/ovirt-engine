@@ -108,7 +108,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromProviders() RETURNS SETOF providers
+Create or replace FUNCTION GetAllFromProviders() RETURNS SETOF providers STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -119,7 +119,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromProvidersByType(v_provider_type varchar(32)) RETURNS SETOF providers
+Create or replace FUNCTION GetAllFromProvidersByType(v_provider_type varchar(32)) RETURNS SETOF providers STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -132,7 +132,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetProviderByProviderId(v_id UUID)
-RETURNS SETOF providers
+RETURNS SETOF providers STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -147,7 +147,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetProviderByName(v_name VARCHAR)
-RETURNS SETOF providers
+RETURNS SETOF providers STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY

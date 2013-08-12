@@ -7,7 +7,7 @@ DROP TYPE IF EXISTS Getsystem_statistics_rs CASCADE;
 CREATE TYPE Getsystem_statistics_rs AS (val INTEGER);
 Create or replace FUNCTION Getsystem_statistics(v_entity VARCHAR(10), -- /*VM,HOST,USER,SD*/
 v_status VARCHAR(20)) -- comma seperated list of status values
-RETURNS Getsystem_statistics_rs
+RETURNS Getsystem_statistics_rs STABLE
    AS $procedure$
    DECLARE
    v_i Getsystem_statistics_rs;

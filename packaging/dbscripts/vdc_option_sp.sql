@@ -56,7 +56,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVdcOption() RETURNS SETOF vdc_options
+Create or replace FUNCTION GetAllFromVdcOption() RETURNS SETOF vdc_options STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vdc_options.*
@@ -68,7 +68,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdcOptionById(v_option_id INTEGER) RETURNS SETOF vdc_options
+Create or replace FUNCTION GetVdcOptionById(v_option_id INTEGER) RETURNS SETOF vdc_options STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vdc_options.*
@@ -82,7 +82,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVdcOptionByName(v_option_name VARCHAR(50),
-	v_version VARCHAR(40)) RETURNS SETOF vdc_options
+	v_version VARCHAR(40)) RETURNS SETOF vdc_options STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vdc_options.*

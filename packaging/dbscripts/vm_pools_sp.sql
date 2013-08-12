@@ -174,7 +174,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVm_poolsByvm_pool_id(v_vm_pool_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vm_pools_full_view
+Create or replace FUNCTION GetVm_poolsByvm_pool_id(v_vm_pool_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF vm_pools_full_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_pools_full_view.*
@@ -189,7 +189,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVm_poolsByvm_pool_name(v_vm_pool_name VARCHAR(255)) RETURNS SETOF vm_pools_view
+Create or replace FUNCTION GetVm_poolsByvm_pool_name(v_vm_pool_name VARCHAR(255)) RETURNS SETOF vm_pools_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_pools_view.*
@@ -204,7 +204,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllVm_poolsByUser_id(v_user_id UUID) RETURNS SETOF vm_pools_view
+Create or replace FUNCTION GetAllVm_poolsByUser_id(v_user_id UUID) RETURNS SETOF vm_pools_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT  DISTINCT vm_pools_view.*
@@ -217,7 +217,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVm_poolsByAdGroup_names(v_ad_group_names VARCHAR(4000)) RETURNS SETOF vm_pools_view
+Create or replace FUNCTION GetVm_poolsByAdGroup_names(v_ad_group_names VARCHAR(4000)) RETURNS SETOF vm_pools_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT vm_pools_view.*
@@ -232,7 +232,7 @@ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetVmDataFromPoolByPoolId(v_pool_id uuid, v_user_id uuid, v_is_filtered boolean)
-  RETURNS SETOF vms AS $procedure$
+  RETURNS SETOF vms STABLE AS $procedure$
 BEGIN
      RETURN QUERY SELECT vms.*
      FROM vms WHERE vm_pool_id = v_pool_id

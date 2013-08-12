@@ -62,7 +62,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromLUNs() RETURNS SETOF luns_view
+Create or replace FUNCTION GetAllFromLUNs() RETURNS SETOF luns_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -75,7 +75,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetLUNsBystorage_server_connection(v_storage_server_connection VARCHAR(50)) RETURNS SETOF luns_view
+Create or replace FUNCTION GetLUNsBystorage_server_connection(v_storage_server_connection VARCHAR(50)) RETURNS SETOF luns_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT luns_view.*
@@ -92,7 +92,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetLUNsByVolumeGroupId(v_volume_group_id VARCHAR(50))
-RETURNS SETOF luns_view
+RETURNS SETOF luns_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -107,7 +107,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetLUNByLUNId(v_LUN_id VARCHAR(50))
-RETURNS SETOF luns_view
+RETURNS SETOF luns_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -173,7 +173,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromstorage_domain_dynamic() RETURNS SETOF storage_domain_dynamic
+Create or replace FUNCTION GetAllFromstorage_domain_dynamic() RETURNS SETOF storage_domain_dynamic STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -187,7 +187,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_domain_dynamicByid(v_id UUID)
-RETURNS SETOF storage_domain_dynamic
+RETURNS SETOF storage_domain_dynamic STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -238,7 +238,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromstorage_pool_iso_map() RETURNS SETOF storage_pool_iso_map
+Create or replace FUNCTION GetAllFromstorage_pool_iso_map() RETURNS SETOF storage_pool_iso_map STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -251,7 +251,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getstorage_pool_iso_mapBystorage_idAndBystorage_pool_id(v_storage_id UUID,v_storage_pool_id UUID) RETURNS SETOF storage_pool_iso_map
+Create or replace FUNCTION Getstorage_pool_iso_mapBystorage_idAndBystorage_pool_id(v_storage_id UUID,v_storage_pool_id UUID) RETURNS SETOF storage_pool_iso_map STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -266,7 +266,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_pool_iso_mapsBystorage_id(v_storage_id UUID)
-RETURNS SETOF storage_pool_iso_map
+RETURNS SETOF storage_pool_iso_map STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -281,7 +281,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_pool_iso_mapsByBystorage_pool_id(v_storage_id UUID,
-	v_storage_pool_id UUID) RETURNS SETOF storage_pool_iso_map
+	v_storage_pool_id UUID) RETURNS SETOF storage_pool_iso_map STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -394,7 +394,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_server_connectionsByid(v_id VARCHAR(50))
-RETURNS SETOF storage_server_connections
+RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -409,7 +409,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_server_connectionsByConnection(v_connection VARCHAR(250))
-RETURNS SETOF storage_server_connections
+RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -424,7 +424,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_server_connectionsByIqn(v_iqn VARCHAR(128))
-RETURNS SETOF storage_server_connections
+RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -437,7 +437,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_server_connectionsByIqnAndConnection(v_iqn VARCHAR(128) ,
-	v_connection VARCHAR(250)) RETURNS SETOF storage_server_connections
+	v_connection VARCHAR(250)) RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -455,7 +455,7 @@ Create or replace FUNCTION Getstorage_server_connectionsByKey(v_iqn VARCHAR(128)
 	v_port VARCHAR(50) ,
 	v_portal VARCHAR(50) ,
 	v_username VARCHAR(50) ,
-	v_password VARCHAR(50)) RETURNS SETOF storage_server_connections
+	v_password VARCHAR(50)) RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -474,7 +474,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_server_connectionsByStorageType(v_storage_type INTEGER)
-RETURNS SETOF storage_server_connections
+RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -486,7 +486,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllstorage_server_connections()
-RETURNS SETOF storage_server_connections
+RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -497,7 +497,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getstorage_server_connectionsByVolumeGroupId(v_volume_group_id VARCHAR(50)) RETURNS SETOF storage_server_connections
+Create or replace FUNCTION Getstorage_server_connectionsByVolumeGroupId(v_volume_group_id VARCHAR(50)) RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT storage_server_connections.*
@@ -515,7 +515,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllConnectableStorageSeverConnection(v_storage_pool_id UUID)
-RETURNS SETOF storage_server_connections
+RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT distinct storage_server_connections.*
@@ -537,7 +537,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetNFSstorage_server_connectionsByStoragePoolId(v_storage_pool_id UUID)
-RETURNS SETOF storage_server_connections
+RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT distinct storage_server_connections.*
@@ -550,7 +550,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION Getstorage_server_connectionsByLunId(v_lunId VARCHAR(50))
-RETURNS SETOF storage_server_connections
+RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY SELECT storage_server_connections.*
@@ -614,7 +614,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllFromLUN_storage_server_connection_map()
-RETURNS SETOF LUN_storage_server_connection_map
+RETURNS SETOF LUN_storage_server_connection_map STABLE
    AS $procedure$
 BEGIN
 
@@ -628,7 +628,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetLUN_storage_server_connection_mapByLUNBystorage_server_conn(v_LUN_id VARCHAR(50),v_storage_server_connection VARCHAR(50)) RETURNS SETOF LUN_storage_server_connection_map
+Create or replace FUNCTION GetLUN_storage_server_connection_mapByLUNBystorage_server_conn(v_LUN_id VARCHAR(50),v_storage_server_connection VARCHAR(50)) RETURNS SETOF LUN_storage_server_connection_map STABLE
    AS $procedure$
 BEGIN
 

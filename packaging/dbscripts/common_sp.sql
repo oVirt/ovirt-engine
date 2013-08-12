@@ -247,42 +247,42 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION CheckDBConnection() RETURNS SETOF integer
+Create or replace FUNCTION CheckDBConnection() RETURNS SETOF integer IMMUTABLE
    AS $procedure$
 BEGIN
     RETURN QUERY SELECT 1;
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION generate_drop_all_functions_syntax() RETURNS SETOF text
+Create or replace FUNCTION generate_drop_all_functions_syntax() RETURNS SETOF text STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY select 'drop function if exists ' || ns.nspname || '.' || proname || '(' || oidvectortypes(proargtypes) || ') cascade;' from pg_proc inner join pg_namespace ns on (pg_proc.pronamespace=ns.oid) where ns.nspname = 'public' and proname not ilike 'uuid%' order by proname;
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION generate_drop_all_views_syntax() RETURNS SETOF text
+Create or replace FUNCTION generate_drop_all_views_syntax() RETURNS SETOF text STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY select 'DROP VIEW if exists ' || table_name || ' CASCADE;' from information_schema.views where table_schema = 'public' order by table_name;
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION generate_drop_all_tables_syntax() RETURNS SETOF text
+Create or replace FUNCTION generate_drop_all_tables_syntax() RETURNS SETOF text STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY select 'DROP TABLE if exists ' || table_name || ' CASCADE;' from information_schema.tables where table_schema = 'public' and table_type = 'BASE TABLE' order by table_name;
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION generate_drop_all_seq_syntax() RETURNS SETOF text
+Create or replace FUNCTION generate_drop_all_seq_syntax() RETURNS SETOF text STABLE
    AS $procedure$
 BEGIN
 RETURN QUERY select 'DROP SEQUENCE if exists ' || sequence_name || ' CASCADE;' from information_schema.sequences  where sequence_schema = 'public' order by sequence_name;
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION fn_get_column_size( v_table varchar(64), v_column varchar(64)) returns integer
+Create or replace FUNCTION fn_get_column_size( v_table varchar(64), v_column varchar(64)) returns integer STABLE
    AS $procedure$
    declare
    retvalue  integer;
@@ -558,7 +558,7 @@ CREATE TYPE async_tasks_info_rs AS (
 
 
 create or replace FUNCTION fn_db_get_async_tasks()
-returns SETOF async_tasks_info_rs
+returns SETOF async_tasks_info_rs STABLE
 AS $procedure$
 DECLARE
     v_record async_tasks_info_rs;

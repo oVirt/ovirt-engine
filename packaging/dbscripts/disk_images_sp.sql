@@ -11,7 +11,7 @@
 
 
 Create or replace FUNCTION GetImageByImageGuid(v_image_guid UUID)
-RETURNS SETOF vm_images_view
+RETURNS SETOF vm_images_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -24,7 +24,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAncestralImageByImageGuid(v_image_guid UUID)
-RETURNS SETOF images_storage_domain_view
+RETURNS SETOF images_storage_domain_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY WITH RECURSIVE ancestor_image(image_guid, parentid) AS (
@@ -49,7 +49,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetSnapshotByGuid(v_image_guid UUID)
-RETURNS SETOF images_storage_domain_view
+RETURNS SETOF images_storage_domain_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -63,7 +63,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetSnapshotsByStorageDomainId(v_storage_domain_id UUID)
-RETURNS SETOF images_storage_domain_view
+RETURNS SETOF images_storage_domain_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -76,7 +76,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetSnapshotByParentGuid(v_parent_guid UUID)
-RETURNS SETOF images_storage_domain_view
+RETURNS SETOF images_storage_domain_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -90,7 +90,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetVmImageByImageGuid(v_image_guid UUID)
-RETURNS SETOF vm_images_view
+RETURNS SETOF vm_images_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -102,7 +102,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetSnapshotsByVmSnapshotId(v_vm_snapshot_id UUID)
-RETURNS SETOF images_storage_domain_view
+RETURNS SETOF images_storage_domain_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -115,7 +115,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetSnapshotsByImageGroupId(v_image_group_id UUID)
-RETURNS SETOF images_storage_domain_view
+RETURNS SETOF images_storage_domain_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -128,7 +128,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetImagesWhichHaveNoDisk(v_vm_id UUID)
-RETURNS SETOF images_storage_domain_view
+RETURNS SETOF images_storage_domain_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT i.*

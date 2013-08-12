@@ -13,7 +13,7 @@ CREATE TYPE booleanResultType AS(result BOOLEAN);
 
 
 CREATE OR REPLACE FUNCTION getGlobalIds(v_name VARCHAR(4000))
-RETURNS UUID
+RETURNS UUID IMMUTABLE STRICT
    AS $function$
    DECLARE
    v_id  UUID;
@@ -29,9 +29,9 @@ BEGIN
    end if;
    return  v_id;
 END; $function$
-LANGUAGE plpgsql IMMUTABLE;
+LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION public.fnSplitter(ids TEXT)  RETURNS SETOF idTextType AS
+CREATE OR REPLACE FUNCTION public.fnSplitter(ids TEXT)  RETURNS SETOF idTextType IMMUTABLE AS
 $function$
 BEGIN
 	RETURN QUERY
@@ -40,7 +40,7 @@ END; $function$
 LANGUAGE plpgsql;
 
 
-CREATE OR REPLACE FUNCTION fnSplitterUuid(ids TEXT)  RETURNS SETOF UUID AS
+CREATE OR REPLACE FUNCTION fnSplitterUuid(ids TEXT)  RETURNS SETOF UUID IMMUTABLE AS
 $function$
 BEGIN
  IF ids != '' THEN
@@ -56,7 +56,7 @@ LANGUAGE plpgsql;
 --All permissions of current user (include groups)
 DROP TYPE IF EXISTS user_permissions CASCADE;
 CREATE TYPE user_permissions AS(permission_id UUID, role_id UUID, user_id UUID);
-CREATE OR REPLACE FUNCTION public.fn_user_permissions(v_userId IN uuid) RETURNS SETOF user_permissions AS
+CREATE OR REPLACE FUNCTION public.fn_user_permissions(v_userId IN uuid) RETURNS SETOF user_permissions STABLE AS
 $function$
 DECLARE
 
@@ -90,7 +90,7 @@ END; $function$
 LANGUAGE 'plpgsql';
 
 
-CREATE OR REPLACE FUNCTION public.fn_get_entity_parents(v_entity_id IN uuid, v_object_type IN int4) RETURNS SETOF idUuidType AS
+CREATE OR REPLACE FUNCTION public.fn_get_entity_parents(v_entity_id IN uuid, v_object_type IN int4) RETURNS SETOF idUuidType STABLE AS
 $function$
 /*	Gets a list of all parent GUID to the system root (including)
 
@@ -341,7 +341,7 @@ LANGUAGE 'plpgsql';
 
 
 
-CREATE OR REPLACE FUNCTION public.fn_get_disk_commited_value_by_storage(v_storage_domain_id IN uuid) RETURNS integer AS
+CREATE OR REPLACE FUNCTION public.fn_get_disk_commited_value_by_storage(v_storage_domain_id IN uuid) RETURNS integer STABLE AS
 $function$
 DECLARE
     result integer;
@@ -432,7 +432,7 @@ BEGIN
 END; $function$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION public.fn_get_ad_element_name(v_ad_element_id IN uuid) RETURNS text AS
+CREATE OR REPLACE FUNCTION public.fn_get_ad_element_name(v_ad_element_id IN uuid) RETURNS text STABLE AS
 $function$
 DECLARE
     result text;
@@ -450,7 +450,7 @@ BEGIN
 END; $function$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION public.fn_get_entity_name(v_entity_id IN uuid, v_object_type IN int4) RETURNS text AS
+CREATE OR REPLACE FUNCTION public.fn_get_entity_name(v_entity_id IN uuid, v_object_type IN int4) RETURNS text STABLE AS
 $function$
 /*    Gets object name by its id and type
 
@@ -538,7 +538,7 @@ LANGUAGE 'plpgsql';
 
 
 CREATE OR REPLACE FUNCTION getUserAndGroupsById(v_id UUID)
-RETURNS SETOF idUuidType
+RETURNS SETOF idUuidType STABLE
    AS $function$
 BEGIN
    RETURN QUERY
@@ -554,7 +554,7 @@ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION getElementIdsByIdAndGroups(v_id UUID,v_group_ids text)
-RETURNS SETOF idUuidType
+RETURNS SETOF idUuidType STABLE
    AS $function$
 BEGIN
   RETURN QUERY
@@ -577,7 +577,7 @@ CREATE TYPE vds_group_usage_rs AS
 -- returns a set of integers representing vm statuses on which the vm shouldn't
 -- be used for quota calculation
 CREATE OR REPLACE FUNCTION getNonCountableQutoaVmStatuses()
-RETURNS SETOF INTEGER
+RETURNS SETOF INTEGER IMMUTABLE
     AS $BODY$
 BEGIN
     RETURN query select 0 union select 13 union select 14 union select 15;
@@ -590,7 +590,7 @@ LANGUAGE plpgsql;
 -- If vds group id is null, then returns the global usage of the quota, other wise returns only the summarize of all VMs in the specific cluster.
 -- NOTE: VmDynamic status (0/13/14/15) must be persistent with UpdateVmCommand
 CREATE OR REPLACE FUNCTION CalculateVdsGroupUsage(v_quota_id UUID, v_vds_group_id UUID)
-RETURNS SETOF vds_group_usage_rs
+RETURNS SETOF vds_group_usage_rs STABLE
 AS $function$
 BEGIN
     RETURN QUERY SELECT cast(COALESCE(sum(num_of_sockets * cpu_per_socket), 0) as INTEGER) as virtual_cpu_usage,
@@ -613,7 +613,7 @@ CREATE TYPE all_vds_group_usage_rs AS
 -- If vds group id is null, then returns the global usage of the quota, otherwise returns only the sum of all VMs in the specific cluster.
 -- NOTE: VmDynamic status (0/13/14/15) must be persistent with UpdateVmCommand
 CREATE OR REPLACE FUNCTION calculateAllVdsGroupUsage()
-RETURNS SETOF all_vds_group_usage_rs
+RETURNS SETOF all_vds_group_usage_rs STABLE
 AS $function$
 BEGIN
     RETURN QUERY SELECT
@@ -644,7 +644,7 @@ CREATE TYPE all_storage_usage_rs AS
 
 
 CREATE OR REPLACE FUNCTION calculateAllStorageUsage()
-RETURNS SETOF all_storage_usage_rs
+RETURNS SETOF all_storage_usage_rs STABLE
 AS $function$
 BEGIN
     -- Summarize size of all disks that are active.
@@ -670,7 +670,7 @@ LANGUAGE plpgsql;
 -- For active disks, we summarize the full size and for snapshots and other disks, we summarize only the actual size.
 -- If v_storage_id is null, then return only the global usage of the quota, other wise return only the summarize in the specific storage.
 CREATE OR REPLACE FUNCTION CalculateStorageUsage(v_quota_id UUID, v_storage_id UUID)
-RETURNS double precision
+RETURNS double precision STABLE
 AS $function$
 DECLARE
 	v_virtual_size double precision;
@@ -719,7 +719,7 @@ drop function create_uuid_sequence();
 -- This function replaces the same function from the uuid-ossp extension
 -- so that we don't need that extension any more:
 --
-create or replace function uuid_generate_v1() returns uuid
+create or replace function uuid_generate_v1() returns uuid STABLE
 as $procedure$
 declare
     v_val bigint;
@@ -741,7 +741,7 @@ language plpgsql;
 
 -- This function turns a string of IP addresses to an array of IP
 -- addreses, in order to correct sorting.
-CREATE OR REPLACE FUNCTION fn_get_comparable_ip_list(text) RETURNS inet[]
+CREATE OR REPLACE FUNCTION fn_get_comparable_ip_list(text) RETURNS inet[] IMMUTABLE STRICT
 AS $procedure$
 BEGIN
 CASE

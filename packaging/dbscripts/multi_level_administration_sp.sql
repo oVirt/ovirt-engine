@@ -47,7 +47,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetPermissionsByid(v_id UUID)
-RETURNS SETOF permissions_view
+RETURNS SETOF permissions_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -61,7 +61,7 @@ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION get_user_permissions_for_domain(v_name VARCHAR(255), v_domain VARCHAR(255))
-RETURNS SETOF permissions_view
+RETURNS SETOF permissions_view STABLE
    AS $procedure$
    DECLARE
    v_user_name VARCHAR(255);
@@ -91,7 +91,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetConsumedPermissionsForQuotaId(v_quota_id UUID)
-RETURNS SETOF permissions_view
+RETURNS SETOF permissions_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY    SELECT *
@@ -103,7 +103,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetPermissionsByAdElementId(v_ad_element_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
-RETURNS SETOF permissions_view
+RETURNS SETOF permissions_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -121,7 +121,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetPermissionsByRoleId(v_role_id UUID)
-RETURNS SETOF permissions_view
+RETURNS SETOF permissions_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -135,7 +135,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetPermissionsByRoleIdAndAdElementId(v_role_id UUID,
-	v_ad_element_id UUID) RETURNS SETOF permissions_view
+	v_ad_element_id UUID) RETURNS SETOF permissions_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -151,7 +151,7 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetPermissionsByRoleIdAndAdElementIdAndObjectId(v_role_id UUID,
 	v_ad_element_id UUID,v_object_id UUID)
-RETURNS SETOF permissions_view
+RETURNS SETOF permissions_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -166,7 +166,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetDirectPermissionsByAdElementId(v_ad_element_id UUID)
-RETURNS SETOF permissions_view
+RETURNS SETOF permissions_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -245,7 +245,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromRole() RETURNS SETOF roles
+Create or replace FUNCTION GetAllFromRole() RETURNS SETOF roles STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -258,7 +258,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetRolsByid(v_id UUID) RETURNS SETOF roles
+Create or replace FUNCTION GetRolsByid(v_id UUID) RETURNS SETOF roles STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -272,7 +272,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetRoleByName(v_name VARCHAR(126))
-RETURNS SETOF roles
+RETURNS SETOF roles STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -286,7 +286,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetAllRolesByUserIdAndGroupIds(v_user_id UUID, v_group_ids text)
-RETURNS SETOF roles
+RETURNS SETOF roles STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT roles.*
@@ -308,7 +308,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetPermissionByRoleId(v_role_id UUID)
-RETURNS SETOF permissions
+RETURNS SETOF permissions STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -323,7 +323,7 @@ LANGUAGE plpgsql;
 
 -- gets entity permissions given the user id, action group id and the object type and id
 Create or replace FUNCTION get_entity_permissions(v_user_id UUID,v_action_group_id INTEGER,v_object_id UUID,v_object_type_id INTEGER)
-RETURNS SETOF UUID
+RETURNS SETOF UUID STABLE
 	-- Add the parameters for the stored procedure here
    AS $procedure$
    DECLARE
@@ -345,7 +345,7 @@ LANGUAGE plpgsql;
 -- gets entity permissions given the user id, groups, action group id and the object type and object id
 Create or replace FUNCTION get_entity_permissions_for_user_and_groups(v_user_id UUID,v_group_ids text,v_action_group_id INTEGER,v_object_id UUID,v_object_type_id INTEGER,
 v_ignore_everyone BOOLEAN)
-RETURNS SETOF UUID
+RETURNS SETOF UUID STABLE
 	-- Add the parameters for the stored procedure here
    AS $procedure$
    DECLARE
@@ -400,7 +400,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Get_roles_groups_By_action_group_id_And_By_role_id(v_action_group_id INTEGER,v_role_id UUID) RETURNS SETOF roles_groups
+Create or replace FUNCTION Get_roles_groups_By_action_group_id_And_By_role_id(v_action_group_id INTEGER,v_role_id UUID) RETURNS SETOF roles_groups STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -417,7 +417,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Get_role_groups_By_role_id(v_role_id UUID)
-RETURNS SETOF roles_groups
+RETURNS SETOF roles_groups STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -433,7 +433,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetPermissionsByEntityId(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
-RETURNS SETOF permissions_view
+RETURNS SETOF permissions_view STABLE
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
    AS $procedure$
@@ -448,7 +448,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetUserPermissionsByEntityId(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
-RETURNS SETOF permissions_view
+RETURNS SETOF permissions_view STABLE
     -- SET NOCOUNT ON added to prevent extra result sets from
     -- interfering with SELECT statements.
    AS $procedure$
@@ -481,7 +481,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetRoleActionGroupsByRoleId(v_id UUID)
-RETURNS SETOF roles_groups
+RETURNS SETOF roles_groups STABLE
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
    AS $procedure$
@@ -499,7 +499,7 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetPermissionsTreeByEntityId
 (v_id UUID, v_object_type_id INTEGER, v_user_id UUID, v_is_filtered BOOLEAN)
-RETURNS SETOF permissions_view
+RETURNS SETOF permissions_view STABLE
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
    AS $procedure$
@@ -520,7 +520,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetPermissionsByRoleIdAndObjectId(v_role_id UUID,
-	v_object_id UUID) RETURNS SETOF permissions_view
+	v_object_id UUID) RETURNS SETOF permissions_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -532,7 +532,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetForRoleAndAdElementAndObject_wGroupCheck(v_role_id UUID,
-	v_ad_element_id UUID, v_object_id UUID) RETURNS SETOF permissions_view
+	v_ad_element_id UUID, v_object_id UUID) RETURNS SETOF permissions_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *

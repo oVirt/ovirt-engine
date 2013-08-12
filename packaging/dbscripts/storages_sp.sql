@@ -136,7 +136,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromstorage_pool(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF storage_pool
+Create or replace FUNCTION GetAllFromstorage_pool(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF storage_pool STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -151,7 +151,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllByStatus(v_status INTEGER) RETURNS SETOF storage_pool
+Create or replace FUNCTION GetAllByStatus(v_status INTEGER) RETURNS SETOF storage_pool STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -163,7 +163,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getstorage_poolByid(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF storage_pool
+Create or replace FUNCTION Getstorage_poolByid(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF storage_pool STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -183,7 +183,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_poolByName(v_name VARCHAR(40))
-RETURNS SETOF storage_pool
+RETURNS SETOF storage_pool STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -197,7 +197,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_poolsByType(v_storage_pool_type INTEGER)
-RETURNS SETOF storage_pool
+RETURNS SETOF storage_pool STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -211,7 +211,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_poolsByStorageDomainId(v_storage_domain_id UUID)
-RETURNS SETOF storage_pool
+RETURNS SETOF storage_pool STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT storage_pool.*
@@ -227,7 +227,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_poolsByVdsId(v_vdsId UUID)
-RETURNS SETOF storage_pool
+RETURNS SETOF storage_pool STABLE
    AS $procedure$
    DECLARE
    v_clusterId  UUID;
@@ -247,7 +247,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_poolsByVdsGroupId(v_clusterId UUID)
-RETURNS SETOF storage_pool
+RETURNS SETOF storage_pool STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -286,7 +286,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION Getstorage_domains_List_By_ImageId(v_image_id UUID) RETURNS SETOF storage_domains
+Create or replace FUNCTION Getstorage_domains_List_By_ImageId(v_image_id UUID) RETURNS SETOF storage_domains STABLE
    AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
@@ -351,7 +351,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromstorage_domain_static() RETURNS SETOF storage_domain_static
+Create or replace FUNCTION GetAllFromstorage_domain_static() RETURNS SETOF storage_domain_static STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -364,7 +364,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_domain_staticByid(v_id UUID)
-RETURNS SETOF storage_domain_static
+RETURNS SETOF storage_domain_static STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -379,7 +379,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_domain_staticByName(v_name VARCHAR(250))
-RETURNS SETOF storage_domain_static
+RETURNS SETOF storage_domain_static STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -394,7 +394,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_domain_staticBystorage_pool_id(v_storage_pool_id UUID)
-RETURNS SETOF storage_domain_static_view
+RETURNS SETOF storage_domain_static_view STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -409,7 +409,7 @@ LANGUAGE plpgsql;
 DROP TYPE IF EXISTS GetStorageDomainIdsByStoragePoolIdAndStatus_rs CASCADE;
 CREATE TYPE GetStorageDomainIdsByStoragePoolIdAndStatus_rs AS (storage_id UUID);
 Create or replace FUNCTION GetStorageDomainIdsByStoragePoolIdAndStatus(v_storage_pool_id UUID, v_status INTEGER)
-RETURNS SETOF GetStorageDomainIdsByStoragePoolIdAndStatus_rs
+RETURNS SETOF GetStorageDomainIdsByStoragePoolIdAndStatus_rs STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY
@@ -424,7 +424,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_domains_By_id(v_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
-RETURNS SETOF storage_domains_without_storage_pools
+RETURNS SETOF storage_domains_without_storage_pools STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -439,7 +439,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_domains_by_storage_pool_id_with_permitted_action (v_user_id UUID, v_action_group_id integer, v_storage_pool_id UUID)
-RETURNS SETOF storage_domains
+RETURNS SETOF storage_domains STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -451,7 +451,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION Getstorage_domains_By_id_and_by_storage_pool_id(v_id UUID,
-	v_storage_pool_id UUID ) RETURNS SETOF storage_domains
+	v_storage_pool_id UUID ) RETURNS SETOF storage_domains STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -463,7 +463,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_domains_By_storagePoolId(v_storage_pool_id UUID, v_user_id UUID, v_is_filtered BOOLEAN)
-RETURNS SETOF storage_domains
+RETURNS SETOF storage_domains STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -480,7 +480,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_domain_by_type_and_storagePoolId(v_storage_domain_type INTEGER, v_storage_pool_id UUID)
-RETURNS SETOF storage_domains
+RETURNS SETOF storage_domains STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -492,7 +492,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_domains_By_connection(v_connection CHARACTER VARYING)
-RETURNS SETOF storage_domains
+RETURNS SETOF storage_domains STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -506,7 +506,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetAllFromStorageDomainsByConnectionId(v_connection_id CHARACTER VARYING)
-RETURNS SETOF storage_domains
+RETURNS SETOF storage_domains STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -516,7 +516,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetAllFromstorage_domains(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF storage_domains
+Create or replace FUNCTION GetAllFromstorage_domains(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF storage_domains STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -529,7 +529,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getstorage_domain_staticBystorage_pool_type(v_storage_pool_type INTEGER)
-RETURNS SETOF storage_domain_static
+RETURNS SETOF storage_domain_static STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -542,7 +542,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getstorage_domain_staticBystorage_type_and_storage_pool_id(v_storage_type INTEGER, v_storage_pool_id UUID) RETURNS SETOF storage_domains
+Create or replace FUNCTION Getstorage_domain_staticBystorage_type_and_storage_pool_id(v_storage_type INTEGER, v_storage_pool_id UUID) RETURNS SETOF storage_domains STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -629,7 +629,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION Getstorage_domains_List_By_storageDomainId(v_storage_domain_id UUID)
-RETURNS SETOF storage_domains
+RETURNS SETOF storage_domains STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -640,7 +640,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 --This SP returns all data centers containing clusters with permissions to run the given action by user
-Create or replace FUNCTION fn_perms_get_storage_pools_with_permitted_action_on_vds_groups(v_user_id UUID, v_action_group_id integer, v_supports_virt_service boolean, v_supports_gluster_service boolean) RETURNS SETOF storage_pool
+Create or replace FUNCTION fn_perms_get_storage_pools_with_permitted_action_on_vds_groups(v_user_id UUID, v_action_group_id integer, v_supports_virt_service boolean, v_supports_gluster_service boolean) RETURNS SETOF storage_pool STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT sp.*
@@ -655,7 +655,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION Getstorage_domains_By_storage_pool_id_and_connection(v_storage_pool_id UUID, v_connection CHARACTER VARYING)
-RETURNS SETOF storage_domains
+RETURNS SETOF storage_domains STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -670,7 +670,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetFailingStorage_domains()
-RETURNS SETOF storage_domains
+RETURNS SETOF storage_domains STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY
@@ -679,7 +679,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetFailingVdss()
-RETURNS SETOF vds
+RETURNS SETOF vds STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY
@@ -690,7 +690,7 @@ LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION GetStoragePoolsByClusterService(
     v_supports_virt_service BOOLEAN,
-    v_supports_gluster_service BOOLEAN) RETURNS SETOF storage_pool
+    v_supports_gluster_service BOOLEAN) RETURNS SETOF storage_pool STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT sp.* FROM storage_pool SP
@@ -702,7 +702,7 @@ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetStorageServerConnectionsForDomain(v_storage_domain_id UUID)
- RETURNS SETOF storage_server_connections
+ RETURNS SETOF storage_server_connections STABLE
  AS $procedure$
  BEGIN
 RETURN QUERY SELECT *

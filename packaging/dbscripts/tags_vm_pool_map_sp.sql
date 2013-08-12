@@ -47,7 +47,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromtags_vm_pool_map() RETURNS SETOF tags_vm_pool_map
+Create or replace FUNCTION GetAllFromtags_vm_pool_map() RETURNS SETOF tags_vm_pool_map STABLE
    AS $procedure$
 BEGIN
 
@@ -62,7 +62,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Gettags_vm_pool_mapBytag_idAndByvm_pool_id(v_tag_id UUID,
- v_vm_pool_id UUID) RETURNS SETOF tags_vm_pool_map
+ v_vm_pool_id UUID) RETURNS SETOF tags_vm_pool_map STABLE
    AS $procedure$
 BEGIN
 
@@ -80,7 +80,7 @@ LANGUAGE plpgsql;
 
 
 ----custom
-Create or replace FUNCTION GetTagsByVmpoolId(v_vm_pool_ids VARCHAR(4000)) RETURNS SETOF tags_vm_pool_map_view
+Create or replace FUNCTION GetTagsByVmpoolId(v_vm_pool_ids VARCHAR(4000)) RETURNS SETOF tags_vm_pool_map_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_vm_pool_map_view.*

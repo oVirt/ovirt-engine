@@ -59,7 +59,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromad_groups() RETURNS SETOF ad_groups
+Create or replace FUNCTION GetAllFromad_groups() RETURNS SETOF ad_groups STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -71,7 +71,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getad_groupsByid(v_id UUID) RETURNS SETOF ad_groups
+Create or replace FUNCTION Getad_groupsByid(v_id UUID) RETURNS SETOF ad_groups STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -82,7 +82,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getad_groupsByName(v_name VARCHAR(256)) RETURNS SETOF ad_groups
+Create or replace FUNCTION Getad_groupsByName(v_name VARCHAR(256)) RETURNS SETOF ad_groups STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *

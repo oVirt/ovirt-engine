@@ -75,7 +75,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromtags() RETURNS SETOF tags
+Create or replace FUNCTION GetAllFromtags() RETURNS SETOF tags STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT tags.*
@@ -87,7 +87,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GettagsBytag_id(v_tag_id UUID) RETURNS SETOF tags
+Create or replace FUNCTION GettagsBytag_id(v_tag_id UUID) RETURNS SETOF tags STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT tags.*
@@ -99,7 +99,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GettagsByparent_id(v_parent_id UUID) RETURNS SETOF tags
+Create or replace FUNCTION GettagsByparent_id(v_parent_id UUID) RETURNS SETOF tags STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT tags.*
@@ -111,7 +111,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GettagsBytag_name(v_tag_name VARCHAR(50)) RETURNS SETOF tags
+Create or replace FUNCTION GettagsBytag_name(v_tag_name VARCHAR(50)) RETURNS SETOF tags STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT tags.*
@@ -156,7 +156,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromtags_user_group_map() RETURNS SETOF tags_user_group_map
+Create or replace FUNCTION GetAllFromtags_user_group_map() RETURNS SETOF tags_user_group_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT tags_user_group_map.*
@@ -169,7 +169,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetTagUserGroupByGroupIdAndByTagId(v_group_id UUID,
- v_tag_id UUID) RETURNS SETOF tags_user_group_map
+ v_tag_id UUID) RETURNS SETOF tags_user_group_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT tags_user_group_map.*
@@ -182,7 +182,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetTagsByUserGroupId(v_group_ids VARCHAR(4000)) RETURNS SETOF tags_user_group_map_view
+Create or replace FUNCTION GetTagsByUserGroupId(v_group_ids VARCHAR(4000)) RETURNS SETOF tags_user_group_map_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_user_group_map_view.*
@@ -194,7 +194,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetUserGroupTagsByTagIds(v_tag_ids VARCHAR(4000)) RETURNS SETOF tags_user_group_map_view
+Create or replace FUNCTION GetUserGroupTagsByTagIds(v_tag_ids VARCHAR(4000)) RETURNS SETOF tags_user_group_map_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_user_group_map_view.*
@@ -238,7 +238,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromtags_user_map() RETURNS SETOF tags_user_map
+Create or replace FUNCTION GetAllFromtags_user_map() RETURNS SETOF tags_user_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT tags_user_map.*
@@ -251,7 +251,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetTagUserByTagIdAndByuserId(v_tag_id UUID,
- v_user_id UUID) RETURNS SETOF tags_user_map
+ v_user_id UUID) RETURNS SETOF tags_user_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT tags_user_map.*
@@ -263,7 +263,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetTagsByUserId(v_user_ids VARCHAR(4000)) RETURNS SETOF tags_user_map_view
+Create or replace FUNCTION GetTagsByUserId(v_user_ids VARCHAR(4000)) RETURNS SETOF tags_user_map_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_user_map_view.*
@@ -275,7 +275,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetUserTagsByTagIds(v_tag_ids VARCHAR(4000)) RETURNS SETOF tags_user_map_view
+Create or replace FUNCTION GetUserTagsByTagIds(v_tag_ids VARCHAR(4000)) RETURNS SETOF tags_user_map_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_user_map_view.*
@@ -319,7 +319,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromtags_vds_map() RETURNS SETOF tags_vds_map
+Create or replace FUNCTION GetAllFromtags_vds_map() RETURNS SETOF tags_vds_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT tags_vds_map.*
@@ -332,7 +332,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetTagVdsBytagIdAndByVdsId(v_tag_id UUID,
- v_vds_id UUID) RETURNS SETOF tags_vds_map
+ v_vds_id UUID) RETURNS SETOF tags_vds_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT tags_vds_map.*
@@ -345,7 +345,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetTagsByVdsId(v_vds_ids VARCHAR(4000)) RETURNS SETOF tags_vds_map_view
+Create or replace FUNCTION GetTagsByVdsId(v_vds_ids VARCHAR(4000)) RETURNS SETOF tags_vds_map_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_vds_map_view.*
@@ -357,7 +357,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVdsTagsByTagIds(v_tag_ids VARCHAR(4000)) RETURNS SETOF tags_vds_map_view
+Create or replace FUNCTION GetVdsTagsByTagIds(v_tag_ids VARCHAR(4000)) RETURNS SETOF tags_vds_map_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_vds_map_view.*
@@ -402,7 +402,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromtags_vm_map() RETURNS SETOF tags_vm_map
+Create or replace FUNCTION GetAllFromtags_vm_map() RETURNS SETOF tags_vm_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT tags_vm_map.*
@@ -415,7 +415,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetTagVmByTagIdAndByvmId(v_tag_id UUID,
- v_vm_id UUID) RETURNS SETOF tags_vm_map
+ v_vm_id UUID) RETURNS SETOF tags_vm_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT tags_vm_map.*
@@ -428,7 +428,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetTagsByVmId(v_vm_ids VARCHAR(4000)) RETURNS SETOF tags_vm_map_view
+Create or replace FUNCTION GetTagsByVmId(v_vm_ids VARCHAR(4000)) RETURNS SETOF tags_vm_map_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_vm_map_view.*
@@ -440,7 +440,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVmTagsByTagId(v_tag_ids VARCHAR(4000)) RETURNS SETOF tags_vm_map_view
+Create or replace FUNCTION GetVmTagsByTagId(v_tag_ids VARCHAR(4000)) RETURNS SETOF tags_vm_map_view STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT DISTINCT tags_vm_map_view.*
@@ -470,7 +470,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetnVmTagsByVmId(v_vm_id UUID) RETURNS SETOF tags_vm_map
+Create or replace FUNCTION GetnVmTagsByVmId(v_vm_id UUID) RETURNS SETOF tags_vm_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY select * from tags_vm_map
@@ -482,7 +482,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetnVmTagsByVmIdAndDefaultTag(v_vm_id UUID) RETURNS SETOF tags_vm_map
+Create or replace FUNCTION GetnVmTagsByVmIdAndDefaultTag(v_vm_id UUID) RETURNS SETOF tags_vm_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY select tags_vm_map.* from tags_vm_map

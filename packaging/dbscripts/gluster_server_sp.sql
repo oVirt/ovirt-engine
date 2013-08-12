@@ -15,7 +15,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetGlusterServerByServerId(v_server_id UUID)
-RETURNS SETOF gluster_server
+RETURNS SETOF gluster_server STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT server_id, gluster_server_uuid
@@ -27,7 +27,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetGlusterServerByGlusterServerUUID(v_gluster_server_uuid UUID)
-RETURNS SETOF gluster_server
+RETURNS SETOF gluster_server STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT server_id, gluster_server_uuid

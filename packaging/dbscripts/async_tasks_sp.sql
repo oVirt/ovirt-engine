@@ -104,7 +104,7 @@ LANGUAGE plpgsql;
 
 
 CREATE OR REPLACE FUNCTION GetAsyncTasksIdsByEntityId(v_entity_id UUID)
-RETURNS SETOF idUuidType
+RETURNS SETOF idUuidType STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT async_task_id from async_tasks_entities where entity_id = v_entity_id;
@@ -112,7 +112,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 CREATE OR REPLACE FUNCTION  GetAsyncTaskEntitiesByTaskId(v_task_id UUID)
-RETURNS SETOF async_tasks_entities
+RETURNS SETOF async_tasks_entities STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -150,7 +150,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetAsyncTasksByStoragePoolId(v_storage_pool_id UUID)
-RETURNS SETOF idUuidType
+RETURNS SETOF idUuidType STABLE
   AS $procedure$
 BEGIN
    RETURN QUERY SELECT async_tasks.task_id
@@ -160,7 +160,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetAllFromasync_tasks() RETURNS SETOF async_tasks
+Create or replace FUNCTION GetAllFromasync_tasks() RETURNS SETOF async_tasks STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -170,7 +170,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION Getasync_tasksBytask_id(v_task_id UUID) RETURNS SETOF async_tasks
+Create or replace FUNCTION Getasync_tasksBytask_id(v_task_id UUID) RETURNS SETOF async_tasks STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
@@ -181,7 +181,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION GetAsyncTasksByEntityId(v_entity_id UUID) RETURNS SETOF async_tasks
+Create or replace FUNCTION GetAsyncTasksByEntityId(v_entity_id UUID) RETURNS SETOF async_tasks STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT async_tasks.*
@@ -192,7 +192,7 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION GetAsyncTasksByVdsmTaskId(v_vdsm_task_id UUID) RETURNS SETOF async_tasks
+Create or replace FUNCTION GetAsyncTasksByVdsmTaskId(v_vdsm_task_id UUID) RETURNS SETOF async_tasks STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *

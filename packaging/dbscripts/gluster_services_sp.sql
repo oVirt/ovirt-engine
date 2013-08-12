@@ -9,7 +9,7 @@
 
 -- Fetch all gluster service types
 Create or replace FUNCTION GetGlusterServiceTypes()
-    RETURNS SETOF gluster_service_types
+    RETURNS SETOF gluster_service_types STABLE
     AS $procedure$
 BEGIN
     RETURN  QUERY SELECT *
@@ -19,7 +19,7 @@ LANGUAGE plpgsql;
 
 -- Fetch services of a given type
 Create or replace FUNCTION GetGlusterServicesByType(v_service_type VARCHAR(100))
-    RETURNS SETOF gluster_services
+    RETURNS SETOF gluster_services STABLE
     AS $procedure$
 BEGIN
     RETURN  QUERY SELECT *
@@ -30,7 +30,7 @@ LANGUAGE plpgsql;
 
 -- Fetch services of given cluster
 Create or replace FUNCTION GetGlusterClusterServicesByClusterId(v_cluster_id UUID)
-    RETURNS SETOF gluster_cluster_services
+    RETURNS SETOF gluster_cluster_services STABLE
     AS $procedure$
 BEGIN
     RETURN  QUERY SELECT *
@@ -42,7 +42,7 @@ LANGUAGE plpgsql;
 -- Fetch cluster-wide service given cluster id and service type
 Create or replace FUNCTION GetGlusterClusterServicesByClusterIdAndServiceType(v_cluster_id UUID,
                                                                 v_service_type VARCHAR(100))
-    RETURNS SETOF gluster_cluster_services
+    RETURNS SETOF gluster_cluster_services STABLE
     AS $procedure$
 BEGIN
     RETURN  QUERY SELECT *
@@ -54,7 +54,7 @@ LANGUAGE plpgsql;
 
 -- Fetch services of given server
 Create or replace FUNCTION GetGlusterServerServicesByServerId(v_server_id UUID)
-    RETURNS SETOF gluster_server_services_view
+    RETURNS SETOF gluster_server_services_view STABLE
     AS $procedure$
 BEGIN
     RETURN  QUERY SELECT *
@@ -65,7 +65,7 @@ LANGUAGE plpgsql;
 
 -- Fetch services from all servers of given cluster
 Create or replace FUNCTION GetGlusterServerServicesByClusterId(v_cluster_id UUID)
-    RETURNS SETOF gluster_server_services_view
+    RETURNS SETOF gluster_server_services_view STABLE
     AS $procedure$
 BEGIN
     RETURN  QUERY SELECT s.*
@@ -77,7 +77,7 @@ LANGUAGE plpgsql;
 
 -- Fetch services of given cluster
 Create or replace FUNCTION GetGlusterServerServicesByClusterIdAndServiceType(v_cluster_id UUID, v_service_type VARCHAR(100))
-    RETURNS SETOF gluster_server_services_view
+    RETURNS SETOF gluster_server_services_view STABLE
     AS $procedure$
 BEGIN
     RETURN  QUERY SELECT s.*
@@ -90,7 +90,7 @@ LANGUAGE plpgsql;
 
 -- Fetch services of given server
 Create or replace FUNCTION GetGlusterServerServicesByServerIdAndServiceType(v_server_id UUID, v_service_type VARCHAR(100))
-    RETURNS SETOF gluster_server_services_view
+    RETURNS SETOF gluster_server_services_view STABLE
     AS $procedure$
 BEGIN
     RETURN  QUERY SELECT *
@@ -102,7 +102,7 @@ LANGUAGE plpgsql;
 
 -- Fetch a service by it's ID
 Create or replace FUNCTION GetGlusterServiceByGlusterServiceId(v_id UUID)
-RETURNS SETOF gluster_services
+RETURNS SETOF gluster_services STABLE
 AS $procedure$
 BEGIN
     RETURN  QUERY SELECT *
@@ -113,7 +113,7 @@ LANGUAGE plpgsql;
 
 -- Fetch a server service by it's ID
 Create or replace FUNCTION GetGlusterServerServiceByGlusterServerServiceId(v_id UUID)
-RETURNS SETOF gluster_server_services_view
+RETURNS SETOF gluster_server_services_view STABLE
 AS $procedure$
 BEGIN
     RETURN  QUERY SELECT *
@@ -124,7 +124,7 @@ LANGUAGE plpgsql;
 
 -- Fetch all server services
 Create or replace FUNCTION GetAllFromGlusterServerServices()
-RETURNS SETOF gluster_server_services_view
+RETURNS SETOF gluster_server_services_view STABLE
 AS $procedure$
 BEGIN
     RETURN  QUERY SELECT *
@@ -135,7 +135,7 @@ LANGUAGE plpgsql;
 -- Fetch a service by it's name
 Create or replace FUNCTION GetGlusterServiceByTypeAndName(v_service_type VARCHAR(100),
                                                         v_service_name VARCHAR(100))
-RETURNS SETOF gluster_services
+RETURNS SETOF gluster_services STABLE
 AS $procedure$
 BEGIN
     RETURN  QUERY SELECT *
@@ -147,7 +147,7 @@ LANGUAGE plpgsql;
 
 -- Fetch all services
 Create or replace FUNCTION GetAllFromGlusterServices()
-RETURNS SETOF gluster_services
+RETURNS SETOF gluster_services STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT * FROM gluster_services;

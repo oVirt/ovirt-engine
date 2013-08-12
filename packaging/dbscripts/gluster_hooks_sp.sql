@@ -29,7 +29,7 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterHookById(v_id UUID,
                                               v_includeContent BOOLEAN=false)
-RETURNS SETOF gluster_hooks
+RETURNS SETOF gluster_hooks STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT id, cluster_id, gluster_command, stage, name,
@@ -45,7 +45,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterHookContentById(v_id UUID)
-RETURNS SETOF text
+RETURNS SETOF text STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT content
@@ -55,7 +55,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterHooksByClusterId(v_cluster_id UUID)
-RETURNS SETOF gluster_hooks
+RETURNS SETOF gluster_hooks STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT id, cluster_id, gluster_command, stage, name,
@@ -68,7 +68,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetGlusterServerHooksById(v_id UUID)
-RETURNS SETOF gluster_server_hooks_view
+RETURNS SETOF gluster_server_hooks_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT *
@@ -83,7 +83,7 @@ Create or replace FUNCTION GetGlusterHook(v_cluster_id UUID,
                                           v_stage VARCHAR(100),
                                           v_name VARCHAR(1000),
                                           v_includeContent BOOLEAN=false)
-RETURNS SETOF gluster_hooks
+RETURNS SETOF gluster_hooks STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT id, cluster_id, gluster_command, stage, name,
@@ -225,7 +225,7 @@ LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterServerHook(v_hook_id UUID,
                                                 v_server_id UUID)
-RETURNS SETOF gluster_server_hooks_view
+RETURNS SETOF gluster_server_hooks_view STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY SELECT *

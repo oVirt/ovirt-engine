@@ -44,7 +44,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromDiskLunMaps() RETURNS SETOF disk_lun_map
+Create or replace FUNCTION GetAllFromDiskLunMaps() RETURNS SETOF disk_lun_map STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -58,7 +58,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetDiskLunMapByDiskLunMapId(v_disk_id UUID, v_lun_id VARCHAR(50))
-RETURNS SETOF disk_lun_map
+RETURNS SETOF disk_lun_map STABLE
 AS $procedure$
 BEGIN
     RETURN QUERY
@@ -75,7 +75,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetDiskLunMapByLunId(v_lun_id VARCHAR(50))
-RETURNS SETOF disk_lun_map
+RETURNS SETOF disk_lun_map STABLE
 AS $procedure$
 BEGIN
 	RETURN QUERY

@@ -56,7 +56,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromVm_pool_map() RETURNS SETOF vm_pool_map
+Create or replace FUNCTION GetAllFromVm_pool_map() RETURNS SETOF vm_pool_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_pool_map.*
@@ -68,7 +68,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVm_pool_mapByvm_guid(v_vm_guid UUID) RETURNS SETOF vm_pool_map
+Create or replace FUNCTION GetVm_pool_mapByvm_guid(v_vm_guid UUID) RETURNS SETOF vm_pool_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_pool_map.*
@@ -81,7 +81,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetVm_pool_mapByvm_pool_id(v_vm_pool_id UUID) RETURNS SETOF vm_pool_map
+Create or replace FUNCTION GetVm_pool_mapByvm_pool_id(v_vm_pool_id UUID) RETURNS SETOF vm_pool_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_pool_map.*
@@ -93,7 +93,7 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION getVmMapsInVmPoolByVmPoolIdAndStatus(v_vm_pool_id UUID, v_status INTEGER) RETURNS SETOF vm_pool_map
+Create or replace FUNCTION getVmMapsInVmPoolByVmPoolIdAndStatus(v_vm_pool_id UUID, v_status INTEGER) RETURNS SETOF vm_pool_map STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT vm_pool_id, vm_pool_map.vm_guid

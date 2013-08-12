@@ -58,7 +58,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllFromcustom_actions() RETURNS SETOF custom_actions
+Create or replace FUNCTION GetAllFromcustom_actions() RETURNS SETOF custom_actions STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -71,7 +71,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getcustom_actionsByaction_id(v_action_id INTEGER)
-RETURNS SETOF custom_actions
+RETURNS SETOF custom_actions STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -84,7 +84,7 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION Getcustom_actionsByTab_id(v_tab INTEGER) RETURNS SETOF custom_actions
+Create or replace FUNCTION Getcustom_actionsByTab_id(v_tab INTEGER) RETURNS SETOF custom_actions STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
@@ -98,7 +98,7 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION Getcustom_actionsByNameAndTab(v_action_name VARCHAR(50),
-	v_tab INTEGER) RETURNS SETOF custom_actions
+	v_tab INTEGER) RETURNS SETOF custom_actions STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT *
