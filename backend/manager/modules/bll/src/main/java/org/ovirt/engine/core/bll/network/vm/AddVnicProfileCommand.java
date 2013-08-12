@@ -24,6 +24,7 @@ public class AddVnicProfileCommand<T extends VnicProfileParameters> extends Vnic
         VnicProfileValidator validator = new VnicProfileValidator(getVnicProfile());
         return validate(validator.vnicProfileIsSet())
                 && validate(validator.networkExists())
+                && validate(validator.networkQosExistsOrNull())
                 && validate(validator.vnicProfileForVmNetworkOnly())
                 && validate(validator.vnicProfileNameNotUsed())
                 && validate(validator.portMirroringNotSetIfExternalNetwork())

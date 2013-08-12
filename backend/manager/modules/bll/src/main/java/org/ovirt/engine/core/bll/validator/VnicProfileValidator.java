@@ -49,6 +49,13 @@ public class VnicProfileValidator {
         return new NetworkValidator(getNetwork()).networkIsSet();
     }
 
+    public ValidationResult networkQosExistsOrNull() {
+        return vnicProfile.getNetworkQosId() == null
+                || getDbFacade().getQosDao().get(vnicProfile.getNetworkQosId()) != null
+                ? ValidationResult.VALID
+                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_NOT_EXISTS);
+    }
+
     public ValidationResult vnicProfileNameNotUsed() {
         for (VnicProfile profile : getVnicProfiles()) {
             if (profile.getName().equals(vnicProfile.getName()) && !profile.getId().equals(vnicProfile.getId())) {

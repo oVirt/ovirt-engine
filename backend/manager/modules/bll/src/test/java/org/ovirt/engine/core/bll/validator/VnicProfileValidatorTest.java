@@ -23,6 +23,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.dao.network.VnicProfileDao;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -51,6 +53,9 @@ public class VnicProfileValidatorTest {
     private NetworkDao networkDao;
 
     @Mock
+    private NetworkQoSDao networkQosDao;
+
+    @Mock
     private VmDAO vmDao;
 
     @Mock
@@ -58,6 +63,9 @@ public class VnicProfileValidatorTest {
 
     @Mock
     private Network network;
+
+    @Mock
+    private NetworkQoS networkQos;
 
     private List<VnicProfile> vnicProfiles = new ArrayList<>();
 
@@ -73,6 +81,7 @@ public class VnicProfileValidatorTest {
         // mock some commonly used DAOs
         when(dbFacade.getVnicProfileDao()).thenReturn(vnicProfileDao);
         when(dbFacade.getNetworkDao()).thenReturn(networkDao);
+        when(dbFacade.getQosDao()).thenReturn(networkQosDao);
         when(dbFacade.getVmDao()).thenReturn(vmDao);
 
         // mock their getters
@@ -112,6 +121,26 @@ public class VnicProfileValidatorTest {
     public void networkDoesntExist() throws Exception {
         when(networkDao.get(any(Guid.class))).thenReturn(null);
         assertThat(validator.networkExists(), failsWith(VdcBllMessages.NETWORK_NOT_EXISTS));
+    }
+
+    @Test
+    public void networkQosExists() throws Exception {
+        when(vnicProfile.getNetworkQosId()).thenReturn(DEFAULT_GUID);
+        when(networkQosDao.get(DEFAULT_GUID)).thenReturn(networkQos);
+        assertThat(validator.networkQosExistsOrNull(), isValid());
+    }
+
+    @Test
+    public void networkQosNull() throws Exception {
+        when(vnicProfile.getNetworkQosId()).thenReturn(null);
+        assertThat(validator.networkQosExistsOrNull(), isValid());
+    }
+
+    @Test
+    public void networkQosDoesntExist() throws Exception {
+        when(vnicProfile.getNetworkQosId()).thenReturn(DEFAULT_GUID);
+        when(networkQosDao.get(any(Guid.class))).thenReturn(null);
+        assertThat(validator.networkQosExistsOrNull(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_NOT_EXISTS));
     }
 
     private void vnicProfileAvailableTest(Matcher<ValidationResult> matcher, List<VnicProfile> vnicProfiles) {
