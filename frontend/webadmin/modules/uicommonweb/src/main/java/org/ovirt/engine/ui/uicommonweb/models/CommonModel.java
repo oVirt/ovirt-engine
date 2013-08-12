@@ -478,10 +478,10 @@ public class CommonModel extends ListModel
         getSystemTree().getResetCommand().execute();
         getSystemTree().getSelectedItemChangedEvent().addListener(this);
 
-        for (SearchableListModel item : getItems())
-        {
-            item.setIsAvailable(true);
-        }
+        // the main tabs that should appear when a bookmark is selected should
+        // be the exact same main tabs that are displayed when the "System" node
+        // in the system tree is selected.
+        updateAvailability(SystemTreeItemType.System, null);
 
         setSearchStringPrefix(""); //$NON-NLS-1$
         setSearchString(e.getBookmark().getbookmark_value());
@@ -507,101 +507,7 @@ public class CommonModel extends ListModel
             return;
         }
 
-        // Update items availability depending on system tree selection.
-        dataCenterList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.System
-                || model.getType() == SystemTreeItemType.DataCenters);
-
-        clusterList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Clusters || model.getType() == SystemTreeItemType.Cluster
-                || model.getType() == SystemTreeItemType.Cluster_Gluster
-                || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.Network
-                || model.getType() == SystemTreeItemType.System);
-
-        hostList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Cluster
-                || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Hosts
-                || model.getType() == SystemTreeItemType.Host || model.getType() == SystemTreeItemType.Storage
-                || model.getType() == SystemTreeItemType.Network || model.getType() == SystemTreeItemType.System);
-
-        volumeList.setIsAvailable(model.getType() == SystemTreeItemType.Cluster_Gluster
-                || model.getType() == SystemTreeItemType.Volume
-                || model.getType() == SystemTreeItemType.Volumes
-                || model.getType() == SystemTreeItemType.System);
-
-        if (model.getType() == SystemTreeItemType.Cluster) {
-            volumeList.setIsAvailable(false);
-        }
-
-        storageList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Cluster
-                || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Host
-                || model.getType() == SystemTreeItemType.Storages || model.getType() == SystemTreeItemType.Storage
-                || model.getType() == SystemTreeItemType.System);
-
-        quotaList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter);
-
-        boolean isDataStorage = false;
-        if (model.getType() == SystemTreeItemType.Storage)
-        {
-            StorageDomain storage = (StorageDomain) model.getEntity();
-            isDataStorage =
-                    storage.getStorageDomainType() == StorageDomainType.Data
-                            || storage.getStorageDomainType() == StorageDomainType.Master;
-        }
-
-        diskList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || isDataStorage || model.getType() == SystemTreeItemType.System);
-
-        vmList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Cluster
-                || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Host
-                || model.getType() == SystemTreeItemType.Network || isDataStorage
-                || model.getType() == SystemTreeItemType.VMs
-                || model.getType() == SystemTreeItemType.System);
-
-        poolList.setIsAvailable(model.getType() == SystemTreeItemType.System
-                || model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Cluster
-                || model.getType() == SystemTreeItemType.Cluster_Gluster);
-
-        templateList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Cluster
-                || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Host
-                || model.getType() == SystemTreeItemType.Network || isDataStorage
-                || model.getType() == SystemTreeItemType.Templates
-                || model.getType() == SystemTreeItemType.System);
-
-        if (model.getType() == SystemTreeItemType.Cluster_Gluster) {
-            VDSGroup cluster = (VDSGroup) model.getEntity();
-            if (!cluster.supportsVirtService()) {
-                vmList.setIsAvailable(false);
-                templateList.setIsAvailable(false);
-                storageList.setIsAvailable(false);
-                poolList.setIsAvailable(false);
-            }
-        }
-
-        userList.setIsAvailable(model.getType() == SystemTreeItemType.System);
-        eventList.setIsAvailable(model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Cluster
-                || model.getType() == SystemTreeItemType.Cluster_Gluster || model.getType() == SystemTreeItemType.Host
-                || model.getType() == SystemTreeItemType.Storage || model.getType() == SystemTreeItemType.System
-                || model.getType() == SystemTreeItemType.Volume);
-
-        reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled()
-                && ReportInit.getInstance().getDashboard(model.getType().toString()) != null);
-
-        networkList.setIsAvailable(model.getType() == SystemTreeItemType.Network
-                || model.getType() == SystemTreeItemType.Networks
-                || model.getType() == SystemTreeItemType.System || model.getType() == SystemTreeItemType.DataCenter
-                || model.getType() == SystemTreeItemType.Cluster || model.getType() == SystemTreeItemType.Host);
-
-        providerList.setIsAvailable(model.getType() == SystemTreeItemType.Providers
-                || model.getType() == SystemTreeItemType.Provider);
-
-        profileList.setIsAvailable(model.getType() == SystemTreeItemType.Network
-                || model.getType() == SystemTreeItemType.DataCenter);
+        updateAvailability(model.getType(), model.getEntity());
 
         // Select a default item depending on system tree selection.
         ListModel oldSelectedItem = getSelectedItem();
@@ -636,6 +542,106 @@ public class CommonModel extends ListModel
                 treeContext.setSystemTreeSelectedItem((SystemTreeItemModel) getSystemTree().getSelectedItem());
             }
         }
+    }
+
+    private void updateAvailability(SystemTreeItemType type, Object entity) {
+
+        // Update items availability depending on system tree selection
+
+        dataCenterList.setIsAvailable(type == SystemTreeItemType.DataCenter
+                || type == SystemTreeItemType.Storage || type == SystemTreeItemType.System
+                || type == SystemTreeItemType.DataCenters);
+
+        clusterList.setIsAvailable(type == SystemTreeItemType.DataCenter
+                || type == SystemTreeItemType.Clusters || type == SystemTreeItemType.Cluster
+                || type == SystemTreeItemType.Cluster_Gluster
+                || type == SystemTreeItemType.Storage || type == SystemTreeItemType.Network
+                || type == SystemTreeItemType.System);
+
+        hostList.setIsAvailable(type == SystemTreeItemType.DataCenter
+                || type == SystemTreeItemType.Cluster
+                || type == SystemTreeItemType.Cluster_Gluster || type == SystemTreeItemType.Hosts
+                || type == SystemTreeItemType.Host || type == SystemTreeItemType.Storage
+                || type == SystemTreeItemType.Network || type == SystemTreeItemType.System);
+
+        volumeList.setIsAvailable(type == SystemTreeItemType.Cluster_Gluster
+                || type == SystemTreeItemType.Volume
+                || type == SystemTreeItemType.Volumes
+                || type == SystemTreeItemType.System);
+
+        if (type == SystemTreeItemType.Cluster) {
+            volumeList.setIsAvailable(false);
+        }
+
+        storageList.setIsAvailable(type == SystemTreeItemType.DataCenter
+                || type == SystemTreeItemType.Cluster
+                || type == SystemTreeItemType.Cluster_Gluster || type == SystemTreeItemType.Host
+                || type == SystemTreeItemType.Storages || type == SystemTreeItemType.Storage
+                || type == SystemTreeItemType.System);
+
+        quotaList.setIsAvailable(type == SystemTreeItemType.DataCenter);
+
+        boolean isDataStorage = false;
+        if (type == SystemTreeItemType.Storage && entity != null)
+        {
+            StorageDomain storage = (StorageDomain) entity;
+            isDataStorage =
+                    storage.getStorageDomainType() == StorageDomainType.Data
+                            || storage.getStorageDomainType() == StorageDomainType.Master;
+        }
+
+        diskList.setIsAvailable(type == SystemTreeItemType.DataCenter
+                || isDataStorage || type == SystemTreeItemType.System);
+
+        vmList.setIsAvailable(type == SystemTreeItemType.DataCenter
+                || type == SystemTreeItemType.Cluster
+                || type == SystemTreeItemType.Cluster_Gluster || type == SystemTreeItemType.Host
+                || type == SystemTreeItemType.Network || isDataStorage
+                || type == SystemTreeItemType.VMs
+                || type == SystemTreeItemType.System);
+
+        poolList.setIsAvailable(type == SystemTreeItemType.System
+                || type == SystemTreeItemType.DataCenter
+                || type == SystemTreeItemType.Cluster
+                || type == SystemTreeItemType.Cluster_Gluster);
+
+        templateList.setIsAvailable(type == SystemTreeItemType.DataCenter
+                || type == SystemTreeItemType.Cluster
+                || type == SystemTreeItemType.Cluster_Gluster || type == SystemTreeItemType.Host
+                || type == SystemTreeItemType.Network || isDataStorage
+                || type == SystemTreeItemType.Templates
+                || type == SystemTreeItemType.System);
+
+        if (type == SystemTreeItemType.Cluster_Gluster && entity != null) {
+            VDSGroup cluster = (VDSGroup) entity;
+            if (!cluster.supportsVirtService()) {
+                vmList.setIsAvailable(false);
+                templateList.setIsAvailable(false);
+                storageList.setIsAvailable(false);
+                poolList.setIsAvailable(false);
+            }
+        }
+
+        userList.setIsAvailable(type == SystemTreeItemType.System);
+        eventList.setIsAvailable(type == SystemTreeItemType.DataCenter
+                || type == SystemTreeItemType.Cluster
+                || type == SystemTreeItemType.Cluster_Gluster || type == SystemTreeItemType.Host
+                || type == SystemTreeItemType.Storage || type == SystemTreeItemType.System
+                || type == SystemTreeItemType.Volume);
+
+        reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled()
+                && ReportInit.getInstance().getDashboard(type.toString()) != null);
+
+        networkList.setIsAvailable(type == SystemTreeItemType.Network
+                || type == SystemTreeItemType.Networks
+                || type == SystemTreeItemType.System || type == SystemTreeItemType.DataCenter
+                || type == SystemTreeItemType.Cluster || type == SystemTreeItemType.Host);
+
+        providerList.setIsAvailable(type == SystemTreeItemType.Providers
+                || type == SystemTreeItemType.Provider);
+
+        profileList.setIsAvailable(type == SystemTreeItemType.Network
+                || type == SystemTreeItemType.DataCenter);
     }
 
     private void changeSelectedTabIfNeeded(SystemTreeItemModel model) {
