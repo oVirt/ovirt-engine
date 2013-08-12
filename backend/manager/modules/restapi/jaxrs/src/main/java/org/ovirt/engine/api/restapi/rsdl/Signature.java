@@ -6,7 +6,15 @@ import java.util.Map;
 public class Signature implements Cloneable {
     private Map<Object, Object> mandatoryArguments = new HashMap<Object, Object>();
     private Map<Object, Object> optionalArguments = new HashMap<Object, Object>();
+    private Boolean deprecated;
 
+    public Boolean getDeprecated() {
+        return deprecated;
+    }
+
+    public void setDeprecated(Boolean deprecated) {
+        this.deprecated = deprecated;
+    }
     public Map<Object, Object> getMandatoryArguments() {
         return mandatoryArguments;
     }
