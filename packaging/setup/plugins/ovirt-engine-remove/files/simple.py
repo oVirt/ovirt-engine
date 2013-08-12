@@ -160,7 +160,7 @@ class Plugin(plugin.PluginBase):
                             dialog=self.dialog,
                             name='OVESETUP_REMOVE_GROUP/' + group,
                             note=_(
-                                'Do you want to clean {description}? '
+                                'Do you want to remove {description}? '
                                 '(@VALUES@) [@DEFAULT@]: '
                             ).format(
                                 description=msg,
