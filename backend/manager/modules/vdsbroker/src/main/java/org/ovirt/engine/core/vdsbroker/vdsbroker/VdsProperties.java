@@ -285,6 +285,13 @@ public final class VdsProperties {
     public static final String time = "time";
     public static final String action = "action";
 
+    // Network QoS
+    public static final String QOS_INBOUND = "inbound";
+    public static final String QOS_OUTBOUND = "outbound";
+    public static final String QOS_AVERAGE = "average";
+    public static final String QOS_PEAK = "peak";
+    public static final String QOS_BURST = "burst";
+
     public static String MigrationMethostoString(MigrationMethod method) {
         if (method == MigrationMethod.OFFLINE) {
             return offline;

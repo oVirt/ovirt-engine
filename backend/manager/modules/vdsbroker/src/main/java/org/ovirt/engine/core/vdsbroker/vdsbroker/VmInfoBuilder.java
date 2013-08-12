@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
@@ -545,6 +546,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             vnicProfile = DbFacade.getInstance().getVnicProfileDao().get(nic.getVnicProfileId());
             if (vnicProfile != null) {
                 network = DbFacade.getInstance().getNetworkDao().get(vnicProfile.getNetworkId());
+                addQosForDevice((Map<String, Object>) struct.get(VdsProperties.SpecParams),
+                        vnicProfile, vm.getVdsGroupCompatibilityVersion());
             }
         }
 
@@ -561,6 +564,38 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 vm.getVdsGroupCompatibilityVersion(),
                 getVnicCustomProperties(vnicProfile));
 
+    }
+
+    private static void addQosForDevice(Map<String, Object> specParams, VnicProfile vnicProfile, Version vdsGroupCompatibilityVersion) {
+        if (FeatureSupported.networkQoS(vdsGroupCompatibilityVersion)
+                && vnicProfile.getNetworkQosId() != null) {
+            NetworkQoS networkQoS = DbFacade.getInstance().getQosDao().get(vnicProfile.getNetworkQosId());
+            if (networkQoS != null) {
+                if (specParams == null) {
+                    specParams = new HashMap<>();
+                }
+                if (networkQoS.getInboundAverage() > 0) {
+                    Map<String, String> inbound = generateQoSData(networkQoS.getInboundAverage(),
+                            networkQoS.getInboundPeak(),
+                            networkQoS.getInboundBurst());
+                    specParams.put(VdsProperties.QOS_INBOUND, inbound);
+                }
+                if (networkQoS.getOutboundAverage() > 0) {
+                    Map<String, String> outbound = generateQoSData(networkQoS.getOutboundAverage(),
+                            networkQoS.getOutboundPeak(),
+                            networkQoS.getOutboundBurst());
+                    specParams.put(VdsProperties.QOS_OUTBOUND, outbound);
+                }
+            }
+        }
+    }
+
+    private static Map<String, String> generateQoSData(int average, int peak, int burst){
+        Map<String, String> qosData = new HashMap<>();
+        qosData.put(VdsProperties.QOS_AVERAGE, String.valueOf(average));
+        qosData.put(VdsProperties.QOS_PEAK, String.valueOf(peak));
+        qosData.put(VdsProperties.QOS_BURST, String.valueOf(burst));
+        return qosData;
     }
 
     public static Map<String, String> getVnicCustomProperties(VnicProfile vnicProfile) {
