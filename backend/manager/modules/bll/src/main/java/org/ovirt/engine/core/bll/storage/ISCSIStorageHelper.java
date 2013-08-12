@@ -100,20 +100,34 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         List<StorageServerConnections> toRemove =
                 new ArrayList<StorageServerConnections>();
         for (StorageServerConnections connection : connections) {
-            List<String> list = LinqUtils.foreach(
-                    DbFacade.getInstance().getLunDao().getAllForStorageServerConnection(connection.getid()),
-                    new Function<LUNs, String>() {
-                        @Override
-                        public String eval(LUNs a) {
-                            return a.getLUN_id();
-                        }
-                    });
+            fillConnectionDetailsIfNeeded(connection);
+            if (connection.getid() != null) {
+                List<String> list = LinqUtils.foreach(
+                        DbFacade.getInstance().getLunDao().getAllForStorageServerConnection(connection.getid()),
+                        new Function<LUNs, String>() {
+                            @Override
+                            public String eval(LUNs a) {
+                                return a.getLUN_id();
+                            }
+                        });
 
-            if (0 < CollectionUtils.subtract(list, lunsByVgWithNoDisks).size()) {
-                toRemove.add(connection);
+                if (0 < CollectionUtils.subtract(list, lunsByVgWithNoDisks).size()) {
+                    toRemove.add(connection);
+                }
             }
         }
         return (List<StorageServerConnections>) CollectionUtils.subtract(connections, toRemove);
+    }
+
+    private void fillConnectionDetailsIfNeeded(StorageServerConnections connection) {
+        // in case that the connection id is null (in case it wasn't loaded from the db before) - we can attempt to load
+        // it from the db by its details.
+        if (connection.getid() == null) {
+            List<StorageServerConnections> dbConnections = DbFacade.getInstance().getStorageServerConnectionDao().getAllForConnection(connection);
+            if (!dbConnections.isEmpty()) {
+                connection.setid(dbConnections.get(0).getid());
+            }
+        }
     }
 
     @Override
