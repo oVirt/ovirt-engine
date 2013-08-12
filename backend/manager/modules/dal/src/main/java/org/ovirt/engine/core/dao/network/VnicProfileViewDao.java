@@ -78,4 +78,13 @@ public interface VnicProfileViewDao extends ReadDao<VnicProfileView, Guid> {
      * @return the list of vnic profiles
      */
     List<VnicProfileView> getAllForNetwork(Guid networkId, Guid userId, boolean filtered);
+
+
+    /**
+     * Retrieves all vnic profiles associated with the given network QoS.
+     * @param qosId
+     *          the network QoS ID
+     * @return the list of vnic profiles
+     */
+    List<VnicProfileView> getAllForNetworkQos(Guid qosId);
 }

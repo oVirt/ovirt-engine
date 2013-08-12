@@ -1181,3 +1181,12 @@ BEGIN
                                       WHERE  user_id = v_user_id AND entity_id = vnic_profiles_view.id));
 END; $procedure$
 LANGUAGE plpgsql;
+
+Create or replace FUNCTION GetVnicProfileViewsByNetworkQosId(v_network_qos_id UUID) RETURNS SETOF vnic_profiles_view
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT *
+   FROM vnic_profiles_view
+   WHERE network_qos_id = v_network_qos_id;
+END; $procedure$
+LANGUAGE plpgsql;

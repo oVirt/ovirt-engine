@@ -99,4 +99,11 @@ public class VnicProfileViewDaoDbFacadeImpl extends DefaultReadDaoDbFacade<VnicP
             return new VnicProfileView();
         }
     }
+
+    @Override
+    public List<VnicProfileView> getAllForNetworkQos(Guid qosId) {
+        return getCallsHandler().executeReadList("GetVnicProfileViewsByNetworkQosId",
+                VnicProfileViewRowMapper.INSTANCE,
+                getCustomMapSqlParameterSource().addValue("network_qos_id", qosId));
+    }
 }
