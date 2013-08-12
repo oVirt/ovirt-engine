@@ -22,7 +22,7 @@
         RequestHeader unset Expect early
     </IfModule>
 
-    <Proxy ajp://localhost:@JBOSS_AJP_PORT@>
+    <Proxy ajp://127.0.0.1:@JBOSS_AJP_PORT@>
         # This is needed to make sure that connections to the application server
         # are recovered in a short time interval (5 seconds at the moment)
         # otherwise when the application server is restarted the web server will
@@ -38,11 +38,11 @@
     Redirect /ovirt-engine /ovirt-engine/
 
     <Location /ovirt-engine/>
-        ProxyPass ajp://localhost:@JBOSS_AJP_PORT@/
+        ProxyPass ajp://127.0.0.1:@JBOSS_AJP_PORT@/
     </Location>
 
     <LocationMatch ^/(UserPortal($|/)|RHEVManagerWeb($|/)|OvirtEngineWeb($|/)|webadmin($|/)|docs($|/)|ovirt-engine-novnc/|ovirt-engine-novnc-main.html$|ovirt-engine-theme/|ovirt-engine-spicehtml5/|ovirt-engine-spicehtml5-main.html$|spice/|ca.crt$|engine.ssh.key.txt$|rhevm.ssh.key.txt$|ovirt-engine-attachment/)>
-        ProxyPassMatch ajp://localhost:@JBOSS_AJP_PORT@
+        ProxyPassMatch ajp://127.0.0.1:@JBOSS_AJP_PORT@
         <IfModule deflate_module>
             AddOutputFilterByType DEFLATE text/javascript text/css text/html text/xml text/json application/xml application/json application/x-yaml
         </IfModule>
@@ -54,7 +54,7 @@
         # Apache older than 2.4 don't copy the setting from the Proxy
         # directive:
         #
-        ProxyPass ajp://localhost:@JBOSS_AJP_PORT@/api timeout=3600
+        ProxyPass ajp://127.0.0.1:@JBOSS_AJP_PORT@/api timeout=3600
 
         <IfModule deflate_module>
             AddOutputFilterByType DEFLATE text/javascript text/css text/html text/xml text/json application/xml application/json application/x-yaml
