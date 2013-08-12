@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.UUID;
+
 import org.ovirt.engine.core.common.businessentities.VDSNiceType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 
@@ -28,6 +30,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         mVerbs.add("DATACENTER");
         // mVerbs.Add("NOTE", "NOTE");
         buildCompletions();
+        mVerbs.add("ID");
         // Building the types dict
         getTypeDictionary().put("NAME", String.class);
         getTypeDictionary().put("COMMENT", String.class);
@@ -49,6 +52,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         getTypeDictionary().put("TAG", String.class);
         getTypeDictionary().put("TYPE", VDSNiceType.class);
         getTypeDictionary().put("DATACENTER", String.class);
+        getTypeDictionary().put("ID", UUID.class);
         // mTypeDict.Add("NOTE", typeof(string));
         // building the ColumnName Dict
         columnNameDict.put("NAME", "vds_name");
@@ -71,6 +75,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         columnNameDict.put("TAG", "tag_name");
         columnNameDict.put("TYPE", "vds_type");
         columnNameDict.put("DATACENTER", "storage_pool_name");
+        columnNameDict.put("ID", "vds_id");
         // mColumnNameDict.Add("NOTE", "note");
         // Building the validation dict
         buildBasicValidationTable();
