@@ -57,7 +57,7 @@
 
 	</ui:style>
 
-	<d:SimpleDialogPanel ui:field="mainPanel" width="670px" height="550px">
+	<d:SimpleDialogPanel ui:field="mainPanel" width="760px" height="550px">
 		<d:content>
 			<t:DialogTabPanel ui:field="tabPanel" height="100%">
                 <t:tab>

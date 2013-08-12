@@ -64,11 +64,9 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
             return;
         }
 
-        SystemTreeItemModel treeSelectedItem =
-                (SystemTreeItemModel) CommonModel.getInstance().getSystemTree().getSelectedItem();
-        SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, treeSelectedItem);
+        StoragePool treeSelectedDc = getSelectedDc();
         final VnicProfileModel profileModel =
-                new NewVnicProfileModel(this, ((StoragePool) treeSelectedDc.getEntity()).getcompatibility_version());
+                new NewVnicProfileModel(this, treeSelectedDc.getcompatibility_version(), treeSelectedDc.getId());
         setWindow(profileModel);
 
         initNetworkList(profileModel);
@@ -82,12 +80,19 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
             return;
         }
 
+        StoragePool selectedDc = getSelectedDc();
         final VnicProfileModel profileModel =
-                new EditVnicProfileModel(this, profile.getCompatibilityVersion(), profile);
+                new EditVnicProfileModel(this, profile.getCompatibilityVersion(), profile, selectedDc.getId());
         setWindow(profileModel);
 
         initNetworkList(profileModel);
+    }
 
+    private StoragePool getSelectedDc() {
+        SystemTreeItemModel treeSelectedItem =
+                (SystemTreeItemModel) CommonModel.getInstance().getSystemTree().getSelectedItem();
+        SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, treeSelectedItem);
+        return (StoragePool) treeSelectedDc.getEntity();
     }
 
     public void remove() {

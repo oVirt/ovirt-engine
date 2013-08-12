@@ -1,15 +1,15 @@
 package org.ovirt.engine.ui.webadmin.widget.vnicProfile;
 
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelTextBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfileWidget.ViewIdHandler;
-import org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfilesEditor.WidgetStyle;
-import org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfilesEditor.WidgetUiBinder;
 import org.ovirt.engine.ui.common.widget.Align;
 
 import com.google.gwt.core.client.GWT;
@@ -41,6 +41,11 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     @Path(value = "publicUse.entity")
     public EntityModelCheckBoxEditor publicUseEditor;
 
+    @UiField(provided = true)
+    @Path(value = "networkQoS.selectedItem")
+    @WithElementId("networkQoS")
+    public ListModelListBoxEditor<Object> networkQoSEditor;
+
     private VnicProfileModel vnicProfileModel;
 
     @UiField
@@ -52,11 +57,25 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
 
     public VnicProfileWidget() {
         publicUseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        networkQoSEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return (((NetworkQoS)object).getName());
+            }
+        });
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         publicUseEditor.setLabel(constants.profilePublicUseInstanceTypeLabel());
-        publicUseEditor.addContentWidgetStyleName(style.publicUse());
+        networkQoSEditor.setLabel(constants.profileQoSInstanceTypeLabel());
+
+        initStyles();
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
+    }
+
+    private void initStyles() {
+        nameEditor.addContentWidgetStyleName(style.name());
+        publicUseEditor.addContentWidgetStyleName(style.publicUse());
+        networkQoSEditor.addContentWidgetStyleName(style.qos());
     }
 
     @Override
@@ -70,7 +89,11 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     }
 
     interface WidgetStyle extends CssResource {
+        String name();
+
         String publicUse();
+
+        String qos();
     }
 
 }

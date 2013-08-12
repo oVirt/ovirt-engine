@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -85,13 +86,21 @@ public class EditNetworkModel extends NetworkModel {
                 for (VnicProfileView profileView : (List<VnicProfileView>) returnValue) {
                     VnicProfileModel editModel = new EditVnicProfileModel(getSourceListModel(),
                             getSelectedDc().getcompatibility_version(),
-                            profileView, false);
+                            profileView, null, false);
+
+                    if (profileView.getNetworkQosName() != null && !profileView.getNetworkQosName().equals("")) { //$NON-NLS-1$
+                        NetworkQoS networkQoS = new NetworkQoS();
+                        networkQoS.setName(profileView.getNetworkQosName());
+                        editModel.getNetworkQoS().setSelectedItem(networkQoS);
+                    }
+                    editModel.getNetworkQoS().setIsChangable(false);
                     profilesModels.add(editModel);
                     editModel.getName().setIsChangable(false);
                 }
                 if (profilesModels.isEmpty()){
-                    profilesModels.add(new NewVnicProfileModel(getSourceListModel(),
-                            getSelectedDc().getcompatibility_version(), false));
+                    VnicProfileModel newProfileModel = new NewVnicProfileModel(getSourceListModel(),
+                            getSelectedDc().getcompatibility_version(), false, getSelectedDc().getId());
+                    profilesModels.add(newProfileModel);
                 }
                 getProfiles().setItems(profilesModels);
                 originalProfileModels = profilesModels;

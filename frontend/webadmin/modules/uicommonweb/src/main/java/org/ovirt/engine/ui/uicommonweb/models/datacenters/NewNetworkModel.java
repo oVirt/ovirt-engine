@@ -105,7 +105,10 @@ public class NewNetworkModel extends NetworkModel {
     protected void initProfiles() {
         List<VnicProfileModel> profiles = new LinkedList<VnicProfileModel>();
 
-        profiles.add(new NewVnicProfileModel(getSourceListModel(), getSelectedDc().getcompatibility_version(), false));
+        NewVnicProfileModel newModel =
+                new NewVnicProfileModel(getSourceListModel(), getSelectedDc().getcompatibility_version(), false,
+                        getSelectedDc().getId());
+        profiles.add(newModel);
         getProfiles().setItems(profiles);
     }
 

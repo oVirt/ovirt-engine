@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.editor.TakesConstrainedValueEditor;
@@ -81,6 +82,7 @@ public class VnicProfilesEditor extends Composite implements IsEditor<TakesValue
         int numOfProfiles = values.size();
 
         for (final Object value : values) {
+            final Guid dcId = ((VnicProfileModel) value).getDcId();
             VnicProfileWidget vnicProfileWidget = new VnicProfileWidget();
             editors.add(vnicProfileWidget);
             vnicProfileWidget.edit((VnicProfileModel) value);
@@ -88,7 +90,7 @@ public class VnicProfilesEditor extends Composite implements IsEditor<TakesValue
             final HorizontalPanel profilePanel = new HorizontalPanel();
 
             PushButton addButton = new PushButton(new Image(resources.increaseIcon()));
-            PushButton remvoeButton = new PushButton(new Image(resources.decreaseIcon()));
+            final PushButton remvoeButton = new PushButton(new Image(resources.decreaseIcon()));
             addButton.addStyleName(style.addButtonStyle());
             remvoeButton.addStyleName(style.removeButtonStyle());
             profilePanel.add(vnicProfileWidget);
@@ -100,9 +102,10 @@ public class VnicProfilesEditor extends Composite implements IsEditor<TakesValue
                 public void onClick(ClickEvent event) {
                     List models = (List<VnicProfileModel>) getValue().getItems();
                     VnicProfileModel existingProfileModel = (VnicProfileModel) value;
-                    models.add(models.indexOf(existingProfileModel) + 1,
-                            new NewVnicProfileModel(existingProfileModel.getSourceModel(),
-                                    existingProfileModel.getDcCompatibilityVersion()));
+                    VnicProfileModel newVnicProfileModel = new NewVnicProfileModel(existingProfileModel.getSourceModel(),
+                            existingProfileModel.getDcCompatibilityVersion(), dcId);
+                    models.add(models.indexOf(existingProfileModel) + 1, newVnicProfileModel);
+
                     setAcceptableValues(models);
                 }
             });

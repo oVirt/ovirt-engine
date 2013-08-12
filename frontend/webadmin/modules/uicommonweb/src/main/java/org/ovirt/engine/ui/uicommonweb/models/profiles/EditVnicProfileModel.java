@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
@@ -12,8 +13,9 @@ public class EditVnicProfileModel extends VnicProfileModel {
     public EditVnicProfileModel(EntityModel sourceModel,
             Version dcCompatibilityVersion,
             VnicProfile profile,
+            Guid dcId,
             boolean customPropertiesVisible) {
-        super(sourceModel, dcCompatibilityVersion, customPropertiesVisible);
+        super(sourceModel, dcCompatibilityVersion, customPropertiesVisible, dcId);
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfileTitle());
         setHashName("edit_vnic_profile"); //$NON-NLS-1$
 
@@ -22,12 +24,12 @@ public class EditVnicProfileModel extends VnicProfileModel {
         getName().setEntity(profile.getName());
         getDescription().setEntity(profile.getDescription());
         getPortMirroring().setEntity(getProfile().isPortMirroring());
-
+        initNetworkQoSList(getProfile().getNetworkQosId());
         getPublicUse().setIsAvailable(false);
     }
 
-    public EditVnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion, VnicProfile profile) {
-        this(sourceModel, dcCompatibilityVersion, profile, true);
+    public EditVnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion, VnicProfile profile, Guid dcId) {
+        this(sourceModel, dcCompatibilityVersion, profile, dcId, true);
     }
 
     @Override

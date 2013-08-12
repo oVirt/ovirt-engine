@@ -67,7 +67,8 @@ public class NetworkProfileListModel extends SearchableListModel
             return;
         }
 
-        NewVnicProfileModel model = new NewVnicProfileModel(this, getEntity().getCompatibilityVersion());
+        NewVnicProfileModel model = new NewVnicProfileModel(this, getEntity().getCompatibilityVersion(),
+                getEntity().getDataCenterId());
         setWindow(model);
 
         initProfileNetwork(model);
@@ -81,7 +82,8 @@ public class NetworkProfileListModel extends SearchableListModel
         EditVnicProfileModel model =
                 new EditVnicProfileModel(this,
                         getEntity().getCompatibilityVersion(),
-                        (VnicProfileView) getSelectedItem());
+                        (VnicProfileView) getSelectedItem(),
+                        getEntity().getDataCenterId());
         setWindow(model);
 
         initProfileNetwork(model);

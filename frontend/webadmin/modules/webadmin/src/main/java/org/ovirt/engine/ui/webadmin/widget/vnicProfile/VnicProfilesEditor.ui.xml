@@ -20,7 +20,7 @@
 			height: 10px;
 			padding-left: 2px;
 			padding-top: 2px;
-			margin-top: 4px;
+			margin-top: 7px;
 			margin-left: 8px;
 		}
 
@@ -30,7 +30,7 @@
 			height: 10px;
 			padding-left: 2px;
 			padding-top: 2px;
-			margin-top: 4px;
+			margin-top: 7px;
 		}
 
 	</ui:style>

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.profile;
 
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -63,6 +64,11 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     @WithElementId("description")
     EntityModelTextBoxEditor descriptionEditor;
 
+    @UiField(provided = true)
+    @Path(value = "networkQoS.selectedItem")
+    @WithElementId("networkQoS")
+    public ListModelListBoxEditor<Object> networkQoSEditor;
+
     @UiField
     @Path("portMirroring.entity")
     @WithElementId("portMirroring")
@@ -92,6 +98,12 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
                 return ((Network) object).getName();
             }
         });
+        networkQoSEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+            @Override
+            public String renderNullSafe(Object object) {
+                return (((NetworkQoS)object).getName());
+            }
+        });
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         applyStyles();
@@ -105,6 +117,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
         descriptionEditor.setLabel(constants.descriptionVnicProfile());
         portMirroringEditor.setLabel(constants.portMirroringVnicProfile());
         publicUseEditor.setLabel(constants.publicUseVnicProfile());
+        networkQoSEditor.setLabel(constants.profileQoSInstanceTypeLabel());
     }
 
     @Override

@@ -1111,6 +1111,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Description")
     String descriptionVnicProfile();
 
+    @DefaultStringValue("QoS Name")
+    String qosNameVnicProfile();
+
     @DefaultStringValue("Port Mirroring")
     String portMirroringVnicProfile();
 
@@ -2871,6 +2874,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Public")
     String profilePublicUseInstanceTypeLabel();
+
+    @DefaultStringValue("QoS")
+    String profileQoSInstanceTypeLabel();
 
     @DefaultStringValue("Some hosts in this cluster have the console address overridden and some not. For details please see the Hosts subtab")
     String consolePartiallyOverridden();

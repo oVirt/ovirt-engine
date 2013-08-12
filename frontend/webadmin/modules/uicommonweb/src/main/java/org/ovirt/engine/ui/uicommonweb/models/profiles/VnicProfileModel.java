@@ -10,11 +10,14 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetDeviceCustomPropertiesParameters;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -44,8 +47,10 @@ public abstract class VnicProfileModel extends Model {
     private final Version dcCompatibilityVersion;
     private final boolean customPropertiesSupported;
     private ListModel network;
+    private ListModel networkQoS;
     private VnicProfile vnicProfile = null;
     private boolean customPropertiesVisible;
+    private Guid dcId;
 
     public EntityModel getName()
     {
@@ -115,10 +120,28 @@ public abstract class VnicProfileModel extends Model {
         return vnicProfile;
     }
 
-    public VnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion, boolean customPropertiesVisible) {
+    public ListModel getNetworkQoS() {
+        return networkQoS;
+    }
+
+    public void setNetworkQoS(ListModel networkQoS) {
+        this.networkQoS = networkQoS;
+    }
+
+    public Guid getDcId() {
+        return dcId;
+    }
+
+    public void setDcId(Guid dcId) {
+        this.dcId = dcId;
+    }
+
+    public VnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion, boolean customPropertiesVisible,
+                            Guid dcId) {
         this.sourceModel = sourceModel;
         this.dcCompatibilityVersion = dcCompatibilityVersion;
         this.customPropertiesVisible = customPropertiesVisible;
+        this.dcId = dcId;
 
         customPropertiesSupported =
                 (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
@@ -126,6 +149,7 @@ public abstract class VnicProfileModel extends Model {
 
         setName(new EntityModel());
         setNetwork(new ListModel());
+        setNetworkQoS(new ListModel());
         setPortMirroring(new EntityModel());
         setCustomPropertySheet(new KeyValueModel());
         EntityModel publicUse = new EntityModel();
@@ -138,8 +162,8 @@ public abstract class VnicProfileModel extends Model {
         initCommands();
     }
 
-    public VnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion) {
-        this(sourceModel, dcCompatibilityVersion, true);
+    public VnicProfileModel(EntityModel sourceModel, Version dcCompatibilityVersion, Guid dcId) {
+        this(sourceModel, dcCompatibilityVersion, true, dcId);
     }
 
     protected boolean isPortMirroringSupported() {
@@ -201,6 +225,8 @@ public abstract class VnicProfileModel extends Model {
         vnicProfile.setName((String) getName().getEntity());
         Network network = (Network) getNetwork().getSelectedItem();
         vnicProfile.setNetworkId(network != null ? network.getId() : null);
+        NetworkQoS networkQoS = (NetworkQoS) getNetworkQoS().getSelectedItem();
+        vnicProfile.setNetworkQosId(networkQoS != null ? networkQoS.getId() : null);
         vnicProfile.setPortMirroring((Boolean) getPortMirroring().getEntity());
 
         if (customPropertiesVisible) {
@@ -270,6 +296,28 @@ public abstract class VnicProfileModel extends Model {
         }
     }
 
+    public void initNetworkQoSList(final Guid selectedItemId) {
+        if (getDcId() == null) {
+            return;
+        }
+
+        AsyncQuery _asyncQuery = new AsyncQuery();
+        _asyncQuery.setModel(this);
+        _asyncQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object ReturnValue)
+            {
+                ArrayList<NetworkQoS> networkQoSes =
+                        (ArrayList<NetworkQoS>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                getNetworkQoS().setItems(networkQoSes);
+                setSelectedNetworkQoSId(selectedItemId);
+            }
+        };
+
+        IdQueryParameters queryParams = new IdQueryParameters(getDcId());
+        Frontend.RunQuery(VdcQueryType.GetAllNetworkQosByStoragePoolId, queryParams, _asyncQuery);
+    }
+
     public boolean validate()
     {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation() });
@@ -283,5 +331,17 @@ public abstract class VnicProfileModel extends Model {
 
     protected VdcActionParametersBase getActionParameters() {
         return new VnicProfileParameters(vnicProfile);
+    }
+
+    public void setSelectedNetworkQoSId(Guid networkQoSId) {
+        getNetworkQoS().setSelectedItem(null);
+        if (getNetworkQoS().getItems() != null && networkQoSId != null) {
+            for (Object item : getNetworkQoS().getItems()) {
+                if (((NetworkQoS)item).getId().equals(networkQoSId)) {
+                    getNetworkQoS().setSelectedItem(item);
+                    break;
+                }
+            }
+        }
     }
 }

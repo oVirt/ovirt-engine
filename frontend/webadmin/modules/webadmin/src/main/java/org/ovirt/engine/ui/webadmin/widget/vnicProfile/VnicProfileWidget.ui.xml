@@ -6,17 +6,35 @@
 
     <ui:style type="org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfileWidget.WidgetStyle" >
 		.publicUse {
-			width: 75px;
+			width: 90px;
+		}
+
+		.qos {
+			width: 135px;
+		}
+
+		.name {
+			width: 160px;
 		}
 
 		.publicUsePanel {
 			width: 75px;
+			margin-left: 20px;
+		}
+
+		.qosPanel {
+			width: 185px;
+			margin-left: 20px;
+
 		}
     </ui:style>
 	<g:HorizontalPanel>
 		<e:EntityModelTextBoxOnlyEditor ui:field="nameEditor" />
 		<g:SimplePanel addStyleNames="{style.publicUsePanel}">
 			<e:EntityModelCheckBoxEditor ui:field="publicUseEditor"/>
+		</g:SimplePanel>
+		<g:SimplePanel addStyleNames="{style.qosPanel}">
+			<e:ListModelListBoxEditor ui:field="networkQoSEditor"/>
 		</g:SimplePanel>
 	</g:HorizontalPanel>
 

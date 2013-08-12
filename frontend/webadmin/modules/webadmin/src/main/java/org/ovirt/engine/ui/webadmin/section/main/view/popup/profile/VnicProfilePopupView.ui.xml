@@ -39,6 +39,7 @@
 				<e:ListModelListBoxEditor ui:field="networkEditor" />
 				<e:EntityModelTextBoxEditor ui:field="nameEditor" />
 				<e:EntityModelTextBoxEditor ui:field="descriptionEditor" />
+				<e:ListModelListBoxEditor ui:field="networkQoSEditor"/>
 				<g:SimplePanel width="100%">
 					<e:EntityModelCheckBoxEditor ui:field="portMirroringEditor" />
 				</g:SimplePanel>
