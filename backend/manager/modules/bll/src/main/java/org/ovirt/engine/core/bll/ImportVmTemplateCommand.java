@@ -121,7 +121,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 getParameters().setImages(images);
                 getVmTemplate().setImages(images);
                 ensureDomainMap(getParameters().getImages(), getParameters().getDestDomainId());
-                Map<Guid, DiskImage> imageMap = new HashMap<Guid, DiskImage>();
+                HashMap<Guid, DiskImage> imageMap = new HashMap<Guid, DiskImage>();
                 for (DiskImage image : images) {
                     if (Guid.Empty.equals(image.getVmSnapshotId())) {
                         retVal = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID);

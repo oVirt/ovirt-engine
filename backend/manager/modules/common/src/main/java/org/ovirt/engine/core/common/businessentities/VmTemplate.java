@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.validation.constraints.Size;
 import javax.validation.groups.Default;
@@ -37,7 +36,7 @@ public class VmTemplate extends VmBase {
 
     private String storagePoolName;
 
-    private Map<Guid, DiskImage> diskMap = new HashMap<Guid, DiskImage>();
+    private HashMap<Guid, DiskImage> diskMap = new HashMap<Guid, DiskImage>();
 
     private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
 
@@ -201,11 +200,11 @@ public class VmTemplate extends VmBase {
     }
 
     @JsonIgnore
-    public Map<Guid, DiskImage> getDiskImageMap() {
+    public HashMap<Guid, DiskImage> getDiskImageMap() {
         return diskMap;
     }
 
-    public void setDiskImageMap(Map<Guid, DiskImage> value) {
+    public void setDiskImageMap(HashMap<Guid, DiskImage> value) {
         diskMap = value;
     }
 
