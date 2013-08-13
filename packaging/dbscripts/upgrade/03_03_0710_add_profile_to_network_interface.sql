@@ -66,7 +66,8 @@ INSERT INTO vnic_profiles(id, name, network_id, port_mirroring)
         network.name,
         network.id,
         FALSE
-       FROM network;
+       FROM network
+       WHERE network.vm_network IS TRUE;
 
 -- create profiles with port_mirroring support for networks with such such VNICs
 INSERT INTO vnic_profiles(id, name, network_id, port_mirroring)
@@ -75,7 +76,8 @@ INSERT INTO vnic_profiles(id, name, network_id, port_mirroring)
         network.id,
         TRUE
        FROM network
-       WHERE __temp_has_port_mirroring_template_interfaces(network.id) OR __temp_has_port_mirroring_vm_interfaces(network.id);
+       WHERE network.vm_network IS TRUE
+       AND (__temp_has_port_mirroring_template_interfaces(network.id) OR __temp_has_port_mirroring_vm_interfaces(network.id));
 
 -- add correct profile to each VM/Template vnic
 UPDATE vm_interface
@@ -227,6 +229,7 @@ BEGIN
 ------------------------------------------------
     DELETE FROM roles_groups
     WHERE action_group_id = 1200;
+
 
 END; $procedure$
 LANGUAGE plpgsql;
