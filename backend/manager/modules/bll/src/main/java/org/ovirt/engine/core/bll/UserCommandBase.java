@@ -108,7 +108,7 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
         SearchParameters p = new SearchParameters(String.format("user:name = %1$s or usrname = %2$s", userName,
                 userName), SearchType.DBUser);
         p.setMaxCount(Integer.MAX_VALUE);
-        List<IVdcQueryable> elements = (List<IVdcQueryable>) Backend.getInstance()
+        List<IVdcQueryable> elements = Backend.getInstance()
                 .runInternalQuery(VdcQueryType.Search, p).getReturnValue();
         DbUser adElement;
         if (elements != null && elements.size() > 0

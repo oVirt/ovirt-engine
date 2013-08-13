@@ -8,12 +8,16 @@ import java.io.Serializable;
 public class VdcQueryReturnValue implements Serializable {
     private static final long serialVersionUID = -7737597005584540780L;
 
-    private boolean _succeeded;
-    private String _exceptionString;
+    private boolean succeeded;
+    private String exceptionString;
     private Object returnValue;
 
-    public Object getReturnValue() {
-        return returnValue;
+    public VdcQueryReturnValue() {
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T getReturnValue() {
+        return (T) returnValue;
     }
 
     public void setReturnValue(Object value) {
@@ -21,21 +25,18 @@ public class VdcQueryReturnValue implements Serializable {
     }
 
     public String getExceptionString() {
-        return _exceptionString;
+        return exceptionString;
     }
 
     public void setExceptionString(String value) {
-        _exceptionString = value;
+        exceptionString = value;
     }
 
     public boolean getSucceeded() {
-        return _succeeded;
+        return succeeded;
     }
 
     public void setSucceeded(boolean value) {
-        _succeeded = value;
-    }
-
-    public VdcQueryReturnValue() {
+        succeeded = value;
     }
 }

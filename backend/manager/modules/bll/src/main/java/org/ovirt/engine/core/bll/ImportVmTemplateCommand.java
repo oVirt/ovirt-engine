@@ -108,7 +108,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     VdcQueryType.GetTemplatesFromExportDomain, tempVar);
             retVal = qretVal.getSucceeded();
             if (retVal) {
-                Map<VmTemplate, List<DiskImage>> templates = (Map) qretVal.getReturnValue();
+                Map<VmTemplate, List<DiskImage>> templates = qretVal.getReturnValue();
                 ArrayList<DiskImage> images = new ArrayList<DiskImage>();
                 for (Map.Entry<VmTemplate, List<DiskImage>> entry : templates.entrySet()) {
                     if (entry.getKey().getId().equals(getVmTemplate().getId())) {

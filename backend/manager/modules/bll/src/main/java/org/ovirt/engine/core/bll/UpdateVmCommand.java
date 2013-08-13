@@ -109,8 +109,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (getParameters().isUpdateWatchdog()) {
             VdcQueryReturnValue query =
                     getBackend().runInternalQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(getParameters().getVmId()));
-            @SuppressWarnings("unchecked")
-            List<VmWatchdog> watchdogs = (List<VmWatchdog>) query.getReturnValue();
+            List<VmWatchdog> watchdogs = query.getReturnValue();
             if (watchdogs.isEmpty()) {
                 if (getParameters().getWatchdog() == null) {
                     // nothing to do, no watchdog and no watchdog to create

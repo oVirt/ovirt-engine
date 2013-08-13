@@ -20,7 +20,7 @@ public class GetAllVmsAndVmPoolsQuery<P extends VdcQueryParametersBase> extends 
         List<Object> retValList = new ArrayList<Object>();
         VdcQueryReturnValue queryResult = Backend.getInstance().runInternalQuery(VdcQueryType.GetAllVms, getParameters());
         if (queryResult != null && queryResult.getSucceeded()) {
-            retValList.addAll((List<VM>) queryResult.getReturnValue());
+            retValList.addAll(queryResult.<List<VM>>getReturnValue());
         } else {
             isSucceeded = false;
         }
@@ -29,7 +29,7 @@ public class GetAllVmsAndVmPoolsQuery<P extends VdcQueryParametersBase> extends 
                     Backend.getInstance().runInternalQuery(VdcQueryType.GetAllVmPoolsAttachedToUser,
                             new VdcQueryParametersBase());
             if (queryResult != null && queryResult.getSucceeded()) {
-                retValList.addAll((List<VmPool>) queryResult.getReturnValue());
+                retValList.addAll(queryResult.<List<VmPool>>getReturnValue());
             } else {
                 isSucceeded = false;
             }

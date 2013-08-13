@@ -437,7 +437,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 tempVar);
 
         if (qretVal.getSucceeded()) {
-            ArrayList<VM> vms = (ArrayList<VM>) qretVal.getReturnValue();
+            ArrayList<VM> vms = qretVal.getReturnValue();
             for (VM vm : vms) {
                 if (vm.getId().equals(getVm().getId())) {
                     if (!getParameters().getForceOverride()) {
@@ -464,7 +464,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         if (qretVal.getSucceeded()) {
             if (!VmTemplateHandler.BlankVmTemplateId.equals(tmplId)) {
-                Map<VmTemplate, List<DiskImage>> templates = (Map) qretVal.getReturnValue();
+                Map<VmTemplate, List<DiskImage>> templates = qretVal.getReturnValue();
                 VmTemplate tmpl = LinqUtils.firstOrNull(templates.keySet(), new Predicate<VmTemplate>() {
                     @Override
                     public boolean eval(VmTemplate vmTemplate) {

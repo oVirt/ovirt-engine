@@ -154,8 +154,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
                     VdcQueryType.GetVmsFromExportDomain, tempVar);
 
             if (qretVal != null && qretVal.getSucceeded()) {
-                @SuppressWarnings("unchecked")
-                ArrayList<VM> vms = (ArrayList<VM>) qretVal.getReturnValue();
+                ArrayList<VM> vms = qretVal.getReturnValue();
                 if (!vms.isEmpty()) {
                     exportVm = vms.get(0);
                     setVm(exportVm);

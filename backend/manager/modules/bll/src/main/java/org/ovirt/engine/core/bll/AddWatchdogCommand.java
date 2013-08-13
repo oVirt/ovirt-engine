@@ -48,8 +48,7 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
         VdcQueryReturnValue returnValue =
                 getBackend().runInternalQuery(VdcQueryType.GetWatchdog,
                         new IdQueryParameters(getParameters().getId()));
-        @SuppressWarnings("unchecked")
-        Collection<VmWatchdog> watchdogs = (Collection<VmWatchdog>) returnValue.getReturnValue();
+        Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
         if (!watchdogs.isEmpty()) {
             return failCanDoAction(VdcBllMessages.WATCHDOG_ALREADY_EXISTS);
         }

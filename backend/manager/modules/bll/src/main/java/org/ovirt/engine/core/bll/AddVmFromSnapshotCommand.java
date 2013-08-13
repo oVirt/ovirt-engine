@@ -329,7 +329,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 Backend.getInstance().RunQuery(VdcQueryType.GetVmConfigurationBySnapshot,
                         new IdQueryParameters(snapshot.getId()));
         if (queryReturnValue.getSucceeded()) {
-            result = (VM) queryReturnValue.getReturnValue();
+            result = queryReturnValue.getReturnValue();
         }
         return result;
     }

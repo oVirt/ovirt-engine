@@ -320,7 +320,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 new GetAllFromExportDomainQueryParameters
                 (getParameters().getStoragePoolId(), getParameters().getSourceDomainId());
         VdcQueryReturnValue qRetVal = getBackend().runInternalQuery(VdcQueryType.GetVmsFromExportDomain, p);
-        return qRetVal.getSucceeded() ? (List<VM>) qRetVal.getReturnValue() : null;
+        return qRetVal.getSucceeded() ? qRetVal.<List<VM>>getReturnValue() : null;
     }
 
     private boolean validateImageConfig(List<String> canDoActionMessages,
@@ -531,7 +531,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                         getParameters().getSourceDomainId()));
 
         if (qRetVal.getSucceeded()) {
-            Map<VmTemplate, ?> templates = (Map<VmTemplate, ?>) qRetVal.getReturnValue();
+            Map<VmTemplate, ?> templates = qRetVal.getReturnValue();
 
             for (VmTemplate template : templates.keySet()) {
                 if (getParameters().getVm().getVmtGuid().equals(template.getId())) {
@@ -546,8 +546,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         boolean retValue = getParameters().isImportAsNewEntity() || checkIfDisksExist(imageList);
         if (retValue && !VmTemplateHandler.BlankVmTemplateId.equals(getVm().getVmtGuid())
                 && !getParameters().getCopyCollapse()) {
-            List<StorageDomain> domains = (List<StorageDomain>) Backend
-                    .getInstance()
+            List<StorageDomain> domains = Backend.getInstance()
                     .runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
                             new IdQueryParameters(getVm().getVmtGuid())).getReturnValue();
             List<Guid> domainsId = LinqUtils.foreach(domains, new Function<StorageDomain, Guid>() {

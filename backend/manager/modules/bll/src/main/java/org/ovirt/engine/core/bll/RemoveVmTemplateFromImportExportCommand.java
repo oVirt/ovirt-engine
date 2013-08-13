@@ -151,7 +151,6 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
      * get template from export domain
      */
     @Override
-    @SuppressWarnings("unchecked")
     public VmTemplate getVmTemplate() {
         if (exportTemplate == null) {
             GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getParameters()
@@ -160,7 +159,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
                     VdcQueryType.GetTemplatesFromExportDomain, tempVar);
 
             if (qretVal.getSucceeded()) {
-                templatesFromExport = (Map<VmTemplate, List<DiskImage>>) qretVal.getReturnValue();
+                templatesFromExport = qretVal.getReturnValue();
                 exportTemplate = LinqUtils.firstOrNull(templatesFromExport.keySet(), new Predicate<VmTemplate>() {
                     @Override
                     public boolean eval(VmTemplate t) {
