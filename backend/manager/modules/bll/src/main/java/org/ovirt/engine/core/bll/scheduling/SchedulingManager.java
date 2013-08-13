@@ -497,7 +497,9 @@ public class SchedulingManager {
                         hostIDs,
                         vm.getId(),
                         parameters);
-        sumScoreResults(hostCostTable, externalScores);
+        if (externalScores != null) {
+            sumScoreResults(hostCostTable, externalScores);
+        }
     }
 
     private void sumScoreResults(Map<Guid, Integer> hostCostTable, List<Pair<Guid, Integer>> externalScores) {

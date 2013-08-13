@@ -51,10 +51,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
             return parseDiscoverResults(result);
 
         } catch (XmlRpcException e) {
-            log.error("Could not communicate with the external scheduler while discovering" + e);
-            // TODO: decision is needed what to do here:
-            // - return all vds without filtering?
-            // - return empty vds list?
+            log.error("Could not communicate with the external scheduler while discovering", e);
             return null;
         }
     }
@@ -81,11 +78,8 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
             return parseFilterResults(result);
 
         } catch (XmlRpcException e) {
-            log.error("Could not communicate with the external scheduler while filtering " + e);
-            // TODO: decision is needed what to do here:
-            // - return all vds without filtering?
-            // - return empty vds list?
-            return null;
+            log.error("Could not communicate with the external scheduler while filtering", e);
+            return hostIDs;
         }
     }
 
@@ -134,10 +128,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
             return parseScoreResults(result);
 
         } catch (XmlRpcException e) {
-            log.error("Could not communicate with the external scheduler while running score functions " + e);
-            // TODO: decision is needed what to do here:
-            // - return all vds without filtering?
-            // - return empty vds list?
+            log.error("Could not communicate with the external scheduler while running weight modules", e);
             return null;
         }
     }
@@ -202,10 +193,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
             return parseBalanceResults(result);
 
         } catch (XmlRpcException e) {
-            log.error("Could not communicate with the external scheduler while balancing " + e);
-            // TODO: decision is needed what to do here:
-            // - return all vds without filtering?
-            // - return empty vds list?
+            log.error("Could not communicate with the external scheduler while balancing", e);
             return null;
         }
     }
