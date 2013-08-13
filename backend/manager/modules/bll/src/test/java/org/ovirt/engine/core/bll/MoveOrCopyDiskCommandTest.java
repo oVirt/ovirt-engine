@@ -217,7 +217,7 @@ public class MoveOrCopyDiskCommandTest {
         doReturn(true).when(command).isStorageDomainSpaceWithinThresholds();
 
         // Spy away the image handler methods
-        doReturn(true).when(command).checkImageConfiguration(any(List.class));
+        doReturn(true).when(command).checkImageConfiguration();
         doReturn(Collections.emptyList()).when(command).getAllImageSnapshots();
 
         doReturn(false).when(command).acquireLock();

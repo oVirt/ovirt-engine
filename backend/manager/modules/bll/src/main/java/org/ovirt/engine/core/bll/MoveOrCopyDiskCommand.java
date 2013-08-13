@@ -43,8 +43,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         implements QuotaStorageDependent {
 
     private Map<String, Pair<String, String>> sharedLockMap;
-    private List<PermissionSubject> permsList = null;
-    private List<VM> listVms;
+    private List<PermissionSubject> cachedPermsList;
+    private List<VM> cachedListVms;
 
     public MoveOrCopyDiskCommand(T parameters) {
         super(parameters);
@@ -52,17 +52,14 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     protected void setActionMessageParameters() {
-        if (getParameters().getOperation() == ImageOperation.Copy) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__COPY);
-        } else {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MOVE);
-        }
+        addCanDoActionMessage(getParameters().getOperation() == ImageOperation.Copy ?
+                        VdcBllMessages.VAR__ACTION__COPY
+                        : VdcBllMessages.VAR__ACTION__MOVE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
     }
 
     @Override
     protected boolean canDoAction() {
-        ArrayList<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
         return isImageExist()
                 && checkOperationIsCorrect()
                 && canFindVmOrTemplate()
@@ -73,7 +70,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && validateDestStorage()
                 && checkTemplateInDestStorageDomain()
                 && validateSpaceRequirements()
-                && checkImageConfiguration(canDoActionMessages)
+                && checkImageConfiguration()
                 && checkCanBeMoveInVm()
                 && checkIfNeedToBeOverride();
     }
@@ -81,16 +78,14 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean isSourceAndDestTheSame() {
         if (getParameters().getOperation() == ImageOperation.Move
                 && getParameters().getSourceDomainId().equals(getParameters().getStorageDomainId())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
         }
         return true;
     }
 
     protected boolean isImageExist() {
         if (getImage() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
         }
         return true;
     }
@@ -99,12 +94,11 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         DiskImage diskImage = getImage();
         if (diskImage.getImageStatus() == ImageStatus.LOCKED) {
             if (getParameters().getOperation() == ImageOperation.Move) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED);
-                addCanDoActionMessage(String.format("$%1$s %2$s", "diskAliases", diskImage.getDiskAlias()));
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISKS_LOCKED,
+                        String.format("$%1$s %2$s", "diskAliases", diskImage.getDiskAlias()));
             } else {
-                addCanDoActionMessage(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
+                return failCanDoAction(VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED);
             }
-            return false;
         }
         return true;
     }
@@ -116,19 +110,16 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * @return
      */
     protected boolean checkOperationIsCorrect() {
-        boolean retValue = true;
         if (getParameters().getOperation() == ImageOperation.Copy
                 && getImage().getVmEntityType() != VmEntityType.TEMPLATE) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_TEMPLATE_DISK);
-            retValue = false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_TEMPLATE_DISK);
         }
 
-        if (retValue && getParameters().getOperation() == ImageOperation.Move
+        if (getParameters().getOperation() == ImageOperation.Move
                 && getImage().getVmEntityType() == VmEntityType.TEMPLATE) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
-            retValue = false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
         }
-        return retValue;
+        return true;
     }
 
     protected boolean validateDestStorage() {
@@ -168,8 +159,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected boolean checkIfNeedToBeOverride() {
         if (getParameters().getOperation() == ImageOperation.Copy && !getParameters().getForceOverride()
                 && getImage().getStorageIds().contains(getStorageDomain().getId())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_ALREADY_EXISTS);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_ALREADY_EXISTS);
         }
         return true;
     }
@@ -190,10 +180,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return validate(validator.isDomainExistAndActive());
     }
 
-    protected boolean checkImageConfiguration(List<String> canDoActionMessages) {
+    protected boolean checkImageConfiguration() {
         return ImagesHandler.CheckImageConfiguration(getStorageDomain().getStorageStaticData(),
                 getImage(),
-                canDoActionMessages);
+                getReturnValue().getCanDoActionMessages());
     }
 
     /**
@@ -224,10 +214,10 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * @return List of Vms.
      */
     private List<VM> getVmsForDiskId() {
-        if (listVms == null) {
-            listVms = getVmDAO().getVmsListForDisk(getImage().getId());
+        if (cachedListVms == null) {
+            cachedListVms = getVmDAO().getVmsListForDisk(getImage().getId());
         }
-        return listVms;
+        return cachedListVms;
     }
 
     /**
@@ -236,16 +226,14 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * @return
      */
     protected boolean checkTemplateInDestStorageDomain() {
-        boolean retValue = true;
         if (getParameters().getOperation() == ImageOperation.Move
                 && !Guid.Empty.equals(getImage().getImageTemplateId())) {
             DiskImage templateImage = getDiskImageDao().get(getImage().getImageTemplateId());
             if (!templateImage.getStorageIds().contains(getParameters().getStorageDomainId())) {
-                retValue = false;
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_DESTINATION_DOMAIN);
             }
         }
-        return retValue;
+        return true;
     }
 
     protected VmDeviceDAO getVmDeviceDAO() {
@@ -313,16 +301,16 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        if (permsList == null) {
-            permsList = new ArrayList<PermissionSubject>();
+        if (cachedPermsList == null) {
+            cachedPermsList = new ArrayList<PermissionSubject>();
 
             DiskImage image = getImage();
             Guid diskId = image == null ? Guid.Empty : image.getId();
-            permsList.add(new PermissionSubject(diskId, VdcObjectType.Disk, ActionGroup.CONFIGURE_DISK_STORAGE));
-            permsList.add(new PermissionSubject(getParameters().getStorageDomainId(),
+            cachedPermsList.add(new PermissionSubject(diskId, VdcObjectType.Disk, ActionGroup.CONFIGURE_DISK_STORAGE));
+            cachedPermsList.add(new PermissionSubject(getParameters().getStorageDomainId(),
                     VdcObjectType.Storage, ActionGroup.CREATE_DISK));
         }
-        return permsList;
+        return cachedPermsList;
     }
 
     /**
@@ -352,18 +340,15 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      * @return
      */
     private boolean canFindVmOrTemplate() {
-        boolean retValue = true;
         if (getParameters().getOperation() == ImageOperation.Copy) {
             Collection<VmTemplate> templates = getVmTemplateDAO().getAllForImage(getImage().getImageId()).values();
             if (templates.isEmpty()) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
-                retValue = false;
-            } else {
-                VmTemplate vmTemplate = templates.iterator().next();
-                setVmTemplate(vmTemplate);
-                sharedLockMap = Collections.singletonMap(vmTemplate.getId().toString(),
-                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
             }
+            VmTemplate vmTemplate = templates.iterator().next();
+            setVmTemplate(vmTemplate);
+            sharedLockMap = Collections.singletonMap(vmTemplate.getId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         } else {
             List<VM> vmsForDisk = getVmsForDiskId();
             if (!vmsForDisk.isEmpty()) {
@@ -375,7 +360,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 lockForMove(lockMap);
             }
         }
-        return retValue;
+        return true;
     }
 
     protected void lockForMove(Map<String, Pair<String, String>> lockMap) {
