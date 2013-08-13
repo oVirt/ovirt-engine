@@ -10,6 +10,7 @@ import java.util.MissingResourceException;
 import java.util.Set;
 
 import com.google.gwt.i18n.client.Dictionary;
+import com.google.gwt.i18n.client.LocaleInfo;
 import com.google.gwt.regexp.shared.MatchResult;
 import com.google.gwt.regexp.shared.RegExp;
 
@@ -33,6 +34,8 @@ public class DynamicMessages {
         COPY_RIGHT_NOTICE("copy_right_notice"), //$NON-NLS-1$
         FEEDBACK_URL("feedback_url"), //$NON-NLS-1$
         FEEDBACK_LINK_LABEL("feedback_link_label"), //$NON-NLS-1$
+        GUIDE_URL("guide_url"), //$NON-NLS-1$
+        GUIDE_LINK_LABEL("guide_link_label"), //$NON-NLS-1$
         DOC("doc"); //$NON-NLS-1$
 
         private final String value;
@@ -248,6 +251,26 @@ public class DynamicMessages {
      */
     public final String feedbackLinkLabel() {
         return getString(DynamicMessageKey.FEEDBACK_LINK_LABEL);
+    }
+
+    /**
+     * Get the guide URL using the {@code Dictionary} in the host page. Uses current locale (e.g. "en_US")
+     * for placeholder {0}, if it exists. With a fall back to the standard GWT Constant.
+     *
+     * @return The guide URL.
+     */
+    public final String guideUrl() {
+        return formatString(DynamicMessageKey.GUIDE_URL, LocaleInfo.getCurrentLocale().getLocaleName());
+    }
+
+    /**
+     * Get the guide link label using the {@code Dictionary} in the host page. With a fall back to the standard GWT
+     * Constant.
+     *
+     * @return The guide link label.
+     */
+    public final String guideLinkLabel() {
+        return getString(DynamicMessageKey.GUIDE_LINK_LABEL);
     }
 
     /**

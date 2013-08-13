@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.utils.WebUtils;
 import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetHandler;
 import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.uicommon.WebAdminConfigurator;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -46,8 +45,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
             AboutPopupPresenterWidget aboutPopup,
             ConfigurePopupPresenterWidget configurePopup,
             ApplicationDynamicMessages dynamicMessages) {
-        super(eventBus, view, user,
-                WebAdminConfigurator.DOCUMENTATION_GUIDE_PATH, dynamicMessages.applicationDocTitle());
+        super(eventBus, view, user, dynamicMessages.applicationDocTitle(), dynamicMessages.guideUrl());
         this.searchPanel = searchPanel;
         this.aboutPopup = aboutPopup;
         this.configurePopup = configurePopup;

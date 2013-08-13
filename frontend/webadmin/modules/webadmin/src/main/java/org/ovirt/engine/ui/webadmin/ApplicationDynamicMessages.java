@@ -17,6 +17,7 @@ public class ApplicationDynamicMessages extends DynamicMessages {
         addFallback(DynamicMessageKey.COPY_RIGHT_NOTICE, constants.copyRightNotice());
         addFallback(DynamicMessageKey.DOC, constants.engineWebAdminDoc());
         addFallback(DynamicMessageKey.FEEDBACK_LINK_LABEL, constants.feedbackMessage());
+        addFallback(DynamicMessageKey.GUIDE_LINK_LABEL, constants.guideLinkLabel());
     }
 
 }

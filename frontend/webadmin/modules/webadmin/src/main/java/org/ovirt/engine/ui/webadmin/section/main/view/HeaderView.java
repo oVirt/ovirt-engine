@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.webadmin.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.HeaderPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.Style.Cursor;
 import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.dom.client.HasClickHandlers;
@@ -79,7 +78,7 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
         this.configureLink = new Anchor(constants.configureLinkLabel());
         this.logoutLink = new Anchor(constants.logoutLinkLabel());
         this.aboutLink = new Anchor(constants.aboutLinkLabel());
-        this.guideLink = new Anchor(constants.guideLinkLabel());
+        this.guideLink = new Anchor(dynamicMessages.guideLinkLabel());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         mainTabBarPanel.getElement().getStyle().setZIndex(1);
@@ -149,11 +148,6 @@ public class HeaderView extends AbstractSingleSlotView implements HeaderPresente
     @Override
     public Label getFeedbackLabel() {
         return feedbackImageLabel;
-    }
-
-    @Override
-    public void setGuideLinkEnabled(boolean enabled) {
-        guideLink.getElement().getStyle().setCursor(enabled ? Cursor.POINTER : Cursor.DEFAULT);
     }
 
 }

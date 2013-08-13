@@ -5,7 +5,6 @@ import org.ovirt.engine.ui.common.presenter.AbstractHeaderPresenterWidget;
 import org.ovirt.engine.ui.common.widget.tab.AbstractHeadlessTabPanel.TabWidgetHandler;
 import org.ovirt.engine.ui.userportal.ApplicationDynamicMessages;
 import org.ovirt.engine.ui.userportal.auth.CurrentUserRole;
-import org.ovirt.engine.ui.userportal.uicommon.UserPortalConfigurator;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -32,8 +31,7 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
     public HeaderPresenterWidget(EventBus eventBus, ViewDef view, CurrentUser user,
             CurrentUserRole userRole, AboutPopupPresenterWidget aboutPopup,
             ApplicationDynamicMessages dynamicMessages) {
-        super(eventBus, view, user,
-                UserPortalConfigurator.DOCUMENTATION_GUIDE_PATH, dynamicMessages.applicationDocTitle());
+        super(eventBus, view, user, dynamicMessages.applicationDocTitle(), dynamicMessages.guideUrl());
         this.userRole = userRole;
         this.aboutPopup = aboutPopup;
     }
