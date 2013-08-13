@@ -67,6 +67,7 @@
         <artifactId>maven-checkstyle-plugin</artifactId>
         <configuration>
           <propertyExpansion>disallowFinals=true</propertyExpansion>
+          <propertyExpansion>disallowMemberInit=true</propertyExpansion>
         </configuration>
       </plugin>
       <plugin>
