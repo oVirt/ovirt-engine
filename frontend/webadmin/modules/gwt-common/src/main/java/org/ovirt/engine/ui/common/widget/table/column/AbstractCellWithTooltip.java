@@ -64,9 +64,10 @@ public abstract class AbstractCellWithTooltip<C> extends AbstractCell<C> {
         parent.getStyle().setProperty("overflow", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
 
         int scrollWidthAfter = parent.getScrollWidth();
+        int clientWidthAfter = parent.getClientWidth();
         parent.getStyle().setProperty("overflow", overflowValue); //$NON-NLS-1$
 
-        return scrollWidthAfter > scrollWidthBefore;
+        return scrollWidthAfter > scrollWidthBefore || scrollWidthAfter > clientWidthAfter;
     }
 
     /**
@@ -79,11 +80,11 @@ public abstract class AbstractCellWithTooltip<C> extends AbstractCell<C> {
         int clientHeightBefore = parent.getClientHeight();
         String whiteSpaceValue = parent.getStyle().getProperty("whiteSpace"); //$NON-NLS-1$
         parent.getStyle().setProperty("whiteSpace", "normal"); //$NON-NLS-1$ //$NON-NLS-2$
-
+        int scrollHeightAfter = parent.getScrollHeight();
         int clientHeightAfter = parent.getClientHeight();
         parent.getStyle().setProperty("whiteSpace", whiteSpaceValue); //$NON-NLS-1$
 
-        return clientHeightAfter > clientHeightBefore;
+        return clientHeightAfter > clientHeightBefore || clientHeightAfter < scrollHeightAfter;
     }
 
 }
