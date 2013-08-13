@@ -44,6 +44,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private static final String USB_BUS = "usb";
     private final static String FIRST_MASTER_MODEL = "ich9-ehci1";
     private static final String CLOUD_INIT_VOL_ID = "config-2";
+    private static final int TO_KILOBITS = 1024;
 
     private final List<Map<String, Object>> devices = new ArrayList<Map<String, Object>>();
     private List<VmDevice> managedDevices = null;
@@ -574,28 +575,26 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 if (specParams == null) {
                     specParams = new HashMap<>();
                 }
-                if (networkQoS.getInboundAverage() > 0) {
-                    Map<String, String> inbound = generateQoSData(networkQoS.getInboundAverage(),
-                            networkQoS.getInboundPeak(),
-                            networkQoS.getInboundBurst());
-                    specParams.put(VdsProperties.QOS_INBOUND, inbound);
-                }
-                if (networkQoS.getOutboundAverage() > 0) {
-                    Map<String, String> outbound = generateQoSData(networkQoS.getOutboundAverage(),
-                            networkQoS.getOutboundPeak(),
-                            networkQoS.getOutboundBurst());
-                    specParams.put(VdsProperties.QOS_OUTBOUND, outbound);
-                }
+                addQosData(specParams, VdsProperties.QOS_INBOUND,
+                        networkQoS.getInboundAverage(),
+                        networkQoS.getInboundPeak(),
+                        networkQoS.getInboundBurst());
+                addQosData(specParams, VdsProperties.QOS_OUTBOUND,
+                        networkQoS.getOutboundAverage(),
+                        networkQoS.getOutboundPeak(),
+                        networkQoS.getOutboundBurst());
             }
         }
     }
 
-    private static Map<String, String> generateQoSData(int average, int peak, int burst){
-        Map<String, String> qosData = new HashMap<>();
-        qosData.put(VdsProperties.QOS_AVERAGE, String.valueOf(average));
-        qosData.put(VdsProperties.QOS_PEAK, String.valueOf(peak));
-        qosData.put(VdsProperties.QOS_BURST, String.valueOf(burst));
-        return qosData;
+    private static void addQosData(Map<String, Object> specParams, String containerName, int average, int peak, int burst){
+        if (average > 0) {
+            Map<String, String> qosData = new HashMap<>();
+            qosData.put(VdsProperties.QOS_AVERAGE, String.valueOf(average * TO_KILOBITS));
+            qosData.put(VdsProperties.QOS_PEAK, String.valueOf(peak * TO_KILOBITS));
+            qosData.put(VdsProperties.QOS_BURST, String.valueOf(burst * TO_KILOBITS));
+            specParams.put(containerName, qosData);
+        }
     }
 
     public static Map<String, String> getVnicCustomProperties(VnicProfile vnicProfile) {
