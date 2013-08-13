@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -17,7 +18,7 @@ public class VmPayload implements Serializable {
 
     private VmDeviceType type;
     private String volumeId;
-    private Map<String, String> files; // file data is base64-encoded
+    private HashMap<String, String> files; // file data is base64-encoded
 
     public VmPayload() {
         this.type = VmDeviceType.CDROM;
@@ -31,7 +32,7 @@ public class VmPayload implements Serializable {
 
         Map<String, Object> payload = (Map<String, Object>)specParams.get(SpecParamsPayload);
         this.volumeId = (String)payload.get(SpecParamsVolumeIdType);
-        this.files = (Map<String, String>)payload.get(SpecParamsFileType);
+        this.files = (HashMap<String, String>)payload.get(SpecParamsFileType);
     }
 
     public static boolean isPayload(Map<String, Object> specParams) {
@@ -65,10 +66,16 @@ public class VmPayload implements Serializable {
      *
      * @return Map of files in this payload
      */
-    public Map<String, String> getFiles() {
+    public HashMap<String, String> getFiles() {
         return files;
     }
 
+    /**
+     * this is a calculated field our of the inner members.
+     * no need to de-serialize this as it is not a getter of a field.
+     * @return
+     */
+    @JsonIgnore
     public Map<String, Object> getSpecParams() {
         // function produce something like that:
         // vmPayload={volumeId:volume-id,file:{filename:content,filename2:content2,...}}
