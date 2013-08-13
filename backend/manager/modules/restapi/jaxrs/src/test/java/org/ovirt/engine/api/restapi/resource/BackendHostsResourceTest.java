@@ -262,7 +262,7 @@ public class BackendHostsResourceTest
             collection.add(model);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-            verifyIncompleteException(wae, "Host", "add", "address", "rootPassword");
+            verifyIncompleteException(wae, "Host", "add", "address");
         }
     }
 
