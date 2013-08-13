@@ -1235,7 +1235,7 @@ public class VdsBrokerObjectsBuilder {
             iface.setSubnet(net.getSubnet());
             boolean bridgedNetwork = isBridgedNetwork(network);
             iface.setBridged(bridgedNetwork);
-            setGatewayIfManagementNetwork(iface, host, net.getGateway());
+            setGatewayIfNecessary(iface, host, net.getGateway());
 
             if (bridgedNetwork) {
                 Map<String, Object> networkConfig = (Map<String, Object>) network.get("cfg");
@@ -1295,7 +1295,7 @@ public class VdsBrokerObjectsBuilder {
             if (bootproto == NetworkBootProtocol.STATIC_IP) {
                 String gateway = (String) cfg.get(VdsProperties.GATEWAY);
                 if (StringUtils.isNotEmpty(gateway)) {
-                    setGatewayIfManagementNetwork(iface, host, gateway.toString());
+                    setGatewayIfNecessary(iface, host, gateway.toString());
                 }
             }
         }
@@ -1317,16 +1317,22 @@ public class VdsBrokerObjectsBuilder {
     }
 
     /**
-     * Store the gateway for management network or the active interface only (could happen when there is no management
-     * network yet). If gateway was provided for non-management network, its value should be ignored.
+     * Store the gateway for either of these cases:
+     * 1. any host network, in a cluster that supports multiple gateways
+     * 2. management network, no matter the cluster compatibility version
+     * 3. the active interface (could happen when there is no management network yet)
+     * If gateway was provided for non-management network when multiple gateways aren't supported, its value should be ignored.
      *
      * @param iface
      *            the host network interface
+     * @param host
+     *            the host whose interfaces are being edited
      * @param gateway
      *            the gateway value to be set
      */
-    private static void setGatewayIfManagementNetwork(VdsNetworkInterface iface, VDS host, String gateway) {
-        if (NetworkUtils.getEngineNetwork().equals(iface.getNetworkName())
+    private static void setGatewayIfNecessary(VdsNetworkInterface iface, VDS host, String gateway) {
+        if (FeatureSupported.multipleGatewaysSupported(host.getVdsGroupCompatibilityVersion())
+                || NetworkUtils.getEngineNetwork().equals(iface.getNetworkName())
                 || iface.getName().equals(host.getActiveNic())) {
             iface.setGateway(gateway);
         }
