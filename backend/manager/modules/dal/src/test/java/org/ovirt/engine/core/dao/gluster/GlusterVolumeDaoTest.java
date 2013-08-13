@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -19,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAOTestCase;
 
@@ -30,6 +32,7 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
     private static final Guid CLUSTER_ID = new Guid("ae956031-6be2-43d6-bb8f-5191c9253314");
     private static final Guid EXISTING_VOL_DIST_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
     private static final Guid EXISTING_VOL_REPL_ID = new Guid("b2cb2f73-fab3-4a42-93f0-d5e4c069a43e");
+    private static final Guid REBALANCING_VOLUME_TASKID = new Guid("44f714ed-2818-4350-b94a-8c3927e53f7c");
     private static final String EXISTING_VOL_REPL_NAME = "test-vol-replicate-1";
     private static final String NEW_VOL_NAME = "test-new-vol-1";
     private static final String OPTION_KEY_NFS_DISABLE = "nfs.disable";
@@ -160,6 +163,19 @@ public class GlusterVolumeDaoTest extends BaseDAOTestCase {
         assertFalse(volume.equals(existingDistVol));
         existingDistVol.setStatus(GlusterStatus.DOWN);
         assertEquals(existingDistVol, volume);
+    }
+
+    @Test
+    public void testUpdateAsyncTaskId() {
+        assertNull(existingDistVol.getAsyncTask());
+        dao.updateVolumeTask(existingDistVol.getId(), REBALANCING_VOLUME_TASKID);
+        GlusterVolumeEntity volume = dao.getAllWithQuery("select * from gluster_volumes_view where id = '"
+                        + existingDistVol.getId() + "'").get(0);
+
+        assertNotNull("Volume : "+ existingDistVol.getId() +" doesn't exists",volume);
+        assertTrue("Task ID is not getting updated",volume.getAsyncTask().getTaskId().equals(REBALANCING_VOLUME_TASKID));
+        assertTrue("Invalid Task status",JobExecutionStatus.STARTED ==volume.getAsyncTask().getStatus());
+        assertTrue("Invalid Task type", GlusterTaskType.REBALANCE_VOLUME ==volume.getAsyncTask().getType());
     }
 
     @Test

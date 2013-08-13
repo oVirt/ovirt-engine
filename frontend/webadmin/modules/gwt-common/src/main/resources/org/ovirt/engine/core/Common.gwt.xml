@@ -246,6 +246,7 @@
 		<!-- Gluster -->
 		<include name="common/businessentities/gluster/GlusterVolumeEntity.java" />
 		<include name="common/businessentities/gluster/GlusterVolumeType.java" />
+		<include name="common/businessentities/gluster/GlusterTaskSupport.java"/>
 		<include name="common/businessentities/gluster/GlusterStatus.java" />
 		<include name="common/businessentities/gluster/GlusterServiceStatus.java" />
 		<include name="common/businessentities/gluster/TransportType.java" />
@@ -271,6 +272,9 @@
 		<include name="common/businessentities/gluster/GlusterHookStatus.java"/>
 		<include name="common/businessentities/gluster/GlusterHookContentType.java"/>
 		<include name="common/businessentities/gluster/GlusterHookConflictFlags.java"/>
+		<include name="common/asynctasks/gluster/GlusterAsyncTask.java"/>
+		<include name="common/asynctasks/gluster/GlusterTaskStatus.java"/>
+		<include name="common/asynctasks/gluster/GlusterTaskType.java"/>
 		<include name="common/action/gluster/*.java"/>
 		<include name="common/queries/gluster/*.java"/>
 		<include name="common/constants/gluster/GlusterConstants.java"/>

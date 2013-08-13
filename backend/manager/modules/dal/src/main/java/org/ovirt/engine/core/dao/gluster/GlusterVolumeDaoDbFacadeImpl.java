@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.AccessProtocol;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -14,6 +16,8 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
+import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
@@ -29,6 +33,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     private static final RowMapper<GlusterVolumeEntity> volumeRowMapper = new GlusterVolumeRowMapper();
     private static final RowMapper<AccessProtocol> accessProtocolRowMapper = new AccessProtocolRowMapper();
     private static final RowMapper<TransportType> transportTypeRowMapper = new TransportTypeRowMapper();
+    private static final RowMapper<GlusterAsyncTask> glusterAsyncTaskRowMapper = new GlusterAsyncTaskRowMapper();
 
     public GlusterVolumeDaoDbFacadeImpl() {
         super("GlusterVolume");
@@ -167,6 +172,12 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     }
 
     @Override
+    public void updateVolumeTask(Guid volumeId, Guid taskId) {
+        getCallsHandler().executeModification("UpdateGlusterVolumeAsyncTask",
+                createVolumeIdParams(volumeId).addValue("task_id", taskId));
+    }
+
+    @Override
     public void updateVolumeStatusByName(Guid clusterId, String volumeName, GlusterStatus status) {
         getCallsHandler().executeModification("UpdateGlusterVolumeStatusByName",
                 getCustomMapSqlParameterSource()
@@ -211,6 +222,18 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
                 "GetTransportTypesByGlusterVolumeGuid",
                 transportTypeRowMapper,
                 createVolumeIdParams(volumeId));
+    }
+
+    private GlusterAsyncTask getAsyncTaskOfVolume(Guid volumeId) {
+        List<GlusterAsyncTask> glusterAsyncTasks = getCallsHandler().executeReadList(
+                "GetGlusterTaskByGlusterVolumeGuid",
+                glusterAsyncTaskRowMapper,
+                createVolumeIdParams(volumeId));
+
+        if(glusterAsyncTasks != null && !glusterAsyncTasks.isEmpty()){
+            return glusterAsyncTasks.get(0);
+        }
+        return null;
     }
 
     private MapSqlParameterSource createVolumeIdParams(Guid id) {
@@ -283,6 +306,7 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             volume.setOptions(dbFacade.getGlusterOptionDao().getOptionsOfVolume(volume.getId()));
             volume.setAccessProtocols(new HashSet<AccessProtocol>(getAccessProtocolsOfVolume(volume.getId())));
             volume.setTransportTypes(new HashSet<TransportType>(getTransportTypesOfVolume(volume.getId())));
+            volume.setAsyncTask(getAsyncTaskOfVolume(volume.getId()));
         }
     }
 
@@ -316,6 +340,23 @@ public class GlusterVolumeDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         public TransportType mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             return TransportType.valueOf(rs.getString("transport_type"));
+        }
+    }
+    private static final class GlusterAsyncTaskRowMapper implements RowMapper<GlusterAsyncTask> {
+        @Override
+        public GlusterAsyncTask mapRow(ResultSet rs, int rowNum)
+                throws SQLException {
+            GlusterAsyncTask asyncTask = new GlusterAsyncTask();
+            asyncTask.setTaskId(getGuidDefaultEmpty(rs, "external_id"));
+            String jobStatus =rs.getString("status");
+            String stepType = rs.getString("step_type");
+            if(stepType != null && !stepType.isEmpty()){
+                asyncTask.setType(GlusterTaskType.forValue(StepEnum.valueOf(stepType)));
+            }
+            if(jobStatus != null && !jobStatus.isEmpty()){
+                asyncTask.setStatus(JobExecutionStatus.valueOf(jobStatus));
+            }
+            return asyncTask;
         }
     }
 

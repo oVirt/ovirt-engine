@@ -229,6 +229,15 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetGlusterTaskByGlusterVolumeGuid(v_volume_id UUID)
+    RETURNS SETOF gluster_volume_task_steps STABLE
+       AS $procedure$
+BEGIN
+       RETURN QUERY SELECT *
+       FROM  gluster_volume_task_steps
+       WHERE volume_id = v_volume_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetTransportTypesByGlusterVolumeGuid(v_volume_id UUID)
     RETURNS SETOF gluster_volume_transport_types STABLE
@@ -422,6 +431,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION UpdateGlusterVolumeAsyncTask(v_volume_id UUID,
+                                                    v_task_id UUID)
+    RETURNS VOID
+    AS $procedure$
+BEGIN
+    UPDATE gluster_volumes
+    SET
+        task_id = v_task_id,
+        _update_date = LOCALTIMESTAMP
+    WHERE id = v_volume_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION UpdateGlusterVolumeStatusByName(v_cluster_id UUID,
                                                     v_vol_name VARCHAR(1000),

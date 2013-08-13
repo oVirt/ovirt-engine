@@ -72,4 +72,6 @@ public interface GlusterVolumeDao extends DAO, SearchDAO<GlusterVolumeEntity>, M
 
     public void updateGlusterVolume(GlusterVolumeEntity volume);
 
+    public void updateVolumeTask(Guid volumeId, Guid taskId);
+
 }

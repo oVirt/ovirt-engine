@@ -1560,6 +1560,14 @@ SELECT gluster_volumes.*,
 FROM gluster_volumes
 INNER JOIN vds_groups ON gluster_volumes.cluster_id = vds_groups.vds_group_id;
 
+CREATE OR REPLACE VIEW gluster_volume_task_steps
+AS
+SELECT step.*,
+       gluster_volumes.id as volume_id
+FROM step
+INNER JOIN gluster_volumes ON gluster_volumes.task_id = step.external_id
+WHERE step.external_system_type = 'GLUSTER';
+
 CREATE OR REPLACE VIEW gluster_server_services_view
 AS
 SELECT gluster_server_services.*,

@@ -13,6 +13,7 @@ import java.util.Set;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
@@ -37,7 +38,7 @@ import org.ovirt.engine.core.compat.StringHelper;
  * @see GlusterVolumeOptionEntity
  * @see AccessProtocol
  */
-public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity<Guid> {
+public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity<Guid>, GlusterTaskSupport {
     private static final long serialVersionUID = 2355384696827317277L;
 
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL", groups = { RemoveEntity.class })
@@ -74,6 +75,8 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
 
     private Set<TransportType> transportTypes;
 
+    private GlusterAsyncTask asyncTask;
+
     public GlusterVolumeEntity() {
         options = new LinkedHashMap<String, GlusterVolumeOptionEntity>();
         bricks = new ArrayList<GlusterBrickEntity>();
@@ -82,6 +85,7 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
                 AccessProtocol.GLUSTER, AccessProtocol.NFS}));
         transportTypes = new LinkedHashSet<TransportType>();
         volumeType = GlusterVolumeType.DISTRIBUTE;
+        asyncTask = new GlusterAsyncTask();
     }
 
     @Override
@@ -421,5 +425,15 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
     @Override
     public Object getQueryableId() {
         return getId();
+    }
+
+    @Override
+    public GlusterAsyncTask getAsyncTask() {
+       return asyncTask;
+    }
+
+    @Override
+    public void setAsyncTask(GlusterAsyncTask asyncTask) {
+        this.asyncTask = asyncTask;
     }
 }
