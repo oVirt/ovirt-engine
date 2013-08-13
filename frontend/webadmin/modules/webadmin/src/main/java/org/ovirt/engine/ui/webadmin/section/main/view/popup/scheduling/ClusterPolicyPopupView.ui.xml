@@ -75,6 +75,10 @@
 		.iconInfoStyle {
 		margin-left: 10px;
 		}
+		.externalLabel {
+		line-height: 30px;
+		font-weight: bold;
+		}
 	</ui:style>
 
 	<d:SimpleDialogPanel width="700px" height="650px">
@@ -157,8 +161,11 @@
 					<g:HTML>
 						<hr style="width:100%;" />
 					</g:HTML>
+					<g:HorizontalPanel>
 					<e:ListModelListBoxOnlyEditor
 						ui:field="loadBalanceListEditor" />
+						<g:Label ui:field="externalLabel" addStyleNames="{style.externalLabel}"/>
+					</g:HorizontalPanel>
 				</g:FlowPanel>
 				<g:HorizontalPanel>
 					<g:Label addStyleNames="{style.sectionLabel}"

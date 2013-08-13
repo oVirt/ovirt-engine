@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.scheduling.ClusterPo
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.dom.client.Style.FontWeight;
 import com.google.gwt.event.dom.client.ContextMenuEvent;
 import com.google.gwt.event.dom.client.ContextMenuHandler;
 import com.google.gwt.event.dom.client.DragDropEventBase;
@@ -80,13 +81,13 @@ public class PolicyUnitPanel extends FocusPanel {
 
     public void initWidget() {
         HorizontalPanel panel = new HorizontalPanel();
-        Label policyUnitLabel = new Label(policyUnit.getName());
+        Panel namePanel = getNamePanel(policyUnit);
         if (!used) {
             panel.setStyleName(style.unusedPolicyUnitStyle());
-            panel.add(policyUnitLabel);
+            panel.add(namePanel);
         } else {
             Panel policyUnitLablePanel = new SimplePanel();
-            policyUnitLablePanel.add(policyUnitLabel);
+            policyUnitLablePanel.add(namePanel);
             policyUnitLablePanel.setStyleName(style.usedFilterPolicyUnitStyle());
             Label label = new Label();
             label.setStyleName(style.positionLabelStyle());
@@ -104,6 +105,19 @@ public class PolicyUnitPanel extends FocusPanel {
             panel.add(policyUnitLablePanel);
         }
         setWidget(panel);
+    }
+
+    protected Panel getNamePanel(PolicyUnit policyUnit) {
+        HorizontalPanel panel = new HorizontalPanel();
+        Label label = new Label(policyUnit.getName());
+        if (!policyUnit.isInternal()) {
+            Label extLabel = new Label(constants.externalPolicyUnitLabel());
+            extLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+            panel.add(extLabel);
+            panel.setWidth("40%"); //$NON-NLS-1$
+        }
+        panel.add(label);
+        return panel;
     }
 
     protected void showContextMenu(PolicyUnitPanel sourcePanel, int clientX, int clientY) {
