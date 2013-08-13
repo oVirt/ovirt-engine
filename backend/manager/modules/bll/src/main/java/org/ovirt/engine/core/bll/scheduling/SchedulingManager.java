@@ -340,7 +340,8 @@ public class SchedulingManager {
         hostList =
                 runInternalFilters(internalFilters, hostList, vm, parameters, filterPositionMap, messages, memoryChecker);
 
-        if (Config.GetValue(ConfigValues.ExternalSchedulerEnabled)){
+        if (Config.<Boolean> GetValue(ConfigValues.ExternalSchedulerEnabled) && externalFilters.size() > 0
+                && hostList != null && hostList.size() > 0) {
             hostList = runExternalFilters(externalFilters, hostList, vm, parameters, messages);
         }
 
@@ -443,7 +444,7 @@ public class SchedulingManager {
 
         Map<Guid, Integer> hostCostTable = runInternalFunctions(internalScoreFunctions, hostList, vm, parameters);
 
-        if (Config.GetValue(ConfigValues.ExternalSchedulerEnabled)) {
+        if (Config.<Boolean> GetValue(ConfigValues.ExternalSchedulerEnabled) && externalScoreFunctions.size() > 0) {
             runExternalFunctions(externalScoreFunctions, hostList, vm, parameters, hostCostTable);
         }
         Entry<Guid, Integer> bestHostEntry = null;
