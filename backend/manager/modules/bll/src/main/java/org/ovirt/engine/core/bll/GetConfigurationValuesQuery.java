@@ -15,6 +15,11 @@ import org.ovirt.engine.core.compat.Version;
 
 public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     private static final List<String> versions = getVersionsList();
+    private static final List<ConfigurationValues> generalOnlyPasswdConfigurationValues = new ArrayList<>();
+
+    static {
+        generalOnlyPasswdConfigurationValues.add(ConfigurationValues.LocalAdminPassword);
+    }
 
     public GetConfigurationValuesQuery(P parameters) {
         super(parameters);
@@ -41,18 +46,29 @@ public class GetConfigurationValuesQuery<P extends VdcQueryParametersBase> exten
                 continue;
             }
 
+            if (generalOnlyPasswdConfigurationValues.contains(configValue)) {
+                populateValueForConfigValue(configValue, ConfigCommon.defaultConfigurationVersion, configValuesMap);
+                continue;
+            }
+
             // Adding a configuration value for each version
             for (String version : versions) {
-                KeyValuePairCompat<ConfigurationValues, String> key =
-                        new KeyValuePairCompat<ConfigurationValues, String>(configValue, version);
-                Object value =
-                        Config.<Object> GetValue(ConfigValues.valueOf(configValue.toString()), version);
-
-                configValuesMap.put(key, value);
+                populateValueForConfigValue(configValue, version, configValuesMap);
             }
         }
 
         getQueryReturnValue().setReturnValue(configValuesMap);
+    }
+
+    private void populateValueForConfigValue(ConfigurationValues configValue,
+            String version,
+            Map<KeyValuePairCompat<ConfigurationValues, String>, Object> configValuesMap) {
+        KeyValuePairCompat<ConfigurationValues, String> key
+                = new KeyValuePairCompat<ConfigurationValues, String>(configValue, version);
+        Object value
+                = Config.<Object>GetValue(ConfigValues.valueOf(configValue.toString()), version);
+
+        configValuesMap.put(key, value);
     }
 
     /**
