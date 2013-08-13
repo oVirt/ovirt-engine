@@ -1923,14 +1923,18 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-     * Add validation message and return false.
+     * Add validation message with variable replacements and return false.
      *
      * @param message   the message to add
+     * @param variableReplacements variable replacements
      * @return  false always
      * @see {@link #addCanDoActionMessage(String)}
      */
-    protected final boolean failCanDoAction(VdcBllMessages message) {
+    protected final boolean failCanDoAction(VdcBllMessages message, String ... variableReplacements) {
         addCanDoActionMessage(message);
+        for (String variableReplacement : variableReplacements) {
+            addCanDoActionMessage(variableReplacement);
+        }
         return false;
     }
 
