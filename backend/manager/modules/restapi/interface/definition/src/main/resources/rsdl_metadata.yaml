@@ -571,9 +571,9 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
-      #deprecated, replaced by a signature with vnic profile id instead of network name and port mirroring
       - mandatoryArguments: {}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}, nic.plugged: 'xs:boolean'}
+        deprecated: true
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -603,9 +603,9 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
-      #deprecated, replaced by a signature with vnic profile id instead of network name and port mirroring
       - mandatoryArguments: {nic.name: 'xs:string'}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}, nic.plugged: 'xs:boolean'}
+        deprecated: true
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -2829,9 +2829,9 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
-      #deprecated, replaced by a signature with vnic profile id instead of network name and port mirroring
       - mandatoryArguments: {nic.name: 'xs:string'}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
+        deprecated: true
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -2860,9 +2860,9 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
-      #deprecated, replaced by a signature with vnic profile id instead of network name and port mirroring
       - mandatoryArguments: {}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
+        deprecated: true
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
