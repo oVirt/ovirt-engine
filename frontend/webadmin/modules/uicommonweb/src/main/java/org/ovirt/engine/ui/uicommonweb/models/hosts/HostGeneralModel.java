@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
+import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -666,15 +667,43 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
-    public boolean shouldAlertUpgrade(ArrayList<RpmVersion> isos, Version hostOs)
+    protected static boolean shouldAlertUpgrade(ArrayList<RpmVersion> isos, String[] hostOs)
     {
+        // HhostOs holds the following components:
+        // hostOs[0] holds prefix
+        // hostOs[1] holds version
+        // hostOs[2] holds release
+        final int VERSION_FIELDS_NUMBER = 4;
         boolean alert = false;
+        // Fix hostOs[1] to be format of major.minor.build.revision
+        // Add ".0" for missing parts
+        String[] hostOsVersionParts = hostOs[1].split("\\."); //$NON-NLS-1$
+        for (int counter = 0; counter < VERSION_FIELDS_NUMBER - hostOsVersionParts.length; counter++) {
+            hostOs[1] = hostOs[1].trim() + ".0"; //$NON-NLS-1$
+        }
+        Version hostVersion = new Version(hostOs[1].trim());
+        String releaseHost = hostOs[2].trim();
 
-        for (RpmVersion iso: isos) {
-            if (iso.getMajor() == hostOs.getMajor() &&
-                    iso.compareTo(hostOs) > 0) {
-                alert = true;
-                break;
+        for (RpmVersion iso : isos) {
+            // Major check
+            if (hostVersion.getMajor() == iso.getMajor()) {
+                // Minor and Buildiso.getRpmName()
+                if (iso.getMinor() > hostVersion.getMinor() ||
+                        iso.getBuild() > hostVersion.getBuild()) {
+                    alert = true;
+                    break;
+                }
+
+                String rpmFromIso = iso.getRpmName();
+                // Removes the ".iso" file extension , and get the release part from it
+                int isoIndex = rpmFromIso.indexOf(".iso"); //$NON-NLS-1$
+                if (isoIndex != -1) {
+                    rpmFromIso = iso.getRpmName().substring(0, isoIndex);
+                }
+                if (RpmVersionUtils.compareRpmParts(RpmVersionUtils.splitRpmToParts(rpmFromIso)[2], releaseHost) > 0) {
+                    alert = true;
+                    break;
+                }
             }
         }
         return alert;
@@ -1100,18 +1129,15 @@ public class HostGeneralModel extends EntityModel
                             if (isos.size() > 0)
                             {
                                 VDS vds = hostGeneralModel.getEntity();
-                                String [] host = vds.getHostOs().split("-"); //$NON-NLS-1$ //$NON-NLS-2$
+                                String [] hostOsInfo = vds.getHostOs().split("-"); //$NON-NLS-1$ //$NON-NLS-2$
+                                for (int counter = 0; counter < hostOsInfo.length; counter++) {
+                                    hostOsInfo[counter] = hostOsInfo[counter].trim();
+                                }
                                 hostGeneralModel.setHasUpgradeAlert(
                                     shouldAlertUpgrade(
                                         isos,
-                                        new Version(
-                                             new StringBuilder().append(
-                                                 host[1].trim()
-                                             ).append(".").append( //$NON-NLS-1$ //$NON-NLS-2$
-                                                 host[2].split("\\.")[0].trim() //$NON-NLS-1$ //$NON-NLS-2$
-                                             ).toString()
+                                        hostOsInfo
                                         )
-                                    )
                                 );
 
                                 boolean executionAllowed = vds.getStatus() != VDSStatus.Up
