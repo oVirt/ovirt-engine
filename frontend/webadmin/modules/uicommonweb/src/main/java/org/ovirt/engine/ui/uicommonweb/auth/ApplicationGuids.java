@@ -13,7 +13,7 @@ public enum ApplicationGuids {
     userTemplateBasedVM(new Guid("def00009-0000-0000-0000-def000000009")), //$NON-NLS-1$
     quotaConsumer(new Guid("def0000a-0000-0000-0000-def00000000a")), //$NON-NLS-1$
     dataCenterAdmin(new Guid("def00002-0000-0000-0000-def000000002")), //$NON-NLS-1$
-    vnicProfileUser(new Guid("def00020-0000-0000-0000-def000000010")), //$NON-NLS-1$
+    vnicProfileUser(new Guid("DEF0000A-0000-0000-0000-DEF000000010")), //$NON-NLS-1$
 
     // ad_groups
     everyone(new Guid("eee00000-0000-0000-0000-123456789eee")); //$NON-NLS-1$
