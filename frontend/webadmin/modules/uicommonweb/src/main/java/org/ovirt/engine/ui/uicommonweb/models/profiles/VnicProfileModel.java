@@ -46,6 +46,7 @@ public abstract class VnicProfileModel extends Model {
     private final EntityModel sourceModel;
     private final Version dcCompatibilityVersion;
     private final boolean customPropertiesSupported;
+    private final boolean qosSupported;
     private ListModel network;
     private ListModel networkQoS;
     private VnicProfile vnicProfile = null;
@@ -146,6 +147,9 @@ public abstract class VnicProfileModel extends Model {
         customPropertiesSupported =
                 (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
                         dcCompatibilityVersion.toString());
+        qosSupported =
+                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.NetworkQosSupported,
+                        dcCompatibilityVersion.toString());
 
         setName(new EntityModel());
         setNetwork(new ListModel());
@@ -158,6 +162,15 @@ public abstract class VnicProfileModel extends Model {
         setDescription(new EntityModel());
         getPortMirroring().setIsChangable(isPortMirroringSupported());
         initCustomPropertySheet();
+
+        if (qosSupported) {
+            getNetworkQoS().setIsChangable(true);
+        } else {
+            getNetworkQoS().setChangeProhibitionReason(ConstantsManager.getInstance()
+                    .getConstants().qosNotSupportedDcVersion());
+            getNetworkQoS().setIsChangable(false);
+            getNetworkQoS().setSelectedItem(null);
+        }
 
         initCommands();
     }
@@ -297,7 +310,7 @@ public abstract class VnicProfileModel extends Model {
     }
 
     public void initNetworkQoSList(final Guid selectedItemId) {
-        if (getDcId() == null) {
+        if (getDcId() == null || !qosSupported) {
             return;
         }
 
