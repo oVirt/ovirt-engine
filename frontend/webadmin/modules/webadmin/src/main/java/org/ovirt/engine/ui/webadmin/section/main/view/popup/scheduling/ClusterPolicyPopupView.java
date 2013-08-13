@@ -32,10 +32,10 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClusterPolicyModel> implements ClusterPolicyPopupPresenterWidget.ViewDef {
-
     interface Driver extends SimpleBeanEditorDriver<NewClusterPolicyModel, ClusterPolicyPopupView> {
     }
 
@@ -48,6 +48,7 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
     }
 
     private final Driver driver = GWT.create(Driver.class);
+    private ApplicationConstants constants;
 
     @UiField
     @Path(value = "name.entity")
@@ -95,12 +96,17 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
     @UiField(provided = true)
     InfoIcon propertiesInfoIcon;
 
+    @UiField
+    @Ignore
+    Label externalLabel;
+
     @Inject
     public ClusterPolicyPopupView(EventBus eventBus,
             ApplicationResources resources,
             ApplicationConstants constants,
             ApplicationTemplates templates) {
         super(eventBus, resources);
+        this.constants = constants;
         initListBoxEditors();
         initPanels();
         initInfoIcons(resources, constants, templates);
@@ -202,6 +208,11 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
         PolicyUnit selectedItem = (PolicyUnit) model.getLoadBalanceList().getSelectedItem();
         if (selectedItem != null) {
             loadBalanceListEditor.getElement().setTitle(selectedItem.getDescription());
+            if (selectedItem.isInternal()) {
+                externalLabel.setText(""); //$NON-NLS-1$
+            } else {
+                externalLabel.setText(constants.externalPolicyUnitLabel()); //$NON-NLS-1$
+            }
         }
     }
 

@@ -3088,4 +3088,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
             "needed. Setting it when creating a policy generates the default values, which may " +
             "be overridden in each specific cluster using this policy.")
     String clusterPolicyPropertiesInfo();
+
+    @DefaultStringValue("(EXT)")
+    String externalPolicyUnitLabel();
 }

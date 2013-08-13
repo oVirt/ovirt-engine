@@ -36,10 +36,10 @@ public class FunctionPolicyUnitPanel extends PolicyUnitPanel {
     @Override
     public void initWidget() {
         HorizontalPanel panel = new HorizontalPanel();
-        Label policyUnitLabel = new Label(policyUnit.getName());
+        Panel namePanel = getNamePanel(policyUnit);
         if (!used) {
             panel.setStyleName(style.unusedPolicyUnitStyle());
-            panel.add(policyUnitLabel);
+            panel.add(namePanel);
         } else {
             HorizontalPanel weightPanel = new HorizontalPanel();
             final Label weightLabel = new Label(String.valueOf(factor));
@@ -86,7 +86,7 @@ public class FunctionPolicyUnitPanel extends PolicyUnitPanel {
             weightPanel.setStyleName(style.positionLabelStyle());
             panel.add(weightPanel);
             Panel policyUnitLablePanel = new SimplePanel();
-            policyUnitLablePanel.add(policyUnitLabel);
+            policyUnitLablePanel.add(namePanel);
             policyUnitLablePanel.setStyleName(style.usedFilterPolicyUnitStyle());
             panel.add(policyUnitLablePanel);
         }
