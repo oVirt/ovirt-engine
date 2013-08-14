@@ -588,6 +588,10 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
         ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$LDAP_GROUP_CATEGORY, "objectClass=ipaUserGroup");
         ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$CN, "cn");
         ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$USER_ACCOUNT_NAME, "uid");
+        ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$SN, "SN");
+        ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$SAMACCOUNTNAME, "SAMACCOUNTNAME");
+        ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$DEPARTMENT, "DEPARTMENT");
+        ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$TITLE, "TITLE");
 
         dsSearchSyntaxMap = new EnumMap<SearchLangageLDAPTokens, String>(SearchLangageLDAPTokens.class);
         dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$GIVENNAME, "givenname");
@@ -597,6 +601,10 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
         dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$LDAP_GROUP_CATEGORY, "objectClass=groupOfUniqueNames");
         dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$CN, "cn");
         dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$USER_ACCOUNT_NAME, "uid");
+        dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$SN, "SN");
+        dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$SAMACCOUNTNAME, "SAMACCOUNTNAME");
+        dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$DEPARTMENT, "DEPARTMENT");
+        dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$TITLE, "TITLE");
 
         itdsSearchSyntaxMap = new EnumMap<SearchLangageLDAPTokens, String>(SearchLangageLDAPTokens.class);
         itdsSearchSyntaxMap.put(SearchLangageLDAPTokens.$GIVENNAME, "givenname");
@@ -605,6 +613,10 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
         itdsSearchSyntaxMap.put(SearchLangageLDAPTokens.$LDAP_GROUP_CATEGORY, "objectClass=groupOfUniqueNames");
         itdsSearchSyntaxMap.put(SearchLangageLDAPTokens.$CN, "cn");
         itdsSearchSyntaxMap.put(SearchLangageLDAPTokens.$USER_ACCOUNT_NAME, "uid");
+        itdsSearchSyntaxMap.put(SearchLangageLDAPTokens.$SN, "SN");
+        itdsSearchSyntaxMap.put(SearchLangageLDAPTokens.$SAMACCOUNTNAME, "SAMACCOUNTNAME");
+        itdsSearchSyntaxMap.put(SearchLangageLDAPTokens.$DEPARTMENT, "DEPARTMENT");
+        itdsSearchSyntaxMap.put(SearchLangageLDAPTokens.$TITLE, "TITLE");
 
         openLdapSearchSyntaxMap = new EnumMap<SearchLangageLDAPTokens, String>(SearchLangageLDAPTokens.class);
         openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$GIVENNAME, "givenname");
@@ -613,5 +625,9 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
         openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$LDAP_GROUP_CATEGORY, "objectClass=groupOfNames");
         openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$CN, "cn");
         openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$USER_ACCOUNT_NAME, "uid");
+        openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$SN, "SN");
+        openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$SAMACCOUNTNAME, "SAMACCOUNTNAME");
+        openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$DEPARTMENT, "DEPARTMENT");
+        openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$TITLE, "TITLE");
     }
 }
