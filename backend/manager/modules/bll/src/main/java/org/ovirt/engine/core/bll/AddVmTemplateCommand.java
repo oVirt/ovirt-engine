@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
@@ -105,7 +106,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             updateVmDisks();
             setStoragePoolId(getVm().getStoragePoolId());
             isVmInDb = true;
-        } else if (getVdsGroup() != null) {
+        } else if (getVdsGroup() != null && parameterMasterVm != null) {
             VM vm = new VM(parameterMasterVm, new VmDynamic(), null);
             vm.setDisplayType(parameterMasterVm.getDefaultDisplayType());
             vm.setVdsGroupCompatibilityVersion(getVdsGroup().getcompatibility_version());
@@ -475,6 +476,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     protected void endSuccessfully() {
         setVmTemplateId(getParameters().getVmTemplateId());
         setVmId(getVmIdFromImageParameters());
+        isVmInDb = getVm() != null;
+
         getVmStaticDAO().incrementDbGeneration(getVmTemplateId());
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             Backend.getInstance().EndAction(VdcActionType.CreateImageTemplate, p);
