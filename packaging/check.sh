@@ -3,7 +3,7 @@
 BASE="$(dirname "$0")"
 
 FILES="$(
-	find "${BASE}" -name '*.py' | grep -v fedora | while read f; do
+	find "${BASE}" -name '*.py' | while read f; do
 		[ -e "${f}.in" ] || echo "${f}"
 	done
 )"
