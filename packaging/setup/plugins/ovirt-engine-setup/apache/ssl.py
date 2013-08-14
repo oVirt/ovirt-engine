@@ -132,7 +132,7 @@ class Plugin(plugin.PluginBase):
             self.dialog.note(
                 _(
                     'Setup can configure apache to use SSL using a '
-                    'certificate issued from the internal CA'
+                    'certificate issued from the internal CA.'
                 )
             )
             self.environment[
@@ -141,8 +141,8 @@ class Plugin(plugin.PluginBase):
                 dialog=self.dialog,
                 name='OVESETUP_APACHE_CONFIG_SSL',
                 note=_(
-                    'Do you wish to setup to configure or prefer to perform '
-                    'that manually? (@VALUES@) [@DEFAULT@]: '
+                    'Do you wish Setup to configure that, or prefer to '
+                    'perform that manually? (@VALUES@) [@DEFAULT@]: '
                 ),
                 prompt=True,
                 true=_('Automatic'),
@@ -162,9 +162,9 @@ class Plugin(plugin.PluginBase):
             ):
                 self.logger.warning(
                     _(
-                        "Apache SSL automatic configuration was requested, "
-                        "however, SSL configuration file '{file}' was not "
-                        "found. Disabling configuration."
+                        "Automatic Apache SSL configuration was requested. "
+                        "However, SSL configuration file '{file}' was not "
+                        "found. Disabling automatic Apache SSL configuration."
                     )
                 )
                 self._enabled = False
@@ -189,8 +189,8 @@ class Plugin(plugin.PluginBase):
         if missingParams:
             self.logger.warning(
                 _(
-                    'The expected parameters {missingParams} were not '
-                    'found in the {file}. The automatic '
+                    'Expected parameter(s) {missingParams} were not '
+                    'found in {file}. Automatic '
                     'configuration of this file will not be '
                     'performed.'
                 ).format(

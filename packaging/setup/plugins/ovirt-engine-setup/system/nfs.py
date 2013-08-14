@@ -120,7 +120,7 @@ class Plugin(plugin.PluginBase):
                     dialog=self.dialog,
                     name='NFS_CONFIG_ENABLED',
                     note=_(
-                        'Configure NFS share on this server to be used '
+                        'Configure an NFS share on this server to be used '
                         'as an ISO Domain? '
                         '(@VALUES@) [@DEFAULT@]: '
                     ),

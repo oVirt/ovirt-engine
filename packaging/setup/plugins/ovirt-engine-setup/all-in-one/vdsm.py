@@ -55,7 +55,7 @@ class Plugin(plugin.PluginBase):
 
     def _waitVDSMHostUp(self, engine_api, host):
         self.logger.info(_(
-            'Waiting for VDSM host to become operational.'
+            'Waiting for VDSM host to become operational. '
             'This may take several minutes...'
         ))
         tries = self.VDSM_RETRIES

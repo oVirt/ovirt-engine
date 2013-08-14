@@ -146,8 +146,8 @@ class Plugin(plugin.PluginBase):
                 response = self.dialog.queryString(
                     name='OVESETUP_CONFIG_FIREWALL_MANAGER',
                     note=_(
-                        '{manager} was detected on your computer, '
-                        'do you wish setup to configure it? '
+                        '{manager} was detected on your computer. '
+                        'Do you wish Setup to configure it? '
                         '(@VALUES@) [@DEFAULT@]: '
                     ).format(
                         manager=manager,

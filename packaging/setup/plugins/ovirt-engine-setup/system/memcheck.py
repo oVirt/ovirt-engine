@@ -61,9 +61,9 @@ class Plugin(plugin.PluginBase):
         ] * 0.95:
             self.logger.warn(
                 _(
-                    'Warning: Not enough available memory on the Host, '
-                    'the minimum requirement is {minimum}MB, and the '
-                    'recommended is {recommended}MB).'
+                    'Warning: Not enough memory is available on the host. '
+                    'Minimum requirement is {minimum}MB, and {recommended}MB '
+                    'is recommended.'
                 ).format(
                     minimum=self.environment[
                         osetupcons.SystemEnv.MEMCHECK_MINIMUM_MB
@@ -80,7 +80,7 @@ class Plugin(plugin.PluginBase):
             ] * 0.95:
                 self.logger.warn(
                     _(
-                        'There is less than {recommended}MB available memory'
+                        'Less than {recommended}MB of memory is available'
                     ).format(
                         recommended=self.environment[
                             osetupcons.SystemEnv.MEMCHECK_RECOMMENDED_MB
@@ -136,8 +136,8 @@ class Plugin(plugin.PluginBase):
                 dialog=self.dialog,
                 name='OVESETUP_MEMORY_CHECK',
                 note=_(
-                    'Do you want to install with memory less than '
-                    'recommended? (@VALUES@) [@DEFAULT@]: '
+                    'Do you want Setup to continue, with amount of memory '
+                    'less than recommended? (@VALUES@) [@DEFAULT@]: '
                 ),
                 prompt=True,
                 true=_('Yes'),

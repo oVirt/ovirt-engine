@@ -307,14 +307,14 @@ class Plugin(plugin.PluginBase):
         haveRollback = None
 
         if self.environment[osetupcons.RPMDistroEnv.ENABLE_UPGRADE] is None:
-            self.logger.info(_('Checking for product upgrade...'))
+            self.logger.info(_('Checking for product updates...'))
             (
                 upgradeAvailable,
                 haveRollback,
             ) = self._checkForProductUpdate()
 
             if not upgradeAvailable:
-                self.logger.info(_('No product update'))
+                self.logger.info(_('No product updates found'))
             else:
                 self.environment[
                     osetupcons.RPMDistroEnv.ENABLE_UPGRADE
@@ -322,8 +322,8 @@ class Plugin(plugin.PluginBase):
                     dialog=self.dialog,
                     name='OVESETUP_RPMDISTRO_PACKAGE_UPGRADE',
                     note=_(
-                        'Setup has found packages to be upgraded, '
-                        'do you wish to upgrade them now? '
+                        'Setup has found updates for some packages, '
+                        'do you wish to update them now? '
                         '(@VALUES@) [@DEFAULT@]: '
                     ),
                     prompt=True,
@@ -333,20 +333,20 @@ class Plugin(plugin.PluginBase):
                 )
 
         if self.environment[osetupcons.RPMDistroEnv.ENABLE_UPGRADE]:
-            self.logger.info(_('Checking for setup upgrade...'))
+            self.logger.info(_('Checking for an update for Setup...'))
             if self._checkForPackagesUpdate(
                 packages=(osetupcons.Const.ENGINE_PACKAGE_SETUP_NAME,)
             ):
                 self.logger.error(
                     _(
-                        'An upgrade for the setup package was found. '
-                        'Please upgrade that package and the execute '
-                        'setup again. Package name is {package}.'
+                        'An update for the Setup package "{package}" was '
+                        'found. Please update that package, e.g. by running '
+                        '"yum update {package}", and then execute Setup again.'
                     ).format(
                         package=osetupcons.Const.ENGINE_PACKAGE_SETUP_NAME,
                     )
                 )
-                raise RuntimeError(_('Please update setup package'))
+                raise RuntimeError(_('Please update the Setup package'))
 
             if upgradeAvailable is None:
                 (
@@ -355,7 +355,7 @@ class Plugin(plugin.PluginBase):
                 ) = self._checkForProductUpdate()
 
             if not upgradeAvailable:
-                self.dialog.note(text=_('No update is available'))
+                self.dialog.note(text=_('No update for Setup found'))
             else:
                 if not haveRollback:
                     if self.environment[
@@ -368,9 +368,10 @@ class Plugin(plugin.PluginBase):
                             name='OVESETUP_RPMDISTRO_REQUIRE_ROLLBACK',
                             note=_(
                                 'Setup will not be able to rollback new '
-                                'packages in case of a failure because these '
-                                'are missing at repository, do you want to '
-                                'continue? (@VALUES@) [@DEFAULT@]: '
+                                'packages in case of a failure because '
+                                'installed ones are not available in enabled repositories. '
+                                'Do you want to continue anyway? '
+                                '(@VALUES@) [@DEFAULT@]: '
                             ),
                             prompt=True,
                             true=_('Yes'),

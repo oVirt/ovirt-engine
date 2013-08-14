@@ -74,7 +74,7 @@ class Plugin(plugin.PluginBase):
                 osetupcons.ConfigEnv.APPLICATION_MODE
             ] = self.dialog.queryString(
                 name='OVESETUP_CONFIG_APPLICATION_MODE',
-                note=_('Data center (@VALUES@) [@DEFAULT@]: '),
+                note=_('Application mode (@VALUES@) [@DEFAULT@]: '),
                 prompt=True,
                 validValues=(
                     'Both',

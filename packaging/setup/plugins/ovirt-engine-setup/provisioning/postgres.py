@@ -429,11 +429,10 @@ class Plugin(plugin.PluginBase):
                     name='OVESETUP_PROVISIONING_POSTGRES_ENABLED',
                     note=_(
                         'Setup can configure the local postgresql server '
-                        'automatically for engine to run. This may conflict '
-                        'with existing applications.\n'
-                        '\n'
-                        'Would you like the setup to automatically configure '
-                        'postgresql or prefer to perform that '
+                        'automatically for the engine to run. This may '
+                        'conflict with existing applications.\n'
+                        'Would you like Setup to automatically configure '
+                        'postgresql, or prefer to perform that '
                         'manually? (@VALUES@) [@DEFAULT@]: '
                     ),
                     prompt=True,
