@@ -29,6 +29,7 @@ import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.RoleDAO;
 import org.ovirt.engine.core.dao.RoleGroupMapDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -555,6 +556,10 @@ public class AuditLogableBase extends TimeoutBase {
 
     public StoragePoolDAO getStoragePoolDAO() {
         return getDbFacade().getStoragePoolDao();
+    }
+
+    public StorageDomainStaticDAO getStorageDomainStaticDAO() {
+        return getDbFacade().getStorageDomainStaticDao();
     }
 
     public VdsDAO getVdsDAO() {

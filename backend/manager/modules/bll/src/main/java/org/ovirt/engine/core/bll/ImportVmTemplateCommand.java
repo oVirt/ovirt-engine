@@ -52,7 +52,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -232,11 +231,6 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
 
         return true;
-    }
-
-    @Override
-    protected StorageDomainStaticDAO getStorageDomainStaticDAO() {
-        return DbFacade.getInstance().getStorageDomainStaticDao();
     }
 
     /**

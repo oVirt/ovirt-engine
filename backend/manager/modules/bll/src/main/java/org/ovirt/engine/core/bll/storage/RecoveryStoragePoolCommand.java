@@ -64,8 +64,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
                         VdcBllMessages.STORAGE_POOL_REINITIALIZE_WITH_MORE_THAN_ONE_DATA_DOMAIN.toString());
                 returnValue = false;
             } else {
-                StorageDomain domain = DbFacade.getInstance().getStorageDomainDao().get(
-                        _newMasterStorageDomainId);
+                StorageDomain domain = loadTargetedMasterDomain();
                 if (domain.getStorageDomainSharedStatus() != StorageDomainSharedStatus.Unattached) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
                     returnValue = false;
@@ -76,6 +75,11 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
             }
         }
         return returnValue;
+    }
+
+    private StorageDomain loadTargetedMasterDomain() {
+        return getStorageDomainDAO().get(
+                _newMasterStorageDomainId);
     }
 
     @Override
@@ -110,18 +114,22 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
                             VdcReturnValueBase returnVal = getBackend().runInternalAction(
                                     VdcActionType.ReconstructMasterDomain, getParameters());
 
-                            boolean succeeded = (returnVal.getActionReturnValue() != null) ?
+                            boolean reconstructVerbExecuted = (returnVal.getActionReturnValue() != null) ?
                                     (Boolean) returnVal.getActionReturnValue() : false;
 
                             getStoragePoolDAO().updateStatus(getStoragePool().getId(),
                                     StoragePoolStatus.NonResponsive);
 
-                            if (!succeeded) {
+                            if (!reconstructVerbExecuted) {
                                 getStoragePoolIsoMapDAO().remove(domainPoolMap.getId());
                             }
 
+                            if (returnVal.getSucceeded()) {
+                                updateStorageDomainFormat(loadTargetedMasterDomain());
+                            }
+
                             setSucceeded(returnVal.getSucceeded());
-                            return new EventResult(succeeded, EventType.RECONSTRUCT);
+                            return new EventResult(reconstructVerbExecuted, EventType.RECONSTRUCT);
                         }
                     });
         } else {

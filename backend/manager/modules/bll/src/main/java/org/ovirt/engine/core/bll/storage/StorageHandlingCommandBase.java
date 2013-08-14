@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
@@ -270,6 +271,21 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 }
             });
             StoragePoolStatusHandler.PoolStatusChanged(getStoragePool().getId(), getStoragePool().getstatus());
+        }
+    }
+
+    protected void updateStorageDomainFormat(StorageDomain domain) {
+        StorageDomainType sdType = domain.getStorageDomainType();
+        if (sdType == StorageDomainType.Data || sdType == StorageDomainType.Master) {
+            final StorageDomainStatic storageStaticData = domain.getStorageStaticData();
+            final StorageFormatType targetFormat = getStoragePool().getStoragePoolFormatType();
+
+            if (storageStaticData.getStorageFormat() != targetFormat) {
+                log.infoFormat("Updating storage domain {0} (type {1}) to format {2}",
+                        getStorageDomain().getId(), sdType, targetFormat);
+                storageStaticData.setStorageFormat(targetFormat);
+                getStorageDomainStaticDAO().update(storageStaticData);
+            }
         }
     }
 

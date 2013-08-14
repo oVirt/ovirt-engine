@@ -251,10 +251,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         return Backend.getInstance().getResourceManager();
     }
 
-    protected StorageDomainStaticDAO getStorageDomainStaticDAO() {
-        return DbFacade.getInstance().getStorageDomainStaticDao();
-    }
-
     /**
      * Copy properties from old entity which assumed not to be available in the param object.
      *

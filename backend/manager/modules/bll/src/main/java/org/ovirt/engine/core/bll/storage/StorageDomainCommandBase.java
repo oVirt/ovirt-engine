@@ -33,7 +33,6 @@ import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -363,10 +362,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected ImageStorageDomainMapDao getImageStorageDomainMapDao() {
         return getDbFacade().getImageStorageDomainMapDao();
-    }
-
-    protected StorageDomainStaticDAO getStorageDomainStaticDAO() {
-        return getDbFacade().getStorageDomainStaticDao();
     }
 
     protected StorageServerConnectionDAO getStorageServerConnectionDAO() {

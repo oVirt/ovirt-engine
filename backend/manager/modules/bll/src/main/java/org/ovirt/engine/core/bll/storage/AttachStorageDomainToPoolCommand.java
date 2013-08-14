@@ -9,10 +9,8 @@ import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
@@ -93,15 +91,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
 
                             // upgrade the domain format to the storage pool format
                             if (sdType == StorageDomainType.Data || sdType == StorageDomainType.Master) {
-                                final StorageDomainStatic domain = getStorageDomain().getStorageStaticData();
-                                final StorageFormatType targetFormat = getStoragePool().getStoragePoolFormatType();
-
-                                if (domain.getStorageFormat() != targetFormat) {
-                                    log.infoFormat("Updating storage domain {0} (type {1}) to format {2}",
-                                            getStorageDomain().getId(), sdType, targetFormat);
-                                    domain.setStorageFormat(targetFormat);
-                                    getStorageDomainStaticDAO().update(domain);
-                                }
+                                updateStorageDomainFormat(getStorageDomain());
                             }
                             return null;
                         }
