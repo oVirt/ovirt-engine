@@ -326,17 +326,17 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
 
     public void enableCifs() {
         accessProtocols.add(AccessProtocol.CIFS);
-        setOption(GlusterConstants.OPTION_USER_CIFS, GlusterConstants.ON);
+        setOption(GlusterConstants.OPTION_USER_CIFS, GlusterConstants.ENABLE);
     }
 
     public void disableCifs() {
         accessProtocols.remove(AccessProtocol.CIFS);
-        setOption(GlusterConstants.OPTION_USER_CIFS, GlusterConstants.OFF);
+        setOption(GlusterConstants.OPTION_USER_CIFS, GlusterConstants.DISABLE);
     }
 
     public boolean isCifsEnabled() {
         String cifsEnabled = getOptionValue(GlusterConstants.OPTION_USER_CIFS);
-        return (cifsEnabled == null || cifsEnabled.equalsIgnoreCase(GlusterConstants.ON));
+        return (cifsEnabled == null || cifsEnabled.equalsIgnoreCase(GlusterConstants.ENABLE));
     }
 
     public List<String> getBrickDirectories() {

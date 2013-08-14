@@ -5,6 +5,9 @@ public class GlusterConstants {
     public static final String ON = "on";
     public static final String OFF = "off";
 
+    public static final String ENABLE = "enable";
+    public static final String DISABLE = "disable";
+
     public static final String OPTION_AUTH_ALLOW = "auth.allow";
     public static final String OPTION_NFS_DISABLE = "nfs.disable";
     public static final String OPTION_USER_CIFS = "user.cifs";
