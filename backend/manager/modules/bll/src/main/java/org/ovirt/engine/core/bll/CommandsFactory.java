@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,11 +50,12 @@ public final class CommandsFactory {
 
             return (CommandBase<P>) constructor.newInstance(new Object[] { parameters });
         }
-
-        catch (Exception e) {
-            log.error(
-                    "CommandsFactory [parameter: VdcActionParametersBase]: Failed to get type information using " +
-                            "reflection for Action: " + action, e);
+        catch (InvocationTargetException ex) {
+            log.error("Error in invocating CTOR of command " + action.name() + ". Exception is ", ex);
+            return null;
+        }
+        catch (Exception ex) {
+            log.error("An exception has occured while trying to create a command object for command " + action.name(), ex);
             return null;
         }
     }
