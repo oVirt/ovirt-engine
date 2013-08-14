@@ -997,9 +997,7 @@ public class VmDeviceUtils {
     }
 
     private static boolean isDiskOrInterface(VmDevice vmDevice) {
-        return VmDeviceCommonUtils.isDisk(vmDevice) ||
-        (vmDevice.getDevice().equals(VmDeviceType.BRIDGE.getName())
-                && vmDevice.getType() == VmDeviceGeneralType.INTERFACE);
+        return VmDeviceCommonUtils.isDisk(vmDevice) || VmDeviceCommonUtils.isBridge(vmDevice);
     }
 
     public static boolean isVirtioScsiControllerAttached(Guid vmId) {

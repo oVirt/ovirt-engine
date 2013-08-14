@@ -52,6 +52,11 @@ public class VmDeviceCommonUtils {
         return device.getType() == VmDeviceGeneralType.SOUND;
     }
 
+    public static boolean isBridge(VmDevice device) {
+        return device.getType() == VmDeviceGeneralType.INTERFACE
+                && device.getDevice().equals(VmDeviceType.BRIDGE.getName());
+    }
+
     /**
      * updates given devices boot order
      *
@@ -149,9 +154,7 @@ public class VmDeviceCommonUtils {
      */
     private static int setNetworkBootOrder(List<VmDevice> devices, int bootOrder) {
         for (VmDevice device : devices) {
-            if (device.getType() == VmDeviceGeneralType.INTERFACE
-                    && device.getDevice().equals(
-                            VmDeviceType.BRIDGE.getName())) {
+            if (isBridge(device)) {
                 if (device.getIsPlugged()) {
                     device.setBootOrder(++bootOrder);
                 }
