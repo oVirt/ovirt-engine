@@ -807,7 +807,6 @@ fi
 
 # Man pages
 %{_mandir}/man8/engine-setup.*
-%{_mandir}/man8/engine-config.*
 
 # Configuration files
 %{engine_data}/conf/ovirt-engine-root-redirect.conf.in
@@ -888,6 +887,7 @@ fi
 %{_bindir}/engine-manage-domains
 
 # Man pages:
+%{_mandir}/man8/engine-config.*
 %{_mandir}/man8/engine-manage-domains.*
 
 # Configuration files for the configuration tool:
