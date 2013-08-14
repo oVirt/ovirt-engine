@@ -197,9 +197,7 @@ public class VmDeviceCommonUtils {
             boolean isOldCluster) {
         LinkedList<VmDevice> diskDevices = new LinkedList<VmDevice>();
         for (VmDevice device : devices) {
-            if (device.getType() == VmDeviceGeneralType.DISK
-                    && device.getDevice().equals(
-                            VmDeviceType.DISK.getName())) {
+            if (isDisk(device)) {
                 Guid id = device.getDeviceId();
                 if (id != null && !id.equals(Guid.Empty)) {
                     if (device.getSnapshotId() == null) {

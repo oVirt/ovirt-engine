@@ -1160,7 +1160,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private boolean devicePluggable(VmDevice device) {
-        return (VmDeviceType.DISK.getName().equals(device.getDevice()) && VmDeviceGeneralType.DISK == device.getType())
+        return VmDeviceCommonUtils.isDisk(device)
                 || (VmDeviceType.BRIDGE.getName().equals(device.getDevice())
                 && VmDeviceGeneralType.INTERFACE == device.getType());
     }

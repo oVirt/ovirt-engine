@@ -997,8 +997,7 @@ public class VmDeviceUtils {
     }
 
     private static boolean isDiskOrInterface(VmDevice vmDevice) {
-        return(vmDevice.getDevice().equals(VmDeviceType.DISK.getName())
-                && vmDevice.getType() == VmDeviceGeneralType.DISK) ||
+        return VmDeviceCommonUtils.isDisk(vmDevice) ||
         (vmDevice.getDevice().equals(VmDeviceType.BRIDGE.getName())
                 && vmDevice.getType() == VmDeviceGeneralType.INTERFACE);
     }
