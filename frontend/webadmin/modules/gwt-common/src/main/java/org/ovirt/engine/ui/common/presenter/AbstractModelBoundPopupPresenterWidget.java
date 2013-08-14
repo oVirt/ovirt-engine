@@ -238,8 +238,8 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
 
         UICommand openDocumentationCommand = model.getOpenDocumentationCommand();
         if (openDocumentationCommand != null) {
-            boolean isDocumentationAvailable = model.getConfigurator().isDocumentationAvailable() &&
-                    hashName != null && DocumentationPathTranslator.getPath(hashName) != null;
+            boolean isDocumentationAvailable = hashName != null &&
+                    DocumentationPathTranslator.getPath(hashName) != null;
             openDocumentationCommand.setIsAvailable(isDocumentationAvailable);
             updateHelpCommand(isDocumentationAvailable ? openDocumentationCommand : null);
         }

@@ -2227,19 +2227,6 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void getDocumentationBaseURL(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? (String) source : ""; //$NON-NLS-1$
-            }
-        };
-        getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.DocsURL, getDefaultConfigurationVersion()),
-                aQuery);
-    }
-
     public static void getAllAttachableDisks(AsyncQuery aQuery, Guid storagePoolId, Guid vmId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

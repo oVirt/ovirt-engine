@@ -93,7 +93,6 @@ select fn_db_add_config_value('DirectLUNDiskEnabled','false','3.0');
 select fn_db_add_config_value('DirectLUNDiskEnabled','true','3.1');
 select fn_db_add_config_value('DirectLUNDiskEnabled','true','3.2');
 select fn_db_add_config_value('DirectLUNDiskEnabled','true','3.3');
-select fn_db_add_config_value('DocsURL','docs','general');
 --Handling NetBIOS Domain Name
 select fn_db_add_config_value('DomainName','example.com','general');
 -- Host time drift
@@ -857,6 +856,7 @@ select fn_db_delete_config_value_all_versions('EmulatedMachine');
 select fn_db_delete_config_value_all_versions('ENGINEEARLib');
 select fn_db_delete_config_value('AverageToPeakRatio','general');
 select fn_db_delete_config_value('AverageToBurstRatio','general');
+select fn_db_delete_config_value('DocsURL','general');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

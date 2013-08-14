@@ -127,7 +127,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
 
     @Override
     public void onUiCommonInit(UiCommonInitEvent event) {
-        updateDocumentationBaseURL();
+        fetchDocumentationFile();
     }
 
     @Override
@@ -150,8 +150,7 @@ public class UserPortalConfigurator extends Configurator implements IEventListen
         return clientAgentType.version;
     }
 
-    @Override
-    protected void onUpdateDocumentationBaseURL() {
+    protected void fetchDocumentationFile() {
         fetchFile(getDocumentationBaseURL() + "UserPortalDocumentationPath.csv", documentationFileFetchedEvent); //$NON-NLS-1$
     }
 

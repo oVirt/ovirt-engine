@@ -76,7 +76,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
 
     @Override
     public void onUiCommonInit(UiCommonInitEvent event) {
-        updateDocumentationBaseURL();
+        fetchDocumentationFile();
     }
 
     @Override
@@ -99,8 +99,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
         return clientAgentType.version;
     }
 
-    @Override
-    protected void onUpdateDocumentationBaseURL() {
+    protected void fetchDocumentationFile() {
         fetchFile(getDocumentationBaseURL() + "DocumentationPath.csv", documentationFileFetchedEvent); //$NON-NLS-1$
     }
 

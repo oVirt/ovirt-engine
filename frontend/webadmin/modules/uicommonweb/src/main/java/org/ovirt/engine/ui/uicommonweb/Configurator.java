@@ -24,6 +24,7 @@ import com.google.gwt.i18n.client.LocaleInfo;
 public abstract class Configurator {
 
     private static final String DOCUMENTATION_LIB_PATH = "html/"; //$NON-NLS-1$
+    private static final String DOCUMENTATION_ROOT = "docs"; //$NON-NLS-1$
 
     private static String documentationLangPath;
 
@@ -168,26 +169,6 @@ public abstract class Configurator {
         privatePollingTimerInterval = value;
     }
 
-    private boolean isDocumentationAvailable;
-
-    public boolean isDocumentationAvailable() {
-        return isDocumentationAvailable;
-    }
-
-    protected void setDocumentationAvailable(boolean isDocumentationAvailable) {
-        this.isDocumentationAvailable = isDocumentationAvailable;
-    }
-
-    private String documentationBasePath;
-
-    public String getDocumentationBasePath() {
-        return documentationBasePath;
-    }
-
-    protected void setDocumentationBasePath(String documentationBasePath) {
-        this.documentationBasePath = documentationBasePath;
-    }
-
     /**
      * Returns the base URL for serving documentation resources.
      * <p>
@@ -196,7 +177,7 @@ public abstract class Configurator {
      * @return Documentation base URL, including the trailing slash.
      */
     public String getDocumentationBaseURL() {
-        return FrontendUrlUtils.getRootURL() + getDocumentationBasePath() + "/"; //$NON-NLS-1$
+        return FrontendUrlUtils.getRootURL() + DOCUMENTATION_ROOT + "/"; //$NON-NLS-1$
     }
 
     /**
@@ -223,21 +204,6 @@ public abstract class Configurator {
 
     public String getUsbFilter() {
         return usbFilter;
-    }
-
-    public void updateDocumentationBaseURL() {
-        AsyncDataProvider.getDocumentationBaseURL(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        String documentationBaseURL = (String) returnValue;
-                        boolean isDocumentationAvailable = !documentationBaseURL.equals(""); //$NON-NLS-1$
-
-                        setDocumentationAvailable(isDocumentationAvailable);
-                        setDocumentationBasePath(documentationBaseURL);
-                        onUpdateDocumentationBaseURL();
-                    }
-                }));
     }
 
     // Fetch file from a specified path
@@ -365,8 +331,6 @@ public abstract class Configurator {
     protected abstract String clientPlatformType();
 
     public abstract Float clientBrowserVersion();
-
-    protected abstract void onUpdateDocumentationBaseURL();
 
     public boolean isSpiceProxyDefined() {
         String spiceProxy = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);

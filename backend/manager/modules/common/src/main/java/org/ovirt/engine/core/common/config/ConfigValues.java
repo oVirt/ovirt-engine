@@ -883,14 +883,6 @@ public enum ConfigValues {
     @DefaultValueAttribute("20")
     QuotaGraceStorage(334),
 
-    /**
-     * The base URL for the documentation web-site
-     */
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    DocsURL(335),
-
     // This value indicates devices that although are given to us by VDSM
     // are still treated as managed devices
     // This should be a [device=<device> type=<type>[,]]* string
