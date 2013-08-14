@@ -434,7 +434,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected Collection<DiskImage> getImagesToCheckDestinationStorageDomains() {
-        return getVmTemplate().getDiskMap().values();
+        return getVmTemplate().getDiskTemplateMap().values();
     }
 
     private boolean validateProvidedDestinations() {
@@ -699,7 +699,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected boolean addVmImages() {
-        if (getVmTemplate().getDiskMap().size() > 0) {
+        if (getVmTemplate().getDiskTemplateMap().size() > 0) {
             if (getVm().getStatus() != VMStatus.Down) {
                 log.error("Cannot add images. VM is not Down");
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);

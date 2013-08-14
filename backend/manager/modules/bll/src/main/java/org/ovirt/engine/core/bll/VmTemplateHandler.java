@@ -45,13 +45,13 @@ public class VmTemplateHandler {
     }
 
     public static void UpdateDisksFromDb(VmTemplate vmt) {
-        vmt.getDiskMap().clear();
+        vmt.getDiskTemplateMap().clear();
         vmt.getDiskImageMap().clear();
         vmt.getDiskList().clear();
         List<Disk> diskList = DbFacade.getInstance().getDiskDao().getAllForVm(vmt.getId());
         for (Disk dit : diskList) {
             DiskImage diskImage = (DiskImage) dit;
-            vmt.getDiskMap().put(dit.getId(), diskImage);
+            vmt.getDiskTemplateMap().put(dit.getId(), diskImage);
             // Translation from number of sectors to GB.
             vmt.setSizeGB(Double.valueOf(dit.getSize()) / Double.valueOf((1024 * 1024 * 1024)));
             vmt.getDiskImageMap().put(dit.getId(), diskImage);

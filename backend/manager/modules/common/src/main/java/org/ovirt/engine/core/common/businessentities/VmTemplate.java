@@ -36,7 +36,7 @@ public class VmTemplate extends VmBase {
 
     private String storagePoolName;
 
-    private HashMap<Guid, DiskImage> diskMap = new HashMap<Guid, DiskImage>();
+    private HashMap<Guid, DiskImage> diskImageMap = new HashMap<Guid, DiskImage>();
 
     private ArrayList<DiskImage> diskList = new ArrayList<DiskImage>();
 
@@ -172,7 +172,7 @@ public class VmTemplate extends VmBase {
     }
 
     @JsonIgnore
-    public HashMap<Guid, DiskImage> getDiskMap() {
+    public HashMap<Guid, DiskImage> getDiskTemplateMap() {
         return diskTemplateMap;
     }
 
@@ -201,11 +201,11 @@ public class VmTemplate extends VmBase {
 
     @JsonIgnore
     public HashMap<Guid, DiskImage> getDiskImageMap() {
-        return diskMap;
+        return diskImageMap;
     }
 
     public void setDiskImageMap(HashMap<Guid, DiskImage> value) {
-        diskMap = value;
+        diskImageMap = value;
     }
 
     @Override

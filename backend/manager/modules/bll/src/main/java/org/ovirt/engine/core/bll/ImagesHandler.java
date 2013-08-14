@@ -83,7 +83,7 @@ public final class ImagesHandler {
                 storageDomainsMap.put(storageDomain.getId(), storageDomain);
             }
         }
-        for (DiskImage image : template.getDiskMap().values()) {
+        for (DiskImage image : template.getDiskTemplateMap().values()) {
             for (Guid storageId : image.getStorageIds()) {
                 if (storageDomainsMap.containsKey(storageId)) {
                     ArrayList<Guid> storageIds = new ArrayList<Guid>();

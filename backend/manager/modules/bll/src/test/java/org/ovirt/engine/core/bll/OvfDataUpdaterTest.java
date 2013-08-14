@@ -310,7 +310,7 @@ public class OvfDataUpdaterTest {
             VmTemplate template = createVmTemplate(id, templateStatus);
             for (int i = 0; i < diskCount; i++) {
                 DiskImage image = createDiskImage(diskStatus);
-                template.getDiskMap().put(image.getId(), image);
+                template.getDiskTemplateMap().put(image.getId(), image);
                 template.getDiskList().add(image);
             }
             toReturn.put(template.getId(), template);

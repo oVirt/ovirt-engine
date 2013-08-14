@@ -282,7 +282,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         }
         Map<Guid, DiskImage> diskImageTemplate = getDiskImageTempalteList();
         for (Guid key : diskImageTemplate.keySet()) {
-            vmTemplate.getDiskMap().put(key, diskImageTemplate.get(key));
+            vmTemplate.getDiskTemplateMap().put(key, diskImageTemplate.get(key));
         }
     }
 

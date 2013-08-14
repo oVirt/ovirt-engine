@@ -41,7 +41,7 @@ public class TemplatesTree<M extends SearchableListModel> extends AbstractSubTab
 
         addItemToPanel(panel, new Image(resources.vmImage()), "25px"); //$NON-NLS-1$
         addTextBoxToPanel(panel, new TextBoxLabel(), template.getName(), ""); //$NON-NLS-1$
-        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), template.getDiskMap().size(), "110px"); //$NON-NLS-1$
+        addValueLabelToPanel(panel, new DiskSizeLabel<Integer>(), template.getDiskTemplateMap().size(), "110px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new DiskSizeLabel<Double>(), template.getActualDiskSize(), "110px"); //$NON-NLS-1$
         addValueLabelToPanel(panel, new FullDateTimeLabel(), template.getCreationDate(), "140px"); //$NON-NLS-1$
 

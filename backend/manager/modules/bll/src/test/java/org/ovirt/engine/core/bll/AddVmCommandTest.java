@@ -151,7 +151,7 @@ public class AddVmCommandTest {
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
         doReturn(Collections.emptyList()).when(cmd).validateCustomProperties(any(VmStatic.class));
         // Adding 10 disks, which each one should consume the default sparse size (which is 1GB).
-        setNewDisksForTemplate(10, cmd.getVmTemplate().getDiskMap());
+        setNewDisksForTemplate(10, cmd.getVmTemplate().getDiskTemplateMap());
         doReturn(createVmTemplate()).when(cmd).getVmTemplate();
         assertFalse("Thin vm could not be added due to storage sufficient",
                 cmd.canAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
@@ -384,7 +384,7 @@ public class AddVmCommandTest {
             vmTemplate = new VmTemplate();
             vmTemplate.setStoragePoolId(STORAGE_POOL_ID);
             DiskImage image = createDiskImageTemplate();
-            vmTemplate.getDiskMap().put(image.getImageId(), image);
+            vmTemplate.getDiskTemplateMap().put(image.getImageId(), image);
             HashMap<Guid, DiskImage> diskImageMap = new HashMap<Guid, DiskImage>();
             DiskImage diskImage = createDiskImage(REQUIRED_DISK_SIZE_GB);
             diskImageMap.put(diskImage.getId(), diskImage);
@@ -480,7 +480,7 @@ public class AddVmCommandTest {
 
             @Override
             protected int getNeededDiskSize(Guid domainId) {
-                return getBlockSparseInitSizeInGb() * getVmTemplate().getDiskMap().size();
+                return getBlockSparseInitSizeInGb() * getVmTemplate().getDiskTemplateMap().size();
             }
         };
         cmd = spy(cmd);

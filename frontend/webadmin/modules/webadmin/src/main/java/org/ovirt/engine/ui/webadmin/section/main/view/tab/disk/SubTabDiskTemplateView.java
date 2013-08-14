@@ -48,7 +48,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
         TextColumnWithTooltip<VmTemplate> disksColumn = new TextColumnWithTooltip<VmTemplate>() {
             @Override
             public String getValue(VmTemplate object) {
-                return String.valueOf(object.getDiskMap().size());
+                return String.valueOf(object.getDiskTemplateMap().size());
             }
         };
         getTable().addColumn(disksColumn, constants.disksTemplate(), "200px"); //$NON-NLS-1$

@@ -71,13 +71,13 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
 
     @Override
     protected boolean addVmImages() {
-        if (getVmTemplate().getDiskMap().size() > 0) {
+        if (getVmTemplate().getDiskTemplateMap().size() > 0) {
             if (getVm().getStatus() != VMStatus.Down) {
                 log.error("Cannot add images. VM is not Down");
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
             VmHandler.LockVm(getVm().getDynamicData(), getCompensationContext());
-            for (DiskImage disk : getVmTemplate().getDiskMap().values()) {
+            for (DiskImage disk : getVmTemplate().getDiskTemplateMap().values()) {
                 VdcReturnValueBase result = Backend.getInstance().runInternalAction(
                                 VdcActionType.CreateCloneOfTemplate,
                                 buildCreateCloneOfTemplateParameters(disk),
@@ -116,7 +116,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     protected boolean canDoAction() {
         boolean retValue = super.canDoAction();
         if (retValue) {
-            for (DiskImage dit : getVmTemplate().getDiskMap().values()) {
+            for (DiskImage dit : getVmTemplate().getDiskTemplateMap().values()) {
                 retValue =
                         ImagesHandler.CheckImageConfiguration(destStorages.get(diskInfoDestinationMap.get(dit.getId()).getStorageIds().get(0))
                                 .getStorageStaticData(),

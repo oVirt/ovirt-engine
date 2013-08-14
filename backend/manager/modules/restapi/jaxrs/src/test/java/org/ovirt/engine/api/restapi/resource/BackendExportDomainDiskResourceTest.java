@@ -179,7 +179,7 @@ public class BackendExportDomainDiskResourceTest
 
     protected VmTemplate getVmTemplateEntity(int index) {
         VmTemplate vm = setUpEntityExpectations(control.createMock(VmTemplate.class), index);
-        org.easymock.EasyMock.expect(vm.getDiskMap()).andReturn(getDiskMap()).anyTimes();
+        org.easymock.EasyMock.expect(vm.getDiskTemplateMap()).andReturn(getDiskMap()).anyTimes();
         return vm;
     }
 

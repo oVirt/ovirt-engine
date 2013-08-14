@@ -37,7 +37,7 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
                     template.setInterfaces(interfaces);
                     // add disk map
                     for (DiskImage disk : diskImages) {
-                        template.getDiskMap().put(disk.getId(), disk);
+                        template.getDiskTemplateMap().put(disk.getId(), disk);
                     }
                     templates.put(template, diskImages);
                 }

@@ -213,7 +213,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (!ensureDestinationImageMap()) {
             return false;
         }
-        storageToDisksMap = ImagesHandler.buildStorageToDiskMap(getVmTemplate().getDiskMap().values(),
+        storageToDisksMap = ImagesHandler.buildStorageToDiskMap(getVmTemplate().getDiskTemplateMap().values(),
                 diskInfoDestinationMap);
         List<Guid> storageIds = new ArrayList<Guid>();
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
@@ -277,7 +277,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 Guid storageId = getParameters().getStorageDomainId();
                 ArrayList<Guid> storageIds = new ArrayList<Guid>();
                 storageIds.add(storageId);
-                for (DiskImage image : getVmTemplate().getDiskMap().values()) {
+                for (DiskImage image : getVmTemplate().getDiskTemplateMap().values()) {
                     image.setStorageIds(storageIds);
                     diskInfoDestinationMap.put(image.getId(), image);
                 }
@@ -287,7 +287,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                         destStorages, false);
             }
         }
-        if (getVmTemplate().getDiskMap().values().size() != diskInfoDestinationMap.size()) {
+        if (getVmTemplate().getDiskTemplateMap().values().size() != diskInfoDestinationMap.size()) {
             log.errorFormat("Can not found any default active domain for one of the disks of template with id : {0}",
                     getVmTemplate().getId());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
