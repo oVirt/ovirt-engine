@@ -170,15 +170,15 @@ public class HostSetupNetworksModel extends EntityModel {
         NetworkInterfaceModel nic2 = null;
         LogicalNetworkModel network2 = null;
 
-        if (op1Type != null && op1Type.equals(NIC)) {
+        if (NIC.equals(op1Type)) {
             nic1 = nicMap.get(op1Key);
-        } else if (op1Type != null && op1Type.equals(NETWORK)) {
+        } else if (NETWORK.equals(op1Type)) {
             network1 = networkMap.get(op1Key);
         }
 
-        if (op2Type != null && op2Type.equals(NIC)) {
+        if (NIC.equals(op2Type)) {
             nic2 = nicMap.get(op2Key);
-        } else if (op2Type != null && op2Type.equals(NETWORK)) {
+        } else if (NETWORK.equals(op2Type)) {
             network2 = networkMap.get(op2Key);
         }
 

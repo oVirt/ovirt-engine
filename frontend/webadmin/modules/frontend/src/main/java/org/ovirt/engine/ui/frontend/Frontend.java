@@ -190,7 +190,7 @@ public class Frontend {
     }
 
     private static void handleNotLoggedInEvent(String errorMessage) {
-        if (errorMessage != null && errorMessage.equals("USER_IS_NOT_LOGGED_IN")) { //$NON-NLS-1$
+        if ("USER_IS_NOT_LOGGED_IN".equals(errorMessage)) { //$NON-NLS-1$
             frontendNotLoggedInEvent.raise(Frontend.class, EventArgs.Empty);
         }
     }

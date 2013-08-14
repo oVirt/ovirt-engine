@@ -98,7 +98,7 @@ public enum OsRepositoryImpl implements OsRepository {
         ArrayList<Integer> oss = new ArrayList<Integer>();
         for (int osId : getOsIds()) {
             String bus = getValueByVersion(idToUnameLookup.get(osId), "bus", null);
-            if (bus != null && bus.equalsIgnoreCase("64")) {
+            if ("64".equalsIgnoreCase(bus)) {
                 oss.add(osId);
             }
         }
