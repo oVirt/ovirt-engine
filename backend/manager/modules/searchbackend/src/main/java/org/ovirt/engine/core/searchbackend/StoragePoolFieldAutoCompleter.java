@@ -24,7 +24,7 @@ public class StoragePoolFieldAutoCompleter extends BaseConditionFieldAutoComplet
         // building the ColumnName Dict
         columnNameDict.put("NAME", "name");
         columnNameDict.put("DESCRIPTION", "description");
-        columnNameDict.put("COMMENT", "comment");
+        columnNameDict.put("COMMENT", "free_text_comment");
         columnNameDict.put("TYPE", "storage_pool_type");
         columnNameDict.put("STATUS", "status");
 
