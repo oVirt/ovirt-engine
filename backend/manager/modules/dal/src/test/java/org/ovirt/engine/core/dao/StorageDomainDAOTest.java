@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -402,9 +403,12 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     public void testRemove() {
         List<VM> vms = getDbFacade().getVmDao().getAllForStorageDomain(EXISTING_DOMAIN_ID);
         List<VmTemplate> templates = getDbFacade().getVmTemplateDao().getAllForStorageDomain(EXISTING_DOMAIN_ID);
+        BaseDisk diskImage = getDbFacade().getBaseDiskDao().get(FixturesTool.DISK_ID);
 
+        assertNotNull(diskImage);
         assertFalse(vms.isEmpty());
         assertFalse(templates.isEmpty());
+
         assertNotNull(dao.get(EXISTING_DOMAIN_ID));
 
         dao.remove(existingDomain.getId());
@@ -418,7 +422,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
         for (VmTemplate template : templates) {
             assertNull(getDbFacade().getVmTemplateDao().get(template.getId()));
         }
-
+        assertNull(getDbFacade().getBaseDiskDao().get(FixturesTool.DISK_ID));
     }
 
     @Test

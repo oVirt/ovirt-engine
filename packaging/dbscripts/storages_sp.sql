@@ -562,15 +562,15 @@ RETURNS VOID
 BEGIN
 
    BEGIN
-      -- Images residing on only the specified storage domain
-      CREATE GLOBAL TEMPORARY TABLE tt_TEMPSTORAGEDOMAINMAPTABLE AS select image_id
-         from image_storage_domain_map where storage_domain_id = v_storage_domain_id
-         except select image_id from image_storage_domain_map where storage_domain_id != v_storage_domain_id;
+      -- Creating a temporary table which will give all the images and the disks which resids on only the specified storage domain. (copied template disks on multiple storage domains will not be part of this table)
+      CREATE GLOBAL TEMPORARY TABLE tt_TEMPSTORAGEDOMAINMAPTABLE AS select image_guid as image_id,disk_id
+         from images_storage_domain_view where storage_id = v_storage_domain_id
+         except select image_guid as image_id, disk_id from images_storage_domain_view where storage_id != v_storage_domain_id;
       exception when others then
          truncate table tt_TEMPSTORAGEDOMAINMAPTABLE;
-         insert into tt_TEMPSTORAGEDOMAINMAPTABLE select image_id
-         from image_storage_domain_map where storage_domain_id = v_storage_domain_id
-         except select image_id from image_storage_domain_map where storage_domain_id != v_storage_domain_id;
+         insert into tt_TEMPSTORAGEDOMAINMAPTABLE select image_guid as image_id,disk_id
+         from images_storage_domain_view where storage_id = v_storage_domain_id
+         except select image_guid as image_id, disk_id from images_storage_domain_view where storage_id != v_storage_domain_id;
    END;
 
    BEGIN
@@ -612,6 +612,12 @@ BEGIN
    delete FROM vm_static where vm_guid in(select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
    delete FROM storage_domain_dynamic where id  = v_storage_domain_id;
    delete FROM storage_domain_static where id  = v_storage_domain_id;
+
+   -- Deletes the disks which the only storage domain they are reside on, is the storage domain.
+   DELETE FROM base_disks WHERE  disk_id IN (SELECT disk_id FROM tt_TEMPSTORAGEDOMAINMAPTABLE);
+
+   -- Deletes the disks's permissions which the only storage domain they are reside on, is the storage domain.
+   DELETE FROM permissions WHERE object_id IN (SELECT disk_id FROM tt_TEMPSTORAGEDOMAINMAPTABLE);
 
 END; $procedure$
 LANGUAGE plpgsql;
