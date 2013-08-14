@@ -88,11 +88,12 @@ public class EditNetworkModel extends NetworkModel {
                             getSelectedDc().getcompatibility_version(),
                             profileView, null, false);
 
-                    if (profileView.getNetworkQosName() != null && !profileView.getNetworkQosName().equals("")) { //$NON-NLS-1$
-                        NetworkQoS networkQoS = new NetworkQoS();
-                        networkQoS.setName(profileView.getNetworkQosName());
-                        editModel.getNetworkQoS().setSelectedItem(networkQoS);
-                    }
+                    NetworkQoS networkQoS = new NetworkQoS();
+                    networkQoS.setName(profileView.getNetworkQosName() == null
+                            ? ConstantsManager.getInstance().getConstants().unlimitedQoSTitle()
+                            : profileView.getNetworkQosName());
+                    editModel.getNetworkQoS().setSelectedItem(networkQoS);
+
                     editModel.getNetworkQoS().setIsChangable(false);
                     profilesModels.add(editModel);
                     editModel.getName().setIsChangable(false);

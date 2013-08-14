@@ -226,7 +226,10 @@ public abstract class VnicProfileModel extends Model {
         Network network = (Network) getNetwork().getSelectedItem();
         vnicProfile.setNetworkId(network != null ? network.getId() : null);
         NetworkQoS networkQoS = (NetworkQoS) getNetworkQoS().getSelectedItem();
-        vnicProfile.setNetworkQosId(networkQoS != null ? networkQoS.getId() : null);
+        vnicProfile.setNetworkQosId(networkQoS != null
+                && networkQoS.getId() != null
+                && !networkQoS.getId().equals(Guid.Empty)
+                ? networkQoS.getId() : null);
         vnicProfile.setPortMirroring((Boolean) getPortMirroring().getEntity());
 
         if (customPropertiesVisible) {
@@ -309,6 +312,10 @@ public abstract class VnicProfileModel extends Model {
             {
                 ArrayList<NetworkQoS> networkQoSes =
                         (ArrayList<NetworkQoS>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                NetworkQoS none = new NetworkQoS();
+                none.setName(ConstantsManager.getInstance().getConstants().unlimitedQoSTitle());
+                none.setId(Guid.Empty);
+                networkQoSes.add(0, none);
                 getNetworkQoS().setItems(networkQoSes);
                 setSelectedNetworkQoSId(selectedItemId);
             }
@@ -334,14 +341,15 @@ public abstract class VnicProfileModel extends Model {
     }
 
     public void setSelectedNetworkQoSId(Guid networkQoSId) {
-        getNetworkQoS().setSelectedItem(null);
-        if (getNetworkQoS().getItems() != null && networkQoSId != null) {
+        if (networkQoSId != null) {
             for (Object item : getNetworkQoS().getItems()) {
                 if (((NetworkQoS)item).getId().equals(networkQoSId)) {
                     getNetworkQoS().setSelectedItem(item);
                     break;
                 }
             }
+        } else {
+            setSelectedNetworkQoSId(Guid.Empty);
         }
     }
 }

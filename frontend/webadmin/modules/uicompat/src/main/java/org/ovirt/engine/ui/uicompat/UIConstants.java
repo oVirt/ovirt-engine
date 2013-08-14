@@ -2064,5 +2064,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Time Zone cannot be changed after the Virtual Machine is initialized.")
     String timeZoneCannotBeChangedAfterVMInit();
+
+    @DefaultStringValue("Network QoS is supported only for Data Center version 3.3 or higher")
+    String qosNotSupportedDcVersion();
+
+    @DefaultStringValue("[Unlimited]")
+    String unlimitedQoSTitle();
 }
 
