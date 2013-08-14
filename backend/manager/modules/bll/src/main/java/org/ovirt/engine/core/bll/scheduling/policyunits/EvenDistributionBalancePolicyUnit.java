@@ -38,19 +38,18 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {
-        List<VDS> relevantHosts = getVdsDao().getAllForVdsGroupWithoutMigrating(cluster.getId());
-        if (relevantHosts == null || relevantHosts.size() < 2) {
-            int hostCount = relevantHosts == null ? 0 : relevantHosts.size();
+        if (hosts == null || hosts.size() < 2) {
+            int hostCount = hosts == null ? 0 : hosts.size();
             log.debugFormat("No balancing for cluster {0}, contains only {1} host(s)", cluster.getName(), hostCount);
             return null;
         }
         // get vds that over committed for the time defined
-        List<VDS> overUtilizedHosts = getOverUtilizedHosts(relevantHosts, parameters);
+        List<VDS> overUtilizedHosts = getOverUtilizedHosts(hosts, parameters);
 
         if (overUtilizedHosts == null || overUtilizedHosts.size() == 0) {
             return null;
         }
-        List<VDS> underUtilizedHosts = getUnderUtilizedHosts(cluster, relevantHosts, parameters);
+        List<VDS> underUtilizedHosts = getUnderUtilizedHosts(cluster, hosts, parameters);
         if (underUtilizedHosts == null || underUtilizedHosts.size() == 0) {
             return null;
         }

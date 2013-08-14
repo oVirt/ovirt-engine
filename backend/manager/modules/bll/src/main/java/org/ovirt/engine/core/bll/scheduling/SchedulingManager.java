@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -173,7 +173,7 @@ public class SchedulingManager {
         clusterLockMap.putIfAbsent(cluster.getId(), new Object());
         synchronized (clusterLockMap.get(cluster.getId())) {
             List<VDS> vdsList = getVdsDAO()
-                    .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode });
+                    .getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
             updateInitialHostList(vdsList, hostBlackList, true);
             updateInitialHostList(vdsList, hostWhiteList, false);
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
@@ -227,7 +227,7 @@ public class SchedulingManager {
             Guid destVdsId,
             List<String> messages) {
         List<VDS> vdsList = getVdsDAO()
-                .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode });
+                .getAllForVdsGroupWithStatus(cluster.getId(), VDSStatus.Up);
         updateInitialHostList(vdsList, vdsBlackList, true);
         updateInitialHostList(vdsList, vdsWhiteList, false);
         ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
@@ -596,11 +596,12 @@ public class SchedulingManager {
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
             PolicyUnitImpl policyUnit = policyUnits.get(policy.getBalance());
             Pair<List<Guid>, Guid> balanceResult = null;
-            if (policyUnit.isInternal()){
-                balanceResult = internalRunBalance(policyUnit, cluster);
-            } else if (Config.GetValue(ConfigValues.ExternalSchedulerEnabled)) {
-                if (policyUnit.isEnabled()) {
-                    balanceResult = externalRunBalance(policyUnit, cluster);
+            if (policyUnit.isEnabled()) {
+                List<VDS> hosts = getVdsDAO().getAllForVdsGroupWithoutMigrating(cluster.getId());
+                if (policyUnit.isInternal()) {
+                    balanceResult = internalRunBalance(policyUnit, cluster, hosts);
+                } else if (Config.GetValue(ConfigValues.ExternalSchedulerEnabled)) {
+                    balanceResult = externalRunBalance(policyUnit, cluster, hosts);
                 }
             }
 
@@ -610,18 +611,14 @@ public class SchedulingManager {
         }
     }
 
-    private Pair<List<Guid>, Guid> internalRunBalance(PolicyUnitImpl policyUnit, VDSGroup cluster) {
-        List<VDS> hosts = getVdsDAO()
-                .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode });
+    private Pair<List<Guid>, Guid> internalRunBalance(PolicyUnitImpl policyUnit, VDSGroup cluster, List<VDS> hosts) {
         return policyUnit.balance(cluster,
                 hosts,
                 cluster.getClusterPolicyProperties(),
                 new ArrayList<String>());
     }
 
-    private Pair<List<Guid>, Guid> externalRunBalance(PolicyUnitImpl policyUnit, VDSGroup cluster){
-        List<VDS> hosts = getVdsDAO()
-                .getAllOfTypes(new VDSType[] { VDSType.VDS, VDSType.oVirtNode });
+    private Pair<List<Guid>, Guid> externalRunBalance(PolicyUnitImpl policyUnit, VDSGroup cluster, List<VDS> hosts) {
         List<Guid> hostIDs = new ArrayList<Guid>();
         for (VDS vds : hosts) {
             hostIDs.add(vds.getId());
