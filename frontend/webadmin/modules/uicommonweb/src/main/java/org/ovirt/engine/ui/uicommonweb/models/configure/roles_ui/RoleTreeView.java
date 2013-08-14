@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
@@ -14,15 +15,9 @@ public class RoleTreeView
     public static ArrayList<SelectionTreeNodeModel> getRoleTreeView(boolean isReadOnly, boolean isAdmin)
     {
         RoleNode tree = initTreeView();
-        ArrayList<ActionGroup> userActionGroups = null;
-        if (isAdmin == false)
-        {
-            userActionGroups = getUserActionGroups();
-        }
-
         ArrayList<SelectionTreeNodeModel> roleTreeView = new ArrayList<SelectionTreeNodeModel>();
-
         SelectionTreeNodeModel firstNode = null, secondNode = null, thirdNode = null;
+
         for (RoleNode first : tree.getLeafRoles())
         {
             firstNode = new SelectionTreeNodeModel();
@@ -49,18 +44,9 @@ public class RoleTreeView
                     thirdNode.setIsChangable(!isReadOnly);
                     thirdNode.setIsSelectedNullable(false);
                     thirdNode.setTooltip(third.getTooltip());
-                    if (!isAdmin)
-                    {
-                        if (userActionGroups.contains(ActionGroup.valueOf(thirdNode.getTitle())))
-                        {
-                            secondNode.getChildren().add(thirdNode);
-                        }
-                    }
-                    else
-                    {
+                    if (isAdmin || ActionGroup.valueOf(thirdNode.getTitle()).getRoleType() == RoleType.USER) {
                         secondNode.getChildren().add(thirdNode);
                     }
-
                 }
                 if (secondNode.getChildren().size() > 0)
                 {
@@ -74,42 +60,6 @@ public class RoleTreeView
         }
 
         return roleTreeView;
-    }
-
-    private static ArrayList<ActionGroup> getUserActionGroups() {
-        ArrayList<ActionGroup> array = new ArrayList<ActionGroup>();
-        array.add(ActionGroup.CREATE_VM);
-        array.add(ActionGroup.DELETE_VM);
-        array.add(ActionGroup.EDIT_VM_PROPERTIES);
-        array.add(ActionGroup.VM_BASIC_OPERATIONS);
-        array.add(ActionGroup.CHANGE_VM_CD);
-        array.add(ActionGroup.MIGRATE_VM);
-        array.add(ActionGroup.CONNECT_TO_VM);
-        array.add(ActionGroup.CONFIGURE_VM_NETWORK);
-        array.add(ActionGroup.CONFIGURE_VM_STORAGE);
-        array.add(ActionGroup.MOVE_VM);
-        array.add(ActionGroup.MANIPULATE_VM_SNAPSHOTS);
-        array.add(ActionGroup.CREATE_TEMPLATE);
-        array.add(ActionGroup.EDIT_TEMPLATE_PROPERTIES);
-        array.add(ActionGroup.DELETE_TEMPLATE);
-        array.add(ActionGroup.COPY_TEMPLATE);
-        array.add(ActionGroup.CONFIGURE_TEMPLATE_NETWORK);
-        array.add(ActionGroup.CREATE_VM_POOL);
-        array.add(ActionGroup.EDIT_VM_POOL_CONFIGURATION);
-        array.add(ActionGroup.DELETE_VM_POOL);
-        array.add(ActionGroup.VM_POOL_BASIC_OPERATIONS);
-        array.add(ActionGroup.MANIPULATE_PERMISSIONS);
-        array.add(ActionGroup.CREATE_DISK);
-        array.add(ActionGroup.ATTACH_DISK);
-        array.add(ActionGroup.DELETE_DISK);
-        array.add(ActionGroup.CONFIGURE_DISK_STORAGE);
-        array.add(ActionGroup.EDIT_DISK_PROPERTIES);
-        array.add(ActionGroup.LOGIN);
-        array.add(ActionGroup.CHANGE_VM_CUSTOM_PROPERTIES);
-        array.add(ActionGroup.EDIT_ADMIN_VM_PROPERTIES);
-        array.add(ActionGroup.RECONNECT_TO_VM);
-        array.add(ActionGroup.EDIT_ADMIN_TEMPLATE_PROPERTIES);
-        return array;
     }
 
     private static RoleNode initTreeView()
