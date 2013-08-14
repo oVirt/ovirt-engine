@@ -172,9 +172,7 @@ public class VmDeviceCommonUtils {
      */
     private static int setCDBootOrder(List<VmDevice> devices, int bootOrder) {
         for (VmDevice device : devices) {
-            if (device.getType() == VmDeviceGeneralType.DISK
-                    && device.getDevice().equals(
-                            VmDeviceType.CDROM.getName())) {
+            if (isCD(device)) {
                 if (device.getIsPlugged()) {
                     device.setBootOrder(++bootOrder);
                 }
