@@ -83,8 +83,8 @@ class Plugin(plugin.PluginBase):
         ] is None:
             self.dialog.note(
                 _(
-                    'Setup can configure the default welcome page of the '
-                    'web server to present ovirt-engine application. '
+                    'Setup can configure the default page of the '
+                    'web server to present the application home page. '
                     'This may conflict with existing applications.'
                 )
             )
@@ -94,8 +94,8 @@ class Plugin(plugin.PluginBase):
                 dialog=self.dialog,
                 name='OVESETUP_APACHE_CONFIG_ROOT_REDIRECTION',
                 note=_(
-                    'Do you wish to set ovirt-engine as default web server '
-                    'page? (@VALUES@) [@DEFAULT@]: '
+                    'Do you wish to set the application as the default page '
+                    'of the web server? (@VALUES@) [@DEFAULT@]: '
                 ),
                 prompt=True,
                 default=self.environment[
