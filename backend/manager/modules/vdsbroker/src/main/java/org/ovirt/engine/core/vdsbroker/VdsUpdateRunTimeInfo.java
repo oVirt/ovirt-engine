@@ -1978,7 +1978,8 @@ public class VdsUpdateRunTimeInfo {
                 Disk disk = getDbFacade().getDiskDao().get(imageDynamic.getId());
                 // We have disk_id statistics, which is good, but disk_image_dynamic table contains image_id, so we
                 // update for the AI.
-                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                // We also check if the disk is null, as, for external VMs the disk is not in the database
+                if (disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                     DiskImage diskImage = (DiskImage) disk;
                     Guid activeImageId = diskImage.getImageId();
                     imageDynamic.setId(activeImageId);
