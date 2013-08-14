@@ -106,8 +106,7 @@ public enum ConfigurationValues {
     QoSOutboundBurstDefaultValue,
     MaxVmNameLengthWindows(ConfigAuthType.User),
     MaxVmNameLengthNonWindows(ConfigAuthType.User),
-    AttestationServer,
-    NetworkQosSupported
+    AttestationServer
     ;
 
     public static enum ConfigAuthType {

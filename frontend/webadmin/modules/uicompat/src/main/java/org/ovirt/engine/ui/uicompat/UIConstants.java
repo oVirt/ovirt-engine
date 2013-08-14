@@ -2050,6 +2050,4 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Cannot edit name in tree context")
     String cannotEditNameInTreeContext();
 
-    @DefaultStringValue("Network QoS is supported only for Data Center version 3.3 or higher")
-    String qosNotSupportedDcVersion();
 }
