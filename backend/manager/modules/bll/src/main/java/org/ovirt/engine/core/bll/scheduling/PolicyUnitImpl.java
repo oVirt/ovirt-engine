@@ -9,7 +9,6 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
-import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationDomainPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NoneBalancePolicyUnit;
@@ -36,8 +35,6 @@ public class PolicyUnitImpl extends PolicyUnit {
         switch (policyUnit.getName()) {
         case "Migration":
             return new MigrationPolicyUnit(policyUnit);
-        case "MigrationDomain":
-            return new MigrationDomainPolicyUnit(policyUnit);
         case "PinToHost":
             return new PinToHostPolicyUnit(policyUnit);
         case "CPU":
