@@ -1,8 +1,15 @@
 package org.ovirt.engine.core.config;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
+import javax.xml.parsers.FactoryConfigurationError;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.apache.log4j.xml.DOMConfigurator;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
 import org.ovirt.engine.core.tools.ToolConsole;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
@@ -45,12 +52,29 @@ public class EngineConfig {
     }
 
     /**
+     * Initializes logging configuration
+     */
+    private static void initLogging() {
+        String cfgFile = System.getProperty("log4j.configuration");
+        if (StringUtils.isNotBlank(cfgFile)) {
+            try {
+                URL url = new URL(cfgFile);
+                LogManager.resetConfiguration();
+                DOMConfigurator.configure(url);
+            } catch (FactoryConfigurationError | MalformedURLException ex) {
+                System.out.println("Cannot configure logging: " + ex.getMessage());
+            }
+        }
+    }
+
+    /**
      * The main method, instantiates the parser and executes.
      *
      * @param args
      *            The arguments given by the user.
      */
     public static void main(String... args) {
+        initLogging();
         try {
             getInstance().setParser(new EngineConfigCLIParser());
             getInstance().setUpAndExecute(args);
