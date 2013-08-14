@@ -36,7 +36,7 @@ public class SubnetMaskValidation implements IValidation
         }
 
         ValidationResult result = new ValidationResult();
-        if (value != null && value instanceof String) {
+        if (value instanceof String) {
             result.setSuccess(validateNetMask((String) value));
             result.setReasons(reasons);
         }

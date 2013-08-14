@@ -64,7 +64,7 @@ public class RemoveVmFromPoolRunner extends MultipleActionsRunner {
         List<VdcActionParametersBase> parameters = getParameters();
         if (parameters != null && parameters.size() != 0) {
             VdcActionParametersBase param = parameters.get(0);
-            if (param != null && param instanceof RemoveVmFromPoolParameters) {
+            if (param instanceof RemoveVmFromPoolParameters) {
                 return ((RemoveVmFromPoolParameters) param);
             }
         }

@@ -66,7 +66,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
                 } catch (RuntimeException ex) {
                     returnValue.setSucceeded(false);
                     Throwable th = ex instanceof VdcBLLException ? ex : ex.getCause();
-                    if (th != null && th instanceof VdcBLLException) {
+                    if (th instanceof VdcBLLException) {
                         VdcBLLException vdcExc = (VdcBLLException) th;
                         if (vdcExc.getErrorCode() != null) {
                             returnValue.setExceptionString(vdcExc.getErrorCode().toString());

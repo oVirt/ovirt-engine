@@ -43,7 +43,7 @@ public class ValidationError {
 
     @Override
     public boolean equals(Object other) {
-        if (other != null && other instanceof ValidationError) {
+        if (other instanceof ValidationError) {
             ValidationError otherError = (ValidationError) other;
             return keyName.equals(otherError.getKeyName()) && reason == otherError.getReason();
         }

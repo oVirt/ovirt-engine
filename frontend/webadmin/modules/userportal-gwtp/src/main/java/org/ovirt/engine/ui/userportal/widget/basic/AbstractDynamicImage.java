@@ -45,7 +45,7 @@ public abstract class AbstractDynamicImage<T, R extends ClientBundleWithLookup> 
 
     private ImageResource getImage(T value) {
         ResourcePrototype resource = resources.getResource(imageName(value));
-        if (resource == null || !(resource instanceof ImageResource)) {
+        if (!(resource instanceof ImageResource)) {
             return (ImageResource) resources.getResource(defaultImageName(value));
         }
 

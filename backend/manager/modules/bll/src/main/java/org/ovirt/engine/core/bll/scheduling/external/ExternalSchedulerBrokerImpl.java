@@ -64,7 +64,6 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
         return retValue;
     }
 
-
     @Override
     public List<Guid> runFilters(List<String> filterNames,
             List<Guid> hostIDs,
@@ -104,7 +103,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
     }
 
     private List<Guid> parseFilterResults(Object result) {
-        if (result == null || !(result instanceof Object[])) {
+        if (!(result instanceof Object[])) {
             log.error("External scheduler error, malformed filter results");
             return null;
         }
@@ -161,7 +160,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
     }
 
     private List<Pair<Guid, Integer>> parseScoreResults(Object result) {
-        if (result == null || !(result instanceof Object[])) {
+        if (!(result instanceof Object[])) {
             log.error("External scheduler error, malformed score results");
             return null;
         }
@@ -215,7 +214,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
     }
 
     private Pair<List<Guid>, Guid> parseBalanceResults(Object result) {
-        if (result == null || !(result instanceof Object[])) {
+        if (!(result instanceof Object[])) {
             log.error("External scheduler error, malformed balance results");
             return null;
         }

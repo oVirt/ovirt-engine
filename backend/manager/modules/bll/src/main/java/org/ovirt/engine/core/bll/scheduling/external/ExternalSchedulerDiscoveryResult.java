@@ -27,7 +27,7 @@ public class ExternalSchedulerDiscoveryResult {
 
     public boolean populate(Object xmlRpcRawResult) {
         try {
-        if (xmlRpcRawResult == null || !(xmlRpcRawResult instanceof HashMap)) {
+        if (!(xmlRpcRawResult instanceof HashMap)) {
             log.error("External scheduler error, malformed discover results");
             return false;
         }

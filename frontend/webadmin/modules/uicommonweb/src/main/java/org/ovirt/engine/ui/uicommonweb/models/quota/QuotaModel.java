@@ -459,7 +459,7 @@ public class QuotaModel extends EntityModel {
         if (entity instanceof Integer) {
             return (Integer) entity;
         }
-        if (entity == null || !(entity instanceof String)) {
+        if (!(entity instanceof String)) {
             return null;
         }
         String text = (String) entity;
