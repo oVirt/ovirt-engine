@@ -1622,14 +1622,24 @@ public class VdsUpdateRunTimeInfo {
                     vmStatic.setOrigin(OriginType.EXTERNAL);
                 }
 
-                vmStatic.setNumOfSockets(Integer.parseInt((String) vmInfo.get(VdsProperties.num_of_cpus)));
-                vmStatic.setMemSizeMb(Integer.parseInt((String) vmInfo.get(VdsProperties.mem_size_mb)));
+                vmStatic.setNumOfSockets(parseIntVdsProperty(vmInfo.get(VdsProperties.num_of_cpus)));
+                vmStatic.setMemSizeMb(parseIntVdsProperty(vmInfo.get(VdsProperties.mem_size_mb)));
+
                 _externalVmsToAdd.add(vmStatic);
                 log.infoFormat("Importing VM {0} as {1}, as it is running on the on Host, but does not exist in the engine.", vmNameOnHost, vmStatic.getName());
             }
         }
     }
 
+    // Some properties were changed recently from String to Integer
+    // This method checks what type is the property, and returns int
+    private int parseIntVdsProperty(Object vdsProperty) {
+        if (vdsProperty instanceof Integer) {
+            return (Integer) vdsProperty;
+        } else {
+            return Integer.parseInt((String) vdsProperty);
+        }
+    }
 
     private void updateRepository(List<VM> running) {
         for (VmInternalData vmInternalData : _runningVms.values()) {
