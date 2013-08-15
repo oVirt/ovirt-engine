@@ -106,8 +106,8 @@ The branding directory is treated as a standard conf.d, in which directories
 are sorted by name, each package is read by order and overrides
 the previous ones.
 
-MAINTENANCE
------------
+MAINTENANCE - CSS
+-----------------
 
 To expose CSS class defined in ui.xml template via <ui:style> element:
 1. rename the given class to use obrand_ prefix and mark it as @external,
@@ -116,4 +116,35 @@ To expose CSS class defined in ui.xml template via <ui:style> element:
    packaging/branding/ovirt.brand directory
 3. when styling <g:Image> or other widgets that work with ImageResource,
    specify url="clear.cache.gif" to avoid broken images
+
+MAINTENANCE - ADDING A BRANDED MESSAGE
+--------------------------------------
+
+All branded messages feed into the application via the host page and then via the
+ApplicationDynamicMessages classes. To added a new branded message to the application:
+
+1. add a property to messages.properties in the form of
+    obrand.webadmin.my_new_message=BrandX Message
+    obrand.userportal.my_new_message=BrandX Message
+  You'll need to add one for both webadmin and userportal if you want the message
+  exposed to both applications.
+2. in DynamicMessages.java, add a key to the DynamicMessageKey enum for your property.
+3. in DynamicMessages.java, add a getter for your property. Use the existing getters
+  as examples.
+4a. If the message will be exposed to webadmin, add a constant to the webadmin copy
+  of ApplicationConstants.java. This will be used as a fallback if the branding files
+  are missing. Example:
+    @DefaultStringValue("BrandX Message")
+    String myNewMessage();
+4b. If the message will be exposed to webadmin, repeat 4a for userportal's copy of
+  ApplicationConstants.java.
+5a. If the message will be exposed to webadmin, add an addFallback() call in webadmin's
+  copy of ApplicationDynamicMessages.java. Use existing calls as examples.
+5b. If the message will be exposed to webadmin, repeat 5a for userportal's copy of
+  ApplicationDynamicMessages.java.
+
+You can now use an injected ApplicationDynamicMessages to access the branded messages.
+Example:
+  Anchor x = new Anchor(dynamicMessages.myNewMessage());
+See HeaderView.java for a real-world example.
 
