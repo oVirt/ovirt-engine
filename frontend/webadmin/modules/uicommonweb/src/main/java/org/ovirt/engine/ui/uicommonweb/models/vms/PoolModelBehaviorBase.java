@@ -69,8 +69,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                                 model.setDataCentersAndClusters(model,
                                         dataCenters,
                                         (List<VDSGroup>) returnValue, null);
-
-                                initTemplate();
                                 initCdImage();
                                 getPoolModelBehaviorInitializedEvent().raise(this, EventArgs.Empty);
                             }
@@ -199,6 +197,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         }
         updateMemoryBalloon();
         updateCpuSharesAvailability();
+        updateTemplate();
     }
 
     @Override
@@ -226,7 +225,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                 .setEntity((int) ((Integer) getModel().getMemSize().getEntity() * overCommitFactor));
     }
 
-    private void initTemplate()
+    private void updateTemplate()
     {
         StoragePool dataCenter = getModel().getSelectedDataCenter();
         if (dataCenter == null) {

@@ -247,11 +247,13 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     }
 
     public void setValue(T value) {
-        super.setValue(asValidValue(value));
+        addToValidValuesIfNeeded(value);
+        super.setValue(value);
     }
 
     public void setValue(T value, boolean fireEvents) {
-        super.setValue(asValidValue(value), fireEvents);
+        addToValidValuesIfNeeded(value);
+        super.setValue(value, fireEvents);
     }
 
     @Override
@@ -263,24 +265,18 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         return null;
     }
 
-    private T asValidValue(T valueCandidate) {
-        // not yet inited - accept everything
-        if (acceptableValues.size() == 0) {
-            return valueCandidate;
+    private void addToValidValuesIfNeeded(T value) {
+        if (!acceptableValues.contains(value)) {
+            acceptableValues.add(value);
         }
 
-        // it is one of the correct values
-        if (acceptableValues.contains(valueCandidate)) {
-            return valueCandidate;
-        }
-
-        // not correct value - return to the previous one
-        return getValue();
     }
 
     @Override
     public void setAcceptableValues(Collection<T> acceptableValues) {
         this.acceptableValues = acceptableValues;
+        T selected = getValue();
+        addToValidValuesIfNeeded(selected);
         RenderableSuggestOracle<T> suggestOracle = (RenderableSuggestOracle<T>) suggestBox.getSuggestOracle();
         suggestOracle.setData(acceptableValues);
     }
