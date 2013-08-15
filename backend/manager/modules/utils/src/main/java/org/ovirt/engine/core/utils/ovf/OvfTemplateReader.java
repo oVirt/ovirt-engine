@@ -7,11 +7,13 @@ import java.util.Date;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
@@ -147,7 +149,15 @@ public class OvfTemplateReader extends OvfReader {
                 break;
             // OTHER
             case 0:
-                readVmDevice(node, _vmTemplate, Guid.newGuid(), Boolean.FALSE);
+                boolean addAsManaged = false;
+                if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
+                        && StringUtils.isNotEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText)) {
+                    VmDeviceGeneralType type = VmDeviceGeneralType.forValue(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).InnerText);
+                    String device = node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).InnerText;
+                    // special devices are treated as managed devices but still have the OTHER OVF ResourceType
+                    addAsManaged = VmDeviceCommonUtils.isSpecialDevice(device, type);
+                }
+                readVmDevice(node, _vmTemplate, Guid.newGuid(), addAsManaged);
                 break;
 
             }
