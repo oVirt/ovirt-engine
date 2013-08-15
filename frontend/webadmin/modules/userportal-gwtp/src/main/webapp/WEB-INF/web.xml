@@ -7,6 +7,25 @@
     <filter-mapping>
         <filter-name>LocaleFilter</filter-name>
         <url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>LocaleFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>BrandingFilter</filter-name>
+        <url-pattern>/org.ovirt.engine.ui.userportal.UserPortal/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>BrandingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
     <filter-mapping>
@@ -28,6 +47,11 @@
     <servlet-mapping>
         <servlet-name>BrandingServlet</servlet-name>
         <url-pattern>/theme/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>PageNotFoundServlet</servlet-name>
+        <url-pattern>/404.html</url-pattern>
     </servlet-mapping>
 
     <!-- Default page to serve -->

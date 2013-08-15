@@ -45,6 +45,12 @@
         <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
     </filter>
 
+    <!-- Branding Filter, passes branding information to jsps -->
+    <filter>
+        <filter-name>BrandingFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.utils.servlet.BrandingFilter</filter-class>
+    </filter>
+
     <servlet>
         <servlet-name>UserPortalHostPageServlet</servlet-name>
         <servlet-class>org.ovirt.engine.ui.frontend.server.gwt.UserPortalHostPageServlet</servlet-class>
@@ -68,5 +74,11 @@
     <servlet>
         <servlet-name>BrandingServlet</servlet-name>
         <servlet-class>org.ovirt.engine.core.utils.branding.BrandingServlet</servlet-class>
+    </servlet>
+
+    <!-- PageNotFound Servlet -->
+    <servlet>
+        <servlet-name>PageNotFoundServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.utils.servlet.PageNotFoundServlet</servlet-class>
     </servlet>
 </web-fragment>

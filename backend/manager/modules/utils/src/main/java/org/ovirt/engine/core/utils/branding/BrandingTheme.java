@@ -34,7 +34,9 @@ public class BrandingTheme {
         /** User portal application. */
         USER_PORTAL("userportal", "user_portal_css"), //$NON-NLS-1$ //$NON-NLS-2$
         /** Welcome page. */
-        WELCOME("welcome", "welcome_css"); //$NON-NLS-1 //$NON-NLS-2$
+        WELCOME("welcome", "welcome_css"), //$NON-NLS-1 //$NON-NLS-2$
+        /** Page not found page. */
+        PAGE_NOT_FOUND("pagenotfound", "welcome_css"); //$NON-NLS-1 //$NON-NLS-2$
 
         /**
          * Prefix associated with application type.

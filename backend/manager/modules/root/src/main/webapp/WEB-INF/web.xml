@@ -245,14 +245,51 @@
     <url-pattern>/ovirt-engine-theme/*</url-pattern>
   </servlet-mapping>
 
+  <!-- PageNotFound Servlet -->
+  <servlet>
+    <servlet-name>PageNotFoundServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.core.utils.servlet.PageNotFoundServlet</servlet-class>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>PageNotFoundServlet</servlet-name>
+    <url-pattern>/404.html</url-pattern>
+  </servlet-mapping>
+
   <!-- Filters -->
+  <!-- Locale Filter, determines the user locale -->
   <filter>
     <filter-name>LocaleFilter</filter-name>
     <filter-class>org.ovirt.engine.core.utils.servlet.LocaleFilter</filter-class>
   </filter>
+  <!-- Branding Filter, passes branding information to jsps -->
+  <filter>
+    <filter-name>BrandingFilter</filter-name>
+    <filter-class>org.ovirt.engine.core.utils.servlet.BrandingFilter</filter-class>
+  </filter>
+
   <filter-mapping>
     <filter-name>LocaleFilter</filter-name>
     <url-pattern>/ovirt-engine</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>LocaleFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>ERROR</dispatcher>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>BrandingFilter</filter-name>
+    <url-pattern>/ovirt-engine</url-pattern>
+    <dispatcher>REQUEST</dispatcher>
+  </filter-mapping>
+
+  <filter-mapping>
+    <filter-name>BrandingFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+    <dispatcher>ERROR</dispatcher>
   </filter-mapping>
 
   <!-- Go to the index when a page is not found (preserving the

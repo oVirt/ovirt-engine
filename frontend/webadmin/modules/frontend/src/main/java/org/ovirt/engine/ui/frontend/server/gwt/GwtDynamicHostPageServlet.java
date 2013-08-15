@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.frontend.server.gwt;
 import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.Locale;
 
 import javax.ejb.EJB;
@@ -24,7 +23,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.utils.branding.BrandingManager;
-import org.ovirt.engine.core.utils.branding.BrandingTheme;
 import org.ovirt.engine.core.utils.branding.BrandingTheme.ApplicationType;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
@@ -99,13 +97,9 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
     @Override
     protected void doGet(final HttpServletRequest request, final HttpServletResponse response) throws IOException,
         ServletException {
-        List<BrandingTheme> brandingThemes;
 
         // Set attribute for selector script
         request.setAttribute(MD5Attributes.ATTR_SELECTOR_SCRIPT.getKey(), getSelectorScriptName());
-        // Set attribute for themes.
-        brandingThemes = brandingManager.getBrandingThemes();
-        request.setAttribute(MD5Attributes.ATTR_STYLES.getKey(), brandingThemes);
         // Set the messages that need to be replaced.
         request.setAttribute(MD5Attributes.ATTR_MESSAGES.getKey(), getBrandingMessages(getLocaleFromRequest(request)));
         // Set class of servlet

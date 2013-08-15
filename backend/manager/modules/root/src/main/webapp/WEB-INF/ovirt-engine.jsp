@@ -6,7 +6,7 @@
 <html>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-    <title><fmt:message key="title" /></title>
+    <title><fmt:message key="welcome.title" /></title>
     <c:if test="${requestScope['brandingStyle'] != null}">
         <c:forEach items="${requestScope['brandingStyle']}" var="theme">
             <c:if test="${theme.getThemeStyleSheet(requestScope['applicationType']) != null}">
@@ -20,7 +20,7 @@
     <div>
         <div class="obrand_left">
             <div class="obrand_header_nav">
-                <fmt:message key="header.main" />
+                <fmt:message key="welcome.header.main" />
             </div>
         </div>
         <div class="obrand_right">
@@ -29,18 +29,18 @@
         </div>
     </div>
     <div class="obrand_main">
-        <div class="obrand_welcome"><fmt:message key="welcome.text" /></div>
+        <div class="obrand_welcome"><fmt:message key="welcome.welcome.text" /></div>
         <div class="obrand_welcome">
              <script type="text/JavaScript">
             <!--
-            document.write('<fmt:message key="version"><fmt:param value="${requestScope[\'version\']}" /> </fmt:message>')
+            document.write('<fmt:message key="welcome.version"><fmt:param value="${requestScope[\'version\']}" /> </fmt:message>')
             //-->
             </script>
         </div>
 
         <noscript id="warningMessage" class="obrand_warningMessage">
-            <b><fmt:message key="browser.javascript1" /></b>
-            <fmt:message key="browser.javascript2" />
+            <b><fmt:message key="welcome.browser.javascript1" /></b>
+            <fmt:message key="welcome.browser.javascript2" />
         </noscript>
         <div id='dynamicLinksSection' style="display: none;">
             ${requestScope['sections'].toString()}

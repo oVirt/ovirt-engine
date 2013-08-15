@@ -115,8 +115,6 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
                 anyString());
         verify(mockRequest, never()).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_USER_INFO.getKey()),
                 any(ObjectNode.class));
-        verify(mockRequest).setAttribute(GwtDynamicHostPageServlet.MD5Attributes.ATTR_STYLES.getKey(),
-                new ArrayList<BrandingTheme>());
         verify(mockRequest).setAttribute(GwtDynamicHostPageServlet.MD5Attributes.ATTR_MESSAGES.getKey(),
                 null); //$NON-NLS-1$
     }
@@ -133,8 +131,6 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
                 anyString());
         verify(mockRequest).setAttribute(eq(GwtDynamicHostPageServlet.MD5Attributes.ATTR_USER_INFO.getKey()),
                 any(ObjectNode.class));
-        verify(mockRequest).setAttribute(GwtDynamicHostPageServlet.MD5Attributes.ATTR_STYLES.getKey(),
-                new ArrayList<BrandingTheme>());
         verify(mockRequest).setAttribute(GwtDynamicHostPageServlet.MD5Attributes.ATTR_MESSAGES.getKey(),
                 null); //$NON-NLS-1$
     }
