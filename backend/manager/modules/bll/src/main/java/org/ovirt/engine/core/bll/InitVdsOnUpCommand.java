@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerInfo;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
@@ -216,17 +215,15 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         EventResult result = new EventResult(true, EventType.VDSCONNECTTOPOOL);
         StoragePool storagePool = getStoragePoolDAO().get(storagePoolId);
         StorageDomain masterDomain = getStorageDomainDAO().getStorageDomainByTypeAndPool(storagePoolId, StorageDomainType.Master);
-        boolean shouldProceedVdsStats = true;
+        boolean masterDomainInactiveOrUnknown = masterDomain.getStatus() == StorageDomainStatus.InActive
+                || masterDomain.getStatus() == StorageDomainStatus.Unknown;
         try {
             runVdsCommand(VDSCommandType.ConnectStoragePool,
                     new ConnectStoragePoolVDSCommandParameters(vds.getId(), storagePoolId,
                             vds.getVdsSpmId(), masterDomain.getId(),
                             storagePool.getmaster_domain_version()));
         } catch (VdcBLLException e) {
-            if (e.getErrorCode() != VdcBllErrors.VDS_NETWORK_ERROR &&
-                    (masterDomain.getStatus() == StorageDomainStatus.InActive
-                    || masterDomain.getStatus() == StorageDomainStatus.Unknown)) {
-                shouldProceedVdsStats = false;
+            if (masterDomainInactiveOrUnknown) {
                 log.infoFormat("Could not connect host {0} to pool {1}, as the master domain is in inactive/unknown status - not failing the operation",
                         vds.getName(),
                         storagePool
@@ -238,8 +235,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             }
         }
 
-        if (result.isSuccess() && shouldProceedVdsStats) {
-            result.setSuccess(proceedVdsStats());
+        if (result.isSuccess()) {
+            result.setSuccess(proceedVdsStats(!masterDomainInactiveOrUnknown));
             if (!result.isSuccess()) {
                 AuditLogDirector.log(new AuditLogableBase(getVdsId()),
                         AuditLogType.VDS_STORAGE_VDS_STATS_FAILED);
@@ -263,19 +260,23 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         return returnValue;
     }
 
-    protected boolean proceedVdsStats() {
+    protected boolean proceedVdsStats(boolean shouldCheckReportedDomains) {
         boolean returnValue = true;
         try {
             runVdsCommand(VDSCommandType.GetStats, new VdsIdAndVdsVDSCommandParametersBase(getVds()));
-            List<Guid> problematicDomainsIds = IrsBrokerCommand.fetchDomainsReportedAsProblematic(getVds().getStoragePoolId(), getVds().getDomains());
-            for (Guid domainId : problematicDomainsIds) {
-                StorageDomainStatic domainInfo = getStorageDomainStaticDAO().get(domainId);
-                log.errorFormat("Storage Domain {0} of pool {1} is in problem in host {2}",
-                        domainInfo != null ? domainInfo.getStorageName() : domainId,
-                        getStoragePool().getName(),
-                        getVds().getName());
-                if (domainInfo == null || domainInfo.getStorageDomainType().isDataDomain()) {
-                    returnValue = false;
+            if (shouldCheckReportedDomains) {
+                List<Guid> problematicDomainsIds =
+                        IrsBrokerCommand.fetchDomainsReportedAsProblematic(getVds().getStoragePoolId(),
+                                getVds().getDomains());
+                for (Guid domainId : problematicDomainsIds) {
+                    StorageDomainStatic domainInfo = getStorageDomainStaticDAO().get(domainId);
+                    log.errorFormat("Storage Domain {0} of pool {1} is in problem in host {2}",
+                            domainInfo != null ? domainInfo.getStorageName() : domainId,
+                            getStoragePool().getName(),
+                            getVds().getName());
+                    if (domainInfo == null || domainInfo.getStorageDomainType().isDataDomain()) {
+                        returnValue = false;
+                    }
                 }
             }
         } catch (VdcBLLException e) {
