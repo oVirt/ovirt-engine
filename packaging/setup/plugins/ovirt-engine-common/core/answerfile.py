@@ -19,6 +19,8 @@
 """Answer file plugin."""
 
 
+import os
+import datetime
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -50,36 +52,55 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
         priority=plugin.Stages.PRIORITY_LAST,
-        condition=lambda self: self.environment[
-            osetupcons.CoreEnv.ANSWER_FILE
-        ] is not None
     )
     def _closeup(self):
-        self.logger.info(
-            _("Generating answer file '{name}'").format(
-                name=self.environment[osetupcons.CoreEnv.ANSWER_FILE],
+        answers = []
+        answers.append(
+            os.path.join(
+                osetupcons.FileLocations.OVIRT_SETUP_ANSWERS_DIR,
+                '%s-%s.conf' % (
+                    datetime.datetime.now().strftime('%Y%m%d%H%M%S'),
+                    self.environment[osetupcons.CoreEnv.ACTION],
+                ),
             )
         )
-        with open(
-            self.resolveFile(self.environment[osetupcons.CoreEnv.ANSWER_FILE]),
-            'w'
-        ) as f:
-            f.write('[environment:default]\n')
-            for c in osetupcons.__dict__['__osetup_attrs__']:
-                for k in c.__dict__.values():
-                    if hasattr(k, '__osetup_attrs__'):
-                        if k.__osetup_attrs__['answerfile']:
-                            k = k.fget(None)
-                            if k in self.environment:
-                                v = self.environment[k]
-                                f.write(
-                                    '%s=%s:%s\n' % (
-                                        k,
-                                        common.typeName(v),
-                                        '\n'.join(v) if isinstance(v, list)
-                                        else v,
+        if self.environment[osetupcons.CoreEnv.ANSWER_FILE] is not None:
+            answers.append(
+                self.environment[osetupcons.CoreEnv.ANSWER_FILE]
+            )
+
+        for answer in answers:
+            self.logger.info(
+                _("Generating answer file '{name}'").format(
+                    name=answer,
+                )
+            )
+            with open(answer, 'w') as f:
+                f.write(
+                    (
+                        '# action=%s\n'
+                        '[environment:default]\n'
+                    ) % (
+                        self.environment[
+                            osetupcons.CoreEnv.ACTION
+                        ],
+                    )
+                )
+                for c in osetupcons.__dict__['__osetup_attrs__']:
+                    for k in c.__dict__.values():
+                        if hasattr(k, '__osetup_attrs__'):
+                            if k.__osetup_attrs__['answerfile']:
+                                k = k.fget(None)
+                                if k in self.environment:
+                                    v = self.environment[k]
+                                    f.write(
+                                        '%s=%s:%s\n' % (
+                                            k,
+                                            common.typeName(v),
+                                            '\n'.join(v) if isinstance(v, list)
+                                            else v,
+                                        )
                                     )
-                                )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
