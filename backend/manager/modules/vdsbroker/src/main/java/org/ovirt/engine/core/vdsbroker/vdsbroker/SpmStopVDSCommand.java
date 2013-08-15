@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.HashMap;
+
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.VDSError;
@@ -27,12 +29,18 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                             .getInstance()
                             .runVdsCommand(VDSCommandType.HSMGetAllTasksStatuses,
                                     new VdsIdVDSCommandParametersBase(getVds().getId()));
-                    performSpmStop =
-                            vdsReturnValue.getReturnValue() != null ? ((java.util.HashMap<Guid, AsyncTaskStatus>) vdsReturnValue.getReturnValue()).isEmpty()
-                                    : true;
+
+                    if (isNotSPM(vdsReturnValue)) {
+                        return;
+                    }
+
                     getVDSReturnValue().setSucceeded(vdsReturnValue.getSucceeded());
                     getVDSReturnValue().setVdsError(vdsReturnValue.getVdsError());
-                } catch (java.lang.Exception e2) {
+
+                    if (vdsReturnValue.getReturnValue() != null) {
+                        performSpmStop = ((HashMap<Guid, AsyncTaskStatus>) vdsReturnValue.getReturnValue()).isEmpty();
+                    }
+                } catch (Exception e) {
                     log.infoFormat("SpmStopVDSCommand::Could not get tasks on vds {0} stopping SPM",
                             getVds().getName());
                 }
@@ -78,6 +86,11 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
             vdsStatus = getVds().getPreviousStatus();
         }
         return vdsStatus != VDSStatus.NonResponsive && getVds().getStatus() != VDSStatus.Connecting;
+    }
+
+    private boolean isNotSPM(VDSReturnValue returnValue) {
+        return returnValue.getVdsError() != null &&
+                returnValue.getVdsError().getCode() == VdcBllErrors.SpmStatusError;
     }
 
     @Override
