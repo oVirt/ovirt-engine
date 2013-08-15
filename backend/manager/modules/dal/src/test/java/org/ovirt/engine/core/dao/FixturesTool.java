@@ -256,6 +256,17 @@ public class FixturesTool {
     protected static final Guid FLOATING_LUN_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a37");
 
     /**
+     * Predefined disk id based on LUN for testing.<BR/>
+     * LUN ID: 1IET_00180002
+     */
+    protected static final Guid LUN_DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a41");
+
+    /**
+     * Predefined LUN ID
+     */
+    protected static final String LUN_ID_FOR_DISK = "1IET_00180002";
+
+    /**
      * Predefined boot LUN disk attached to VM_RHEL5_POOL_57
      */
     protected static final Guid BOOTABLE_DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a40");

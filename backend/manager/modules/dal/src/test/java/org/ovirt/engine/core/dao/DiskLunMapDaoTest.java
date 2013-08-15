@@ -14,7 +14,7 @@ import org.ovirt.engine.core.utils.RandomUtils;
 public class DiskLunMapDaoTest extends BaseGenericDaoTestCase<DiskLunMapId, DiskLunMap, DiskLunMapDao> {
 
     private static final DiskLunMapId EXISTING_DISK_LUN_MAP_ID =
-            new DiskLunMapId(new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a35"), "1IET_00180002");
+            new DiskLunMapId(FixturesTool.LUN_DISK_ID, FixturesTool.LUN_ID_FOR_DISK);
     protected static final int TOTAL_DISK_LUN_MAPS = 3;
 
     @Override

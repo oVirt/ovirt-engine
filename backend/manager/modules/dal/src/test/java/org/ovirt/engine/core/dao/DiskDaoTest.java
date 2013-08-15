@@ -199,7 +199,8 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
      *            The result to check
      */
     private static void assertPluggedGetAllForVMResult(List<Disk> disks) {
-        assertEquals("VM should have only one plugged disk", 1, disks.size());
+        Integer numberOfDisks = 2;
+        assertEquals("VM should have " + numberOfDisks + " plugged disk", numberOfDisks.intValue(), disks.size());
     }
 
     /**
