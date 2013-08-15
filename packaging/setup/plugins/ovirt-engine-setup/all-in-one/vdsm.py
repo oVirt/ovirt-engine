@@ -52,9 +52,6 @@ class Plugin(plugin.PluginBase):
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._enabled = False
-        self._version = distutils.version.LooseVersion(
-            osetupconfig.PACKAGE_VERSION
-        ).version
 
     def _waitVDSMHostUp(self, engine_api, host):
         self.logger.info(_(
@@ -194,9 +191,24 @@ class Plugin(plugin.PluginBase):
             password=self.environment[osetupcons.ConfigEnv.ADMIN_PASSWORD],
             ca_file=osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
         )
+
+        SupportedClusterLevels = self.environment[
+            osetupcons.DBEnv.STATEMENT
+        ].getVdcOption(name='SupportedClusterLevels')
+        self.logger.debug(
+            'SupportedClusterLevels [{levels}], '
+            'PACKAGE_VERSION [{pv}],'.format(
+                levels=SupportedClusterLevels,
+                pv=osetupconfig.PACKAGE_VERSION,
+            )
+        )
+        v = max(
+            distutils.version.LooseVersion(vs).version
+            for vs in SupportedClusterLevels.split(',')
+        )
         engine_version = self._ovirtsdk_xml.params.Version(
-            major=self._version[0],
-            minor=self._version[1],
+            major=v[0],
+            minor=v[1],
         )
 
         self.logger.debug('Creating the local data center')
