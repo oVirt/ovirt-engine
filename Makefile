@@ -415,6 +415,7 @@ install-dev:	\
 	install -d "$(DESTDIR)$(PKG_CACHE_DIR)"
 	install -d "$(DESTDIR)$(PKG_STATE_DIR)/deployments"
 	install -d "$(DESTDIR)$(PKG_STATE_DIR)/content"
+	install -d "$(DESTDIR)$(PKG_STATE_DIR)/setup/answers"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/host-deploy"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/setup"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/notifier"

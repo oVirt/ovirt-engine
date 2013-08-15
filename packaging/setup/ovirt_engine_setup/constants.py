@@ -175,6 +175,14 @@ class FileLocations(object):
         OVIRT_ENGINE_LOCALSTATEDIR,
         'deployments',
     )
+    OVIRT_SETUP_STATE_DIR = os.path.join(
+        OVIRT_ENGINE_LOCALSTATEDIR,
+        'setup',
+    )
+    OVIRT_SETUP_ANSWERS_DIR = os.path.join(
+        OVIRT_SETUP_STATE_DIR,
+        'answers',
+    )
 
     OVIRT_ENGINE_PKIKEYSDIR = os.path.join(
         OVIRT_ENGINE_PKIDIR,

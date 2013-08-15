@@ -449,8 +449,7 @@ make %{make_common_opts} install DESTDIR="%{buildroot}"
 #
 # /var creation
 #
-install -dm 755 "%{buildroot}/%{engine_state}/deployments"
-install -dm 755 "%{buildroot}/%{engine_state}/content"
+install -dm 755 "%{buildroot}/%{engine_state}"/{deployments,content,setup/answers}
 install -dm 755 "%{buildroot}/%{engine_log}"/{host-deploy,setup,notifier,engine-manage-domains,dump}
 install -dm 755 "%{buildroot}/%{engine_cache}"
 install -dm 755 "%{buildroot}/%{engine_run}/notifier"
@@ -729,6 +728,7 @@ fi
 %{engine_data}/conf/ovirt-engine-root-redirect.conf.in
 %{engine_data}/firewalld/base/
 %{engine_data}/setup/
+%{engine_state}/setup/
 
 # backward compatibility
 %ghost %config(noreplace) %{_sysconfdir}/firewalld/services/ovirt.xml
