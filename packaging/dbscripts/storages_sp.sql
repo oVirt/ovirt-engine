@@ -563,12 +563,12 @@ BEGIN
 
    BEGIN
       -- Creating a temporary table which will give all the images and the disks which resids on only the specified storage domain. (copied template disks on multiple storage domains will not be part of this table)
-      CREATE GLOBAL TEMPORARY TABLE tt_TEMPSTORAGEDOMAINMAPTABLE AS select image_guid as image_id,disk_id
+      CREATE GLOBAL TEMPORARY TABLE STORAGE_DOMAIN_MAP_TABLE AS select image_guid as image_id,disk_id
          from images_storage_domain_view where storage_id = v_storage_domain_id
          except select image_guid as image_id, disk_id from images_storage_domain_view where storage_id != v_storage_domain_id;
       exception when others then
-         truncate table tt_TEMPSTORAGEDOMAINMAPTABLE;
-         insert into tt_TEMPSTORAGEDOMAINMAPTABLE select image_guid as image_id,disk_id
+         truncate table STORAGE_DOMAIN_MAP_TABLE;
+         insert into STORAGE_DOMAIN_MAP_TABLE select image_guid as image_id,disk_id
          from images_storage_domain_view where storage_id = v_storage_domain_id
          except select image_guid as image_id, disk_id from images_storage_domain_view where storage_id != v_storage_domain_id;
    END;
@@ -578,32 +578,38 @@ BEGIN
       CREATE GLOBAL TEMPORARY TABLE TEMPLATES_IDS_TEMPORARY_TABLE AS select vm_device.vm_id as vm_guid
          from images_storage_domain_view
          JOIN vm_device ON vm_device.device_id = images_storage_domain_view.disk_id
-         JOIN tt_TEMPSTORAGEDOMAINMAPTABLE ON tt_TEMPSTORAGEDOMAINMAPTABLE.image_id = images_storage_domain_view.image_guid
+         JOIN STORAGE_DOMAIN_MAP_TABLE ON STORAGE_DOMAIN_MAP_TABLE.image_id = images_storage_domain_view.image_guid
          where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
       exception when others then
          truncate table TEMPLATES_IDS_TEMPORARY_TABLE;
          insert into TEMPLATES_IDS_TEMPORARY_TABLE select vm_device.vm_id as vm_guid
          from images_storage_domain_view
          JOIN vm_device ON vm_device.device_id = images_storage_domain_view.disk_id
-         JOIN tt_TEMPSTORAGEDOMAINMAPTABLE ON tt_TEMPSTORAGEDOMAINMAPTABLE.image_id = images_storage_domain_view.image_guid
+         JOIN STORAGE_DOMAIN_MAP_TABLE ON STORAGE_DOMAIN_MAP_TABLE.image_id = images_storage_domain_view.image_guid
          where entity_type = 'TEMPLATE' and storage_id = v_storage_domain_id;
    END;
 
-   delete FROM image_storage_domain_map where storage_domain_id = v_storage_domain_id;
+   BEGIN
+     -- Vms which resides on the storage domain
+     CREATE GLOBAL TEMPORARY TABLE VM_IDS_TEMPORARY_TABLE AS select vm_id,vm_images_view.entity_type as entity_type from vm_images_view
+            JOIN vm_device ON vm_device.device_id = vm_images_view.disk_id
+            WHERE v_storage_domain_id in (SELECT * FROM fnsplitteruuid(storage_id));
+     exception when others then
+     truncate table VM_IDS_TEMPORARY_TABLE;
+     insert into VM_IDS_TEMPORARY_TABLE select vm_id,vm_images_view.entity_type as entity_type from vm_images_view
+            JOIN vm_device ON vm_device.device_id = vm_images_view.disk_id
+            WHERE v_storage_domain_id in (SELECT * FROM fnsplitteruuid(storage_id));
+   END;
 
-   delete FROM permissions where object_id in (select vm_id as vm_guid from vm_images_view
-                                                              JOIN vm_device ON vm_device.device_id = vm_images_view.disk_id
-                                                              where v_storage_domain_id in (SELECT * FROM fnsplitteruuid(storage_id)) and vm_images_view.entity_type <> 'TEMPLATE');
-   delete FROM snapshots WHERE vm_id in (select vm_id as vm_guid from vm_images_view
-                                         JOIN vm_device ON vm_device.device_id = vm_images_view.disk_id
-                                         where v_storage_domain_id in (SELECT * FROM fnsplitteruuid(storage_id)));
-   delete FROM images where image_guid in (select image_id from tt_TEMPSTORAGEDOMAINMAPTABLE);
+   delete FROM permissions where object_id in (select vm_id as vm_guid from VM_IDS_TEMPORARY_TABLE where entity_type <> 'TEMPLATE');
+   delete FROM snapshots WHERE vm_id in (select vm_id as vm_guid from VM_IDS_TEMPORARY_TABLE);
+
+   delete FROM image_storage_domain_map where storage_domain_id = v_storage_domain_id;
+   delete FROM images where image_guid in (select image_id from STORAGE_DOMAIN_MAP_TABLE);
    delete FROM vm_interface where vmt_guid in(select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
    delete FROM permissions where object_id in (select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE);
    delete FROM permissions where object_id = v_storage_domain_id;
-   delete FROM vm_static where vm_guid in(select vm_id as vm_guid from vm_images_view
-                                          JOIN vm_device ON vm_device.device_id = vm_images_view.disk_id
-                                          where v_storage_domain_id in (SELECT * FROM fnsplitteruuid(storage_id)) and vm_images_view.entity_type <> 'TEMPLATE');
+   delete FROM vm_static where vm_guid in(select vm_id as vm_guid from VM_IDS_TEMPORARY_TABLE where entity_type <> 'TEMPLATE');
 
    -- Delete pools and snapshots of pools based on templates from the storage domain to be removed
    delete FROM snapshots where vm_id in (select vm_guid FROM vm_static where vmt_guid in (select vm_guid from TEMPLATES_IDS_TEMPORARY_TABLE));
@@ -614,10 +620,10 @@ BEGIN
    delete FROM storage_domain_static where id  = v_storage_domain_id;
 
    -- Deletes the disks which the only storage domain they are reside on, is the storage domain.
-   DELETE FROM base_disks WHERE  disk_id IN (SELECT disk_id FROM tt_TEMPSTORAGEDOMAINMAPTABLE);
+   DELETE FROM base_disks WHERE  disk_id IN (SELECT disk_id FROM STORAGE_DOMAIN_MAP_TABLE);
 
    -- Deletes the disks's permissions which the only storage domain they are reside on, is the storage domain.
-   DELETE FROM permissions WHERE object_id IN (SELECT disk_id FROM tt_TEMPSTORAGEDOMAINMAPTABLE);
+   DELETE FROM permissions WHERE object_id IN (SELECT disk_id FROM STORAGE_DOMAIN_MAP_TABLE);
 
 END; $procedure$
 LANGUAGE plpgsql;
