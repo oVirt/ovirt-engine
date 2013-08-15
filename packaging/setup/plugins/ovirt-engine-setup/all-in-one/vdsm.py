@@ -248,6 +248,7 @@ class Plugin(plugin.PluginBase):
                 ),
                 ssh=self._ovirtsdk_xml.params.SSH(
                     authentication_method='publickey',
+                    port=self.environment[osetupcons.AIOEnv.SSHD_PORT],
                 ),
             )
         )
