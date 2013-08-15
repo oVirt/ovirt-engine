@@ -399,29 +399,6 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
         }
     }
 
-    private String privateinfo;
-
-    private String getinfo()
-    {
-        return privateinfo;
-    }
-
-    private void setinfo(String value)
-    {
-        privateinfo = value;
-    }
-
-    public String getInfo()
-    {
-        return getinfo();
-    }
-
-    public void setInfo(String value)
-    {
-        setinfo(value);
-        onPropertyChanged(new PropertyChangedEventArgs("Info")); //$NON-NLS-1$
-    }
-
     public Model()
     {
         setPropertyChangedEvent(new Event(ProvidePropertyChangedEvent.Definition));

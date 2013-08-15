@@ -192,13 +192,13 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                             }
                         }
                         innerVolumeModel.getDataCenter().setIsChangable(false);
-                        innerVolumeModel.getDataCenter().setInfo(ConstantsManager.getInstance()
+                        innerVolumeModel.getDataCenter().setChangeProhibitionReason(ConstantsManager.getInstance()
                                 .getConstants()
                                 .cannotChooseVolumesDataCenterinTreeContect());
                         innerVolumeModel.getCluster().setItems(Arrays.asList(cluster));
                         innerVolumeModel.getCluster().setSelectedItem(cluster);
                         innerVolumeModel.getCluster().setIsChangable(false);
-                        innerVolumeModel.getCluster().setInfo(ConstantsManager.getInstance()
+                        innerVolumeModel.getCluster().setChangeProhibitionReason(ConstantsManager.getInstance()
                                 .getConstants()
                                 .cannotChooseVolumesClusterinTreeContect());
                         break;
@@ -210,7 +210,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                                 .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
                         innerVolumeModel.getDataCenter().setSelectedItem(selectDataCenter);
                         innerVolumeModel.getDataCenter().setIsChangable(false);
-                        innerVolumeModel.getDataCenter().setInfo(ConstantsManager.getInstance()
+                        innerVolumeModel.getDataCenter().setChangeProhibitionReason(ConstantsManager.getInstance()
                                 .getConstants()
                                 .cannotChooseVolumesDataCenterinTreeContect());
                         break;

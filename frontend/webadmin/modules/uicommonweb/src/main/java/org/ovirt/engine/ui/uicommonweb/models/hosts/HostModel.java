@@ -1727,17 +1727,19 @@ public abstract class HostModel extends Model
         }
         else if (selectedSystemTreeItem != null)
         {
+            final UIConstants constants = ConstantsManager.getInstance().getConstants();
+
             switch (selectedSystemTreeItem.getType())
             {
             case Host:
                 getName().setIsChangable(false);
-                getName().setInfo("Cannot edit Host's Name in this tree context"); //$NON-NLS-1$
+                getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
                 break;
             case Hosts:
             case Cluster:
             case Cluster_Gluster:
                 getCluster().setIsChangable(false);
-                getCluster().setInfo("Cannot change Host's Cluster in tree context"); //$NON-NLS-1$
+                getCluster().setChangeProhibitionReason(constants.cannotChangeClusterInTreeContext());
                 getDataCenter().setIsChangable(false);
                 break;
             case DataCenter:

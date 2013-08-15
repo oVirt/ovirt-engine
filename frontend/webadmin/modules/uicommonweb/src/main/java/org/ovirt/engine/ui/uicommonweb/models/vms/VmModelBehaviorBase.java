@@ -356,6 +356,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void updateDefaultHost()
     {
         VDSGroup cluster = getModel().getSelectedCluster();
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
         if (cluster == null)
         {
@@ -394,7 +395,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                             .setItems(new ArrayList<VDS>(Arrays.asList(new VDS[] { vds })));
                                     model.getDefaultHost().setSelectedItem(vds);
                                     model.getDefaultHost().setIsChangable(false);
-                                    model.getDefaultHost().setInfo("Cannot choose other Host in tree context"); //$NON-NLS-1$
+                                    model.getDefaultHost().setChangeProhibitionReason(constants.cannotChangeHostInTreeContext());
                                     break;
                                 }
                             }

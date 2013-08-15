@@ -51,6 +51,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 @SuppressWarnings("unused")
 public class DataCenterListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
@@ -287,6 +288,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     public void edit()
     {
         StoragePool dataCenter = (StoragePool) getSelectedItem();
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
         if (getWindow() != null)
         {
@@ -297,7 +299,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         setWindow(model);
         model.setEntity(dataCenter);
         model.setDataCenterId(dataCenter.getId());
-        model.setTitle(ConstantsManager.getInstance().getConstants().editDataCenterTitle());
+        model.setTitle(constants.editDataCenterTitle());
         model.setHashName("edit_data_center"); //$NON-NLS-1$
         model.getName().setEntity(dataCenter.getName());
 
@@ -305,7 +307,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                 && getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter)
         {
             model.getName().setIsChangable(false);
-            model.getName().setInfo("Cannot edit Data Center's Name in tree context"); //$NON-NLS-1$
+            model.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
         }
 
         model.getDescription().setEntity(dataCenter.getdescription());

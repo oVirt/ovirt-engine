@@ -417,7 +417,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                         if (vdsList.size() > 0)
                         {
                             clusterModel.getEnableTrustedService().setIsChangable(false);
-                            clusterModel.getEnableTrustedService().setInfo(ConstantsManager.getInstance()
+                            clusterModel.getEnableTrustedService().setChangeProhibitionReason(
+                                    ConstantsManager.getInstance()
                                     .getConstants()
                                     .trustedServiceDisabled());
                         }

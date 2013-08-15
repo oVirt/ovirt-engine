@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class StorageModel extends ListModel implements ISupportSystemTreeContext
 {
@@ -396,6 +397,8 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
 
     private void initDataCenter()
     {
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
+
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)
         {
             switch (getSystemTreeSelectedItem().getType())
@@ -411,7 +414,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 getDataCenter().setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
                 getDataCenter().setSelectedItem(dc);
                 getDataCenter().setIsChangable(false);
-                getDataCenter().setInfo("Cannot choose Storage's Data Center in tree context"); //$NON-NLS-1$
+                getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
             }
                 break;
 
@@ -419,7 +422,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 VDS host = (VDS) getSystemTreeSelectedItem().getEntity();
 
                 getHost().setIsChangable(false);
-                getHost().setInfo("Cannot choose Storage's Host in tree context"); //$NON-NLS-1$
+                getHost().setChangeProhibitionReason(constants.cannotChangeHostInTreeContext());
                 getHost().setSelectedItem(host);
 
                 SystemTreeItemModel dataCenterItem =
@@ -429,7 +432,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
                 getDataCenter().setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { dc })));
                 getDataCenter().setSelectedItem(dc);
                 getDataCenter().setIsChangable(false);
-                getDataCenter().setInfo("Cannot choose Storage's Data Center in tree context"); //$NON-NLS-1$
+                getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
             }
                 break;
             }

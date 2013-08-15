@@ -625,6 +625,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 HostListModel hostListModel = (HostListModel) model;
                 HostModel innerHostModel = (HostModel) hostListModel.getWindow();
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
+                final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
                 if (hostListModel.getSystemTreeSelectedItem() != null)
                 {
@@ -632,7 +633,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                     {
                     case Host:
                         innerHostModel.getName().setIsChangable(false);
-                        innerHostModel.getName().setInfo("Cannot edit Host's Name in this tree context"); //$NON-NLS-1$
+                        innerHostModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
                         break;
                     case Hosts:
                     case Cluster:
@@ -649,11 +650,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                             }
                         }
                         innerHostModel.getDataCenter().setIsChangable(false);
-                        innerHostModel.getDataCenter().setInfo("Cannot choose Host's Data Center in tree context"); //$NON-NLS-1$
+                        innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
                         innerHostModel.getCluster().setItems(Arrays.asList(cluster));
                         innerHostModel.getCluster().setSelectedItem(cluster);
                         innerHostModel.getCluster().setIsChangable(false);
-                        innerHostModel.getCluster().setInfo("Cannot choose Host's Cluster in tree context"); //$NON-NLS-1$
+                        innerHostModel.getCluster().setChangeProhibitionReason(constants.cannotChangeClusterInTreeContext());
                         break;
                     case DataCenter:
                         StoragePool selectDataCenter =
@@ -662,7 +663,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                                 .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
                         innerHostModel.getDataCenter().setSelectedItem(selectDataCenter);
                         innerHostModel.getDataCenter().setIsChangable(false);
-                        innerHostModel.getDataCenter().setInfo("Cannot choose Host's Data Center in tree context"); //$NON-NLS-1$
+                        innerHostModel.getDataCenter().setChangeProhibitionReason(constants.cannotChangeDCInTreeContext());
                         break;
                     default:
                         innerHostModel.getDataCenter().setItems(dataCenters);

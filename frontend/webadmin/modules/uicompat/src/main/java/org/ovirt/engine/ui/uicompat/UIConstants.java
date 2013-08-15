@@ -2050,4 +2050,16 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Cannot edit name in tree context")
     String cannotEditNameInTreeContext();
 
+    @DefaultStringValue("Cannot change Repository type with Storage Domains attached to it")
+    String cannotChangeRepositoryTypeWithSDAttached();
+
+    @DefaultStringValue("Cannot change Data Center in tree context")
+    String cannotChangeDCInTreeContext();
+
+    @DefaultStringValue("Cannot change Cluster in tree context")
+    String cannotChangeClusterInTreeContext();
+
+    @DefaultStringValue("Cannot change Host in tree context")
+    String cannotChangeHostInTreeContext();
 }
+
