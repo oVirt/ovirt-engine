@@ -601,8 +601,8 @@ actions:
     body:
       parameterType: NIC
       signatures:
-      - mandatoryArguments: {}
-        optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
+      - mandatoryArguments: {nic.name: 'xs:string'}
+        optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
       - mandatoryArguments: {nic.name: 'xs:string'}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}, nic.plugged: 'xs:boolean'}
         deprecated: true
@@ -2827,8 +2827,8 @@ actions:
     body:
       parameterType: NIC
       signatures:
-      - mandatoryArguments: {}
-        optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.name: 'xs:string', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
+      - mandatoryArguments: {nic.name: 'xs:string'}
+        optionalArguments: {nic.vnic_profile.id: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.plugged: 'xs:boolean'}
       - mandatoryArguments: {nic.name: 'xs:string'}
         optionalArguments: {nic.network.id|name: 'xs:string', nic.linked: 'xs:boolean', nic.mac.address: 'xs:string', nic.interface: 'xs:string', nic.port_mirroring.networks.network--COLLECTION: {network.id: 'xs:string'}}
         deprecated: true
