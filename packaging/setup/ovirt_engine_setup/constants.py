@@ -1050,6 +1050,8 @@ class AIOEnv(object):
         return 'OVESETUP_AIO/storageDomainDir'
 
     STORAGE_DOMAIN_NAME = 'OVESETUP_AIO/storageDomainName'
+    SSHD_PORT = 'OVESETUP_AIO/sshdPort'
+    DEFAULT_SSH_PORT = 22
 
 
 @util.export

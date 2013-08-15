@@ -46,12 +46,22 @@ class Plugin(plugin.PluginBase):
         self._enabled = False
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_INIT,
+    )
+    def _init(self):
+        self.environment.setdefault(
+            osetupcons.AIOEnv.SSHD_PORT,
+            None
+        )
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
     )
     def _setup(self):
         self._enabled = not self.environment[
             osetupcons.CoreEnv.DEVELOPER_MODE
         ]
+        self.command.detect('sshd')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -71,6 +81,24 @@ class Plugin(plugin.PluginBase):
                 name='sshd',
                 state=True,
             )
+        if self.environment[osetupcons.AIOEnv.SSHD_PORT] is None:
+            rc, stdout, stderr = self.execute(
+                args=(
+                    self.command.get('sshd'),
+                    '-T',
+                ),
+            )
+            for line in stdout:
+                words = line.split()
+                if words[0] == 'port':
+                    self.environment[
+                        osetupcons.AIOEnv.SSHD_PORT
+                    ] = int(words[1])
+                    break
+        self.environment.setdefault(
+            osetupcons.AIOEnv.SSHD_PORT,
+            osetupcons.AIOEnv.DEFAULT_SSH_PORT
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
