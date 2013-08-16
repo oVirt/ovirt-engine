@@ -1,0 +1,28 @@
+@external actionPanelPopupPanel;
+.actionPanelPopupPanel {
+	background-color: white;
+}
+
+@external actionPanelPopupMenuBar;
+.actionPanelPopupMenuBar {
+	background-color: white;
+	border: 1px solid #96B7D6;
+}
+
+@external menuItem;
+.menuItem {
+	color: black;
+	background-color: white;
+	cursor: pointer;
+	border-bottom: 1px solid #E0E9F2;
+}
+
+@external menuItem-selected;
+.menuItem-selected {
+	background-color: #E1E8F2;
+}
+
+@external menuItem-disabled;
+.menuItem-disabled {
+	color: #C0C0C0
+}
