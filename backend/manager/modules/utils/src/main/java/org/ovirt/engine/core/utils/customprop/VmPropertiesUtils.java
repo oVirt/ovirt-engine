@@ -25,7 +25,7 @@ import org.ovirt.engine.core.utils.exceptions.InitializationException;
  */
 public class VmPropertiesUtils extends CustomPropertiesUtils {
 
-    private static VmPropertiesUtils vmPropertiesUtils = null;
+    private static final VmPropertiesUtils vmPropertiesUtils;
 
     static {
         vmPropertiesUtils = new VmPropertiesUtils();
@@ -242,7 +242,7 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         Set<ValidationError> errorsSet = new HashSet<ValidationError>();
         List<ValidationError> results = new ArrayList<ValidationError>();
         if (!StringUtils.isEmpty(vmPropertiesFieldValue)) {
-            String keyValuePairs[] = SEMICOLON_PATTERN.split(vmPropertiesFieldValue);
+            String keyValuePairs[] = semicolonPattern.split(vmPropertiesFieldValue);
 
             for (String keyValuePairStr : keyValuePairs) {
                 String[] pairParts = keyValuePairStr.split(KEY_VALUE_DELIMETER, 2);

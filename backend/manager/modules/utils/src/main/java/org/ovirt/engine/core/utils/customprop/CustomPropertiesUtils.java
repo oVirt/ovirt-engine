@@ -20,33 +20,72 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
  *
  */
 public class CustomPropertiesUtils {
-    protected final Pattern SEMICOLON_PATTERN = Pattern.compile(";");
+    /**
+     * Delimiter of each property definition
+     */
     protected final static String PROPERTIES_DELIMETER = ";";
+
+    /**
+     * Delimiter of property name and value
+     */
     protected final static String KEY_VALUE_DELIMETER = "=";
 
-    protected final static String LEGITIMATE_CHARACTER_FOR_KEY = "[a-z_A-Z0-9]";
-    protected final static Pattern KEY_PATTERN = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_KEY + ")+");
-    protected final static String LEGITIMATE_CHARACTER_FOR_VALUE = "[^" + PROPERTIES_DELIMETER + "]"; // all characters
-                                                                                               // but the delimiter
-                                                                                               // are allowed
-    protected final Pattern VALUE_PATTERN = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_VALUE + ")+");
+    /**
+     * Pattern to separate property definition
+     */
+    protected final Pattern semicolonPattern;
 
-    // properties are in form of key1=val1;key2=val2; .... key and include alpha numeric characters and _
+    /**
+     * Regex describing legitimate characters for property name - alphanumeric characters and underscore
+     */
+    protected final static String LEGITIMATE_CHARACTER_FOR_KEY = "[a-z_A-Z0-9]";
+
+    /**
+     * Pattern to validate property name
+     */
+    protected final Pattern keyPattern;
+
+    /**
+     * Regex describing legitimate characters for property value - all except {@code PROPERTIES_DELIMITER}
+     */
+    protected final static String LEGITIMATE_CHARACTER_FOR_VALUE = "[^" + PROPERTIES_DELIMETER + "]";
+
+    /**
+     * Pattern to validate property value
+     */
+    protected final Pattern valuePattern;
+
+    /**
+     * Regex describing property definition - key=value
+     */
     protected static final String KEY_VALUE_REGEX_STR = "((" + LEGITIMATE_CHARACTER_FOR_KEY + ")+)=(("
             + LEGITIMATE_CHARACTER_FOR_VALUE + ")+)";
 
-    // frontend can pass custom values in the form of "key=value" or "key1=value1;... key-n=value_n" (if there is only
-    // one key-value, no ; is attached to it
+    /**
+     * Regex describing properties definition. They can be in the from of "key=value" or "key1=value1;... key-n=value_n"
+     * (last {@code ;} character can be omitted)
+     */
     protected static final String VALIDATION_STR = KEY_VALUE_REGEX_STR + "(;" + KEY_VALUE_REGEX_STR + ")*;?";
-    protected final Pattern VALIDATION_PATTERN = Pattern.compile(VALIDATION_STR);
 
-    protected final List<ValidationError> invalidSyntaxValidationError =
-            Arrays.asList(new ValidationError(ValidationFailureReason.SYNTAX_ERROR, ""));
+    /**
+     * Pattern to validation properties definition
+     */
+    protected final Pattern validationPattern;
+
+    /**
+     * List defining syntax error during properties validation
+     */
+    protected final List<ValidationError> invalidSyntaxValidationError;
 
     /**
      * Constructor has package access to enable testing, but class cannot be instantiated outside package
      */
     CustomPropertiesUtils() {
+        semicolonPattern = Pattern.compile(PROPERTIES_DELIMETER);
+        keyPattern = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_KEY + ")+");
+        valuePattern = Pattern.compile("(" + LEGITIMATE_CHARACTER_FOR_VALUE + ")+");
+        validationPattern = Pattern.compile(VALIDATION_STR);
+        invalidSyntaxValidationError = Arrays.asList(new ValidationError(ValidationFailureReason.SYNTAX_ERROR, ""));
     }
 
     /**
@@ -67,7 +106,7 @@ public class CustomPropertiesUtils {
      * @return returns {@code true} if custom properties contains syntax error, otherwise {@code false}
      */
     public boolean syntaxErrorInProperties(String properties) {
-        return !VALIDATION_PATTERN.matcher(properties).matches();
+        return !validationPattern.matcher(properties).matches();
     }
 
     /**
@@ -83,12 +122,12 @@ public class CustomPropertiesUtils {
             for (Map.Entry<String, String> e : properties.entrySet()) {
                 String key = e.getKey();
                 String value = e.getValue();
-                if (key == null || !KEY_PATTERN.matcher(key).matches()) {
+                if (key == null || !keyPattern.matcher(key).matches()) {
                     // syntax error in property name
                     error = true;
                     break;
                 }
-                if (value == null || !VALUE_PATTERN.matcher(value).matches()) {
+                if (value == null || !valuePattern.matcher(value).matches()) {
                     // syntax error in property value
                     error = true;
                     break;
@@ -106,7 +145,7 @@ public class CustomPropertiesUtils {
             return;
         }
 
-        String[] propertiesStrs = SEMICOLON_PATTERN.split(properties);
+        String[] propertiesStrs = semicolonPattern.split(properties);
 
         // Property is in the form of key=regex
         for (String property : propertiesStrs) {
@@ -115,8 +154,8 @@ public class CustomPropertiesUtils {
             String[] propertyParts = property.split(KEY_VALUE_DELIMETER, 2);
             if (propertyParts.length == 1) {
                 // there is no value(regex) for the property - we assume in that case that any value is allowed except
-                // for the properties delimeter
-                pattern = VALUE_PATTERN;
+                // for the properties delimiter
+                pattern = valuePattern;
             } else {
                 pattern = Pattern.compile(propertyParts[1]);
             }
@@ -220,7 +259,7 @@ public class CustomPropertiesUtils {
 
         Map<String, String> map = new LinkedHashMap<String, String>();
         if (StringUtils.isNotEmpty(properties)) {
-            String keyValuePairs[] = SEMICOLON_PATTERN.split(properties);
+            String keyValuePairs[] = semicolonPattern.split(properties);
             for (String keyValuePairStr : keyValuePairs) {
                 String[] pairParts = keyValuePairStr.split(KEY_VALUE_DELIMETER, 2);
                 String key = pairParts[0];

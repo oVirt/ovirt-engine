@@ -26,7 +26,7 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
     /**
      * Singleton instance of the class
      */
-    private static DevicePropertiesUtils devicePropertiesUtils = null;
+    private static final DevicePropertiesUtils devicePropertiesUtils;
 
     static {
         devicePropertiesUtils = new DevicePropertiesUtils();
@@ -95,14 +95,12 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
     /**
      * Error thrown if device custom properties are to be set for a device in unsupported cluster version
      */
-    protected final List<ValidationError> unsupportedVersionValidationError =
-            Arrays.asList(new ValidationError(ValidationFailureReason.UNSUPPORTED_VERSION, ""));
+    protected final List<ValidationError> unsupportedVersionValidationError;
 
     /**
      * Error thrown if device custom properties are to be set for a device with UNKNOWN type
      */
-    protected final List<ValidationError> invalidDeviceTypeValidationError =
-            Arrays.asList(new ValidationError(ValidationFailureReason.INVALID_DEVICE_TYPE, ""));
+    protected final List<ValidationError> invalidDeviceTypeValidationError;
 
     /**
      * Creates an instance and initializes device custom properties patterns. Constructor is package visible for testing
@@ -146,6 +144,11 @@ public class DevicePropertiesUtils extends CustomPropertiesUtils {
         }
         devicePropValidationStr = sb.toString();
         devicePropValidationPattern = Pattern.compile(devicePropValidationStr);
+
+        unsupportedVersionValidationError =
+                Arrays.asList(new ValidationError(ValidationFailureReason.UNSUPPORTED_VERSION, ""));
+        invalidDeviceTypeValidationError =
+                Arrays.asList(new ValidationError(ValidationFailureReason.INVALID_DEVICE_TYPE, ""));
     }
 
     /**
