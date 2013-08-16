@@ -193,9 +193,10 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         UpdateVmNicValidator nicValidator =
-                new UpdateVmNicValidator(getInterface(), getVm().getVdsGroupCompatibilityVersion());
+                new UpdateVmNicValidator(getInterface(), getVm().getVdsGroupCompatibilityVersion(), getVm().getOs());
         if (!validate(nicValidator.unplugPlugNotRequired())
                 || !validate(nicValidator.linkedCorrectly())
+                || !validate(nicValidator.isCompatibleWithOs())
                 || !validate(nicValidator.emptyNetworkValid())
                 || !validate(nicValidator.hotUpdatePossible())) {
             return false;
@@ -305,8 +306,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
      */
     private class UpdateVmNicValidator extends VmNicValidator {
 
-        public UpdateVmNicValidator(VmNic nic, Version version) {
-            super(nic, version);
+        public UpdateVmNicValidator(VmNic nic, Version version, int osId) {
+            super(nic, version, osId);
         }
 
         /**

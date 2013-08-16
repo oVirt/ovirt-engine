@@ -1,9 +1,15 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Version;
 
 /**
@@ -17,9 +23,17 @@ public class VmNicValidator {
 
     protected Version version;
 
+    protected int osId;
+
     public VmNicValidator(VmNic nic, Version version) {
         this.nic = nic;
         this.version = version;
+    }
+
+    public VmNicValidator(VmNic nic, Version version, int osId) {
+        this.nic = nic;
+        this.version = version;
+        this.osId = osId;
     }
 
     /**
@@ -43,4 +57,27 @@ public class VmNicValidator {
     protected String clusterVersion() {
         return String.format(CLUSTER_VERSION_REPLACEMENT_FORMAT, version.getValue());
     }
+
+    /**
+     * @return An error if the network interface type is not compatible with the selected operating
+     *         system.
+     */
+    public ValidationResult isCompatibleWithOs() {
+        List<String> networkDevices = getOsRepository().getNetworkDevices(osId, version);
+        List<VmInterfaceType> interfaceTypes = new ArrayList<VmInterfaceType>();
+
+        for (String networkDevice : networkDevices) {
+            interfaceTypes.add(VmInterfaceType.valueOf(networkDevice));
+        }
+
+        return (!interfaceTypes.contains(VmInterfaceType.forValue(nic.getType())))
+                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS)
+                : ValidationResult.VALID;
+
+    }
+
+    public OsRepository getOsRepository() {
+        return SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    }
+
 }

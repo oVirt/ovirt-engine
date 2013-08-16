@@ -2197,6 +2197,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Updating the virtual machine interface while the virtual machine is running is not supported for clusters of version ${clusterVersion}.")
     String HOT_VM_INTERFACE_UPDATE_IS_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The network interface type is not compatible with the selected operating system.")
+    String ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS();
+
     @DefaultStringValue("Cannot ${action} ${type}. Updating some of the properties is not supported while the interface is plugged into a running virtual machine. Please un-plug the interface, update the properties, and then plug it back.")
     String CANNOT_PERFOM_HOT_UPDATE();
 
