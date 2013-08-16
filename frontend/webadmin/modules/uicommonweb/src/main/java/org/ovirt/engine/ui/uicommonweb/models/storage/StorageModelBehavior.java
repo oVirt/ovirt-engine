@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -104,5 +105,13 @@ public abstract class StorageModelBehavior extends Model
         {
             getModel().frontend_QueryComplete();
         }
+    }
+
+    protected boolean isLocalStorage(IStorageModel storage) {
+        return storage.getType() == StorageType.LOCALFS;
+    }
+
+    protected boolean isLocalDataCenter(StoragePool dataCenter) {
+        return dataCenter.getStorageType() == StorageType.LOCALFS;
     }
 }

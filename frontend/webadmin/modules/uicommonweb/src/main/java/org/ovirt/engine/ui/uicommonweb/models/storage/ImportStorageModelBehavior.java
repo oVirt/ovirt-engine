@@ -39,7 +39,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
                                 Object[] array = (Object[]) target;
                                 ImportStorageModelBehavior behavior = (ImportStorageModelBehavior) array[0];
                                 IStorageModel storageModelItem = (IStorageModel) array[1];
-                                behavior.postUpdateItemsAvailability(behavior, storageModelItem, returnValue == null);
+                                behavior.postUpdateItemsAvailability(storageModelItem, returnValue == null);
 
                             }
                         }, getHash()), dataCenter.getId());
@@ -54,32 +54,47 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
                                 Object[] array = (Object[]) target;
                                 ImportStorageModelBehavior behavior = (ImportStorageModelBehavior) array[0];
                                 IStorageModel storageModelItem = (IStorageModel) array[1];
-                                behavior.postUpdateItemsAvailability(behavior, storageModelItem, returnValue == null);
+                                behavior.postUpdateItemsAvailability(storageModelItem, returnValue == null);
 
                             }
                         }, getHash()), dataCenter.getId());
             }
             else
             {
-                postUpdateItemsAvailability(this, item, false);
+                postUpdateItemsAvailability(item, false);
             }
         }
     }
 
-    public void postUpdateItemsAvailability(ImportStorageModelBehavior behavior,
-            IStorageModel item,
-            boolean isNoStorageAttached)
+    public void postUpdateItemsAvailability(IStorageModel item, boolean isNoStorageAttached)
     {
         Model model = (Model) item;
         StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
 
-        // available type/function items are:
-        // all in case of Unassigned DC.
-        // ISO in case the specified DC doesn't have an attached ISO domain.
-        // Export in case the specified DC doesn't have an attached export domain.
-        model.setIsSelectable((dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)
-                || (item.getRole() == StorageDomainType.ISO && isNoStorageAttached) || (item.getRole() == StorageDomainType.ImportExport && isNoStorageAttached)));
+        boolean isItemSelectable = isItemSelectable(item, dataCenter, isNoStorageAttached);
+        model.setIsSelectable(isItemSelectable);
 
-        behavior.onStorageModelUpdated(item);
+        onStorageModelUpdated(item);
+    }
+
+    private boolean isItemSelectable(IStorageModel item, StoragePool dataCenter, boolean isNoStorageAttached) {
+        // Local SD can be attached to a local DC only
+        if (isLocalStorage(item) && !isLocalDataCenter(dataCenter)) {
+            return false;
+        }
+
+        // All storage domains can be attached to Unassigned DC
+        if (dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
+            return true;
+        }
+
+        // Local and ISO domains can be attached to DC if it doesn't have
+        // an attached domain of the same type already
+        if (isNoStorageAttached &&
+                (item.getRole() == StorageDomainType.ISO || item.getRole() == StorageDomainType.ImportExport)) {
+            return true;
+        }
+
+        return false;
     }
 }

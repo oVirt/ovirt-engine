@@ -17,15 +17,15 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
     {
         super.updateItemsAvailability();
 
+        StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
+        if (dataCenter == null) {
+            return;
+        }
+
         // Allow Data storage type corresponding to the selected data-center type + ISO and Export that are NFS only:
         for (IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems()))
         {
             Model model = (Model) item;
-
-            StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
-            if (dataCenter == null) {
-                return;
-            }
 
             if (item.getRole() == StorageDomainType.ISO)
             {
@@ -68,21 +68,46 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
         StoragePool dataCenter = (StoragePool) getModel().getDataCenter().getSelectedItem();
         Model model = (Model) item;
 
-        boolean isExistingStorage = getModel().getStorage() != null &&
-                item.getType() == getModel().getStorage().getStorageType();
-        boolean isNoneDataCenter = dataCenter != null &&
-                dataCenter.getId().equals(StorageModel.UnassignedDataCenterId);
-
-        boolean isData = item.getRole() == StorageDomainType.Data;
-        boolean isExportOrIso = item.getRole() == StorageDomainType.ImportExport || item.getRole() == StorageDomainType.ISO;
-
-        boolean canAttachData = isData && item.getType() == dataCenter.getStorageType();
-        boolean canAttachExportOrIso = isExportOrIso && isNoExportOrIsoStorageAttached &&
-                dataCenter.getstatus() != StoragePoolStatus.Uninitialized;
-
-        model.setIsSelectable(isExistingStorage || (isNoneDataCenter && isData) ||
-                (!isNoneDataCenter && (canAttachData || canAttachExportOrIso)));
+        boolean isItemSelectable = isItemSelectable(item, dataCenter, isNoExportOrIsoStorageAttached);
+        model.setIsSelectable(isItemSelectable);
 
         onStorageModelUpdated(item);
+    }
+
+    private boolean isItemSelectable(IStorageModel item, StoragePool dataCenter, boolean isNoExportOrIsoStorageAttached) {
+        boolean isExistingStorage = getModel().getStorage() != null &&
+                item.getType() == getModel().getStorage().getStorageType();
+
+        if (isExistingStorage) {
+            return true;
+        }
+
+        if (isLocalStorage(item) && !isLocalDataCenter(dataCenter)) {
+            return false;
+        }
+
+        boolean isNoneDataCenter = dataCenter != null &&
+                dataCenter.getId().equals(StorageModel.UnassignedDataCenterId);
+        boolean isDataDomain = item.getRole() == StorageDomainType.Data;
+
+        if (isNoneDataCenter) {
+            // 'None' Data Center can create only Data Storage Domain
+            return isDataDomain;
+        } else {
+            boolean isExportDomain = item.getRole() == StorageDomainType.ImportExport;
+            boolean canAttachExportDomain = isNoExportOrIsoStorageAttached &&
+                    dataCenter.getstatus() != StoragePoolStatus.Uninitialized;
+
+            boolean isIsoDomain = item.getRole() == StorageDomainType.ISO;
+            boolean canAttachIsoDomain = isNoExportOrIsoStorageAttached &&
+                    dataCenter.getstatus() != StoragePoolStatus.Uninitialized;
+
+            boolean canAttachDataDomain = item.getType() == dataCenter.getStorageType();
+
+            return isExportDomain && canAttachExportDomain ||
+                    isIsoDomain && canAttachIsoDomain ||
+                    isDataDomain && canAttachDataDomain;
+
+        }
     }
 }

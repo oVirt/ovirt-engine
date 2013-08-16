@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSType;
@@ -46,8 +45,9 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
                 setStoragePool(storagePool);
             }
 
-            if (retVal && getStorageDomain().getStorageDomainType() == StorageDomainType.Data
-                    && storagePool.getStorageType() != StorageType.LOCALFS) {
+            if (retVal &&
+                    getStorageDomain().getStorageType() == StorageType.LOCALFS &&
+                    storagePool.getStorageType() != StorageType.LOCALFS) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_IS_NOT_LOCAL);
                 retVal = false;
             }
