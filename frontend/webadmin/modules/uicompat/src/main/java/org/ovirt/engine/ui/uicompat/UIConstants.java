@@ -1594,12 +1594,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Multiple bricks of a Replicate volume are present on the same server. This setup is not optimal. \nDo you still want to continue?")
     String addBricksToReplicateVolumeFromSameServerMsg();
 
-    @DefaultStringValue("Cannot choose Volume's Data Center in tree context")
-    String cannotChooseVolumesDataCenterinTreeContect();
-
-    @DefaultStringValue("Cannot choose Volume's Cluster in tree context")
-    String cannotChooseVolumesClusterinTreeContect();
-
     @DefaultStringValue("Disable Gluster Hooks")
     String confirmDisableGlusterHooks();
 
@@ -2061,5 +2055,14 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Cannot change Host in tree context")
     String cannotChangeHostInTreeContext();
+
+    @DefaultStringValue("Data Center can be changed only when the Host is in Maintenance mode.")
+    String dcCanOnlyBeChangedWhenHostInMaintMode();
+
+    @DefaultStringValue("Cluster can be changed only when the Host is in Maintenance mode.")
+    String clusterCanOnlyBeChangedWhenHostInMaintMode();
+
+    @DefaultStringValue("Time Zone cannot be changed after the Virtual Machine is initialized.")
+    String timeZoneCannotBeChangedAfterVMInit();
 }
 

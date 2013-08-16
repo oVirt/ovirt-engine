@@ -51,6 +51,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class VolumeListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
 
@@ -172,6 +173,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 VolumeListModel volumeListModel = (VolumeListModel) model;
                 VolumeModel innerVolumeModel = (VolumeModel) volumeListModel.getWindow();
                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) result;
+                final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
                 if (volumeListModel.getSystemTreeSelectedItem() != null)
                 {
@@ -192,15 +194,13 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                             }
                         }
                         innerVolumeModel.getDataCenter().setIsChangable(false);
-                        innerVolumeModel.getDataCenter().setChangeProhibitionReason(ConstantsManager.getInstance()
-                                .getConstants()
-                                .cannotChooseVolumesDataCenterinTreeContect());
+                        innerVolumeModel.getDataCenter().setChangeProhibitionReason(
+                                constants.cannotChangeDCInTreeContext());
                         innerVolumeModel.getCluster().setItems(Arrays.asList(cluster));
                         innerVolumeModel.getCluster().setSelectedItem(cluster);
                         innerVolumeModel.getCluster().setIsChangable(false);
-                        innerVolumeModel.getCluster().setChangeProhibitionReason(ConstantsManager.getInstance()
-                                .getConstants()
-                                .cannotChooseVolumesClusterinTreeContect());
+                        innerVolumeModel.getCluster().setChangeProhibitionReason(
+                                constants.cannotChangeClusterInTreeContext());
                         break;
                     case Clusters:
                     case DataCenter:
@@ -210,9 +210,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                                 .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { selectDataCenter })));
                         innerVolumeModel.getDataCenter().setSelectedItem(selectDataCenter);
                         innerVolumeModel.getDataCenter().setIsChangable(false);
-                        innerVolumeModel.getDataCenter().setChangeProhibitionReason(ConstantsManager.getInstance()
-                                .getConstants()
-                                .cannotChooseVolumesDataCenterinTreeContect());
+                        innerVolumeModel.getDataCenter().setChangeProhibitionReason(
+                                constants.cannotChangeDCInTreeContext());
                         break;
                     default:
                         innerVolumeModel.getDataCenter().setItems(dataCenters);

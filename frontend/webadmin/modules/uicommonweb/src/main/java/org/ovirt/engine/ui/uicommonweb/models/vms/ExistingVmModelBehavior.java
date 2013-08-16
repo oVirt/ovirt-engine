@@ -22,6 +22,8 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 @SuppressWarnings("unused")
 public class ExistingVmModelBehavior extends VmModelBehaviorBase
@@ -209,8 +211,9 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
         if (vm.isInitialized())
         {
-            getModel().getTimeZone()
-                    .setChangeProhibitionReason("Time Zone cannot be change since the Virtual Machine was booted at the first time."); //$NON-NLS-1$
+            UIConstants constants = ConstantsManager.getInstance().getConstants();
+            getModel().getTimeZone().setChangeProhibitionReason(
+                    constants.timeZoneCannotBeChangedAfterVMInit());
             getModel().getTimeZone().setIsChangable(false);
         }
 

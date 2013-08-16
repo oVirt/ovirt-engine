@@ -7,6 +7,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class EditHostModel extends HostModel {
 
@@ -45,9 +47,10 @@ public class EditHostModel extends HostModel {
 
     @Override
     protected void setAllowChangeHostPlacementPropertiesWhenNotInMaintenance() {
-        getDataCenter().setChangeProhibitionReason("Data Center can be changed only when the Host is in Maintenance mode."); //$NON-NLS-1$
+        UIConstants constants = ConstantsManager.getInstance().getConstants();
+        getDataCenter().setChangeProhibitionReason(constants.dcCanOnlyBeChangedWhenHostInMaintMode());
         getDataCenter().setIsChangable(false);
-        getCluster().setChangeProhibitionReason("Cluster can be changed only when the Host is in Maintenance mode."); //$NON-NLS-1$
+        getCluster().setChangeProhibitionReason(constants.clusterCanOnlyBeChangedWhenHostInMaintMode());
         getCluster().setIsChangable(false);
     }
 

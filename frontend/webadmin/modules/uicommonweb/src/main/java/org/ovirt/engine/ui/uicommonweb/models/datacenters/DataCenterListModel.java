@@ -321,8 +321,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
                         List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
 
                         if (storageDomainList.size() != 0) {
-                            model.getStorageTypeList()
-                                    .setChangeProhibitionReason("Cannot change Repository type with Storage Domains attached to it"); //$NON-NLS-1$
+                            model.getStorageTypeList().setChangeProhibitionReason(
+                                    constants.cannotChangeRepositoryTypeWithSDAttached());
                             model.getStorageTypeList().setIsChangable(false);
                         }
 
