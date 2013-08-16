@@ -7,25 +7,34 @@ import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.MenuItem;
 import com.google.gwt.user.client.ui.MenuItemSeparator;
-import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.user.client.ui.SimplePanel;
 
 public class MenuPanelPopup extends Composite {
 
-    interface WidgetUiBinder extends UiBinder<Widget, MenuPanelPopup> {
-        WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
+    public interface Resources extends ClientBundle {
+
+        @Source("org/ovirt/engine/ui/common/css/MenuPanelPopup.css")
+        Style style();
+
     }
 
-    @UiField(provided = true)
-    PopupPanel panel;
+    public interface Style extends CssResource {
 
-    @UiField(provided = true)
-    MenuBar menu;
+        String actionPanelPopupPanel();
 
+        String actionPanelPopupMenuBar();
+
+    }
+
+    private static final Resources resources = GWT.create(Resources.class);
+
+    private final PopupPanel panel;
+    private final MenuBar menu;
 
     public MenuPanelPopup(boolean autoHide) {
         panel = new PopupPanel(autoHide);
@@ -44,8 +53,12 @@ public class MenuPanelPopup extends Composite {
                 return super.addSeparator(separator);
             }
         };
-        initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
         panel.setWidget(menu);
+        initWidget(new SimplePanel(panel));
+
+        resources.style().ensureInjected();
+        panel.setStylePrimaryName(resources.style().actionPanelPopupPanel());
+        menu.setStylePrimaryName(resources.style().actionPanelPopupMenuBar());
 
         NodeList<Element> table = menu.getElement().getElementsByTagName("table"); //$NON-NLS-1$
         table.getItem(0).getStyle().setProperty("width", "100%"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -58,4 +71,5 @@ public class MenuPanelPopup extends Composite {
     public MenuBar getMenuBar() {
         return menu;
     }
+
 }
