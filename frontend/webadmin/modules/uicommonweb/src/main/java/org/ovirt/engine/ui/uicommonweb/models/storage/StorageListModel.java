@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.SearchParameters;
@@ -786,7 +785,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToRemoveTheStorageDomainMsg());
         model.getFormat().setIsAvailable(false);
 
-        AsyncDataProvider.getHostListByStatus(new AsyncQuery(new Object[]{this, model}, new INewAsyncCallback() {
+        StorageDomain storage = (StorageDomain) getSelectedItem();
+        boolean localFsOnly = storage.getStorageType() == StorageType.LOCALFS;
+
+        AsyncDataProvider.getHostsForStorageOperation(new AsyncQuery(new Object[]{this, model}, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -816,7 +818,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                 }
 
             }
-        }), VDSStatus.Up);
+        }), null, localFsOnly);
     }
 
     private void onRemove()
