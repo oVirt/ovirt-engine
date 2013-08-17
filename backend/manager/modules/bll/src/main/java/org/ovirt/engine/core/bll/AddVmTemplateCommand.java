@@ -71,12 +71,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     private boolean isVmInDb;
 
     /**
-     * A mapping between source disk id and target disk id.
-     * This mapping is used when creating new devices for this template.
-     */
-    private Map<Guid, Guid> srcDiskToTargetDiskMapping = new HashMap<>();
-
-    /**
      * Constructor for command creation when compensation is applied on startup
      *
      * @param commandId
@@ -197,6 +191,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         getParameters().setVmTemplateId(getVmTemplateId());
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
 
+        final Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping = new HashMap<>();
+
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
 
             @Override
@@ -211,13 +207,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             @Override
             public Void runInTransaction() {
                 addPermission();
-                AddVmTemplateImages();
-                List<VmNic> vmInterfaces = addVmInterfaces();
+                AddVmTemplateImages(srcDeviceIdToTargetDeviceIdMapping);
+                addVmInterfaces(srcDeviceIdToTargetDeviceIdMapping);
                 if (isVmInDb) {
                     VmDeviceUtils.copyVmDevices(getVmId(),
                             getVmTemplateId(),
-                            srcDiskToTargetDiskMapping,
-                            vmInterfaces,
+                            srcDeviceIdToTargetDeviceIdMapping,
                             getParameters().isSoundDeviceEnabled(),
                             getParameters().isConsoleEnabled());
                 } else {
@@ -228,8 +223,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             getVmTemplate(),
                             true,
                             Collections.<VmDevice> emptyList(),
-                            srcDiskToTargetDiskMapping,
-                            vmInterfaces,
+                            srcDeviceIdToTargetDeviceIdMapping,
                             getParameters().isSoundDeviceEnabled(),
                             getParameters().isConsoleEnabled());
                 }
@@ -433,8 +427,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         setActionReturnValue(getVmTemplate().getId());
     }
 
-    protected List<VmNic> addVmInterfaces() {
-        List<VmNic> templateInterfaces = new ArrayList<>();
+    protected void addVmInterfaces(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
         List<VmNic> interfaces = getVmNicDao().getAllForVm(getParameters().getMasterVm().getId());
         for (VmNic iface : interfaces) {
             VmNic iDynamic = new VmNic();
@@ -445,13 +438,12 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             iDynamic.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());
             iDynamic.setType(iface.getType());
             iDynamic.setLinked(iface.isLinked());
-            templateInterfaces.add(iDynamic);
             getVmNicDao().save(iDynamic);
+            srcDeviceIdToTargetDeviceIdMapping.put(iface.getId(), iDynamic.getId());
         }
-        return templateInterfaces;
     }
 
-    protected void AddVmTemplateImages() {
+    protected void AddVmTemplateImages(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
         Guid vmSnapshotId = Guid.newGuid();
         for (DiskImage diskImage : mImages) {
             // The return value of this action is the 'copyImage' task GUID:
@@ -463,7 +455,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
             getReturnValue().getVdsmTaskIdList().addAll(retValue.getInternalVdsmTaskIdList());
             DiskImage newImage = (DiskImage) retValue.getActionReturnValue();
-            srcDiskToTargetDiskMapping.put(diskImage.getId(), newImage.getId());
+            srcDeviceIdToTargetDeviceIdMapping.put(diskImage.getId(), newImage.getId());
         }
     }
 

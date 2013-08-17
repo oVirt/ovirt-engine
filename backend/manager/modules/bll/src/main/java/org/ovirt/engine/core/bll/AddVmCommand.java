@@ -82,6 +82,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     private String cachedDiskSharedLockMessage;
 
     private Map<Guid, Guid> srcDiskIdToTargetDiskIdMapping = new HashMap<>();
+    private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
 
     public AddVmCommand(T parameters) {
         super(parameters);
@@ -413,7 +414,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected boolean checkCpuSockets() {
         return AddVmCommand.CheckCpuSockets(getParameters().getVmStaticData().getNumOfSockets(),
                 getParameters().getVmStaticData().getCpuPerSocket(), getVdsGroup().getcompatibility_version()
-                        .toString(), getReturnValue().getCanDoActionMessages());
+                .toString(), getReturnValue().getCanDoActionMessages());
     }
 
     protected boolean buildAndCheckDestStorageDomains() {
@@ -602,8 +603,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected void copyVmDevices() {
         VmDeviceUtils.copyVmDevices(getVmTemplateId(),
                 getVmId(),
-                srcDiskIdToTargetDiskIdMapping,
-                _vmInterfaces,
+                getSrcDeviceIdToTargetDeviceIdMapping(),
                 getParameters().isSoundDeviceEnabled(),
                 getParameters().isConsoleEnabled());
     }
@@ -641,7 +641,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected void addVmNetwork() {
         // Add interfaces from template
         for (VmNic iface : getVmInterfaces()) {
-            iface.setId(Guid.newGuid());
+            Guid id = Guid.newGuid();
+            srcVmNicIdToTargetVmNicIdMapping.put(iface.getId(), id);
+            iface.setId(id);
             iface.setMacAddress(MacPoolManager.getInstance().allocateNewMac());
             iface.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());
             iface.setVmTemplateId(null);
@@ -925,5 +927,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
     public Map<Guid, Guid> getSrcDiskIdToTargetDiskIdMapping() {
         return srcDiskIdToTargetDiskIdMapping;
+    }
+
+    public Map<Guid, Guid> getSrcDeviceIdToTargetDeviceIdMapping() {
+        Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping = new HashMap<>();
+        srcDeviceIdToTargetDeviceIdMapping.putAll(srcVmNicIdToTargetVmNicIdMapping);
+        srcDeviceIdToTargetDeviceIdMapping.putAll(srcDiskIdToTargetDiskIdMapping);
+        return srcDeviceIdToTargetDeviceIdMapping;
     }
 }

@@ -231,8 +231,7 @@ public class VmDeviceUtils {
                                      VmBase vmBase,
                                      boolean isVm,
                                      List<VmDevice> devicesDataToUse,
-                                     Map<Guid, Guid> srcDiskToTargetDiskMapping,
-                                     List<VmNic> ifaces,
+                                     Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping,
                                      boolean soundDeviceEnabled,
                                      boolean isConsoleEnabled) {
         Guid id;
@@ -264,7 +263,7 @@ public class VmDeviceUtils {
             switch(device.getType()) {
                 case DISK:
                     if (VmDeviceType.DISK.getName().equals(device.getDevice())) {
-                            id = srcDiskToTargetDiskMapping.get(device.getDeviceId());
+                            id = srcDeviceIdToTargetDeviceIdMapping.get(device.getDeviceId());
                     } else if (VmDeviceType.CDROM.getName().equals(device.getDevice())) {
                         // check here is source VM had CD (Vm from snapshot)
                         String srcCdPath = (String) device.getSpecParams().get(VdsProperties.Path);
@@ -279,9 +278,7 @@ public class VmDeviceUtils {
                     break;
 
                 case INTERFACE:
-                    if (ifaceCount < ifaces.size()) {
-                        id = ifaces.get(ifaceCount++).getId();
-                    }
+                    id = srcDeviceIdToTargetDeviceIdMapping.get(device.getDeviceId());
                     break;
 
                 case CONTROLLER:
@@ -383,8 +380,7 @@ public class VmDeviceUtils {
 
     public static void copyVmDevices(Guid srcId,
                                      Guid dstId,
-                                     Map<Guid, Guid> srcDiskToTargetDiskMapping,
-                                     List<VmNic> ifaces,
+                                     Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping,
                                      boolean soundDeviceEnabled,
                                      boolean isConsoleEnabled) {
         VM vm = DbFacade.getInstance().getVmDao().get(dstId);
@@ -396,8 +392,8 @@ public class VmDeviceUtils {
         }
 
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
-        copyVmDevices(srcId, dstId, vm, vmBase, isVm, devices, srcDiskToTargetDiskMapping,
-                ifaces, soundDeviceEnabled, isConsoleEnabled);
+        copyVmDevices(srcId, dstId, vm, vmBase, isVm, devices, srcDeviceIdToTargetDeviceIdMapping,
+                soundDeviceEnabled, isConsoleEnabled);
     }
 
     private static void addVideoDevice(VmBase vm) {
