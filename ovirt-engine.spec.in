@@ -695,7 +695,6 @@ fi
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/certs
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/private
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_pki}/requests
-# root only
 %dir %{engine_pki}/keys
 %{engine_data}/bin/pki-common.sh
 %{engine_data}/bin/pki-create-ca.sh
