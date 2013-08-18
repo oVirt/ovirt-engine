@@ -62,6 +62,9 @@ class Plugin(plugin.PluginBase):
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
         name=osetupcons.Stages.APACHE_RESTART,
+        after=(
+            osetupcons.Stages.CORE_ENGINE_START,
+        ),
         condition=lambda self: (
             self._enabled and
             self.environment[
