@@ -7,10 +7,12 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -162,18 +164,38 @@ public class ImportNetworksModel extends Model {
     public void onImport() {
         List<VdcActionParametersBase> mulipleActionParameters =
                 new LinkedList<VdcActionParametersBase>();
+        List<IFrontendActionAsyncCallback> callbacks = new LinkedList<IFrontendActionAsyncCallback>();
 
-        for (ExternalNetwork externalNetwork : (Iterable<ExternalNetwork>) importedNetworks.getItems()) {
+        for (final ExternalNetwork externalNetwork : (Iterable<ExternalNetwork>) importedNetworks.getItems()) {
             final Network network = externalNetwork.getNetwork();
             Guid dcId = ((StoragePool) externalNetwork.getDataCenters().getSelectedItem()).getId();
             network.setName(externalNetwork.getDisplayName());
             network.setDataCenterId(dcId);
             AddNetworkStoragePoolParameters params =
                     new AddNetworkStoragePoolParameters(dcId, network);
+            params.setVnicProfileRequired(false);
             mulipleActionParameters.add(params);
+            callbacks.add(new IFrontendActionAsyncCallback() {
+
+                @Override
+                public void executed(FrontendActionAsyncResult result) {
+                    network.setId((Guid) result.getReturnValue().getActionReturnValue());
+                    addVnicProfile(network, externalNetwork.isPublicUse());
+                }
+            });
         }
 
-        Frontend.RunMultipleActions(VdcActionType.AddNetwork, mulipleActionParameters, new IFrontendActionAsyncCallback() {
+        Frontend.RunMultipleActions(VdcActionType.AddNetwork, mulipleActionParameters, callbacks);
+        cancel();
+    }
+
+    private void addVnicProfile(Network network, boolean publicUse) {
+        VnicProfile vnicProfile = new VnicProfile();
+        vnicProfile.setName(network.getName());
+        vnicProfile.setNetworkId(network.getId());
+        VnicProfileParameters parameters = new VnicProfileParameters(vnicProfile);
+        parameters.setPublicUse(publicUse);
+        Frontend.RunAction(VdcActionType.AddVnicProfile, parameters, new IFrontendActionAsyncCallback() {
 
             @Override
             public void executed(FrontendActionAsyncResult result) {
