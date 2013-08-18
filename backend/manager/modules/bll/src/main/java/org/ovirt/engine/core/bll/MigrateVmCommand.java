@@ -31,12 +31,10 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
 
-    private Guid _vdsDestinationId;
+    private Guid vdsDestinationId;
     protected boolean forcedMigrationForNonMigratableVM;
 
-    /**
-     * Used to log the migration error.
-     */
+    /** Used to log the migration error. */
     private VdcBllErrors migrationErrorCode;
 
     public MigrateVmCommand(T parameters) {
@@ -44,13 +42,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         forcedMigrationForNonMigratableVM = parameters.isForceMigrationForNonMigratableVM();
     }
 
-    // this property is used for audit log events
+    /**
+     * this property is used for audit log events
+     */
     public String getVdsDestination() {
-        if (getDestinationVds() != null) {
-            return getDestinationVds().getName();
-        } else {
-            return null;
-        }
+        return getDestinationVds() != null ? getDestinationVds().getName() : null;
     }
 
     /**
@@ -68,8 +64,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected VDS getDestinationVds() {
-        if (_destinationVds == null && _vdsDestinationId != null) {
-            _destinationVds = DbFacade.getInstance().getVdsDao().get(_vdsDestinationId);
+        if (_destinationVds == null && vdsDestinationId != null) {
+            _destinationVds = DbFacade.getInstance().getVdsDao().get(vdsDestinationId);
         }
         return _destinationVds;
     }
@@ -82,7 +78,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     protected void initVdss() {
-        setVdsIdRef(new Guid(getVm().getRunOnVds().toString()));
+        setVdsIdRef(getVm().getRunOnVds());
         VDS destVds = getDestinationVds();
         Guid vdsToRunOn =
                 SchedulingManager.getInstance().schedule(getVdsGroup(),
@@ -100,14 +96,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         // make _destinationVds null in order to refresh it from db in case it
         // changed.
         _destinationVds = null;
-        if (_vdsDestinationId != null && _vdsDestinationId.equals(Guid.Empty)) {
+        if (vdsDestinationId != null && vdsDestinationId.equals(Guid.Empty)) {
             throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_CANT_ALLOC_VDS_MIGRATION);
         }
-        if (getDestinationVds() == null) {
-            throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_VDS_NOT_FOUND);
-        }
 
-        if (getVds() == null) {
+        if (getDestinationVds() == null || getVds() == null) {
             throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_VDS_NOT_FOUND);
         }
     }
@@ -127,42 +120,50 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     private void perform() {
-        getVm().setMigratingToVds(_vdsDestinationId);
-
-        String srcVdsHost = getVds().getHostName();
-        String dstVdsHost = String.format("%1$s:%2$s", getDestinationVds().getHostName(), getDestinationVds()
-                .getPort());
-        Boolean tunnelMigration = null;
-        if (FeatureSupported.tunnelMigration(getVm().getVdsGroupCompatibilityVersion())) {
-            // if vm has no override for tunnel migration (its null),
-            // use cluster's setting
-            tunnelMigration =
-                    getVm().getTunnelMigration() != null ? getVm().getTunnelMigration()
-                            : getVdsGroup().isTunnelMigration();
-        }
+        getVm().setMigratingToVds(vdsDestinationId);
 
         getParameters().setStartTime(new Date());
 
         // Starting migration at src VDS
-        boolean connectToLunDiskSuccess = connectLunDisks(_vdsDestinationId);
+        boolean connectToLunDiskSuccess = connectLunDisks(vdsDestinationId);
         if (connectToLunDiskSuccess) {
             setActionReturnValue(Backend
                     .getInstance()
                     .getResourceManager()
                     .RunAsyncVdsCommand(
                             VDSCommandType.Migrate,
-                            new MigrateVDSCommandParameters(getVdsId(), getVmId(), srcVdsHost, _vdsDestinationId,
-                                    dstVdsHost, MigrationMethod.ONLINE, tunnelMigration, getMigrationNetworkIp()),
+                            createMigrateVDSCommandParameters(),
                             this)
                     .getReturnValue());
         }
-        if (!connectToLunDiskSuccess || (VMStatus) getActionReturnValue() != VMStatus.MigratingFrom) {
+        if (!connectToLunDiskSuccess || getActionReturnValue() != VMStatus.MigratingFrom) {
             getVm().setMigreatingToPort(0);
             getVm().setMigreatingFromPort(0);
             getVm().setMigratingToVds(null);
             throw new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_MIGRATION_FAILED_AT_DST);
         }
         ExecutionHandler.setAsyncJob(getExecutionContext(), true);
+    }
+
+    private MigrateVDSCommandParameters createMigrateVDSCommandParameters() {
+        String srcVdsHost = getVds().getHostName();
+        String dstVdsHost = String.format("%1$s:%2$s",
+                getDestinationVds().getHostName(),
+                getDestinationVds().getPort());
+
+        return new MigrateVDSCommandParameters(getVdsId(), getVmId(), srcVdsHost, vdsDestinationId,
+                dstVdsHost, MigrationMethod.ONLINE, isTunnelMigrationUsed(), getMigrationNetworkIp());
+    }
+
+    private Boolean isTunnelMigrationUsed() {
+        if (FeatureSupported.tunnelMigration(getVm().getVdsGroupCompatibilityVersion())) {
+            // if vm has no override for tunnel migration (its null),
+            // use cluster's setting
+            return getVm().getTunnelMigration() != null ?
+                    getVm().getTunnelMigration()
+                    : getVdsGroup().isTunnelMigration();
+        }
+        return null;
     }
 
     private String getMigrationNetworkIp() {
@@ -221,11 +222,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     }
 
     protected Guid getVdsDestinationId() {
-        return _vdsDestinationId;
+        return vdsDestinationId;
     }
 
     protected void setVdsDestinationId(Guid value) {
-        _vdsDestinationId = value;
+        vdsDestinationId = value;
     }
 
     @Override
@@ -293,22 +294,15 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     public void rerun() {
-        /**
-         * make Vm property to null in order to refresh it from db.
-         */
+         // make Vm property to null in order to refresh it from db
         setVm(null);
         determineMigrationFailureForAuditLog();
-        /**
-         * if vm is up and rerun is called then it got up on the source, try to
-         * rerun
-         */
+        // if vm is up and rerun is called then it got up on the source, try to rerun
         if (getVm() != null && getVm().getStatus() == VMStatus.Up) {
             setVdsDestinationId(null);
             super.rerun();
         } else {
-            /**
-             * vm went down on the destination and source, migration failed.
-             */
+            // vm went down on the destination and source, migration failed.
             decreasePendingVms(getDestinationVds().getId());
             _isRerun = true;
             setSucceeded(false);
@@ -332,11 +326,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected Guid getCurrentVdsId() {
-        if (getVdsDestinationId() != null) {
-            return getVdsDestinationId();
-        } else {
-            return super.getCurrentVdsId();
-        }
+        return getVdsDestinationId() != null ? getVdsDestinationId() : super.getCurrentVdsId();
     }
 
     public String getDuration() {
