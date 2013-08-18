@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling.external;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -85,27 +85,26 @@ public class ExternalSchedulerDiscoveryThread extends Thread {
                 continue;
             }
 
-            try{
-                Map<String, String> discoveryPropMap = SimpleCustomPropertiesUtil.getInstance().convertProperties(discoveryUnit.getRegex());
-                if (!policyUnit.getParameterRegExMap().equals(discoveryPropMap)) {
-                    sendToDb(discoveryUnit, true, type);
-                }
-            } catch (Exception e) {
-                // TODO: handle exception? log?
+            Map<String, String> discoveryPropMap =
+                    StringUtils.isEmpty(discoveryUnit.getRegex()) ? new LinkedHashMap<String, String>() :
+                    SimpleCustomPropertiesUtil.getInstance().convertProperties(discoveryUnit.getRegex());
+            if (!discoveryPropMap.equals(policyUnit.getParameterRegExMap()) ||
+                    !discoveryUnit.getDescription().equals(policyUnit.getDescription()) ||
+                    !policyUnit.isEnabled()) {
+                sendToDb(discoveryUnit, policyUnit.getId(), type);
             }
-
-            // TODO: when policy unit description is merged, compare it as well
 
             return policyUnit;
 
         }
-        sendToDb(discoveryUnit, false, type);
+        sendToDb(discoveryUnit, null, type);
         return null;
     }
 
-    private void sendToDb(ExternalSchedulerDiscoveryUnit discovery, boolean isUpdate, PolicyUnitType type) {
+    private void sendToDb(ExternalSchedulerDiscoveryUnit discovery, Guid policyUnitId, PolicyUnitType type) {
         PolicyUnit policy = createFromDiscoveryUnit(discovery, type);
-        if (isUpdate) {
+        if (policyUnitId != null) {
+            policy.setId(policyUnitId);
             getPolicyUnitDao().update(policy);
         } else {
             policy.setId(Guid.newGuid());
@@ -118,13 +117,13 @@ public class ExternalSchedulerDiscoveryThread extends Thread {
         policy.setInternal(false);
         policy.setName(discoveryUnit.getName());
         policy.setPolicyUnitType(type);
-        if(!StringUtils.isBlank(discoveryUnit.getRegex())) {
+        policy.setDescription(discoveryUnit.getDescription());
+        if (!StringUtils.isEmpty(discoveryUnit.getRegex())) {
             policy.setParameterRegExMap(SimpleCustomPropertiesUtil.getInstance()
                     .convertProperties(discoveryUnit.getRegex()));
         } else {
-            policy.setParameterRegExMap(new HashMap<String, String>());
+            policy.setParameterRegExMap(new LinkedHashMap<String, String>());
         }
-        // TODO: when policy unit description is merged, set it
         return policy;
     }
 

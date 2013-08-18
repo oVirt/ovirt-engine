@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -41,13 +43,21 @@ public class ExternalSchedulerDiscoveryResult {
                     return false;
                 }
             // list of module names as keys and [description, regex] as value
-            for (String moduleName : typeMap.keySet()) {
-                Object[] singleModule = typeMap.get(moduleName);
+                for (String moduleName : typeMap.keySet()) {
+                    Object[] singleModule = typeMap.get(moduleName);
+                    // check custom properties format.
+                    String customPropertiesRegex = singleModule[1].toString();
+                    if (!StringUtils.isEmpty(customPropertiesRegex) && SimpleCustomPropertiesUtil.getInstance()
+                            .syntaxErrorInProperties(customPropertiesRegex)) {
+                        log.error("module " + moduleName + " will not be loaded, wrong custom properties format ("
+                                + customPropertiesRegex + ")");
+                        continue;
+                    }
                     ExternalSchedulerDiscoveryUnit currentUnit = new ExternalSchedulerDiscoveryUnit(moduleName,
-                        singleModule[0].toString(),
-                        singleModule[1].toString());
+                            singleModule[0].toString(),
+                            customPropertiesRegex);
                     currentList.add(currentUnit);
-            }
+                }
         }
         return true;
         } catch (Exception e) {
