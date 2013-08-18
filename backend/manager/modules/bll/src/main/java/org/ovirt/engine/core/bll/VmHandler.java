@@ -92,9 +92,11 @@ public class VmHandler {
             mUpdateVmsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond());
         }
         COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.MigrateVm);
+        COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.MigrateVmToServer);
+        COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.InternalMigrateVm);
+        COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.CancelMigrateVm);
         COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.SetVmTicket);
         COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.VmLogon);
-        COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.CancelMigrateVm);
     }
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status) {
