@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDAODbFacadeImpl.DiskImageRowMapper;
@@ -48,6 +49,21 @@ public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
                         .addValue("user_id", userID)
                         .addValue("is_filtered", isFiltered);
         return getCallsHandler().executeReadList("GetDisksVmGuid", DiskRowMapper.instance, parameterSource);
+    }
+
+    @Override
+    public List<Disk> getAllForVmPartialData(Guid vmId,
+            boolean onlyPluggedDisks,
+            Guid userID,
+            boolean isFiltered) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_guid", vmId)
+                .addValue("only_plugged", onlyPluggedDisks)
+                .addValue("user_id", userID)
+                .addValue("is_filtered", isFiltered);
+        return getCallsHandler().executeReadList("GetDisksVmGuidBasicView",
+                DiskBasicViewRowMapper.instance,
+                parameterSource);
     }
 
     @Override
@@ -108,6 +124,24 @@ public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
                 disk = LunDiskRowMapper.instance.mapRow(rs, rowNum);
                 break;
             }
+
+            return disk;
+        }
+    }
+
+    private static class DiskBasicViewRowMapper implements RowMapper<Disk> {
+
+        public static DiskBasicViewRowMapper instance = new DiskBasicViewRowMapper();
+
+        private DiskBasicViewRowMapper() {
+        }
+
+        @Override
+        public Disk mapRow(ResultSet rs, int rowNum) throws SQLException {
+            DiskImage disk = new DiskImage();
+            disk.setDiskAlias(rs.getString("disk_alias"));
+            disk.setSize(rs.getLong("size"));
+            disk.setId(getGuid(rs, "disk_id"));
 
             return disk;
         }

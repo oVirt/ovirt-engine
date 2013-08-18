@@ -52,6 +52,25 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+DROP TYPE IF EXISTS disks_basic_rs CASCADE;
+CREATE TYPE disks_basic_rs AS (disk_id UUID,disk_alias varchar(255),size BIGINT);
+
+Create or replace FUNCTION GetDisksVmGuidBasicView(v_vm_guid UUID, v_only_plugged BOOLEAN, v_user_id UUID, v_is_filtered BOOLEAN)
+RETURNS SETOF disks_basic_rs
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT disk_id,disk_alias, size
+      FROM images
+      LEFT OUTER JOIN base_disks ON images.image_group_id = base_disks.disk_id
+      LEFT JOIN vm_device ON vm_device.device_id = image_group_id AND (NOT v_only_plugged OR is_plugged)
+      WHERE vm_device.vm_id = v_vm_guid
+      AND images.active = true
+      AND (NOT v_is_filtered OR EXISTS (SELECT 1
+                                        FROM   user_disk_permissions_view
+                                        WHERE  user_id = v_user_id AND entity_id = disk_id));
+
+END; $procedure$
+LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetVmBootDisk(v_vm_guid UUID) RETURNS SETOF all_disks AS $procedure$
 BEGIN

@@ -176,6 +176,14 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
         assertEquals("Wrong boot disk for VM", bootDisk.getId(), FixturesTool.BOOTABLE_DISK_ID);
     }
 
+    @Test
+    public void testGetVmPartialData() {
+        List<Disk> disks = dao.getAllForVm(FixturesTool.VM_RHEL5_POOL_57, PRIVILEGED_USER_ID, true);
+        assertFullGetAllForVMResult(disks);
+        assertEquals("New Description", disks.get(0).getDiskDescription());
+        assertNotNull(disks.get(0).getDiskAlias());
+    }
+
     /**
      * Asserts the result of {@link DiskImageDAO#getAllForVm(Guid)} contains the correct disks.
      * @param disks
