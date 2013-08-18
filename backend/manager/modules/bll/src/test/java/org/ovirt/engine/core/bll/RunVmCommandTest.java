@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
@@ -32,7 +31,6 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.action.RunVmParams;
-import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
@@ -361,20 +359,15 @@ public class RunVmCommandTest {
 
     private RunVmValidator mockSuccessfulRunVmValidator() {
         RunVmValidator runVmValidator = mock(RunVmValidator.class);
-        when(runVmValidator.canRunVm(any(VM.class),
+        when(runVmValidator.canRunVm(
                 Matchers.anyListOf(String.class),
                 Matchers.anyListOf(Disk.class),
-                any(BootSequence.class),
                 any(StoragePool.class),
-                anyBoolean(),
-                anyString(),
-                anyString(),
-                anyBoolean(),
                 Matchers.anyListOf(Guid.class),
                 Matchers.anyListOf(Guid.class),
                 any(Guid.class),
                 any(VDSGroup.class))).thenReturn(true);
-        when(runVmValidator.validateNetworkInterfaces(any(VM.class))).thenReturn(ValidationResult.VALID);
+        when(runVmValidator.validateNetworkInterfaces()).thenReturn(ValidationResult.VALID);
         doReturn(runVmValidator).when(command).getRunVmValidator();
         return runVmValidator;
     }

@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -54,6 +55,22 @@ import org.ovirt.engine.core.utils.customprop.ValidationError;
 import org.ovirt.engine.core.utils.customprop.VmPropertiesUtils;
 
 public class RunVmValidator {
+
+    private VM vm;
+    private RunVmParams runVmParam;
+    private boolean isInternalExecution;
+
+    public RunVmValidator(VM vm, RunVmParams rumVmParam, boolean isInternalExecution) {
+        this.vm = vm;
+        this.runVmParam = rumVmParam;
+        this.isInternalExecution = isInternalExecution;
+    }
+
+    /**
+     * Used for testings
+     */
+    protected RunVmValidator() {
+    }
 
     public boolean validateVmProperties(VM vm, List<String> messages) {
         List<ValidationError> validationErrors =
@@ -321,45 +338,35 @@ public class RunVmValidator {
     /**
      * A general method for run vm validations. used in runVmCommand and in VmPoolCommandBase
      *
-     * @param vm
      * @param messages
      * @param vmDisks
-     * @param bootSequence
-     * @param isInternalExecution
      * @param storagePool
-     * @param diskPath
-     * @param floppyPath
-     * @param runAsStateless
-     * @param vdsSelector
      * @param vdsBlackList
      *            - hosts that we already tried to run on
      * @param vdsWhiteList
      *            - initial host list, mainly runOnSpecificHost (runOnce/migrateToHost)
+     * @param destVds
+     * @param vdsGroup
      * @return
      */
-    public boolean canRunVm(VM vm,
+    public boolean canRunVm(
             List<String> messages,
             List<Disk> vmDisks,
-            BootSequence bootSequence,
             StoragePool storagePool,
-            boolean isInternalExecution,
-            String diskPath,
-            String floppyPath,
-            Boolean runAsStateless,
             List<Guid> vdsBlackList,
             List<Guid> vdsWhiteList,
             Guid destVds,
             VDSGroup vdsGroup) {
 
         if (!validateVmProperties(vm, messages) ||
-                !validate(validateBootSequence(vm, bootSequence, vmDisks), messages) ||
+                !validate(validateBootSequence(vm, runVmParam.getBootSequence(), vmDisks), messages) ||
                 !validate(new VmValidator(vm).vmNotLocked(), messages) ||
                 !validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()), messages) ||
                 !validate(validateVmStatusUsingMatrix(vm), messages) ||
-                !validate(validateIsoPath(vm, diskPath, floppyPath), messages)  ||
+                !validate(validateIsoPath(vm, runVmParam.getDiskPath(), runVmParam.getFloppyPath()), messages)  ||
                 !validate(vmDuringInitialization(vm), messages) ||
                 !validate(validateVdsStatus(vm), messages) ||
-                !validate(validateStatelessVm(vm, vmDisks, runAsStateless), messages)) {
+                !validate(validateStatelessVm(vm, vmDisks, runVmParam.getRunAsStateless()), messages)) {
             return false;
         }
 
@@ -382,7 +389,7 @@ public class RunVmValidator {
     /**
      * @return true if all VM network interfaces are valid
      */
-    public ValidationResult validateNetworkInterfaces(VM vm) {
+    public ValidationResult validateNetworkInterfaces() {
         Map<String, VmNetworkInterface> interfaceNetworkMap = Entities.vmInterfacesByNetworkName(vm.getInterfaces());
         Set<String> interfaceNetworkNames = interfaceNetworkMap.keySet();
         List<Network> clusterNetworks = getNetworkDao().getAllForCluster(vm.getVdsGroupId());

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -19,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
@@ -34,7 +34,6 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmPoolDAO;
 
 public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends CommandBase<T> {
-    private static final RunVmValidator runVmValidator = new RunVmValidator();
     private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
     private VmPool mVmPool;
 
@@ -219,7 +218,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
             messages.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.name());
             return false;
         }
-        VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(vm.getVdsGroupId());
 
         // TODO: This is done to keep consistency with VmDAO.getById.
         // It can probably be removed, but that requires some more research
@@ -228,19 +226,14 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         RunVmParams runVmParams = new RunVmParams(vmId);
         runVmParams.setUseVnc(osRepository.isLinux(vm.getVmOsId()) || vm.getVmType() == VmType.Server);
 
-        return getRunVmValidator().canRunVm(vm,
+        return new RunVmValidator(vm, runVmParams, false).canRunVm(
                 messages,
                 getDiskDao().getAllForVm(vm.getId(), true),
-                runVmParams.getBootSequence(),
                 fetchStoragePool(vm.getStoragePoolId()),
-                false,
-                runVmParams.getDiskPath(),
-                runVmParams.getFloppyPath(),
-                runVmParams.getRunAsStateless(),
-                new ArrayList<Guid>(),
+                Collections.<Guid>emptyList(),
                 null,
                 null,
-                vdsGroup);
+                DbFacade.getInstance().getVdsGroupDao().get(vm.getVdsGroupId()));
     }
 
     private static DiskDao getDiskDao() {
@@ -249,10 +242,6 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
     private static StoragePool fetchStoragePool(Guid storagePoolId) {
         return DbFacade.getInstance().getStoragePoolDao().get(storagePoolId);
-    }
-
-    private static RunVmValidator getRunVmValidator() {
-        return runVmValidator;
     }
 
     @Override

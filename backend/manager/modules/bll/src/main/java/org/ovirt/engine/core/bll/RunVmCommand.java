@@ -83,7 +83,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         implements QuotaVdsDependent {
 
-    private static final RunVmValidator runVmValidator = new RunVmValidator();
     private boolean mResume;
     /** Note: this field should not be used directly, use {@link #isVmRunningStateless()} instead */
     private Boolean cachedVmIsRunningStateless;
@@ -776,20 +775,17 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return false;
         }
 
+        RunVmValidator runVmValidator = getRunVmValidator();
+
         if (vm.getStatus() == VMStatus.Paused) {
             // if VM is paused, it was already checked before that it is capable to run
             return true;
         }
 
-        if (!getRunVmValidator().canRunVm(vm,
+        if (!runVmValidator.canRunVm(
                 getReturnValue().getCanDoActionMessages(),
                 getDiskDao().getAllForVm(vm.getId(), true),
-                getParameters().getBootSequence(),
                 getStoragePool(),
-                isInternalExecution(),
-                getParameters().getDiskPath(),
-                getParameters().getFloppyPath(),
-                getParameters().getRunAsStateless(),
                 getRunVdssList(),
                 getVdsWhiteList(),
                 getDestinationVds() != null ? getDestinationVds().getId() : null,
@@ -797,7 +793,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return false;
         }
 
-        if (!validate(getRunVmValidator().validateNetworkInterfaces(vm))) {
+        if (!validate(runVmValidator.validateNetworkInterfaces())) {
             return false;
         }
 
@@ -834,7 +830,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     protected RunVmValidator getRunVmValidator() {
-        return runVmValidator;
+        return new RunVmValidator(getVm(), getParameters(), isInternalExecution());
     }
 
     @Override
