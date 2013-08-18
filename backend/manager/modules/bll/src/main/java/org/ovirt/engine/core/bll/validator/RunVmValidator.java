@@ -63,6 +63,9 @@ public class RunVmValidator {
 
     private List<Disk> cachedVmDisks;
     private List<DiskImage> cachedVmImageDisks;
+    private Set<String> cachedInterfaceNetworkNames;
+    private List<Network> cachedClusterNetworks;
+    private Set<String> cachedClusterNetworksNames;
 
     public RunVmValidator(VM vm, RunVmParams rumVmParam, boolean isInternalExecution) {
         this.vm = vm;
@@ -312,22 +315,17 @@ public class RunVmValidator {
      * @return true if all VM network interfaces are valid
      */
     public ValidationResult validateNetworkInterfaces() {
-        Map<String, VmNetworkInterface> interfaceNetworkMap = Entities.vmInterfacesByNetworkName(vm.getInterfaces());
-        Set<String> interfaceNetworkNames = interfaceNetworkMap.keySet();
-        List<Network> clusterNetworks = getNetworkDao().getAllForCluster(vm.getVdsGroupId());
-        Set<String> clusterNetworksNames = Entities.objectNames(clusterNetworks);
-
         ValidationResult validationResult = validateInterfacesConfigured(vm);
         if (!validationResult.isValid()) {
             return validationResult;
         }
 
-        validationResult = validateInterfacesAttachedToClusterNetworks(vm, clusterNetworksNames, interfaceNetworkNames);
+        validationResult = validateInterfacesAttachedToClusterNetworks(vm, getClusterNetworksNames(), getInterfaceNetworkNames());
         if (!validationResult.isValid()) {
             return validationResult;
         }
 
-        validationResult = validateInterfacesAttachedToVmNetworks(clusterNetworks, interfaceNetworkNames);
+        validationResult = validateInterfacesAttachedToVmNetworks(getClusterNetworks(), getInterfaceNetworkNames());
         if (!validationResult.isValid()) {
             return validationResult;
         }
@@ -488,6 +486,7 @@ public class RunVmValidator {
                 }
             }
         }
+
         return map;
     }
 
@@ -495,6 +494,7 @@ public class RunVmValidator {
         if (cachedVmDisks == null) {
             cachedVmDisks = getDiskDao().getAllForVm(vm.getId(), true);
         }
+
         return cachedVmDisks;
     }
 
@@ -502,6 +502,31 @@ public class RunVmValidator {
         if (cachedVmImageDisks == null) {
             cachedVmImageDisks = ImagesHandler.filterImageDisks(getVmDisks(), true, false, false);
         }
+
         return cachedVmImageDisks;
+    }
+
+    private Set<String> getInterfaceNetworkNames() {
+        if (cachedInterfaceNetworkNames == null) {
+            cachedInterfaceNetworkNames = Entities.vmInterfacesByNetworkName(vm.getInterfaces()).keySet();
+        }
+
+        return cachedInterfaceNetworkNames;
+    }
+
+    private List<Network> getClusterNetworks() {
+        if (cachedClusterNetworks == null) {
+            cachedClusterNetworks = getNetworkDao().getAllForCluster(vm.getVdsGroupId());
+        }
+
+        return cachedClusterNetworks;
+    }
+
+    private Set<String> getClusterNetworksNames() {
+        if (cachedClusterNetworksNames == null) {
+            cachedClusterNetworksNames = Entities.objectNames(getClusterNetworks());
+        }
+
+        return cachedClusterNetworksNames;
     }
 }
