@@ -3182,4 +3182,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("(EXT)")
     String externalPolicyUnitLabel();
+
+    @DefaultStringValue("(Disabled)")
+    String disabledPolicyUnit();
 }

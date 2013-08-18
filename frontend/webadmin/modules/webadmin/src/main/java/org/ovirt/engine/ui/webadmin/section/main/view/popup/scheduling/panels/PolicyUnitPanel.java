@@ -47,7 +47,7 @@ public class PolicyUnitPanel extends FocusPanel {
         this.locked = locked;
         this.style = style;
         getElement().setTitle(policyUnit.getDescription());
-        if (!locked) {
+        if (!locked && (policyUnit.isEnabled() || used)) {
             addDomHandler(new ContextMenuHandler() {
 
                 @Override
@@ -104,6 +104,9 @@ public class PolicyUnitPanel extends FocusPanel {
             panel.setWidth("100%"); //$NON-NLS-1$
             panel.add(policyUnitLablePanel);
         }
+        if (!policyUnit.isEnabled()) {
+            panel.getElement().getStyle().setOpacity(0.5);
+        }
         setWidget(panel);
     }
 
@@ -114,16 +117,24 @@ public class PolicyUnitPanel extends FocusPanel {
             Label extLabel = new Label(constants.externalPolicyUnitLabel());
             extLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
             panel.add(extLabel);
-            panel.setWidth("40%"); //$NON-NLS-1$
+
         }
         panel.add(label);
+        if (!policyUnit.isEnabled()) {
+            Label disabledLabel = new Label(constants.disabledPolicyUnit());
+            disabledLabel.getElement().getStyle().setFontWeight(FontWeight.BOLD);
+            panel.add(disabledLabel);
+        }
+        panel.setSpacing(2);
         return panel;
     }
 
     protected void showContextMenu(PolicyUnitPanel sourcePanel, int clientX, int clientY) {
         MenuBar menuBar = createMenu();
         fillMenuBar(menuBar);
-        addSubMenu(menuBar);
+        if (policyUnit.isEnabled()) {
+            addSubMenu(menuBar);
+        }
         menuPopup.setWidget(menuBar);
         menuPopup.setPopupPosition(clientX, clientY);
         menuPopup.show();
