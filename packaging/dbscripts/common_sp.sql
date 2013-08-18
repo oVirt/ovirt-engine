@@ -198,34 +198,6 @@ LANGUAGE plpgsql;
 -- End of DB helper functions
 --------------------------------------------------
 
-CREATE OR REPLACE FUNCTION isloggingenabled(errorcode text)
-  RETURNS boolean AS
-$BODY$
--- determine if logging errors is enabled.
--- define in your postgresql.conf:
--- custom_variable_classes = 'engine'
--- set engine.logging = 'true';
--- or this could be in a config table
-
--- NOTE: We should look at checking error codes as not all are suitable for exceptions some are just notice or info
-declare
-    result boolean := false;
-    prop text;
-begin
-    -- check for log setting in postgresql.conf
-    select current_setting('engine.logging') into prop;
-    if prop = 'true' then
-result = true;
-    end if;
-    return result;
-exception
-    when others then
-result = true;  -- default to log if not specified
-return result;
-end;
-$BODY$
-  LANGUAGE 'plpgsql';
-
 CREATE OR REPLACE FUNCTION attach_user_to_su_role(v_permission_id uuid)
   RETURNS void AS
 $procedure$
