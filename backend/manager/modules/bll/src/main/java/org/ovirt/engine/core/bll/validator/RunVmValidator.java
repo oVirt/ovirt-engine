@@ -72,6 +72,55 @@ public class RunVmValidator {
     protected RunVmValidator() {
     }
 
+    /**
+     * A general method for run vm validations. used in runVmCommand and in VmPoolCommandBase
+     *
+     * @param messages
+     * @param vmDisks
+     * @param storagePool
+     * @param vdsBlackList
+     *            - hosts that we already tried to run on
+     * @param vdsWhiteList
+     *            - initial host list, mainly runOnSpecificHost (runOnce/migrateToHost)
+     * @param destVds
+     * @param vdsGroup
+     * @return
+     */
+    public boolean canRunVm(List<String> messages, List<Disk> vmDisks, StoragePool storagePool,
+            List<Guid> vdsBlackList, List<Guid> vdsWhiteList, Guid destVds, VDSGroup vdsGroup) {
+
+        if (!validateVmProperties(vm, messages) ||
+                !validate(validateBootSequence(vm, runVmParam.getBootSequence(), vmDisks), messages) ||
+                !validate(new VmValidator(vm).vmNotLocked(), messages) ||
+                !validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()), messages) ||
+                !validate(validateVmStatusUsingMatrix(vm), messages) ||
+                !validate(validateIsoPath(vm, runVmParam.getDiskPath(), runVmParam.getFloppyPath()), messages)  ||
+                !validate(vmDuringInitialization(vm), messages) ||
+                !validate(validateVdsStatus(vm), messages) ||
+                !validate(validateStatelessVm(vm, vmDisks, runVmParam.getRunAsStateless()), messages)) {
+            return false;
+        }
+
+        List<DiskImage> images = ImagesHandler.filterImageDisks(vmDisks, true, false, false);
+        if (!images.isEmpty() && (
+                !validate(validateStoragePoolUp(vm, storagePool), messages) ||
+                !validate(validateStorageDomains(vm, isInternalExecution, images), messages) ||
+                !validate(validateImagesForRunVm(vm, images), messages))) {
+            return false;
+        }
+
+        if (!SchedulingManager.getInstance().canSchedule(
+                vdsGroup, vm, vdsBlackList, vdsWhiteList, destVds, messages)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    //////////////////////////
+    /// Validation methods ///
+    //////////////////////////
+
     public boolean validateVmProperties(VM vm, List<String> messages) {
         List<ValidationError> validationErrors =
                 getVmPropertiesUtils().validateVMProperties(
@@ -177,35 +226,13 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
-    private boolean isRepoImageExists(String repoImagePath, Guid storageDomainId, ImageFileType imageFileType) {
-        VdcQueryReturnValue ret = getBackend().runInternalQuery(
-                VdcQueryType.GetImagesList,
-                new GetImagesListParameters(storageDomainId, imageFileType));
-
-        if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {
-            for (RepoImage isoFileMetaData : ret.<List<RepoImage>>getReturnValue()) {
-                if (repoImagePath.equals(isoFileMetaData.getRepoImageId())) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public ValidationResult vmDuringInitialization(VM vm) {
         if (vm.isRunning() || vm.getStatus() == VMStatus.NotResponding ||
                 isVmDuringInitiating(vm)) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
         }
-        return ValidationResult.VALID;
-    }
 
-    protected boolean isVmDuringInitiating(VM vm) {
-        return (Boolean) getBackend()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
-                        new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
-                .getReturnValue();
+        return ValidationResult.VALID;
     }
 
     public ValidationResult validateVdsStatus(VM vm) {
@@ -240,6 +267,7 @@ public class RunVmValidator {
         if (!hasSpaceValidation.isValid()) {
             return hasSpaceValidation;
         }
+
         return ValidationResult.VALID;
     }
 
@@ -248,11 +276,8 @@ public class RunVmValidator {
                 VdcActionType.RunVm)) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
         }
-        return ValidationResult.VALID;
-    }
 
-    protected SnapshotsValidator getSnapshotValidator() {
-        return new SnapshotsValidator();
+        return ValidationResult.VALID;
     }
 
     /**
@@ -270,6 +295,7 @@ public class RunVmValidator {
                 return validationResult;
             }
         }
+
         return ValidationResult.VALID;
     }
 
@@ -279,20 +305,109 @@ public class RunVmValidator {
     }
 
     /**
-     * map the VM number of pluggable and snapable disks from their domain.
-     * @param vm
-     * @return
+     * @return true if all VM network interfaces are valid
      */
-    public Map<StorageDomain, Integer> mapStorageDomainsToNumOfDisks(VM vm, List<Disk> plugDisks) {
-        Map<StorageDomain, Integer> map = new HashMap<StorageDomain, Integer>();
-        for (Disk disk : plugDisks) {
-            if (disk.isAllowSnapshot()) {
-                for (StorageDomain domain : getStorageDomainDAO().getAllStorageDomainsByImageId(((DiskImage) disk).getImageId())) {
-                    map.put(domain, map.containsKey(domain) ? Integer.valueOf(map.get(domain) + 1) : Integer.valueOf(1));
+    public ValidationResult validateNetworkInterfaces() {
+        Map<String, VmNetworkInterface> interfaceNetworkMap = Entities.vmInterfacesByNetworkName(vm.getInterfaces());
+        Set<String> interfaceNetworkNames = interfaceNetworkMap.keySet();
+        List<Network> clusterNetworks = getNetworkDao().getAllForCluster(vm.getVdsGroupId());
+        Set<String> clusterNetworksNames = Entities.objectNames(clusterNetworks);
+
+        ValidationResult validationResult = validateInterfacesConfigured(vm);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        validationResult = validateInterfacesAttachedToClusterNetworks(vm, clusterNetworksNames, interfaceNetworkNames);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        validationResult = validateInterfacesAttachedToVmNetworks(clusterNetworks, interfaceNetworkNames);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * Checking that the interfaces are all configured, interfaces with no network are allowed only if network linking
+     * is supported.
+     *
+     * @return true if all VM network interfaces are attached to existing cluster networks, or to no network (when
+     *         network linking is supported).
+     */
+    protected ValidationResult validateInterfacesConfigured(VM vm) {
+        for (VmNetworkInterface nic : vm.getInterfaces()) {
+            if (nic.getVnicProfileId() == null) {
+                return FeatureSupported.networkLinking(vm.getVdsGroupCompatibilityVersion()) ?
+                        ValidationResult.VALID:
+                            new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED);
+            }
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * @param clusterNetworksNames
+     *            cluster logical networks names
+     * @param interfaceNetworkNames
+     *            VM interface network names
+     * @return true if all VM network interfaces are attached to existing cluster networks
+     */
+    protected ValidationResult validateInterfacesAttachedToClusterNetworks(VM vm,
+            final Set<String> clusterNetworkNames, final Set<String> interfaceNetworkNames) {
+
+        Set<String> result = new HashSet<String>(interfaceNetworkNames);
+        result.removeAll(clusterNetworkNames);
+        if (FeatureSupported.networkLinking(vm.getVdsGroupCompatibilityVersion())) {
+            result.remove(null);
+        }
+
+        // If after removing the cluster network names we still have objects, then we have interface on networks that
+        // aren't attached to the cluster
+        return result.isEmpty() ?
+                ValidationResult.VALID
+                : new ValidationResult(
+                        VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NOT_IN_CLUSTER,
+                        String.format("$networks %1$s", StringUtils.join(result, ",")));
+    }
+
+    /**
+     * @param clusterNetworks
+     *            cluster logical networks
+     * @param interfaceNetworkNames
+     *            VM interface network names
+     * @return true if all VM network interfaces are attached to VM networks
+     */
+    protected ValidationResult validateInterfacesAttachedToVmNetworks(final List<Network> clusterNetworks,
+            Set<String> interfaceNetworkNames) {
+        List<String> nonVmNetworkNames =
+                NetworkUtils.filterNonVmNetworkNames(clusterNetworks, interfaceNetworkNames);
+
+        return nonVmNetworkNames.isEmpty() ?
+                ValidationResult.VALID
+                : new ValidationResult(
+                        VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK,
+                        String.format("$networks %1$s", StringUtils.join(nonVmNetworkNames, ",")));
+    }
+
+    ///////////////////////
+    /// Utility methods ///
+    ///////////////////////
+
+    protected boolean validate(ValidationResult validationResult, List<String> message) {
+        if (!validationResult.isValid()) {
+            message.add(validationResult.getMessage().name());
+            if (validationResult.getVariableReplacements() != null) {
+                for (String variableReplacement : validationResult.getVariableReplacements()) {
+                    message.add(variableReplacement);
                 }
             }
         }
-        return map;
+        return validationResult.isValid();
     }
 
     protected NetworkDao getNetworkDao() {
@@ -323,156 +438,48 @@ public class RunVmValidator {
         return VmPropertiesUtils.getInstance();
     }
 
-    protected boolean validate(ValidationResult validationResult, List<String> message) {
-        if (!validationResult.isValid()) {
-            message.add(validationResult.getMessage().name());
-            if (validationResult.getVariableReplacements() != null) {
-                for (String variableReplacement : validationResult.getVariableReplacements()) {
-                    message.add(variableReplacement);
+    private boolean isRepoImageExists(String repoImagePath, Guid storageDomainId, ImageFileType imageFileType) {
+        VdcQueryReturnValue ret = getBackend().runInternalQuery(
+                VdcQueryType.GetImagesList,
+                new GetImagesListParameters(storageDomainId, imageFileType));
+
+        if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {
+            for (RepoImage isoFileMetaData : ret.<List<RepoImage>>getReturnValue()) {
+                if (repoImagePath.equals(isoFileMetaData.getRepoImageId())) {
+                    return true;
                 }
             }
         }
-        return validationResult.isValid();
+        return false;
+    }
+
+    protected boolean isVmDuringInitiating(VM vm) {
+        return (Boolean) getBackend()
+                .getResourceManager()
+                .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
+                        new IsVmDuringInitiatingVDSCommandParameters(vm.getId()))
+                .getReturnValue();
+    }
+
+    protected SnapshotsValidator getSnapshotValidator() {
+        return new SnapshotsValidator();
     }
 
     /**
-     * A general method for run vm validations. used in runVmCommand and in VmPoolCommandBase
-     *
-     * @param messages
-     * @param vmDisks
-     * @param storagePool
-     * @param vdsBlackList
-     *            - hosts that we already tried to run on
-     * @param vdsWhiteList
-     *            - initial host list, mainly runOnSpecificHost (runOnce/migrateToHost)
-     * @param destVds
-     * @param vdsGroup
+     * map the VM number of pluggable and snapable disks from their domain.
+     * @param vm
+     * @param plugDisks
      * @return
      */
-    public boolean canRunVm(
-            List<String> messages,
-            List<Disk> vmDisks,
-            StoragePool storagePool,
-            List<Guid> vdsBlackList,
-            List<Guid> vdsWhiteList,
-            Guid destVds,
-            VDSGroup vdsGroup) {
-
-        if (!validateVmProperties(vm, messages) ||
-                !validate(validateBootSequence(vm, runVmParam.getBootSequence(), vmDisks), messages) ||
-                !validate(new VmValidator(vm).vmNotLocked(), messages) ||
-                !validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()), messages) ||
-                !validate(validateVmStatusUsingMatrix(vm), messages) ||
-                !validate(validateIsoPath(vm, runVmParam.getDiskPath(), runVmParam.getFloppyPath()), messages)  ||
-                !validate(vmDuringInitialization(vm), messages) ||
-                !validate(validateVdsStatus(vm), messages) ||
-                !validate(validateStatelessVm(vm, vmDisks, runVmParam.getRunAsStateless()), messages)) {
-            return false;
-        }
-
-        List<DiskImage> images = ImagesHandler.filterImageDisks(vmDisks, true, false, false);
-        if (!images.isEmpty() && (
-                !validate(validateStoragePoolUp(vm, storagePool), messages) ||
-                !validate(validateStorageDomains(vm, isInternalExecution, images), messages) ||
-                !validate(validateImagesForRunVm(vm, images), messages))) {
-            return false;
-        }
-
-        if (!SchedulingManager.getInstance().canSchedule(
-                vdsGroup, vm, vdsBlackList, vdsWhiteList, destVds, messages)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @return true if all VM network interfaces are valid
-     */
-    public ValidationResult validateNetworkInterfaces() {
-        Map<String, VmNetworkInterface> interfaceNetworkMap = Entities.vmInterfacesByNetworkName(vm.getInterfaces());
-        Set<String> interfaceNetworkNames = interfaceNetworkMap.keySet();
-        List<Network> clusterNetworks = getNetworkDao().getAllForCluster(vm.getVdsGroupId());
-        Set<String> clusterNetworksNames = Entities.objectNames(clusterNetworks);
-
-        ValidationResult validationResult = isVmInterfacesConfigured(vm);
-        if (!validationResult.isValid()) {
-            return validationResult;
-        }
-
-        validationResult = isVmInterfacesAttachedToClusterNetworks(vm, clusterNetworksNames, interfaceNetworkNames);
-        if (!validationResult.isValid()) {
-            return validationResult;
-        }
-
-        validationResult = isVmInterfacesAttachedToVmNetworks(clusterNetworks, interfaceNetworkNames);
-        if (!validationResult.isValid()) {
-            return validationResult;
-        }
-
-        return ValidationResult.VALID;
-    }
-
-    /**
-     * Checking that the interfaces are all configured, interfaces with no network are allowed only if network linking
-     * is supported.
-     *
-     * @return true if all VM network interfaces are attached to existing cluster networks, or to no network (when
-     *         network linking is supported).
-     */
-    protected ValidationResult isVmInterfacesConfigured(VM vm) {
-        for (VmNetworkInterface nic : vm.getInterfaces()) {
-            if (nic.getVnicProfileId() == null) {
-                return FeatureSupported.networkLinking(vm.getVdsGroupCompatibilityVersion()) ?
-                        ValidationResult.VALID:
-                            new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_NETWORK_NOT_CONFIGURED);
+    public Map<StorageDomain, Integer> mapStorageDomainsToNumOfDisks(VM vm, List<Disk> plugDisks) {
+        Map<StorageDomain, Integer> map = new HashMap<StorageDomain, Integer>();
+        for (Disk disk : plugDisks) {
+            if (disk.isAllowSnapshot()) {
+                for (StorageDomain domain : getStorageDomainDAO().getAllStorageDomainsByImageId(((DiskImage) disk).getImageId())) {
+                    map.put(domain, map.containsKey(domain) ? Integer.valueOf(map.get(domain) + 1) : Integer.valueOf(1));
+                }
             }
         }
-        return ValidationResult.VALID;
+        return map;
     }
-
-    /**
-     * @param clusterNetworksNames
-     *            cluster logical networks names
-     * @param interfaceNetworkNames
-     *            VM interface network names
-     * @return true if all VM network interfaces are attached to existing cluster networks
-     */
-    protected ValidationResult isVmInterfacesAttachedToClusterNetworks(VM vm,
-            final Set<String> clusterNetworkNames, final Set<String> interfaceNetworkNames) {
-
-        Set<String> result = new HashSet<String>(interfaceNetworkNames);
-        result.removeAll(clusterNetworkNames);
-        if (FeatureSupported.networkLinking(vm.getVdsGroupCompatibilityVersion())) {
-            result.remove(null);
-        }
-
-        // If after removing the cluster network names we still have objects, then we have interface on networks that
-        // aren't attached to the cluster
-        return result.isEmpty() ?
-                ValidationResult.VALID
-                : new ValidationResult(
-                        VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_NOT_IN_CLUSTER,
-                        String.format("$networks %1$s", StringUtils.join(result, ",")));
-    }
-
-    /**
-     * @param clusterNetworks
-     *            cluster logical networks
-     * @param interfaceNetworkNames
-     *            VM interface network names
-     * @return true if all VM network interfaces are attached to VM networks
-     */
-    protected ValidationResult isVmInterfacesAttachedToVmNetworks(final List<Network> clusterNetworks,
-            Set<String> interfaceNetworkNames) {
-        List<String> nonVmNetworkNames =
-                NetworkUtils.filterNonVmNetworkNames(clusterNetworks, interfaceNetworkNames);
-
-        return nonVmNetworkNames.isEmpty() ?
-                ValidationResult.VALID
-                : new ValidationResult(
-                        VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK,
-                        String.format("$networks %1$s", StringUtils.join(nonVmNetworkNames, ",")));
-    }
-
 }
