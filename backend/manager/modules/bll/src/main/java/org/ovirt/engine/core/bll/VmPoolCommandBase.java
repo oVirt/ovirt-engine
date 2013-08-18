@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VmPoolDAO;
 
 public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends CommandBase<T> {
@@ -228,16 +227,11 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
 
         return new RunVmValidator(vm, runVmParams, false).canRunVm(
                 messages,
-                getDiskDao().getAllForVm(vm.getId(), true),
                 fetchStoragePool(vm.getStoragePoolId()),
                 Collections.<Guid>emptyList(),
                 null,
                 null,
                 DbFacade.getInstance().getVdsGroupDao().get(vm.getVdsGroupId()));
-    }
-
-    private static DiskDao getDiskDao() {
-        return DbFacade.getInstance().getDiskDao();
     }
 
     private static StoragePool fetchStoragePool(Guid storagePoolId) {

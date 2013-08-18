@@ -361,7 +361,6 @@ public class RunVmCommandTest {
         RunVmValidator runVmValidator = mock(RunVmValidator.class);
         when(runVmValidator.canRunVm(
                 Matchers.anyListOf(String.class),
-                Matchers.anyListOf(Disk.class),
                 any(StoragePool.class),
                 Matchers.anyListOf(Guid.class),
                 Matchers.anyListOf(Guid.class),

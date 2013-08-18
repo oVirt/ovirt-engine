@@ -783,7 +783,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (!runVmValidator.canRunVm(
                 getReturnValue().getCanDoActionMessages(),
-                getDiskDao().getAllForVm(vm.getId(), true),
                 getStoragePool(),
                 getRunVdssList(),
                 getVdsWhiteList(),

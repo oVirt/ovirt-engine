@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandPa
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -59,6 +60,8 @@ public class RunVmValidator {
     private VM vm;
     private RunVmParams runVmParam;
     private boolean isInternalExecution;
+
+    private List<Disk> cachedVmDisks;
 
     public RunVmValidator(VM vm, RunVmParams rumVmParam, boolean isInternalExecution) {
         this.vm = vm;
@@ -86,22 +89,22 @@ public class RunVmValidator {
      * @param vdsGroup
      * @return
      */
-    public boolean canRunVm(List<String> messages, List<Disk> vmDisks, StoragePool storagePool,
-            List<Guid> vdsBlackList, List<Guid> vdsWhiteList, Guid destVds, VDSGroup vdsGroup) {
+    public boolean canRunVm(List<String> messages, StoragePool storagePool, List<Guid> vdsBlackList,
+            List<Guid> vdsWhiteList, Guid destVds, VDSGroup vdsGroup) {
 
         if (!validateVmProperties(vm, messages) ||
-                !validate(validateBootSequence(vm, runVmParam.getBootSequence(), vmDisks), messages) ||
+                !validate(validateBootSequence(vm, runVmParam.getBootSequence(), getVmDisks()), messages) ||
                 !validate(new VmValidator(vm).vmNotLocked(), messages) ||
                 !validate(getSnapshotValidator().vmNotDuringSnapshot(vm.getId()), messages) ||
                 !validate(validateVmStatusUsingMatrix(vm), messages) ||
                 !validate(validateIsoPath(vm, runVmParam.getDiskPath(), runVmParam.getFloppyPath()), messages)  ||
                 !validate(vmDuringInitialization(vm), messages) ||
                 !validate(validateVdsStatus(vm), messages) ||
-                !validate(validateStatelessVm(vm, vmDisks, runVmParam.getRunAsStateless()), messages)) {
+                !validate(validateStatelessVm(vm, getVmDisks(), runVmParam.getRunAsStateless()), messages)) {
             return false;
         }
 
-        List<DiskImage> images = ImagesHandler.filterImageDisks(vmDisks, true, false, false);
+        List<DiskImage> images = ImagesHandler.filterImageDisks(getVmDisks(), true, false, false);
         if (!images.isEmpty() && (
                 !validate(validateStoragePoolUp(vm, storagePool), messages) ||
                 !validate(validateStorageDomains(vm, isInternalExecution, images), messages) ||
@@ -438,6 +441,10 @@ public class RunVmValidator {
         return VmPropertiesUtils.getInstance();
     }
 
+    protected DiskDao getDiskDao() {
+        return DbFacade.getInstance().getDiskDao();
+    }
+
     private boolean isRepoImageExists(String repoImagePath, Guid storageDomainId, ImageFileType imageFileType) {
         VdcQueryReturnValue ret = getBackend().runInternalQuery(
                 VdcQueryType.GetImagesList,
@@ -481,5 +488,12 @@ public class RunVmValidator {
             }
         }
         return map;
+    }
+
+    private List<Disk> getVmDisks() {
+        if (cachedVmDisks == null) {
+            cachedVmDisks = getDiskDao().getAllForVm(vm.getId(), true);
+        }
+        return cachedVmDisks;
     }
 }
