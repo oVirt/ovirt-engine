@@ -113,11 +113,30 @@ public class RunVmValidator {
                         vdsGroup, vm, vdsBlackList, vdsWhiteList, destVds, messages);
     }
 
-    //////////////////////////
-    /// Validation methods ///
-    //////////////////////////
+    /**
+     * @return true if all VM network interfaces are valid
+     */
+    public ValidationResult validateNetworkInterfaces() {
+        ValidationResult validationResult = validateInterfacesConfigured(vm);
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
 
-    public boolean validateVmProperties(VM vm, List<String> messages) {
+        validationResult = validateInterfacesAttachedToClusterNetworks(vm, getClusterNetworksNames(), getInterfaceNetworkNames());
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        validationResult = validateInterfacesAttachedToVmNetworks(getClusterNetworks(), getInterfaceNetworkNames());
+        if (!validationResult.isValid()) {
+            return validationResult;
+        }
+
+        return ValidationResult.VALID;
+    }
+
+
+    protected boolean validateVmProperties(VM vm, List<String> messages) {
         List<ValidationError> validationErrors =
                 getVmPropertiesUtils().validateVMProperties(
                         vm.getVdsGroupCompatibilityVersion(),
@@ -131,7 +150,7 @@ public class RunVmValidator {
         return true;
     }
 
-    public ValidationResult validateBootSequence(VM vm, BootSequence bootSequence, List<Disk> vmDisks) {
+    protected ValidationResult validateBootSequence(VM vm, BootSequence bootSequence, List<Disk> vmDisks) {
         BootSequence boot_sequence = (bootSequence != null) ?
                 bootSequence : vm.getDefaultBootSequence();
         Guid storagePoolId = vm.getStoragePoolId();
@@ -171,7 +190,7 @@ public class RunVmValidator {
      *            The VM's image disks
      * @return <code>true</code> if the VM can be run, <code>false</code> if not
      */
-    public ValidationResult validateStorageDomains(VM vm, boolean isInternalExecution,
+    protected ValidationResult validateStorageDomains(VM vm, boolean isInternalExecution,
             List<DiskImage> vmImages) {
         if (vmImages.isEmpty()) {
             return ValidationResult.VALID;
@@ -200,7 +219,7 @@ public class RunVmValidator {
     /**
      * Check isValid only if VM is not HA VM
      */
-    public ValidationResult validateImagesForRunVm(VM vm, List<DiskImage> vmDisks) {
+    protected ValidationResult validateImagesForRunVm(VM vm, List<DiskImage> vmDisks) {
         if (vmDisks.isEmpty()) {
             return ValidationResult.VALID;
         }
@@ -209,7 +228,7 @@ public class RunVmValidator {
                 new DiskImagesValidator(vmDisks).diskImagesNotLocked() : ValidationResult.VALID;
     }
 
-    public ValidationResult validateIsoPath(VM vm, String diskPath, String floppyPath) {
+    protected ValidationResult validateIsoPath(VM vm, String diskPath, String floppyPath) {
         if (vm.isAutoStartup() || (StringUtils.isEmpty(diskPath) && StringUtils.isEmpty(floppyPath))) {
             return ValidationResult.VALID;
         }
@@ -230,7 +249,7 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult vmDuringInitialization(VM vm) {
+    protected ValidationResult vmDuringInitialization(VM vm) {
         if (vm.isRunning() || vm.getStatus() == VMStatus.NotResponding ||
                 isVmDuringInitiating(vm)) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
@@ -239,7 +258,7 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult validateVdsStatus(VM vm) {
+    protected ValidationResult validateVdsStatus(VM vm) {
         if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null) {
             VDS vds = getVdsDao().get(new Guid(vm.getRunOnVds().toString()));
             if (vds.getStatus() != VDSStatus.Up) {
@@ -251,7 +270,7 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult validateStatelessVm(VM vm, List<Disk> plugDisks, Boolean stateless) {
+    protected ValidationResult validateStatelessVm(VM vm, List<Disk> plugDisks, Boolean stateless) {
         // if the VM is not stateless, there is nothing to check
         if (stateless != null ? !stateless : !vm.isStateless()) {
             return ValidationResult.VALID;
@@ -275,7 +294,7 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult validateVmStatusUsingMatrix(VM vm) {
+    protected ValidationResult validateVmStatusUsingMatrix(VM vm) {
         if (!VdcActionUtils.canExecute(Arrays.asList(vm), VM.class,
                 VdcActionType.RunVm)) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
@@ -286,10 +305,9 @@ public class RunVmValidator {
 
     /**
      * check that we can create snapshots for all disks
-     * @param vm
-     * @return true if all storage domains have enough space to create snapshots for this VM plugged disks
+     * return true if all storage domains have enough space to create snapshots for this VM plugged disks
      */
-    public ValidationResult hasSpaceForSnapshots(VM vm, List<Disk> plugDisks) {
+    protected ValidationResult hasSpaceForSnapshots(VM vm, List<Disk> plugDisks) {
         Integer minSnapshotSize = Config.<Integer> GetValue(ConfigValues.InitStorageSparseSizeInGB);
         Map<StorageDomain, Integer> mapStorageDomainsToNumOfDisks = mapStorageDomainsToNumOfDisks(vm, plugDisks);
         for (Entry<StorageDomain, Integer> e : mapStorageDomainsToNumOfDisks.entrySet()) {
@@ -303,34 +321,12 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult validateStoragePoolUp(VM vm, StoragePool storagePool, List<DiskImage> vmImages) {
+    protected ValidationResult validateStoragePoolUp(VM vm, StoragePool storagePool, List<DiskImage> vmImages) {
         if (vmImages.isEmpty() || vm.isAutoStartup()) {
             return ValidationResult.VALID;
         }
 
         return new StoragePoolValidator(storagePool).isUp();
-    }
-
-    /**
-     * @return true if all VM network interfaces are valid
-     */
-    public ValidationResult validateNetworkInterfaces() {
-        ValidationResult validationResult = validateInterfacesConfigured(vm);
-        if (!validationResult.isValid()) {
-            return validationResult;
-        }
-
-        validationResult = validateInterfacesAttachedToClusterNetworks(vm, getClusterNetworksNames(), getInterfaceNetworkNames());
-        if (!validationResult.isValid()) {
-            return validationResult;
-        }
-
-        validationResult = validateInterfacesAttachedToVmNetworks(getClusterNetworks(), getInterfaceNetworkNames());
-        if (!validationResult.isValid()) {
-            return validationResult;
-        }
-
-        return ValidationResult.VALID;
     }
 
     /**
