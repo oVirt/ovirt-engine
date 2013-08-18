@@ -651,9 +651,17 @@ public class Frontend {
     }
 
     /**
-     * A convenience method that calls
-     * {@link #RunMultipleActions(List, List, List, IFrontendActionAsyncCallback, Object)} with just the one
-     * VdcActionType for all actions, and a single callback to be called when all actions have succeeded.
+     * Overloaded method for {@link #RunMultipleActions(VdcActionType, List, List, Object)} with state = null.
+     */
+    public static void RunMultipleActions(VdcActionType actionType,
+            List<VdcActionParametersBase> parameters,
+            List<IFrontendActionAsyncCallback> callbacks) {
+        RunMultipleActions(actionType, parameters, callbacks, null);
+    }
+
+    /**
+     * A convenience method that calls {@link #RunMultipleActions(VdcActionType, List, List, Object)} with just a single
+     * callback to be called when all actions have succeeded.
      *
      * @param actionType
      *            the action to be repeated.
@@ -661,6 +669,8 @@ public class Frontend {
      *            the parameters of each action.
      * @param successCallback
      *            the callback to be executed when all actions have succeeded.
+     * @param state
+     *            the state.
      */
     public static void RunMultipleActions(VdcActionType actionType,
             List<VdcActionParametersBase> parameters,
@@ -671,13 +681,41 @@ public class Frontend {
             return;
         }
         int n = parameters.size();
-        VdcActionType[] actionTypes = new VdcActionType[n];
         IFrontendActionAsyncCallback[] callbacks = new IFrontendActionAsyncCallback[n];
-        Arrays.fill(actionTypes, actionType);
         callbacks[n-1] = successCallback;
-        RunMultipleActions(new LinkedList<VdcActionType>(Arrays.asList(actionTypes)),
+        RunMultipleActions(actionType,
                 parameters,
                 new LinkedList<IFrontendActionAsyncCallback>(Arrays.asList(callbacks)),
+                state);
+    }
+
+    /**
+     * A convenience method that calls
+     * {@link #RunMultipleActions(List, List, List, IFrontendActionAsyncCallback, Object)} with just the one
+     * VdcActionType for all actions.
+     *
+     * @param actionType
+     *            the action to be repeated.
+     * @param parameters
+     *            the parameters of each action.
+     * @param callbacks
+     *            the callback to be executed upon the success of each action.
+     * @param state
+     *            the state.
+     */
+    public static void RunMultipleActions(VdcActionType actionType,
+            List<VdcActionParametersBase> parameters,
+            List<IFrontendActionAsyncCallback> callbacks,
+            Object state) {
+
+        if (parameters == null || parameters.isEmpty()) {
+            return;
+        }
+        VdcActionType[] actionTypes = new VdcActionType[parameters.size()];
+        Arrays.fill(actionTypes, actionType);
+        RunMultipleActions(new LinkedList<VdcActionType>(Arrays.asList(actionTypes)),
+                parameters,
+                callbacks,
                 null,
                 state);
     }
