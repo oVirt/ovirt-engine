@@ -21,10 +21,13 @@ sshd service handler plugin.
 """
 
 
+import os
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
+from otopi import constants as otopicons
+from otopi import filetransaction
 from otopi import util
 from otopi import plugin
 
@@ -59,9 +62,6 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.AIO_CONFIG_AVAILABLE,
         ),
-        before=(
-            osetupcons.Stages.AIO_CONFIG_ROOT_PASSWORD,
-        ),
     )
     def _customization(self):
         if not self.services.exists(name='sshd'):
@@ -70,6 +70,51 @@ class Plugin(plugin.PluginBase):
             self.services.state(
                 name='sshd',
                 state=True,
+            )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        condition=lambda self: (
+            self._enabled and
+            self.environment[osetupcons.AIOEnv.CONFIGURE]
+        ),
+        after=(
+            osetupcons.Stages.SSH_KEY_AVAILABLE,
+        ),
+    )
+    def _misc(self):
+        authorized_keys_line = self.environment[
+            osetupcons.PKIEnv.ENGINE_SSH_PUBLIC_KEY_VALUE
+        ] + ' ovirt-engine'
+
+        authorized_keys_file = os.path.join(
+            os.path.expanduser('~root'),
+            '.ssh',
+            'authorized_keys'
+        )
+
+        content = []
+        if os.path.exists(authorized_keys_file):
+            with open(authorized_keys_file, 'r') as f:
+                content = f.read().splitlines()
+
+        if not authorized_keys_line in content:
+            self.environment[
+                osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+            ].append(authorized_keys_file)
+
+            content.append(authorized_keys_line)
+            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+                filetransaction.FileTransaction(
+                    name=authorized_keys_file,
+                    content=content,
+                    mode=0o600,
+                    owner='root',
+                    enforcePermissions=True,
+                    modifiedList=self.environment[
+                        otopicons.CoreEnv.MODIFIED_FILES
+                    ],
+                )
             )
 
     @plugin.event(
@@ -84,7 +129,6 @@ class Plugin(plugin.PluginBase):
             name='sshd',
             state=True
         )
-
 
 
 # vim: expandtab tabstop=4 shiftwidth=4

@@ -527,6 +527,7 @@ class Stages(object):
     CONFIG_APPLICATION_MODE_AVAILABLE = \
         'osetup.config.applicationMode.available'
     CA_AVAILABLE = 'osetup.pki.ca.available'
+    SSH_KEY_AVAILABLE = 'osetup.pki.ssh.available'
     SYSTEM_NFS_CONFIG_AVAILABLE = 'osetup.system.nfs.available'
     SYSTEM_SYSCTL_CONFIG_AVAILABLE = 'osetup.system.sysctl.available'
     CONFIG_ISO_DOMAIN_AVAILABLE = 'osetup.config.iso_domain.available'
@@ -553,7 +554,6 @@ class Stages(object):
     DIALOG_TITLES_E_SUMMARY = 'osetup.dialog.titles.summary.end'
 
     AIO_CONFIG_AVAILABLE = 'osetup.aio.config.available'
-    AIO_CONFIG_ROOT_PASSWORD = 'osetup.aio.config.rootpassword'
     AIO_CONFIG_STORAGE = 'osetup.aio.config.storage'
     AIO_CONFIG_VDSM = 'osetup.aio.config.vdsm'
 
@@ -782,6 +782,8 @@ class PKIEnv(object):
     )
     def ORG(self):
         return 'OVESETUP_PKI/organization'
+
+    ENGINE_SSH_PUBLIC_KEY_VALUE = 'OVESETUP_PKI/sshPublicKey'
 
 
 @util.export
@@ -1030,13 +1032,6 @@ class AIOEnv(object):
     )
     def CONFIGURE(self):
         return 'OVESETUP_AIO/configure'
-
-    @osetupattrs(
-        answerfile=True,
-        summary=False,
-    )
-    def ROOT_PASSWORD(self):
-        return 'OVESETUP_AIO/rootPassword'
 
     LOCAL_DATA_CENTER = 'OVESETUP_AIO/localDataCenter'
     LOCAL_CLUSTER = 'OVESETUP_AIO/localCluster'

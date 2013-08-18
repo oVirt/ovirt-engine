@@ -284,7 +284,6 @@ Requires:	openssh
 Requires:	openssl
 Requires:	otopi >= 1.1.0
 Requires:	policycoreutils-python
-Requires:	python-paramiko
 Requires:	python-psycopg2
 Requires:	yum
 
@@ -427,7 +426,7 @@ fi
 %package setup-plugin-allinone
 Summary:	All-in-one plugin for %{ovirt_product_name_short}'s setup
 Group:		Virtualization/Management
-Requires:	%{name}-sdk >= 3.1.0.6
+Requires:	%{name}-sdk >= 3.3.0
 Requires:	%{name}-setup >= %{version}-%{release}
 Requires:	openssh-server
 Requires:	ovirt-host-deploy >= 1.1.0

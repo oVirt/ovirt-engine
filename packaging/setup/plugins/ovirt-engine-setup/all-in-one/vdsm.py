@@ -170,7 +170,6 @@ class Plugin(plugin.PluginBase):
             osetupcons.AIOEnv.CONFIGURE
         ],
         after=(
-            osetupcons.Stages.AIO_CONFIG_ROOT_PASSWORD,
             osetupcons.Stages.AIO_CONFIG_STORAGE,
             osetupcons.Stages.CORE_ENGINE_START,
             osetupcons.Stages.APACHE_RESTART,
@@ -247,7 +246,9 @@ class Plugin(plugin.PluginBase):
                 cluster=engine_api.clusters.get(
                     self.environment[osetupcons.AIOEnv.LOCAL_CLUSTER]
                 ),
-                root_password=self.environment[osetupcons.AIOEnv.ROOT_PASSWORD]
+                ssh=self._ovirtsdk_xml.params.SSH(
+                    authentication_method='publickey',
+                ),
             )
         )
         if not self._waitVDSMHostUp(
