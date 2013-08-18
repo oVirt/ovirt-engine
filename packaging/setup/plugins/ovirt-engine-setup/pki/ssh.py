@@ -45,17 +45,17 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_SETUP,
     )
     def _setup(self):
-        self.command.detect('openssl')
         self.command.detect('ssh-keygen')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
+        name=osetupcons.Stages.SSH_KEY_AVAILABLE,
         after=(
             osetupcons.Stages.CA_AVAILABLE,
         ),
     )
     def _misc(self):
-        rc, stdout, stderr = self.execute(
+        rc, privkey, stderr = self.execute(
             (
                 osetupcons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
                 '--name=engine',
@@ -69,7 +69,7 @@ class Plugin(plugin.PluginBase):
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_SSH_KEY,
-                content=stdout,
+                content=privkey,
                 mode=0o600,
                 owner=self.environment[osetupcons.SystemEnv.USER_ROOT],
                 enforcePermissions=True,
@@ -78,6 +78,18 @@ class Plugin(plugin.PluginBase):
                 ],
             )
         )
+        rc, pubkey, stderr = self.execute(
+            (
+                self.command.get('ssh-keygen'),
+                '-y',
+                '-f', '/dev/fd/0',
+            ),
+            stdin=privkey,
+            logStreams=False,
+        )
+        self.environment[
+            osetupcons.PKIEnv.ENGINE_SSH_PUBLIC_KEY_VALUE
+        ] = pubkey[0]
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
