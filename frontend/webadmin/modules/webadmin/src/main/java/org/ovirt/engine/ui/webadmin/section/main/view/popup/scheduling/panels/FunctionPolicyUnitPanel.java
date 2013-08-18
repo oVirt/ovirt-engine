@@ -76,11 +76,11 @@ public class FunctionPolicyUnitPanel extends PolicyUnitPanel {
                     });
             upButton.setWidth("12px"); //$NON-NLS-1$
             upButton.getElement().getStyle().setPadding(0, Unit.PX);
-            if (!locked) {
+            if (!locked || policyUnit.isEnabled()) {
                 weightPanel.add(downButton);
             }
             weightPanel.add(weightLabel);
-            if (!locked) {
+            if (!locked || policyUnit.isEnabled()) {
                 weightPanel.add(upButton);
             }
             weightPanel.setStyleName(style.positionLabelStyle());
@@ -89,6 +89,9 @@ public class FunctionPolicyUnitPanel extends PolicyUnitPanel {
             policyUnitLablePanel.add(namePanel);
             policyUnitLablePanel.setStyleName(style.usedFilterPolicyUnitStyle());
             panel.add(policyUnitLablePanel);
+        }
+        if (!policyUnit.isEnabled()) {
+            panel.getElement().getStyle().setOpacity(0.5);
         }
         setWidget(panel);
     }

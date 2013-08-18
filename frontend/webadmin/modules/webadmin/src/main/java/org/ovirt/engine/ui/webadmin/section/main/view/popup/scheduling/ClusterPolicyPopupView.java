@@ -208,11 +208,14 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
         PolicyUnit selectedItem = (PolicyUnit) model.getLoadBalanceList().getSelectedItem();
         if (selectedItem != null) {
             loadBalanceListEditor.getElement().setTitle(selectedItem.getDescription());
-            if (selectedItem.isInternal()) {
-                externalLabel.setText(""); //$NON-NLS-1$
-            } else {
-                externalLabel.setText(constants.externalPolicyUnitLabel()); //$NON-NLS-1$
+            String text = ""; //$NON-NLS-1$
+            if (!selectedItem.isInternal()) {
+                text = constants.externalPolicyUnitLabel() + " "; //$NON-NLS-1$
             }
+            if (!selectedItem.isEnabled()) {
+                text += constants.disabledPolicyUnit();
+            }
+            externalLabel.setText(text);
         }
     }
 
