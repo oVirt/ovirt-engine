@@ -56,6 +56,7 @@ printf "Creating tables...\n"
 execute_file "create_tables.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 
 printf "Creating functions...\n"
+drop_old_uuid_functions
 execute_file "create_functions.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 
 printf "Creating common functions...\n"

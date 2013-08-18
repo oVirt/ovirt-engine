@@ -96,6 +96,19 @@ execute_file "common_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
     \rm -f drop_all_views.sql
 }
 
+drop_old_uuid_functions() {
+    #
+    # dropping the uuid extension and old functions is
+    # required only if we upgrade from old database
+    # as it requires special privileges, so
+    # before execution check if actually required
+    #
+    CMD="select count(*) from pg_proc where proname = 'uuid_nil';"
+    if [ "$(execute_command "$CMD" ${DATABASE} ${SERVERNAME} ${PORT} | sed -e 's/ //g' -e '/^$/d')" != 0 ]; then
+        su postgres -c "psql -f drop_old_uuid_functions.sql ${DATABASE}"  > /dev/null
+    fi
+}
+
 #drops sps before upgrade or refresh operations
 drop_sps() {
 # common stored procedures are executed first (for new added functions to be valid)
@@ -107,16 +120,7 @@ execute_file "common_sp.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
     execute_file "${drop_all_functions}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
     \rm -f "${drop_all_functions}"
 
-    #
-    # dropping the uuid extension and old functions is
-    # required only if we upgrade from old database
-    # as it requires special privileges, so
-    # before execution check if actually required
-    #
-    CMD="select count(*) from pg_proc where proname = 'uuid_nil';"
-    if [ "$(execute_command "$CMD" ${DATABASE} ${SERVERNAME} ${PORT} | sed -e 's/ //g' -e '/^$/d')" != 0 ]; then
-        psql -w -U postgres -h ${SERVERNAME} -p ${PORT} -f drop_old_uuid_functions.sql ${DATABASE} > /dev/null
-    fi
+    drop_old_uuid_functions
     # recreate generic functions
     execute_file "create_functions.sql" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 }
