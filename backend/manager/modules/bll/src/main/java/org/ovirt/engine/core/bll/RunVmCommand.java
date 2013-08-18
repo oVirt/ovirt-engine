@@ -198,13 +198,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
     private void resumeVm() {
         mResume = true;
-        setVdsId(new Guid(getVm().getRunOnVds().toString()));
+        setVdsId(getVm().getRunOnVds());
         if (getVds() != null) {
             try {
-                VDSReturnValue result = getBackend()
-                        .getResourceManager()
-                        .RunAsyncVdsCommand(VDSCommandType.Resume,
-                                new ResumeVDSCommandParameters(getVdsId(), getVm().getId()), this);
+                VDSReturnValue result = getBackend().getResourceManager()
+                        .RunAsyncVdsCommand(
+                                VDSCommandType.Resume,
+                                new ResumeVDSCommandParameters(getVdsId(), getVm().getId()),
+                                this);
                 setActionReturnValue(result.getReturnValue());
                 setSucceeded(result.getSucceeded());
                 ExecutionHandler.setAsyncJob(getExecutionContext(), true);
@@ -753,11 +754,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         RunVmValidator runVmValidator = getRunVmValidator();
-
-        if (vm.getStatus() == VMStatus.Paused) {
-            // if VM is paused, it was already checked before that it is capable to run
-            return true;
-        }
 
         if (!runVmValidator.canRunVm(
                 getReturnValue().getCanDoActionMessages(),

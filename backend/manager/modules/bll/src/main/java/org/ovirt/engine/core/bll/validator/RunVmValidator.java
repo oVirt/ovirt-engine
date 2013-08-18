@@ -29,11 +29,11 @@ import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
@@ -48,7 +48,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -96,6 +96,12 @@ public class RunVmValidator {
     public boolean canRunVm(List<String> messages, StoragePool storagePool, List<Guid> vdsBlackList,
             List<Guid> vdsWhiteList, Guid destVds, VDSGroup vdsGroup) {
 
+        if (vm.getStatus() == VMStatus.Paused) {
+            // if the VM is paused, we should only check the VDS status
+            // as the rest of the checks were already checked before
+            return validate(validateVdsStatus(vm), messages);
+        }
+
         return
                 validateVmProperties(vm, messages) &&
                 validate(validateBootSequence(vm, runVmParam.getBootSequence(), getVmDisks()), messages) &&
@@ -105,7 +111,6 @@ public class RunVmValidator {
                 validate(validateStoragePoolUp(vm, storagePool, getVmImageDisks()), messages) &&
                 validate(validateIsoPath(vm, runVmParam.getDiskPath(), runVmParam.getFloppyPath()), messages)  &&
                 validate(vmDuringInitialization(vm), messages) &&
-                validate(validateVdsStatus(vm), messages) &&
                 validate(validateStatelessVm(vm, getVmDisks(), runVmParam.getRunAsStateless()), messages) &&
                 validate(validateStorageDomains(vm, isInternalExecution, getVmImageDisks()), messages) &&
                 validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
@@ -259,12 +264,11 @@ public class RunVmValidator {
     }
 
     protected ValidationResult validateVdsStatus(VM vm) {
-        if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null) {
-            VDS vds = getVdsDao().get(new Guid(vm.getRunOnVds().toString()));
-            if (vds.getStatus() != VDSStatus.Up) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
-                        VdcBllMessages.VAR__HOST_STATUS__UP.toString());
-            }
+        if (vm.getStatus() == VMStatus.Paused && vm.getRunOnVds() != null &&
+                getVdsDynamic(vm.getRunOnVds()).getStatus() != VDSStatus.Up) {
+            return new ValidationResult(
+                    VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL,
+                    VdcBllMessages.VAR__HOST_STATUS__UP.toString());
         }
 
         return ValidationResult.VALID;
@@ -412,8 +416,8 @@ public class RunVmValidator {
         return DbFacade.getInstance().getNetworkDao();
     }
 
-    protected VdsDAO getVdsDao() {
-        return DbFacade.getInstance().getVdsDao();
+    protected VdsDynamicDAO getVdsDynamicDao() {
+        return DbFacade.getInstance().getVdsDynamicDao();
     }
 
     protected BackendInternal getBackend() {
@@ -484,6 +488,10 @@ public class RunVmValidator {
         }
 
         return map;
+    }
+
+    private VdsDynamic getVdsDynamic(Guid vdsId) {
+        return getVdsDynamicDao().get(vdsId);
     }
 
     private List<Disk> getVmDisks() {
