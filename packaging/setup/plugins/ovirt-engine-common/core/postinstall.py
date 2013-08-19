@@ -15,10 +15,6 @@
 # limitations under the License.
 #
 
-# Copied from packaging/setup/plugins/ovirt-engine-setup/core/postinstall.py
-# Changes:
-# - set FQDN
-# TODO: Merge
 
 """post install config file plugin."""
 
@@ -28,6 +24,7 @@ _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
 from otopi import util
+from otopi import common
 from otopi import plugin
 from otopi import constants as otopicons
 from otopi import filetransaction
@@ -44,42 +41,43 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
+        stage=plugin.Stages.STAGE_INIT,
     )
-    def _setup(self):
-        self.environment[
-            osetupcons.RenameEnv.FILES_TO_BE_MODIFIED
-        ].append(
-            osetupcons.FileLocations.
-            OVIRT_SETUP_POST_INSTALL_CONFIG
-        )
+    def _init(self):
+        self.environment[osetupcons.CoreEnv.GENERATE_POSTINSTALL] = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
+        priority=plugin.Stages.PRIORITY_LAST,
+        condition=lambda self: self.environment[
+            osetupcons.CoreEnv.GENERATE_POSTINSTALL
+        ],
     )
     def _misc(self):
-        config = (
-            osetupcons.FileLocations.
-            OVIRT_SETUP_POST_INSTALL_CONFIG
+        self.logger.info(
+            _("Generating post install configuration file '{name}'").format(
+                name=osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG,
+            )
         )
-
-        with open(config, 'r') as f:
-            content = []
-            for line in f:
-                line = line.rstrip('\n')
-                if line.startswith('OVESETUP_CONFIG/fqdn='):
-                    line = (
-                        'OVESETUP_CONFIG/fqdn=str:%s'
-                    ) % (
-                        self.environment[
-                            osetupcons.RenameEnv.FQDN
-                        ],
-                    )
-                content.append(line)
-
+        content = ['[environment:default]']
+        for c in osetupcons.__dict__['__osetup_attrs__']:
+            for k in c.__dict__.values():
+                if hasattr(k, '__osetup_attrs__'):
+                    if k.__osetup_attrs__['postinstallfile']:
+                        k = k.fget(None)
+                        if k in self.environment:
+                            v = self.environment[k]
+                            content.append(
+                                '%s=%s:%s' % (
+                                    k,
+                                    common.typeName(v),
+                                    '\n'.join(v) if isinstance(v, list)
+                                    else v,
+                                )
+                            )
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
-                name=config,
+                name=osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG,
                 content=content,
                 modifiedList=self.environment[
                     otopicons.CoreEnv.MODIFIED_FILES
