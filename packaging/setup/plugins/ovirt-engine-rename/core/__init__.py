@@ -26,7 +26,6 @@ from . import database
 from . import engine
 from . import misc
 from . import pki
-from . import postinstall
 from . import protocols
 from . import tools
 from . import uninstall
@@ -38,7 +37,6 @@ def createPlugins(context):
     engine.Plugin(context=context)
     misc.Plugin(context=context)
     pki.Plugin(context=context)
-    postinstall.Plugin(context=context)
     protocols.Plugin(context=context)
     tools.Plugin(context=context)
     uninstall.Plugin(context=context)

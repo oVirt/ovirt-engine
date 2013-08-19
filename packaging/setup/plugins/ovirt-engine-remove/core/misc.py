@@ -72,6 +72,12 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+    )
+    def _setup(self):
+        self.environment[osetupcons.CoreEnv.GENERATE_POSTINSTALL] = False
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.REMOVE_CUSTOMIZATION_COMMON,
     )
