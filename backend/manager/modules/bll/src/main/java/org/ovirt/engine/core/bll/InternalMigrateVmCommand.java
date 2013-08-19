@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.common.action.InternalMigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 @InternalCommandAttribute
@@ -30,10 +29,11 @@ public class InternalMigrateVmCommand<T extends InternalMigrateVmParameters> ext
      * the internal migration command should fail
      */
     @Override
-    protected boolean canMigrateVm(VM vm) {
-        if (vm.getMigrationSupport() == MigrationSupport.MIGRATABLE) {
-            return super.canMigrateVm(vm);
+    protected boolean canDoAction() {
+        if (getVm().getMigrationSupport() == MigrationSupport.MIGRATABLE) {
+            return super.canDoAction();
         }
+
         return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE);
     }
 }

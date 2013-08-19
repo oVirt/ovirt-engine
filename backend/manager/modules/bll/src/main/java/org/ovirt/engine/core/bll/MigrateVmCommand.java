@@ -231,16 +231,8 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected boolean canDoAction() {
-        return canMigrateVm(getVm());
-    }
+        final VM vm = getVm();
 
-    @Override
-    protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MIGRATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-    }
-
-    protected boolean canMigrateVm(VM vm) {
         if (vm == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
@@ -290,6 +282,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                         getParameters().getInitialHosts(),
                         getVdsDestinationId(),
                         getReturnValue().getCanDoActionMessages());
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MIGRATE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
     }
 
     @Override
