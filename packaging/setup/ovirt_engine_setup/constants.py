@@ -642,6 +642,14 @@ class CoreEnv(object):
     def REMOVE(self):
         return 'OVESETUP_CORE/remove'
 
+    @osetupattrs(
+        postinstallfile=True,
+    )
+    def GENERATED_BY_VERSION(self):
+        return 'OVESETUP_CORE/generatedByVersion'
+
+    ORIGINAL_GENERATED_BY_VERSION = 'OVESETUP_CORE/originalGeneratedByVersion'
+
 
 @util.export
 @util.codegen

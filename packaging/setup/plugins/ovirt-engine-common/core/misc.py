@@ -66,6 +66,22 @@ class Plugin(plugin.PluginBase):
         priority=plugin.Stages.PRIORITY_HIGH,
     )
     def _init(self):
+
+        self.environment.setdefault(
+            osetupcons.CoreEnv.GENERATED_BY_VERSION,
+            None
+        )
+
+        self.environment[
+            osetupcons.CoreEnv.ORIGINAL_GENERATED_BY_VERSION
+        ] = self.environment[
+            osetupcons.CoreEnv.GENERATED_BY_VERSION
+        ]
+
+        self.environment[
+            osetupcons.CoreEnv.GENERATED_BY_VERSION
+        ] = osetupcons.Const.PACKAGE_VERSION
+
         self.environment.setdefault(
             osetupcons.CoreEnv.DEVELOPER_MODE,
             None
