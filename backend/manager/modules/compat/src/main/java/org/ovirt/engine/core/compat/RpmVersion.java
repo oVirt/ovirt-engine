@@ -16,6 +16,7 @@ public class RpmVersion extends Version {
     private static final String RPM_REGEX = "([^ ]+)\\-([0-9][^ \\-]*\\-[0-9\\.]+)\\.(.*)";
     private static final Pattern rpmCompiled = Pattern.compile(RPM_REGEX);
     private String rpmName;
+    private String rpmRevision;
 
     public RpmVersion() {
         super();
@@ -28,11 +29,8 @@ public class RpmVersion extends Version {
      */
     public RpmVersion(String rpmName) {
         this.rpmName = rpmName;
-        if (rpmName == null || rpmName.isEmpty()) {
-            setValue(rpmName);
-        } else {
-            setValue(extractRpmVersion(rpmName));
-        }
+        setValue(extractRpmVersion(rpmName));
+        extractRpmRevision(rpmName);
     }
 
     /**
@@ -60,14 +58,27 @@ public class RpmVersion extends Version {
                 start = rpmName.indexOf(namePrefix);
             }
 
-            String rawVersion;
+            String raw;
             if (start > -1) {
-                rawVersion = rpmName.substring(start + namePrefix.length());
+                raw = rpmName.substring(start + namePrefix.length());
             } else {
-                rawVersion = rpmName;
+                raw = rpmName;
             }
-            setValue(extractRpmVersion(rawVersion.toCharArray()));
+            extractRpmRevision(raw);
+            setValue(extractRpmVersion(raw.toCharArray()));
         }
+    }
+
+    private void extractRpmRevision(String rpmName) {
+        if (rpmName == null || rpmName.isEmpty()) {
+            return;
+        }
+        int lastDashIndex = rpmName.lastIndexOf('-');
+        if (lastDashIndex == -1) {
+            return;
+        }
+        rpmRevision = rpmName.substring(lastDashIndex + 1);
+
     }
 
     public String getRpmName() {
@@ -87,7 +98,7 @@ public class RpmVersion extends Version {
      *            the char material which contains the version
      * @return a string contains a version in format of w.x.y.z where w,x,y and z are int.
      */
-    private static String extractRpmVersion(char[] version) {
+    private String extractRpmVersion(char[] version) {
         int start = indexOfFirstDigit(version);
         int end = version.length;
         int dots = 3;
@@ -113,6 +124,9 @@ public class RpmVersion extends Version {
     }
 
     private String extractRpmVersion(String rpmName) {
+        if (rpmName == null || rpmName.isEmpty()) {
+            return rpmName;
+        }
         Matcher matchToolPattern = rpmCompiled.matcher(rpmName);
 
         String rawString = null;
@@ -156,6 +170,14 @@ public class RpmVersion extends Version {
         } else if (!rpmName.equals(other.rpmName))
             return false;
         return true;
+    }
+
+    public String getRpmRevision() {
+        return rpmRevision;
+    }
+
+    public void setRpmRevision(String rpmRevision) {
+        this.rpmRevision = rpmRevision;
     }
 
 }

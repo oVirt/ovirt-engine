@@ -16,10 +16,16 @@ public class RpmVersion extends Version {
                 return false;
         } else if (!rpmName.equals(other.rpmName))
             return false;
+        if (rpmRevision == null) {
+            if (other.rpmRevision != null)
+                return false;
+        } else if (!rpmRevision.equals(other.rpmRevision))
+            return false;
         return true;
     }
 
     private String rpmName;
+    private String rpmRevision;
 
     public String getRpmName() {
         return this.rpmName;
@@ -28,4 +34,14 @@ public class RpmVersion extends Version {
     public void setRpmName(String rpmName) {
         this.rpmName = rpmName;
     }
+
+    public String getRpmRevision() {
+        return this.rpmRevision;
+    }
+
+    public void setRpmRevision(String rpmRevision) {
+        this.rpmRevision = rpmRevision;
+    }
+
+
 }
