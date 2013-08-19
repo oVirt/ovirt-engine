@@ -3,6 +3,8 @@ package org.ovirt.engine.api.restapi.types;
 import org.junit.Assert;
 import org.junit.Test;
 import org.ovirt.engine.api.model.WatchDog;
+import org.ovirt.engine.api.model.WatchdogAction;
+import org.ovirt.engine.api.model.WatchdogModel;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;

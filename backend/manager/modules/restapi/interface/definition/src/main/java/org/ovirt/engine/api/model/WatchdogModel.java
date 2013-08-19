@@ -1,18 +1,15 @@
-package org.ovirt.engine.api.restapi.types;
+package org.ovirt.engine.api.model;
 
 import org.apache.commons.lang.StringUtils;
 
-public enum WatchdogAction {
-    NONE,
-    RESET,
-    POWEROFF,
-    PAUSE,
-    DUMP;
+public enum WatchdogModel {
+    I6300ESB,
+    IB700;
     public String value() {
         return this.name().toLowerCase();
     }
 
-    public static WatchdogAction fromValue(String value) {
+    public static WatchdogModel fromValue(String value) {
         try {
             return valueOf(StringUtils.upperCase(value));
         } catch (IllegalArgumentException e) {

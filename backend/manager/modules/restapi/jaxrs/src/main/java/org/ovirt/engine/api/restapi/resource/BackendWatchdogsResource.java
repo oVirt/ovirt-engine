@@ -2,11 +2,11 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.ovirt.engine.api.model.WatchDog;
 import org.ovirt.engine.api.model.WatchDogs;
+import org.ovirt.engine.api.model.WatchdogAction;
+import org.ovirt.engine.api.model.WatchdogModel;
 import org.ovirt.engine.api.resource.WatchdogResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource.ParametersProvider;
-import org.ovirt.engine.api.restapi.types.WatchdogAction;
-import org.ovirt.engine.api.restapi.types.WatchdogModel;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
