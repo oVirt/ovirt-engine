@@ -379,10 +379,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         // if collapse true we check that we have the template on source
         // (backup) domain
         if (getParameters().getCopyCollapse() && !isTemplateExistsOnExportDomain()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMPORTED_TEMPLATE_IS_MISSING);
-            addCanDoActionMessage(String.format("$DomainName %1$s",
-                    getStorageDomainStaticDAO().get(getParameters().getSourceDomainId()).getStorageName()));
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMPORTED_TEMPLATE_IS_MISSING,
+                    String.format("$DomainName %1$s",
+                            getStorageDomainStaticDAO().get(getParameters().getSourceDomainId()).getStorageName()));
         }
 
         if (!validateVdsCluster()) {
@@ -462,9 +461,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     protected boolean validateNoDuplicateVm() {
         VmStatic duplicateVm = getVmStaticDAO().get(getVm().getId());
         if (duplicateVm != null) {
-            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS);
-            addCanDoActionMessage(String.format("$VmName %1$s", duplicateVm.getName()));
-            return false;
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_IMPORT_VM_EXISTS,
+                    String.format("$VmName %1$s", duplicateVm.getName()));
         }
         return true;
     }

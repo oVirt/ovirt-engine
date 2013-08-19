@@ -119,10 +119,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (getParameters().getTemplateMustExists()) {
             if (!CheckTemplateInStorageDomain(getVm().getStoragePoolId(), getParameters().getStorageDomainId(),
                     getVm().getVmtGuid())) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_EXPORT_DOMAIN);
-                getReturnValue().getCanDoActionMessages().add(
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_EXPORT_DOMAIN,
                         String.format("$TemplateName %1$s", getVm().getVmtName()));
-                return false;
             }
         }
 
@@ -149,8 +147,8 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         // check destination storage is Export domain
         if (getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
-            addCanDoActionMessage(String.format("$storageDomainName %1$s", getStorageDomainName()));
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SPECIFY_DOMAIN_IS_NOT_EXPORT_DOMAIN,
+                    String.format("$storageDomainName %1$s", getStorageDomainName()));
         }
 
         // get the snapshot that are going to be exported and have memory
