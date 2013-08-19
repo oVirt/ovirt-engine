@@ -1563,4 +1563,16 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntity<Gu
         vmDynamic.setLastWatchdogEvent(lastWatchdogEvent);
     }
 
+    public boolean isHostedEngine() {
+        return OriginType.HOSTED_ENGINE.equals(getOrigin());
+    }
+
+    public boolean isExternalVm() {
+        return OriginType.EXTERNAL.equals(getOrigin());
+    }
+
+    public boolean isManagedVm() {
+        return !isHostedEngine() && !isExternalVm();
+    }
+
 }

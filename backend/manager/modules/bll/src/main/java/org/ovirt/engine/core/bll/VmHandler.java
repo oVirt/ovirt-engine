@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.EditableField;
 import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
-import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -574,24 +573,12 @@ public class VmHandler {
     public static ValidationResult canRunActionOnNonManagedVm(VM vm, VdcActionType actionType) {
         ValidationResult validationResult = ValidationResult.VALID;
 
-        if (!isManagedVm(vm)) {
+        if (!vm.isManagedVm()) {
             if (!COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.contains(actionType)) {
                 validationResult = new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_RUN_ACTION_ON_NON_MANAGED_VM);
             }
         }
         return validationResult;
-    }
-
-    public static boolean isHostedEngine(VM vm) {
-        return OriginType.HOSTED_ENGINE.equals(vm.getOrigin());
-    }
-
-    public static boolean isExternalVm(VM vm) {
-        return OriginType.EXTERNAL.equals(vm.getOrigin());
-    }
-
-    public static boolean isManagedVm(VM vm) {
-        return !isHostedEngine(vm) && !isExternalVm(vm);
     }
 
 }
