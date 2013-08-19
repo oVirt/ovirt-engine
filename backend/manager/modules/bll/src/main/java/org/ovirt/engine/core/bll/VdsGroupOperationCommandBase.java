@@ -60,10 +60,11 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
             }
             getVdsGroup().setClusterPolicyId(clusterPolicy.getId());
         }
-        updateClusterPolicyProperties(getVdsGroup(), clusterPolicy);
+        Map<String, String> customPropertiesRegexMap = SchedulingManager.getInstance()
+                .getCustomPropertiesRegexMap(clusterPolicy);
+        updateClusterPolicyProperties(getVdsGroup(), clusterPolicy, customPropertiesRegexMap);
         List<ValidationError> validationErrors =
-                SimpleCustomPropertiesUtil.getInstance().validateProperties(SchedulingManager.getInstance()
-                        .getCustomPropertiesRegexMap(clusterPolicy),
+                SimpleCustomPropertiesUtil.getInstance().validateProperties(customPropertiesRegexMap,
                         getVdsGroup().getClusterPolicyProperties());
         if (!validationErrors.isEmpty()) {
             SimpleCustomPropertiesUtil.getInstance().handleCustomPropertiesError(validationErrors,
@@ -75,13 +76,15 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
 
     /**
      * Updates cluster policy parameters map to contain all default cluster properties and remove properties that
-     * doesn't exist in the cluster policy.
+     * doesn't exist in the valid custom properties.
      *
      * @param cluster
      * @param clusterPolicy
+     * @param customPropertiesRegexMap
+     *            - custom properties for all policy unit in cluster policy
      */
     private void updateClusterPolicyProperties(VDSGroup cluster,
-            ClusterPolicy clusterPolicy) {
+            ClusterPolicy clusterPolicy, Map<String, String> customPropertiesRegexMap) {
         if (cluster.getClusterPolicyProperties() == null) {
             cluster.setClusterPolicyProperties(new LinkedHashMap<String, String>());
         }
@@ -94,7 +97,7 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
                 }
             }
             for (String key : clusterPolicyProperties.keySet()) {
-                if (!clusterPolicy.getParameterMap().containsKey(key)) {
+                if (!customPropertiesRegexMap.containsKey(key)) {
                     toRemoveKeysList.add(key);
                 }
             }
