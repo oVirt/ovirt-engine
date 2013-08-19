@@ -407,7 +407,7 @@ install-dev:	\
 
 	$(MAKE) \
 		install \
-		EXTRA_BUILD_FLAGS="$(DEV_BUILD_FLAGS)" \
+		BUILD_DEV=1 \
 		PYTHON_DIR="$(PREFIX)$(PYTHON_SYS_DIR)" \
 		$(NULL)
 
