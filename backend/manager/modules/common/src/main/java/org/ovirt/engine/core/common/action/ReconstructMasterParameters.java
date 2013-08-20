@@ -25,7 +25,6 @@ public class ReconstructMasterParameters extends StorageDomainPoolParametersBase
 
     public ReconstructMasterParameters(Guid storagePoolId, Guid newMasterDomainId) {
         this(storagePoolId, Guid.Empty, false);
-        privateNewMasterDomainId = Guid.Empty;
         this.privateNewMasterDomainId = newMasterDomainId;
     }
 
