@@ -13,13 +13,7 @@ public class EditClusterPolicyCommand extends ClusterPolicyCRUDCommand {
 
     @Override
     protected boolean canDoAction() {
-        if (!checkRemoveEditValidations()) {
-            return false;
-        }
-        if (!checkAddEditValidations()) {
-            return false;
-        }
-        return true;
+        return checkRemoveEditValidations() && checkAddEditValidations();
     }
 
     @Override
