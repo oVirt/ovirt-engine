@@ -84,15 +84,15 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
     private UICommand startCommand;
     private UICommand stopCommand;
-    private UICommand rebalanceCommand;
+    private UICommand startRebalanceCommand;
     private UICommand optimizeForVirtStoreCommand;
 
-    public UICommand getRebalanceCommand() {
-        return rebalanceCommand;
+    public UICommand getStartRebalanceCommand() {
+        return startRebalanceCommand;
     }
 
-    public void setRebalanceCommand(UICommand rebalanceCommand) {
-        this.rebalanceCommand = rebalanceCommand;
+    public void setStartRebalanceCommand(UICommand startRebalanceCommand) {
+        this.startRebalanceCommand = startRebalanceCommand;
     }
 
     public UICommand getStartCommand() {
@@ -131,14 +131,13 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         setRemoveVolumeCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setStartCommand(new UICommand("Start", this)); //$NON-NLS-1$
         setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
-        setRebalanceCommand(new UICommand("Rebalance", this)); //$NON-NLS-1$
+        setStartRebalanceCommand(new UICommand("StartRebalance", this)); //$NON-NLS-1$
         setOptimizeForVirtStoreCommand(new UICommand("OptimizeForVirtStore", this)); //$NON-NLS-1$
-        getRebalanceCommand().setIsAvailable(false);
 
         getRemoveVolumeCommand().setIsExecutionAllowed(false);
         getStartCommand().setIsExecutionAllowed(false);
         getStopCommand().setIsExecutionAllowed(false);
-        getRebalanceCommand().setIsExecutionAllowed(false);
+        getStartRebalanceCommand().setIsExecutionAllowed(false);
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
@@ -356,13 +355,15 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                     allowStop = false;
                     allowStartRebalance = false;
                 }
+                allowStartRebalance = allowStartRebalance &&
+                        (volume.getAsyncTask() == null || Guid.isNullOrEmpty(volume.getAsyncTask().getTaskId()));
             }
         }
 
         getStartCommand().setIsExecutionAllowed(allowStart);
         getStopCommand().setIsExecutionAllowed(allowStop);
         getRemoveVolumeCommand().setIsExecutionAllowed(allowRemove);
-        getRebalanceCommand().setIsExecutionAllowed(allowStartRebalance);
+        getStartRebalanceCommand().setIsExecutionAllowed(allowStartRebalance);
         getOptimizeForVirtStoreCommand().setIsExecutionAllowed(allowOptimize);
 
         // System tree dependent actions.
@@ -394,8 +395,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             start();
         } else if (command.equals(getStopCommand())) {
             stop();
-        } else if (command.equals(getRebalanceCommand())) {
-            rebalance();
+        } else if (command.equals(getStartRebalanceCommand())) {
+            startRebalance();
         } else if (command.equals(getOptimizeForVirtStoreCommand())) {
             optimizeForVirtStore();
         } else if (command.getName().equals("onStop")) {//$NON-NLS-1$
@@ -406,7 +407,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
     }
 
-    private void rebalance() {
+    private void startRebalance() {
         if (getSelectedItems() == null) {
             return;
         }
