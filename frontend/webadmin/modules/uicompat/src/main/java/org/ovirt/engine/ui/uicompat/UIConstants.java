@@ -57,10 +57,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Setup Host Networks")
     String setupHostNetworksTitle();
 
-    @DefaultStringValue("Assign/Unassign Networks")
+    @DefaultStringValue("Manage Networks")
     String assignDetachNetworksTitle();
 
-    @DefaultStringValue("Assign/Unassign Network")
+    @DefaultStringValue("Manage Network")
     String assignDetachNetworkTitle();
 
     @DefaultStringValue("Clusters")

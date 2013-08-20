@@ -1822,10 +1822,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Add Network")
     String addNetworkNetwork();
 
-    @DefaultStringValue("Assign/Unassign Networks")
+    @DefaultStringValue("Manage Networks")
     String assignDetatchNetworksNework();
 
-    @DefaultStringValue("Assign/Unassign Network")
+    @DefaultStringValue("Manage Network")
     String assignUnassignNetwork();
 
     @DefaultStringValue("Set as Display")
