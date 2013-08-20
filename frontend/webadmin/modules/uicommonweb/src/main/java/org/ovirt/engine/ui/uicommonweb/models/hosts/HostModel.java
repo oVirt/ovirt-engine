@@ -177,16 +177,16 @@ public abstract class HostModel extends Model
         privateFetchSshFingerprint = value;
     }
 
-    private EntityModel privateHostPort;
+    private EntityModel privateAuthSshPort;
 
-    public EntityModel getHostPort()
+    public EntityModel getAuthSshPort()
     {
-        return privateHostPort;
+        return privateAuthSshPort;
     }
 
-    private void setHostPort(EntityModel value)
+    private void setAuthSshPort(EntityModel value)
     {
-        privateHostPort = value;
+        privateAuthSshPort = value;
     }
 
     private EntityModel privateUserPassword;
@@ -874,8 +874,8 @@ public abstract class HostModel extends Model
         setHost(new EntityModel());
         setPkSection(new EntityModel());
         setPasswordSection(new EntityModel());
-        setHostPort(new EntityModel());
-        getHostPort().setEntity(constants.defaultHostSSHPort());
+        setAuthSshPort(new EntityModel());
+        getAuthSshPort().setEntity(constants.defaultHostSSHPort());
         setUserName(new EntityModel());
         getUserName().setEntity(constants.defaultUserName());
         // TODO: remove setIsChangable when configured ssh username is enabled
@@ -1585,7 +1585,7 @@ public abstract class HostModel extends Model
                 new HostAddressValidation() });
 
         getPort().validateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
-        getHostPort().validateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
+        getAuthSshPort().validateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
 
         if ((Boolean) getConsoleAddressEnabled().getEntity()) {
             getConsoleAddress().validateEntity(new IValidation[] {new NotEmptyValidation(), new HostAddressValidation()});
@@ -1666,7 +1666,8 @@ public abstract class HostModel extends Model
         getHost().setEntity(vds.getHostName());
         getFetchSshFingerprint().setEntity(vds.getSshKeyFingerprint());
         getUserName().setEntity(vds.getSshUsername());
-        setHostPort(vds);
+        getAuthSshPort().setEntity(vds.getSshPort());
+        setPort(vds);
         boolean consoleAddressEnabled = vds.getConsoleAddress() != null;
         getConsoleAddressEnabled().setEntity(consoleAddressEnabled);
         getConsoleAddress().setEntity(vds.getConsoleAddress());
@@ -1768,7 +1769,7 @@ public abstract class HostModel extends Model
 
     protected abstract void updateHosts();
 
-    protected abstract void setHostPort(VDS vds);
+    protected abstract void setPort(VDS vds);
 
     public abstract boolean showNetworkProviderTab();
 }

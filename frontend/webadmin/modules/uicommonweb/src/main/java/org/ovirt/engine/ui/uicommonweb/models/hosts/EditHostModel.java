@@ -36,10 +36,10 @@ public class EditHostModel extends HostModel {
     protected void setAllowChangeHost(VDS vds) {
         if (vds.getStatus() != VDSStatus.InstallFailed) {
             getHost().setIsChangable(false);
-            getPort().setIsChangable(false);
+            getAuthSshPort().setIsChangable(false);
         } else {
             getHost().setIsChangable(true);
-            getPort().setIsChangable(true);
+            getAuthSshPort().setIsChangable(true);
         }
     }
 
@@ -61,7 +61,7 @@ public class EditHostModel extends HostModel {
     }
 
     @Override
-    protected void setHostPort(VDS vds) {
+    protected void setPort(VDS vds) {
         getPort().setEntity(vds.getPort());
     }
 

@@ -155,9 +155,9 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     EntityModelTextBoxEditor hostAddressEditor;
 
     @UiField
-    @Path(value = "hostPort.entity")
-    @WithElementId("hostPort")
-    EntityModelTextBoxEditor hostPortEditor;
+    @Path(value = "authSshPort.entity")
+    @WithElementId("authSshPort")
+    EntityModelTextBoxEditor authSshPortEditor;
 
     @UiField
     @Path(value = "userPassword.entity")
@@ -547,7 +547,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         userNameEditor.setLabel(constants.hostPopupUsernameLabel());
         commentEditor.setLabel(constants.commentLabel());
         hostAddressEditor.setLabel(constants.hostPopupHostAddressLabel());
-        hostPortEditor.setLabel(constants.hostPopupPortLabel());
+        authSshPortEditor.setLabel(constants.hostPopupPortLabel());
         authLabel.setText(constants.hostPopupAuthLabel());
 
         fingerprintLabel.setText(constants.hostPopupHostFingerprintLabel());
@@ -973,7 +973,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         providerSearchFilterLabel.setTabIndex(nextTabIndex++);
         nameEditor.setTabIndex(nextTabIndex++);
         hostAddressEditor.setTabIndex(nextTabIndex++);
-        hostPortEditor.setTabIndex(nextTabIndex++);
+        authSshPortEditor.setTabIndex(nextTabIndex++);
         userNameEditor.setTabIndex(nextTabIndex++);
         rbPassword.setTabIndex(nextTabIndex++);
         passwordEditor.setTabIndex(nextTabIndex++);

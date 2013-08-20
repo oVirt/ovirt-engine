@@ -150,7 +150,7 @@ public class NewHostModel extends HostModel {
     }
 
     @Override
-    protected void setHostPort(VDS vds) {
+    protected void setPort(VDS vds) {
         // If port is "0" then we set it to the default port
         if (vds.getPort() == 0) {
             getPort().setEntity(NewHostDefaultPort);
