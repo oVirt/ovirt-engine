@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.scheduling;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -126,6 +127,7 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
                 ClusterPolicyListModel clusterPolicyListModel = (ClusterPolicyListModel) model;
                 ArrayList<ClusterPolicy> list =
                         (ArrayList<ClusterPolicy>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                Collections.sort(list, new Linq.ClusterPolicyComparator());
                 clusterPolicyListModel.setItems(list);
             }
         });

@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -1156,4 +1157,19 @@ public final class Linq
         return filterProvidersByProvidedType(source, VdcObjectType.Network);
     }
 
+    /**
+     * pre-defined cluster policies should be ordered first, then order lexicographically
+     * @param list - cluster policy list
+     */
+    public final static class ClusterPolicyComparator implements Comparator<ClusterPolicy>, Serializable {
+        final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+        @Override
+        public int compare(ClusterPolicy cp1, ClusterPolicy cp2) {
+            if (cp1.isLocked() != cp2.isLocked()) {
+                return cp1.isLocked() ? -1 : 1;
+            }
+            return lexoNumeric.compare(cp1.getName(), cp2.getName());
+        }
+    }
 }
