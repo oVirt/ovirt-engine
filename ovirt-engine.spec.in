@@ -194,6 +194,7 @@ Requires:	novnc
 Requires:	openssl
 Requires:	ovirt-host-deploy-java >= 1.1.0
 Requires:	python-cheetah
+Requires:	spice-html5
 
 %if %{ovirt_install_systemd}
 Requires(post):		systemd
