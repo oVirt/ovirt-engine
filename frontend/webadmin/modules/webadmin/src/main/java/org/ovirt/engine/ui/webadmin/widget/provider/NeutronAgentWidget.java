@@ -1,7 +1,5 @@
-package org.ovirt.engine.ui.common.widget.uicommon.popup.provider;
+package org.ovirt.engine.ui.webadmin.widget.provider;
 
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
@@ -14,6 +12,9 @@ import org.ovirt.engine.ui.uicommonweb.models.providers.NeutronAgentModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -36,8 +37,8 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
-    private static CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
-    private static CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+    private static ApplicationConstants constants = GWT.create(ApplicationConstants.class);
+    private static ApplicationTemplates templates = GWT.create(ApplicationTemplates.class);
 
     @UiField(provided = true)
     EntityModelWidgetWithInfo mappings;

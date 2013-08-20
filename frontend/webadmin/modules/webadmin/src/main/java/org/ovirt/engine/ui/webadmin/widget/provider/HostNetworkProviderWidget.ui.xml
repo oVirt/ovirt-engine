@@ -2,7 +2,7 @@
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget" xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.provider">
+	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget" xmlns:p="urn:import:org.ovirt.engine.ui.webadmin.widget.provider">
 
 	<ui:style>
 		.sectionStyle {

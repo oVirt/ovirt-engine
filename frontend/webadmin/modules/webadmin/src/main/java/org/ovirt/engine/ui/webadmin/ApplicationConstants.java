@@ -2976,6 +2976,21 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Networks")
     String providerNetworksSubTabLabel();
 
+    @DefaultStringValue("QPID")
+    String qpid();
+
+    @DefaultStringValue("Host")
+    String hostQpid();
+
+    @DefaultStringValue("Port")
+    String portQpid();
+
+    @DefaultStringValue("Username")
+    String usernameQpid();
+
+    @DefaultStringValue("Password")
+    String passwordQpid();
+
     // Provider Network
     @DefaultStringValue("External ID")
     String externalIdProviderNetwork();

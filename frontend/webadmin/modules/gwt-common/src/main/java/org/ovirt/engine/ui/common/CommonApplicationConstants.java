@@ -340,21 +340,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("▲")
     String horizontalSplitTableUp();
 
-    @DefaultStringValue("QPID")
-    String qpid();
-
-    @DefaultStringValue("Host")
-    String hostQpid();
-
-    @DefaultStringValue("Port")
-    String portQpid();
-
-    @DefaultStringValue("Username")
-    String usernameQpid();
-
-    @DefaultStringValue("Password")
-    String passwordQpid();
-
     // General
     @DefaultStringValue("Yes")
     String yes();
