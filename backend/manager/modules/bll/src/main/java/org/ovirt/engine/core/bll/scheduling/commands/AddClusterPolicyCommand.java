@@ -14,10 +14,7 @@ public class AddClusterPolicyCommand extends ClusterPolicyCRUDCommand {
 
     @Override
     protected boolean canDoAction() {
-        if (!checkAddEditValidations()) {
-            return false;
-        }
-        return true;
+        return checkAddEditValidations();
     }
 
     @Override
