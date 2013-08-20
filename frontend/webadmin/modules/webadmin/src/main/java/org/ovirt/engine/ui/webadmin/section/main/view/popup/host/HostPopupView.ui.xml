@@ -247,7 +247,7 @@
                                     <e:EntityModelTextBoxEditor ui:field="nameEditor"/>
                                     <e:EntityModelTextBoxEditor ui:field="commentEditor"/>
                                     <e:EntityModelTextBoxEditor ui:field="hostAddressEditor" />
-                                    <e:EntityModelTextBoxEditor ui:field="hostPortEditor"/>
+                                    <e:EntityModelTextBoxEditor ui:field="authSshPortEditor"/>
                                     <g:VerticalPanel addStyleNames="{style.content}">
                                         <g:Label ui:field="authLabel" addStyleNames="{style.headerAuthLabel}"/>
                                         <e:EntityModelTextBoxEditor ui:field="userNameEditor"/>

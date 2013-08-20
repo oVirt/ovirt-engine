@@ -849,7 +849,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         host.setComment((String) model.getComment().getEntity());
         host.setHostName((String) model.getHost().getEntity());
         host.setPort(Integer.parseInt(model.getPort().getEntity().toString()));
-        host.setSshPort(Integer.parseInt(model.getHostPort().getEntity().toString()));
+        host.setSshPort(Integer.parseInt(model.getAuthSshPort().getEntity().toString()));
         boolean sshUsernameSet = model.getUserName().getEntity() != null;
         host.setSshUsername(sshUsernameSet ? model.getUserName().getEntity().toString() : null);
         boolean sshFpSet = model.getFetchSshFingerprint().getEntity() != null;

@@ -467,7 +467,7 @@ public class ClusterGuideModel extends GuideModel
         host.setVdsName((String) model.getName().getEntity());
         host.setHostName((String) model.getHost().getEntity());
         host.setPort((Integer) model.getPort().getEntity());
-        host.setSshPort((Integer) model.getHostPort().getEntity());
+        host.setSshPort((Integer) model.getAuthSshPort().getEntity());
         host.setSshUsername(model.getUserName().getEntity().toString());
         host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity().toString());
         host.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
