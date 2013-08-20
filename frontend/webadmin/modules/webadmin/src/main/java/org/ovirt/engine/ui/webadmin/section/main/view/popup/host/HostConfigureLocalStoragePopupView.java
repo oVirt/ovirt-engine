@@ -119,10 +119,6 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
     EntityModelTextBoxEditor storageNameEditor;
 
     @UiField
-    @Ignore
-    Label pathLabel;
-
-    @UiField
     @Path(value = "storage.path.entity")
     EntityModelTextBoxEditor pathEditor;
 
@@ -289,7 +285,7 @@ public class HostConfigureLocalStoragePopupView extends AbstractModelBoundPopupV
         storageButton.setText(getConstants().editText());
         storageNameEditor.setLabel(getConstants().storagePopupNameLabel());
 
-        pathLabel.setText(getConstants().configureLocalStoragePopupPathLabel());
+        pathEditor.setLabel(getConstants().configureLocalStoragePopupPathLabel());
 
         optimizationTab.setLabel(getConstants().clusterPopupOptimizationTabLabel());
 

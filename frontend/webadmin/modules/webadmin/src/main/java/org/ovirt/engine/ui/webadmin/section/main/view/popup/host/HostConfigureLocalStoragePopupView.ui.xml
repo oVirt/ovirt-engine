@@ -115,7 +115,6 @@
                                         <g:Anchor ui:field="storageButton" styleName="{style.toggleButtonStyle}" />
                                     </g:HorizontalPanel>
                                 </g:VerticalPanel>
-                                <g:Label ui:field="pathLabel" />
                                 <e:EntityModelTextBoxEditor ui:field="pathEditor" />
                             </g:VerticalPanel>
 						</t:content>
