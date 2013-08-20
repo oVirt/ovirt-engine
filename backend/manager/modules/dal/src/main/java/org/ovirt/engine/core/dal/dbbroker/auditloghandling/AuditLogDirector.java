@@ -729,6 +729,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_INVALID_INTERFACES, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VM_IMPORT_FROM_CONFIGURATION_EXECUTED_SUCCESSFULLY, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VM_IMPORT_FROM_CONFIGURATION_ATTACH_DISKS_FAILED, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.IMPORTEXPORT_SNAPSHOT_VM_INVALID_INTERFACES, AuditLogSeverity.WARNING);
     }
 
     private static void initNetworkSeverities() {
