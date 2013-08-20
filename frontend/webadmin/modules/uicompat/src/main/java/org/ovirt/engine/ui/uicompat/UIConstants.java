@@ -241,6 +241,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Bricks")
     String bricksTitle();
 
+    @DefaultStringValue("Volume Rebalance Status")
+    String volumeRebalanceStatusTitle();
+
     @DefaultStringValue("Virtual Machines")
     String virtualMachinesTitle();
 
@@ -2090,5 +2093,14 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("[Unlimited]")
     String unlimitedQoSTitle();
+
+    @DefaultStringValue("Rebalance Status")
+    String rebalanceStatusTitle();
+
+    @DefaultStringValue("Fetching Data")
+    String rebalanceStatusFetchMessage();
+
+    @DefaultStringValue("Stop Rebalance")
+    String stopRebalance();
 }
 

@@ -160,6 +160,13 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
             }
         });
 
+        rebalanceSubActions.add(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.statusRebalance()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getMainModel().getStatusRebalanceCommand();
+            }
+        });
+
         getTable().addActionButton(new WebAdminMenuBarButtonDefinition<GlusterVolumeEntity>(constants.rebalanceVolume(),rebalanceSubActions,CommandLocation.ContextAndToolBar));
     }
 }

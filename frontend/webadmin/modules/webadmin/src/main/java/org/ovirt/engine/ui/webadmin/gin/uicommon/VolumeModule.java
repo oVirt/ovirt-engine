@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAd
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeRebalanceStatusPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -47,14 +48,19 @@ public class VolumeModule extends AbstractGinModule {
     public MainModelProvider<GlusterVolumeEntity, VolumeListModel> getVolumeListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VolumePopupPresenterWidget> popupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<VolumeRebalanceStatusPopupPresenterWidget> rebalanceStatusPopupProvider) {
         return new MainTabModelProvider<GlusterVolumeEntity, VolumeListModel>(eventBus, defaultConfirmPopupProvider, VolumeListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
                 if (lastExecutedCommand == getModel().getNewVolumeCommand()) {
                     return popupProvider.get();
-                } else {
+                }
+                else if (lastExecutedCommand == getModel().getStatusRebalanceCommand()) {
+                    return rebalanceStatusPopupProvider.get();
+                }
+                else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }

@@ -3239,4 +3239,47 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Rebalance completed")
     String rebalanceCompleted();
+
+    @DefaultStringValue("Started At :")
+    String rebalanceStartTime();
+
+    @DefaultStringValue("Status At :")
+    String rebalanceStatusTime();
+
+    @DefaultStringValue("Volume :")
+    String rebalanceVolumeName();
+
+    @DefaultStringValue("Cluster :")
+    String rebalanceClusterVolume();
+
+    //Volume Rebalance Status Table Columns
+    @DefaultStringValue("Host")
+    String rebalanceSessionHost();
+
+    @DefaultStringValue("Files Rebalanced")
+    String rebalanceFileCount();
+
+    @DefaultStringValue("Size")
+    String rebalanceSize();
+
+    @DefaultStringValue("Files Failed")
+    String rebalanceFailedFileCount();
+
+    @DefaultStringValue("Files Skipped")
+    String rebalanceSkippedFileCount();
+
+    @DefaultStringValue("Files Scanned")
+    String rebalanceScannedFileCount();
+
+    @DefaultStringValue("Run Time")
+    String rebalanceRunTime();
+
+    @DefaultStringValue("Status")
+    String rebalanceStatus();
+
+    @DefaultStringValue("(Completed)")
+    String rebalanceComplete();
+
+    @DefaultStringValue("Rebalance NOT STARTED")
+    String rebalanceNotStarted();
 }

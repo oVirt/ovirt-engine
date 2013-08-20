@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.uicompat;
 import java.util.Date;
 import java.util.List;
 
-import com.google.gwt.i18n.client.Constants.DefaultStringValue;
-
 public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("One of the parameters isn''t supported (available parameter(s): {0})")
@@ -296,4 +294,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("{0} ({1} Socket(s), {2} Core(s) per Socket)")
     String cpuInfoMessage(int numOfCpus, int sockets, int coresPerSocket);
+
+    @DefaultMessage("No Rebalance ever happened on volume :  {0}")
+    String rebalanceStatusConfirmationMessage(String name);
 }

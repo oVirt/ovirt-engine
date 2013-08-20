@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.webadmin;
 
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
+
+import com.google.gwt.i18n.client.Messages.DefaultMessage;
 
 public interface ApplicationMessages extends CommonApplicationMessages {
 
@@ -84,4 +87,20 @@ public interface ApplicationMessages extends CommonApplicationMessages {
 
     @DefaultMessage("{0} VMs running, out of which {1} migrating")
     String migratingVmsOutOfTotal(String vmCount, String vmMigrating);
+
+    @DefaultMessage("Rebalance {0}")
+    String rebalanceStatusMessage(JobExecutionStatus jobStatus);
+
+
+    @DefaultMessage("{0} Bytes")
+    String rebalanceFileSizeBytes(long size);
+
+    @DefaultMessage("{0} Kb")
+    String rebalanceFileSizeKb(long size);
+
+    @DefaultMessage("{0} Mb")
+    String rebalanceFileSizeMb(long size);
+
+    @DefaultMessage("{0} Gb")
+    String rebalanceFileSizeGb(long size);
 }

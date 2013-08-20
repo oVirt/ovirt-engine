@@ -42,6 +42,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.DetachG
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeRebalanceStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.MoveHostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
@@ -246,6 +247,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.DetachGluste
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.ReplaceBrickPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumeParameterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.VolumeRebalanceStatusPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.guide.GuidePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.guide.MoveHostPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.HostBondPopupView;
@@ -1021,6 +1023,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(GlusterHookResolveConflictsPopupPresenterWidget.class,
                 GlusterHookResolveConflictsPopupPresenterWidget.ViewDef.class,
                 GlusterHookResolveConflictsPopupView.class);
+
+        bindPresenterWidget(VolumeRebalanceStatusPopupPresenterWidget.class,
+                VolumeRebalanceStatusPopupPresenterWidget.ViewDef.class,
+                VolumeRebalanceStatusPopupView.class);
 
         bindPresenterWidget(ManageGlusterSwiftPopupPresenterWidget.class,
                 ManageGlusterSwiftPopupPresenterWidget.ViewDef.class,

@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterServi
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -109,6 +110,7 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServiceQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
+import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.IntegerCompat;
 import org.ovirt.engine.core.compat.KeyValuePairCompat;
@@ -1343,6 +1345,17 @@ public final class AsyncDataProvider {
         Frontend.RunQuery(VdcQueryType.GetGlusterServerServicesByClusterId,
                 new GlusterServiceQueryParameters(clusterId,
                         ServiceType.GLUSTER_SWIFT), aQuery);
+    }
+
+    public static void getGlusterRebalanceStatus(AsyncQuery aQuery, Guid clusterId, Guid volumeId) {
+        aQuery.converterCallback = new IAsyncConverter<GlusterVolumeTaskStatusEntity>() {
+            @Override
+            public GlusterVolumeTaskStatusEntity Convert(Object source, AsyncQuery _asyncQuery) {
+                return (GlusterVolumeTaskStatusEntity) source;
+            }
+        };
+        GlusterVolumeQueriesParameters parameters = new GlusterVolumeQueriesParameters(clusterId, volumeId);
+        Frontend.RunQuery(VdcQueryType.GetGlusterVolumeRebalanceStatus, parameters, aQuery);
     }
 
     public static void getRpmVersionViaPublic(AsyncQuery aQuery) {
