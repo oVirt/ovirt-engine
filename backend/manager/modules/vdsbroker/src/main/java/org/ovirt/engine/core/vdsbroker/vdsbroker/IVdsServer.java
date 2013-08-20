@@ -14,6 +14,7 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterTasksListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeTaskReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumesListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IsoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
@@ -266,4 +267,6 @@ public interface IVdsServer {
     StoragePoolInfoReturnForXmlRpc getStoragePoolInfo(String spUUID);
 
     GlusterTasksListReturnForXmlRpc glusterTasksList();
+
+    GlusterVolumeTaskReturnForXmlRpc glusterVolumeRebalanceStatus(String volumeName);
 }

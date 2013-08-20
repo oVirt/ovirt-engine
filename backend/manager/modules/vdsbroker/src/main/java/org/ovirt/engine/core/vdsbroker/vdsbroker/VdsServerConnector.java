@@ -250,4 +250,6 @@ public interface VdsServerConnector {
     public Map<String, Object> getStoragePoolInfo(String spUUID);
 
     public Map<String, Object> glusterTasksList();
+
+    public Map<String, Object> glusterVolumeRebalanceStatus(String volumeName);
 }

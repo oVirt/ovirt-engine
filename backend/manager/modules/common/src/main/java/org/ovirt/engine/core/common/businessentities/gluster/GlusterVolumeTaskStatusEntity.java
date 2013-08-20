@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,6 +14,8 @@ public class GlusterVolumeTaskStatusEntity implements Serializable {
     private GlusterVolumeTaskStatusDetail statusSummary;
 
     public GlusterVolumeTaskStatusEntity() {
+        hostwiseStatusDetails = new ArrayList<GlusterVolumeTaskStatusForHost>();
+        statusSummary = new GlusterVolumeTaskStatusDetail();
     }
 
     public Date getStartTime() {

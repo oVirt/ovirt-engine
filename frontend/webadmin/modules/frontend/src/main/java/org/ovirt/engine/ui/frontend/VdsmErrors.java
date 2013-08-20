@@ -780,4 +780,7 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Failed to get gluster tasks list")
     String GlusterVolumeStatusAllFailedException();
+
+    @DefaultStringValue("Failed to get gluster volume rebalance status")
+    String GlusterVolumeRebalanceStatusFailedException();
 }
