@@ -73,8 +73,16 @@ public class NetworkHelper {
             return null;
         }
 
-        Network retVal = null;
         VnicProfile vnicProfile = DbFacade.getInstance().getVnicProfileDao().get(vnicProfileId);
+        return getNetworkByVnicProfile(vnicProfile);
+    }
+
+    public static Network getNetworkByVnicProfile(VnicProfile vnicProfile) {
+        if (vnicProfile == null) {
+            return null;
+        }
+
+        Network retVal = null;
         if (vnicProfile.getNetworkId() != null) {
             retVal = DbFacade.getInstance().getNetworkDao().get(vnicProfile.getNetworkId());
         }

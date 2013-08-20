@@ -4,13 +4,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 /**
  * A class that can validate a {@link vmNic} is valid from certain aspects.
@@ -54,6 +59,38 @@ public class VmNicValidator {
                 : ValidationResult.VALID;
     }
 
+    /**
+     * @return <ul>
+     *         <li>{@code VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS} if the profile doesn't exist.</li>
+     *         <li>{@code VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER} if the network is not in the current
+     *         cluster.</li>
+     *         <li>{@code VdcBllMessages.ACTION_TYPE_FAILED_NETWROK_QOS_IS_NOT_SUPPORTED} if the profile contains QoS
+     *         and it is not supported in the current cluster's version.</li>
+     *         <li>{@code ValidationResult.VALID} otherwise.</li>
+     *         </ul>
+     */
+    public ValidationResult profileValid(Guid clusterId) {
+        if (nic.getVnicProfileId() != null) {
+            // Check that the profile exists
+            VnicProfile vnicProfile = getDbFacade().getVnicProfileDao().get(nic.getVnicProfileId());
+            if (vnicProfile == null) {
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS);
+            }
+
+            // Check that the network exists in current cluster
+            Network network = getNetworkByVnicProfile(vnicProfile);
+            if (network == null || !isNetworkInCluster(network, clusterId)) {
+                return new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
+            }
+
+            // Check that if the profile contains QoS it is supported in the current cluster's version
+            if (!FeatureSupported.networkQoS(version) && vnicProfile.getNetworkQosId() != null)
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWROK_QOS_IS_NOT_SUPPORTED,
+                        clusterVersion());
+        }
+        return ValidationResult.VALID;
+    }
+
     protected String clusterVersion() {
         return String.format(CLUSTER_VERSION_REPLACEMENT_FORMAT, version.getValue());
     }
@@ -80,4 +117,15 @@ public class VmNicValidator {
         return SimpleDependecyInjector.getInstance().get(OsRepository.class);
     }
 
+    protected Network getNetworkByVnicProfile(VnicProfile vnicProfile) {
+        return NetworkHelper.getNetworkByVnicProfile(vnicProfile);
+    }
+
+    protected boolean isNetworkInCluster(Network network, Guid clusterId) {
+        return NetworkHelper.isNetworkInCluster(network, clusterId);
+    }
+
+    protected DbFacade getDbFacade() {
+        return DbFacade.getInstance();
+    }
 }

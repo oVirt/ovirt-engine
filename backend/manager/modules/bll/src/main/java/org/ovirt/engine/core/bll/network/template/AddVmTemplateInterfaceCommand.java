@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmTemplateHandler;
-import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
@@ -15,7 +14,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -72,20 +70,9 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
 
         if (!validate(nicValidator.linkedCorrectly())
                 || !validate(nicValidator.isCompatibleWithOs())
-                || !validate(nicValidator.emptyNetworkValid())) {
+                || !validate(nicValidator.emptyNetworkValid())
+                || !validate(nicValidator.profileValid(getVmTemplate().getVdsGroupId()))) {
             return false;
-        }
-
-        if (getParameters().getInterface().getVnicProfileId() != null) {
-            // check that the network exists in current cluster
-            Network interfaceNetwork =
-                    NetworkHelper.getNetworkByVnicProfileId(getParameters().getInterface().getVnicProfileId());
-
-            if (interfaceNetwork == null
-                    || !NetworkHelper.isNetworkInCluster(interfaceNetwork, getVmTemplate().getVdsGroupId())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
-                return false;
-            }
         }
 
         return true;

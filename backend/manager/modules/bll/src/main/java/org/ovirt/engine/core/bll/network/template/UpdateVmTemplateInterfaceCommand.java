@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -12,7 +11,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -66,24 +64,13 @@ public class UpdateVmTemplateInterfaceCommand<T extends AddVmTemplateInterfacePa
 
         if (!validate(nicValidator.linkedCorrectly())
                 || !validate(nicValidator.isCompatibleWithOs())
-                || !validate(nicValidator.emptyNetworkValid())) {
+                || !validate(nicValidator.emptyNetworkValid())
+                || !validate(nicValidator.profileValid(getVmTemplate().getVdsGroupId()))) {
             return false;
         }
 
         if (!StringUtils.equals(oldIface.getName(), getInterfaceName()) && !interfaceNameUnique(interfaces)) {
             return false;
-        }
-
-        if (getParameters().getInterface().getVnicProfileId() != null) {
-            // check that the network exists in current cluster
-            Network interfaceNetwork =
-                    NetworkHelper.getNetworkByVnicProfileId(getParameters().getInterface().getVnicProfileId());
-
-            if (interfaceNetwork == null
-                    || !NetworkHelper.isNetworkInCluster(interfaceNetwork, getVmTemplate().getVdsGroupId())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
-                return false;
-            }
         }
 
         return true;

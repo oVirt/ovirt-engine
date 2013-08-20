@@ -198,21 +198,12 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 || !validate(nicValidator.linkedCorrectly())
                 || !validate(nicValidator.isCompatibleWithOs())
                 || !validate(nicValidator.emptyNetworkValid())
-                || !validate(nicValidator.hotUpdatePossible())) {
+                || !validate(nicValidator.hotUpdatePossible())
+                || !validate(nicValidator.profileValid(vm.getVdsGroupId()))) {
             return false;
         }
 
         Network network = null;
-        if (getInterface().getVnicProfileId() != null) {
-
-            network = NetworkHelper.getNetworkByVnicProfileId(getInterface().getVnicProfileId());
-            // check that the network exists in current cluster
-            if (network == null || !NetworkHelper.isNetworkInCluster(network, getVm().getVdsGroupId())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
-                return false;
-            }
-        }
-
         if (getRequiredAction() == RequiredAction.UPDATE_VM_DEVICE) {
             Network oldNetwork = NetworkHelper.getNetworkByVnicProfileId(oldIface.getVnicProfileId());
             if (!validate(nicValidator.hotUpdateDoneWithInternalNetwork(oldNetwork, network))) {

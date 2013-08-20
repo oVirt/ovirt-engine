@@ -2194,6 +2194,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. There is no network on the virtual machine's interface, this is not supported for clusters of version ${clusterVersion}.")
     String NULL_NETWORK_IS_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. There is Network QoS on the profile, this is not supported for clusters of version ${clusterVersion}.")
+    String ACTION_TYPE_FAILED_NETWROK_QOS_IS_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Updating the virtual machine interface while the virtual machine is running is not supported for clusters of version ${clusterVersion}.")
     String HOT_VM_INTERFACE_UPDATE_IS_NOT_SUPPORTED();
 

@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
-import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
@@ -17,7 +16,6 @@ import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -139,22 +137,9 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
 
         if (!validate(nicValidator.linkedCorrectly())
                 || !validate(nicValidator.isCompatibleWithOs())
-                || !validate(nicValidator.emptyNetworkValid())) {
+                || !validate(nicValidator.emptyNetworkValid())
+                || !validate(nicValidator.profileValid(vm.getVdsGroupId()))) {
             return false;
-        }
-
-        if (getInterface().getVnicProfileId() != null) {
-            // check that the network exists in current cluster
-            Network network = NetworkHelper.getNetworkByVnicProfileId(getInterface().getVnicProfileId());
-
-            if (network == null || !NetworkHelper.isNetworkInCluster(network, getVm().getVdsGroupId())) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER);
-                return false;
-            } else if (!network.isVmNetwork()) {
-                addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NOT_A_VM_NETWORK);
-                addCanDoActionMessage(String.format("$networks %1$s", network.getName()));
-                return false;
-            }
         }
 
         if (StringUtils.isNotEmpty(getMacAddress())) {
