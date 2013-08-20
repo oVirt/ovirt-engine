@@ -226,25 +226,25 @@ class Plugin(plugin.PluginBase):
 
                 # Verify all installed packages available in yum
                 for package in myum.queryTransaction():
+                    installed = False
+                    reinstall_available = False
                     for query in myum.queryPackages(
-                        patterns=(package['name'],)
+                        patterns=(package['name'],),
+                        showdups=True,
                     ):
-                        if query['operation'] == 'installed':
-                            self.logger.debug(
-                                'Checking package %s',
+                        self.logger.debug(
+                            'dupes: operation [%s] package %s' % (
+                                query['operation'],
                                 query['display_name'],
                             )
-                            if not myum.queryPackages(
-                                patterns=(query['display_name'],),
-                                showdups=True,
-                            ):
-                                self.logger.debug(
-                                    'package %s not available in cache' % (
-                                        query['display_name']
-                                    )
-                                )
-                                haveRollback = False
-
+                        )
+                        if query['operation'] == 'installed':
+                            installed = True
+                        if query['operation'] == 'reinstall_available':
+                            reinstall_available = True
+                    if installed and not reinstall_available:
+                        haveRollback = False
+                        break
         return (upgradeAvailable, haveRollback)
 
     def __init__(self, context):
@@ -368,15 +368,16 @@ class Plugin(plugin.PluginBase):
                             name='OVESETUP_RPMDISTRO_REQUIRE_ROLLBACK',
                             note=_(
                                 'Setup will not be able to rollback new '
-                                'packages in case of a failure because '
-                                'installed ones are not available in enabled repositories. '
-                                'Do you want to continue anyway? '
+                                'packages in case of a failure, because '
+                                'installed ones were not found in enabled '
+                                'repositories.\n'
+                                'Do you want to abort Setup? '
                                 '(@VALUES@) [@DEFAULT@]: '
                             ),
                             prompt=True,
                             true=_('Yes'),
                             false=_('No'),
-                            default=False,
+                            default=True,
                         )
 
                     if self.environment[
