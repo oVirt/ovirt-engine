@@ -16,30 +16,29 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
     @Override
     protected boolean canDoAction() {
         VM vm = getVm();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__MIGRATE);
-        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
         Guid destinationId = getVdsDestinationId();
         VDS vds = DbFacade.getInstance().getVdsDao().get(destinationId);
         if (vds == null) {
-            addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
-            return false;
-        } else if (vm.getRunOnVds() != null && vm.getRunOnVds().equals(destinationId)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST);
-            return false;
-        } else if (!vm.getVdsGroupId().equals(getDestinationVds().getVdsGroupId())) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATE_BETWEEN_TWO_CLUSTERS);
-            return false;
-        } else {
-            return super.canDoAction();
+            return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
         }
+
+        if (vm.getRunOnVds() != null && vm.getRunOnVds().equals(destinationId)) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST);
+        }
+
+        if (!vm.getVdsGroupId().equals(getDestinationVds().getVdsGroupId())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATE_BETWEEN_TWO_CLUSTERS);
+        }
+
+        return super.canDoAction();
     }
 
+    /**
+     * In case we failed to migrate to that specific server, the VM should no longer be pending,
+     * and we report failure, without an attempt to rerun
+     */
     @Override
     public void rerun() {
-        /**
-         * In case we failed to migrate to that specific server, the VM should no longer be pending, and we
-         * report failure, without an attempt to rerun
-         */
         decreasePendingVms(getDestinationVds().getId());
         _isRerun = false;
         setSucceeded(false);
