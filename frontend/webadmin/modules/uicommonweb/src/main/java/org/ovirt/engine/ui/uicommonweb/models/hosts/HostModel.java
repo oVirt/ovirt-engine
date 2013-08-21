@@ -1584,7 +1584,6 @@ public abstract class HostModel extends Model
                 new LengthValidation(255),
                 new HostAddressValidation() });
 
-        getPort().validateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
         getAuthSshPort().validateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
 
         if ((Boolean) getConsoleAddressEnabled().getEntity()) {
@@ -1625,8 +1624,9 @@ public abstract class HostModel extends Model
         setIsGeneralTabValid(getName().getIsValid()
                 && getComment().getIsValid()
                 && getHost().getIsValid()
-                && getPort().getIsValid()
-                && getCluster().getIsValid());
+                && getAuthSshPort().getIsValid()
+                && getCluster().getIsValid()
+        );
 
         setIsPowerManagementTabValid(getManagementIp().getIsValid()
                 && getPmUserName().getIsValid()
