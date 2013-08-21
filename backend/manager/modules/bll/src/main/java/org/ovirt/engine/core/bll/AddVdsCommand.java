@@ -28,12 +28,11 @@ import org.ovirt.engine.core.common.action.RemoveVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
@@ -44,14 +43,9 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
-import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
-import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.gluster.AddGlusterServerVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
@@ -65,8 +59,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<T> {
-
-    private VDS upServer;
 
     private AuditLogType errorType = AuditLogType.USER_FAILED_ADD_VDS;
 
@@ -175,27 +167,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 }
             });
             ExecutionHandler.setAsyncJob(getExecutionContext(), true);
-        } else {
-            // If cluster supports gluster service do gluster peer probe
-            // only on non vds installation mode.
-            // Also gluster peer probe is not needed when importing an existing gluster cluster
-            if (isGlusterSupportEnabled() && getAllVds(getVdsGroupId()).size() > 1) {
-                String hostName =
-                        (getParameters().getvds().getHostName().isEmpty()) ? getParameters().getvds().getManagementIp()
-                                : getParameters().getvds().getHostName();
-                VDSReturnValue returnValue =
-                        runVdsCommand(
-                                VDSCommandType.AddGlusterServer,
-                                new AddGlusterServerVDSParameters(upServer.getId(),
-                                        hostName));
-                setSucceeded(returnValue.getSucceeded());
-                if (!getSucceeded()) {
-                    getReturnValue().getFault().setError(returnValue.getVdsError().getCode());
-                    getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
-                    errorType = AuditLogType.GLUSTER_SERVER_ADD_FAILED;
-                    return;
-                }
-            }
         }
     }
 
@@ -345,7 +316,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
         if (returnValue && isGlusterSupportEnabled()) {
             if (clusterHasServers()) {
-                upServer = getClusterUtils().getUpServer(getVdsGroupId());
+                VDS upServer = getClusterUtils().getUpServer(getVdsGroupId());
                 if (upServer == null) {
                     returnValue = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_GLUSTER_HOST_TO_PEER_PROBE);
                 }
@@ -554,23 +525,4 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         return jobProperties;
     }
 
-    /**
-     * This method will return the list of all vds from the cluster
-     *
-     * @param clusterId
-     * @return List of Vds
-     */
-    private List<VDS> getAllVds(Guid clusterId) {
-        return getVdsDAO().getAllForVdsGroup(clusterId);
-    }
-
-    @Override
-    protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        VDSGroup cluster = getVdsGroup();
-        if (cluster != null && cluster.supportsGlusterService() && !isInternalExecution()) {
-            return Collections.singletonMap(cluster.getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-        }
-        return null;
-    }
 }
