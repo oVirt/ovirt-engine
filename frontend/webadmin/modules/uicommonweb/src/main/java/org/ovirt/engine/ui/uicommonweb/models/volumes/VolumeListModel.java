@@ -332,35 +332,38 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     private void updateActionAvailability() {
-        if (getSelectedItems() == null || getSelectedItems().size() == 0)
-        {
-            getRemoveVolumeCommand().setIsExecutionAllowed(false);
-            getStopCommand().setIsExecutionAllowed(false);
-            getStartCommand().setIsExecutionAllowed(false);
-            getRebalanceCommand().setIsExecutionAllowed(false);
-            getOptimizeForVirtStoreCommand().setIsExecutionAllowed(false);
+
+        boolean allowStart = true;
+        boolean allowStop = true;
+        boolean allowRemove = true;
+        boolean allowStartRebalance = true;
+        boolean allowOptimize = true;
+
+        if (getSelectedItems() == null || getSelectedItems().size() == 0) {
+            allowStart = false;
+            allowStop = false;
+            allowRemove = false;
+            allowStartRebalance = false;
+            allowOptimize = false;
         }
         else {
-            getRemoveVolumeCommand().setIsExecutionAllowed(true);
-            getStopCommand().setIsExecutionAllowed(true);
-            getStartCommand().setIsExecutionAllowed(true);
-            getRebalanceCommand().setIsExecutionAllowed(true);
-            getOptimizeForVirtStoreCommand().setIsExecutionAllowed(true);
-
-            for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> cast(getSelectedItems()))
-            {
-                if (volume.getStatus() == GlusterStatus.UP)
-                {
-                    getRemoveVolumeCommand().setIsExecutionAllowed(false);
-                    getStartCommand().setIsExecutionAllowed(false);
+            for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> cast(getSelectedItems())) {
+                if (volume.getStatus() == GlusterStatus.UP) {
+                    allowStart = false;
+                    allowRemove = false;
                 }
-                else if (volume.getStatus() == GlusterStatus.DOWN)
-                {
-                    getStopCommand().setIsExecutionAllowed(false);
-                    getRebalanceCommand().setIsExecutionAllowed(false);
+                else if (volume.getStatus() == GlusterStatus.DOWN) {
+                    allowStop = false;
+                    allowStartRebalance = false;
                 }
             }
         }
+
+        getStartCommand().setIsExecutionAllowed(allowStart);
+        getStopCommand().setIsExecutionAllowed(allowStop);
+        getRemoveVolumeCommand().setIsExecutionAllowed(allowRemove);
+        getRebalanceCommand().setIsExecutionAllowed(allowStartRebalance);
+        getOptimizeForVirtStoreCommand().setIsExecutionAllowed(allowOptimize);
 
         // System tree dependent actions.
         boolean isAvailable =
@@ -368,7 +371,6 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         getNewVolumeCommand().setIsAvailable(isAvailable);
         getRemoveVolumeCommand().setIsAvailable(isAvailable);
-
     }
 
     private void cancel() {
