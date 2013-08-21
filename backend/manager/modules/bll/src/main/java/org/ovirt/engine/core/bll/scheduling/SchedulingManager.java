@@ -186,7 +186,8 @@ public class SchedulingManager {
                             parameters,
                             policy.getFilterPositionMap(),
                             messages,
-                            memoryChecker);
+                            memoryChecker,
+                            true);
 
             if (vdsList == null || vdsList.size() == 0) {
                 return null;
@@ -237,7 +238,8 @@ public class SchedulingManager {
                         parameters,
                         policy.getFilterPositionMap(),
                         messages,
-                        noWaitingMemoryChecker);
+                        noWaitingMemoryChecker,
+                        false);
 
         if (vdsList == null || vdsList.size() == 0) {
             return false;
@@ -279,7 +281,8 @@ public class SchedulingManager {
             VM vm,
             Map<String, String> parameters,
             Map<Guid, Integer> filterPositionMap,
-            List<String> messages, VdsFreeMemoryChecker memoryChecker) {
+            List<String> messages, VdsFreeMemoryChecker memoryChecker,
+            boolean shouldRunExternalFilters) {
         ArrayList<PolicyUnitImpl> internalFilters = new ArrayList<PolicyUnitImpl>();
         ArrayList<PolicyUnitImpl> externalFilters = new ArrayList<PolicyUnitImpl>();
         sortFilters(filters, filterPositionMap);
@@ -299,8 +302,11 @@ public class SchedulingManager {
         hostList =
                 runInternalFilters(internalFilters, hostList, vm, parameters, filterPositionMap, messages, memoryChecker);
 
-        if (Config.<Boolean> GetValue(ConfigValues.ExternalSchedulerEnabled) && externalFilters.size() > 0
-                && hostList != null && hostList.size() > 0) {
+        if (shouldRunExternalFilters
+                && Config.<Boolean> GetValue(ConfigValues.ExternalSchedulerEnabled)
+                && externalFilters.size() > 0
+                && hostList != null
+                && hostList.size() > 0) {
             hostList = runExternalFilters(externalFilters, hostList, vm, parameters, messages);
         }
 
