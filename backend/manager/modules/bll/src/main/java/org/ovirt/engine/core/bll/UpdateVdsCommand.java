@@ -71,7 +71,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
                     returnValue = false;
                 } else if (_oldVds.getStatus() != VDSStatus.InstallFailed && !_oldVds.getHostName().equals(hostName)) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_HOSNAME_CANNOT_CHANGE);
+                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_HOSTNAME_CANNOT_CHANGE);
                     returnValue = false;
                 }
                 // check if a name is updated to an existing vds name
