@@ -32,6 +32,8 @@ public class ExternalSchedulerDiscoveryThread extends Thread {
         } else {
             AuditLogableBase loggable = new AuditLogableBase();
             AuditLogDirector.log(loggable, AuditLogType.FAILED_TO_CONNECT_TO_SCHEDULER_PROXY);
+            markAllExternalPoliciesAsDisabled();
+            log.warn("Discovery returned empty result, disabled external policy units");
         }
     }
 
@@ -71,6 +73,10 @@ public class ExternalSchedulerDiscoveryThread extends Thread {
                 getPolicyUnitDao().update(policyUnit);
             }
         }
+    }
+
+    public void markAllExternalPoliciesAsDisabled(){
+        markExternalPoliciesAsDisabled(getPolicyUnitDao().getAll());
     }
 
     private PolicyUnit compareToDB(List<PolicyUnit> dbEnteries,
