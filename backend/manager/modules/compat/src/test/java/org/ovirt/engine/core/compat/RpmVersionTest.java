@@ -41,12 +41,14 @@ public class RpmVersionTest {
     }
 
     @Test
-    public void testRpmRevision() {
-        assertEquals(new RpmVersion("test-javadb-common-10.2.2.2.2-1.1.i386").getRpmRevision(), "1.1.i386");
-        assertEquals(new RpmVersion("java-1.7.0-openjdk-devel-1.7.0.25-2.3.10.4.fc18.x86_64").getRpmRevision(),
+    public void testRpmRelease() {
+        assertEquals(new RpmVersion("ovirt-node-iso-2.6.0-20130212.fc18.noarch").getRpmRelease(),
+                "20130212.fc18.noarch");
+        assertEquals(new RpmVersion("test-javadb-common-10.2.2.2.2-1.1.i386").getRpmRelease(), "1.1.i386");
+        assertEquals(new RpmVersion("java-1.7.0-openjdk-devel-1.7.0.25-2.3.10.4.fc18.x86_64").getRpmRelease(),
                 "2.3.10.4.fc18.x86_64");
-        assertEquals(new RpmVersion("rhev-agent-2.3.7.10.3-1.el6", "RHEV-Agent", true).getRpmRevision(), "1.el6");
-        assertEquals(new RpmVersion("rhev-agent-2.3.7.10.3-1.el6", "rhev-agent", false).getRpmRevision(), "1.el6");
+        assertEquals(new RpmVersion("rhev-agent-2.3.7.10.3-1.el6", "RHEV-Agent", true).getRpmRelease(), "1.el6");
+        assertEquals(new RpmVersion("rhev-agent-2.3.7.10.3-1.el6", "rhev-agent", false).getRpmRelease(), "1.el6");
     }
 
     @Test

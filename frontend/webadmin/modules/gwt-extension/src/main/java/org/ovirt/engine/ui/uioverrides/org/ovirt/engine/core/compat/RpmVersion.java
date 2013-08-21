@@ -16,16 +16,16 @@ public class RpmVersion extends Version {
                 return false;
         } else if (!rpmName.equals(other.rpmName))
             return false;
-        if (rpmRevision == null) {
-            if (other.rpmRevision != null)
+        if (rpmRelease == null) {
+            if (other.rpmRelease != null)
                 return false;
-        } else if (!rpmRevision.equals(other.rpmRevision))
+        } else if (!rpmRelease.equals(other.rpmRelease))
             return false;
         return true;
     }
 
     private String rpmName;
-    private String rpmRevision;
+    private String rpmRelease;
 
     public String getRpmName() {
         return this.rpmName;
@@ -35,12 +35,12 @@ public class RpmVersion extends Version {
         this.rpmName = rpmName;
     }
 
-    public String getRpmRevision() {
-        return this.rpmRevision;
+    public String getRpmRelease() {
+        return this.rpmRelease;
     }
 
-    public void setRpmRevision(String rpmRevision) {
-        this.rpmRevision = rpmRevision;
+    public void setRpmRelease(String rpmRelease) {
+        this.rpmRelease = rpmRelease;
     }
 
 

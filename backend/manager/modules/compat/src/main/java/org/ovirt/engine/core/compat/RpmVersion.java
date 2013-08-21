@@ -16,7 +16,7 @@ public class RpmVersion extends Version {
     private static final String RPM_REGEX = "([^ ]+)\\-([0-9][^ \\-]*\\-[0-9\\.]+)\\.(.*)";
     private static final Pattern rpmCompiled = Pattern.compile(RPM_REGEX);
     private String rpmName;
-    private String rpmRevision;
+    private String rpmRelease;
 
     public RpmVersion() {
         super();
@@ -30,7 +30,7 @@ public class RpmVersion extends Version {
     public RpmVersion(String rpmName) {
         this.rpmName = rpmName;
         setValue(extractRpmVersion(rpmName));
-        extractRpmRevision(rpmName);
+        extractRpmRelease(rpmName);
     }
 
     /**
@@ -64,12 +64,12 @@ public class RpmVersion extends Version {
             } else {
                 raw = rpmName;
             }
-            extractRpmRevision(raw);
+            extractRpmRelease(raw);
             setValue(extractRpmVersion(raw.toCharArray()));
         }
     }
 
-    private void extractRpmRevision(String rpmName) {
+    private void extractRpmRelease(String rpmName) {
         if (rpmName == null || rpmName.isEmpty()) {
             return;
         }
@@ -77,8 +77,7 @@ public class RpmVersion extends Version {
         if (lastDashIndex == -1) {
             return;
         }
-        rpmRevision = rpmName.substring(lastDashIndex + 1);
-
+        rpmRelease = rpmName.substring(lastDashIndex + 1);
     }
 
     public String getRpmName() {
@@ -172,12 +171,12 @@ public class RpmVersion extends Version {
         return true;
     }
 
-    public String getRpmRevision() {
-        return rpmRevision;
+    public String getRpmRelease() {
+        return rpmRelease;
     }
 
-    public void setRpmRevision(String rpmRevision) {
-        this.rpmRevision = rpmRevision;
+    public void setRpmRelease(String rpmRelease) {
+        this.rpmRelease = rpmRelease;
     }
 
 }
