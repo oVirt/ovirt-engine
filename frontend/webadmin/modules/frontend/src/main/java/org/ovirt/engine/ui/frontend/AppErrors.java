@@ -875,7 +875,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS();
 
     @DefaultStringValue("Cannot ${action} ${type}. Provided wrong storage domain, which is not related to disk.")
-    String ACTION_TYPE_FAILED_STOARGE_DOMAIN_IS_WRONG();
+    String ACTION_TYPE_FAILED_STORAGE_DOMAIN_IS_WRONG();
 
     @DefaultStringValue("Cannot ${action} ${type}. The chosen CPU is not supported.")
     String ACTION_TYPE_FAILED_CPU_NOT_FOUND();
