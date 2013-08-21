@@ -197,7 +197,7 @@ public class VmNicValidatorTest {
 
     @Test
     public void networkQosNotSupported() throws Exception {
-        vnicProfileValidationTest(both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWROK_QOS_IS_NOT_SUPPORTED))
+        vnicProfileValidationTest(both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_IS_NOT_SUPPORTED))
                 .and(replacements(hasItem(CLUSTER_VERSION_REPLACEMENT))), true, true, true, false);
     }
 

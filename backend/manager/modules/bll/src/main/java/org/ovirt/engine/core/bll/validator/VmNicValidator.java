@@ -64,7 +64,7 @@ public class VmNicValidator {
      *         <li>{@code VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS} if the profile doesn't exist.</li>
      *         <li>{@code VdcBllMessages.NETWORK_NOT_EXISTS_IN_CURRENT_CLUSTER} if the network is not in the current
      *         cluster.</li>
-     *         <li>{@code VdcBllMessages.ACTION_TYPE_FAILED_NETWROK_QOS_IS_NOT_SUPPORTED} if the profile contains QoS
+     *         <li>{@code VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_IS_NOT_SUPPORTED} if the profile contains QoS
      *         and it is not supported in the current cluster's version.</li>
      *         <li>{@code ValidationResult.VALID} otherwise.</li>
      *         </ul>
@@ -85,7 +85,7 @@ public class VmNicValidator {
 
             // Check that if the profile contains QoS it is supported in the current cluster's version
             if (!FeatureSupported.networkQoS(version) && vnicProfile.getNetworkQosId() != null)
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWROK_QOS_IS_NOT_SUPPORTED,
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_IS_NOT_SUPPORTED,
                         clusterVersion());
         }
         return ValidationResult.VALID;
