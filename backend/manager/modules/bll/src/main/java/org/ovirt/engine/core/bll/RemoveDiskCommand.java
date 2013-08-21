@@ -123,7 +123,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
 
         if (!diskImage.getStorageIds().contains(getParameters().getStorageDomainId())) {
             retValue = false;
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STOARGE_DOMAIN_IS_WRONG);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_IS_WRONG);
         }
 
         StorageDomainValidator validator = new StorageDomainValidator(getStorageDomain());
