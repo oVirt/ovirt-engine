@@ -1877,7 +1877,7 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_DUPLICATE_KEYS();
 
     @DefaultStringValue("Host Address can not be modified due to Security restrictions.  In order to change Host Address, Host has to be reinstalled")
-    String ACTION_TYPE_FAILED_HOSNAME_CANNOT_CHANGE();
+    String ACTION_TYPE_FAILED_HOSTNAME_CANNOT_CHANGE();
 
     @DefaultStringValue("Action failed due to database connection failure. Please check connectivity to your Database server.")
     String CAN_DO_ACTION_DATABASE_CONNECTION_FAILURE();
