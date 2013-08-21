@@ -2204,10 +2204,10 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_VM_INTERFACE_TYPE_IS_NOT_SUPPORTED_BY_OS();
 
     @DefaultStringValue("Cannot ${action} ${type}. Updating some of the properties is not supported while the interface is plugged into a running virtual machine. Please un-plug the interface, update the properties, and then plug it back.")
-    String CANNOT_PERFOM_HOT_UPDATE();
+    String CANNOT_PERFORM_HOT_UPDATE();
 
     @DefaultStringValue("Cannot ${action} ${type}. Update is not possible when 'Port Mirroring' is set on the interface of a running virtual machine.")
-    String CANNOT_PERFOM_HOT_UPDATE_WITH_PORT_MIRRORING();
+    String CANNOT_PERFORM_HOT_UPDATE_WITH_PORT_MIRRORING();
 
     @DefaultStringValue("Cannot ${action} ${type}. 'Port Mirroring' setting requires a network.")
     String PORT_MIRRORING_REQUIRES_NETWORK();

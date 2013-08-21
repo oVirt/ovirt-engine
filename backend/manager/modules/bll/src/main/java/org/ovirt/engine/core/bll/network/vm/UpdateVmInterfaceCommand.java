@@ -311,7 +311,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                     return new ValidationResult(VdcBllMessages.HOT_VM_INTERFACE_UPDATE_IS_NOT_SUPPORTED,
                             clusterVersion());
                 } else if (getVnicProfile().isPortMirroring()) {
-                    return new ValidationResult(VdcBllMessages.CANNOT_PERFOM_HOT_UPDATE_WITH_PORT_MIRRORING);
+                    return new ValidationResult(VdcBllMessages.CANNOT_PERFORM_HOT_UPDATE_WITH_PORT_MIRRORING);
                 }
             }
 
@@ -324,7 +324,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
          */
         public ValidationResult unplugPlugNotRequired() {
             return liveActionRequired() && propertiesRequiringUnplugPlugWereUpdated()
-                    ? new ValidationResult(VdcBllMessages.CANNOT_PERFOM_HOT_UPDATE) : ValidationResult.VALID;
+                    ? new ValidationResult(VdcBllMessages.CANNOT_PERFORM_HOT_UPDATE) : ValidationResult.VALID;
         }
 
         private boolean propertiesRequiringUnplugPlugWereUpdated() {
