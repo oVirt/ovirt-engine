@@ -240,6 +240,7 @@ public class AdElementListModel extends SearchableListModel
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
+        _asyncQuery.setHandleFailure(true);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object ReturnValue)
