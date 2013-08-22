@@ -130,10 +130,14 @@ class FileLocations(object):
         '.pgpass',
     )
 
-    LEGACY_FIREWALLD_SERVICE_FILE = os.path.join(
+    FIREWALLD_SERVICES_DIR = os.path.join(
         SYSCONFDIR,
         'firewalld',
         'services',
+    )
+
+    LEGACY_FIREWALLD_SERVICE_FILE = os.path.join(
+        FIREWALLD_SERVICES_DIR,
         'ovirt.xml'
     )
 
@@ -561,6 +565,7 @@ class Stages(object):
 
     REMOVE_CUSTOMIZATION_COMMON = 'osetup.remove.customization.common'
     REMOVE_CUSTOMIZATION_GROUPS = 'osetup.remove.customization.groups'
+    REMOVE_FIREWALLD_SERVICES = 'osetup.remove.firewalld.services'
 
     RENAME_PKI_CONF_MISC = 'osetup.rename.pki.conf.misc'
 
@@ -1026,6 +1031,8 @@ class RemoveEnv(object):
     )
     def REMOVE_ALL(self):
         return 'OVESETUP_REMOVE/removeAll'
+
+    FILES_TO_REMOVE = 'OVESETUP_REMOVE/filesToRemove'
 
 
 @util.export
