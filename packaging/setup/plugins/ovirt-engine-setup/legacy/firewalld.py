@@ -27,7 +27,6 @@ _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 from otopi import util
 from otopi import plugin
 from otopi import constants as otopicons
-from otopi import filetransaction
 
 
 from ovirt_engine_setup import constants as osetupcons
@@ -41,30 +40,30 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_MISC,
+        stage=plugin.Stages.STAGE_VALIDATION,
         condition=lambda self: self.environment[
             osetupcons.CoreEnv.UPGRADE_FROM_LEGACY
         ],
+        # TODO: add:
+        # before=(
+        #    otopicons.Stages.FIREWALLD_VALIDATION,
+        #),
+        # and remove:
+        priority=plugin.Stages.PRIORITY_HIGH,
     )
-    def _misc(self):
+    def _validation(self):
         if os.path.exists(
             osetupcons.FileLocations.LEGACY_FIREWALLD_SERVICE_FILE
         ):
-            self.environment[otopicons.NetEnv.FIREWALLD_DISABLE_SERVICES] = [
+            self.environment[
+                otopicons.NetEnv.FIREWALLD_DISABLE_SERVICES
+            ].append(
                 os.path.splitext(
                     os.path.basename(
                         osetupcons.FileLocations.
                         LEGACY_FIREWALLD_SERVICE_FILE
                     )
-                )[0],
-            ]
-            self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-                filetransaction.FileTransaction(
-                    name=(
-                        osetupcons.FileLocations.LEGACY_FIREWALLD_SERVICE_FILE
-                    ),
-                    content='',
-                )
+                )[0]
             )
 
     @plugin.event(

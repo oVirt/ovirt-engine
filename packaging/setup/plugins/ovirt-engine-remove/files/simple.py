@@ -102,6 +102,10 @@ class Plugin(plugin.PluginBase):
             osetupcons.RemoveEnv.ASK_GROUPS,
             True
         )
+        self.environment.setdefault(
+            osetupcons.RemoveEnv.FILES_TO_REMOVE,
+            []
+        )
         self._infos = sorted(
             glob.glob(
                 os.path.join(
@@ -232,6 +236,9 @@ class Plugin(plugin.PluginBase):
         self.logger.debug('files=%s', self._files)
         self.logger.debug('unremovable=%s', unremovable)
         self.logger.debug('toremove=%s', self._toremove)
+        self.environment[
+            osetupcons.RemoveEnv.FILES_TO_REMOVE
+        ] = self._toremove
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
