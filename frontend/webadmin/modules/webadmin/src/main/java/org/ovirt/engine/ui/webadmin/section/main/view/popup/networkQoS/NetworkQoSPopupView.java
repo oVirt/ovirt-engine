@@ -136,6 +136,12 @@ public class NetworkQoSPopupView extends AbstractModelBoundPopupView<NetworkQoSM
         outboundBurstEditor.setLabel(constants.burstNetworkQoSPopup());
         inboundEnabled.setLabel(constants.inboundLabelQoSPopup());
         outboundEnabled.setLabel(constants.outboundLabelQoSPopup());
+        inboundAverageEditor.setTitle(constants.averageNetworkQoSPopup() + constants.inMegabitsNetworkQoSPopup());
+        inboundPeakEditor.setTitle(constants.peakNetworkQoSPopup() + constants.inMegabitsNetworkQoSPopup());
+        inboundBurstEditor.setTitle(constants.burstNetworkQoSPopup() + constants.inMegabytesNetworkQoSPopup());
+        outboundAverageEditor.setTitle(constants.averageNetworkQoSPopup() + constants.inMegabitsNetworkQoSPopup());
+        outboundPeakEditor.setTitle(constants.peakNetworkQoSPopup() + constants.inMegabitsNetworkQoSPopup());
+        outboundBurstEditor.setTitle(constants.burstNetworkQoSPopup() + constants.inMegabytesNetworkQoSPopup());
     }
 
     @Override

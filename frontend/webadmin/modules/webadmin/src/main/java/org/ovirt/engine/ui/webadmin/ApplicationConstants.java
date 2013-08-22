@@ -3064,6 +3064,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Burst")
     String burstNetworkQoSPopup();
 
+    @DefaultStringValue(" (Megabits per second)")
+    String inMegabitsNetworkQoSPopup();
+
+    @DefaultStringValue(" (Megabytes)")
+    String inMegabytesNetworkQoSPopup();
+
     @DefaultStringValue("Inbound")
     String inboundLabelQoSPopup();
 
@@ -3073,7 +3079,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Mbps")
     String mbpsLabelQoSPopup();
 
-    @DefaultStringValue("Mb")
+    @DefaultStringValue("MiB")
     String mbLabelQoSPopup();
 
     @DefaultStringValue("Cluster Policies")
