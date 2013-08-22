@@ -44,7 +44,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private static final String USB_BUS = "usb";
     private final static String FIRST_MASTER_MODEL = "ich9-ehci1";
     private static final String CLOUD_INIT_VOL_ID = "config-2";
-    private static final int TO_KILOBITS = 1024;
+    private static final int MEGABITS_TO_KILOBYTES = 128;
+    private static final int MEGABYTES_TO_KILOBYTES = 1024;
 
     private final List<Map<String, Object>> devices = new ArrayList<Map<String, Object>>();
     private List<VmDevice> managedDevices = null;
@@ -590,9 +591,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private static void addQosData(Map<String, Object> specParams, String containerName, int average, int peak, int burst){
         if (average > 0) {
             Map<String, String> qosData = new HashMap<>();
-            qosData.put(VdsProperties.QOS_AVERAGE, String.valueOf(average * TO_KILOBITS));
-            qosData.put(VdsProperties.QOS_PEAK, String.valueOf(peak * TO_KILOBITS));
-            qosData.put(VdsProperties.QOS_BURST, String.valueOf(burst * TO_KILOBITS));
+            qosData.put(VdsProperties.QOS_AVERAGE, String.valueOf(average * MEGABITS_TO_KILOBYTES));
+            qosData.put(VdsProperties.QOS_PEAK, String.valueOf(peak * MEGABITS_TO_KILOBYTES));
+            qosData.put(VdsProperties.QOS_BURST, String.valueOf(burst * MEGABYTES_TO_KILOBYTES));
             specParams.put(containerName, qosData);
         }
     }
