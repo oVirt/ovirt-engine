@@ -312,19 +312,22 @@ public final class VdcActionUtils {
         }
 
         if (entity.getClass().getName().endsWith("VDS")) {
-            return (entity instanceof VDS ?
+            return entity instanceof VDS ?
                     ((VDS) entity).getStatus() :
-                    null);
-        } else if (entity.getClass().getName().endsWith("VM")) {
-            return (entity instanceof VM ?
+                    null;
+        }
+        if (entity.getClass().getName().endsWith("VM")) {
+            return entity instanceof VM ?
                     ((VM) entity).getStatus() :
-                    null);
-        } else if (entity.getClass().getName().endsWith("VmTemplate")) {
-            return (entity instanceof VmTemplate ?
+                    null;
+        }
+        if (entity.getClass().getName().endsWith("VmTemplate")) {
+            return entity instanceof VmTemplate ?
                     ((VmTemplate) entity).getStatus() :
-                    null);
+                    null;
 
-        } else if (entity instanceof StorageDomain) {
+        }
+        if (entity instanceof StorageDomain) {
             StorageDomainStatus status = ((StorageDomain) entity).getStatus();
             return status != null ? status : StorageDomainStatus.Uninitialized;
         }
