@@ -792,7 +792,7 @@ class PKIEnv(object):
     def ORG(self):
         return 'OVESETUP_PKI/organization'
 
-    ENGINE_SSH_PUBLIC_KEY_VALUE = 'OVESETUP_PKI/sshPublicKey'
+    ENGINE_SSH_PUBLIC_KEY = 'OVESETUP_PKI/sshPublicKey'
 
 
 @util.export

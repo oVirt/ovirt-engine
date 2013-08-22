@@ -94,7 +94,7 @@ class Plugin(plugin.PluginBase):
             )
         )
         self.environment[
-            osetupcons.PKIEnv.ENGINE_SSH_PUBLIC_KEY_VALUE
+            osetupcons.PKIEnv.ENGINE_SSH_PUBLIC_KEY
         ] = self._getSSHPublicKey('\n'.join(privkey))
 
     @plugin.event(
@@ -114,7 +114,7 @@ class Plugin(plugin.PluginBase):
             with open(temp, "w") as f:
                 f.write(
                     self.environment[
-                        osetupcons.PKIEnv.ENGINE_SSH_PUBLIC_KEY_VALUE
+                        osetupcons.PKIEnv.ENGINE_SSH_PUBLIC_KEY
                     ]
                 )
                 f.write('\n')
