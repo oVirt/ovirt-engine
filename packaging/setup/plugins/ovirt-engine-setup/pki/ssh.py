@@ -20,9 +20,14 @@
 
 
 import os
+import base64
+import struct
 import tempfile
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
+
+
+from M2Crypto import RSA
 
 
 from otopi import util
@@ -37,6 +42,16 @@ from ovirt_engine_setup import constants as osetupcons
 @util.export
 class Plugin(plugin.PluginBase):
     """CA plugin."""
+
+    def _getSSHPublicKey(self, key):
+        ALGO = 'ssh-rsa'
+        key = RSA.load_key_string(key.encode('ascii'))
+        sshkey = (
+            struct.pack('!l', len(ALGO)) + ALGO.encode('ascii') +
+            key.pub()[0] +
+            key.pub()[1]
+        )
+        return '%s %s' % (ALGO, base64.b64encode(sshkey))
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -78,18 +93,9 @@ class Plugin(plugin.PluginBase):
                 ],
             )
         )
-        rc, pubkey, stderr = self.execute(
-            (
-                self.command.get('ssh-keygen'),
-                '-y',
-                '-f', '/dev/fd/0',
-            ),
-            stdin=privkey,
-            logStreams=False,
-        )
         self.environment[
             osetupcons.PKIEnv.ENGINE_SSH_PUBLIC_KEY_VALUE
-        ] = pubkey[0]
+        ] = self._getSSHPublicKey('\n'.join(privkey))
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
@@ -103,20 +109,14 @@ class Plugin(plugin.PluginBase):
     def _closeup(self):
         temp = None
         try:
-            rc, pubkey, stderr = self.execute(
-                (
-                    self.command.get('ssh-keygen'),
-                    '-y',
-                    '-f', (
-                        osetupcons.FileLocations.
-                        OVIRT_ENGINE_PKI_ENGINE_SSH_KEY
-                    ),
-                ),
-            )
             fd, temp = tempfile.mkstemp(suffix='.pub')
             os.close(fd)
             with open(temp, "w") as f:
-                f.write(pubkey[0])
+                f.write(
+                    self.environment[
+                        osetupcons.PKIEnv.ENGINE_SSH_PUBLIC_KEY_VALUE
+                    ]
+                )
                 f.write('\n')
 
             rc, fingerprint, stderr = self.execute(
