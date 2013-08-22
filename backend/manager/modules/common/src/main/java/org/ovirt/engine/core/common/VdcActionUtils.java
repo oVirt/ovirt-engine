@@ -18,8 +18,7 @@ import org.ovirt.engine.core.compat.NotImplementedException;
 
 public final class VdcActionUtils {
 
-    private static final java.util.Map<java.lang.Class<?>, java.util.Map<Enum<?>, java.util.HashSet<VdcActionType>>>
-            _matrix =
+    private static final java.util.Map<java.lang.Class<?>, java.util.Map<Enum<?>, java.util.HashSet<VdcActionType>>> _matrix =
             new java.util.HashMap<java.lang.Class<?>, java.util.Map<Enum<?>, java.util.HashSet<VdcActionType>>>();
 
     static {
@@ -40,7 +39,9 @@ public final class VdcActionUtils {
         vdsMatrix.put(
                 VDSStatus.Error,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RemoveVds,
-                        VdcActionType.ClearNonResponsiveVdsVms, VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities)));
+                        VdcActionType.ClearNonResponsiveVdsVms,
+                        VdcActionType.ApproveVds,
+                        VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.Installing,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RemoveVds, VdcActionType.ActivateVds,
@@ -65,9 +66,13 @@ public final class VdcActionUtils {
                         VdcActionType.ApproveVds, VdcActionType.MaintenanceVds, VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.Unassigned,
-                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ActivateVds, VdcActionType
-                        .RemoveVds, VdcActionType.MaintenanceVds,
-                        VdcActionType.ClearNonResponsiveVdsVms, VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities)));
+                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ActivateVds,
+                        VdcActionType
+                        .RemoveVds,
+                        VdcActionType.MaintenanceVds,
+                        VdcActionType.ClearNonResponsiveVdsVms,
+                        VdcActionType.ApproveVds,
+                        VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.Initializing,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ActivateVds, VdcActionType.RemoveVds,
@@ -87,7 +92,8 @@ public final class VdcActionUtils {
                         VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.InstallFailed,
-                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities)));
+                new HashSet<VdcActionType>(Arrays.asList(VdcActionType.ApproveVds,
+                        VdcActionType.RefreshHostCapabilities)));
         vdsMatrix.put(
                 VDSStatus.Connecting,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.MaintenanceVds, VdcActionType.RemoveVds,
@@ -203,11 +209,22 @@ public final class VdcActionUtils {
         vmMatrix.put(
                 VMStatus.ImageIllegal,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RunVm,
-                        VdcActionType.RunVmOnce, VdcActionType.StopVm, VdcActionType.ShutdownVm,
-                        VdcActionType.HibernateVm, VdcActionType.MigrateVm, VdcActionType.AddVmTemplate,
-                        VdcActionType.ExportVm, VdcActionType.MoveVm, VdcActionType.ImportVm, VdcActionType.ChangeDisk,
-                        VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface, VdcActionType.CreateAllSnapshotsFromVm,
-                        VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm, VdcActionType.ExtendImageSize)));
+                        VdcActionType.RunVmOnce,
+                        VdcActionType.StopVm,
+                        VdcActionType.ShutdownVm,
+                        VdcActionType.HibernateVm,
+                        VdcActionType.MigrateVm,
+                        VdcActionType.AddVmTemplate,
+                        VdcActionType.ExportVm,
+                        VdcActionType.MoveVm,
+                        VdcActionType.ImportVm,
+                        VdcActionType.ChangeDisk,
+                        VdcActionType.AddVmInterface,
+                        VdcActionType.UpdateVmInterface,
+                        VdcActionType.CreateAllSnapshotsFromVm,
+                        VdcActionType.RemoveVmInterface,
+                        VdcActionType.CancelMigrateVm,
+                        VdcActionType.ExtendImageSize)));
         vmMatrix.put(
                 VMStatus.ImageLocked,
                 new HashSet<VdcActionType>(Arrays.asList(VdcActionType.RunVm,
