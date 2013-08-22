@@ -529,7 +529,7 @@ public class ImportVmModel extends ListWithDetailsModel {
     @Override
     public void setItems(final Iterable value)
     {
-        String vm_guidKey = "_VM_ID ="; //$NON-NLS-1$
+        String vm_guidKey = "ID ="; //$NON-NLS-1$
         String orKey = " or "; //$NON-NLS-1$
         StringBuilder searchPattern = new StringBuilder();
         searchPattern.append("VM: "); //$NON-NLS-1$

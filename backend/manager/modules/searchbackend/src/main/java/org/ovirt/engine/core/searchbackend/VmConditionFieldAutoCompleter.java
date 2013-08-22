@@ -36,9 +36,9 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mVerbs.add("TYPE");
         mVerbs.add("QUOTA");
         mVerbs.add("HOST");
+        mVerbs.add("ID");
         // Building the autoCompletion Dict
         buildCompletions();
-        mVerbs.add("_VM_ID");
 
         // Building the types dict
         getTypeDictionary().put("NAME", String.class);
@@ -63,7 +63,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put("TYPE", VmType.class);
         getTypeDictionary().put("QUOTA", String.class);
         getTypeDictionary().put("HOST", String.class);
-        getTypeDictionary().put("_VM_ID", UUID.class);
+        getTypeDictionary().put("ID", UUID.class);
 
         // building the ColumnName Dict
         columnNameDict.put("NAME", "vm_name");
@@ -89,7 +89,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put("TYPE", "vm_type");
         columnNameDict.put("QUOTA", "quota_name");
         columnNameDict.put("HOST", "run_on_vds_name");
-        columnNameDict.put("_VM_ID", "vm_guid");
+        columnNameDict.put("ID", "vm_guid");
 
         // Override field names for purpose of sorting, if needed
         sortableFieldDict.put("IP", StringFormat.format("fn_get_comparable_ip_list(%s)", getDbFieldName("IP")));
