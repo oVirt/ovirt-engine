@@ -209,7 +209,7 @@
         }
 
 		.migrationSelect {
-			margin-right: 174px;
+			margin-right: 7px;
 		}
 
 		.generalTabExtendedRightWidgetWidth {
@@ -269,6 +269,14 @@
             width: 120px;
             float:left;
         }
+
+		.hostSelector {
+			width: 416px;
+		}
+
+		.migrationSelectorInner {
+			width: 260px;
+		}
 	</ui:style>
 
 	<t:DialogTabPanel width="100%" height="100%">
@@ -437,7 +445,7 @@
                             <g:HorizontalPanel verticalAlignment='ALIGN_MIDDLE'>
                                 <g:RadioButton ui:field="specificHost" addStyleNames="{style.radioButtonSpecificHost}" />
                                 <g:Label ui:field="specificHostLabel" text="{constants.specificVmPopup}" />
-                                <e:ListModelListBoxEditor ui:field="defaultHostEditor" />
+                                <e:ListModelListBoxEditor ui:field="defaultHostEditor" addStyleNames="{style.hostSelector}"/>
                             </g:HorizontalPanel>
 						</g:VerticalPanel>
 						<g:Label addStyleNames="{style.sectionLabel}" text="{constants.runMigrationOptionsVmPopup}" />

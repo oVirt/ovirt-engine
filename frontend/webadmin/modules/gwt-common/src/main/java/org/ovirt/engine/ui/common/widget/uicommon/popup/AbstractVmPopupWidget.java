@@ -107,6 +107,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         String cdImageEditor();
 
         String monitorsStyles();
+
+        String migrationSelectorInner();
     }
 
     @UiField
@@ -999,6 +1001,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         numOfMonitorsEditor.addContentWidgetStyleName(style.monitorsStyles());
         numOfMonitorsEditor.setStyleName(style.monitorsStyles());
         numOfMonitorsEditor.hideLabel();
+        migrationModeEditor.addContentWidgetStyleName(style.migrationSelectorInner());
     }
 
     @Override
