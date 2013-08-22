@@ -109,14 +109,14 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
         }
         if (StringUtils.isEmpty(iface.getNetworkName())) {
             if (iface.getBonded() != null && iface.getBonded() == true) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_BOND_NOT_ATTACCH_TO_NETWORK);
+                addCanDoActionMessage(VdcBllMessages.NETWORK_BOND_NOT_ATTACH_TO_NETWORK);
             } else {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_ATTACCH_TO_NETWORK);
+                addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_ATTACH_TO_NETWORK);
             }
             return false;
         } else if (!StringUtils.equals(getParameters().getInterface().getNetworkName(), getParameters().getNetwork()
                 .getName())) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_ATTACCH_TO_NETWORK);
+            addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_NOT_ATTACH_TO_NETWORK);
             return false;
         }
 

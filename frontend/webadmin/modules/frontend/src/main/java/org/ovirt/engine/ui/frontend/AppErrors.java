@@ -1466,10 +1466,10 @@ public interface AppErrors extends ConstantsWithLookup {
     String ACTION_TYPE_FAILED_MOM_UPDATE_VDS_VERSION();
 
     @DefaultStringValue("Bond is not attached to Network.")
-    String NETWORK_BOND_NOT_ATTACCH_TO_NETWORK();
+    String NETWORK_BOND_NOT_ATTACH_TO_NETWORK();
 
     @DefaultStringValue("Network Interface is not attached to Logical Network.")
-    String NETWORK_INTERFACE_NOT_ATTACCH_TO_NETWORK();
+    String NETWORK_INTERFACE_NOT_ATTACH_TO_NETWORK();
 
     @DefaultStringValue("Bonding cannot be applied on an Interface where VLAN is defined.\n-Please remove VLAN from the interface.")
     String NETWORK_INTERFACE_IN_USE_BY_VLAN();
