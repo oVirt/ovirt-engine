@@ -134,7 +134,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
-        return Collections.singletonMap(getVmId().toString(),
+        return Collections.singletonMap(getParameters().getContainerId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(
                         LockingGroup.REMOTE_VM,
                         getVmIsBeingImportedMessage()));
