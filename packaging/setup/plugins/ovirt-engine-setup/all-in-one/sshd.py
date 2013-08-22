@@ -112,7 +112,7 @@ class Plugin(plugin.PluginBase):
     )
     def _misc(self):
         authorized_keys_line = self.environment[
-            osetupcons.PKIEnv.ENGINE_SSH_PUBLIC_KEY_VALUE
+            osetupcons.PKIEnv.ENGINE_SSH_PUBLIC_KEY
         ] + ' ovirt-engine'
 
         authorized_keys_file = os.path.join(
