@@ -641,6 +641,7 @@ public abstract class RunOnceModel extends Model
         updateIsoList();
         updateDisplayProtocols();
         updateFloppyImages();
+        updateInitialRunFields();
 
         // Boot sequence.
         setIsBootFromNetworkAllowedForVm();
