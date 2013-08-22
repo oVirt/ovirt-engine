@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -18,14 +19,13 @@ import org.ovirt.engine.core.compat.NotImplementedException;
 
 public final class VdcActionUtils {
 
-    private static final java.util.Map<java.lang.Class<?>, java.util.Map<Enum<?>, java.util.HashSet<VdcActionType>>> _matrix =
-            new java.util.HashMap<java.lang.Class<?>, java.util.Map<Enum<?>, java.util.HashSet<VdcActionType>>>();
+    private static final Map<Class<?>, Map<Enum<?>, HashSet<VdcActionType>>> _matrix =
+            new HashMap<Class<?>, Map<Enum<?>, HashSet<VdcActionType>>>();
 
     static {
         // this matrix contains the actions that CANNOT run per status
         // ("black list")
-        java.util.HashMap<Enum<?>, java.util.HashSet<VdcActionType>> vdsMatrix =
-                new java.util.HashMap<Enum<?>, java.util.HashSet<VdcActionType>>();
+        HashMap<Enum<?>, HashSet<VdcActionType>> vdsMatrix = new HashMap<Enum<?>, HashSet<VdcActionType>>();
         vdsMatrix.put(
                 VDSStatus.Maintenance,
                 new HashSet<VdcActionType>(Arrays
