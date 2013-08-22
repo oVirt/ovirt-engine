@@ -25,7 +25,7 @@ public final class VdcActionUtils {
     static {
         // this matrix contains the actions that CANNOT run per status
         // ("black list")
-        HashMap<Enum<?>, Set<VdcActionType>> vdsMatrix = new HashMap<Enum<?>, Set<VdcActionType>>();
+        Map<Enum<?>, Set<VdcActionType>> vdsMatrix = new HashMap<Enum<?>, Set<VdcActionType>>();
         vdsMatrix.put(
                 VDSStatus.Maintenance,
                 EnumSet.of(VdcActionType.MaintenanceVds, VdcActionType.ClearNonResponsiveVdsVms,
@@ -98,7 +98,7 @@ public final class VdcActionUtils {
                 EnumSet.of(VdcActionType.ActivateVds, VdcActionType.ApproveVds, VdcActionType.RefreshHostCapabilities));
         _matrix.put(VDS.class, vdsMatrix);
 
-        HashMap<Enum<?>, Set<VdcActionType>> vmMatrix = new HashMap<Enum<?>, Set<VdcActionType>>();
+        Map<Enum<?>, Set<VdcActionType>> vmMatrix = new HashMap<Enum<?>, Set<VdcActionType>>();
         vmMatrix.put(
                 VMStatus.WaitForLaunch,
                 EnumSet.of(VdcActionType.HibernateVm, VdcActionType.RunVm,
@@ -254,7 +254,7 @@ public final class VdcActionUtils {
                         VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm, VdcActionType.ExtendImageSize));
         _matrix.put(VM.class, vmMatrix);
 
-        HashMap<Enum<?>, Set<VdcActionType>> vmTemplateMatrix = new HashMap<Enum<?>, Set<VdcActionType>>();
+        Map<Enum<?>, Set<VdcActionType>> vmTemplateMatrix = new HashMap<Enum<?>, Set<VdcActionType>>();
         vmTemplateMatrix.put(
                 VmTemplateStatus.Locked,
                 EnumSet.of(VdcActionType.RemoveVmTemplate,
@@ -266,7 +266,7 @@ public final class VdcActionUtils {
                         VdcActionType.MoveOrCopyTemplate, VdcActionType.ImportVmTemplate));
         _matrix.put(VmTemplate.class, vmTemplateMatrix);
 
-        HashMap<Enum<?>, Set<VdcActionType>> storageDomainMatrix = new HashMap<Enum<?>, Set<VdcActionType>>();
+        Map<Enum<?>, Set<VdcActionType>> storageDomainMatrix = new HashMap<Enum<?>, Set<VdcActionType>>();
         storageDomainMatrix.put(
                 StorageDomainStatus.Active,
                 EnumSet.of(VdcActionType.DetachStorageDomainFromPool, VdcActionType.ActivateStorageDomain));
