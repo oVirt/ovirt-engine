@@ -58,7 +58,10 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
             ((HasValueChangeHandlers<T>) editor).addValueChangeHandler(new ValueChangeHandler<T>() {
                 @Override
                 public void onValueChange(ValueChangeEvent<T> event) {
-                    ctx.setInModel(event.getValue());
+                    // Set value in model
+                    if (ctx.canSetInModel()) {
+                        ctx.setInModel(event.getValue());
+                    }
                 }
             });
         }
@@ -76,7 +79,9 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
                 public void onKeyPress(KeyPressEvent event) {
                     if (KeyCodes.KEY_ENTER == event.getNativeEvent().getKeyCode()) {
                         // Set value in model
-                        ctx.setInModel(editor.getValue());
+                        if (ctx.canSetInModel()) {
+                            ctx.setInModel(editor.getValue());
+                        }
                     }
                 }
             });
