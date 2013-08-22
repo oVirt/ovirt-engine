@@ -71,7 +71,10 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
         name=osetupcons.Stages.AIO_CONFIG_AVAILABLE,
         before=(
-            osetupcons.Stages.DIALOG_TITLES_S_NETWORK,
+            osetupcons.Stages.DIALOG_TITLES_E_ALLINONE,
+        ),
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_S_ALLINONE,
         ),
     )
     def _constomization(self):

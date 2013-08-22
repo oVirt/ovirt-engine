@@ -69,6 +69,9 @@ class Plugin(plugin.PluginBase):
             self._enabled and
             self.environment[osetupcons.AIOEnv.CONFIGURE]
         ),
+        before=(
+            osetupcons.Stages.DIALOG_TITLES_E_ALLINONE,
+        ),
         after=(
             osetupcons.Stages.AIO_CONFIG_AVAILABLE,
         ),

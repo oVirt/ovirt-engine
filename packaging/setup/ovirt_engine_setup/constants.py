@@ -539,6 +539,7 @@ class Stages(object):
     CONFIG_ISO_DOMAIN_AVAILABLE = 'osetup.config.iso_domain.available'
     APACHE_RESTART = 'osetup.apache.core.restart'
 
+    DIALOG_TITLES_S_ALLINONE = 'osetup.dialog.titles.allinone.start'
     DIALOG_TITLES_S_APACHE = 'osetup.dialog.titles.apache.start'
     DIALOG_TITLES_S_DATABASE = 'osetup.dialog.titles.database.start'
     DIALOG_TITLES_S_ENGINE = 'osetup.dialog.titles.engine.start'
@@ -547,6 +548,7 @@ class Stages(object):
     DIALOG_TITLES_S_PACKAGES = 'osetup.dialog.titles.packaging.start'
     DIALOG_TITLES_S_PKI = 'osetup.dialog.titles.pki.start'
     DIALOG_TITLES_S_SYSTEM = 'osetup.dialog.titles.system.start'
+    DIALOG_TITLES_E_ALLINONE = 'osetup.dialog.titles.allinone.end'
     DIALOG_TITLES_E_APACHE = 'osetup.dialog.titles.apache.end'
     DIALOG_TITLES_E_DATABASE = 'osetup.dialog.titles.database.end'
     DIALOG_TITLES_E_ENGINE = 'osetup.dialog.titles.engine.end'

@@ -76,7 +76,13 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self.environment[
             osetupcons.AIOEnv.CONFIGURE
         ],
-        name=osetupcons.Stages.AIO_CONFIG_STORAGE
+        name=osetupcons.Stages.AIO_CONFIG_STORAGE,
+        before=(
+            osetupcons.Stages.DIALOG_TITLES_E_ALLINONE,
+        ),
+        after=(
+            osetupcons.Stages.AIO_CONFIG_AVAILABLE,
+        ),
     )
     def _customization(self):
         """

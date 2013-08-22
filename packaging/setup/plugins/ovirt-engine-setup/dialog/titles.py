@@ -70,9 +70,34 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=osetupcons.Stages.DIALOG_TITLES_S_NETWORK,
+        name=osetupcons.Stages.DIALOG_TITLES_S_ALLINONE,
         after=(
             osetupcons.Stages.DIALOG_TITLES_E_PACKAGES,
+        ),
+        condition=lambda self: self.environment[
+            osetupcons.AIOEnv.ENABLE
+        ],
+    )
+    def _title_s_allinone(self):
+        self._title(
+            text=_('ALL IN ONE CONFIGURATION'),
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.DIALOG_TITLES_E_ALLINONE,
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_S_ALLINONE,
+        ),
+    )
+    def _title_e_allinone(self):
+        pass
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=osetupcons.Stages.DIALOG_TITLES_S_NETWORK,
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_E_ALLINONE,
         ),
     )
     def _title_s_network(self):
