@@ -5,9 +5,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
@@ -18,6 +21,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 
 public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters> extends GlusterVolumeCommandBase<T> {
 
@@ -25,6 +29,20 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
 
     public GlusterAsyncCommandBase(T params) {
         super(params);
+    }
+
+    @Override
+    protected boolean canDoAction() {
+        GlusterVolumeEntity glusterVolume = getGlusterVolume();
+        if (!super.canDoAction()) {
+            return false;
+        }
+
+        if (!glusterVolume.isOnline()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
+        }
+
+        return true;
     }
 
     @Override
@@ -58,6 +76,19 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
                                 getStepMessageMap(JobExecutionStatus.STARTED)));
     }
 
+    protected void endStepJob() {
+        GlusterAsyncTask asyncTask = getGlusterVolume().getAsyncTask();
+        // Gluster Volume Rebalance Task will have only one step ( REBALANCING_VOLUME )
+        Step step = getStepDao().getStepsByExternalId(asyncTask.getTaskId()).get(0);
+        step.markStepEnded(JobExecutionStatus.ABORTED);
+        step.setDescription(ExecutionMessageDirector.resolveStepMessage(getStepType(),
+                getStepMessageMap(JobExecutionStatus.ABORTED)));
+        JobRepositoryFactory.getJobRepository().updateStep(step);
+
+        ExecutionContext finalContext = ExecutionHandler.createFinalizingContext(step.getId());
+        ExecutionHandler.endTaskJob(finalContext, false);
+    }
+
     protected GlusterAsyncTask handleTaskReturn(GlusterAsyncTask asyncTask) {
         Guid externalTaskId = asyncTask.getTaskId();
         asyncTaskStep.setStatus(JobExecutionStatus.STARTED);
@@ -74,6 +105,14 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
         return Collections.singletonMap(getGlusterVolumeId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER,
                         VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS));
+    }
+
+    protected void clearVolumeTaskAndReleaseLock() {
+        EngineLock lock = new EngineLock(getExclusiveLocks(), getSharedLocks());
+        setLock(lock);
+        freeLock();
+        getGlusterVolumeDao().updateVolumeTask(getGlusterVolumeId(), null);
+
     }
 
 }

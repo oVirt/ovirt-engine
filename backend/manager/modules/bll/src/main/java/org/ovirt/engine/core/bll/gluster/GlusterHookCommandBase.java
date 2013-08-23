@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.gluster;
 
 import java.util.List;
 
-import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.action.gluster.GlusterHookParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -20,11 +19,6 @@ public abstract class GlusterHookCommandBase<T extends GlusterHookParameters> ex
 
     public GlusterHookCommandBase(T params) {
         super(params);
-    }
-
-    @Override
-    protected BackendInternal getBackend() {
-        return super.getBackend();
     }
 
     @Override

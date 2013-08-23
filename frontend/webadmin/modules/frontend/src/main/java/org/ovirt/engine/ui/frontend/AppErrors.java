@@ -802,6 +802,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action rebalance")
     String VAR__ACTION__REBALANCE_START();
 
+    @DefaultStringValue("$action stop rebalance")
+    String VAR__ACTION__REBALANCE_STOP();
+
     @DefaultStringValue("$action start profiling")
     String VAR__ACTION__START_PROFILE();
 
@@ -2467,6 +2470,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. A task is in progress on the volume ${volumeName} in cluster ${vdsGroup}.")
     String ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Rebalance is not running on the volume ${volumeName} in cluster ${vdsGroup}.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_REBALANCE_NOT_STARTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The Network Interface ${IfaceName} has an invalid MAC address ${MacAddress}. MAC address must be in format \"HH:HH:HH:HH:HH:HH\" where H is a hexadecimal character (either a digit or A-F, case is insignificant).")
     String ACTION_TYPE_FAILED_NETWORK_INTERFACE_MAC_INVALID();

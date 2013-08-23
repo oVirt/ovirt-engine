@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -36,6 +37,11 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
     public GlusterCommandBase(T params) {
         super(params);
+    }
+
+    @Override
+    protected BackendInternal getBackend() {
+        return super.getBackend();
     }
 
     @Override

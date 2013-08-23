@@ -32,7 +32,6 @@ public class StartRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<
         super.setActionMessageParameters();
     }
 
-
     @Override
     protected boolean canDoAction() {
         GlusterVolumeEntity glusterVolume = getGlusterVolume();
@@ -40,15 +39,9 @@ public class StartRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<
             return false;
         }
 
-        if (!glusterVolume.isOnline()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED);
-            return false;
-        }
-
         if (!glusterVolume.getVolumeType().isDistributedType()
                 || (glusterVolume.getBricks().size() == 1)) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_BRICKS_ARE_NOT_DISTRIBUTED);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_VOLUME_BRICKS_ARE_NOT_DISTRIBUTED);
         }
         return true;
     }
