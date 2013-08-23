@@ -127,6 +127,7 @@ public enum VDSCommandType {
     GetGlusterVolumeOptionsInfo("org.ovirt.engine.core.vdsbroker.gluster"),
     GlusterVolumeRemoveBricks("org.ovirt.engine.core.vdsbroker.gluster"),
     StartRebalanceGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
+    StopRebalanceGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     AddBricksToGlusterVolume("org.ovirt.engine.core.vdsbroker.gluster"),
     ReplaceGlusterVolumeBrick("org.ovirt.engine.core.vdsbroker.gluster"),
     RemoveGlusterServer("org.ovirt.engine.core.vdsbroker.gluster"),
