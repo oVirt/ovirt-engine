@@ -186,6 +186,12 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
             break;
         }
 
+        addSelectionChangeHandler();
+        addCheckBoxColumn(hideCheckbox, showSelectAllCheckbox);
+
+    }
+
+    public void addSelectionChangeHandler() {
         // Handle selection
         getSelectionModel().addSelectionChangeHandler(new Handler() {
             @Override
@@ -219,6 +225,9 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
                 }
             }
         });
+    }
+
+    private void addCheckBoxColumn(boolean hideCheckbox, boolean showSelectAllCheckbox) {
 
         if (!hideCheckbox) {
             // Add selection column
