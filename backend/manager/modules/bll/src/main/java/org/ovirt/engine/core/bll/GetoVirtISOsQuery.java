@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
+import org.ovirt.engine.core.common.utils.RpmVersionUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.compat.Version;
@@ -84,10 +85,11 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
                             continue;
                         }
 
-                        RpmVersion isoVersion = parseIsoFileVersion(isoFileName, majorVersionStr);
+                        RpmVersion isoVersion = new RpmVersion(isoFileName, getOvirtIsoPrefix(), true);
                         boolean shouldAdd = false;
 
-                        if (isoVersion != null && isIsoVersionSupported(isoVersion)) {
+                        String rpmParts[] = RpmVersionUtils.splitRpmToParts(isoFileName);
+                        if (isoVersion != null && isIsoVersionSupported(rpmParts[1])) {
                             if (isoData.getVdsmCompatibilityVersion() != null) {
                                 shouldAdd = isIsoCompatibleForUpgradeByClusterVersion(isoData);
                             } else if (vdsOsVersion != null) {
@@ -140,21 +142,6 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
             vdsOsVersion = VdsHandler.getOvirtHostOsVersion(vds);
         }
         return vdsOsVersion;
-    }
-
-    private RpmVersion parseIsoFileVersion(String isoFileName, String majorVersionStr) {
-        RpmVersion isoVersion = null;
-        try {
-            String rpmLike = isoFileName.replaceFirst(majorVersionStr + "-", majorVersionStr + ".");
-            isoVersion = new RpmVersion(rpmLike, getOvirtIsoPrefix(), true);
-            isoVersion.setRpmName(isoFileName);
-        } catch (RuntimeException e) {
-            log.errorFormat("Failed to extract RpmVersion for iso file {0} with major version {1} due to {2}",
-                    isoFileName,
-                    majorVersionStr,
-                    ExceptionUtils.getMessage(e));
-        }
-        return isoVersion;
     }
 
     private static String getIsoFileNameByVersion(List<String> listOfIsoFiles, String majorVersionStr, String releaseStr) {
@@ -244,9 +231,9 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
         });
     }
 
-    private static boolean isIsoVersionSupported(Version isoVersion) {
-        Version supported = new Version(Config.<String> GetValue(ConfigValues.OvirtInitialSupportedIsoVersion));
-        return isoVersion.compareTo(supported) >= 0;
+    private boolean isIsoVersionSupported(String isoVersion) {
+        String supported = Config.<String> GetValue(ConfigValues.OvirtInitialSupportedIsoVersion);
+        return RpmVersionUtils.compareRpmParts(isoVersion, supported) >= 0;
     }
 
     public VDS getVdsByVdsId(Guid vdsId) {
