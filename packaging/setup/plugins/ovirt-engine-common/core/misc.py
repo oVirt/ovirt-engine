@@ -135,5 +135,26 @@ class Plugin(plugin.PluginBase):
             ),
         )
 
+    @plugin.event(
+        stage=plugin.Stages.STAGE_TERMINATE,
+    )
+    def _terminate(self):
+        if self.environment[otopicons.BaseEnv.ERROR]:
+            self.logger.error(
+                _('Execution of {action} failed').format(
+                    action=self.environment[
+                        osetupcons.CoreEnv.ACTION
+                    ],
+                ),
+            )
+        else:
+            self.logger.info(
+                _('Execution of {action} completed successfully').format(
+                    action=self.environment[
+                        osetupcons.CoreEnv.ACTION
+                    ],
+                ),
+            )
+
 
 # vim: expandtab tabstop=4 shiftwidth=4
