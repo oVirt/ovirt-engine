@@ -263,7 +263,9 @@ public class VmDeviceUtils {
             switch(device.getType()) {
                 case DISK:
                     if (VmDeviceType.DISK.getName().equals(device.getDevice())) {
+                        if (srcDeviceIdToTargetDeviceIdMapping.containsKey(device.getDeviceId())) {
                             id = srcDeviceIdToTargetDeviceIdMapping.get(device.getDeviceId());
+                        }
                     } else if (VmDeviceType.CDROM.getName().equals(device.getDevice())) {
                         // check here is source VM had CD (Vm from snapshot)
                         String srcCdPath = (String) device.getSpecParams().get(VdsProperties.Path);
@@ -278,7 +280,9 @@ public class VmDeviceUtils {
                     break;
 
                 case INTERFACE:
-                    id = srcDeviceIdToTargetDeviceIdMapping.get(device.getDeviceId());
+                    if (srcDeviceIdToTargetDeviceIdMapping.containsKey(device.getDeviceId())) {
+                        id = srcDeviceIdToTargetDeviceIdMapping.get(device.getDeviceId());
+                    }
                     break;
 
                 case CONTROLLER:
