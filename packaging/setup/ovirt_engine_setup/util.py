@@ -72,9 +72,8 @@ def escape(s, chars):
     ret = ''
     for c in s:
         if c in chars:
-            ret += '\\' + c
-        else:
-            ret += c
+            ret += '\\'
+        ret += c
     return ret
 
 
