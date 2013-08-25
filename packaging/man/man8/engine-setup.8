@@ -1,105 +1,34 @@
-.TH engine\-setup 8 "August 23, 2012" "3.3.0"
-.SH NAME
-engine\-setup \- Setup and configuration utility for Red Hat Enterprise
-Virtualization Manager.
-.SH SYNOPSIS
-engine\-setup [options]
-.SH DESCRIPTION
+.Dd August 25, 2013
+.Os POSIX-compatible
+.Dt engine-setup 8
+.Sh NAME
+engine\-setup \- Setup and configuration utility for Open Virtualization
+Manager.
+.Sh SYNOPSIS
+.Nm engine\-setup [options]
+.Sh DESCRIPTION
 The engine\-setup utility performs setup and configuration of
-Red Hat Enterprise Virtualization Manager. Configuration values
+Open Virtualization Manager. Configuration values
 must be provided interactively, as command line options, or using
 an answer file. Following a successful run of the engine\-setup
-utility Red Hat Enterprise Virtualization Manager is installed
+utility Open Virtualization Manager is installed
 and ready for use. Where a run of the engine\-setup utility is
 unsuccessful, comprehensive logging and error information is output
 both to standard output and to the engine\-setup log file.
-.SH GENERAL OPTIONS
-.TP
-\-h, \-\-help
-Show help information and exit.
-.TP
-\-\-gen\-answer\-file=GEN_ANSWER_FILE
-Generate a template answer file. This option is incompatible with
-all other options.
-.TP
-\-\-answer\-file=ANSWER_FILE
-Run the utility in non-interactive mode, extracting all configuration
-values from the specified answer file. This option is incompatible with
-all other options.
-.TP
-\-\-no\-mem\-check
-Disable the configuration script's minimum memory check. Specifying this
-option allows installation of Red Hat Enterprise Virtualization Manager
-on systems with less than the recommended amount of fre system memory.
-.SH PORT OPTIONS
-.TP
-\-\-http\-port=HTTP_PORT
-Configures the HTTP service port on which the Manager will be accessed.
-.TP
-\-\-https\-port=HTTPS_PORT
-Configure the HTTPS service port on which the Manager will be accessed.
-.SH MANAGER OPTIONS
-.TP
-\-\-host\-fqdn=HOST_FQDN
-Specify the fully qualified domain name of the system. This will be the
-domain name used to access the Manager, once configured.
-.TP
-\-\-auth\-pass=AUTH_PASS
-Specify the password to use for the Manager's locally created
-administrative user.
-.TP
-\-\-org\-name=ORG_NAME
-Specify the Organization Name for the Manager's certificate headers.
-.TP
-\-\-default\-dc\-type=DC_TYPE
-Specify the storage type for the default data center, created during
-installation. Valid values are 'NFS', 'FC', and 'ISCSI' for Network
-File System, Fibre Channel, and iSCSI respectively.
-.TP
-\-\-db\-remote\-install=DB_REMOTE
-Specify database location. Valid values are 'local', and 'remote'.
-.SH REMOTE DATABASE OPTIONS
-.TP
-\-\-db\-host=DB_HOST
-Hostname or IP address of the remote database server. This value is
-not required for 'local' database configuration.
-.TP
-\-\-db\-port=DB_PORT
-Connection port for the remote database server. This value is not
-required for 'local' database configuration.
-.TP
-\-\-db\-admin=DB_ADMIN
-Remote database administrative user. This value is not required for 'local'
-database configuration.
-.TP
-\-\-db\-remote\-pass=DB_REMOTE_PASS
-Password for the remote database administrator. This value is not required
-for 'local' database configuration.
-.TP
-\-\-db\-secure\-connection=DB_SECURE_CONNECTION
-Should the connection to the database be secure? Support for this
-configuration must first be enabled on the remote database server. This
-option is not required for 'local' database configuration.
-.SH LOCAL DATABASE OPTIONS
-.TP
-\-\-db\-local\-pass=DB_LOCAL_PASS
-Password for the local database administrator. This option is not required
-for 'remote' database configuration.
-.SH ISO DOMAIN OPTIONS
-.TP
-\-\-config\-nfs=yes|no
-Specify whether to configure an NFS share on the management server to
-be used as an ISO storage domain.
-.TP
-\-\-iso\-domain\-name=ISO_DOMAIN_NAME
-Specify ISO Domain Name
-.TP
-\-\-nfs\-mp=NFS_MP
-Specify NFS mount point.
-.SH FIREWALL OPTIONS
-.TP
-\-\-override\-iptables=yes|no
-Specify whether the utility is to configure the local firewall,
-overriding the existing configuration.
-.SH BUGS
+.Sh OPTIONS
+.Bl -tag -width "AA"
+.It \-\-log=file
+write log to this file.
+.It \-\-config=file
+Load configuration files.
+.It \-\-config-append=file
+Load extra configuration files.
+.It \-\-offline
+Offline mode.
+.It \-\-generate-answer=file
+Generate answer file.
+.It \-\-jboss-home=dir
+Use this jboss.
+.El
+.Sh BUGS
 Report bugs at https://bugzilla.redhat.com/.
