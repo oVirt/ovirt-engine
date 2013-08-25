@@ -71,7 +71,6 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_SETUP,
     )
     def _setup(self):
-        self.command.detect('openssl')
         self.environment[
             osetupcons.RenameEnv.FILES_TO_BE_MODIFIED
         ].extend(
@@ -82,18 +81,6 @@ class Plugin(plugin.PluginBase):
             )
         )
 
-    def _cert_fingerprint(self, certfile):
-        rc, stdout, stder = self.execute(
-            args=(
-                self.command.get('openssl'),
-                'x509',
-                '-in', certfile,
-                '-noout',
-                '-fingerprint',
-            ),
-        )
-        return stdout[0]
-
     @plugin.event(
         stage=plugin.Stages.STAGE_LATE_SETUP,
         condition=lambda self: os.path.exists(
@@ -101,15 +88,15 @@ class Plugin(plugin.PluginBase):
         )
     )
     def _late_setup(self):
-        apache_ca_fp = self._cert_fingerprint(
-            osetupcons.FileLocations.
-            OVIRT_ENGINE_PKI_APACHE_CA_CERT
-        )
-        ca_fp = self._cert_fingerprint(
-            osetupcons.FileLocations.
-            OVIRT_ENGINE_PKI_ENGINE_CA_CERT
-        )
-        if (apache_ca_fp != ca_fp):
+        if (
+            X509.load_cert(
+                file=osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT,
+                format=X509.FORMAT_PEM,
+            ).get_pubkey().get_rsa().pub() != X509.load_cert(
+                file=osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+                format=X509.FORMAT_PEM,
+            ).get_pubkey().get_rsa().pub()
+        ):
             self.logger.warning(_('The CA certificate of Apache is changed'))
             self.dialog.note(
                 text=_(
@@ -252,18 +239,14 @@ class Plugin(plugin.PluginBase):
         # this implementation is not transactional
         # too many issues with legacy ca implementation
         # need to work this out to allow transactional
-        rc, stdout, stder = self.execute(
+        rc, stdout, stderr = self.execute(
             args=(
-                self.command.get('openssl'),
-                'pkcs12',
-                '-in', (
-                    osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_STORE
+                osetupcons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                '--name=%s' % 'apache',
+                '--passin=%s' % (
+                    self.environment[osetupcons.PKIEnv.STORE_PASS],
                 ),
-                '-passin', 'pass:%s' % self.environment[
-                    osetupcons.PKIEnv.STORE_PASS
-                ],
-                '-nodes',
-                '-nokeys',
+                '--cert=-',
             ),
         )
 
