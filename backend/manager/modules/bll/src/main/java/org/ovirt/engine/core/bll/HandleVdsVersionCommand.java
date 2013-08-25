@@ -47,9 +47,6 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         VDS vds = getVds();
         VDSGroup cluster = getVdsGroup();
 
-        // get only major and minor of vdc version
-        Version partialVdcVersion = new Version(
-                new Version(Config.<String> GetValue(ConfigValues.VdcVersion)).toString(2));
         // check that vdc support vds OR vds support vdc
         RpmVersion vdsVersion = vds.getVersion();
         Version vdsmVersion = new Version(vdsVersion.getMajor(),vdsVersion.getMinor());
