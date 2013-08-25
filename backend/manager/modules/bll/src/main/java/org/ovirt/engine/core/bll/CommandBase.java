@@ -57,6 +57,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.EntityStatusSnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -1840,7 +1841,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private void freeLockExecute() {
-        if (releaseLocksAtEndOfExecute || !getSucceeded() || !hasTasks()) {
+        if (releaseLocksAtEndOfExecute || !getSucceeded() ||
+                (!hasTasks() && !(this instanceof IVdsAsyncCommand))) {
             freeLock();
         }
     }
