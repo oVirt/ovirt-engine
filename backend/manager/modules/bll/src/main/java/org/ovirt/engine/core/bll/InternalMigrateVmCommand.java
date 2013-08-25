@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
+@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 @InternalCommandAttribute
 public class InternalMigrateVmCommand<T extends InternalMigrateVmParameters> extends MigrateVmCommand<MigrateVmParameters> {
 

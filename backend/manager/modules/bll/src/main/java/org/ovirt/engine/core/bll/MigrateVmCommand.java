@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
+@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmCommandBase<T> {
 
     private Guid vdsDestinationId;
@@ -72,8 +73,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     @Override
     protected void failedToRunVm() {
-        if (getVm().getStatus() != VMStatus.Up) {
-            super.failedToRunVm();
+        try {
+            if (getVm().getStatus() != VMStatus.Up) {
+                super.failedToRunVm();
+            }
+        }
+        finally {
+            freeLock();
         }
     }
 
@@ -309,6 +315,26 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         }
     }
 
+    @Override
+    public void runningSucceded() {
+        try {
+            super.runningSucceded();
+        }
+        finally {
+            freeLock();
+        }
+    }
+
+    @Override
+    public void reportCompleted() {
+        try {
+            super.reportCompleted();
+        }
+        finally {
+            freeLock();
+        }
+    }
+
     /**
      * Log that the migration had failed with the error code that is in the VDS and needs to be retrieved.
      */
@@ -331,5 +357,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     public String getDuration() {
         // return time in seconds
         return String.valueOf((new Date().getTime() - getParameters().getStartTime().getTime()) / 1000 % 60);
+    }
+
+    @Override
+    protected String getVmLockMessage() {
+        StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_BEING_MIGRATED.name());
+        builder.append(String.format("$VmName %1$s", getVmName()));
+        return builder.toString();
     }
 }

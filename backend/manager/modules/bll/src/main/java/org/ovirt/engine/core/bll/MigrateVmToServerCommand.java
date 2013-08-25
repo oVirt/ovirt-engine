@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
+@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> extends MigrateVmCommand<T> {
     public MigrateVmToServerCommand(T parameters) {
         super(parameters);

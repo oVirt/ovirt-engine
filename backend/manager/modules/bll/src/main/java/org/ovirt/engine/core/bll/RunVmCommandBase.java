@@ -337,6 +337,14 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getVmLockMessage()));
+    }
+
+    /**
+     * Returns a message that explains the reason the VM is exclusively locked
+     * @return String explaining why the VM is exclusively locked
+     */
+    protected String getVmLockMessage() {
+        return VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.name();
     }
 }

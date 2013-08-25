@@ -1552,6 +1552,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM ${VmName} is being imported.")
     String ACTION_TYPE_FAILED_VM_IS_BEING_IMPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. VM ${VmName} is being migrated.")
+    String ACTION_TYPE_FAILED_VM_IS_BEING_MIGRATED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Template ${TemplateName} is being removed.")
     String ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_REMOVED();
 
