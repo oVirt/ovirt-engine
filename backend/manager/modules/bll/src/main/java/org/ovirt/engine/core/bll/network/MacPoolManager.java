@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.network;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -8,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.apache.commons.collections.map.CaseInsensitiveMap;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -33,13 +33,15 @@ public class MacPoolManager {
      * A Map that holds the allocated MAC addresses as keys, and counters as values. These MAC addresses were taken from
      * the range defined by the user in {@link ConfigValues#MacPoolRanges}
      */
-    private final Map<String, Integer> allocatedMacs = new HashMap<String, Integer>();
+    @SuppressWarnings("unchecked")
+    private final Map<String, Integer> allocatedMacs = new CaseInsensitiveMap();
 
     /**
      * A Map that holds the allocated MAC addresses as keys, and counters as values. These MAC addresses were allocated
      * when user requested a specific MAC address that is out of the range defined in {@link ConfigValues#MacPoolRanges}
      */
-    private final Map<String, Integer> allocatedCustomMacs = new HashMap<String, Integer>();
+    @SuppressWarnings("unchecked")
+    private final Map<String, Integer> allocatedCustomMacs = new CaseInsensitiveMap();
 
     /**
      * A Set that holds the non-allocated MAC addresses from the range defined in {@link ConfigValues#MacPoolRanges}
