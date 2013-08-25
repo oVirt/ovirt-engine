@@ -305,6 +305,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             _isRerun = true;
             setSucceeded(false);
             log();
+            failedToRunVm();
         }
     }
 
