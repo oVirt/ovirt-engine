@@ -7,13 +7,12 @@ import java.util.Map;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Range;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
-import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.HostnameOrIp;
+import org.ovirt.engine.core.common.validation.annotation.ValidNameWithDot;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
@@ -30,8 +29,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     @EditableField
     @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NAME_SIZE)
-    @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS_WITH_DOT, message = "VALIDATION_VDS_NAME_INVALID", groups = {
-            CreateEntity.class, UpdateEntity.class })
+    @ValidNameWithDot(message = "VALIDATION_VDS_NAME_INVALID", groups = { CreateEntity.class, UpdateEntity.class })
     private String name;
 
     @EditableField
@@ -73,8 +71,8 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     @EditableField
     @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NAME_SIZE)
-    @Pattern(regexp = ValidationUtils.NO_SPECIAL_CHARACTERS_WITH_DOT, message = "VALIDATION_VDS_SSH_USERNAME_INVALID", groups = {
-            CreateEntity.class, UpdateEntity.class })
+    @ValidNameWithDot(message = "VALIDATION_VDS_SSH_USERNAME_INVALID", groups = { CreateEntity.class,
+            UpdateEntity.class })
     private String sshUsername;
 
     @EditableOnVdsStatus

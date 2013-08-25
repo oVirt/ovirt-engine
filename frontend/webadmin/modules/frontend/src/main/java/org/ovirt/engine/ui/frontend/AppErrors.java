@@ -1852,6 +1852,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Name must be formed of alphanumeric characters, numbers or \"-_\".")
     String VALIDATION_NAME_INVALID();
 
+    @DefaultStringValue("Name must be formed of alphanumeric characters, numbers or \"-_.\".")
+    String VALIDATION_NAME_INVALID_WITH_DOT();
+
     @DefaultStringValue("URL is required.")
     String VALIDATION_URL_NULL();
 

@@ -4,6 +4,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.common.validation.annotation.ValidNameWithDot;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateVmNic;
@@ -64,6 +65,7 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
 
     @NotNull(message = VmNic.VALIDATION_MESSAGE_NAME_NOT_NULL, groups = { CreateEntity.class,
             UpdateEntity.class })
+    @ValidNameWithDot(groups = { CreateEntity.class, UpdateEntity.class })
     @Override
     public String getName() {
         return super.getName();
