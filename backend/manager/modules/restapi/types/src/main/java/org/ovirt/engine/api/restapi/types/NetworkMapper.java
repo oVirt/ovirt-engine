@@ -45,12 +45,8 @@ public class NetworkMapper {
                 entity.setGateway(model.getIp().getGateway());
             }
         }
-        if (model.isSetVlan() && model.getVlan().getId()!=null) {
-            try {
-                entity.setVlanId(model.getVlan().getId());
-            } catch (NumberFormatException e) {
-                // REVIST: handle parse error
-            }
+        if (model.isSetVlan()) {
+            entity.setVlanId(model.getVlan().getId());
         }
         if (model.isSetStp()) {
             entity.setStp(model.isStp());
