@@ -103,7 +103,7 @@ def main():
 
         myum = miniyum.MiniYum(
             sink=(
-                miniyum.MiniYumSinkBase if options.quiet
+                None if options.quiet
                 else _MyMiniYumSink()
             ),
             disabledPlugins=('versionlock',),
