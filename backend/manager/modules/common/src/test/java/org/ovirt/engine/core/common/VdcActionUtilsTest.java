@@ -11,6 +11,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -56,14 +57,14 @@ public class VdcActionUtilsTest {
         });
     }
 
-    public VdcActionUtilsTest(Object toTest, VdcActionType action, boolean result) {
+    public VdcActionUtilsTest(BusinessEntityWithStatus<?, ?> toTest, VdcActionType action, boolean result) {
         this.toTest = toTest;
         this.action = action;
         this.result = result;
     }
 
     /** The object to test. */
-    private Object toTest;
+    private BusinessEntityWithStatus<?, ?> toTest;
 
     /** The action to test */
     private VdcActionType action;
@@ -75,7 +76,10 @@ public class VdcActionUtilsTest {
 
     @Test
     public void canExecute() {
-        assertEquals(result, VdcActionUtils.canExecute(Collections.singletonList(toTest), toTest.getClass(), action));
+        assertEquals(result,
+                VdcActionUtils.canExecute(Collections.<BusinessEntityWithStatus<?, ?>> singletonList(toTest),
+                        toTest.getClass(),
+                        action));
     }
 
 }

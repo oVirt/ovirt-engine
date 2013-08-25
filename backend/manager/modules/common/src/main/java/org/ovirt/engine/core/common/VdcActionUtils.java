@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -15,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
-import org.ovirt.engine.core.compat.NotImplementedException;
 
 public final class VdcActionUtils {
 
@@ -294,41 +294,17 @@ public final class VdcActionUtils {
         _matrix.put(StorageDomain.class, storageDomainMatrix);
     }
 
-    public static boolean canExecute(List<?> entities, Class<?> type, VdcActionType action) {
+    public static boolean canExecute(List<? extends BusinessEntityWithStatus<?, ?>> entities,
+            Class type,
+            VdcActionType action) {
         if (_matrix.containsKey(type)) {
-            for (Object a : entities) {
-                if (a.getClass() == type && _matrix.get(type).containsKey(getStatusProperty(a))
-                        && _matrix.get(type).get(getStatusProperty(a)).contains(action)) {
+            for (BusinessEntityWithStatus<?, ?> a : entities) {
+                if (a.getClass() == type && _matrix.get(type).containsKey(a.getStatus())
+                        && _matrix.get(type).get(a.getStatus()).contains(action)) {
                     return false;
                 }
             }
         }
         return true;
     }
-
-    private static Enum<?> getStatusProperty(Object entity) {
-        if (entity.getClass().getName().endsWith("VDS")) {
-            return entity instanceof VDS ?
-                    ((VDS) entity).getStatus() :
-                    null;
-        }
-        if (entity.getClass().getName().endsWith("VM")) {
-            return entity instanceof VM ?
-                    ((VM) entity).getStatus() :
-                    null;
-        }
-        if (entity.getClass().getName().endsWith("VmTemplate")) {
-            return entity instanceof VmTemplate ?
-                    ((VmTemplate) entity).getStatus() :
-                    null;
-
-        }
-        if (entity instanceof StorageDomain) {
-            StorageDomainStatus status = ((StorageDomain) entity).getStatus();
-            return status != null ? status : StorageDomainStatus.Uninitialized;
-        }
-
-        throw new NotImplementedException();
-    }
-
 }

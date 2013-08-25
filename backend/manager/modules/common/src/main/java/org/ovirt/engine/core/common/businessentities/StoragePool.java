@@ -11,7 +11,7 @@ import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 
-public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, Nameable, Commented {
+public class StoragePool extends IVdcQueryable implements BusinessEntityWithStatus<Guid, StoragePoolStatus>, Nameable, Commented {
     private static final long serialVersionUID = 6162262095329980112L;
 
     private Guid id;
@@ -121,10 +121,12 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, 
         storagePoolFormatType = value;
     }
 
+    @Override
     public StoragePoolStatus getStatus() {
         return status;
     }
 
+    @Override
     public void setStatus(StoragePoolStatus value) {
         status = value;
     }

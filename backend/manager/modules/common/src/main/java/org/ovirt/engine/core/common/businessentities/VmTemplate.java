@@ -19,7 +19,7 @@ import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmTemplate extends VmBase {
+public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid, VmTemplateStatus> {
     private static final long serialVersionUID = -5238366659716600486L;
 
     private List<VmNetworkInterface> interfaces;
@@ -120,10 +120,12 @@ public class VmTemplate extends VmBase {
         this.childCount = value;
     }
 
+    @Override
     public VmTemplateStatus getStatus() {
         return status;
     }
 
+    @Override
     public void setStatus(VmTemplateStatus value) {
         status = value;
     }

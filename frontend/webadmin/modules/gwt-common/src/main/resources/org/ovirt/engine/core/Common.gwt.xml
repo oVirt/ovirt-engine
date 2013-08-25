@@ -11,6 +11,7 @@
 		<!-- Business entities -->
 		<include name="common/businessentities/HasStoragePool.java" />
 		<include name="common/businessentities/BusinessEntity.java" />
+		<include name="common/businessentities/BusinessEntityWithStatus.java" />
 		<include name="common/businessentities/LdapGroup.java" />
 		<include name="common/businessentities/BusinessEntitiesDefinitions.java" />
 		<include name="common/businessentities/LdapUser.java" />
