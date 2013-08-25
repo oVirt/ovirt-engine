@@ -636,16 +636,16 @@ public class StorageDataCenterListModel extends SearchableListModel
                         : new ArrayList<StorageDomain>();
 
         getActivateCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.CanExecute(items, StorageDomain.class, VdcActionType.ActivateStorageDomain));
+                && VdcActionUtils.canExecute(items, StorageDomain.class, VdcActionType.ActivateStorageDomain));
 
         getMaintenanceCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.CanExecute(items, StorageDomain.class, VdcActionType.DeactivateStorageDomain));
+                && VdcActionUtils.canExecute(items, StorageDomain.class, VdcActionType.DeactivateStorageDomain));
 
         getAttachCommand().setIsExecutionAllowed(getEntity() != null
                 && (getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached || getEntity().getStorageDomainType() == StorageDomainType.ISO));
 
         getDetachCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, StorageDomain.class, VdcActionType.DetachStorageDomainFromPool));
+                && VdcActionUtils.canExecute(items, StorageDomain.class, VdcActionType.DetachStorageDomainFromPool));
     }
 
     @Override

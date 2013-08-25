@@ -209,7 +209,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
     public boolean isExtendImageSizeEnabled() {
         return (getEntity() != null) ?
-                VdcActionUtils.CanExecute(Arrays.asList(getEntity()), VM.class, VdcActionType.ExtendImageSize) : false;
+                VdcActionUtils.canExecute(Arrays.asList(getEntity()), VM.class, VdcActionType.ExtendImageSize) : false;
     }
 
     public VmDiskListModel()

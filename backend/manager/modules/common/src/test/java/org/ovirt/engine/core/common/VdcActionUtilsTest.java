@@ -75,7 +75,7 @@ public class VdcActionUtilsTest {
 
     @Test
     public void canExecute() {
-        assertEquals(result, VdcActionUtils.CanExecute(Collections.singletonList(toTest), toTest.getClass(), action));
+        assertEquals(result, VdcActionUtils.canExecute(Collections.singletonList(toTest), toTest.getClass(), action));
     }
 
 }

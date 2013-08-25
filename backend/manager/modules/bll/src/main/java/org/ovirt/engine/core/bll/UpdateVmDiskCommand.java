@@ -236,7 +236,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL);
         }
 
-        if (!VdcActionUtils.CanExecute(getVmsDiskPluggedTo(), VM.class, VdcActionType.ExtendImageSize)) {
+        if (!VdcActionUtils.canExecute(getVmsDiskPluggedTo(), VM.class, VdcActionType.ExtendImageSize)) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
         }
 

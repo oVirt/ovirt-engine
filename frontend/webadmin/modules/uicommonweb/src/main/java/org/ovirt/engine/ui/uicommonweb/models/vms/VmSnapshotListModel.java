@@ -703,7 +703,7 @@ public class VmSnapshotListModel extends SearchableListModel
         boolean isCloneVmSupported = getIsCloneVmSupported();
 
         getCanSelectSnapshot().setEntity(!isPreviewing && !isLocked && !isStateless
-                && VdcActionUtils.CanExecute(Arrays.asList(vm), VM.class, VdcActionType.CreateAllSnapshotsFromVm));
+                && VdcActionUtils.canExecute(Arrays.asList(vm), VM.class, VdcActionType.CreateAllSnapshotsFromVm));
         getNewCommand().setIsExecutionAllowed(!isPreviewing && !isLocked && !isVmImageLocked && !isStateless);
         getPreviewCommand().setIsExecutionAllowed(isSelected && !isLocked && !isPreviewing && isVmDown && !isStateless);
         getCommitCommand().setIsExecutionAllowed(isPreviewing && isVmDown && !isStateless);

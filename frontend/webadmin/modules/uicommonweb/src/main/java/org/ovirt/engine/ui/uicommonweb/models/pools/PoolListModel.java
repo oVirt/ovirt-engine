@@ -589,7 +589,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                 && getSelectedItems().size() == 1 && hasVms(getSelectedItem()));
 
         getRemoveCommand().setIsExecutionAllowed(getSelectedItems() != null && getSelectedItems().size() > 0
-                && VdcActionUtils.CanExecute(getSelectedItems(), VmPool.class, VdcActionType.RemoveVmPool));
+                && VdcActionUtils.canExecute(getSelectedItems(), VmPool.class, VdcActionType.RemoveVmPool));
     }
 
     private boolean hasVms(Object selectedItem) {

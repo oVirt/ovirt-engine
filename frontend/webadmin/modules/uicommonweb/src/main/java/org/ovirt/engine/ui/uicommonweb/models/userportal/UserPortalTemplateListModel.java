@@ -43,7 +43,7 @@ public class UserPortalTemplateListModel extends TemplateListModel
                     item.getStatus() != VmTemplateStatus.Locked &&
                             !isBlankTemplateSelected());
             getRemoveCommand().setIsExecutionAllowed(
-                    VdcActionUtils.CanExecute(items, VmTemplate.class,
+                    VdcActionUtils.canExecute(items, VmTemplate.class,
                             VdcActionType.RemoveVmTemplate) &&
                             !isBlankTemplateSelected()
                     );

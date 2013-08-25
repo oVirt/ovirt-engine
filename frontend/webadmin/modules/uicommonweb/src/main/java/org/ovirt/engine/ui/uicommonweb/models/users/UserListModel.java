@@ -611,7 +611,7 @@ public class UserListModel extends ListWithDetailsModel
                         : new ArrayList();
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, DbUser.class, VdcActionType.RemoveUser));
+                && VdcActionUtils.canExecute(items, DbUser.class, VdcActionType.RemoveUser));
 
         getAssignTagsCommand().setIsExecutionAllowed(items.size() > 0);
     }

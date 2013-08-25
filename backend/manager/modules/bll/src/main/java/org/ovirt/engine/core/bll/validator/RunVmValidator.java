@@ -221,7 +221,7 @@ public class RunVmValidator {
     }
 
     public ValidationResult validateVmStatusUsingMatrix(VM vm) {
-        if (!VdcActionUtils.CanExecute(Arrays.asList(vm), VM.class,
+        if (!VdcActionUtils.canExecute(Arrays.asList(vm), VM.class,
                 VdcActionType.RunVm)) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL);
         }

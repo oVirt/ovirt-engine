@@ -294,11 +294,11 @@ public final class VdcActionUtils {
         _matrix.put(StorageDomain.class, storageDomainMatrix);
     }
 
-    public static boolean CanExecute(List<?> entities, Class<?> type, VdcActionType action) {
+    public static boolean canExecute(List<?> entities, Class<?> type, VdcActionType action) {
         if (_matrix.containsKey(type)) {
             for (Object a : entities) {
-                if (a.getClass() == type && _matrix.get(type).containsKey(GetStatusProperty(a))
-                        && _matrix.get(type).get(GetStatusProperty(a)).contains(action)) {
+                if (a.getClass() == type && _matrix.get(type).containsKey(getStatusProperty(a))
+                        && _matrix.get(type).get(getStatusProperty(a)).contains(action)) {
                     return false;
                 }
             }
@@ -306,7 +306,7 @@ public final class VdcActionUtils {
         return true;
     }
 
-    private static Enum<?> GetStatusProperty(Object entity) {
+    private static Enum<?> getStatusProperty(Object entity) {
         if (entity == null) {
             return null;
         }

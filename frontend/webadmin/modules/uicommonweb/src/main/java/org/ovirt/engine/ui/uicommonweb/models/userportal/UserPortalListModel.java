@@ -690,25 +690,25 @@ public class UserPortalListModel extends IUserPortalListModel implements IVmPool
 
         getRemoveCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
-                        VM.class,
-                        VdcActionType.RemoveVm));
+                && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
+                VM.class,
+                VdcActionType.RemoveVm));
 
         getRunOnceCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[] { (VM) selectedItem.getEntity() })),
-                        VM.class,
-                        VdcActionType.RunVmOnce));
+                && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
+                VM.class,
+                VdcActionType.RunVmOnce));
 
         getChangeCdCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
+                && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
                 VM.class,
                 VdcActionType.ChangeDisk));
 
         getNewTemplateCommand().setIsExecutionAllowed(selectedItem != null
                 && !selectedItem.isPool()
-                && VdcActionUtils.CanExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
+                && VdcActionUtils.canExecute(new ArrayList<VM>(Arrays.asList(new VM[]{(VM) selectedItem.getEntity()})),
                 VM.class,
                 VdcActionType.AddVmTemplate));
     }

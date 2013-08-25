@@ -2299,31 +2299,31 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         getEditCommand().setIsExecutionAllowed(isEditCommandExecutionAllowed(items));
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.RemoveVm));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.RemoveVm));
         getRunCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.RunVm));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.RunVm));
         getPauseCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.HibernateVm));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.HibernateVm));
         getShutdownCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.ShutdownVm));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ShutdownVm));
         getStopCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.StopVm));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.StopVm));
         getMigrateCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.MigrateVm));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.MigrateVm));
         getCancelMigrateCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.CancelMigrateVm));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.CancelMigrateVm));
         getNewTemplateCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.AddVmTemplate));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.AddVmTemplate));
         getRunOnceCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.RunVmOnce));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.RunVmOnce));
         getExportCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.ExportVm));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ExportVm));
         getCreateSnapshotCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.CreateAllSnapshotsFromVm));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.CreateAllSnapshotsFromVm));
         getRetrieveIsoImagesCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.ChangeDisk));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ChangeDisk));
         getChangeCdCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.ChangeDisk));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ChangeDisk));
         getAssignTagsCommand().setIsExecutionAllowed(items.size() > 0);
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null

@@ -50,7 +50,7 @@ public class EditDiskModel extends AbstractDiskModel
             setVolumeFormat(diskImage.getVolumeFormat());
 
             boolean isExtendImageSizeEnabled = getVm() != null &&
-                    VdcActionUtils.CanExecute(Arrays.asList(getVm()), VM.class, VdcActionType.ExtendImageSize);
+                    VdcActionUtils.canExecute(Arrays.asList(getVm()), VM.class, VdcActionType.ExtendImageSize);
             getSizeExtend().setIsChangable(isExtendImageSizeEnabled);
 
             Guid storageDomainId = diskImage.getStorageIds().get(0);

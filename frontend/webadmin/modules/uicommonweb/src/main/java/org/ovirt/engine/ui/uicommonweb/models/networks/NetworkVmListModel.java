@@ -141,7 +141,7 @@ public class NetworkVmListModel extends SearchableListModel
             vms.add(item.getSecond());
         }
 
-        getRemoveCommand().setIsExecutionAllowed(VdcActionUtils.CanExecute(vms,
+        getRemoveCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(vms,
                 VM.class,
                 VdcActionType.RemoveVmInterface) && getSelectedItems() != null && !getSelectedItems().isEmpty()
                 && canRemoveVnics());

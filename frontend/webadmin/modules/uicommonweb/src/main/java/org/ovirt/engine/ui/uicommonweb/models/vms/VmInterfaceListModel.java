@@ -199,12 +199,12 @@ public class VmInterfaceListModel extends SearchableListModel
         }
 
         getNewCommand().setIsExecutionAllowed(vm != null
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.AddVmInterface));
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.AddVmInterface));
         getEditCommand().setIsExecutionAllowed(vm != null
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.UpdateVmInterface)
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.UpdateVmInterface)
                 && (getSelectedItems() != null && getSelectedItems().size() == 1));
         getRemoveCommand().setIsExecutionAllowed(vm != null
-                && VdcActionUtils.CanExecute(items, VM.class, VdcActionType.RemoveVmInterface) && canRemoveNics()
+                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.RemoveVmInterface) && canRemoveNics()
                 && (getSelectedItems() != null && getSelectedItems().size() > 0));
     }
 

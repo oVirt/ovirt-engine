@@ -1606,36 +1606,36 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         boolean isAllPMEnabled = Linq.findAllVDSByPmEnabled(items).size() == items.size();
 
         getEditCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.UpdateVds));
+                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.UpdateVds));
 
         getEditWithPMemphasisCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.UpdateVds));
+                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.UpdateVds));
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.RemoveVds));
+                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.RemoveVds));
 
         getActivateCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.ActivateVds));
+                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.ActivateVds));
 
         // or special case where its installation failed but its oVirt node
         boolean approveAvailability =
                 items.size() == 1
-                        && (VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.ApproveVds) || (items.get(0)
+                        && (VdcActionUtils.canExecute(items, VDS.class, VdcActionType.ApproveVds) || (items.get(0)
                                 .getStatus() == VDSStatus.InstallFailed && items.get(0).getVdsType() == VDSType.oVirtNode));
         getApproveCommand().setIsExecutionAllowed(approveAvailability);
         getApproveCommand().setIsAvailable(approveAvailability);
 
         getMaintenanceCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.MaintenanceVds));
+                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.MaintenanceVds));
 
         getRestartCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.RestartVds) && isAllPMEnabled);
+                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.RestartVds) && isAllPMEnabled);
 
         getStartCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.StartVds) && isAllPMEnabled);
+                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.StartVds) && isAllPMEnabled);
 
         getStopCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VDS.class, VdcActionType.StopVds) && isAllPMEnabled);
+                && VdcActionUtils.canExecute(items, VDS.class, VdcActionType.StopVds) && isAllPMEnabled);
 
         setIsPowerManagementEnabled(getRestartCommand().getIsExecutionAllowed()
                 || getStartCommand().getIsExecutionAllowed() || getStopCommand().getIsExecutionAllowed());
@@ -1655,7 +1655,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         updateConfigureLocalStorageCommandAvailability();
 
-        getRefreshCapabilitiesCommand().setIsExecutionAllowed(items.size() > 0 && VdcActionUtils.CanExecute(items,
+        getRefreshCapabilitiesCommand().setIsExecutionAllowed(items.size() > 0 && VdcActionUtils.canExecute(items,
                 VDS.class,
                 VdcActionType.RefreshHostCapabilities));
     }

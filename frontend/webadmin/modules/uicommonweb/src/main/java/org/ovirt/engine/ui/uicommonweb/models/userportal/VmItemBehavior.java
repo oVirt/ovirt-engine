@@ -182,16 +182,16 @@ public class VmItemBehavior extends ItemBehavior
         ArrayList<VM> entities = new ArrayList<VM>();
         entities.add(entity);
 
-        getItem().getRunCommand().setIsExecutionAllowed(VdcActionUtils.CanExecute(entities,
+        getItem().getRunCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
                 VM.class,
                 VdcActionType.RunVm));
-        getItem().getPauseCommand().setIsExecutionAllowed(VdcActionUtils.CanExecute(entities,
+        getItem().getPauseCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
                 VM.class,
                 VdcActionType.HibernateVm));
-        getItem().getShutdownCommand().setIsExecutionAllowed(VdcActionUtils.CanExecute(entities,
+        getItem().getShutdownCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
                 VM.class,
                 VdcActionType.ShutdownVm));
-        getItem().getStopCommand().setIsExecutionAllowed(VdcActionUtils.CanExecute(entities,
+        getItem().getStopCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
                 VM.class,
                 VdcActionType.StopVm));
 

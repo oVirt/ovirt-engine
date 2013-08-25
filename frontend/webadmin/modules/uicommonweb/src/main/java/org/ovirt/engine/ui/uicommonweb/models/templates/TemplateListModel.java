@@ -604,7 +604,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         }
 
         getRemoveCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VmTemplate.class, VdcActionType.RemoveVmTemplate));
+                && VdcActionUtils.canExecute(items, VmTemplate.class, VdcActionType.RemoveVmTemplate));
         if (getRemoveCommand().getIsExecutionAllowed() && blankSelected)
         {
             getRemoveCommand().getExecuteProhibitionReasons().add(ConstantsManager.getInstance()
@@ -614,7 +614,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         }
 
         getExportCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.CanExecute(items, VmTemplate.class, VdcActionType.ExportVmTemplate));
+                && VdcActionUtils.canExecute(items, VmTemplate.class, VdcActionType.ExportVmTemplate));
 
         if (getExportCommand().getIsExecutionAllowed() && blankSelected)
         {

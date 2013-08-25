@@ -730,17 +730,17 @@ public class DataCenterStorageListModel extends SearchableListModel
         getAttachBackupCommand().setIsExecutionAllowed(items.size() > 0 && isMasterPresents && !isBackupPresents);
 
         getDetachCommand().setIsExecutionAllowed(selectedItems.size() > 0
-                && VdcActionUtils.CanExecute(selectedItems,
-                        StorageDomain.class,
-                        VdcActionType.DetachStorageDomainFromPool));
+                && VdcActionUtils.canExecute(selectedItems,
+                StorageDomain.class,
+                VdcActionType.DetachStorageDomainFromPool));
 
         getActivateCommand().setIsExecutionAllowed(selectedItems.size() == 1
-                && VdcActionUtils.CanExecute(selectedItems, StorageDomain.class, VdcActionType.ActivateStorageDomain));
+                && VdcActionUtils.canExecute(selectedItems, StorageDomain.class, VdcActionType.ActivateStorageDomain));
 
         getMaintenanceCommand().setIsExecutionAllowed(selectedItems.size() == 1
-                && VdcActionUtils.CanExecute(selectedItems,
-                        StorageDomain.class,
-                        VdcActionType.DeactivateStorageDomain));
+                && VdcActionUtils.canExecute(selectedItems,
+                StorageDomain.class,
+                VdcActionType.DeactivateStorageDomain));
     }
 
     @Override

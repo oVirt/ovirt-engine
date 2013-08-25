@@ -1085,7 +1085,7 @@ public class HostGeneralModel extends EntityModel
         setHasReinstallAlertMaintenance(false);
         setHasNICsAlert(false);
         getInstallCommand().setIsExecutionAllowed(true);
-        getEditHostCommand().setIsExecutionAllowed(VdcActionUtils.CanExecute(new ArrayList<VDS>(Arrays.asList(new VDS[] { getEntity() })),
+        getEditHostCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(new ArrayList<VDS>(Arrays.asList(new VDS[]{getEntity()})),
                 VDS.class,
                 VdcActionType.UpdateVds));
         // Check the network alert presense.
