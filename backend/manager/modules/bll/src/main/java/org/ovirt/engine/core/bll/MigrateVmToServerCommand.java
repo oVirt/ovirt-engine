@@ -5,7 +5,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> extends MigrateVmCommand<T> {
@@ -16,12 +15,17 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        VM vm = getVm();
         Guid destinationId = getVdsDestinationId();
-        VDS vds = DbFacade.getInstance().getVdsDao().get(destinationId);
+        VDS vds = getVdsDAO().get(destinationId);
         if (vds == null) {
             return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
         }
+
+        if (!super.canDoAction()) {
+            return false;
+        }
+
+        VM vm = getVm();
 
         if (vm.getRunOnVds() != null && vm.getRunOnVds().equals(destinationId)) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST);
@@ -31,7 +35,7 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATE_BETWEEN_TWO_CLUSTERS);
         }
 
-        return super.canDoAction();
+        return true;
     }
 
     /**
