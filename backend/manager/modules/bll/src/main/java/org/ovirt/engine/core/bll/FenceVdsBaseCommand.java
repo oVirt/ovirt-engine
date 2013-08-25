@@ -216,6 +216,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                 if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Primary)) {
                     handleSpecificCommandActions();
                 } else {
+                    // set the executor to perform the action
+                    executor = new FenceExecutor(getVds(), getParameters().getAction());
                     tryOtherSequentialAgent(lastStatus);
                 }
             } else {
@@ -510,13 +512,20 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                 VDSReturnValue returnValue = executor.Fence(order);
                 if (returnValue != null && returnValue.getReturnValue() != null) {
                     FenceStatusReturnValue value = (FenceStatusReturnValue) returnValue.getReturnValue();
-                    if (FENCE_CMD.equalsIgnoreCase(value.getStatus())) {
-                        statusReached = true;
-                        log.infoFormat("vds {0} status is {1}", vdsName, FENCE_CMD);
-                    } else {
-                        i++;
-                        if (i <= getRerties())
-                            ThreadUtils.sleep(getDelayInSeconds() * 1000);
+                    if (value.getStatus().equalsIgnoreCase("unknown")) {
+                        // No need to retry , agent definitions are corrupted
+                        log.warnFormat("Host {0} {1} PM Agent definitions are corrupted, Waiting for Host to {2) aborted.", vdsName, order.name(), actionType.name());
+                        break;
+                    }
+                    else {
+                        if (FENCE_CMD.equalsIgnoreCase(value.getStatus())) {
+                            statusReached = true;
+                            log.infoFormat("vds {0} status is {1}", vdsName, FENCE_CMD);
+                        } else {
+                            i++;
+                            if (i <= getRerties())
+                                ThreadUtils.sleep(getDelayInSeconds() * 1000);
+                        }
                     }
                 } else {
                     log.errorFormat("Failed to get host {0} status.", vdsName);
