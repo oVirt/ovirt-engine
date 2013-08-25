@@ -61,6 +61,9 @@ class Plugin(plugin.PluginBase):
         def commit(self):
             pass
 
+    def _subjectComponentEscape(self, s):
+        return osetuputil.escape(s, '/\\')
+
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._enabled = False
@@ -199,11 +202,17 @@ class Plugin(plugin.PluginBase):
             args=(
                 osetupcons.FileLocations.OVIRT_ENGINE_PKI_CA_CREATE,
                 '--subject=/C=%s/O=%s/CN=%s.%s' % (
-                    self.environment[osetupcons.PKIEnv.COUNTRY],
-                    self.environment[osetupcons.PKIEnv.ORG],
-                    self.environment[
-                        osetupcons.ConfigEnv.FQDN
-                    ][:MAX_HOST_FQDN_LEN],
+                    self._subjectComponentEscape(
+                        self.environment[osetupcons.PKIEnv.COUNTRY],
+                    ),
+                    self._subjectComponentEscape(
+                        self.environment[osetupcons.PKIEnv.ORG],
+                    ),
+                    self._subjectComponentEscape(
+                        self.environment[
+                            osetupcons.ConfigEnv.FQDN
+                        ][:MAX_HOST_FQDN_LEN],
+                    ),
                     random.randint(10000, 99999),
                 ),
                 '--keystore-password=%s' % (
@@ -226,9 +235,15 @@ class Plugin(plugin.PluginBase):
                         self.environment[osetupcons.PKIEnv.STORE_PASS],
                     ),
                     '--subject=/C=%s/O=%s/CN=%s' % (
-                        self.environment[osetupcons.PKIEnv.COUNTRY],
-                        self.environment[osetupcons.PKIEnv.ORG],
-                        self.environment[osetupcons.ConfigEnv.FQDN],
+                        self._subjectComponentEscape(
+                            self.environment[osetupcons.PKIEnv.COUNTRY],
+                        ),
+                        self._subjectComponentEscape(
+                            self.environment[osetupcons.PKIEnv.ORG],
+                        ),
+                        self._subjectComponentEscape(
+                            self.environment[osetupcons.ConfigEnv.FQDN],
+                        ),
                     ),
                 ),
             )

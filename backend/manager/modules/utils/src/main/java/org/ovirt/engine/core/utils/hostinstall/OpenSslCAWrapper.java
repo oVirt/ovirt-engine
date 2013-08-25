@@ -22,6 +22,19 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class OpenSslCAWrapper {
 
+    private static String escapeSubjectComponent(String input) {
+        StringBuilder ret = new StringBuilder();
+
+        for (char x : input.toCharArray()) {
+            if (x == '/' || x == '\\') {
+                ret.append('\\');
+            }
+            ret.append(x);
+        }
+
+        return ret.toString();
+    }
+
     public static String getCACertificate() throws Exception {
 
         InputStream in = null;
@@ -110,7 +123,7 @@ public class OpenSslCAWrapper {
                 new String[] {
                     executable.getAbsolutePath(),
                     String.format("--name=%s", hostname),
-                    String.format("--subject=/O=%s/CN=%s", organization, hostname),
+                    String.format("--subject=/O=%s/CN=%s", escapeSubjectComponent(organization), escapeSubjectComponent(hostname)),
                     String.format("--days=%s", days),
                     String.format("--timeout=%s", signatureTimeout / 2)
                 },
