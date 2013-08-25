@@ -360,6 +360,10 @@ public class VmDeviceUtils {
                     specParams.putAll(device.getSpecParams());
                     break;
 
+                case RNG:
+                    specParams.putAll(device.getSpecParams());
+                    break;
+
                 case CONSOLE:
                     hasAlreadyConsoleDevice = true;
                     if (!isConsoleEnabled) {

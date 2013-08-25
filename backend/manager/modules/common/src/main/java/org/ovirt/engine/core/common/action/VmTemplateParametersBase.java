@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.action;
 import java.io.Serializable;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -16,10 +17,16 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
     private Boolean virtioScsiEnabled;
     private boolean balloonEnabled;
 
+    private VmRngDevice rngDevice;
     /*
      * see VmManagementParametersBase#updateWatchdog for details
      */
     private boolean updateWatchdog;
+
+    /*
+     * see VmManagementParametersBase#updateRngDevice for details
+     */
+    private boolean updateRngDevice;
 
 
     public boolean getCheckDisksExists() {
@@ -87,6 +94,9 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
     public Boolean isVirtioScsiEnabled() {
         return virtioScsiEnabled;
     }
+    public boolean isUpdateRngDevice() {
+        return updateRngDevice;
+    }
 
     public void setVirtioScsiEnabled(Boolean virtioScsiEnabled) {
         this.virtioScsiEnabled = virtioScsiEnabled;
@@ -98,5 +108,19 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
 
     public void setBalloonEnabled(boolean balloonEnabled) {
         this.balloonEnabled = balloonEnabled;
+    }
+    public void setUpdateRngDevice(boolean updateRngDevice) {
+        this.updateRngDevice = updateRngDevice;
+        if (this.rngDevice != null) {
+            this.rngDevice.setVmId(getVmTemplateId());
+        }
+    }
+
+    public VmRngDevice getRngDevice() {
+        return rngDevice;
+    }
+
+    public void setRngDevice(VmRngDevice rngDevice) {
+        this.rngDevice = rngDevice;
     }
 }

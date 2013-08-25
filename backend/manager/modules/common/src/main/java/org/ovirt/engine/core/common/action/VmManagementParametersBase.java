@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.compat.Guid;
@@ -25,6 +26,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     private boolean balloonEnabled;
     private VM vm;
     private VmWatchdog watchdog;
+    private VmRngDevice rngDevice;
     private boolean copyTemplatePermissions;
     private boolean applyChangesLater;
 
@@ -37,6 +39,14 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
     /*
      * This parameter is used to decide if to create sound device or not if it is null then: for add vm legacy logic
      * will be used: create device for desktop type for update the current configuration will remain
+     * Used by rest-api.
+     */
+    private boolean updateRngDevice;
+    /*
+     * This parameter is used to decide if to create sound device or not
+     * if it is null then:
+     * for add vm legacy logic will be used: create device for desktop type
+     * for update the current configuration will remain
      */
     private Boolean soundDeviceEnabled;
     /*
@@ -157,6 +167,25 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
 
     public void setWatchdog(VmWatchdog watchdog) {
         this.watchdog = watchdog;
+    }
+
+    public VmRngDevice getRngDevice() {
+        return rngDevice;
+    }
+
+    public void setRngDevice(VmRngDevice rngDevice) {
+        this.rngDevice = rngDevice;
+        if (this.rngDevice != null) {
+            this.rngDevice.setVmId(getVmId());
+        }
+    }
+
+    public boolean isUpdateRngDevice() {
+        return updateRngDevice;
+    }
+
+    public void setUpdateRngDevice(boolean updateRngDevice) {
+        this.updateRngDevice = updateRngDevice;
     }
 
     public boolean isUpdateWatchdog() {

@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.HotSetNumerOfCpusParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
+import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -132,11 +134,46 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             updateVmPayload();
             VmDeviceUtils.updateVmDevices(getParameters(), oldVm);
             updateWatchdog();
+            updateRngDevice();
         }
         VmHandler.updateVmInitToDB(getParameters().getVmStaticData());
 
         checkTrustedService();
         setSucceeded(true);
+    }
+
+    private boolean updateRngDevice() {
+        // do not update if this flag is not set
+        if (getParameters().isUpdateRngDevice()) {
+            VdcQueryReturnValue query =
+                    getBackend().runInternalQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(getParameters().getVmId()));
+
+            @SuppressWarnings("unchecked")
+            List<VmRngDevice> rngDevs = query.getReturnValue();
+
+            VdcReturnValueBase rngCommandResult = null;
+            if (rngDevs.isEmpty()) {
+                if (getParameters().getRngDevice() != null) {
+                    RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), true);
+                    rngCommandResult = getBackend().runInternalAction(VdcActionType.AddRngDevice, params);
+                }
+            } else {
+                if (getParameters().getRngDevice() == null) {
+                    RngDeviceParameters params = new RngDeviceParameters(rngDevs.get(0), true);
+                    rngCommandResult = getBackend().runInternalAction(VdcActionType.RemoveRngDevice, params);
+                } else {
+                    RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), true);
+                    params.getRngDevice().setDeviceId(rngDevs.get(0).getDeviceId());
+                    rngCommandResult = getBackend().runInternalAction(VdcActionType.UpdateRngDevice, params);
+                }
+            }
+
+            if (rngCommandResult != null && !rngCommandResult.getSucceeded()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void createNextRunSnapshot() {

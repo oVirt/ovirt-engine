@@ -194,6 +194,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             updateOriginalTemplateNameOnDerivedVms();
             UpdateVmTemplate();
             updateWatchdog(getParameters().getVmTemplateData().getId());
+            updateRngDevice(getParameters().getVmTemplateData().getId());
             checkTrustedService();
             setSucceeded(true);
         }

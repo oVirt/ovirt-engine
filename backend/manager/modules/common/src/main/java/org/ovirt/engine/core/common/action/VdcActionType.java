@@ -348,6 +348,11 @@ public enum VdcActionType {
 
     SetHaMaintenance(2050, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
 
+    // Rng crud
+    AddRngDevice(2150, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
+    UpdateRngDevice(2151, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
+    RemoveRngDevice(2152, ActionGroup.EDIT_VM_PROPERTIES, QuotaDependency.NONE),
+
     // Audit Log
     RemoveAuditLogById(2100, false, QuotaDependency.NONE),
     ClearAllDismissedAuditLogs(2101, false, QuotaDependency.NONE);

@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -146,6 +147,12 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             addVmAndAttachToPoolParams.setConsoleEnabled(getParameters().isConsoleEnabled());
 
             addVmAndAttachToPoolParams.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
+
+            VmRngDevice rngDevice = getParameters().getRngDevice();
+            if (rngDevice != null) {
+                addVmAndAttachToPoolParams.setUpdateRngDevice(true);
+                addVmAndAttachToPoolParams.setRngDevice(rngDevice);
+            }
 
             VdcReturnValueBase returnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.AddVmAndAttachToPool,

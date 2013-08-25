@@ -126,7 +126,8 @@ public enum ConfigurationValues {
     IscsiMultipathingSupported,
     BootMenuSupported(ConfigAuthType.User),
     MixedDomainTypesInDataCenter,
-    KeystoneAuthUrl;
+    KeystoneAuthUrl,
+    VirtIoRngDeviceSupported(ConfigAuthType.User);
 
     public static enum ConfigAuthType {
         Admin,

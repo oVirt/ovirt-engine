@@ -52,6 +52,11 @@ public enum VmDeviceGeneralType {
     CONSOLE,
 
     /**
+     * A random number generator device
+     */
+    RNG,
+
+    /**
      * A smartcard device
      */
     SMARTCARD,

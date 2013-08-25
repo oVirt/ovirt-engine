@@ -330,4 +330,14 @@ public class FeatureSupported {
     public static boolean bootMenu(Version version) {
         return supportedInConfig(ConfigValues.BootMenuSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if VirtIo RNG device is supported for the version, <code>false</code> if it's not.
+     */
+    public static boolean virtIoRngSupported(Version version) {
+        return supportedInConfig(ConfigValues.VirtIoRngDeviceSupported, version);
+    }
+
 }

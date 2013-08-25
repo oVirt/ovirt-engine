@@ -1004,4 +1004,21 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         addressMap.put(VdsProperties.Unit, String.valueOf(unit));
         return addressMap;
     }
+
+    protected void buildVmRngDevice() {
+        List<VmDevice> vmDevices =
+                DbFacade.getInstance()
+                        .getVmDeviceDao()
+                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+                                VmDeviceGeneralType.RNG,
+                                VmDeviceType.VIRTIO.getName());
+
+        for (VmDevice vmDevice : vmDevices) {
+            Map<String, Object> struct = new HashMap<>();
+            struct.put(VdsProperties.Type, VmDeviceGeneralType.RNG.getValue());
+            struct.put(VdsProperties.Model, VdsProperties.Virtio);
+            struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
+            addDevice(struct, vmDevice, null);
+        }
+    }
 }

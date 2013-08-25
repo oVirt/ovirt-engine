@@ -23,6 +23,7 @@ public enum VmDeviceType {
     SMARTCARD("smartcard"),
     BALLOON("balloon"),
     CONSOLE("console"),
+    VIRTIO("virtio"),
     WATCHDOG("watchdog"),
     VIRTIOSCSI("virtio-scsi"),
     OTHER("other", "0"),

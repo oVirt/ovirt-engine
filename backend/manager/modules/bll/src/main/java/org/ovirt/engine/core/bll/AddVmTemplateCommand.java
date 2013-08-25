@@ -275,6 +275,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 }
 
                 updateWatchdog(getVmTemplateId());
+                updateRngDevice(getVmTemplateId());
 
                 setSucceeded(true);
                 return null;

@@ -409,6 +409,8 @@ public class VdsBrokerObjectsBuilder {
 
         vds.setSupportedEmulatedMachines(AssignStringValueFromArray(xmlRpcStruct, VdsProperties.emulatedMachines));
 
+        // todo process rngSources too (follow up patch with rng sources reporting)
+
         String hooksStr = ""; // default value if hooks is not in the xml rpc struct
         if (xmlRpcStruct.containsKey(VdsProperties.hooks)) {
             hooksStr = xmlRpcStruct.get(VdsProperties.hooks).toString();

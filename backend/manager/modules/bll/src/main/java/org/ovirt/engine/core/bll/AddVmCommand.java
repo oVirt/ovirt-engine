@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -28,6 +27,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
+import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -726,6 +727,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     addActiveSnapshot();
                     addVmPermission();
                     addVmInit();
+                    addVmRngDevice();
                     getCompensationContext().stateChanged();
                     return null;
                 }
@@ -770,6 +772,19 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             parameters.setAction(vmWatchdog.getAction());
             parameters.setModel(vmWatchdog.getModel());
             getBackend().runInternalAction(VdcActionType.AddWatchdog, parameters);
+        }
+    }
+
+    private void addVmRngDevice() {
+        VmRngDevice rngDev = getParameters().getRngDevice();
+        if (rngDev != null) {
+            rngDev.setVmId(getVmId());
+            RngDeviceParameters params = new RngDeviceParameters(rngDev, true);
+            VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddRngDevice, params);
+            if (!result.getSucceeded()) {
+                log.error("Couldn't add RNG device for new VM.");
+                throw new IllegalArgumentException("Couldn't add RNG device for new VM.");
+            }
         }
     }
 

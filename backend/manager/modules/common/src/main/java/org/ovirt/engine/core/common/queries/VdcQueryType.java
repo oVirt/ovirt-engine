@@ -328,6 +328,7 @@ public enum VdcQueryType implements Serializable {
 
     GetWatchdog(VdcQueryAuthType.User),
     GetConsoleDevices(VdcQueryAuthType.User),
+    GetRngDevice,
 
     GetDeviceCustomProperties(VdcQueryAuthType.User),
 

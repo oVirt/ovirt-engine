@@ -120,6 +120,14 @@ select fn_db_add_config_value('FindFenceProxyRetries','3','general');
 select fn_db_add_config_value('FreeSpaceCriticalLowInGB','5','general');
 select fn_db_add_config_value('FreeSpaceLow','10','general');
 
+-- VirtIO Random Number Generator device enabled
+select fn_db_add_config_value('VirtIoRngDeviceSupported','false','3.0');
+select fn_db_add_config_value('VirtIoRngDeviceSupported','false','3.1');
+select fn_db_add_config_value('VirtIoRngDeviceSupported','false','3.2');
+select fn_db_add_config_value('VirtIoRngDeviceSupported','false','3.3');
+select fn_db_add_config_value('VirtIoRngDeviceSupported','false', '3.4');
+select fn_db_add_config_value('VirtIoRngDeviceSupported','true', '3.5');
+
 -- Gluster related
 select fn_db_add_config_value('GlusterHooksEnabled', 'false', '3.0');
 select fn_db_add_config_value('GlusterHooksEnabled', 'false', '3.1');

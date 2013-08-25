@@ -6,6 +6,7 @@ import javax.validation.Valid;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,6 +22,7 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
     private Boolean soundDeviceEnabled;
     private Boolean consoleEnabled;
     private Boolean virtioScsiEnabled;
+    private VmRngDevice rngDevice;
 
     public AddVmPoolWithVmsParameters() {
     }
@@ -76,5 +78,13 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
 
     public void setVirtioScsiEnabled(Boolean virtioScsiEnabled) {
         this.virtioScsiEnabled = virtioScsiEnabled;
+    }
+
+    public VmRngDevice getRngDevice() {
+        return rngDevice;
+    }
+
+    public void setRngDevice(VmRngDevice rngDevice) {
+        this.rngDevice = rngDevice;
     }
 }

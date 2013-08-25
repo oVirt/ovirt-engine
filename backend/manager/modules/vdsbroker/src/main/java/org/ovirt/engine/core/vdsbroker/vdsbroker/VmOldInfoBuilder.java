@@ -259,4 +259,9 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
     protected void buildVmVirtioScsi() {
         // Not supported in old code
     }
+
+    @Override
+    protected void buildVmRngDevice() {
+        // Not supported in old code
+    }
 }

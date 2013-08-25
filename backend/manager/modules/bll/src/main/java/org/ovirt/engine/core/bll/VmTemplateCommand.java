@@ -9,13 +9,16 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -235,4 +238,40 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             }
         }
     }
+
+    protected void updateRngDevice(Guid templateId) {
+        // do not update if this flag is not set
+        if (getParameters().isUpdateRngDevice()) {
+            VdcQueryReturnValue query =
+                    getBackend().runInternalQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(templateId));
+
+            List<VmRngDevice> rngDevs = query.getReturnValue();
+
+            if (getParameters().getRngDevice() != null) {
+                getParameters().getRngDevice().setVmId(templateId);
+            }
+
+            VdcReturnValueBase rngCommandResult = null;
+            if (rngDevs.isEmpty()) {
+                if (getParameters().getRngDevice() != null) {
+                    RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), false);
+                    rngCommandResult = getBackend().runInternalAction(VdcActionType.AddRngDevice, params);
+                }
+            } else {
+                if (getParameters().getRngDevice() == null) {
+                    RngDeviceParameters params = new RngDeviceParameters(rngDevs.get(0), false);
+                    rngCommandResult = getBackend().runInternalAction(VdcActionType.RemoveRngDevice, params);
+                } else {
+                    RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), false);
+                    params.getRngDevice().setDeviceId(rngDevs.get(0).getDeviceId());
+                    rngCommandResult = getBackend().runInternalAction(VdcActionType.UpdateRngDevice, params);
+                }
+            }
+
+            if (rngCommandResult != null && !rngCommandResult.getSucceeded()) {
+                getReturnValue().setSucceeded(false);
+            }
+        }
+    }
+
 }
