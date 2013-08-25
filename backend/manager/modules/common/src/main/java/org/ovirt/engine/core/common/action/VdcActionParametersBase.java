@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.Pattern;
@@ -70,6 +71,7 @@ public class VdcActionParametersBase implements java.io.Serializable {
         compensationEnabled = false;
         parentCommand = VdcActionType.Unknown;
         commandType = VdcActionType.Unknown;
+        imagesParameters = new ArrayList<VdcActionParametersBase>();
     }
 
     public Guid getCommandId() {
