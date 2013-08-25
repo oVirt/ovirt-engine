@@ -26,7 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 
 public class NewVmModelBehavior extends VmModelBehaviorBase {
 
-    private final ProfileBehavior networkBehavior = new NewProfileBehavior();
+    private final ProfileBehavior networkBehavior = new EditProfileBehavior();
 
     @Override
     public void initialize(SystemTreeItemModel systemTreeSelectedItem)
