@@ -281,7 +281,6 @@ Requires:	logrotate
 Requires:	m2crypto
 Requires:	nfs-utils
 Requires:	openssh
-Requires:	openssl
 Requires:	otopi >= 1.1.0
 Requires:	policycoreutils-python
 Requires:	python-psycopg2

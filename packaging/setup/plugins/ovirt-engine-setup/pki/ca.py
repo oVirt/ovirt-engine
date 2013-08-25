@@ -20,9 +20,13 @@
 
 
 import os
+import re
 import random
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
+
+
+from M2Crypto import X509
 
 
 from otopi import util
@@ -98,7 +102,6 @@ class Plugin(plugin.PluginBase):
         )
     )
     def _setup(self):
-        self.command.detect('openssl')
         self._enabled = True
 
     @plugin.event(
@@ -332,20 +335,17 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _closeup(self):
-        rc, stdout, stderr = self.execute(
-            (
-                self.command.get('openssl'),
-                'x509',
-                '-in',
-                osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
-                '-fingerprint',
-                '-noout',
-                '-sha1',
-            ),
+        x509 = X509.load_cert(
+            file=osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT,
+            format=X509.FORMAT_PEM,
         )
         self.dialog.note(
             text=_('Internal CA {fingerprint}').format(
-                fingerprint='\n'.join(stdout),
+                fingerprint=re.sub(
+                    r'(..)',
+                    r':\1',
+                    x509.get_fingerprint(md='sha1'),
+                )[1:],
             )
         )
 

@@ -57,12 +57,6 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
-    )
-    def _setup(self):
-        self.command.detect('openssl')
-
-    @plugin.event(
         stage=plugin.Stages.STAGE_LATE_SETUP,
     )
     def _late_setup(self):
