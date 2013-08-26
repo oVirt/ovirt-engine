@@ -52,50 +52,13 @@ public class VmInterfaceCreatingManager {
      */
     public void updateOrCreateIfNothingToUpdate(final Guid vmId,
             final List<VnicInstanceType> vnicInstanceTypes) {
-        AsyncQuery getVmNicsQuery = new AsyncQuery();
-        getVmNicsQuery.asyncCallback = new INewAsyncCallback() {
+        new UpdatedNicsUpdater() {
             @Override
-            public void onSuccess(Object model, Object result) {
-                List<VmNetworkInterface> createdNics = (List<VmNetworkInterface>) result;
-
-                if (createdNics == null || createdNics.size() == 0) {
-                    // there are no vnics created - create according to the setup
-                    createVnics(vmId, vnicInstanceTypes);
-                } else {
-                    // there are some vnics created - update according to the setup in the window
-                    ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-
-                    for (VmNetworkInterface created : createdNics) {
-                        for (VnicInstanceType edited : vnicInstanceTypes) {
-                            // can not use getId() because they have different IDs - one is already created, one is not
-                            // yet
-                            boolean sameNic = edited.getNetworkInterface().getName().equals(created.getName());
-
-                            boolean bothProfilesNull =
-                                    created.getVnicProfileId() == null
-                                            && edited.getNetworkInterface().getVnicProfileId() == null;
-
-                            boolean sameProfiles =
-                                    created.getVnicProfileId() != null
-                                            && created.getVnicProfileId().equals(edited.getNetworkInterface()
-                                                    .getVnicProfileId());
-
-                            boolean assignedProfileChanged = !(bothProfilesNull || sameProfiles);
-
-                            if (sameNic && assignedProfileChanged) {
-                                created.setVnicProfileId(edited.getNetworkInterface().getVnicProfileId());
-                                parameters.add(new AddVmInterfaceParameters(vmId, created));
-                                break;
-                            }
-                        }
-
-                    }
-
-                    updateVnicsFromParams(vmId, parameters);
-                }
+            protected void onNoNicsDefinedOnVm() {
+                // there are no vnics created - create according to the setup
+                createVnics(vmId, vnicInstanceTypes);
             }
-        };
-        AsyncDataProvider.getVmNicList(getVmNicsQuery, vmId);
+        }.execute(vmId, vnicInstanceTypes);
     }
 
     /**
@@ -105,7 +68,12 @@ public class VmInterfaceCreatingManager {
      * @param vnicInstanceTypes list of nics as edited in the window
      */
     public void updateVnics(final Guid vmId, final List<VnicInstanceType> vnicInstanceTypes) {
-        updateVnicsFromParams(vmId, createAddVmInterfaceParams(vmId, vnicInstanceTypes));
+        new UpdatedNicsUpdater() {
+            @Override
+            protected void onNoNicsDefinedOnVm() {
+                callback.vnicCreated(vmId);
+            }
+        }.execute(vmId, vnicInstanceTypes);
     }
 
     /**
@@ -158,4 +126,55 @@ public class VmInterfaceCreatingManager {
 
         void queryFailed();
     }
+
+    abstract class UpdatedNicsUpdater {
+        public void execute(final Guid vmId, final List<VnicInstanceType> vnicInstanceTypes) {
+            AsyncQuery getVmNicsQuery = new AsyncQuery();
+            getVmNicsQuery.asyncCallback = new INewAsyncCallback() {
+                @Override
+                public void onSuccess(Object model, Object result) {
+                    List<VmNetworkInterface> createdNics = (List<VmNetworkInterface>) result;
+
+                    if (createdNics == null || createdNics.size() == 0) {
+                        onNoNicsDefinedOnVm();
+                    } else {
+                        // there are some vnics created - update according to the setup in the window
+                        ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
+
+                        for (VmNetworkInterface created : createdNics) {
+                            for (VnicInstanceType edited : vnicInstanceTypes) {
+                                // can not use getId() because they have different IDs - one is already created, one is not
+                                // yet
+                                boolean sameNic = edited.getNetworkInterface().getName().equals(created.getName());
+
+                                boolean bothProfilesNull =
+                                        created.getVnicProfileId() == null
+                                                && edited.getNetworkInterface().getVnicProfileId() == null;
+
+                                boolean sameProfiles =
+                                        created.getVnicProfileId() != null
+                                                && created.getVnicProfileId().equals(edited.getNetworkInterface()
+                                                .getVnicProfileId());
+
+                                boolean assignedProfileChanged = !(bothProfilesNull || sameProfiles);
+
+                                if (sameNic && assignedProfileChanged) {
+                                    created.setVnicProfileId(edited.getNetworkInterface().getVnicProfileId());
+                                    parameters.add(new AddVmInterfaceParameters(vmId, created));
+                                    break;
+                                }
+                            }
+
+                        }
+
+                        updateVnicsFromParams(vmId, parameters);
+                    }
+                }
+            };
+            AsyncDataProvider.getVmNicList(getVmNicsQuery, vmId);
+        }
+
+        protected abstract void onNoNicsDefinedOnVm();
+    }
+
 }
