@@ -19,15 +19,15 @@
 """ssh plugin."""
 
 
-import os
+import re
 import base64
 import struct
-import tempfile
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
-from M2Crypto import RSA
+from M2Crypto import X509
+from M2Crypto import EVP
 
 
 from otopi import util
@@ -43,15 +43,44 @@ from ovirt_engine_setup import constants as osetupcons
 class Plugin(plugin.PluginBase):
     """CA plugin."""
 
-    def _getSSHPublicKey(self, key):
+    def _getSSHPublicKeyRaw(self, key):
         ALGO = 'ssh-rsa'
-        key = RSA.load_key_string(key.encode('ascii'))
-        sshkey = (
-            struct.pack('!l', len(ALGO)) + ALGO.encode('ascii') +
-            key.pub()[0] +
-            key.pub()[1]
+        return {
+            'algo': ALGO,
+            'blob': (
+                struct.pack('!l', len(ALGO)) + ALGO.encode('ascii') +
+                key.pub()[0] +
+                key.pub()[1]
+            ),
+        }
+
+    def _getSSHPublicKey(self, key):
+        sshkey = self._getSSHPublicKeyRaw(key)
+        return '%s %s' % (sshkey['algo'], base64.b64encode(sshkey['blob']))
+
+    def _getSSHPublicKeyFingerprint(self, key):
+        sshkey = self._getSSHPublicKeyRaw(key)
+        md5 = EVP.MessageDigest('md5')
+        md5.update(sshkey['blob'])
+        return re.sub(r'(..)', r':\1', base64.b16encode(md5.digest()))[1:]
+
+    def _getEnginePublicKey(self):
+        rc, cert, stderr = self.execute(
+            (
+                osetupcons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
+                '--name=engine',
+                '--passin=%s' % self.environment[
+                    osetupcons.PKIEnv.STORE_PASS
+                ],
+                '--cert=-',
+            ),
         )
-        return '%s %s' % (ALGO, base64.b64encode(sshkey))
+
+        x509 = X509.load_cert_string(
+            string='\n'.join(cert).encode('ascii'),
+            format=X509.FORMAT_PEM,
+        )
+        return x509.get_pubkey().get_rsa()
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -95,7 +124,7 @@ class Plugin(plugin.PluginBase):
         )
         self.environment[
             osetupcons.PKIEnv.ENGINE_SSH_PUBLIC_KEY
-        ] = self._getSSHPublicKey('\n'.join(privkey))
+        ] = self._getSSHPublicKey(self._getEnginePublicKey())
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
@@ -107,34 +136,13 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _closeup(self):
-        temp = None
-        try:
-            fd, temp = tempfile.mkstemp(suffix='.pub')
-            os.close(fd)
-            with open(temp, "w") as f:
-                f.write(
-                    self.environment[
-                        osetupcons.PKIEnv.ENGINE_SSH_PUBLIC_KEY
-                    ]
-                )
-                f.write('\n')
-
-            rc, fingerprint, stderr = self.execute(
-                (
-                    self.command.get('ssh-keygen'),
-                    '-l',
-                    '-f', temp,
+        self.dialog.note(
+            text=_('SSH fingerprint: {fingerprint}').format(
+                fingerprint=self._getSSHPublicKeyFingerprint(
+                    self._getEnginePublicKey()
                 ),
             )
-
-            self.dialog.note(
-                text=_('SSH fingerprint: {fingerprint}').format(
-                    fingerprint=fingerprint[0].split()[1],
-                )
-            )
-        finally:
-            if temp is not None and os.path.exists(temp):
-                os.unlink(temp)
+        )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
