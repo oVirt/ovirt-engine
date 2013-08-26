@@ -235,7 +235,6 @@ public class VmDeviceUtils {
                                      boolean soundDeviceEnabled,
                                      boolean isConsoleEnabled) {
         Guid id;
-        int ifaceCount = 0;
         String isoPath=vmBase.getIsoPath();
         // indicates that VM should have CD either from its own (iso_path) or from the snapshot it was cloned from.
         boolean shouldHaveCD = StringUtils.isNotEmpty(isoPath);

@@ -444,7 +444,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
     }
 
     protected void AddVmTemplateImages(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
-        Guid vmSnapshotId = Guid.newGuid();
         for (DiskImage diskImage : mImages) {
             // The return value of this action is the 'copyImage' task GUID:
             VdcReturnValueBase retValue = executeChildCommand(diskImage.getImageId());

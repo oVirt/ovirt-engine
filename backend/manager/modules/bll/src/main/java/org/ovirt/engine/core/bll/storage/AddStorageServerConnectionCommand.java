@@ -68,7 +68,6 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = true;
         StorageServerConnections paramConnection = getConnection();
         // if an id was sent - it's not ok since only the backend should allocate ids
         if (StringUtils.isNotEmpty(paramConnection.getid())) {
