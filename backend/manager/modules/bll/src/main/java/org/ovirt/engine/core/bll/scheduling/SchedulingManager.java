@@ -82,7 +82,7 @@ public class SchedulingManager {
         log.info("Initializing Scheduling manager");
         loadPolicyUnits();
         loadClusterPolicies();
-        if(Config.GetValue(ConfigValues.ExternalSchedulerEnabled)) {
+        if(Config.<Boolean> GetValue(ConfigValues.ExternalSchedulerEnabled)) {
             log.info("Starting external scheduler dicovery thread");
             ExternalSchedulerDiscoveryThread discoveryThread = new ExternalSchedulerDiscoveryThread();
             discoveryThread.start();
@@ -600,7 +600,7 @@ public class SchedulingManager {
                 List<VDS> hosts = getVdsDAO().getAllForVdsGroupWithoutMigrating(cluster.getId());
                 if (policyUnit.isInternal()) {
                     balanceResult = internalRunBalance(policyUnit, cluster, hosts);
-                } else if (Config.GetValue(ConfigValues.ExternalSchedulerEnabled)) {
+                } else if (Config.<Boolean> GetValue(ConfigValues.ExternalSchedulerEnabled)) {
                     balanceResult = externalRunBalance(policyUnit, cluster, hosts);
                 }
             }
