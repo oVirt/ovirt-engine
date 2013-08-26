@@ -307,10 +307,6 @@ public final class VdcActionUtils {
     }
 
     private static Enum<?> getStatusProperty(Object entity) {
-        if (entity == null) {
-            return null;
-        }
-
         if (entity.getClass().getName().endsWith("VDS")) {
             return entity instanceof VDS ?
                     ((VDS) entity).getStatus() :
