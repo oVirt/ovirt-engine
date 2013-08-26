@@ -67,9 +67,9 @@ class Plugin(plugin.PluginBase):
         ]
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_SETUP,
+        stage=plugin.Stages.STAGE_VALIDATION,
     )
-    def _setup(self):
+    def _validation(self):
         if not self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
             if self.environment[osetupcons.SystemEnv.NFS_CONFIG_ENABLED]:
                 for filename in self._fileList:

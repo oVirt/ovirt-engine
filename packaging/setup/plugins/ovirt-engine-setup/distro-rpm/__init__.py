@@ -23,11 +23,13 @@
 
 from otopi import util
 from . import packages
+from . import image_upload
 
 
 @util.export
 def createPlugins(context):
     packages.Plugin(context=context)
+    image_upload.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
