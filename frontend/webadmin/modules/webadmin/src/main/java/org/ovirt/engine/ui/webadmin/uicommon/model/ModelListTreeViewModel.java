@@ -193,32 +193,30 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
             public void onSelectionChange(SelectionChangeEvent event) {
                 Set<M> selectedSet = selectionModel.getSelectedSet();
                 HashSet<TreeNodeModel<?, ?>> removedSet = new HashSet<TreeNodeModel<?, ?>>();
-                for (TreeNodeModel<T, M> child : roots) {
-                    if (!selectedSet.contains(child) && child.getSelected()) {
-                        selectedSet.remove(child);
-                        removedSet.add(child);
-                    }
-                    for (TreeNodeModel<T, M> child1 : child.getChildren()) {
-                        if (!selectedSet.contains(child1) && child1.getSelected()) {
-                            selectedSet.remove(child1);
-                            removedSet.add(child1);
-                        }
-                        for (TreeNodeModel<T, M> child2 : child1.getChildren()) {
-                            if (!selectedSet.contains(child2) && child2.getSelected()) {
-                                selectedSet.remove(child2);
-                                removedSet.add(child2);
-                            }
-                        }
-                    }
+                updateSelectionSets(selectedSet, removedSet, roots);
+                for (M toSelect : selectedSet) {
+                    toSelect.setSelected(true);
                 }
-                for (M m : selectedSet) {
-                    m.setSelected(true);
-                }
-                for (TreeNodeModel<?, ?> treeNodeModel : removedSet) {
-                    treeNodeModel.setSelected(false);
+                for (TreeNodeModel<?, ?> toDeselect : removedSet) {
+                    toDeselect.setSelected(false);
                 }
             }
         });
+    }
+
+    /**
+     * Recursively determine the set of changed nodes.
+     * @param selectedSet The set of selected nodes.
+     * @param removedSet The set of removed nodes.
+     * @param nodes The list of nodes to check against.
+     */
+    private void updateSelectionSets(Set<M> selectedSet, Set<TreeNodeModel<?, ?>> removedSet, List<M> nodes) {
+        for (TreeNodeModel<T, M> node : nodes) {
+            if (!selectedSet.contains(node) && node.getSelected()) {
+                removedSet.add(node);
+            }
+            updateSelectionSets(selectedSet, removedSet, node.getChildren());
+        }
     }
 
     public void UpdateSelection(M model, final HasData<M> display) {
