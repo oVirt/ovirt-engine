@@ -111,6 +111,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         }
 
         removeSnapshotsFromDB();
+        removeUnusedImages();
 
         if (!getTaskIdList().isEmpty()) {
             deleteOrphanedImages();
@@ -154,6 +155,36 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 }
 
                 noImagesRemovedYet = false;
+            }
+        }
+    }
+
+    private void removeUnusedImages() {
+        Set<Guid> imageIdsUsedByActiveSnapshot = new HashSet<>();
+        for (DiskImage diskImage : getImagesList()) {
+            imageIdsUsedByActiveSnapshot.add(diskImage.getId());
+        }
+
+        List<DiskImage> imagesToRemove = new ArrayList<>();
+        for (Guid snapshotToRemove : snapshotsToRemove) {
+            List<DiskImage> snapshotDiskImages = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotToRemove);
+            imagesToRemove.addAll(snapshotDiskImages);
+        }
+
+        Set<Guid> removeInProcessImageIds = new HashSet<>();
+        for (DiskImage diskImage : imagesToRemove) {
+            if (imageIdsUsedByActiveSnapshot.contains(diskImage.getId()) ||
+                    removeInProcessImageIds.contains(diskImage.getId())) {
+                continue;
+            }
+
+            VdcReturnValueBase retValue = runAsyncTask(VdcActionType.RemoveImage,
+                    new RemoveImageParameters(diskImage.getImageId()));
+
+            if (retValue.getSucceeded()) {
+                removeInProcessImageIds.add(diskImage.getImageId());
+            } else {
+                log.errorFormat("Failed to remove image <{0}>", diskImage.getImageId());
             }
         }
     }
