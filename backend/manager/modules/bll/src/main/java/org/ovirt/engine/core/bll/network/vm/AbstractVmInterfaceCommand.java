@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -109,6 +110,12 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         }
 
         return true;
+    }
+
+    protected ValidationResult vmStatusLegal(VMStatus status) {
+        return status == VMStatus.Up || status == VMStatus.Down || status == VMStatus.ImageLocked
+                ? ValidationResult.VALID
+                : new ValidationResult(VdcBllMessages.NETWORK_CANNOT_ADD_INTERFACE_WHEN_VM_STATUS_NOT_UP_DOWN_LOCKED);
     }
 
     protected String getMacAddress() {

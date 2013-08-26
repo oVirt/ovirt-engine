@@ -1309,10 +1309,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The Network is in use by a Template.\nNetwork definition cannot be detached unless all references to it are cleared.")
     String NETWORK_CANNOT_REMOVE_NETWORK_IN_USE_BY_TEMPLATE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Changing interface properties is allowed only when the VM is in 'Up' or 'Down' status.")
-    String NETWORK_CANNOT_CHANGE_STATUS_WHEN_NOT_DOWN_UP();
-
-    @DefaultStringValue("Cannot add a Network Interface when VM is not Down, Up or Image-Locked.")
+    @DefaultStringValue("Cannot ${action} a Network Interface when VM is not Down, Up or Image-Locked.")
     String NETWORK_CANNOT_ADD_INTERFACE_WHEN_VM_STATUS_NOT_UP_DOWN_LOCKED();
 
     @DefaultStringValue("The specified VLAN ID (${vlanId}) is already in use.")

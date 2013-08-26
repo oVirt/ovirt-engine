@@ -155,8 +155,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        if (!updateVmNicAllowed(getVm().getStatus())) {
-            addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_CHANGE_STATUS_WHEN_NOT_DOWN_UP);
+        if (!validate(vmStatusLegal(getVm().getStatus()))) {
             return false;
         }
 
@@ -280,10 +279,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
 
     private boolean isVnicProfileChanged(VmNic oldNic, VmNic newNic) {
         return !ObjectUtils.equals(oldNic.getVnicProfileId(), newNic.getVnicProfileId());
-    }
-
-    private boolean updateVmNicAllowed(VMStatus vmStatus) {
-        return vmStatus == VMStatus.Up || vmStatus == VMStatus.Down;
     }
 
     private enum RequiredAction {

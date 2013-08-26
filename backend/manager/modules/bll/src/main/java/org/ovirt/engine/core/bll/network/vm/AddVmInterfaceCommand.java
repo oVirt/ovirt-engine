@@ -107,13 +107,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
             return false;
         }
 
-        switch (getVmDynamicDao().get(getParameters().getVmId()).getStatus()) {
-        case Up:
-        case Down:
-        case ImageLocked:
-            break;
-        default:
-            addCanDoActionMessage(VdcBllMessages.NETWORK_CANNOT_ADD_INTERFACE_WHEN_VM_STATUS_NOT_UP_DOWN_LOCKED);
+        if (!validate(vmStatusLegal(getVmDynamicDao().get(getParameters().getVmId()).getStatus()))) {
             return false;
         }
 
