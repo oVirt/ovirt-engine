@@ -3061,9 +3061,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String publicKeyUsage();
 
     @DefaultStringValue("Filters represents hard constraints for running a VM. " +
-            "Each filter implements logic which validates a minimum requirements in order to run a VM. " +
+            "Each filter implements logic which validates a minimum set of requirements in order to run a VM. " +
             "For example, minimum RAM, CPU, designated host, etc. Hosts which fail this validation " +
-            "are filtered out from the current request.")
+            "are filtered out from the current request. For basic optimization, it is possible to set one " +
+            "filter as the first one, and/or another as the last one. Other than that filter processing order " +
+            "is not guaranteed.")
     String clusterPolicyFilterInfo();
 
     @DefaultStringValue("Weights represent soft constraints for running a VM. " +
