@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOption
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
@@ -85,6 +86,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     private UICommand startCommand;
     private UICommand stopCommand;
     private UICommand startRebalanceCommand;
+    private UICommand stopRebalanceCommand;
     private UICommand optimizeForVirtStoreCommand;
 
     public UICommand getStartRebalanceCommand() {
@@ -93,6 +95,14 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
     public void setStartRebalanceCommand(UICommand startRebalanceCommand) {
         this.startRebalanceCommand = startRebalanceCommand;
+    }
+
+    public UICommand getStopRebalanceCommand() {
+        return stopRebalanceCommand;
+    }
+
+    public void setStopRebalanceCommand(UICommand stopRebalanceCommand) {
+        this.stopRebalanceCommand = stopRebalanceCommand;
     }
 
     public UICommand getStartCommand() {
@@ -132,12 +142,14 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         setStartCommand(new UICommand("Start", this)); //$NON-NLS-1$
         setStopCommand(new UICommand("Stop", this)); //$NON-NLS-1$
         setStartRebalanceCommand(new UICommand("StartRebalance", this)); //$NON-NLS-1$
+        setStopRebalanceCommand(new UICommand("StopRebalace", this)); //$NON-NLS-1$
         setOptimizeForVirtStoreCommand(new UICommand("OptimizeForVirtStore", this)); //$NON-NLS-1$
 
         getRemoveVolumeCommand().setIsExecutionAllowed(false);
         getStartCommand().setIsExecutionAllowed(false);
         getStopCommand().setIsExecutionAllowed(false);
         getStartRebalanceCommand().setIsExecutionAllowed(false);
+        getStopRebalanceCommand().setIsExecutionAllowed(false);
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
@@ -336,6 +348,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         boolean allowStop = true;
         boolean allowRemove = true;
         boolean allowStartRebalance = true;
+        boolean allowStopRebalance = true;
         boolean allowOptimize = true;
 
         if (getSelectedItems() == null || getSelectedItems().size() == 0) {
@@ -343,6 +356,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             allowStop = false;
             allowRemove = false;
             allowStartRebalance = false;
+            allowStopRebalance = false;
             allowOptimize = false;
         }
         else {
@@ -354,9 +368,13 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 else if (volume.getStatus() == GlusterStatus.DOWN) {
                     allowStop = false;
                     allowStartRebalance = false;
+                    allowStopRebalance = false;
                 }
                 allowStartRebalance = allowStartRebalance &&
                         (volume.getAsyncTask() == null || Guid.isNullOrEmpty(volume.getAsyncTask().getTaskId()));
+                allowStopRebalance = allowStopRebalance &&
+                        (volume.getAsyncTask() != null && volume.getAsyncTask().getStatus() != null &&
+                        volume.getAsyncTask().getStatus() == JobExecutionStatus.STARTED);
             }
         }
 
@@ -364,6 +382,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         getStopCommand().setIsExecutionAllowed(allowStop);
         getRemoveVolumeCommand().setIsExecutionAllowed(allowRemove);
         getStartRebalanceCommand().setIsExecutionAllowed(allowStartRebalance);
+        getStopRebalanceCommand().setIsExecutionAllowed(allowStopRebalance);
         getOptimizeForVirtStoreCommand().setIsExecutionAllowed(allowOptimize);
 
         // System tree dependent actions.
@@ -397,6 +416,10 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             stop();
         } else if (command.equals(getStartRebalanceCommand())) {
             startRebalance();
+        } else if (command.equals(getStopRebalanceCommand())) {
+            stopRebalance();
+        } else if (command.getName().equals("onStopRebalance")) { //$NON-NLS-1$
+            onStopRebalance();
         } else if (command.equals(getOptimizeForVirtStoreCommand())) {
             optimizeForVirtStore();
         } else if (command.getName().equals("onStop")) {//$NON-NLS-1$
@@ -419,6 +442,72 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             list.add(new GlusterVolumeRebalanceParameters(volume.getId(), false, false));
         }
         Frontend.RunMultipleAction(VdcActionType.StartRebalanceGlusterVolume, list);
+    }
+
+    private void stopRebalance() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        if (getSelectedItems() == null) {
+            return;
+        }
+
+        ConfirmationModel model = new ConfirmationModel();
+        setWindow(model);
+        model.setTitle(ConstantsManager.getInstance().getConstants().confirmStopVolumeRebalanceTitle());
+        model.setHashName("volume_rebalance_stop"); //$NON-NLS-1$
+        model.setMessage(ConstantsManager.getInstance().getConstants().confirmStopVolumeRebalanceMsg());
+
+        ArrayList<String> list = new ArrayList<String>();
+        for (Object item : getSelectedItems()) {
+            GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
+            list.add(volume.getName());
+        }
+        model.setItems(list);
+
+        UICommand okCommand = new UICommand("onStopRebalance", this); //$NON-NLS-1$
+        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        okCommand.setIsDefault(true);
+        model.getCommands().add(okCommand);
+        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        cancelCommand.setIsCancel(true);
+        model.getCommands().add(cancelCommand);
+    }
+
+    private void onStopRebalance() {
+        if (getWindow() == null) {
+            return;
+        }
+        ConfirmationModel model = (ConfirmationModel) getWindow();
+
+        if (model.getProgress() != null) {
+            return;
+        }
+
+        if (getSelectedItems() == null) {
+            return;
+        }
+
+        ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
+        for (Object item : getSelectedItems()) {
+            GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
+            list.add(new GlusterVolumeRebalanceParameters(volume.getId(), false, false));
+        }
+
+        model.startProgress(null);
+
+        Frontend.RunMultipleAction(VdcActionType.StopRebalanceGlusterVolume, list,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendMultipleActionAsyncResult result) {
+                        ConfirmationModel localModel = (ConfirmationModel) result.getState();
+                        localModel.stopProgress();
+                        cancel();
+                    }
+
+                }, model);
     }
 
     private void optimizeForVirtStore() {
