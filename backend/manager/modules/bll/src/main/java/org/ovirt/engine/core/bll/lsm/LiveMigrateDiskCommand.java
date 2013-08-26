@@ -22,7 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute
+@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends MoveOrCopyDiskCommand<T> implements TaskHandlerCommand<LiveMigrateDiskParameters> {
 
     public LiveMigrateDiskCommand(T parameters) {

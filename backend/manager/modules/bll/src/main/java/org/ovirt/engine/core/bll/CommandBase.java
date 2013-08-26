@@ -499,7 +499,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         } catch (TransactionRolledbackLocalException e) {
             log.infoFormat("EndAction: Transaction was aborted in {0}", this.getClass().getName());
         } finally {
-            freeLock();
+            freeLockEndAction();
             if (getCommandShouldBeLogged()) {
                 logCommand();
             }
@@ -571,7 +571,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             exceptionOccurred = true;
             throw e;
         } finally {
-            freeLock();
+            freeLockEndAction();
             if (TransactionSupport.current() == null) {
 
                 // In the unusual case that we have no current transaction, try to cleanup after yourself and if the
@@ -1843,6 +1843,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private void freeLockExecute() {
         if (releaseLocksAtEndOfExecute || !getSucceeded() ||
                 (!hasTasks() && !(this instanceof IVdsAsyncCommand))) {
+            freeLock();
+        }
+    }
+
+    /**
+     * If the command has more than one task handler, we can reach the end action
+     * phase and in that phase execute the next task handler. In that case, we
+     * don't want to release the locks, so we ask whether we're not in execute state.
+     */
+    private void freeLockEndAction() {
+        if (getActionState() != CommandActionState.EXECUTE) {
             freeLock();
         }
     }

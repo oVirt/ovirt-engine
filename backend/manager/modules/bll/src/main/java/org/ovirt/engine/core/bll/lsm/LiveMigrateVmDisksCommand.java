@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -40,7 +41,7 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
-@LockIdNameAttribute
+@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 @NonTransactiveCommandAttribute
 @InternalCommandAttribute
 public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> extends CommandBase<T>
@@ -62,6 +63,22 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
                 new LiveSnapshotTaskHandler(this),
                 new LiveMigrateDisksTaskHandler(this)
                 );
+    }
+
+    /**
+     * Ugly hack, but it is needed as the endAction method in this command is called only
+     * once and in that case it executes the next task handler, so we have no other option
+     * but to release the lock right after executing the next task handler, assuming it'll
+     * take the VM lock by himself so we won't end up in a state where the VM is not locked.
+     */
+    @Override
+    public VdcReturnValueBase endAction() {
+        try {
+            return super.endAction();
+        }
+        finally {
+            freeLock();
+        }
     }
 
     /* Overridden stubs declared as public in order to implement ITaskHandlerCommand */
@@ -131,7 +148,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     @Override
-    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+    protected Map<String, Pair<String, String>> getSharedLocks() {
         return Collections.singletonMap(getVmId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
