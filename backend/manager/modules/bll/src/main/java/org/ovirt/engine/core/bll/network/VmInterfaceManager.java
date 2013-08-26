@@ -244,7 +244,7 @@ public class VmInterfaceManager {
         List<VnicProfile> networkProfiles = getVnicProfileDao().getAllForNetwork(network.getId());
 
         for (VnicProfile profile : networkProfiles) {
-            if (isVnicProfilePermitted(userId, profile, profile.isPortMirroring())) {
+            if (isVnicProfilePermitted(userId, profile, false)) {
                 return profile;
             }
         }
@@ -270,8 +270,8 @@ public class VmInterfaceManager {
         return null;
     }
 
-    private boolean isVnicProfilePermitted(Guid userId, VnicProfile profile, boolean portMirroring) {
-        return portMirroring == profile.isPortMirroring()
+    private boolean isVnicProfilePermitted(Guid userId, VnicProfile profile, boolean portMirroringRequired) {
+        return portMirroringRequired == profile.isPortMirroring()
                 && getPermissionDAO().getEntityPermissions(userId,
                         ActionGroup.CONFIGURE_VM_NETWORK,
                         profile.getId(),
