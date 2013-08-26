@@ -34,6 +34,7 @@
     <xs:complexContent>
       <xs:extension base="Link">
         <xs:sequence>
+          <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="request" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="response" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="linkCapabilities" minOccurs="0" maxOccurs="1"/>
@@ -3171,6 +3172,7 @@
   <xs:complexType name="ParametersSet">
     <xs:sequence>
       <xs:element name="deprecated" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element ref="parameter" maxOccurs="unbounded" minOccurs="0">
         <xs:annotation>
           <xs:appinfo>
@@ -3201,7 +3203,6 @@
       <xs:extension base="DetailedLink">
         <xs:sequence>
           <xs:element name="name" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="description" type="xs:string" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

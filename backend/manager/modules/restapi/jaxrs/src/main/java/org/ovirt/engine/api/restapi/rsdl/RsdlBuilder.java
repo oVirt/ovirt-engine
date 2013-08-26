@@ -207,6 +207,10 @@ public class RsdlBuilder {
             link.setHref(url);
             return this;
         }
+        public LinkBuilder description(String description) {
+            link.setDescription(description);
+            return this;
+        }
         public LinkBuilder rel(String rel) {
             link.setRel(rel);
             return this;
@@ -381,6 +385,9 @@ public class RsdlBuilder {
         String link_name = link.getHref() + "|rel=" + link.getRel();
         if (this.parametersMetaData.containsKey(link_name)) {
             Action action = this.parametersMetaData.get(link_name);
+            if (action.getDescription() != null) {
+                link.setDescription(action.getDescription());
+            }
             if (action.getRequest() != null) {
                 addUrlParams(link, action);
                 addHeaderParams(link, action);
@@ -398,6 +405,9 @@ public class RsdlBuilder {
                     ParametersSet ps = new ParametersSet();
                     if (signature.getDeprecated() != null) {
                         ps.setDeprecated(signature.getDeprecated());
+                    }
+                    if (signature.getDescription() != null) {
+                        ps.setDescription(signature.getDescription());
                     }
                     addBodyParams(ps, signature.getMandatoryArguments().entrySet(), true);
                     addBodyParams(ps, signature.getOptionalArguments().entrySet(), false);
