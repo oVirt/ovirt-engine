@@ -25,11 +25,8 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-@SuppressWarnings("unused")
 public class ExistingVmModelBehavior extends VmModelBehaviorBase
 {
-    private final ProfileBehavior behavior = new NewProfileBehavior();
-
     private EditProfileBehavior networkBehavior = new EditProfileBehavior();
 
     protected VM vm;
