@@ -36,7 +36,7 @@ public class VmTemplateHandler {
                 "isoPath", "diskImageMap", "defaultDisplayType", "priority", "autoStartup", "stateless",
                 "initrdUrl", "kernelUrl", "kernelParams", "images", "interfaces", "quotaId", "quotaName",
                 "quotaEnforcementType", "migrationSupport", "dedicatedVmForVds", "smartcardEnabled","dbGeneration", "deleteProtected",
-                "quotaDefault", "tunnelMigration", "vncKeyboardLayout", "runAndPause", "singleQxlPci", "cpuShares"
+                "quotaDefault", "tunnelMigration", "vncKeyboardLayout", "runAndPause", "singleQxlPci", "cpuShares", "vmType"
         });
     }
 
