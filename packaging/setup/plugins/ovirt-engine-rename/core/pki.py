@@ -249,12 +249,8 @@ class Plugin(plugin.PluginBase):
                 '--cert=-',
             ),
         )
-
-        while 'BEGIN CERTIFICATE' not in stdout[0]:
-            stdout = stdout[1:]
-
         x509 = X509.load_cert_string(
-            string='\n'.join(stdout).encode('utf8'),
+            string='\n'.join(stdout).encode('ascii'),
             format=X509.FORMAT_PEM,
         )
         subject = x509.get_subject()
