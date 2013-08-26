@@ -17,9 +17,11 @@ import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
@@ -59,26 +61,31 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
     }
 
     @Override
-    public Map<Boolean, List<VM>> getForDisk(Guid id) {
+    public Map<Boolean, List<VM>> getForDisk(Guid id, boolean includeVmsSnapshotAttachedTo) {
         Map<Boolean, List<VM>> result = new HashMap<Boolean, List<VM>>();
-        List<VMWithPlugInfo> vms = getVmsWithPlugInfo(id);
-        for (VMWithPlugInfo vm : vms) {
-            MultiValueMapUtils.addToMap(vm.isPlugged(), vm.getVM(), result);
+        List<Pair<VM,VmDevice>> vms = getVmsWithPlugInfo(id);
+        for (Pair<VM, VmDevice> pair : vms) {
+            VmDevice device = pair.getSecond();
+            if (includeVmsSnapshotAttachedTo || device.getSnapshotId() == null) {
+                MultiValueMapUtils.addToMap(device.getIsPlugged(), pair.getFirst(), result);
+            }
         }
         return result;
     }
 
     @Override
-    public List<VM> getVmsListForDisk(Guid id) {
-        List<VM> result = new ArrayList<VM>();
-        List<VMWithPlugInfo> vms = getVmsWithPlugInfo(id);
-        for (VMWithPlugInfo vm : vms) {
-            result.add(vm.getVM());
+    public List<VM> getVmsListForDisk(Guid id, boolean includeVmsSnapshotAttachedTo) {
+        List<VM> result = new ArrayList<>();
+        List<Pair<VM,VmDevice>> vms = getVmsWithPlugInfo(id);
+        for (Pair<VM,VmDevice> pair : vms) {
+            if (includeVmsSnapshotAttachedTo || pair.getSecond().getSnapshotId() == null) {
+                result.add(pair.getFirst());
+            }
         }
         return result;
     }
 
-    private List<VMWithPlugInfo> getVmsWithPlugInfo(Guid id) {
+    public List<Pair<VM,VmDevice>> getVmsWithPlugInfo(Guid id) {
         return getCallsHandler().executeReadList
                 ("GetVmsByDiskId",
                         VMWithPlugInfoRowMapper.instance,
@@ -372,38 +379,15 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
         }
     }
 
-    private static class VMWithPlugInfo {
-
-        public VM getVM() {
-            return vm;
-        }
-
-        public void setVM(VM vm) {
-            this.vm = vm;
-        }
-
-        public boolean isPlugged() {
-            return isPlugged;
-        }
-
-        public void setPlugged(boolean isPlugged) {
-            this.isPlugged = isPlugged;
-        }
-
-        private VM vm;
-        private boolean isPlugged;
-    }
-
-    private static final class VMWithPlugInfoRowMapper implements RowMapper<VMWithPlugInfo> {
+    private static final class VMWithPlugInfoRowMapper implements RowMapper<Pair<VM,VmDevice>> {
         public static final VMWithPlugInfoRowMapper instance = new VMWithPlugInfoRowMapper();
 
         @Override
-        public VMWithPlugInfo mapRow(ResultSet rs, int rowNum) throws SQLException {
+        public Pair<VM,VmDevice> mapRow(ResultSet rs, int rowNum) throws SQLException {
             @SuppressWarnings("synthetic-access")
-            VMWithPlugInfo entity = new VMWithPlugInfo();
-
-            entity.setPlugged(rs.getBoolean("is_plugged"));
-            entity.setVM(VMRowMapper.instance.mapRow(rs, rowNum));
+            Pair<VM,VmDevice> entity = new Pair<>();
+            entity.setFirst(VMRowMapper.instance.mapRow(rs, rowNum));
+            entity.setSecond(VmDeviceDAODbFacadeImpl.VmDeviceRowMapper.instance.mapRow(rs, rowNum));
             return entity;
         }
     }

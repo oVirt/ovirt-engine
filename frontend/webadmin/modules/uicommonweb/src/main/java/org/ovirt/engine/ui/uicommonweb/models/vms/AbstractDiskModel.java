@@ -447,13 +447,17 @@ public abstract class AbstractDiskModel extends DiskModel
                 ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
 
                 diskModel.getIsBootable().setEntity(true);
-                for (Disk disk : disks) {
-                    if (disk.isBoot() && !disk.equals(getDisk())) {
-                        diskModel.getIsBootable().setChangeProhibitionReason(CONSTANTS.onlyOneBootableDisk());
-                        diskModel.getIsBootable().setEntity(false);
-                        diskModel.getIsBootable().setIsChangable(false);
-                        break;
-                    }
+                if (getDisk() == null || !getDisk().isDiskSnapshot()) {
+                    for (Disk disk : disks) {
+                        if (disk.isBoot() && !disk.equals(getDisk())) {
+                            diskModel.getIsBootable().setEntity(false);
+                            if (!disk.isDiskSnapshot()) {
+                                diskModel.getIsBootable().setChangeProhibitionReason(CONSTANTS.onlyOneBootableDisk());
+                                diskModel.getIsBootable().setIsChangable(false);
+                                break;
+                            }
+                        }
+                 }
                 }
 
                 if (!getIsNew()) {

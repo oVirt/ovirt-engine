@@ -235,12 +235,13 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         setStoragePoolId(getVm().getStoragePoolId());
 
         if (!isValidParametersList() || !checkImagesStatus() || !isValidSpaceRequirements()
-                || !isVmNotRunningStateless() || !isVmNotInPreview()) {
+                || !performVmRelatedChecks()) {
             return false;
         }
 
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
             getReturnValue().setCanDoAction(isDiskNotShareable(parameters.getImageId())
+                    && isDiskSnapshotNotPluggedToOtherVms(parameters.getImageId())
                     && isTemplateInDestStorageDomain(parameters.getImageId(), parameters.getStorageDomainId())
                     && validateSourceStorageDomain(parameters.getImageId())
                     && validateDestStorage(parameters.getImageId(), parameters.getStorageDomainId()));
@@ -262,7 +263,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     protected boolean checkImagesStatus() {
-        List<DiskImage> disksToCheck = ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), true, false);
+        List<DiskImage> disksToCheck = ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), true, false, true);
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksToCheck);
         return validate(diskImagesValidator.diskImagesNotLocked());
     }
@@ -276,6 +277,11 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         }
 
         return true;
+    }
+
+    private boolean isDiskSnapshotNotPluggedToOtherVms(Guid imageId) {
+        DiskImage diskImage = getDiskImageById(imageId);
+        return validate((createDiskImagesValidator(Collections.singletonList(diskImage))).diskImagesSnapshotsNotAttachedToOtherVms(true));
     }
 
     private boolean isTemplateInDestStorageDomain(Guid imageId, Guid sourceDomainId) {
@@ -354,12 +360,17 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(totalImagesSize));
     }
 
-    private boolean isVmNotRunningStateless() {
-        return validate(createVmValidator().vmNotRunningStateless());
+    private boolean performVmRelatedChecks() {
+        VmValidator vmValidator = createVmValidator();
+        return validate(vmValidator.vmNotRunningStateless()) && validate(!isVmNotInPreview());
     }
 
     protected VmValidator createVmValidator() {
         return new VmValidator(getVm());
+    }
+
+    protected DiskImagesValidator createDiskImagesValidator(Iterable<DiskImage> disks) {
+        return new DiskImagesValidator(disks);
     }
 
     private boolean isVmNotInPreview() {

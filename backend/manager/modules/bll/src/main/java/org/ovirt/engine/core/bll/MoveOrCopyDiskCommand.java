@@ -231,7 +231,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      */
     private List<VM> getVmsForDiskId() {
         if (cachedListVms == null) {
-            cachedListVms = getVmDAO().getVmsListForDisk(getImage().getId());
+            cachedListVms = getVmDAO().getVmsListForDisk(getImage().getId(), true);
         }
         return cachedListVms;
     }

@@ -20,8 +20,6 @@ import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 public class VmDeviceDAODbFacadeImpl extends
         MassOperationsGenericDaoDbFacade<VmDevice, VmDeviceId> implements VmDeviceDAO {
 
-    private static VmDeviceRowMapper vmDeviceRowMapper = new VmDeviceRowMapper();
-
     public VmDeviceDAODbFacadeImpl() {
         super("VmDevice");
         setProcedureNameForGet("GetVmDeviceByDeviceId");
@@ -49,12 +47,13 @@ public class VmDeviceDAODbFacadeImpl extends
                 .addValue("is_readonly", entity.getIsReadOnly())
                 .addValue("alias", entity.getAlias())
                 .addValue("custom_properties",
-                        SerializationFactory.getSerializer().serialize(entity.getCustomProperties()));
+                        SerializationFactory.getSerializer().serialize(entity.getCustomProperties()))
+                .addValue("snapshot_id", entity.getSnapshotId());
     }
 
     @Override
     protected RowMapper<VmDevice> createEntityRowMapper() {
-        return vmDeviceRowMapper;
+        return VmDeviceRowMapper.instance;
     }
 
     @Override
@@ -68,6 +67,16 @@ public class VmDeviceDAODbFacadeImpl extends
                 .addValue("vm_id", vmId);
 
         return getCallsHandler().executeReadList("GetVmDeviceByVmId",
+                createEntityRowMapper(), parameterSource);
+    }
+
+    @Override
+    public List<VmDevice> getVmDevicesByDeviceId(Guid deviceId, Guid vmId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("device_id", deviceId)
+                .addValue("vm_id", vmId);
+
+        return getCallsHandler().executeReadList("GetVmDeviceByDeviceId",
                 createEntityRowMapper(), parameterSource);
     }
 
@@ -122,7 +131,9 @@ public class VmDeviceDAODbFacadeImpl extends
 
     }
 
-    private static class VmDeviceRowMapper implements RowMapper<VmDevice> {
+    static class VmDeviceRowMapper implements RowMapper<VmDevice> {
+
+        public static VmDeviceRowMapper instance = new VmDeviceRowMapper();
 
         @SuppressWarnings("unchecked")
         @Override
@@ -144,6 +155,7 @@ public class VmDeviceDAODbFacadeImpl extends
             vmDevice.setAlias(rs.getString("alias"));
             vmDevice.setCustomProperties(SerializationFactory.getDeserializer()
                     .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class));
+            vmDevice.setSnapshotId(getGuid(rs, "snapshot_id"));
             return vmDevice;
         }
     }
@@ -217,6 +229,7 @@ public class VmDeviceDAODbFacadeImpl extends
                         .addValue("is_readonly", entity.getIsReadOnly())
                         .addValue("spec_params", entity.getSpecParams())
                         .addValue("boot_order", entity.getBootOrder())
+                        .addValue("snapshot_id", entity.getSnapshotId())
                         .addValue("device", entity.getDevice());
 
                 return paramValue;

@@ -1508,6 +1508,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     CloudInitSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    HotPlugDiskSnapshotSupported,
+
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60")
     AutoStartVmsRunnerIntervalInSeconds,

@@ -127,22 +127,28 @@ public class BackendSnapshotsResourceTest
         List<String> populates = new ArrayList<String>();
         populates.add("true");
         String ovfData = "data";
+        org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot0 = new org.ovirt.engine.core.common.businessentities.Snapshot();
+        resultSnapshot0.setVmConfiguration(ovfData);
+        resultSnapshot0.setId(SNAPSHOT_IDS[0]);
+        org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot1 = new org.ovirt.engine.core.common.businessentities.Snapshot();
+        resultSnapshot1.setVmConfiguration(ovfData);
+        resultSnapshot1.setId(SNAPSHOT_IDS[1]);
         expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
         UriInfo uriInfo = setUpUriExpectations(null);
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(1);
         setUpGetSnapshotVmConfiguration(SNAPSHOT_IDS[0]);
         setUpGetSnapshotVmConfiguration(SNAPSHOT_IDS[1]);
-        setUpEntityQueryExpectations(VdcQueryType.GetVmOvfConfigurationBySnapshot,
+        setUpEntityQueryExpectations(VdcQueryType.GetSnapshotBySnapshotId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{SNAPSHOT_IDS[1]},
-                ovfData);
-        setUpEntityQueryExpectations(VdcQueryType.GetVmOvfConfigurationBySnapshot,
+                resultSnapshot0);
+        setUpEntityQueryExpectations(VdcQueryType.GetSnapshotBySnapshotId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{SNAPSHOT_IDS[0]},
-                ovfData);
+                resultSnapshot1);
         collection.setUriInfo(uriInfo);
         control.replay();
         List<Snapshot> snapshots =  getCollection();
@@ -179,11 +185,14 @@ public class BackendSnapshotsResourceTest
     private void doTestAddAsync(AsyncTaskStatusEnum asyncStatus, CreationStatus creationStatus) throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         String ovfData = "data";
-        setUpEntityQueryExpectations(VdcQueryType.GetVmOvfConfigurationBySnapshot,
+        org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot0 = new org.ovirt.engine.core.common.businessentities.Snapshot();
+        resultSnapshot0.setVmConfiguration(ovfData);
+        resultSnapshot0.setId(SNAPSHOT_IDS[0]);
+        setUpEntityQueryExpectations(VdcQueryType.GetSnapshotBySnapshotId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{SNAPSHOT_IDS[0]},
-                ovfData);
+                resultSnapshot0);
         setUpCreationExpectations(VdcActionType.CreateAllSnapshotsFromVm,
                 CreateAllSnapshotsFromVmParameters.class,
                 new String[] { "Description", "VmId" },

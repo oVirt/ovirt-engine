@@ -62,18 +62,20 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     @Override
     protected boolean canDoAction() {
+        VmValidator vmValidator = new VmValidator(getVm());
         SnapshotsValidator snapshotValidator = new SnapshotsValidator();
         boolean retValue =
                 validate(snapshotValidator.vmNotDuringSnapshot(getVmId()))
                 && validate(snapshotValidator.vmNotInPreview(getVmId()))
-                && validate(new VmValidator(getVm()).vmDown());
+                && validate(vmValidator.vmDown())
+                && validate(vmValidator.vmNotHavingDeviceSnapshotsAttachedToOtherVms(false));
 
         // check that images are ok
         // not checking storage domain, there is a check in
         // CheckTemplateInStorageDomain later
         VmHandler.updateDisksFromDb(getVm());
-        List<DiskImage> diskImages = ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false);
-        List<DiskImage> diskImagesToValidate = ImagesHandler.filterImageDisks(diskImages, true, false);
+        List<DiskImage> diskImages = ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false, true);
+        List<DiskImage> diskImagesToValidate = ImagesHandler.filterImageDisks(diskImages, true, false, true);
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToValidate);
         retValue = retValue &&
                 validate(new StoragePoolValidator(getStoragePool()).isUp()) &&
@@ -117,7 +119,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
             List<DiskImage> imageList =
                     ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVm().getVmtGuid()),
                             false,
-                            false);
+                            false, true);
             Map<Guid, DiskImage> templateImagesMap = new HashMap<Guid, DiskImage>();
             for (DiskImage image : imageList) {
                 templateImagesMap.put(image.getImageId(), image);
@@ -173,7 +175,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
     @Override
     protected void moveOrCopyAllImageGroups() {
-        moveOrCopyAllImageGroups(getVmId(), getVm().getDiskList());
+        moveOrCopyAllImageGroups(getVmId(), ImagesHandler.filterImageDisks(getVm().getDiskList(), false, false, true));
     }
 
     @Override

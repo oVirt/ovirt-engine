@@ -143,7 +143,7 @@ INNER JOIN storage_for_image_view ON images_storage_domain_view.image_guid = sto
 WHERE images_storage_domain_view.active = TRUE;
 
 
-CREATE OR REPLACE VIEW all_disks
+CREATE OR REPLACE VIEW all_disks_including_snapshots
 AS
 SELECT storage_impl.*,
        bd.disk_id, -- Disk fields
@@ -200,7 +200,6 @@ FROM
            null AS device_size
     FROM images_storage_domain_view
     INNER JOIN storage_for_image_view ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
-    WHERE active = TRUE
     UNION
     SELECT 1 AS disk_storage_type,
            null AS storage_id, -- Storage domain fields
@@ -246,6 +245,13 @@ FROM
     LEFT JOIN vms_for_disk_view on vms_for_disk_view.device_id = dlm.disk_id
 ) AS storage_impl
 JOIN base_disks bd ON bd.disk_id = storage_impl.image_group_id;
+
+
+CREATE OR REPLACE VIEW all_disks
+AS
+SELECT *
+FROM all_disks_including_snapshots
+WHERE active IS NULL OR active = TRUE;
 
 
 CREATE OR REPLACE VIEW storage_domains
@@ -641,7 +647,7 @@ WHERE vm_type = '1';
 
 CREATE OR REPLACE VIEW vms_with_plug_info
 as
-SELECT vms.*, device_id, is_plugged
+SELECT *
 FROM vms
 INNER JOIN vm_device vd ON vd.vm_id = vms.vm_guid;
 
@@ -1504,7 +1510,7 @@ CREATE OR REPLACE VIEW user_db_users_permissions_view AS
 CREATE OR REPLACE VIEW vm_device_view
 AS
 SELECT device_id, vm_id, type, device, address, boot_order, spec_params,
-       is_managed, is_plugged, is_readonly, alias, custom_properties
+       is_managed, is_plugged, is_readonly, alias, custom_properties, snapshot_id
   FROM vm_device;
 
 -- Permissions on VNIC Profiles

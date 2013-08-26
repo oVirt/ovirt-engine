@@ -103,7 +103,7 @@ public class GetDiskAlignmentCommandTest {
         storagePool = new StoragePool();
         storagePool.setStatus(StoragePoolStatus.Up);
 
-        when(vmDao.getVmsListForDisk(diskId)).thenReturn(Collections.singletonList(vm));
+        when(vmDao.getVmsListForDisk(diskId, Boolean.FALSE)).thenReturn(Collections.singletonList(vm));
         when(vmDeviceDao.get(vmDeviceId)).thenReturn(vmDevice);
         when(vdsDao.getAllForVdsGroupWithStatus(groupId, VDSStatus.Up)).thenReturn(Collections.singletonList(vds));
         when(spDao.get(poolId)).thenReturn(storagePool);
@@ -141,7 +141,7 @@ public class GetDiskAlignmentCommandTest {
 
     @Test
     public void testCanDoActionFloatingDisk() {
-        when(vmDao.getVmsListForDisk(diskId)).thenReturn(Collections.<VM>emptyList());
+        when(vmDao.getVmsListForDisk(diskId, Boolean.FALSE)).thenReturn(Collections.<VM>emptyList());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_NOT_VM_DISK);
     }

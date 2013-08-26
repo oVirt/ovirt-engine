@@ -326,12 +326,12 @@ public class OvfDataUpdater {
      */
     protected void buildMetadataDictionaryForVm(VM vm, Map<Guid, KeyValuePairCompat<String, List<Guid>>> metaDictionary) {
         ArrayList<DiskImage> AllVmImages = new ArrayList<DiskImage>();
-        for (Disk disk : vm.getDiskMap().values()) {
-            if (disk.isAllowSnapshot()) {
-                DiskImage diskImage = (DiskImage) disk;
-                AllVmImages.addAll(getAllImageSnapshots(diskImage));
-            }
+        List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskList(), false, true, true);
+
+        for (DiskImage diskImage : filteredDisks) {
+            AllVmImages.addAll(getAllImageSnapshots(diskImage));
         }
+
         String vmMeta = generateVmMetadata(vm, AllVmImages);
         metaDictionary.put(
                 vm.getId(),

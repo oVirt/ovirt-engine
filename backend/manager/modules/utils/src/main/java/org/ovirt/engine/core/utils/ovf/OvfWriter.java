@@ -397,6 +397,12 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteRaw(DevicePropertiesUtils.getInstance().convertProperties(vmDevice.getCustomProperties()));
             _writer.WriteEndElement();
         }
+
+        if (vmDevice.getSnapshotId() != null) {
+            _writer.WriteStartElement(OvfProperties.VMD_SNAPSHOT_PROP);
+            _writer.WriteRaw(String.valueOf(vmDevice.getSnapshotId()));
+            _writer.WriteEndElement();
+        }
     }
 
     @Override

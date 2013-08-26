@@ -79,6 +79,12 @@ public class BackendVmDiskResourceTest
         }
     }
 
+    @Override
+    protected void setUriInfo(UriInfo uriInfo) {
+        resource.setUriInfo(uriInfo);
+        resource.getCollection().setUriInfo(uriInfo);
+    }
+
     @Test
     public void testGet() throws Exception {
         setUriInfo(setUpBasicUriExpectations());

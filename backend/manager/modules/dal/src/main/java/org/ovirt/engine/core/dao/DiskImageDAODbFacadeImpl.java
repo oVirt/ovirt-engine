@@ -70,6 +70,18 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     }
 
     @Override
+    public DiskImage getDiskSnapshotForVmSnapshot(Guid diskId, Guid vmSnapshotId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_snapshot_id", vmSnapshotId)
+                .addValue("image_group_id", diskId);
+
+        return getCallsHandler().executeRead("GetDiskSnapshotForVmSnapshot",
+                DiskImageRowMapper.instance,
+                parameterSource);
+    }
+
+
+    @Override
     public List<DiskImage> getAllSnapshotsForImageGroup(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("image_group_id", id);
@@ -77,6 +89,12 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
         return getCallsHandler().executeReadList("GetSnapshotsByImageGroupId",
                 DiskImageRowMapper.instance,
                 parameterSource);
+    }
+
+    @Override
+    public List<DiskImage> getAttachedDiskSnapshotsToVm(Guid vmId, Boolean isPlugged) {
+        return getCallsHandler().executeReadList("GetAttachedDiskSnapshotsToVm", DiskImageRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("vm_guid", vmId).addValue("is_plugged", isPlugged));
     }
 
     @Override

@@ -65,7 +65,7 @@ public class RemoveDiskCommandTest {
         vmDevice.setId(vmDeviceId);
         vmDevice.setIsPlugged(true);
 
-        when(vmDao.getVmsListForDisk(diskId)).thenReturn(Collections.singletonList(vm));
+        when(vmDao.getVmsListForDisk(diskId, Boolean.TRUE)).thenReturn(Collections.singletonList(vm));
         when(vmDeviceDao.get(vmDeviceId)).thenReturn(vmDevice);
 
         RemoveDiskParameters params = new RemoveDiskParameters(diskId);

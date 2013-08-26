@@ -163,7 +163,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         revertTasks();
 
         if (getDestinationDiskImage() != null
-                && !DbFacade.getInstance().getVmDao().getVmsListForDisk(getDestinationDiskImage().getId()).isEmpty()) {
+                && !DbFacade.getInstance().getVmDao().getVmsListForDisk(getDestinationDiskImage().getId(), false).isEmpty()) {
             // Empty Guid, means new disk rather than snapshot, so no need to add a map to the db for new disk.
             if (!getDestinationDiskImage().getParentId().equals(Guid.Empty)) {
                 if (!getDestinationDiskImage().getParentId().equals(getDestinationDiskImage().getImageTemplateId())) {

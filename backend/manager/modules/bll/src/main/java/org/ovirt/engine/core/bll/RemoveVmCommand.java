@@ -88,7 +88,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     private boolean removeVm() {
         final List<DiskImage> diskImages = ImagesHandler.filterImageDisks(getVm().getDiskList(),
                 true,
-                false);
+                false,
+                true);
 
         for (VmNic nic : getInterfaces()) {
             new ExternalNetworkManager(nic).deallocateIfExternal();
@@ -194,7 +195,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         }
 
         Collection<Disk> vmDisks = getVm().getDiskMap().values();
-        List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false);
+        List<DiskImage> vmImages = ImagesHandler.filterImageDisks(vmDisks, true, false, true);
         if (!vmImages.isEmpty()) {
             Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(vmImages);
             MultipleStorageDomainsValidator storageValidator = new MultipleStorageDomainsValidator(getVm().getStoragePoolId(), storageIds);
@@ -221,6 +222,10 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             if (AsyncTaskManager.getInstance().HasTasksByStoragePoolId(getVm().getStoragePoolId())) {
                 return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_HAS_RUNNING_TASKS);
             }
+        }
+
+        if (getParameters().isRemoveDisks() && !validate(vmValidator.vmNotHavingDeviceSnapshotsAttachedToOtherVms(false))) {
+            return false;
         }
 
         return true;

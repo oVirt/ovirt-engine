@@ -203,11 +203,11 @@ public class MoveDisksCommandTest {
         vm.setRunOnVds(runOnVds);
 
         when(vmDao.get(any(Guid.class))).thenReturn(vm);
-        when(vmDao.getForDisk(diskImageId1)).thenReturn(
+        when(vmDao.getForDisk(diskImageId1, false)).thenReturn(
                 Collections.singletonMap(isPlugged1, Collections.singletonList(vm)));
 
         if (diskImageId2 != null) {
-            when(vmDao.getForDisk(diskImageId2)).thenReturn(
+            when(vmDao.getForDisk(diskImageId2, false)).thenReturn(
                     Collections.singletonMap(isPlugged2, Collections.singletonList(vm)));
         }
     }

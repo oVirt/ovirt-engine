@@ -133,13 +133,16 @@ public class BackendSnapshotsResource
 
     private Snapshot populateSnapshotConfiguration (Snapshot model) {
         VdcQueryReturnValue queryReturnValue =
-                runQuery(VdcQueryType.GetVmOvfConfigurationBySnapshot,
+                runQuery(VdcQueryType.GetSnapshotBySnapshotId,
                         new IdQueryParameters(Guid.createGuidFromString(model.getId())));
 
         if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {
-            return SnapshotMapper.mapSnapshotConfiguration((String) queryReturnValue.getReturnValue(),
-                    ConfigurationType.OVF,
-                    model);
+            org.ovirt.engine.core.common.businessentities.Snapshot snapshot = queryReturnValue.getReturnValue();
+            if (snapshot.getVmConfiguration() != null) {
+                return SnapshotMapper.map(snapshot.getVmConfiguration(),
+                        ConfigurationType.OVF,
+                        model);
+            }
         }
 
         return model;

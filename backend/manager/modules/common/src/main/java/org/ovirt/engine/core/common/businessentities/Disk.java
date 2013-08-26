@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 
 /**
@@ -96,6 +97,11 @@ public abstract class Disk extends BaseDisk {
 
     public void setVmNames(ArrayList<String> vmNames) {
         this.vmNames = vmNames;
+    }
+
+    @JsonIgnore
+    public boolean isDiskSnapshot() {
+        return false;
     }
 
     /**

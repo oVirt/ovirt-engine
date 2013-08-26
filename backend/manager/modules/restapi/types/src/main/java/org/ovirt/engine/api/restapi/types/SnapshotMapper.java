@@ -66,7 +66,7 @@ public class SnapshotMapper {
         return template;
     }
 
-    public static Snapshot mapSnapshotConfiguration(String configuration, ConfigurationType type, Snapshot snapshot) {
+    public static Snapshot map(String configuration, ConfigurationType type, Snapshot snapshot) {
         snapshot.setInitialization(new Initialization());
         snapshot.getInitialization().setConfiguration(new Configuration());
         snapshot.getInitialization().getConfiguration().setData(configuration);

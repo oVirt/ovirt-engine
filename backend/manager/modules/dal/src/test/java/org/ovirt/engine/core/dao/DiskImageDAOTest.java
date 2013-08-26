@@ -3,6 +3,8 @@ package org.ovirt.engine.core.dao;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.ovirt.engine.core.dao.FixturesTool.IMAGE_ID;
 import static org.ovirt.engine.core.dao.FixturesTool.TEMPLATE_IMAGE_ID;
@@ -85,6 +87,26 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
     }
 
     @Test
+    public void getDiskSnapshotForVmSnapshotSameSnapshot() {
+        DiskImage result = dao.getDiskSnapshotForVmSnapshot(existingEntity.getId(), existingEntity.getVmSnapshotId());
+        assertNotNull(result);
+        assertEquals(existingEntity.getId(), result.getId());
+        assertEquals(existingEntity.getVmSnapshotId(), result.getVmSnapshotId());
+    }
+
+    @Test
+    public void getDiskSnapshotForVmSnapshotDifferentSnapshot() {
+        DiskImage result1 = dao.getDiskSnapshotForVmSnapshot(existingEntity.getId(), FixturesTool.EXISTING_SNAPSHOT_ID);
+        DiskImage result2 =
+                dao.getDiskSnapshotForVmSnapshot(existingEntity.getId(), FixturesTool.EXISTING_SNAPSHOT_ID2);
+        assertNotNull(result1);
+        assertNotNull(result2);
+        assertEquals(result1.getId(), result2.getId());
+        assertNotSame("Images should be different", result1.getImageId(), result2.getImageId());
+        assertNotSame("Vm snapshots should be different", result1.getVmSnapshotId(), result2.getVmSnapshotId());
+    }
+
+    @Test
     public void testGetTemplate() {
         DiskImage result = dao.get(TEMPLATE_IMAGE_ID);
         assertNotNull(result);
@@ -101,6 +123,22 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
         for (DiskImage image : result) {
             assertFalse(diskDao.exists(image.getId()));
         }
+    }
+
+    @Test
+    public void testGetDiskSnapshotForVmSnapshot() {
+        DiskImage result = dao.getDiskSnapshotForVmSnapshot(FixturesTool.IMAGE_GROUP_ID, FixturesTool.EXISTING_SNAPSHOT_ID);
+
+        assertNotNull(result);
+        assertEquals(FixturesTool.IMAGE_GROUP_ID, result.getId());
+        assertEquals(FixturesTool.EXISTING_SNAPSHOT_ID, result.getVmSnapshotId());
+    }
+
+    @Test
+    public void testGetDiskSnapshotForVmSnapshotNonExisting() {
+        DiskImage result = dao.getDiskSnapshotForVmSnapshot(Guid.Empty, FixturesTool.EXISTING_SNAPSHOT_ID);
+
+        assertNull(result);
     }
 
     @Test

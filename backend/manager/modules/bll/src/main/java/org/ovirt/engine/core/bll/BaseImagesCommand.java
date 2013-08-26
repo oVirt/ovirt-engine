@@ -170,7 +170,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      */
     protected Guid findImageForSameDrive(SnapshotType snapshotType) {
         return findImageForSameDrive(getSnapshotDao()
-                .getId(getVmDAO().getVmsListForDisk(getImage().getId()).get(0).getId(), snapshotType));
+                .getId(getVmDAO().getVmsListForDisk(getImage().getId(), false).get(0).getId(), snapshotType));
     }
 
     /**

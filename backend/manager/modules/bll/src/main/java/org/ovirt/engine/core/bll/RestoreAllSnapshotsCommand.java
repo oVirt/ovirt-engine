@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -56,6 +57,7 @@ import org.ovirt.engine.core.dao.SnapshotDao;
 public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters> extends VmCommand<T> implements QuotaStorageDependent {
 
     private final Set<Guid> snapshotsToRemove = new HashSet<Guid>();
+    private Snapshot targetSnapshot;
 
     /**
      * The snapshot id which will be removed (the stateless/preview/active image).
@@ -356,17 +358,21 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         }
 
         SnapshotsValidator snapshotValidator = createSnapshotValidator();
-        VmValidator vmValidator = new VmValidator(getVm());
+        VmValidator vmValidator = createVmValidator(getVm());
         if (!validate(snapshotValidator.snapshotExists(getVmId(), getParameters().getDstSnapshotId())) ||
                 !validate(new StoragePoolValidator(getStoragePool()).isUp())) {
             return false;
         }
 
+        targetSnapshot = getSnapshotDao().get(getParameters().getDstSnapshotId());
+
         MultipleStorageDomainsValidator storageValidator = createStorageDomainValidator();
         if (!validate(storageValidator.allDomainsExistAndActive()) ||
                 !validate(storageValidator.allDomainsWithinThresholds()) ||
                 !performImagesChecks() ||
-                !validate(vmValidator.vmDown())) {
+                !validate(vmValidator.vmDown()) ||
+                // if the user choose to commit a snapshot - the vm cant have disk snapshots attached to other vms.
+                (targetSnapshot.getType() == SnapshotType.REGULAR && !validate(vmValidator.vmNotHavingDeviceSnapshotsAttachedToOtherVms(false)))) {
             return false;
         }
 
@@ -389,6 +395,10 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         return new SnapshotsValidator();
     }
 
+    protected VmValidator createVmValidator(VM vm) {
+        return new VmValidator(vm);
+    }
+
     protected MultipleStorageDomainsValidator createStorageDomainValidator() {
         Set<Guid> storageIds = ImagesHandler.getAllStorageIdsForImageIds(getImagesList());
         return new MultipleStorageDomainsValidator(getStoragePoolId(), storageIds);
@@ -396,7 +406,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
 
     protected boolean performImagesChecks() {
         List<DiskImage> diskImagesToCheck =
-                ImagesHandler.filterImageDisks(getImagesList(), true, false);
+                ImagesHandler.filterImageDisks(getImagesList(), true, false, true);
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToCheck);
         return validate(diskImagesValidator.diskImagesNotLocked());
     }

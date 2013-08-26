@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -42,7 +43,10 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
         drive.put(VdsProperties.Type, VmDeviceType.DISK.getName());
         addAddress(drive, getParameters().getVmDevice().getAddress());
         drive.put(VdsProperties.INTERFACE, disk.getDiskInterface().getName());
-        drive.put(VdsProperties.Shareable, String.valueOf(disk.isShareable()));
+        drive.put(VdsProperties.Shareable,
+                (vmDevice.getSnapshotId() != null && FeatureSupported.hotPlugDiskSnapshot(getParameters().getVm()
+                        .getVdsGroupCompatibilityVersion())) ? VdsProperties.Transient
+                        : String.valueOf(disk.isShareable()));
         drive.put(VdsProperties.Optional, Boolean.FALSE.toString());
         drive.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
         drive.put(VdsProperties.DeviceId, vmDevice.getId().getDeviceId().toString());

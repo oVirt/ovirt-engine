@@ -7,6 +7,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,19 +48,38 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
     /** An unplugged disk for the test */
     private DiskImage unpluggedDisk;
 
+    /** A plugged disk snapshot for the test */
+    private DiskImage pluggedDiskSnapshot;
+
+    /** An unplugged disk snapshot for the test */
+    private DiskImage unpluggedDiskSnapshot;
+
+    /** An unplugged disk snapshot for the test */
+    private Guid snapshotId;
+
     @Before
     @Override
     public void setUp() throws Exception {
         super.setUp();
         vmID = Guid.newGuid();
-        pluggedDisk = createDiskImage();
-        unpluggedDisk = createDiskImage();
+        snapshotId = Guid.newGuid();
+        pluggedDisk = createDiskImage(true);
+        unpluggedDisk = createDiskImage(true);
+        pluggedDiskSnapshot = createDiskImage(false);
+        pluggedDiskSnapshot.setVmSnapshotId(snapshotId);
+        pluggedDiskSnapshot.setActive(false);
+        unpluggedDiskSnapshot = createDiskImage(false);
+        unpluggedDiskSnapshot.setVmSnapshotId(snapshotId);
+        unpluggedDiskSnapshot.setActive(false);
         setUpDAOMocks();
     }
 
     private void setUpDAOMocks() {
         // Mock some devices
         VmDevice pluggedDevice = createVMDevice(vmID, pluggedDisk);
+        VmDevice unpluggedDevice = createVMDevice(vmID, unpluggedDisk);
+        VmDevice pluggedSnapshotDevice = createVMDevice(vmID, pluggedDiskSnapshot);
+        VmDevice unpluggedSnapshotDevice = createVMDevice(vmID, unpluggedDiskSnapshot);
 
         // Mock the DAOs
         DbFacade dbFacadeMock = getDbFacadeMockInstance();
@@ -68,6 +88,8 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
         List<Disk> returnArray = new ArrayList<Disk>();
         returnArray.add(pluggedDisk);
         returnArray.add(unpluggedDisk);
+        returnArray.add(pluggedDiskSnapshot);
+        returnArray.add(unpluggedDiskSnapshot);
         diskDAOMock = mock(DiskDao.class);
         when(dbFacadeMock.getDiskDao()).thenReturn(diskDAOMock);
         when(diskDAOMock.getAllForVm(vmID, getUser().getId(), getQueryParameters().isFiltered())).thenReturn(returnArray);
@@ -80,17 +102,21 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
                 VmDeviceType.DISK.getName(),
                 getUser().getId(),
                 getQueryParameters().isFiltered())).
-                thenReturn(Collections.singletonList(pluggedDevice));
+                thenReturn(Arrays.asList(pluggedDevice, unpluggedDevice, pluggedSnapshotDevice, unpluggedSnapshotDevice));
 
         // Snapshots
         doReturn(new ArrayList<DiskImage>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND,
                 createDiskSnapshot(pluggedDisk.getId())))).when(getQuery()).getAllImageSnapshots(pluggedDisk);
         doReturn(Collections.nCopies(NUM_DISKS_OF_EACH_KIND, createDiskSnapshot(unpluggedDisk.getId()))).when(getQuery())
                 .getAllImageSnapshots(unpluggedDisk);
+        doReturn(new ArrayList<DiskImage>(Collections.nCopies(NUM_DISKS_OF_EACH_KIND,
+                createDiskSnapshot(pluggedDiskSnapshot.getId())))).when(getQuery()).getAllImageSnapshots(pluggedDiskSnapshot);
+        doReturn(Collections.nCopies(NUM_DISKS_OF_EACH_KIND, createDiskSnapshot(unpluggedDiskSnapshot.getId()))).when(getQuery())
+                .getAllImageSnapshots(unpluggedDiskSnapshot);
     }
 
-    private static VmDevice createVMDevice(Guid vmID, DiskImage disk) {
-        return new VmDevice(new VmDeviceId(disk.getImageId(), vmID),
+    private VmDevice createVMDevice(Guid vmID, DiskImage disk) {
+        return new VmDevice(new VmDeviceId(disk.getId(), vmID),
                 VmDeviceGeneralType.DISK,
                 VmDeviceType.DISK.getName(),
                 "",
@@ -100,10 +126,11 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
                 true,
                 true,
                 "",
-                null);
+                null,
+                disk.getVmSnapshotId());
     }
 
-    private DiskImage createDiskImage() {
+    private DiskImage createDiskImage(boolean active) {
         DiskImage di = new DiskImage();
         di.setActive(true);
         di.setId(Guid.newGuid());
@@ -136,6 +163,8 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
         // Assert the correct disks are returned
         assertTrue("plugged disk should be in the return value", disks.contains(pluggedDisk));
         assertTrue("unplugged disk should be in the return value", disks.contains(unpluggedDisk));
+        assertTrue("plugged disk snapshots should be in the return value", disks.contains(pluggedDiskSnapshot));
+        assertTrue("unplugged disk snapshots should be in the return value", disks.contains(unpluggedDiskSnapshot));
 
         // Assert the disks have the correct snapshots
         assertCorrectSnapshots(pluggedDisk);

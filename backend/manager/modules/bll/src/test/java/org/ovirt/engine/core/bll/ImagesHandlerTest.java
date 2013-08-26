@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Set;
 
 import org.junit.Before;
@@ -75,5 +76,15 @@ public class ImagesHandlerTest {
 
         assertEquals("Wrong number of Guids returned", 3, result.size());
         assertTrue("Wrong Guids returned", result.containsAll(Arrays.asList(sdId1, sdId2, sdIdShared)));
+    }
+
+    @Test
+    public void filterImageDisksFilterDiskSnapshots() {
+        disk1.setActive(true);
+
+        List<DiskImage> result = ImagesHandler.filterImageDisks(Arrays.asList(disk1, disk2), false, false, true);
+
+        assertEquals("Wrong number of Guids returned", 1, result.size());
+        assertTrue("The result should contain the active image disk" ,result.contains(disk1));
     }
 }

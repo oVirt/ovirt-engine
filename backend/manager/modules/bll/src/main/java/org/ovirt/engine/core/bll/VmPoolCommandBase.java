@@ -153,7 +153,7 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
         }
 
         List<Disk> disks = DbFacade.getInstance().getDiskDao().getAllForVm(vmId);
-        List<DiskImage> vmImages = ImagesHandler.filterImageDisks(disks, true, true);
+        List<DiskImage> vmImages = ImagesHandler.filterImageDisks(disks, true, true, false);
 
         VM vm = DbFacade.getInstance().getVmDao().get(vmId);
         StoragePool sp = DbFacade.getInstance().getStoragePoolDao().get(vm.getStoragePoolId());

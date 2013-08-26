@@ -63,8 +63,13 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     /**
      * The device read-only flag
      */
-
     private boolean isReadOnly;
+
+    /**
+     * The device flag indicating whether the device
+     * is a device from a taken snapshot
+     */
+    private Guid snapshotId;
 
     /**
      * The device alias.
@@ -88,7 +93,8 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
             Boolean isPlugged,
             boolean isReadOnly,
             String alias,
-            Map<String, String> customProperties) {
+            Map<String, String> customProperties,
+            Guid snapshotId) {
         this.id = id;
         this.type = type;
         this.device = device;
@@ -100,6 +106,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         this.isReadOnly = isReadOnly;
         this.alias = alias;
         this.customProperties = customProperties;
+        this.snapshotId = snapshotId;
     }
 
     @Override
@@ -197,6 +204,14 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         this.isReadOnly = isReadOnly;
     }
 
+    public Guid getSnapshotId() {
+        return snapshotId;
+    }
+
+    public void setSnapshotId(Guid snapshotId) {
+        this.snapshotId = snapshotId;
+    }
+
     public String getAlias() {
         return alias;
     }
@@ -228,6 +243,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         result = prime * result + (isReadOnly ? 1231 : 1237);
         result = prime * result + alias.hashCode();
         result = prime * result + (customProperties == null ? 0 : customProperties.hashCode());
+        result = prime * result + (snapshotId == null ? 0 : snapshotId.hashCode());
         return result;
     }
 
@@ -253,7 +269,8 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
                 && getIsPlugged().equals(other.getIsPlugged())
                 && isReadOnly == other.isReadOnly
                 && alias.equals(other.alias)
-                && ObjectUtils.objectsEqual(customProperties, other.customProperties));
+                && ObjectUtils.objectsEqual(customProperties, other.customProperties)
+                && ObjectUtils.objectsEqual(snapshotId, other.snapshotId));
     }
 
     @Override
@@ -283,6 +300,8 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         sb.append(getAlias());
         sb.append(", customProperties=");
         sb.append(getCustomProperties());
+        sb.append(", snapshotId=");
+        sb.append(getSnapshotId());
         sb.append("}");
         return sb.toString();
     }

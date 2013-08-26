@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.LogicalUnit;
+import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
@@ -138,6 +139,29 @@ public class BackendVmDisksResourceTest
         Disk model = getModel(0);
         model.setId(DISK_ID.toString()); //means this is an existing disk --> attach
         model.setSize(1024 * 1024L);
+        Response response = collection.add(model);
+        assertEquals(200, response.getStatus());
+    }
+
+    @Test
+    public void testAttachDiskSnapshot() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        Guid snapshotId = Guid.newGuid();
+        Disk model = getModel(0);
+        model.setSnapshot(new Snapshot());
+        model.getSnapshot().setId(snapshotId.toString());
+        model.setId(DISK_ID.toString()); //means this is an existing disk --> attach
+        setUpEntityQueryExpectations(VdcQueryType.GetAllDisksByVmId,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { PARENT_ID },
+                getEntityList());
+        setUpActionExpectations (VdcActionType.AttachDiskToVm,
+                AttachDettachVmDiskParameters.class,
+                new String[] { "VmId", "EntityInfo", "SnapshotId" },
+                new Object[] { PARENT_ID, new EntityInfo(VdcObjectType.Disk, DISK_ID), snapshotId },
+                true,
+                true);
         Response response = collection.add(model);
         assertEquals(200, response.getStatus());
     }

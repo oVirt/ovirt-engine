@@ -36,14 +36,18 @@ public abstract class VmInfoBuilderBase {
     protected int[] ideIndexSlots = new int[] { 0, 1, 3 };
     protected OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
-    private static class DiskImageByBootComparator implements Comparator<Disk>, Serializable {
+    private static class DiskImageByBootAndSnapshotComparator implements Comparator<Disk>, Serializable {
         private static final long serialVersionUID = 4732164571328497830L;
 
         @Override
         public int compare(Disk o1, Disk o2) {
             Boolean boot1 = o1.isBoot();
             Boolean boot2 = o2.isBoot();
-            return boot1.compareTo(boot2);
+            int bootResult = boot1.compareTo(boot2);
+            if (bootResult == 0 && o1.isBoot()) {
+                return Boolean.compare(o2.isDiskSnapshot(), o1.isDiskSnapshot());
+            }
+            return bootResult;
         }
     }
 
@@ -220,7 +224,7 @@ public abstract class VmInfoBuilderBase {
                 .values());
         Collections.sort(diskImages, new DiskImageByDiskAliasComparator());
         Collections.sort(diskImages,
-                Collections.reverseOrder(new DiskImageByBootComparator()));
+                Collections.reverseOrder(new DiskImageByBootAndSnapshotComparator()));
         return diskImages;
     }
 

@@ -135,7 +135,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         for (MoveDiskParameters moveDiskParameters : getParameters().getParametersList()) {
             DiskImage diskImage = getDiskImageDao().get(moveDiskParameters.getImageId());
 
-            Map<Boolean, List<VM>> allVmsForDisk = getVmDAO().getForDisk(diskImage.getId());
+            Map<Boolean, List<VM>> allVmsForDisk = getVmDAO().getForDisk(diskImage.getId(), false);
             List<VM> vmsForPluggedDisk = allVmsForDisk.get(Boolean.TRUE);
             List<VM> vmsForUnpluggedDisk = allVmsForDisk.get(Boolean.FALSE);
 

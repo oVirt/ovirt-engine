@@ -19,6 +19,8 @@ public interface VmDeviceDAO extends GenericDao<VmDevice, VmDeviceId>, MassOpera
 
     List<VmDevice> getVmDeviceByVmId(Guid vmId);
 
+    List<VmDevice> getVmDevicesByDeviceId(Guid deviceId, Guid vmId);
+
     List<VmDevice> getVmDeviceByVmIdAndType(Guid vmId, VmDeviceGeneralType type);
 
     List<VmDevice> getVmDeviceByVmIdTypeAndDevice(Guid vmId, VmDeviceGeneralType type, String device);

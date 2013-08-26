@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
@@ -41,7 +43,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
 
     public AttachDiskToVmCommand(T parameters) {
         super(parameters);
-        disk = loadDiskById((Guid) getParameters().getEntityInfo().getId());
+        disk = loadDisk((Guid) getParameters().getEntityInfo().getId());
     }
 
     protected AttachDiskToVmCommand(T parameters, Disk disk) {
@@ -49,14 +51,16 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
         this.disk = disk;
     }
 
-    private Disk loadDiskById(Guid id) {
-        return getDiskDao().get(id);
-    }
-
     @Override
     protected boolean canDoAction() {
         if (disk == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
+        }
+
+        if (isOperationPerformedOnDiskSnapshot()
+                && (!validate(getSnapshotsValidator().snapshotExists(getSnapshot())) || !validate(getSnapshotsValidator().snapshotTypeSupported(getSnapshot(),
+                Collections.singletonList(SnapshotType.REGULAR))))) {
+            return false;
         }
 
         boolean isImageDisk = disk.getDiskStorageType() == DiskStorageType.IMAGE;
@@ -94,7 +98,7 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             return failCanDoAction(VdcBllMessages.ACTION_NOT_SUPPORTED_FOR_CLUSTER_POOL_LEVEL);
         }
 
-        if (!disk.isShareable() && disk.getNumberOfVms() > 0) {
+        if (!isOperationPerformedOnDiskSnapshot() && !disk.isShareable() && disk.getNumberOfVms() > 0) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NOT_SHAREABLE_DISK_ALREADY_ATTACHED);
         }
 
@@ -129,7 +133,10 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
 
     @Override
     protected void executeVmCommand() {
-        getVmStaticDAO().incrementDbGeneration(getVm().getId());
+        if (!isOperationPerformedOnDiskSnapshot()) {
+            getVmStaticDAO().incrementDbGeneration(getVm().getId());
+        }
+
         final VmDevice vmDevice = createVmDevice();
         getVmDeviceDao().save(vmDevice);
 
@@ -137,11 +144,16 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
         List<Disk> imageList = new ArrayList<Disk>();
         imageList.add(disk);
         VmHandler.updateDisksForVm(getVm(), imageList);
-        if (disk.isAllowSnapshot()) {
-            updateDiskVmSnapshotId();
+
+        if (!isOperationPerformedOnDiskSnapshot()) {
+            if (disk.isAllowSnapshot()) {
+                updateDiskVmSnapshotId();
+            }
         }
+
         // update vm device boot order
         updateBootOrderInVmDevice();
+
         if (getParameters().isPlugUnPlug() && getVm().getStatus() != VMStatus.Down) {
             performPlugCommand(VDSCommandType.HotPlugDisk, disk, vmDevice);
         }
@@ -159,7 +171,12 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
                 getParameters().isPlugUnPlug(),
                 false,
                 "",
-                null);
+                null,
+                getParameters().getSnapshotId());
+    }
+
+    protected boolean isOperationPerformedOnDiskSnapshot() {
+        return (getParameters().getSnapshotId() != null);
     }
 
     protected void updateBootOrderInVmDevice() {
@@ -217,6 +234,11 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_ATTACH_DISK_TO_VM : AuditLogType.USER_FAILED_ATTACH_DISK_TO_VM;
+    }
+
+
+    protected Snapshot getSnapshot() {
+        return getSnapshotDao().get(getParameters().getSnapshotId());
     }
 
     @Override

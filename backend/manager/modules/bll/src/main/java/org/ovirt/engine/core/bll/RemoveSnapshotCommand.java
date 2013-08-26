@@ -28,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -206,11 +207,13 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             return false;
         }
 
+        VmValidator vmValidator = createVmValidator(getVm());
         if (!validate(new StoragePoolValidator(getStoragePool()).isUp()) ||
                 !validateVmNotDuringSnapshot() ||
                 !validateVmNotInPreview() ||
                 !validateSnapshotExists() ||
-                !validate(new VmValidator(getVm()).vmDown())) {
+                !validate(vmValidator.vmDown()) ||
+                !validate(vmValidator.vmNotHavingDeviceSnapshotsAttachedToOtherVms(false))) {
             return false;
         }
 
@@ -300,7 +303,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     protected boolean validateImages() {
         List<DiskImage> imagesToValidate =
-                ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), true, false);
+                ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), true, false, true);
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(imagesToValidate);
 
         return validate(diskImagesValidator.diskImagesNotLocked()) &&
@@ -326,6 +329,10 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     protected SnapshotsValidator createSnapshotValidator() {
         return new SnapshotsValidator();
     }
+    protected VmValidator createVmValidator(VM vm) {
+        return new VmValidator(vm);
+    }
+
 
     @Override
     public AuditLogType getAuditLogTypeValue() {

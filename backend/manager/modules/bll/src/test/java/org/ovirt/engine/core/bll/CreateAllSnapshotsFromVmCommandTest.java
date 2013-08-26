@@ -68,6 +68,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
         doReturn(storagePoolValidator).when(cmd).createStoragePoolValidator();
         doReturn(diskImagesValidator).when(cmd).createDiskImageValidator(any(List.class));
         doReturn(multipleStorageDomainsValidator).when(cmd).createMultipleStorageDomainsValidator(any(List.class));
+        doReturn(vmValidator).when(cmd).createVmValidator();
     }
 
     @Test
@@ -145,6 +146,17 @@ public class CreateAllSnapshotsFromVmCommandTest {
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS.name()));
+    }
+
+    @Test
+    public void testLiveSnapshotWhenNoPluggedDiskSnapshot() {
+        setUpGeneralValidations();
+        doReturn(true).when(cmd).isLiveSnapshotApplicable();
+        doReturn(getEmptyDiskList()).when(cmd).getDisksList();
+        assertTrue(cmd.canDoAction());
+        assertTrue(cmd.getReturnValue()
+                .getCanDoActionMessages()
+                .isEmpty());
     }
 
     @Test

@@ -20,7 +20,7 @@ public class ImageDaoTest extends BaseGenericDaoTestCase<Guid, Image, ImageDao> 
     private static final Guid EXISTING_SNAPSHOT_ID = new Guid("a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89");
     private static final Guid QUOTA_ID = new Guid("88296e00-0cad-4e5a-9291-008a7b7f4399");
 
-    private static final int TOTAL_IMAGES = 11;
+    private static final int TOTAL_IMAGES = 12;
     private Image newImage;
 
     @Override

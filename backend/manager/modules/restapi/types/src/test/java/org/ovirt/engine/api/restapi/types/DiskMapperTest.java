@@ -35,6 +35,8 @@ public class DiskMapperTest extends AbstractInvertibleMappingTest<Disk, DiskImag
         assertEquals(model.getFormat(), transform.getFormat());
         assertEquals(model.getInterface(), transform.getInterface());
         assertEquals(model.isActive(), transform.isActive());
+        assertNotNull(model.getSnapshot());
+        assertEquals(model.getSnapshot().getId(), transform.getSnapshot().getId());
         assertEquals("unexpected status", model.getStatus().getState(), transform.getStatus().getState());
         assertEquals("unexpected sparse", model.isSparse(), transform.isSparse());
         assertEquals("unexpected bootable", model.isBootable(), transform.isBootable());

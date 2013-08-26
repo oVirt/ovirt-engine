@@ -69,6 +69,7 @@ public class FeaturesHelper {
             addStorageDomainImageFeature(features);
             addGlusterHooksFeature(features);
             addFeatureReportVmFQDN(features);
+            addFeatureAttachDiskSnapshot(features);
         }
         return features;
     }
@@ -288,6 +289,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Custom comment in the resource");
         feature.setDescription("At this point added ability to add custom comment only to the datacenter, in future versions we may allow it in other resources as well.");
+        features.getFeature().add(feature);
+    }
+
+    private void addFeatureAttachDiskSnapshot(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Attaching Disk snapshot to a vm");
+        feature.setDescription("Support for attaching a disk snapshot to a vm.");
         features.getFeature().add(feature);
     }
 

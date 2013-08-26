@@ -206,14 +206,14 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     /**
-     * this method returns the vm that a non shareable disk is attached to
+     * this method returns the vm that a non shareable disk active snapshot is attached to
      * or null is the disk is unattached to any vm,
      * @param disk
      * @return
      */
     private VM getVmForNonShareableDiskImage(DiskImage disk) {
         if (!disk.isShareable()) {
-            List<VM> vms = getVmDAO().getVmsListForDisk(disk.getId());
+            List<VM> vms = getVmDAO().getVmsListForDisk(disk.getId(), false);
             if (!vms.isEmpty()) {
                 return vms.get(0);
             }

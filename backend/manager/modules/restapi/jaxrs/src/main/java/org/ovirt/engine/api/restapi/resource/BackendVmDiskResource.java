@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.ovirt.engine.api.restapi.resource.BackendVmDisksResource.SUB_COLLECTIONS;
 
 import java.util.Collections;
-
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Action;
@@ -107,6 +106,11 @@ public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, or
     @Override
     public Disk get() {
         return super.get();//explicit call solves REST-Easy confusion
+    }
+
+    @Override
+    protected Disk addLinks(Disk model, String... subCollectionMembersToExclude) {
+        return collection.addLinks(model);
     }
 
     @Override

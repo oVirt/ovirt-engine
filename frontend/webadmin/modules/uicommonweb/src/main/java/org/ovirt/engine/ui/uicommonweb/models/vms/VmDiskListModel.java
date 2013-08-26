@@ -409,7 +409,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
             items.add(diskModel);
 
-            // A shared disk can only be detached
+            // A shared disk or a disk snapshot can only be detached
             if (disk.getNumberOfVms() > 1) {
                 model.getLatch().setIsChangable(false);
             }
@@ -646,7 +646,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                 getSelectedItems() != null ? Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
-            if (!isImageDiskOK(disk) || (!isVmDown() && disk.getPlugged())) {
+            if (!isImageDiskOK(disk) || (!isVmDown() && disk.getPlugged()) || disk.isDiskSnapshot()) {
                 return false;
             }
         }
@@ -668,7 +668,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                 Linq.<Disk> cast(getSelectedItems()) : new ArrayList<Disk>();
 
         for (Disk disk : disks) {
-            if (!isImageDiskOK(disk)) {
+            if (!isImageDiskOK(disk) || disk.isDiskSnapshot()) {
                 return false;
             }
         }

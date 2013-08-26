@@ -35,14 +35,19 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
         }
 
         if (retValue) {
-            disk = getDiskDao().get((Guid) getParameters().getEntityInfo().getId());
+            disk = loadDisk((Guid) getParameters().getEntityInfo().getId());
             retValue = isDiskExist(disk);
         }
         if (retValue) {
             vmDevice = getVmDeviceDao().get(new VmDeviceId(disk.getId(), getVmId()));
+
             if (vmDevice == null) {
                 retValue = false;
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_ALREADY_DETACHED);
+            }
+
+            if (retValue && vmDevice.getSnapshotId() != null) {
+                disk = loadDiskFromSnapshot(disk.getId(), vmDevice.getSnapshotId());
             }
         }
         if (retValue && Boolean.TRUE.equals(getParameters().isPlugUnPlug())
@@ -58,10 +63,15 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
         }
 
         // Check if disk has no snapshots before detaching it.
-        if (retValue && DiskStorageType.IMAGE == disk.getDiskStorageType()
-                && getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId()).size() > 1) {
-            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT);
-            retValue = false;
+        if (retValue && DiskStorageType.IMAGE == disk.getDiskStorageType()) {
+            // A "regular" disk cannot be detached if it's part of the vm snapshots
+            // when a disk snapshot is being detached, it will always be part of snapshots - but of it's "original" vm,
+            // therefore for attached disk snapshot it shouldn't be checked whether it has snapshots or not.
+            if (vmDevice.getSnapshotId() == null
+                    && getDiskImageDao().getAllSnapshotsForImageGroup(disk.getId()).size() > 1) {
+                addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_DETACH_DISK_WITH_SNAPSHOT);
+                retValue = false;
+            }
         }
         return retValue;
     }
@@ -79,7 +89,7 @@ public class DetachDiskFromVmCommand<T extends AttachDettachVmDiskParameters> ex
         }
         getVmDeviceDao().remove(vmDevice.getId());
 
-        if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+        if (!disk.isDiskSnapshot()) {
             // clears snapshot ID
             getImageDao().updateImageVmSnapshotId(((DiskImage) disk).getImageId(), null);
         }

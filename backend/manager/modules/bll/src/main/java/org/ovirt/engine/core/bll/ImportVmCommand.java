@@ -650,7 +650,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     @Override
     protected void moveOrCopyAllImageGroups() {
         moveOrCopyAllImageGroups(getVm().getId(),
-                ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false));
+                ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false, true));
         copyAllMemoryImages(getVm().getId());
     }
 

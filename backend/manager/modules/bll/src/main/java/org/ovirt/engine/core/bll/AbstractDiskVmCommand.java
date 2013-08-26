@@ -8,10 +8,11 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.StorageHelperBase;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
-import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -68,7 +69,7 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
             }
         }
         runVdsCommand(commandType, new HotPlugDiskVDSParameters(getVm().getRunOnVds(),
-                getVm().getId(), disk, vmDevice));
+                getVm(), disk, vmDevice));
     }
 
     private IStorageHelper getStorageHelper(StorageType storageType) {
@@ -116,9 +117,9 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     protected boolean isDiskCanBeAddedToVm(Disk diskInfo, VM vm) {
-        if (diskInfo.isBoot()) {
+        if (!diskInfo.isDiskSnapshot() && diskInfo.isBoot()) {
             for (Disk disk : vm.getDiskMap().values()) {
-                if (disk.isBoot()) {
+                if (disk.isBoot() && !disk.isDiskSnapshot()) {
                     addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_BOOT_IN_USE);
                     getReturnValue().getCanDoActionMessages().add(
                             String.format("$DiskName %1$s", disk.getDiskAlias()));
@@ -128,7 +129,27 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
                 }
             }
         }
+
         return true;
+    }
+
+    /**
+     * loads the disk info for the active snapshot, for luns the lun disk will be returned.
+     */
+    protected Disk loadActiveDisk(Guid diskId) {
+        return getDiskDao().get(diskId);
+    }
+
+    protected Disk loadDiskFromSnapshot(Guid diskId, Guid snapshotId) {
+        return getDiskImageDao().getDiskSnapshotForVmSnapshot(diskId, snapshotId);
+    }
+
+    protected Disk loadDisk(Guid diskId) {
+        if (getParameters().getSnapshotId() == null) {
+            return loadActiveDisk(diskId);
+        } else {
+            return loadDiskFromSnapshot(diskId, getParameters().getSnapshotId());
+        }
     }
 
     /** Updates the VM's disks from the database */
@@ -180,13 +201,30 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
     }
 
     private boolean isDiskExistInVm(Disk disk) {
-        List<VM> listVms = getVmDAO().getVmsListForDisk(disk.getId());
+        List<VM> listVms = getVmDAO().getVmsListForDisk(disk.getId(), true);
         for (VM vm : listVms) {
             if (vm.getId().equals(getVmId())) {
                 return true;
             }
         }
         return false;
+    }
+
+    @Override
+    protected boolean isHotPlugSupported() {
+        if (getParameters().getSnapshotId() == null) {
+            return super.isHotPlugSupported();
+        }
+
+        return isHotPlugDiskSnapshotSupported();
+    }
+
+    protected boolean isHotPlugDiskSnapshotSupported() {
+        if (!FeatureSupported.hotPlugDiskSnapshot(getVds().getVdsGroupCompatibilityVersion())) {
+            return failCanDoAction(VdcBllMessages.HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED);
+        }
+
+        return true;
     }
 
     protected ImageDao getImageDao() {

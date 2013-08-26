@@ -98,6 +98,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         }
         if (getVm() != null) {
+            updateVmDevices();
             updateVmDisks();
             setStoragePoolId(getVm().getStoragePoolId());
             isVmInDb = true;
@@ -125,11 +126,14 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
     }
 
+    protected void updateVmDevices() {
+        VmDeviceUtils.setVmDevices(getVm().getStaticData());
+    }
+
     protected void updateVmDisks() {
         VmHandler.updateDisksFromDb(getVm());
-        for (DiskImage diskImage : getVm().getDiskList()) {
-            mImages.add(diskImage);
-        }
+        VmHandler.filterDisksForVM(getVm(), false, false, true);
+        mImages.addAll(getVm().getDiskList());
     }
 
     @Override
@@ -211,7 +215,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             srcDeviceIdToTargetDeviceIdMapping,
                             getParameters().isSoundDeviceEnabled(),
                             getParameters().isConsoleEnabled(),
-                            getParameters().isVirtioScsiEnabled());
+                            getParameters().isVirtioScsiEnabled(),
+                            false);
                 } else {
                     // sending true for isVm in order to create basic devices needed
                     VmDeviceUtils.copyVmDevices(getVmId(),
@@ -223,7 +228,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             srcDeviceIdToTargetDeviceIdMapping,
                             getParameters().isSoundDeviceEnabled(),
                             getParameters().isConsoleEnabled(),
-                            getParameters().isVirtioScsiEnabled());
+                            getParameters().isVirtioScsiEnabled(),
+                            false);
                 }
 
                 setSucceeded(true);
@@ -303,7 +309,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 return false;
             }
 
-            List<DiskImage> diskImagesToCheck = ImagesHandler.filterImageDisks(mImages, true, false);
+            List<DiskImage> diskImagesToCheck = ImagesHandler.filterImageDisks(mImages, true, false, true);
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskImagesToCheck);
             if (!validate(diskImagesValidator.diskImagesNotIllegal()) ||
                     !validate(diskImagesValidator.diskImagesNotLocked())) {
@@ -350,7 +356,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
             Map<StorageDomain, Integer> domainMap =
                     StorageDomainValidator.getSpaceRequirementsForStorageDomains(
-                            ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false),
+                            ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false, true),
                             storageDomains,
                             diskInfoDestinationMap);
 

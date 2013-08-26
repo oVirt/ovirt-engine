@@ -41,7 +41,8 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
             images =
                     ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()),
                             true,
-                            false);
+                            false,
+                            true);
         }
         for (DiskImage image : images) {
             if (Boolean.TRUE.equals(image.getActive())) {

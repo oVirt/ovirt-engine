@@ -1192,6 +1192,7 @@ public class VdsUpdateRunTimeInfo {
                     true,
                     false,
                     alias,
+                    null,
                     null);
             newVmDevices.add(newDevice);
             log.debugFormat("New device was marked for adding to VM {0} Devices : {1}", vmId, newDevice);

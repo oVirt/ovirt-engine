@@ -118,7 +118,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         ArrayList<Disk> vmDisks = (ArrayList<Disk>) returnValue;
 
                         for (Disk disk : vmDisks) {
-                            if (disk.getDiskStorageType() == DiskStorageType.IMAGE && !disk.isShareable()) {
+                            if (disk.getDiskStorageType() == DiskStorageType.IMAGE && !disk.isShareable() && !disk.isDiskSnapshot()) {
                                 imageDisks.add(disk);
                             }
                         }

@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -24,10 +25,10 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
         List<Disk> allDisks =
                 getDbFacade().getDiskDao().getAllForVm
                         (getParameters().getId(), getUserID(), getParameters().isFiltered());
-        Set<Guid> pluggedDiskIds = getPluggedDiskIds();
+        Map<Guid, VmDevice> disksVmDevices = getDisksVmDeviceMap();
         List<Disk> disks = new ArrayList<Disk>(allDisks);
         for (Disk disk : allDisks) {
-            disk.setPlugged(pluggedDiskIds.contains(disk.getId()));
+            disk.setPlugged(disksVmDevices.get(disk.getId()).getIsPlugged());
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage diskImage = (DiskImage) disk;
                 diskImage.getSnapshots().addAll(getAllImageSnapshots(diskImage));
@@ -40,7 +41,7 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
         return ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getImageTemplateId());
     }
 
-    private Set<Guid> getPluggedDiskIds() {
+    private Map<Guid, VmDevice> getDisksVmDeviceMap() {
         List<VmDevice> disksVmDevices =
                 getDbFacade().getVmDeviceDao()
                         .getVmDeviceByVmIdTypeAndDevice(getParameters().getId(),
@@ -48,12 +49,15 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
                                 VmDeviceType.DISK.getName(),
                                 getUserID(),
                                 getParameters().isFiltered());
-        Set<Guid> pluggedDiskIds = new HashSet<Guid>();
-        for (VmDevice diskVmDevice : disksVmDevices) {
-            if (diskVmDevice.getIsPlugged()) {
-                pluggedDiskIds.add(diskVmDevice.getDeviceId());
-            }
+
+        if (disksVmDevices.isEmpty()) {
+            return Collections.emptyMap();
         }
-        return pluggedDiskIds;
+
+        Map<Guid, VmDevice> toReturn = new HashMap<>();
+        for (VmDevice diskVmDevice : disksVmDevices) {
+            toReturn.put(diskVmDevice.getDeviceId(), diskVmDevice);
+        }
+        return toReturn;
     }
 }
