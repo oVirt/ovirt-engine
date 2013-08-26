@@ -11,7 +11,6 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -38,7 +37,6 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
-import org.ovirt.engine.core.dao.VmTemplateDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -59,8 +57,6 @@ public class MoveOrCopyDiskCommandTest {
     private StorageDomainDAO storageDomainDao;
     @Mock
     private VmDAO vmDao;
-    @Mock
-    private VmTemplateDAO vmTemplateDao;
     @Mock
     private VmDeviceDAO vmDeviceDao;
 
@@ -94,7 +90,8 @@ public class MoveOrCopyDiskCommandTest {
     public void canDoActionWrongDiskImageTypeVm() throws Exception {
         initializeCommand(ImageOperation.Copy);
         initVmDiskImage();
-        doReturn(vmTemplateDao).when(command).getVmTemplateDAO();
+        doReturn(null).when(command).getTemplateForImage();
+        command.defineVmTemplate();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
@@ -105,8 +102,8 @@ public class MoveOrCopyDiskCommandTest {
     public void canDoActionCanNotFindTemplet() throws Exception {
         initializeCommand(ImageOperation.Copy);
         initTemplateDiskImage();
-        doReturn(vmTemplateDao).when(command).getVmTemplateDAO();
-        when(vmTemplateDao.get(any(Guid.class))).thenReturn(null);
+        doReturn(null).when(command).getTemplateForImage();
+        command.defineVmTemplate();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
@@ -158,10 +155,9 @@ public class MoveOrCopyDiskCommandTest {
         initializeCommand(ImageOperation.Copy);
         initTemplateDiskImage();
         command.getImage().setImageStatus(ImageStatus.LOCKED);
-        doReturn(vmTemplateDao).when(command).getVmTemplateDAO();
+        doReturn(new VmTemplate()).when(command).getTemplateForImage();
 
-        Map<Boolean, VmTemplate> map = Collections.singletonMap(true, new VmTemplate());
-        doReturn(map).when(vmTemplateDao).getAllForImage(any(Guid.class));
+        command.defineVmTemplate();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue().getCanDoActionMessages().contains(
                 VdcBllMessages.VM_TEMPLATE_IMAGE_IS_LOCKED.toString()));
@@ -245,14 +241,13 @@ public class MoveOrCopyDiskCommandTest {
         }
 
         @Override
-        protected DiskImageDAO getDiskImageDao() {
-            return diskImageDao;
+        protected VmTemplate getTemplateForImage() {
+            return null;
         }
 
         @Override
-        protected boolean acquireLockInternal() {
-            return true;
+        protected DiskImageDAO getDiskImageDao() {
+            return diskImageDao;
         }
-
     }
 }

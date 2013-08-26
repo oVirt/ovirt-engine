@@ -39,15 +39,31 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
+@LockIdNameAttribute
 public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> extends CopyImageGroupCommand<T>
         implements QuotaStorageDependent {
 
-    private Map<String, Pair<String, String>> sharedLockMap;
     private List<PermissionSubject> cachedPermsList;
     private List<VM> cachedListVms;
 
     public MoveOrCopyDiskCommand(T parameters) {
         super(parameters);
+
+        defineVmTemplate();
+    }
+
+    protected void defineVmTemplate() {
+        if (getParameters().getOperation() == ImageOperation.Copy) {
+            setVmTemplate(getTemplateForImage());
+        }
+    }
+
+    protected VmTemplate getTemplateForImage() {
+        if (getImage() == null) {
+            return null;
+        }
+        Collection<VmTemplate> templates = getVmTemplateDAO().getAllForImage(getImage().getId()).values();
+        return !templates.isEmpty() ? templates.iterator().next() : null;
     }
 
     @Override
@@ -63,7 +79,6 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return isImageExist()
                 && checkOperationIsCorrect()
                 && canFindVmOrTemplate()
-                && acquireLockInternal()
                 && isImageNotLocked()
                 && isSourceAndDestTheSame()
                 && validateSourceStorageDomain()
@@ -341,41 +356,39 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
      */
     private boolean canFindVmOrTemplate() {
         if (getParameters().getOperation() == ImageOperation.Copy) {
-            Collection<VmTemplate> templates = getVmTemplateDAO().getAllForImage(getImage().getImageId()).values();
-            if (templates.isEmpty()) {
+            if (getVmTemplate() == null) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
-            }
-            VmTemplate vmTemplate = templates.iterator().next();
-            setVmTemplate(vmTemplate);
-            sharedLockMap = Collections.singletonMap(vmTemplate.getId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-        } else {
-            List<VM> vmsForDisk = getVmsForDiskId();
-            if (!vmsForDisk.isEmpty()) {
-                Map<String, Pair<String, String>> lockMap = new HashMap<String, Pair<String, String>>();
-                for (VM currVm : vmsForDisk) {
-                    lockMap.put(currVm.getId().toString(),
-                            LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-                }
-                lockForMove(lockMap);
             }
         }
         return true;
     }
 
-    protected void lockForMove(Map<String, Pair<String, String>> lockMap) {
-        sharedLockMap = lockMap;
+    @Override
+    protected Map<String, Pair<String, String>> getSharedLocks() {
+        if (getParameters().getOperation() == ImageOperation.Copy) {
+            if (!Guid.Empty.equals(getVmTemplateId())) {
+                return Collections.singletonMap(getVmTemplateId().toString(),
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+            }
+        } else {
+            List<VM> vmsForDisk = getVmsForDiskId();
+            if (!vmsForDisk.isEmpty()) {
+                Map<String, Pair<String, String>> lockMap = new HashMap<>();
+                for (VM currVm : vmsForDisk) {
+                    lockMap.put(currVm.getId().toString(),
+                            LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                }
+                return lockMap;
+            }
+        }
+        return null;
     }
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getImage().getId().toString(),
+        return Collections.singletonMap(
+                (getImage() != null ? getImage().getId() : Guid.Empty).toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-    }
-
-    @Override
-    protected Map<String, Pair<String, String>> getSharedLocks() {
-        return sharedLockMap;
     }
 
     public String getDiskAlias() {
