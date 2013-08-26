@@ -69,7 +69,7 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
 
                         String[] versionParts = isoVersionText.split(",");
                         if (versionParts.length < 2) {
-                            log.debugFormat("Iso version file {0} contains invalid content. Excpected: <major-version>,<release> format.",
+                            log.debugFormat("Iso version file {0} contains invalid content. Expected: <major-version>,<release> format.",
                                     versionFile.getAbsolutePath());
                             continue;
                         }

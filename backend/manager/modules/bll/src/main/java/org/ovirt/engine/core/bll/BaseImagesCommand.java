@@ -183,8 +183,8 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
      * @return The ID of the image for the same drive, or null if none found.
      */
     protected Guid findImageForSameDrive(Guid snapshotId) {
-        List<DiskImage> imagesFromSanpshot = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
-        for (DiskImage diskImage : imagesFromSanpshot) {
+        List<DiskImage> imagesFromSnapshot = getDiskImageDao().getAllSnapshotsForVmSnapshot(snapshotId);
+        for (DiskImage diskImage : imagesFromSnapshot) {
             if (getDiskImage().getId().equals(diskImage.getId())) {
                 return diskImage.getImageId();
             }

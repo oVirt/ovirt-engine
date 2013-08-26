@@ -81,7 +81,7 @@ public class EventQueueMonitor implements EventQueue {
                             || event.getEventType() == EventType.DOMAINFAILOVER) {
                         task = addTaskToQueue(event, callable, storagePoolId, isEventShouldBeFirst(event));
                     } else {
-                        log.debugFormat("Current event was skiped because of recovery is running now for pool {0}, event {1}",
+                        log.debugFormat("Current event was skipped because of recovery is running now for pool {0}, event {1}",
                                 storagePoolId, event);
                     }
                     break;
@@ -92,7 +92,7 @@ public class EventQueueMonitor implements EventQueue {
                             || event.getEventType() == EventType.VDSCLEARCACHE) {
                         task = addTaskToQueue(event, callable, storagePoolId, isEventShouldBeFirst(event));
                     } else {
-                        log.debugFormat("Current event was skiped because of reconstruct is running now for pool {0}, event {1}",
+                        log.debugFormat("Current event was skipped because of reconstruct is running now for pool {0}, event {1}",
                                 storagePoolId, event);
                     }
                     break;
@@ -202,7 +202,7 @@ public class EventQueueMonitor implements EventQueue {
                                             ((eventType == EventType.RECOVERY || eventType == EventType.DOMAINFAILOVER || eventType == EventType.VDSCLEARCACHE) && !result.isSuccess())) {
                                         queue.add(task);
                                     } else {
-                                        log.infoFormat("The following operation {0} was cancelled, because of recosntruct was run before",
+                                        log.infoFormat("The following operation {0} was cancelled, because of reconstruct was run before",
                                                 task.getFirst());
                                         task.getSecond().cancel(true);
                                     }

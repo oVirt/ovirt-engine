@@ -31,8 +31,8 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
         super(commandId);
     }
 
-    public AddVdsSpmIdCommand(T parametars) {
-        super(parametars);
+    public AddVdsSpmIdCommand(T parameters) {
+        super(parameters);
     }
 
     @Override

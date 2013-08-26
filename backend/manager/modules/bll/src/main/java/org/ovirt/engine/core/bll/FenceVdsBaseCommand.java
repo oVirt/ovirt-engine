@@ -154,7 +154,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             // Set status immediately to prevent a race (BZ 636950/656224)
             setStatus();
             // Check which fence invocation pattern to invoke
-            // Regular (no secondary agent) , multiple sequential agents or multiple concurent agents
+            // Regular (no secondary agent) , multiple sequential agents or multiple concurrent agents
             if (StringUtils.isEmpty(getVds().getPmSecondaryIp())){
                 handleSingleAgent(lastStatus, vdsReturnValue);
             }

@@ -288,7 +288,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         if (getVm() != null) {
             if (getVm().getStatus() != VMStatus.PreparingForHibernate) {
                 // If the Vm is not PreparingForHibernate, we shouldn't perform Hibernate on it,
-                // since if the Vm is in another status, something might have happend to it
+                // since if the Vm is in another status, something might have happened to it
                 // that might prevent it from being hibernated.
 
                 // NOTE: We don't remove the 2 volumes because we don't want to

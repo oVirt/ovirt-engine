@@ -80,9 +80,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         super(commandId);
     }
 
-    public AddVdsCommand(T parametars) {
-        super(parametars);
-        setVdsGroupId(parametars.getvds().getVdsGroupId());
+    public AddVdsCommand(T parameters) {
+        super(parameters);
+        setVdsGroupId(parameters.getvds().getVdsGroupId());
     }
 
     @Override

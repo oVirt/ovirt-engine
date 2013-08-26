@@ -23,10 +23,10 @@ public class ConntectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOp
     public void execute(int iterationId) {
         VDS vds = getVdss().get(iterationId);
         try {
-            boolean isConnectSuccessed =
+            boolean isConnectSucceeded =
                     StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
                             .connectStorageToDomainByVdsId(getStorageDomain(), vds.getId());
-            if (isConnectSuccessed) {
+            if (isConnectSucceeded) {
                 ResourceManager.getInstance().runVdsCommand(
                         VDSCommandType.ConnectStoragePool,
                         new ConnectStoragePoolVDSCommandParameters(vds.getId(), getStoragePool().getId(), vds

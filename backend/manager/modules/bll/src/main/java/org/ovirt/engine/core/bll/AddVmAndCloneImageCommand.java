@@ -236,7 +236,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
     protected abstract void logErrorOneOrMoreActiveDomainsAreMissing();
 
     /**
-     * Returns collection of DiskImage objects to use for construction of the imageTODestionationDomainMap
+     * Returns collection of DiskImage objects to use for construction of the imageToDestinationDomainMap
      *
      * @return
      */

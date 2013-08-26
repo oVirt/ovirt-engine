@@ -83,7 +83,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
                                 buildCreateCloneOfTemplateParameters(disk),
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
 
-                // if couldnt create snapshot then stop the transaction and the command
+                // if couldn't create snapshot then stop the transaction and the command
                 if (!result.getSucceeded()) {
                     throw new VdcBLLException(VdcBllErrors.VolumeCreationError);
                 } else {

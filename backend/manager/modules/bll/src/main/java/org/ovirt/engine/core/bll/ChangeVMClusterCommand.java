@@ -33,7 +33,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
 
     @Override
     protected boolean canDoAction() {
-        // Set parameters for messeging.
+        // Set parameters for messaging.
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM__CLUSTER);
 

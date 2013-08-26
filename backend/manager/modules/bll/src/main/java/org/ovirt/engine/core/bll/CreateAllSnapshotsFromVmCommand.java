@@ -367,7 +367,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private void handleVdsLiveSnapshotFailure(VdcBLLException e) {
-        log.warnFormat("Wasn't able to live snpashot due to error: {0}. VM will still be configured to the new created snapshot",
+        log.warnFormat("Wasn't able to live snapshot due to error: {0}. VM will still be configured to the new created snapshot",
                 ExceptionUtils.getMessage(e));
         addCustomValue("SnapshotName", getSnapshotName());
         addCustomValue("VmName", getVmName());

@@ -18,7 +18,7 @@ import org.ovirt.engine.core.dao.VdsStaticDAO;
  * password and fingerprint of any one of the server in the cluster. This Query will validate if the given server is
  * already part of the cluster by checking with the database. If exists the query will return the error message.
  *
- * Since, the importing cluster haven't been bootstarped yet, we are running the gluster peer status command via ssh.
+ * Since, the importing cluster haven't been bootstrapped yet, we are running the gluster peer status command via ssh.
  *
  */
 public class GetGlusterServersForImportQuery<P extends GlusterServersQueryParameters> extends GlusterQueriesCommandBase<P> {

@@ -68,8 +68,8 @@ public class FenceExecutor {
                 ?
                 Config.<String> GetValue(ConfigValues.FenceProxyDefaultPreferences)
                 : _vds.getPmProxyPreferences();
-        String[] pmProxyOPtions = pmProxyPreferences.split(",");
-        for (String pmProxyOption : pmProxyOPtions) {
+        String[] pmProxyOptions = pmProxyPreferences.split(",");
+        for (String pmProxyOption : pmProxyOptions) {
             if (pmProxyOption.equalsIgnoreCase(PMProxyOptions.CLUSTER.name())) {
                 proxyOption = PMProxyOptions.CLUSTER;
             }
@@ -111,7 +111,7 @@ public class FenceExecutor {
                     // do not retry getting proxy for Status operation.
                     if (_action == FenceActionType.Status)
                         break;
-                    log.infoFormat("Atempt {0} to find fence proxy host failed...", ++count);
+                    log.infoFormat("Attempt {0} to find fence proxy host failed...", ++count);
                     try {
                         Thread.sleep(delayInMs);
                     } catch (Exception e) {

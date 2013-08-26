@@ -40,7 +40,7 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (returnValue.getSucceeded()) {
             startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());
         } else {
-            addAuditLogOnRemoveFailue();
+            addAuditLogOnRemoveFailure();
         }
     }
 
@@ -56,7 +56,7 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         unLockImage();
     }
 
-    private void addAuditLogOnRemoveFailue() {
+    private void addAuditLogOnRemoveFailure() {
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("DiskAlias", getDiskImage().getDiskAlias());
         logable.addCustomValue("StorageDomainName", getStorageDomain().getStorageName());

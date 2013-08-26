@@ -328,7 +328,7 @@ public final class CpuFlagsManagerHandler {
 
         /**
          * This method returns true if the given cpus are from the same
-         * manufature (intel or amd)
+         * manufacturer (intel or amd)
          *
          * @param cpuName1
          * @param cpuName2
