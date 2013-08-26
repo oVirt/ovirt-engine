@@ -1,12 +1,14 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
@@ -246,22 +248,33 @@ public class VmHandler {
 
     public static void updateDisksFromDb(VM vm) {
         List<Disk> imageList = DbFacade.getInstance().getDiskDao().getAllForVm(vm.getId());
-        vm.getDiskList().clear();
-        vm.getDiskMap().clear();
+        vm.clearDisks();
         updateDisksForVm(vm, imageList);
     }
 
-    public static void updateDisksForVm(VM vm, List<? extends Disk> diskList) {
-        for (Disk disk : diskList) {
+    public static void updateDisksForVm(VM vm, Collection<? extends Disk> disks) {
+        for (Disk disk : disks) {
             if (disk.isAllowSnapshot()) {
                 DiskImage image = (DiskImage) disk;
-                if (image.getActive() != null && image.getActive()) {
-                    vm.getDiskMap().put(image.getId(), image);
-                    vm.getDiskList().add(image);
-                }
+                vm.getDiskMap().put(image.getId(), image);
+                vm.getDiskList().add(image);
             } else {
                 vm.getDiskMap().put(disk.getId(), disk);
             }
+        }
+    }
+
+    public static void filterDisksForVM(VM vm, boolean allowOnlyNotShareableDisks,
+                                        boolean allowOnlySnapableDisks, boolean allowOnlyActiveDisks) {
+        List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskList(),
+                allowOnlyNotShareableDisks, allowOnlySnapableDisks, allowOnlyActiveDisks);
+        Collection<DiskImage> vmDisksToRemove = CollectionUtils.subtract(vm.getDiskList(), filteredDisks);
+        // done so that lun disks would be included as well
+        Collection<Disk> vmDisksAfterFilter = CollectionUtils.disjunction(vm.getDiskMap().values(), vmDisksToRemove);
+        vm.clearDisks();
+        updateDisksForVm(vm, vmDisksAfterFilter);
+        for (DiskImage diskToRemove : vmDisksToRemove) {
+            vm.getManagedVmDeviceMap().remove(diskToRemove.getId());
         }
     }
 

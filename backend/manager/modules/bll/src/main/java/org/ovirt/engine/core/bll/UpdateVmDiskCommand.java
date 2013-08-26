@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -35,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -52,11 +52,17 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private List<PermissionSubject> listPermissionSubjects;
     private Map<Guid, List<Disk>> otherVmDisks = new HashMap<Guid, List<Disk>>();
-    private List<VM> vmsDiskPluggedTo;
+    private List<VM> vmsDiskPluggedTo, vmsDiskSnapshotPluggedTo, vmsDiskOrSnapshotPluggedTo, vmsDiskOrSnapshotAttachedTo;
+
+    /**
+     * vm device for the given vm and disk
+     */
+    private VmDevice vmDeviceForVm;
     private Disk oldDisk;
 
     public UpdateVmDiskCommand(T parameters) {
         super(parameters);
+        loadVmDiskAttachedToInfo();
     }
 
     /**
@@ -71,9 +77,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         Map<String, Pair<String, String>> sharedLock = new HashMap<String, Pair<String, String>>();
-        List<VM> vmsDiskPluggedTo = getVmsDiskPluggedTo();
 
-        for (VM vm : vmsDiskPluggedTo) {
+        for (VM vm : vmsDiskOrSnapshotPluggedTo) {
             sharedLock.put(vm.getId().toString(),
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_LOCKED));
         }
@@ -83,7 +88,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         Map<String, Pair<String, String>> exclusiveLock = new HashMap<String, Pair<String, String>>();
-        List<VM> vmsDiskPluggedTo = getVmsDiskPluggedTo();
 
         if (getNewDisk().isBoot()) {
             for (VM vm : vmsDiskPluggedTo) {
@@ -125,25 +129,25 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             return false;
         }
 
-        List<VM> vmsDiskPluggedTo = getVmsDiskPluggedTo();
-        if (vmsDiskPluggedTo != null && !vmsDiskPluggedTo.isEmpty()) {
+        if (!vmsDiskOrSnapshotPluggedTo.isEmpty()) {
             // only virtual drive size can be updated when VMs is running
-            if (isAtLeastOneVmIsNotDown(vmsDiskPluggedTo) && shouldUpdatePropertiesOtherThanSize()) {
+            if (isAtLeastOneVmIsNotDown(vmsDiskOrSnapshotPluggedTo) && shouldUpdatePropertiesOtherThanSize()) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
             }
 
             boolean isUpdatedAsBootable = !getOldDisk().isBoot() && getNewDisk().isBoot();
+            // multiple boot disk snapshot can be attached to a single vm
             if (isUpdatedAsBootable && !validate(noVmsContainBootableDisks(vmsDiskPluggedTo))) {
                 return false;
             }
 
             boolean isDiskInterfaceUpdated = getOldDisk().getDiskInterface() != getNewDisk().getDiskInterface();
-            if (isDiskInterfaceUpdated && !validatePciAndIdeLimit(vmsDiskPluggedTo)) {
+            if (isDiskInterfaceUpdated && !validatePciAndIdeLimit(vmsDiskOrSnapshotPluggedTo)) {
                 return false;
             }
         }
 
-        if (shouldResizeDiskImage() && !validateCanResizeDisk()) {
+        if (DiskStorageType.IMAGE.equals(getOldDisk().getDiskStorageType()) && !validateCanResizeDisk()) {
             return false;
         }
 
@@ -225,7 +229,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 return failCanDoAction(VdcBllMessages.SHAREABLE_DISK_IS_NOT_SUPPORTED_BY_VOLUME_FORMAT);
             }
         } else if (isUpdatedToNonShareable(getOldDisk(), getNewDisk())) {
-            if (getVmDAO().getVmsListForDisk(getOldDisk().getId()).size() > 1) {
+            if (vmsDiskOrSnapshotAttachedTo.size() > 1) {
                 return failCanDoAction(VdcBllMessages.DISK_IS_ALREADY_SHARED_BETWEEN_VMS);
             }
         }
@@ -233,26 +237,38 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private boolean validateCanResizeDisk() {
-        DiskImage oldDiskImage = (DiskImage) getOldDisk();
         DiskImage newDiskImage = (DiskImage) getNewDisk();
 
-        if (oldDiskImage.getSize() > newDiskImage.getSize()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL);
-        }
-
-        for (VM vm : getVmsDiskPluggedTo()) {
-            if (!VdcActionUtils.canExecute(Arrays.asList(vm), VM.class, VdcActionType.ExtendImageSize)) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
+        if (vmDeviceForVm.getSnapshotId() != null) {
+            DiskImage snapshotDisk = getDiskImageDao().getDiskSnapshotForVmSnapshot(getParameters().getDiskId(), vmDeviceForVm.getSnapshotId());
+            if (snapshotDisk.getSize() != newDiskImage.getSize()) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_RESIZE_DISK_SNAPSHOT);
             }
         }
 
-        long additionalDiskSpaceInGB = newDiskImage.getSizeInGigabytes() - oldDiskImage.getSizeInGigabytes();
-        StorageDomain storageDomain = getStorageDomainDAO().getForStoragePool(
-                newDiskImage.getStorageIds().get(0), newDiskImage.getStoragePoolId());
-        StorageDomainValidator storageDomainValidator = new StorageDomainValidator(storageDomain);
+        if (getNewDisk().getSize() != getOldDisk().getSize()) {
+            DiskImage oldDiskImage = (DiskImage) getOldDisk();
 
-        return validate(storageDomainValidator.isDomainExistAndActive()) &&
-                validate(storageDomainValidator.isDomainHasSpaceForRequest(additionalDiskSpaceInGB));
+            if (oldDiskImage.getSize() > newDiskImage.getSize()) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL);
+            }
+
+            for (VM vm : getVmsDiskPluggedTo()) {
+                if (!VdcActionUtils.canExecute(Arrays.asList(vm), VM.class, VdcActionType.ExtendImageSize)) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vm.getStatus()));
+                }
+            }
+
+            long additionalDiskSpaceInGB = newDiskImage.getSizeInGigabytes() - oldDiskImage.getSizeInGigabytes();
+            StorageDomain storageDomain = getStorageDomainDAO().getForStoragePool(
+                    newDiskImage.getStorageIds().get(0), newDiskImage.getStoragePoolId());
+            StorageDomainValidator storageDomainValidator = new StorageDomainValidator(storageDomain);
+
+            return validate(storageDomainValidator.isDomainExistAndActive()) &&
+                    validate(storageDomainValidator.isDomainHasSpaceForRequest(additionalDiskSpaceInGB));
+        }
+
+        return true;
     }
 
     @Override
@@ -364,7 +380,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         List<String> vmsWithBoot = new ArrayList<String>(vms.size());
 
         for (VM vm : vms) {
-            Disk bootDisk = getDiskDao().getVmBootDisk(vm.getId());
+            Disk bootDisk = getDiskDao().getVmBootActiveDisk(vm.getId());
             if (bootDisk != null) {
                 vmsWithBoot.add(vm.getName());
             }
@@ -458,7 +474,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private boolean shouldResizeDiskImage() {
         return getNewDisk().getDiskStorageType() == DiskStorageType.IMAGE &&
-                getNewDisk().getSize() != getOldDisk().getSize();
+               vmDeviceForVm.getSnapshotId() == null && getNewDisk().getSize() != getOldDisk().getSize();
     }
 
     private boolean shouldUpdatePropertiesOtherThanSize() {
@@ -522,15 +538,38 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     }
 
     private List<VM> getVmsDiskPluggedTo() {
-        if (vmsDiskPluggedTo == null) {
-            vmsDiskPluggedTo = getVmDAO().getForDisk(getOldDisk().getId()).get(Boolean.TRUE);
+        return vmsDiskPluggedTo;
+    }
 
-            if (vmsDiskPluggedTo == null) {
-                vmsDiskPluggedTo = Collections.emptyList();
+    private List<VM> getVmsDiskSnapshotPluggedTo() {
+        return vmsDiskSnapshotPluggedTo;
+    }
+
+    private void loadVmDiskAttachedToInfo() {
+        if (getOldDisk() != null) {
+            vmsDiskSnapshotPluggedTo = new LinkedList<>();
+            vmsDiskPluggedTo = new LinkedList<>();
+            vmsDiskOrSnapshotPluggedTo = new LinkedList<>();
+            vmsDiskOrSnapshotAttachedTo = new LinkedList<>();
+
+            List<Pair<VM, VmDevice>> attachedVmsInfo = getVmDAO().getVmsWithPlugInfo(getOldDisk().getId());
+            for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
+                VM vm = pair.getFirst();
+                vmsDiskOrSnapshotAttachedTo.add(vm);
+                if (pair.getSecond().getIsPlugged() == Boolean.TRUE) {
+                    if (pair.getSecond().getSnapshotId() != null) {
+                        vmsDiskSnapshotPluggedTo.add(vm);
+                    } else {
+                        vmsDiskPluggedTo.add(vm);
+                    }
+                    vmsDiskOrSnapshotPluggedTo.add(vm);
+                }
+
+                if (vm.getId().equals(getParameters().getVmId())) {
+                    vmDeviceForVm = pair.getSecond();
+                }
             }
         }
-
-        return vmsDiskPluggedTo;
     }
 
     private void lockImageInDb() {

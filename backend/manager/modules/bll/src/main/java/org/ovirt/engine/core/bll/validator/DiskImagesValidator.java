@@ -1,15 +1,22 @@
 package org.ovirt.engine.core.bll.validator;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.dao.SnapshotDao;
+import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 /**
  * A validator for the {@link DiskImage} class. Since most usecases require validations of multiple {@link DiskImage}s
@@ -93,5 +100,47 @@ public class DiskImagesValidator {
         }
 
         return ValidationResult.VALID;
+    }
+
+    public ValidationResult diskImagesSnapshotsNotAttachedToOtherVms(boolean onlyPlugged) {
+        LinkedList<String> pluggedDiskSnapshotInfo = new LinkedList<>();
+        for (DiskImage diskImage : diskImages) {
+            List<VmDevice> devices = getVmDeviceDAO().getVmDevicesByDeviceId(diskImage.getId(), null);
+            for (VmDevice device : devices) {
+               if (device.getSnapshotId() != null && (!onlyPlugged || device.getIsPlugged())) {
+                   VM vm = getVmDAO().get(device.getVmId());
+                   Snapshot snapshot = getSnapshotDAO().get(device.getSnapshotId());
+                   pluggedDiskSnapshotInfo.add(String.format("%s (from Snapshot: %s VM attached to: %s) %n",
+                           diskImage.getDiskAlias(), snapshot.getDescription(), vm.getName()));
+               }
+            }
+        }
+
+        if (!pluggedDiskSnapshotInfo.isEmpty()) {
+            pluggedDiskSnapshotInfo.addFirst(String.format("%n"));
+            VdcBllMessages message =
+                    onlyPlugged ? VdcBllMessages.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_PLUGGED_TO_ANOTHER_VM
+                            : VdcBllMessages.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM;
+            return new ValidationResult(message,
+                    String.format("$disksInfo %s", String.format(StringUtils.join(pluggedDiskSnapshotInfo, "%n"))));
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    private DbFacade getDbFacade() {
+       return DbFacade.getInstance();
+    }
+
+    protected VmDeviceDAO getVmDeviceDAO() {
+       return getDbFacade().getVmDeviceDao();
+    }
+
+    protected VmDAO getVmDAO() {
+        return getDbFacade().getVmDao();
+    }
+
+    protected SnapshotDao getSnapshotDAO() {
+        return getDbFacade().getSnapshotDao();
     }
 }

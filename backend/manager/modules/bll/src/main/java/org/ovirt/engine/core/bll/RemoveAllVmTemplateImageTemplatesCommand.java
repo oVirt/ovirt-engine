@@ -32,7 +32,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
     @Override
     protected void executeCommand() {
         List<DiskImage> imageTemplates = ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(
-                getVmTemplateId()), false, false);
+                getVmTemplateId()), false, false, true);
         boolean noImagesRemovedYet = true;
         for (DiskImage template : imageTemplates) {
             // get disk

@@ -127,6 +127,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             true,
                             "",
+                            null,
                             null);
             struct = new HashMap<String, Object>();
             addCdDetails(vmDevice, struct);
@@ -145,6 +146,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             true,
                             "",
+                            null,
                             null);
             struct = new HashMap<String, Object>();
             addCdDetails(vmDevice, struct);
@@ -186,6 +188,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             true,
                             "",
+                            null,
                             null);
             Map<String, Object> struct = new HashMap<String, Object>();
             addCdDetails(vmDevice, struct);
@@ -204,6 +207,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             true,
                             "",
+                            null,
                             null);
             Map<String, Object> struct = new HashMap<String, Object>();
             addFloppyDetails(vmDevice, struct);
@@ -236,6 +240,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmDrives() {
+        boolean bootDiskFound = false;
         List<Disk> disks = getSortedDisks();
         for (Disk disk : disks) {
             Map<String, Object> struct = new HashMap<String, Object>();
@@ -269,8 +274,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     logUnsupportedInterfaceType();
                     break;
                 }
-                // Insure that boot disk is created first.
-                if (disk.isBoot()) {
+                // Insure that boot disk is created first
+                if (!bootDiskFound && disk.isBoot()) {
+                    bootDiskFound = true;
                     struct.put(VdsProperties.Index, 0);
                 }
                 addAddress(vmDevice, struct);
@@ -293,7 +299,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 }
 
                 addBootOrder(vmDevice, struct);
-                struct.put(VdsProperties.Shareable, String.valueOf(disk.isShareable()));
+                struct.put(VdsProperties.Shareable,
+                        (vmDevice.getSnapshotId() != null && FeatureSupported.hotPlugDiskSnapshot(vm.getVdsGroupCompatibilityVersion())) ? VdsProperties.Transient
+                                : String.valueOf(disk.isShareable()));
                 struct.put(VdsProperties.Optional, Boolean.FALSE.toString());
                 struct.put(VdsProperties.ReadOnly, String.valueOf(vmDevice.getIsReadOnly()));
                 struct.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
@@ -459,6 +467,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         true,
                         true,
                         "",
+                        null,
                         null);
         Map<String, Object> struct = new HashMap<String, Object>();
         addFloppyDetails(vmDevice, struct);
@@ -485,6 +494,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         true,
                         true,
                         "",
+                        null,
                         null);
         Map<String, Object> struct = new HashMap<String, Object>();
         addCdDetails(vmDevice, struct);
@@ -774,6 +784,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             true,
                             "",
+                            null,
                             null);
             addMemBalloonDevice(vmDevice);
         } else {

@@ -559,6 +559,9 @@ actions:
       - mandatoryArguments: {disk.id: 'xs:string'}
         optionalArguments: {disk.active: 'xs:boolean'}
         description: attach a disk to the virtual machine
+      - mandatoryArguments: {disk.id: 'xs:string', disk.snapshot.id: xs:string}
+        optionalArguments: {disk.active: 'xs:boolean'}
+        description: attach a disk snapshot to the virtual machine
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}

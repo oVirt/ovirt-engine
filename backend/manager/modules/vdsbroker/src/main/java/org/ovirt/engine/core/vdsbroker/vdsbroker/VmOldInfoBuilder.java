@@ -71,27 +71,27 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
                 drive.put("propagateErrors", disk.getPropagateErrors().toString()
                         .toLowerCase());
                 switch (disk.getDiskInterface()) {
-                case IDE:
-                    try {
-                        drive.put("if", "ide");
-                        drive.put("index", String.valueOf(ideIndexSlots[ideCount]));
-                        ideCount++;
-                    } catch (IndexOutOfBoundsException e) {
-                        log.errorFormat("buildVmDrives throws IndexOutOfBoundsException for index {0}, IDE slots are limited to 4.",
-                                ideCount);
-                        throw e;
-                    }
-                    break;
-                case VirtIO:
-                    drive.put("if", "virtio");
-                    drive.put("index", String.valueOf(pciCount));
-                    drive.put("boot", String.valueOf(disk.isBoot()).toLowerCase());
-                    pciCount++;
-                    break;
-                default:
-                    // ISCI not supported
-                    logUnsupportedInterfaceType();
-                    break;
+                    case IDE:
+                        try {
+                            drive.put("if", "ide");
+                            drive.put("index", String.valueOf(ideIndexSlots[ideCount]));
+                            ideCount++;
+                        } catch (IndexOutOfBoundsException e) {
+                            log.errorFormat("buildVmDrives throws IndexOutOfBoundsException for index {0}, IDE slots are limited to 4.",
+                                    ideCount);
+                            throw e;
+                        }
+                        break;
+                    case VirtIO:
+                        drive.put("if", "virtio");
+                        drive.put("index", String.valueOf(pciCount));
+                        drive.put("boot", String.valueOf(disk.isBoot()).toLowerCase());
+                        pciCount++;
+                        break;
+                    default:
+                        // ISCI not supported
+                        logUnsupportedInterfaceType();
+                        break;
                 }
 
                 drives.add(drive);

@@ -352,7 +352,7 @@ public class RunVmValidator {
             return false;
         }
 
-        List<DiskImage> images = ImagesHandler.filterImageDisks(vmDisks, true, false);
+        List<DiskImage> images = ImagesHandler.filterImageDisks(vmDisks, true, false, false);
         if (!images.isEmpty() && (
                 !validate(validateStoragePoolUp(vm, storagePool), messages) ||
                 !validate(validateStorageDomains(vm, isInternalExecution, images), messages) ||

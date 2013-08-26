@@ -177,4 +177,13 @@ public class FeatureSupported {
     public static boolean cloudInit(Version version) {
         return supportedInConfig(ConfigValues.CloudInitSupported, version);
     }
+
+   /**
+    * @param version
+    *            Compatibility version to check for.
+    * @return <code>true</code> if hot plug disk snapshot is supported for the given version.
+    */
+    public static boolean hotPlugDiskSnapshot(Version version) {
+        return supportedInConfig(ConfigValues.HotPlugDiskSnapshotSupported, version);
+    }
 }

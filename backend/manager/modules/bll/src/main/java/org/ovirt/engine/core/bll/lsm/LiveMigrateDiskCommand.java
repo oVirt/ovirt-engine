@@ -59,7 +59,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
     public VM getVm() {
         VM vm = super.getVm();
         if (vm == null) {
-            vm = getVmDAO().getVmsListForDisk(getImageGroupId()).get(0);
+            vm = getVmDAO().getVmsListForDisk(getImageGroupId(), false).get(0);
             setVm(vm);
             setVmId(vm.getId());
         }

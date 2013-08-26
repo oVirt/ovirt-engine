@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -179,7 +180,7 @@ public class MoveOrCopyDiskCommandTest {
         vm2.setStatus(VMStatus.Down);
         vmList.add(vm1);
         vmList.add(vm2);
-        when(vmDao.getVmsListForDisk(any(Guid.class))).thenReturn(vmList);
+        when(vmDao.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(vmList);
     }
 
     private void initSrcStorageDomain() {

@@ -1586,4 +1586,8 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         return !isHostedEngine() && !isExternalVm();
     }
 
+    public void clearDisks() {
+        getDiskList().clear();
+        getDiskMap().clear();
+    }
 }

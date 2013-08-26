@@ -101,6 +101,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         if (cachedSelectedActiveDisks == null) {
             cachedSelectedActiveDisks = ImagesHandler.filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(getVmId()),
                     true,
+                    true,
                     true);
         }
         return cachedSelectedActiveDisks;
@@ -316,7 +317,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext())).getSucceeded();
     }
 
-    private boolean isLiveSnapshotApplicable() {
+    protected boolean isLiveSnapshotApplicable() {
         return getParameters().getParentCommand() != VdcActionType.RunVm && getVm() != null
                 && (getVm().isRunning() || getVm().getStatus() == VMStatus.Paused) && getVm().getRunOnVds() != null;
     }
@@ -369,7 +370,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     private SnapshotVDSCommandParameters buildLiveSnapshotParameters(Snapshot snapshot) {
         List<Disk> pluggedDisks = getDiskDao().getAllForVm(getVm().getId(), true);
-        List<DiskImage> filteredPluggedDisks = ImagesHandler.filterImageDisks(pluggedDisks, false, true);
+        List<DiskImage> filteredPluggedDisks = ImagesHandler.filterImageDisks(pluggedDisks, false, true, true);
         if (FeatureSupported.memorySnapshot(getVm().getVdsGroupCompatibilityVersion())) {
             return new SnapshotVDSCommandParameters(getVm().getRunOnVds(),
                     getVm().getId(),

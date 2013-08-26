@@ -79,6 +79,10 @@ public class AddVmTemplateCommandTest {
             }
 
             @Override
+            protected void updateVmDevices() {
+            }
+
+            @Override
             public VM getVm() {
                 return vm;
             }

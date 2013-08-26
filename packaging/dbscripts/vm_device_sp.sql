@@ -13,7 +13,8 @@ Create or replace FUNCTION InsertVmDevice(
     v_is_plugged boolean,
     v_is_readonly boolean,
     v_alias varchar(255),
-    v_custom_properties text)
+    v_custom_properties text,
+    v_snapshot_id uuid)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -29,7 +30,8 @@ BEGIN
         is_plugged,
         is_readonly,
         alias,
-        custom_properties)
+        custom_properties,
+        snapshot_id)
     VALUES(
         v_device_id ,
         v_vm_id ,
@@ -42,7 +44,8 @@ BEGIN
         v_is_plugged,
         v_is_readonly,
         v_alias,
-        v_custom_properties);
+        v_custom_properties,
+        v_snapshot_id);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -58,7 +61,8 @@ Create or replace FUNCTION UpdateVmDevice(
     v_is_plugged boolean,
     v_is_readonly boolean,
     v_alias varchar(255),
-    v_custom_properties text)
+    v_custom_properties text,
+    v_snapshot_id uuid)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -74,6 +78,7 @@ BEGIN
            is_readonly = v_is_readonly,
            alias = v_alias,
            custom_properties = v_custom_properties,
+           snapshot_id = v_snapshot_id,
            _update_date = current_timestamp
     WHERE  device_id = v_device_id and vm_id = v_vm_id;
 END; $procedure$

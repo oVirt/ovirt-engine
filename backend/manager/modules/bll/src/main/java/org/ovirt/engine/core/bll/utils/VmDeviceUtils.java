@@ -267,7 +267,8 @@ public class VmDeviceUtils {
                                      Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping,
                                      boolean soundDeviceEnabled,
                                      boolean isConsoleEnabled,
-                                     Boolean isVirtioScsiEnabled) {
+                                     Boolean isVirtioScsiEnabled,
+                                     boolean copySnapshotDevices) {
         Guid id;
         String isoPath=vmBase.getIsoPath();
         // indicates that VM should have CD either from its own (iso_path) or from the snapshot it was cloned from.
@@ -280,6 +281,10 @@ public class VmDeviceUtils {
         boolean hasVirtioScsiController = false;
 
         for (VmDevice device : devicesDataToUse) {
+            if (device.getSnapshotId() != null && !copySnapshotDevices) {
+                continue;
+            }
+
             id = Guid.newGuid();
             Map<String, Object> specParams = new HashMap<String, Object>();
             if (srcId.equals(Guid.Empty)) {
@@ -432,7 +437,8 @@ public class VmDeviceUtils {
                                      Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping,
                                      boolean soundDeviceEnabled,
                                      boolean isConsoleEnabled,
-                                     Boolean isVirtioScsiEnabled) {
+                                     Boolean isVirtioScsiEnabled,
+                                     boolean copySnapshotDevices) {
         VM vm = DbFacade.getInstance().getVmDao().get(dstId);
         VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
         boolean isVm = (vmBase != null);
@@ -443,7 +449,7 @@ public class VmDeviceUtils {
 
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
         copyVmDevices(srcId, dstId, vm, vmBase, isVm, devices, srcDeviceIdToTargetDeviceIdMapping,
-                soundDeviceEnabled, isConsoleEnabled, isVirtioScsiEnabled);
+                soundDeviceEnabled, isConsoleEnabled, isVirtioScsiEnabled, copySnapshotDevices);
     }
 
     private static void addVideoDevice(VmBase vm) {
@@ -540,7 +546,8 @@ public class VmDeviceUtils {
                     is_plugged,
                     isReadOnly,
                     "",
-                    customProp);
+                    customProp,
+                    null);
         dao.save(managedDevice);
         // If we add Disk/Interface/CD/Floppy, we have to recalculate boot order
         if (type == VmDeviceGeneralType.DISK || type == VmDeviceGeneralType.INTERFACE) {

@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -8,14 +9,16 @@ public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
 
     private Disk disk;
     private VmDevice vmDevice;
+    private VM vm;
 
     public HotPlugDiskVDSParameters() {
     }
 
-    public HotPlugDiskVDSParameters(Guid vdsId, Guid vmId, Disk disk, VmDevice vmDevice) {
-        super(vdsId, vmId);
+    public HotPlugDiskVDSParameters(Guid vdsId, VM vm, Disk disk, VmDevice vmDevice) {
+        super(vdsId, vm.getId());
         this.disk = disk;
         this.vmDevice = vmDevice;
+        this.vm = vm;
     }
 
     public Disk getDisk() {
@@ -34,8 +37,16 @@ public class HotPlugDiskVDSParameters extends VdsAndVmIDVDSParametersBase {
         this.vmDevice = vmDevice;
     }
 
+    public VM getVm() {
+        return vm;
+    }
+
+    public void setVm(VM vm) {
+        this.vm = vm;
+    }
+
     @Override
     public String toString() {
-        return String.format("%s, volumeId = %s", super.toString(), disk.getId());
+        return String.format("%s, diskId = %s", super.toString(), disk.getId());
     }
 }

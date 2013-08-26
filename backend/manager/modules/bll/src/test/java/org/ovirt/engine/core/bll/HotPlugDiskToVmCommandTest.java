@@ -4,9 +4,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -60,7 +63,8 @@ public class HotPlugDiskToVmCommandTest {
     @ClassRule
     public static final MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.HotPlugUnsupportedOsList, "RHEL3x64"),
-            mockConfig(ConfigValues.HotPlugEnabled, "3.1", true));
+            mockConfig(ConfigValues.HotPlugEnabled, "3.1", true),
+            mockConfig(ConfigValues.HotPlugDiskSnapshotSupported, "3.1", true));
 
     @Mock
     private VmDAO vmDAO;
@@ -152,6 +156,16 @@ public class HotPlugDiskToVmCommandTest {
     }
 
     @Test
+    public void canDoActionChecksIfHotPlugDiskSnapshotIsSupported() throws Exception {
+        mockVmStatusUp();
+        cretaeVirtIODisk();
+        initStorageDomain();
+        command.getParameters().setSnapshotId(Guid.newGuid());
+        command.canDoAction();
+        verify(command, times(1)).isHotPlugDiskSnapshotSupported();
+    }
+
+    @Test
     public void canDoActionFailedWrongPlugStatus() throws Exception {
         mockVmStatusUp();
         cretaeDiskWrongPlug(true);
@@ -187,6 +201,8 @@ public class HotPlugDiskToVmCommandTest {
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
         command = spy(createCommand());
         mockVds();
+        mockVmDevice(false);
+        //doReturn(true).when(command).isHotPlugOperationSupported();
         when(command.getActionType()).thenReturn(getCommandActionType());
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
@@ -244,7 +260,7 @@ public class HotPlugDiskToVmCommandTest {
         vm2.setId(Guid.newGuid());
         vmList.add(vm1);
         vmList.add(vm2);
-        when(vmDAO.getVmsListForDisk(any(Guid.class))).thenReturn(vmList);
+        when(vmDAO.getVmsListForDisk(any(Guid.class), anyBoolean())).thenReturn(vmList);
     }
 
     /**

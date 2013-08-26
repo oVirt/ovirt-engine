@@ -49,6 +49,17 @@ public interface DiskImageDAO extends ReadDao<DiskImage, Guid> {
     List<DiskImage> getAllSnapshotsForVmSnapshot(Guid id);
 
     /**
+     * Retrieves the disk image with the image information for the given vm snapshot id.
+     *
+     * @param diskId
+     *            the disk id
+     * @param vmSnapshotId
+     *            the snapshot id
+     * @return the list of snapshots
+     */
+     DiskImage getDiskSnapshotForVmSnapshot(Guid diskId, Guid vmSnapshotId);
+
+    /**
      * Retrieves all snapshots associated with the given image group.
      *
      * @param id
@@ -56,6 +67,19 @@ public interface DiskImageDAO extends ReadDao<DiskImage, Guid> {
      * @return the list of snapshots
      */
     List<DiskImage> getAllSnapshotsForImageGroup(Guid id);
+
+    /**
+     * Retrieves the disk snapshots attached to the VM with the specified id.
+     *
+     * @param vmId
+     *            the VM id
+     * @param isPlugged
+     *            boolean indicating whether to query according to the plugged state,
+     *            when null is provided - both plugged and unplugged disk snapshots
+     *            would be queried.
+     * @return attached disks snapshots to the VM with the specified id.
+     */
+    List<DiskImage> getAttachedDiskSnapshotsToVm(Guid vmId, Boolean isPlugged);
 
     /**
      * Retrieves the ancestor of the given image (or the image itself, if it has no ancestors).

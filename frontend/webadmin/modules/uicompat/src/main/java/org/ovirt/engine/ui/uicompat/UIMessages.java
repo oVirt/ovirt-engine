@@ -102,6 +102,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Direct LUN disk(s) will not be a part of the VM export: {0}.")
     String directLUNDisksWillNotBePartOfTheExport(String diskList);
 
+    @DefaultMessage("Disk snapshot(s) will not be a part of the VM export: {0}.")
+    String snapshotDisksWillNotBePartOfTheExport(String diskList);
+
     @DefaultMessage("There are no disks allowing an export, only the configuration will be a part of the VM export.")
     String noExportableDisksFoundForTheExport();
 
@@ -111,6 +114,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Direct LUN disk(s) will not be a part of the VM snapshot: {0}.")
     String directLUNDisksWillNotBePartOfTheSnapshot(String diskList);
 
+    @DefaultMessage("Disk snapshot(s) will not be a part of the VM snapshot: {0}.")
+    String snapshotDisksWillNotBePartOfTheSnapshot(String diskList);
+
     @DefaultMessage("There are no disks allowing a snapshot, only the configuration will be a part of the VM snapshot.")
     String noExportableDisksFoundForTheSnapshot();
 
@@ -119,6 +125,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Direct LUN disk(s) will not be a part of the VM template: {0}.")
     String directLUNDisksWillNotBePartOfTheTemplate(String diskList);
+
+    @DefaultMessage("Snapshot disk(s) will not be a part of the VM template: {0}.")
+    String snapshotDisksWillNotBePartOfTheTemplate(String diskList);
 
     @DefaultMessage("There are no disks allowing an export, only the configuration will be a part of the VM template.")
     String noExportableDisksFoundForTheTemplate();

@@ -29,7 +29,7 @@ public class GetVmsByImageGuidQueryTest extends AbstractQueryTest<IdQueryParamet
         // Set up the DAOs
         Map<Boolean, List<VM>> expected = Collections.singletonMap(true, Collections.singletonList(new VM()));
         VmDAO vmDAOMock = mock(VmDAO.class);
-        when(vmDAOMock.getForDisk(imageGuid)).thenReturn(expected);
+        when(vmDAOMock.getForDisk(imageGuid, true)).thenReturn(expected);
         when(getDbFacadeMockInstance().getVmDao()).thenReturn(vmDAOMock);
 
         // Run the query

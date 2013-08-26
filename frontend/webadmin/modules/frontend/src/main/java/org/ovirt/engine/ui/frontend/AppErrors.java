@@ -49,6 +49,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM's Snapshot does not exist.")
     String ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The Snapshot type is ${snapshotType} while the operation is supported for Snapshots of the following type(s): ${supportedSnapshotTypes}.")
+    String ACTION_TYPE_FAILED_VM_SNAPSHOT_TYPE_NOT_ALLOWED();
+
     @DefaultStringValue("Cannot ${action} ${type}. The snapshot configuration is corrupted (snapshot ID is empty). Please contact the system administrator.")
     String ACTION_TYPE_FAILED_CORRUPTED_VM_SNAPSHOT_ID();
 
@@ -171,6 +174,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot switch the following Hosts to Maintenance mode: ${HostsList}.\nOne or more running VMs are indicated as non-migratable. The non-migratable VMs are: ${VmsList}.")
     String VDS_CANNOT_MAINTENANCE_IT_INCLUDES_NON_MIGRATABLE_VM();
+
+    @DefaultStringValue("Cannot switch the following Hosts to Maintenance mode: ${HostsList}.\nThe following VMs cannot be migrated because they have activated Disk Snapshot attached: \n \n ${disksInfo} \n \nplease deactivate/detach the Disk snapshots or turn off those VMs and try again.")
+    String VDS_CANNOT_MAINTENANCE_VM_HAS_PLUGGED_DISK_SNAPSHOT();
 
     @DefaultStringValue("Cannot remove default Host Cluster.")
     String VDS_CANNOT_REMOVE_DEFAULT_VDS_GROUP();
@@ -339,6 +345,15 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. VM is previewing a Snapshot.")
     String ACTION_TYPE_FAILED_VM_IN_PREVIEW();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following VM's disks snapshots are attached to other VMs: ${disksInfo} Please detach them from those VMs and try again.")
+    String ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following VM's disks snapshots are plugged to other VMs: ${disksInfo} Please deactivate/detach them from those VMs and try again.")
+    String ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_PLUGGED_TO_ANOTHER_VM();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following VM's activated disks are disk snapshots: \n ${disksInfo}. \nPlease deactivate them and try again.")
+    String ACTION_TYPE_FAILED_VM_HAS_PLUGGED_DISK_SNAPSHOT();
 
     @DefaultStringValue("Cannot ${action} ${type}: The following disks are locked: ${diskAliases}. Please try again in a few minutes.")
     String ACTION_TYPE_FAILED_DISKS_LOCKED();
@@ -2260,6 +2275,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Activate/Deactivate while VM is running, is only supported for Clusters of version 3.1 and above.")
     String HOT_PLUG_IS_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Activation/Deactivation of Disk Snapshot is not supported for clusters of version ${clusterVersion}.")
+    String HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Link state is set to 'Down' on the virtual machine's interface, this is not supported for clusters of version ${clusterVersion}.")
     String UNLINKING_IS_NOT_SUPPORTED();
 
@@ -2671,6 +2689,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action}. New disk size cannot be smaller than the current.")
     String ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Disk snapshot cannot be resized.")
+    String ACTION_TYPE_FAILED_CANNOT_RESIZE_DISK_SNAPSHOT();
 
     @DefaultStringValue("Cannot ${action}. The selected disk format is not supported.")
     String ACTION_TYPE_FAILED_NOT_SUPPORTED_IMAGE_FORMAT();

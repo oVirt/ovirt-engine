@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -59,20 +61,29 @@ public interface VmDAO extends DAO {
     /**
      * Retrieves the VMs with the specified image id.
      *
+     *
      * @param disk
      *            the disk id
+     * @param includeVmsSnapshotAttachedTo
      * @return A {@link Map} from the image's plug status to a {@link List} of the VMs associated with it.
      */
-    Map<Boolean, List<VM>> getForDisk(Guid disk);
+    Map<Boolean, List<VM>> getForDisk(Guid disk, boolean includeVmsSnapshotAttachedTo);
 
     /**
-     * Retrieves a list of VMs fir the specified disk id.
+     * Retrieves a list of VMs for the specified disk id.
+     *
+     * @return A {@link List} of the VMs associated with the disk.
+     */
+    List<VM> getVmsListForDisk(Guid id, boolean includeVmsSnapshotAttachedTo);
+
+    /**
+     * Retrieves a list of VMs for the specified disk id.
      *
      * @param disk
      *            the disk id
      * @return A {@link List} of the VMs associated with the disk.
      */
-    List<VM> getVmsListForDisk(Guid id);
+    List<Pair<VM,VmDevice>> getVmsWithPlugInfo(Guid id);
 
     /**
      * Finds all VMs for the specified user.

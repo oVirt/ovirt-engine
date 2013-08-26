@@ -113,6 +113,21 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetAttachedDiskSnapshotsToVm(v_vm_guid UUID, v_is_plugged BOOLEAN)
+RETURNS SETOF images_storage_domain_view
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT images_storage_domain_view.*
+      FROM images_storage_domain_view
+      JOIN vm_device ON vm_device.device_id = images_storage_domain_view.disk_id
+      WHERE vm_device.vm_id = v_vm_guid AND (v_is_plugged IS NULL OR vm_device.is_plugged = v_is_plugged)
+            AND vm_device.snapshot_id IS NOT NULL
+            AND vm_device.snapshot_id = images_storage_domain_view.vm_snapshot_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
 
 Create or replace FUNCTION GetSnapshotsByImageGroupId(v_image_group_id UUID)
 RETURNS SETOF images_storage_domain_view STABLE
@@ -124,6 +139,19 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+
+
+Create or replace FUNCTION GetDiskSnapshotForVmSnapshot(v_image_group_id UUID, v_vm_snapshot_id UUID)
+RETURNS SETOF images_storage_domain_view
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT *
+      FROM images_storage_domain_view
+      WHERE image_group_id = v_image_group_id
+      AND vm_snapshot_id = v_vm_snapshot_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 

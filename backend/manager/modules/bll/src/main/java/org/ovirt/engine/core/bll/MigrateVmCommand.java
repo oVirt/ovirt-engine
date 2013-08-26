@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
@@ -301,6 +302,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_RUNNING);
         }
 
+        VmValidator vmValidator = new VmValidator(vm);
+
+        if (!validate(vmValidator.vmNotHavingPluggedDiskSnapshots(VdcBllMessages.ACTION_TYPE_FAILED_VM_HAS_PLUGGED_DISK_SNAPSHOT))) {
+            return false;
+        }
+
         if (getDestinationVds() != null && getDestinationVds().getStatus() != VDSStatus.Up) {
             addCanDoActionMessage(VdcBllMessages.VAR__HOST_STATUS__UP);
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
@@ -309,7 +316,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
         return validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId()))
                 // This check was added to prevent migration of VM while its disks are being migrated
                 // TODO: replace it with a better solution
-                && validate(new DiskImagesValidator(ImagesHandler.getPluggedImagesForVm(vm.getId())).diskImagesNotLocked())
+                && validate(new DiskImagesValidator(ImagesHandler.getPluggedActiveImagesForVm(vm.getId())).diskImagesNotLocked())
                 && SchedulingManager.getInstance().canSchedule(getVdsGroup(),
                         getVm(),
                         getVdsBlackList(),

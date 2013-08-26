@@ -156,7 +156,7 @@ public class VmDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetForDisk() {
-        Map<Boolean, List<VM>> result = dao.getForDisk(FixturesTool.IMAGE_GROUP_ID);
+        Map<Boolean, List<VM>> result = dao.getForDisk(FixturesTool.IMAGE_GROUP_ID, true);
 
         assertNotNull(result);
         assertEquals("wrong number of VMs with unplugged image", 1, result.get(false).size());
@@ -167,7 +167,7 @@ public class VmDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetVmsListForDisk() {
-        List<VM> result = dao.getVmsListForDisk(FixturesTool.IMAGE_GROUP_ID);
+        List<VM> result = dao.getVmsListForDisk(FixturesTool.IMAGE_GROUP_ID, false);
 
         assertNotNull(result);
         assertEquals("wrong number of VMs", 1, result.size());

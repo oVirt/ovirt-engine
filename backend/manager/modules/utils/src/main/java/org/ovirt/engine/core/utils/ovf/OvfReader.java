@@ -251,6 +251,11 @@ public abstract class OvfReader implements IOvfBuilder {
             vmDevice.setCustomProperties(null);
         }
 
+        if (node.SelectSingleNode(OvfProperties.VMD_SNAPSHOT_PROP, _xmlNS) != null
+                && StringUtils.isNotEmpty(node.SelectSingleNode(OvfProperties.VMD_SNAPSHOT_PROP, _xmlNS).InnerText)) {
+            vmDevice.setSnapshotId(new Guid(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_CUSTOM_PROP, _xmlNS).InnerText)));
+        }
+
         if (isManaged) {
             vmDevice.setIsManaged(true);
             vmBase.getManagedDeviceMap().put(vmDevice.getDeviceId(), vmDevice);

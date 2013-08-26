@@ -18,16 +18,17 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -62,6 +63,8 @@ public class RemoveSnapshotCommandTest {
     @Mock
     private SnapshotsValidator snapshotValidator;
 
+    private VmValidator vmValidator;
+
     private static final Guid STORAGE_DOMAIN_ID = Guid.newGuid();
     private static final Guid STORAGE_DOMAIN_ID2 = Guid.newGuid();
     private static final Guid STORAGE_POOLD_ID = Guid.newGuid();
@@ -81,8 +84,19 @@ public class RemoveSnapshotCommandTest {
         doReturn(diskImageDAO).when(cmd).getDiskImageDao();
         doReturn(sdDAO).when(cmd).getStorageDomainDAO();
         doReturn(snapshotValidator).when(cmd).createSnapshotValidator();
+        mockVm();
+        vmValidator = spy(new VmValidator(cmd.getVm()));
+        doReturn(vmValidator).when(cmd).createVmValidator(any(VM.class));
         doReturn(STORAGE_POOLD_ID).when(cmd).getStoragePoolId();
         mockConfigSizeDefaults();
+    }
+
+    private void mockVm() {
+        VM vm = new VM();
+        vm.setId(Guid.newGuid());
+        vm.setStatus(VMStatus.Down);
+        vm.setStoragePoolId(STORAGE_POOLD_ID);
+        doReturn(vm).when(cmd).getVm();
     }
 
     private void mockConfigSizeRequirements(int requiredSpaceBufferInGB) {
@@ -201,13 +215,7 @@ public class RemoveSnapshotCommandTest {
                 cmd.validateStorageDomains());
     }
 
-    @Test
-    public void testCanDoActionVmUp() {
-        VM vm = new VM();
-        vm.setId(Guid.newGuid());
-        vm.setStatus(VMStatus.Up);
-        vm.setStoragePoolId(STORAGE_POOLD_ID);
-
+    private void prepareForVmValidatorTests() {
         StoragePool sp = new StoragePool();
         sp.setId(STORAGE_POOLD_ID);
         sp.setStatus(StoragePoolStatus.Up);
@@ -217,10 +225,24 @@ public class RemoveSnapshotCommandTest {
         doReturn(ValidationResult.VALID).when(snapshotValidator).vmNotInPreview(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotValidator).snapshotExists(any(Guid.class), any(Guid.class));
         doReturn(true).when(cmd).validateImages();
-        doReturn(vm).when(cmd).getVm();
         doReturn(sp).when(spDao).get(STORAGE_POOLD_ID);
         doReturn(Collections.emptyList()).when(cmd).getSourceImages();
+    }
+
+    @Test
+    public void testCanDoActionVmUp() {
+        prepareForVmValidatorTests();
+        cmd.getVm().setStatus(VMStatus.Up);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+    }
+
+    @Test
+    public void vmHasPluggedDdeviceSnapshotsAttachedToOtherVms() {
+        prepareForVmValidatorTests();
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM)).when(vmValidator)
+                .vmNotHavingDeviceSnapshotsAttachedToOtherVms(false);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_DISK_SNAPSHOT_IS_ATTACHED_TO_ANOTHER_VM);
     }
 
     /** Mocks a call to {@link RemoveSnapshotCommand#getSourceImages()} and returns its image guid */

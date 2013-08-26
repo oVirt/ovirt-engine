@@ -369,7 +369,7 @@ public class UpdateStorageServerConnectionCommandTest {
         unPluggedVms.add(vm3);
         vmsMap.put(Boolean.FALSE, unPluggedVms);
         vmsMap.put(Boolean.TRUE, pluggedVms);
-        when(vmDAO.getForDisk(diskId1)).thenReturn(vmsMap);
+        when(vmDAO.getForDisk(diskId1, true)).thenReturn(vmsMap);
         parameters.setStorageServerConnection(iscsiConnection);
         when(storageConnDao.get(iscsiConnection.getid())).thenReturn(iscsiConnection);
         doReturn(luns).when(command).getLuns();
@@ -426,7 +426,7 @@ public class UpdateStorageServerConnectionCommandTest {
         unPluggedVms.add(vm3);
         vmsMap.put(Boolean.FALSE, unPluggedVms);
         vmsMap.put(Boolean.TRUE, pluggedVms);
-        when(vmDAO.getForDisk(diskId1)).thenReturn(vmsMap);
+        when(vmDAO.getForDisk(diskId1, true)).thenReturn(vmsMap);
         parameters.setStorageServerConnection(iscsiConnection);
         when(storageConnDao.get(iscsiConnection.getid())).thenReturn(iscsiConnection);
         doReturn(luns).when(command).getLuns();

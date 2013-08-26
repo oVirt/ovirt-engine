@@ -75,7 +75,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
                 vmtImages =
                         ImagesHandler.filterImageDisks(DbFacade.getInstance()
                                 .getDiskDao()
-                                .getAllForVm(vmTemplate.getId()), false, false);
+                                .getAllForVm(vmTemplate.getId()), false, false, true);
             }
             if (vmtImages.size() > 0
                     && !ImagesHandler.isImagesExists(vmtImages, vmtImages.get(0).getStoragePoolId())) {

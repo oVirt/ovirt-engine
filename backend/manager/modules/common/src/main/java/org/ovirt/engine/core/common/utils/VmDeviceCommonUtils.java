@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.utils;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
@@ -182,6 +183,7 @@ public class VmDeviceCommonUtils {
 
     /**
      * updates disk boot order
+     * snapshot disk devices always will have lower priority than regulary attached disks.
      *
      * @param vmBase
      * @param devices
@@ -193,23 +195,35 @@ public class VmDeviceCommonUtils {
             List<VmDevice> devices,
             int bootOrder,
             boolean isOldCluster) {
+        LinkedList<VmDevice> diskDevices = new LinkedList<VmDevice>();
         for (VmDevice device : devices) {
             if (device.getType() == VmDeviceGeneralType.DISK
                     && device.getDevice().equals(
                             VmDeviceType.DISK.getName())) {
                 Guid id = device.getDeviceId();
                 if (id != null && !id.equals(Guid.Empty)) {
-                    // gets the image disk
-                    BaseDisk disk = getDisk(vm, id);
-                    if (disk != null && disk.isBoot()) {
-                        device.setBootOrder(++bootOrder);
+                    if (device.getSnapshotId() == null) {
+                        diskDevices.addFirst(device);
                         if (isOldCluster) { // Only one system disk can be bootable in old version.
                             break;
                         }
+                    } else {
+                        diskDevices.addLast(device);
                     }
                 }
             }
         }
+
+        for (VmDevice device : diskDevices) {
+            BaseDisk disk = getDisk(vm, device.getDeviceId());
+            if (disk != null && disk.isBoot()) {
+                device.setBootOrder(++bootOrder);
+                if (isOldCluster) { // Only one system disk can be bootable in old version.
+                    break;
+                }
+            }
+        }
+
         return bootOrder;
     }
 

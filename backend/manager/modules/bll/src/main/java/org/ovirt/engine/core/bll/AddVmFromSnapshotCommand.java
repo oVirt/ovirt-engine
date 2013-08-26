@@ -221,6 +221,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
             diskImagesFromConfiguration =
                     ImagesHandler.filterImageDisks(vmFromConfiguration.getDiskMap().values(),
                             false,
+                            true,
                             true);
         }
         return diskImagesFromConfiguration;
@@ -268,7 +269,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 getSrcDeviceIdToTargetDeviceIdMapping(),
                 getParameters().isSoundDeviceEnabled(),
                 getParameters().isConsoleEnabled(),
-                isVirtioScsiEnabled());
+                isVirtioScsiEnabled(),
+                false);
     }
 
     @Override
@@ -319,7 +321,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         }
 
         List<DiskImage> disksToCheck =
-                ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getSourceVmFromDb().getId()), true, false);
+                ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getSourceVmFromDb().getId()), true, false, true);
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(disksToCheck);
         if (!validate(diskImagesValidator.diskImagesNotLocked())) {
             return false;

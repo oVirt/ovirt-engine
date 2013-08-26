@@ -39,7 +39,7 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         vm = new VM();
         vm.setStatus(VMStatus.Down);
 
-        when(vmDao.getVmsListForDisk(getDiskImageId())).thenReturn(Arrays.asList(vm));
+        when(vmDao.getVmsListForDisk(getDiskImageId(), Boolean.FALSE)).thenReturn(Arrays.asList(vm));
 
         ExportRepoImageParameters exportParameters = new ExportRepoImageParameters(
                 getDiskImageGroupId(), getRepoStorageDomainId());

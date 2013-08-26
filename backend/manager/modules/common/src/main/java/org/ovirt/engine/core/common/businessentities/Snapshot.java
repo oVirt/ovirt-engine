@@ -250,9 +250,19 @@ public class Snapshot extends IVdcQueryable implements BusinessEntityWithStatus<
     }
 
     public enum SnapshotType {
-        REGULAR,
-        ACTIVE,
-        STATELESS,
-        PREVIEW
+        REGULAR("Regular"),
+        ACTIVE("Active"),
+        STATELESS("Stateless"),
+        PREVIEW("In Preview");
+
+        private String typeName;
+
+        private SnapshotType(String typeName) {
+            this.typeName = typeName;
+        }
+
+        public String toString() {
+            return typeName;
+        }
     }
 }

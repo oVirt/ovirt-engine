@@ -165,7 +165,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
      */
     private List<VM> getVmsForDiskId() {
         if (listVms == null) {
-            listVms = getVmDAO().getVmsListForDisk((Guid) getParameters().getDiskId());
+            listVms = getVmDAO().getVmsListForDisk((Guid) getParameters().getDiskId(), true);
         }
         return listVms;
     }
@@ -224,7 +224,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
                 return false;
             }
 
-            List<DiskImage> diskList = ImagesHandler.filterImageDisks(Arrays.asList(getDisk()), true, false);
+            List<DiskImage> diskList = ImagesHandler.filterImageDisks(Arrays.asList(getDisk()), true, false, true);
             DiskImagesValidator diskImagesValidator = new DiskImagesValidator(diskList);
             if (!validate(diskImagesValidator.diskImagesNotLocked())) {
                 return false;

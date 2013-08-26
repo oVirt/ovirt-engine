@@ -93,8 +93,8 @@ public class DiskDaoDbFacadeImpl extends BaseDAODbFacade implements DiskDao {
     }
 
     @Override
-    public Disk getVmBootDisk(Guid vmId) {
-        return getCallsHandler().executeRead("GetVmBootDisk", DiskRowMapper.instance,
+    public Disk getVmBootActiveDisk(Guid vmId) {
+        return getCallsHandler().executeRead("GetVmBootActiveDisk", DiskRowMapper.instance,
                 getCustomMapSqlParameterSource().addValue("vm_guid", vmId));
     }
 

@@ -616,7 +616,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 getSrcDeviceIdToTargetDeviceIdMapping(),
                 getParameters().isSoundDeviceEnabled(),
                 getParameters().isConsoleEnabled(),
-                isVirtioScsiEnabled());
+                isVirtioScsiEnabled(), false);
     }
 
     protected static boolean isLegalClusterId(Guid clusterId, List<String> reasons) {

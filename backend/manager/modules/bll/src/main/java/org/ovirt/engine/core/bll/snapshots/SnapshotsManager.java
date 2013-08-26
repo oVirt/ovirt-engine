@@ -249,7 +249,7 @@ public class SnapshotsManager {
         VmDeviceUtils.setVmDevices(vm.getStaticData());
         ArrayList<DiskImage> images =
                 new ArrayList<DiskImage>(ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(vm.getId()),
-                        false, true));
+                        false, true, true));
         for (DiskImage image : images) {
             image.setStorageIds(null);
         }
@@ -341,7 +341,7 @@ public class SnapshotsManager {
         if (!vmDevice.getDevice().equals(VmDeviceType.DISK.getName())) {
             return true;
         }
-        return getDiskDao().get(vmDevice.getDeviceId()).isAllowSnapshot();
+        return vmDevice.getSnapshotId() == null && getDiskDao().get(vmDevice.getDeviceId()).isAllowSnapshot();
     }
 
     /**
@@ -479,14 +479,14 @@ public class SnapshotsManager {
     }
 
     /**
-     * Remove all the disks which are allowed to be snapshot but not exist in the snapshot.
+     * Remove all the disks which are allowed to be snapshot but not exist in the snapshot and are not disk snapshots
      * @param vmId - The vm id which is being snapshot.
      * @param diskIdsFromSnapshot - An image group id list for images which are part of the VM.
      */
     private void removeDisksNotInSnapshot(Guid vmId, List<Guid> diskIdsFromSnapshot) {
         for (VmDevice vmDevice : getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
                 vmId, VmDeviceGeneralType.DISK, VmDeviceType.DISK.getName())) {
-            if (!diskIdsFromSnapshot.contains(vmDevice.getDeviceId())) {
+            if (!diskIdsFromSnapshot.contains(vmDevice.getDeviceId()) && vmDevice.getSnapshotId() == null) {
                 Disk disk = getDiskDao().get(vmDevice.getDeviceId());
                 if (disk.isAllowSnapshot()) {
                     getBaseDiskDao().remove(vmDevice.getDeviceId());

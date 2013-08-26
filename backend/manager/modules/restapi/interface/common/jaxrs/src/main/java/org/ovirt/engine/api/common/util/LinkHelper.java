@@ -687,8 +687,14 @@ public class LinkHelper {
     }
 
     public static <R extends BaseResource> R addLinks(UriInfo uriInfo, R model, Class<? extends BaseResource> suggestedParentType) {
+        return addLinks(uriInfo, model, suggestedParentType, true);
+    }
+
+    public static <R extends BaseResource> R addLinks(UriInfo uriInfo, R model, Class<? extends BaseResource> suggestedParentType, boolean addActions) {
         setHref(uriInfo, model, suggestedParentType);
-        setActions(uriInfo, model, suggestedParentType);
+        if (addActions) {
+            setActions(uriInfo, model, suggestedParentType);
+        }
 
         for (BaseResource inline : getInlineResources(model)) {
             if (inline.getId() != null) {

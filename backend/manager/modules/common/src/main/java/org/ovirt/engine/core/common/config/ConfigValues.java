@@ -1521,6 +1521,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("30")
     DwhHeartBeatInterval(540),
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    HotPlugDiskSnapshotSupported(541),
+
     Invalid(65535);
 
     private int intValue;

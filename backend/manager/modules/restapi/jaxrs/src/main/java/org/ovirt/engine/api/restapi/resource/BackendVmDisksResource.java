@@ -1,7 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
@@ -11,10 +10,12 @@ import org.ovirt.engine.api.common.util.LinkHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
+import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageType;
+import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.api.resource.VmDisksResource;
 import org.ovirt.engine.api.restapi.logging.Messages;
@@ -26,7 +27,7 @@ import org.ovirt.engine.core.common.action.RemoveDiskParameters;
 import org.ovirt.engine.core.common.action.UpdateVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -38,8 +39,8 @@ public class BackendVmDisksResource
     protected static final String[] SUB_COLLECTIONS = {"permissions", "statistics"};
 
     public BackendVmDisksResource(Guid parentId,
-                                VdcQueryType queryType,
-                                VdcQueryParametersBase queryParams) {
+                                  VdcQueryType queryType,
+                                  VdcQueryParametersBase queryParams) {
         super(Disk.class,
               Disks.class,
               org.ovirt.engine.core.common.businessentities.Disk.class,
@@ -108,6 +109,28 @@ public class BackendVmDisksResource
     @Override
     protected String[] getRequiredUpdateFields() {
         return new String[0];
+    }
+
+    @Override
+    protected Disk addLinks(Disk model, String... subCollectionMembersToExclude) {
+        Snapshot snapshotInfo = model.getSnapshot();
+        model.setSnapshot(null);
+        super.addLinks(model, subCollectionMembersToExclude);
+        if (snapshotInfo != null) {
+            org.ovirt.engine.core.common.businessentities.Snapshot snapshot =
+                    getEntity(org.ovirt.engine.core.common.businessentities.Snapshot.class,
+                            VdcQueryType.GetSnapshotBySnapshotId,
+                            new IdQueryParameters(asGuid(snapshotInfo.getId())),
+                            snapshotInfo.getId());
+            VM vm = new VM();
+            vm.setId(snapshot.getVmId().toString());
+            snapshotInfo.setVm(vm);
+            model.setSnapshot(snapshotInfo);
+            LinkHelper.addLinks(getUriInfo(), snapshotInfo, null, false);
+            model.setSnapshot(snapshotInfo);
+        }
+
+        return model;
     }
 
     @Override
@@ -183,6 +206,12 @@ public class BackendVmDisksResource
         boolean isDiskActive = disk.isSetActive() ? disk.isActive() : false;
         AttachDettachVmDiskParameters params =
                 new AttachDettachVmDiskParameters(parentId, Guid.createGuidFromStringDefaultEmpty(disk.getId()), isDiskActive);
+
+        if (disk.isSetSnapshot()) {
+            validateParameters(disk, "snapshot.id");
+            params.setSnapshotId(asGuid(disk.getSnapshot().getId()));
+        }
+
         return performAction(VdcActionType.AttachDiskToVm, params);
     }
 

@@ -453,8 +453,8 @@ public final class ImagesHandler {
         return result;
     }
 
-    public static List<DiskImage> getPluggedImagesForVm(Guid vmId) {
-        return filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vmId, true), true, false);
+    public static List<DiskImage> getPluggedActiveImagesForVm(Guid vmId) {
+        return filterImageDisks(DbFacade.getInstance().getDiskDao().getAllForVm(vmId, true), true, false, true);
     }
 
     /**
@@ -483,22 +483,27 @@ public final class ImagesHandler {
     /**
      * Filter image disks by attributes.
      *
+     *
      * @param listOfDisks
      *            - The list of disks to be filtered.
      * @param allowOnlyNotShareableDisks
      *            - Indication whether to allow only disks that are not shareable
      * @param allowOnlySnapableDisks
      *            - Indication whether to allow only disks which are allowed to be snapshoted.
-     * @return - List filtered of disk images.
+     * @param allowOnlyActiveDisks
+     *            - Indication whether to allow only disks that are not disk snapshots.
+     * @return - List filtered of disk images according to the given filters.
      */
     public static List<DiskImage> filterImageDisks(Collection<? extends Disk> listOfDisks,
-            boolean allowOnlyNotShareableDisks,
-            boolean allowOnlySnapableDisks) {
+                                                   boolean allowOnlyNotShareableDisks,
+                                                   boolean allowOnlySnapableDisks,
+                                                   boolean allowOnlyActiveDisks) {
         List<DiskImage> diskImages = new ArrayList<DiskImage>();
         for (Disk disk : listOfDisks) {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE &&
                     (!allowOnlyNotShareableDisks || !disk.isShareable()) &&
-                    (!allowOnlySnapableDisks || disk.isAllowSnapshot())) {
+                    (!allowOnlySnapableDisks || disk.isAllowSnapshot()) &&
+                    (!allowOnlyActiveDisks || Boolean.TRUE.equals(((DiskImage)disk).getActive()))) {
                 diskImages.add((DiskImage) disk);
             }
         }

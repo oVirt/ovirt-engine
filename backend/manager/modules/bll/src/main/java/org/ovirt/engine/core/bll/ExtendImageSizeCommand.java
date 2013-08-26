@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -16,8 +16,10 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ExtendImageSizeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.ExtendVmDiskSizeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
@@ -197,10 +199,13 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
 
     private List<VM> getVmsDiskPluggedTo() {
         if (vmsDiskPluggedTo == null) {
-            vmsDiskPluggedTo = getVmDAO().getForDisk(getImage().getId()).get(Boolean.TRUE);
+            List<Pair<VM, VmDevice>> attachedVmsInfo = getVmDAO().getVmsWithPlugInfo(getImage().getId());
+            vmsDiskPluggedTo = new LinkedList<>();
 
-            if (vmsDiskPluggedTo == null) {
-                vmsDiskPluggedTo = Collections.emptyList();
+            for (Pair<VM, VmDevice> pair : attachedVmsInfo) {
+                if (Boolean.TRUE.equals(pair.getSecond().getIsPlugged()) && pair.getSecond().getSnapshotId() == null) {
+                   vmsDiskPluggedTo.add(pair.getFirst());
+                }
             }
         }
         return vmsDiskPluggedTo;

@@ -41,7 +41,10 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     @Override
     protected boolean canDoAction() {
-        return isVmExist() &&
+        performDbLoads();
+
+        return
+                isVmExist() &&
                 isVmInUpPausedDownStatus() &&
                 canRunActionOnNonManagedVm() &&
                 isDiskExist(getDisk()) &&
@@ -75,6 +78,18 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         return storageDomainValidator;
     }
 
+    protected void performDbLoads() {
+        oldVmDevice =
+                getVmDeviceDao().get(new VmDeviceId(getParameters().getDiskId(), getVmId()));
+        if (oldVmDevice != null) {
+            if (oldVmDevice.getSnapshotId() != null) {
+                disk = getDiskImageDao().getDiskSnapshotForVmSnapshot(getParameters().getDiskId(), oldVmDevice.getSnapshotId());
+            } else {
+                disk = getDiskDao().get(getParameters().getDiskId());
+            }
+        }
+    }
+
     private boolean checkCanPerformPlugUnPlugDisk() {
         boolean returnValue = true;
         if (getVm().getStatus().isUpOrPaused()) {
@@ -84,7 +99,6 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
             }
         }
 
-        oldVmDevice = getVmDeviceDao().get(new VmDeviceId(getDisk().getId(), getVmId()));
         if (getPlugAction() == VDSCommandType.HotPlugDisk && oldVmDevice.getIsPlugged()) {
             return failCanDoAction(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_UNPLUGGED);
         }

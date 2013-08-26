@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
 
-    private static final int TOTAL_DISK_IMAGES = 6;
+    private static final int TOTAL_DISK_IMAGES = 7;
 
     @Override
     protected Guid getExistingEntityId() {
@@ -170,8 +170,8 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
     }
 
     @Test
-    public void testGetVmBootDisk() {
-        Disk bootDisk = dao.getVmBootDisk(FixturesTool.VM_RHEL5_POOL_57);
+    public void testGetVmBootActiveDisk() {
+        Disk bootDisk = dao.getVmBootActiveDisk(FixturesTool.VM_RHEL5_POOL_57);
         assertNotNull("VM should have a boot disk attached", bootDisk);
         assertEquals("Wrong boot disk for VM", bootDisk.getId(), FixturesTool.BOOTABLE_DISK_ID);
     }
@@ -190,7 +190,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
      *            The result to check
      */
     private static void assertFullGetAllForVMResult(List<Disk> disks) {
-        assertEquals("VM should have three disks", 4, disks.size());
+        assertEquals("VM should have five disks", 5, disks.size());
     }
 
     /**

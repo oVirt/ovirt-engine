@@ -15,6 +15,6 @@ public class GetVmsByDiskGuidQuery<P extends IdQueryParameters> extends QueriesC
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(getDbFacade()
                 .getVmDao()
-                .getForDisk(getParameters().getId()));
+                .getForDisk(getParameters().getId(), true));
     }
 }

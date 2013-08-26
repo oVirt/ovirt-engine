@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MaintenanceNumberOfVdssParameters;
 import org.ovirt.engine.core.common.action.MaintenanceVdsParameters;
@@ -118,6 +119,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         Set<Guid> vdsWithRunningVMs = new HashSet<Guid>();
         List<String> hostNotRespondingList = new ArrayList<String>();
         List<String> hostsWithNonMigratableVms = new ArrayList<String>();
+        List<String> hostsWithVmsWithPluggedDiskSnapshots = new ArrayList<>();
         List<String> nonMigratableVms = new ArrayList<String>();
 
         for (Guid vdsId : getParameters().getVdsIdList()) {
@@ -156,6 +158,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                             vdsWithRunningVMs.add(vdsId);
                         }
                         _vdsGroupIds.add(vds.getVdsGroupId());
+
                         List<String> nonMigratableVmDescriptionsToFrontEnd = new ArrayList<String>();
                         for (VM vm : vms) {
                             if (vm.getMigrationSupport() != MigrationSupport.MIGRATABLE) {
@@ -171,6 +174,10 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                             log.error(String.format("VDS %1$s contains non migratable VMs", vdsId));
                             result = false;
 
+                        } else if (!validate(new VmValidator(vms)
+                                .vmNotHavingPluggedDiskSnapshots(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VM_HAS_PLUGGED_DISK_SNAPSHOT))) {
+                            hostsWithVmsWithPluggedDiskSnapshots.add(vds.getName());
+                            result = false;
                         } else if (vds.getStatus() == VDSStatus.Maintenance) {
                             addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_IN_MAINTENANCE);
                             result = false;
@@ -198,6 +205,8 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
 
             // If one of the vms is non migratable, add a CanDoAction message.
             handleNonMigratableVms(hostsWithNonMigratableVms, nonMigratableVms);
+
+            handleHostsWithVmsWithPluggedDiskSnapshots(hostsWithVmsWithPluggedDiskSnapshots);
 
             if (result) {
                 // Remove all redundant clusters in clusters list, by adding it to a
@@ -270,7 +279,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
      *            - List of non responsive hosts with running VM's on them.
      */
     private void handleNonMigratableVms(List<String> hostsWithNonMigratableVms, List<String> nonMigratableVms) {
-        if (!hostsWithNonMigratableVms.isEmpty()) {
+        if (!nonMigratableVms.isEmpty()) {
             addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_IT_INCLUDES_NON_MIGRATABLE_VM);
             getReturnValue().getCanDoActionMessages().add((String.format("$VmsList %1$s",
                     StringUtils.join(nonMigratableVms, " , "))));
@@ -311,6 +320,13 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_RESPONDING_WITH_VMS);
             getReturnValue().getCanDoActionMessages().add(String.format("$HostNotResponding %1$s",
                     StringUtils.join(hostNotRespondingList, ",")));
+        }
+    }
+
+    private void handleHostsWithVmsWithPluggedDiskSnapshots(List<String> hostsWithVmsWithPluggedDiskSnapshots) {
+        if (!hostsWithVmsWithPluggedDiskSnapshots.isEmpty()) {
+            getReturnValue().getCanDoActionMessages().add((String.format("$HostsList %1$s",
+                    StringUtils.join(hostsWithVmsWithPluggedDiskSnapshots, ","))));
         }
     }
 

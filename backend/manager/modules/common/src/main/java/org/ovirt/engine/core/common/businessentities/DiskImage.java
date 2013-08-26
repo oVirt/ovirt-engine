@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -60,6 +61,17 @@ public class DiskImage extends DiskImageBase implements IImage {
 
     public Boolean getActive() {
         return getImage().isActive();
+    }
+
+    @Override
+    @JsonIgnore
+    public boolean isDiskSnapshot() {
+        return !getActive();
+    }
+
+    @JsonIgnore
+    public Guid getSnapshotId() {
+        return isDiskSnapshot() ? getVmSnapshotId() : null;
     }
 
     public void setActive(boolean active) {

@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,12 +31,14 @@ public class SnapshotsValidatorTest {
     @Mock
     private SnapshotDao snapshotDao;
     private Guid vmId;
-    private Guid snapshotId;
+    private Snapshot snapshot;
 
     @Before
     public void setUp() {
         vmId = Guid.newGuid();
-        snapshotId = Guid.newGuid();
+        snapshot = new Snapshot();
+        snapshot.setId(Guid.newGuid());
+        snapshot.setType(Snapshot.SnapshotType.REGULAR);
         doReturn(snapshotDao).when(validator).getSnapshotDao();
     }
 
@@ -66,15 +70,27 @@ public class SnapshotsValidatorTest {
 
     @Test
     public void snapshotExistsByGuidReturnsInvalidResultWhenNoSnapshot() throws Exception {
-        when(snapshotDao.exists(vmId, snapshotId)).thenReturn(false);
-        validateInvalidResult(validator.snapshotExists(vmId, snapshotId),
+        when(snapshotDao.exists(vmId, snapshot.getId())).thenReturn(false);
+        validateInvalidResult(validator.snapshotExists(vmId, snapshot.getId()),
                 VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_DOES_NOT_EXIST);
     }
 
     @Test
     public void snapshotExistsByGuidReturnsValidResultWhenSnapshotExists() throws Exception {
-        when(snapshotDao.exists(vmId, snapshotId)).thenReturn(true);
-        validateValidResult(validator.snapshotExists(vmId, snapshotId));
+        when(snapshotDao.exists(vmId, snapshot.getId())).thenReturn(true);
+        validateValidResult(validator.snapshotExists(vmId, snapshot.getId()));
+    }
+
+    @Test
+    public void snapshotTypeSupported() throws Exception {
+        validateValidResult(validator.snapshotTypeSupported(snapshot, Collections.singletonList(snapshot.getType())));
+    }
+
+    @Test
+    public void snapshotTypeNotSupported() throws Exception {
+        validateInvalidResult(validator.snapshotTypeSupported(snapshot,
+                Collections.singletonList(Snapshot.SnapshotType.ACTIVE)),
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_TYPE_NOT_ALLOWED);
     }
 
     @Test
@@ -85,12 +101,11 @@ public class SnapshotsValidatorTest {
 
     @Test
     public void snapshotExistsBySnapshotReturnsValidResultWhenSnapshotExists() throws Exception {
-        validateValidResult(validator.snapshotExists(new Snapshot()));
+        validateValidResult(validator.snapshotExists(snapshot));
     }
 
     @Test
     public void snapshotNotBrokenReturnsInvalidResult() throws Exception {
-        Snapshot snapshot = new Snapshot();
         snapshot.setStatus(SnapshotStatus.BROKEN);
 
         validateInvalidResult(validator.snapshotNotBroken(snapshot),
@@ -99,7 +114,7 @@ public class SnapshotsValidatorTest {
 
     @Test
     public void snapshotNotBrokenReturnsValidResult() throws Exception {
-        validateValidResult(validator.snapshotNotBroken((new Snapshot())));
+        validateValidResult(validator.snapshotNotBroken(snapshot));
     }
 
     /**

@@ -9,6 +9,7 @@ import org.ovirt.engine.api.model.DiskInterface;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.ScsiGenericIO;
+import org.ovirt.engine.api.model.Snapshot;
 import org.ovirt.engine.api.model.Storage;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.StorageDomains;
@@ -111,6 +112,9 @@ public class DiskMapper {
         if (disk.isSetStatus()) {
             diskImage.setImageStatus(map(DiskStatus.fromValue(disk.getStatus().getState())));
         }
+        if (disk.isSetSnapshot() && disk.getSnapshot().isSetId()) {
+            diskImage.setVmSnapshotId(GuidUtils.asGuid(disk.getSnapshot().getId()));
+        }
         if (disk.isSetSparse()) {
             diskImage.setVolumeType(disk.isSparse() ? VolumeType.Sparse : VolumeType.Preallocated);
         }
@@ -160,6 +164,12 @@ public class DiskMapper {
         model.setSize(entity.getSize());
         model.setProvisionedSize(entity.getSize());
         model.setActualSize(entity.getActualSizeInBytes());
+
+        if (entity.getSnapshotId() != null) {
+            model.setSnapshot(new Snapshot());
+            model.getSnapshot().setId(entity.getSnapshotId().toString());
+        }
+
         if (entity.getVolumeFormat() != null) {
             model.setFormat(map(entity.getVolumeFormat(), null));
         }

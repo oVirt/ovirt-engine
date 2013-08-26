@@ -61,14 +61,17 @@ public class BackendSnapshotResourceTest extends AbstractBackendSubResourceTest<
         List<String> populates = new ArrayList<String>();
         populates.add("true");
         String ovfData = "data";
+        org.ovirt.engine.core.common.businessentities.Snapshot resultSnapshot = new org.ovirt.engine.core.common.businessentities.Snapshot();
+        resultSnapshot.setVmConfiguration(ovfData);
+        resultSnapshot.setId(SNAPSHOT_ID);
         expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(asList(getEntity(1)));
-        setUpEntityQueryExpectations(VdcQueryType.GetVmOvfConfigurationBySnapshot,
+        setUpEntityQueryExpectations(VdcQueryType.GetSnapshotBySnapshotId,
                 IdQueryParameters.class,
                 new String[]{"Id"},
                 new Object[]{SNAPSHOT_ID},
-                ovfData);
+                resultSnapshot);
         control.replay();
         Snapshot snapshot = resource.get();
         verifyModel(snapshot, 1);

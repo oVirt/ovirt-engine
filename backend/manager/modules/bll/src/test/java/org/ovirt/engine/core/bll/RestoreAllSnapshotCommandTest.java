@@ -21,6 +21,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -80,6 +81,9 @@ public class RestoreAllSnapshotCommandTest {
 
     @Mock
     private MultipleStorageDomainsValidator storageValidator;
+
+    @Mock
+    private VmValidator vmValidator;
 
     private Guid vmId = Guid.newGuid();
     private Guid diskImageId = Guid.newGuid();
@@ -153,6 +157,9 @@ public class RestoreAllSnapshotCommandTest {
         spyCommand = spy(new RestoreAllSnapshotsCommand<RestoreAllSnapshotsParameters>(parameters));
         doReturn(true).when(spyCommand).performImagesChecks();
         doReturn(storageValidator).when(spyCommand).createStorageDomainValidator();
+        doReturn(vmValidator).when(spyCommand).createVmValidator(any(VM.class));
+        doReturn(ValidationResult.VALID).when(vmValidator).vmDown();
+        doReturn(ValidationResult.VALID).when(vmValidator).vmNotHavingDeviceSnapshotsAttachedToOtherVms(false);
     }
 
     private void mockDaos() {

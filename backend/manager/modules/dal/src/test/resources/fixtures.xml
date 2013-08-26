@@ -3096,6 +3096,23 @@
             <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
             <value>1</value>
         </row>
+        <row>
+            <value>c9a559d9-8666-40d1-9967-759502b19f0d</value>
+            <value>2010-11-18 11:05:50</value>
+            <value>2147483648</value>
+            <value>00000000-0000-0000-0000-000000000000</value>
+            <value>c9a559d9-8666-40d1-9967-759502b19f0c</value>
+            <value>4</value>
+            <value>2010-11-18 11:05:50</value>
+            <value>a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f11</value>
+            <value>2</value>
+            <value>4</value>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a35</value>
+            <value>2010-11-18 11:11:35</value>
+            <value>2010-12-01 14:13:07</value>
+            <value>88296e00-0cad-4e5a-9291-008a7b7f4401</value>
+            <value>1</value>
+        </row>
     </table>
 
     <table name="base_disks">
@@ -4398,6 +4415,7 @@
         <column>is_readonly</column>
         <column>alias</column>
         <column>custom_properties</column>
+        <column>snapshot_id</column>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a34</value>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -4410,6 +4428,7 @@
             <value>false</value>
             <value>false</value>
             <value>alias</value>
+            <null />
             <null />
         </row>
         <row>
@@ -4425,6 +4444,7 @@
             <value>false</value>
             <value>alias</value>
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
+            <null />
         </row>
 
         <row>
@@ -4440,6 +4460,7 @@
             <value>false</value>
             <value>alias</value>
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
+            <null />
         </row>
         <row>
             <value>e14ed6f0-3b12-11e1-b614-63d00126418d</value>
@@ -4454,6 +4475,7 @@
             <value>false</value>
             <value>alias</value>
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
+            <null />
         </row>
         <row>
             <value>52058975-3d5e-484a-80c1-01c31207f578</value>
@@ -4468,6 +4490,7 @@
             <value>false</value>
             <value>alias</value>
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
+            <null />
         </row>
         <row>
             <value>e2817b12-f873-4046-b0da-0098293c14fd</value>
@@ -4482,6 +4505,7 @@
             <value>false</value>
             <value>alias</value>
             <value>{}</value>
+            <null />
         </row>
         <row>
             <value>14550e82-1e1f-47b5-ae41-b009348dabfa</value>
@@ -4496,6 +4520,7 @@
             <value>false</value>
             <value>alias</value>
             <value>{ "prop1" : "true", "prop2" : "123456" }</value>
+            <null />
         </row>
         <row>
             <value>e2817b12-f873-4046-b0da-0098293c0000</value>
@@ -4510,6 +4535,7 @@
             <value>false</value>
             <value>alias</value>
             <value>{ "prop1" : "true" }</value>
+            <null />
         </row>
         <row>
             <value>14550e82-1e1f-47b5-ae41-b009348dabfb</value>
@@ -4524,6 +4550,7 @@
             <value>false</value>
             <value>alias</value>
             <null />
+            <null />
         </row>
         <row>
             <value>1b26a52b-b60f-44cb-9f46-3ef333b04a40</value>
@@ -4537,6 +4564,7 @@
             <value>true</value>
             <value>false</value>
             <value>alias</value>
+            <null />
             <null />
         </row>
         <row>
