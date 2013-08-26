@@ -44,13 +44,13 @@ public abstract class BookmarkCommandBase<T extends BookmarksParametersBase> ext
         return getParameters().getBookmarkId();
     }
 
-    protected void AddErrorMessages(VdcBllMessages messageActionTypeParameter, VdcBllMessages messageReason) {
+    protected void addErrorMessages(VdcBllMessages messageActionTypeParameter, VdcBllMessages messageReason) {
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__BOOKMARK);
         addCanDoActionMessage(messageActionTypeParameter);
         addCanDoActionMessage(messageReason);
     }
 
-    protected void AddInvalidIdErrorMessages(VdcBllMessages messageActionTypeParameter) {
-        AddErrorMessages(messageActionTypeParameter, VdcBllMessages.ACTION_TYPE_FAILED_BOOKMARK_INVALID_ID);
+    protected void addInvalidIdErrorMessages(VdcBllMessages messageActionTypeParameter) {
+        addErrorMessages(messageActionTypeParameter, VdcBllMessages.ACTION_TYPE_FAILED_BOOKMARK_INVALID_ID);
     }
 }

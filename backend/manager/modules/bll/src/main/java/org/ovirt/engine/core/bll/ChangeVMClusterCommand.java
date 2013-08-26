@@ -69,11 +69,11 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 }
 
                 // Check if VM static parameters are compatible for new cluster.
-                boolean isCpuSocketsValid = AddVmCommand.CheckCpuSockets(
-                                                                         vm.getStaticData().getNumOfSockets(),
-                                                                         vm.getStaticData().getCpuPerSocket(),
-                                                                         clusterCompatibilityVersion.getValue(),
-                                                                         getReturnValue().getCanDoActionMessages());
+                boolean isCpuSocketsValid = AddVmCommand.checkCpuSockets(
+                        vm.getStaticData().getNumOfSockets(),
+                        vm.getStaticData().getCpuPerSocket(),
+                        clusterCompatibilityVersion.getValue(),
+                        getReturnValue().getCanDoActionMessages());
                 if (!isCpuSocketsValid) {
                     return false;
                 }

@@ -307,9 +307,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        if (!AddVmCommand.CheckCpuSockets(vmFromParams.getNumOfSockets(),
+        if (!AddVmCommand.checkCpuSockets(vmFromParams.getNumOfSockets(),
                 vmFromParams.getCpuPerSocket(), getVdsGroup().getcompatibility_version()
-                        .toString(), getReturnValue().getCanDoActionMessages())) {
+                .toString(), getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 

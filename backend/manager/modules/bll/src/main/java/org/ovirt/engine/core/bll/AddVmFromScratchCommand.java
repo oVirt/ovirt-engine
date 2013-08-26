@@ -91,10 +91,10 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                     disk.setBoot(false);
             }
         }
-        return (!disks.isEmpty()) ? ConcreteAddVmImages(((DiskImage)disks.get(0)).getImageId()) : true;
+        return (!disks.isEmpty()) ? concreteAddVmImages(((DiskImage) disks.get(0)).getImageId()) : true;
     }
 
-    protected boolean ConcreteAddVmImages(Guid itGuid) {
+    protected boolean concreteAddVmImages(Guid itGuid) {
         boolean ret = true;
 
         if (getVmDisks().size() > 0) {
@@ -112,7 +112,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                                 tempVar,
                                 ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
                 if (!tmpRetValue.getSucceeded()) {
-                    log.error("AddVmFromScratchCommand::ConcreteAddVmImages: AddImageFromScratch Command failed.");
+                    log.error("concreteAddVmImages: AddImageFromScratch Command failed.");
                     ret = false;
                 }
 

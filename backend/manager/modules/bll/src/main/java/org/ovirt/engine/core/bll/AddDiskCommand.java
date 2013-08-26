@@ -55,7 +55,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -249,13 +248,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
 
         return false;
-    }
-
-    /**
-     * @return The StorageDomainStaticDAO
-     */
-    protected StorageDomainStaticDAO getStorageDomainStaticDao() {
-        return DbFacade.getInstance().getStorageDomainStaticDao();
     }
 
     @Override

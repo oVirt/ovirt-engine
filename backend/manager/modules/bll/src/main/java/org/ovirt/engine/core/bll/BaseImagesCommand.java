@@ -241,13 +241,6 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         }
     }
 
-    protected static void CompleteAdvancedDiskData(DiskImage from, DiskImage to) {
-        to.setBoot(from.isBoot());
-        to.setDiskInterface(from.getDiskInterface());
-        to.setPropagateErrors(from.getPropagateErrors());
-        to.setWipeAfterDelete(from.isWipeAfterDelete());
-    }
-
     protected void addDiskImageToDb(DiskImage image, CompensationContext compensationContext) {
         image.setActive(true);
         getImageDao().save(image.getImage());

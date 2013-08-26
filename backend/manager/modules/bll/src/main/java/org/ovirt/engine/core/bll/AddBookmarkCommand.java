@@ -14,7 +14,7 @@ public class AddBookmarkCommand<T extends BookmarksOperationParameters> extends 
     protected boolean canDoAction() {
         if (DbFacade.getInstance().getBookmarkDao()
                 .getByName(getBookmark().getbookmark_name()) != null) {
-            AddErrorMessages(
+            addErrorMessages(
                     VdcBllMessages.VAR__ACTION__ADD,
                     VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             return false;

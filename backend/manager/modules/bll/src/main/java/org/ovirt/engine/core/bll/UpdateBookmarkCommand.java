@@ -19,14 +19,14 @@ public class UpdateBookmarkCommand<T extends BookmarksOperationParameters>
         Bookmark updated = getBookmark();
 
         if (updated == null) {
-            AddInvalidIdErrorMessages(VdcBllMessages.VAR__ACTION__UPDATE);
+            addInvalidIdErrorMessages(VdcBllMessages.VAR__ACTION__UPDATE);
         } else {
             Bookmark current = DbFacade.getInstance().getBookmarkDao()
                     .getByName(updated.getbookmark_name());
 
             if (!(current == null || current.getbookmark_id().equals(
                     updated.getbookmark_id()))) {
-                AddErrorMessages(
+                addErrorMessages(
                         VdcBllMessages.VAR__ACTION__UPDATE,
                         VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             } else {

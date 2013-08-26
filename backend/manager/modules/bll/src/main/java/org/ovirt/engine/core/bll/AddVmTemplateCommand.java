@@ -197,7 +197,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
             @Override
             public Void runInTransaction() {
-                AddVmTemplateToDb();
+                addVmTemplateToDb();
                 getCompensationContext().stateChanged();
                 return null;
             }
@@ -207,7 +207,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             @Override
             public Void runInTransaction() {
                 addPermission();
-                AddVmTemplateImages(srcDeviceIdToTargetDeviceIdMapping);
+                addVmTemplateImages(srcDeviceIdToTargetDeviceIdMapping);
                 addVmInterfaces(srcDeviceIdToTargetDeviceIdMapping);
                 if (isVmInDb) {
                     VmDeviceUtils.copyVmDevices(getVmId(),
@@ -283,9 +283,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
-        return imagesRelatedChecks() && AddVmCommand.CheckCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
+        return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm().getNumOfSockets(),
                 getParameters().getMasterVm().getCpuPerSocket(), getVdsGroup()
-                        .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
+                .getcompatibility_version().toString(), getReturnValue().getCanDoActionMessages());
     }
 
     private boolean imagesRelatedChecks() {
@@ -379,7 +379,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return destImageDomains;
     }
 
-    protected void AddVmTemplateToDb() {
+    protected void addVmTemplateToDb() {
         // TODO: add timezone handling
         setVmTemplate(
                 new VmTemplate(
@@ -443,7 +443,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
     }
 
-    protected void AddVmTemplateImages(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
+    protected void addVmTemplateImages(Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
         for (DiskImage diskImage : mImages) {
             // The return value of this action is the 'copyImage' task GUID:
             VdcReturnValueBase retValue = executeChildCommand(diskImage.getImageId());

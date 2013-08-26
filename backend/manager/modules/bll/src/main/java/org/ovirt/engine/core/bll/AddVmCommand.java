@@ -281,8 +281,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return true;
     }
 
-    public static boolean CheckCpuSockets(int num_of_sockets, int cpu_per_socket, String compatibility_version,
-            List<String> CanDoActionMessages) {
+    public static boolean checkCpuSockets(int num_of_sockets, int cpu_per_socket, String compatibility_version,
+                                          List<String> CanDoActionMessages) {
         boolean retValue = true;
         if (retValue
                 && (num_of_sockets * cpu_per_socket) > Config.<Integer> GetValue(ConfigValues.MaxNumOfVmCpus,
@@ -412,7 +412,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected boolean checkCpuSockets() {
-        return AddVmCommand.CheckCpuSockets(getParameters().getVmStaticData().getNumOfSockets(),
+        return AddVmCommand.checkCpuSockets(getParameters().getVmStaticData().getNumOfSockets(),
                 getParameters().getVmStaticData().getCpuPerSocket(), getVdsGroup().getcompatibility_version()
                 .toString(), getReturnValue().getCanDoActionMessages());
     }
@@ -608,7 +608,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 getParameters().isConsoleEnabled());
     }
 
-    protected static boolean IsLegalClusterId(Guid clusterId, List<String> reasons) {
+    protected static boolean isLegalClusterId(Guid clusterId, List<String> reasons) {
         // check given cluster id
         VDSGroup vdsGroup = DbFacade.getInstance().getVdsGroupDao().get(clusterId);
         boolean legalClusterId = (vdsGroup != null);
@@ -624,7 +624,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
         if (vmStaticData != null) {
 
-            returnValue = IsLegalClusterId(vmStaticData.getVdsGroupId(), reasons);
+            returnValue = isLegalClusterId(vmStaticData.getVdsGroupId(), reasons);
 
             if (!validatePinningAndMigration(reasons, vmStaticData, getParameters().getVm().getCpuPinning())) {
                 returnValue = false;

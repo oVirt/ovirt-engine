@@ -91,9 +91,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         if (returnValue) {
-            returnValue = AddVmCommand.CheckCpuSockets(getParameters().getVmTemplateData().getNumOfSockets(),
+            returnValue = AddVmCommand.checkCpuSockets(getParameters().getVmTemplateData().getNumOfSockets(),
                     getParameters().getVmTemplateData().getCpuPerSocket(), getVdsGroup().getcompatibility_version()
-                            .toString(), getReturnValue().getCanDoActionMessages());
+                    .toString(), getReturnValue().getCanDoActionMessages());
         }
 
         if (returnValue && getParameters().getVmTemplateData().getSingleQxlPci() &&

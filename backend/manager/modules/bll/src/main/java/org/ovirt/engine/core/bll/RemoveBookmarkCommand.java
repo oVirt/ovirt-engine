@@ -13,7 +13,7 @@ public class RemoveBookmarkCommand<T extends BookmarksParametersBase> extends Bo
     @Override
     protected boolean canDoAction() {
         if (getBookmark() == null) {
-            AddInvalidIdErrorMessages(VdcBllMessages.VAR__ACTION__UPDATE);
+            addInvalidIdErrorMessages(VdcBllMessages.VAR__ACTION__UPDATE);
             return false;
         }
 

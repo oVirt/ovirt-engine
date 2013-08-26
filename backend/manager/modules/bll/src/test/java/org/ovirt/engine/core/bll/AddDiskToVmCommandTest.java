@@ -49,7 +49,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
-import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -75,9 +74,6 @@ public class AddDiskToVmCommandTest {
 
     @Mock
     private StorageDomainDAO storageDomainDAO;
-
-    @Mock
-    private StorageDomainStaticDAO storageDomainStaticDAO;
 
     @Mock
     private StoragePoolIsoMapDAO storagePoolIsoMapDAO;
@@ -330,7 +326,6 @@ public class AddDiskToVmCommandTest {
         doReturn(true).when(command).acquireLockInternal();
         doReturn(storageDomainDAO).when(command).getStorageDomainDAO();
         doReturn(storagePoolIsoMapDAO).when(command).getStoragePoolIsoMapDao();
-        doReturn(storageDomainStaticDAO).when(command).getStorageDomainStaticDao();
         doReturn(storagePoolDAO).when(command).getStoragePoolDAO();
         doReturn(vmNicDAO).when(command).getVmNicDao();
         doReturn(diskLunMapDAO).when(command).getDiskLunMapDao();
