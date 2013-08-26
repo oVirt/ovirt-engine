@@ -126,7 +126,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         boolean returnValue = false;
         StoragePool storagePool = getStoragePool();
         if (storagePool != null) {
-            returnValue = (storagePool.getstatus() == status);
+            returnValue = (storagePool.getStatus() == status);
             if (!returnValue
                     && !getReturnValue().getCanDoActionMessages().contains(
                             VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL.toString())) {
@@ -140,7 +140,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         boolean returnValue = false;
         StoragePool storagePool = getStoragePool();
         if (storagePool != null) {
-            returnValue = (storagePool.getstatus() != status);
+            returnValue = (storagePool.getStatus() != status);
             if (!returnValue
                     && !getReturnValue().getCanDoActionMessages().contains(onFailMessage.name())) {
                 addCanDoActionMessage(onFailMessage);
@@ -255,16 +255,16 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                         : (masterDomain.getStatus() != null && masterDomain.getStatus() == StorageDomainStatus.Maintenance) ? StoragePoolStatus.Maintenance
                                 : (masterDomain.getStatus() != null && masterDomain.getStatus() == StorageDomainStatus.Active) ? StoragePoolStatus.Up
                                         : StoragePoolStatus.NonResponsive;
-        if (newStatus != getStoragePool().getstatus()) {
+        if (newStatus != getStoragePool().getStatus()) {
             getCompensationContext().snapshotEntity(getStoragePool());
-            getStoragePool().setstatus(newStatus);
+            getStoragePool().setStatus(newStatus);
             StoragePool poolFromDb = getStoragePoolDAO().get(getStoragePool().getId());
             if ((getStoragePool().getspm_vds_id() == null && poolFromDb.getspm_vds_id() != null)
                     || (getStoragePool().getspm_vds_id() != null && !getStoragePool().getspm_vds_id().equals(
                             poolFromDb.getspm_vds_id()))) {
                 getStoragePool().setspm_vds_id(poolFromDb.getspm_vds_id());
             }
-            if (getStoragePool().getstatus() == StoragePoolStatus.Uninitialized) {
+            if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
                 getStoragePool().setspm_vds_id(null);
             }
 
@@ -275,7 +275,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                     return null;
                 }
             });
-            StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getstatus());
+            StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getStatus());
         }
     }
 

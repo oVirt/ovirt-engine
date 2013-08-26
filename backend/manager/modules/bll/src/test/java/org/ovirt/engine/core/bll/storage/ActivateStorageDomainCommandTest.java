@@ -148,7 +148,7 @@ public class ActivateStorageDomainCommandTest {
     private void createUpStoragePool() {
         StoragePool pool = new StoragePool();
         pool.setId(Guid.newGuid());
-        pool.setstatus(StoragePoolStatus.Up);
+        pool.setStatus(StoragePoolStatus.Up);
         when(storagePoolDAO.get(any(Guid.class))).thenReturn(pool);
     }
 

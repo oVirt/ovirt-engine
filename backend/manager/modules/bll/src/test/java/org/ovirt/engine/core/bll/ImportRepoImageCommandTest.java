@@ -51,7 +51,7 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
 
     @Test
     public void testCanDoActionPoolInMaintenance() {
-        getStoragePool().setstatus(StoragePoolStatus.Maintenance);
+        getStoragePool().setStatus(StoragePoolStatus.Maintenance);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
     }

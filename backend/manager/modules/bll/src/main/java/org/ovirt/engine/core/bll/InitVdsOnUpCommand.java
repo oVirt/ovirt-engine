@@ -154,10 +154,10 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private void processStoragePoolStatus() {
         if (getVds().getSpmStatus() != VdsSpmStatus.None) {
             StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(getVds().getStoragePoolId());
-            if (pool != null && pool.getstatus() == StoragePoolStatus.NotOperational) {
-                pool.setstatus(StoragePoolStatus.NonResponsive);
-                DbFacade.getInstance().getStoragePoolDao().updateStatus(pool.getId(), pool.getstatus());
-                StoragePoolStatusHandler.poolStatusChanged(pool.getId(), pool.getstatus());
+            if (pool != null && pool.getStatus() == StoragePoolStatus.NotOperational) {
+                pool.setStatus(StoragePoolStatus.NonResponsive);
+                DbFacade.getInstance().getStoragePoolDao().updateStatus(pool.getId(), pool.getStatus());
+                StoragePoolStatusHandler.poolStatusChanged(pool.getId(), pool.getStatus());
             }
         }
     }
@@ -174,8 +174,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
         // if no pool or pool is uninitialized or in maintenance mode no need to
         // connect any storage
-        if (getStoragePool() == null || StoragePoolStatus.Uninitialized == getStoragePool().getstatus()
-                || StoragePoolStatus.Maintenance == getStoragePool().getstatus()) {
+        if (getStoragePool() == null || StoragePoolStatus.Uninitialized == getStoragePool().getStatus()
+                || StoragePoolStatus.Maintenance == getStoragePool().getStatus()) {
             returnValue = true;
             connectPoolSucceeded = true;
         } else {

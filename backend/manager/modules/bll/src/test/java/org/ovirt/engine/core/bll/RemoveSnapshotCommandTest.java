@@ -210,7 +210,7 @@ public class RemoveSnapshotCommandTest {
 
         StoragePool sp = new StoragePool();
         sp.setId(STORAGE_POOLD_ID);
-        sp.setstatus(StoragePoolStatus.Up);
+        sp.setStatus(StoragePoolStatus.Up);
 
         cmd.setSnapshotName("someSnapshot");
         doReturn(ValidationResult.VALID).when(snapshotValidator).vmNotDuringSnapshot(any(Guid.class));

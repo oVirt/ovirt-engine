@@ -398,7 +398,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         UICommand addIsoStorageAction = new UICommand("AddIsoStorage", this); //$NON-NLS-1$
         addIsoStorageAction.getExecuteProhibitionReasons().add(NoDataDomainAttachedReason);
-        addIsoStorageAction.setIsExecutionAllowed(getEntity().getstatus() == StoragePoolStatus.Up);
+        addIsoStorageAction.setIsExecutionAllowed(getEntity().getStatus() == StoragePoolStatus.Up);
 
         if (isoStorageDomains.isEmpty())
         {
@@ -508,7 +508,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     getOptionalActions().add(addLocalStorageAction);
                 }
             }
-            else if (getEntity().getstatus() != StoragePoolStatus.Uninitialized)
+            else if (getEntity().getStatus() != StoragePoolStatus.Uninitialized)
             {
                 String dataCenterInitializeReason =
                         ConstantsManager.getInstance().getConstants().dataCenterWasAlreadyInitializedDcGuide();

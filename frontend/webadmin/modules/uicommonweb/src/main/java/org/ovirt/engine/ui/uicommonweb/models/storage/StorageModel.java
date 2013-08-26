@@ -347,7 +347,7 @@ public class StorageModel extends ListModel implements ISupportSystemTreeContext
     private void updateDataCenterAlert() {
         if (getDataCenter().getSelectedItem() != null
                 && !UnassignedDataCenterId.equals(((StoragePool) getDataCenter().getSelectedItem()).getId())
-                && ((StoragePool) getDataCenter().getSelectedItem()).getstatus() == StoragePoolStatus.Uninitialized) {
+                && ((StoragePool) getDataCenter().getSelectedItem()).getStatus() == StoragePoolStatus.Uninitialized) {
             getDataCenterAlert().setIsAvailable(true);
             getDataCenterAlert().setEntity(ConstantsManager.getInstance().getConstants().dataCenterUninitializedAlert());
         }

@@ -137,12 +137,12 @@ public class OvfDataUpdaterTest {
         pool1 = new StoragePool();
         pool1.setId(Guid.newGuid());
         pool1.setStorageType(StorageType.NFS);
-        pool1.setstatus(StoragePoolStatus.Up);
+        pool1.setStatus(StoragePoolStatus.Up);
 
         pool2 = new StoragePool();
         pool2.setId(Guid.newGuid());
         pool2.setStorageType(StorageType.NFS);
-        pool2.setstatus(StoragePoolStatus.Up);
+        pool2.setStatus(StoragePoolStatus.Up);
 
         performStoragePoolInitOps(pool1);
         performStoragePoolInitOps(pool2);

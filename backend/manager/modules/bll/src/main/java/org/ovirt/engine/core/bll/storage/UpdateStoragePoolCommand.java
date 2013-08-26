@@ -57,7 +57,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     @Override
     protected void executeCommand() {
         updateQuotaCache();
-        if (_oldStoragePool.getstatus() == StoragePoolStatus.Up) {
+        if (_oldStoragePool.getStatus() == StoragePoolStatus.Up) {
             if (!StringUtils.equals(_oldStoragePool.getName(), getStoragePool().getName())) {
                 runVdsCommand(VDSCommandType.SetStoragePoolDescription,
                     new SetStoragePoolDescriptionVDSCommandParameters(
@@ -116,7 +116,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     }
         });
 
-        if (_oldStoragePool.getstatus() == StoragePoolStatus.Up) {
+        if (_oldStoragePool.getStatus() == StoragePoolStatus.Up) {
             try {
                 // No need to worry about "reupgrading" as VDSM will silently ignore
                 // the request.

@@ -52,7 +52,7 @@ public class AddLocalStorageDomainCommand<T extends StorageDomainManagementParam
                 retVal = false;
             }
 
-            if (retVal && storagePool.getstatus() != StoragePoolStatus.Uninitialized) {
+            if (retVal && storagePool.getStatus() != StoragePoolStatus.Uninitialized) {
                 retVal = checkMasterDomainIsUp();
             }
 

@@ -66,12 +66,12 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Object>() {
                 @Override
                 public Object runInTransaction() {
-                    getStoragePool().setstatus(StoragePoolStatus.Maintenance);
+                    getStoragePool().setStatus(StoragePoolStatus.Maintenance);
                     getStoragePool().setStoragePoolFormatType(masterStorageDomain.getStorageFormat());
                     DbFacade.getInstance().getStoragePoolDao().update(getStoragePool());
                     getCompensationContext().stateChanged();
                     StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(),
-                            getStoragePool().getstatus());
+                            getStoragePool().getStatus());
                     return null;
                 }
             });

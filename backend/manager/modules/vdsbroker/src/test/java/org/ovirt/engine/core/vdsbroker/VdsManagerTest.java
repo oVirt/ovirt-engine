@@ -89,13 +89,13 @@ package org.ovirt.engine.core.vdsbroker;
 //        setMockups();
 //        VDS vds = new VDS();
 //        VdsManager vdsManager = VdsManager.buildVdsManager(vds);
-//        vds.setstatus(VDSStatus.NonOperational);
+//        vds.setStatus(VDSStatus.NonOperational);
 //        vds.setvm_count(1);
 //        vdsManager.setVds(vds);
 //        assertTrue(vdsManager.isMonitoringNeeded());
 //        vds.setvm_count(0);
 //        assertFalse(vdsManager.isMonitoringNeeded());
-//        vds.setstatus(VDSStatus.Up);
+//        vds.setStatus(VDSStatus.Up);
 //        assertTrue(vdsManager.isMonitoringNeeded());
 //    }
 //

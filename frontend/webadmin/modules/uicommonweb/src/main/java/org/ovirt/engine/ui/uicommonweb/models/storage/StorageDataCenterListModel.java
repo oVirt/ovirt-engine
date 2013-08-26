@@ -252,7 +252,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                             case Master:
                             case Data:
                                 boolean addDatacenter =
-                                        (dataCenter.getstatus() == StoragePoolStatus.Uninitialized || dataCenter.getstatus() == StoragePoolStatus.Up)
+                                        (dataCenter.getStatus() == StoragePoolStatus.Uninitialized || dataCenter.getStatus() == StoragePoolStatus.Up)
                                                 && (dataCenter.getStoragePoolFormatType() == null || dataCenter.getStoragePoolFormatType() == getEntity().getStorageStaticData()
                                                         .getStorageFormat())
                                                 && dataCenter.getStorageType() == getEntity().getStorageType();
@@ -270,7 +270,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                                                         (StorageDataCenterListModel) array1[0];
                                                 StoragePool dataCenter1 = (StoragePool) array1[1];
                                                 boolean addDatacenter1 =
-                                                        dataCenter1.getstatus() == StoragePoolStatus.Up
+                                                        dataCenter1.getStatus() == StoragePoolStatus.Up
                                                                 && returnValue1 == null;
                                                 listModel1.addToAttachCandidateDatacenters(dataCenter1, addDatacenter1);
 
@@ -290,7 +290,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                                                         (StorageDataCenterListModel) array2[0];
                                                 StoragePool dataCenter2 = (StoragePool) array2[1];
                                                 boolean addDatacenter2 =
-                                                        dataCenter2.getstatus() == StoragePoolStatus.Up
+                                                        dataCenter2.getStatus() == StoragePoolStatus.Up
                                                                 && returnValue2 == null;
                                                 listModel2.addToAttachCandidateDatacenters(dataCenter2, addDatacenter2);
 

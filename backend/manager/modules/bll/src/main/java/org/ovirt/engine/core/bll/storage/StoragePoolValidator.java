@@ -78,7 +78,7 @@ public class StoragePoolValidator {
     }
 
     public ValidationResult isUp() {
-        if (storagePool == null || storagePool.getstatus() != StoragePoolStatus.Up) {
+        if (storagePool == null || storagePool.getStatus() != StoragePoolStatus.Up) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
         }
 

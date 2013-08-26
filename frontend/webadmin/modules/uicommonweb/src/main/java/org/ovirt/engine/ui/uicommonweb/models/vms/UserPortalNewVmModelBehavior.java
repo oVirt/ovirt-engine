@@ -52,7 +52,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                         final List<StoragePool> dataCenters = new ArrayList<StoragePool>();
                         for (StoragePool a : (ArrayList<StoragePool>) returnValue)
                         {
-                            if (a.getstatus() == StoragePoolStatus.Up)
+                            if (a.getStatus() == StoragePoolStatus.Up)
                             {
                                 dataCenters.add(a);
                             }

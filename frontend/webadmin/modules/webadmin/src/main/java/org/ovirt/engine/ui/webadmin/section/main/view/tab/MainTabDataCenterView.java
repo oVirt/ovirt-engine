@@ -67,7 +67,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         TextColumnWithTooltip<StoragePool> statusColumn = new EnumColumn<StoragePool, StoragePoolStatus>() {
             @Override
             public StoragePoolStatus getRawValue(StoragePool object) {
-                return object.getstatus();
+                return object.getStatus();
             }
         };
         getTable().addColumn(statusColumn, constants.statusDc(), "150px"); //$NON-NLS-1$

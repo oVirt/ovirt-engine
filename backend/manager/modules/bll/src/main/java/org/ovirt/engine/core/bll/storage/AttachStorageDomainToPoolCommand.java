@@ -43,7 +43,7 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
     @Override
     protected void executeCommand() {
         if (getStorageDomain() != null) {
-            if (getStoragePool().getstatus() == StoragePoolStatus.Uninitialized) {
+            if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
                 StoragePoolWithStoragesParameter parameters = new StoragePoolWithStoragesParameter(getStoragePool(),
                        Arrays.asList(getStorageDomain().getId()),
                         getParameters().getSessionId());
@@ -125,12 +125,12 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
                 checkStoragePool()
                         && initializeVds() && checkStorageDomain() && checkDomainCanBeAttached(getStorageDomain());
 
-        if (returnValue && getStoragePool().getstatus() == StoragePoolStatus.Uninitialized
+        if (returnValue && getStoragePool().getStatus() == StoragePoolStatus.Uninitialized
                 && getStorageDomain().getStorageDomainType() != StorageDomainType.Data) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_ADD_STORAGE_POOL_WITHOUT_DATA_DOMAIN);
         }
-        if (returnValue && getStoragePool().getstatus() != StoragePoolStatus.Uninitialized) {
+        if (returnValue && getStoragePool().getStatus() != StoragePoolStatus.Uninitialized) {
             returnValue = checkMasterDomainIsUp();
         }
         return returnValue;

@@ -59,8 +59,8 @@ public class DataCenterMapper {
             model.setComment(entity.getComment());
         }
         model.setStorageType(StorageDomainMapper.map(entity.getStorageType(), null));
-        if (entity.getstatus()!=null) {
-            model.setStatus(StatusUtils.create(map(entity.getstatus(), null)));
+        if (entity.getStatus()!=null) {
+            model.setStatus(StatusUtils.create(map(entity.getStatus(), null)));
         }
         if (entity.getcompatibility_version() != null) {
             model.setVersion(new Version());

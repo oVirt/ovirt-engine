@@ -86,7 +86,7 @@ public class JsonObjectSerializationEntitiesTest {
         sp.setName(random.nextString(10));
         sp.setId(Guid.newGuid());
         sp.setStorageType(random.nextEnum(StorageType.class));
-        sp.setstatus(random.nextEnum(StoragePoolStatus.class));
+        sp.setStatus(random.nextEnum(StoragePoolStatus.class));
         return sp;
     }
 

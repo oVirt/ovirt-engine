@@ -889,7 +889,7 @@ public final class Linq
         @Override
         public boolean match(StoragePool source)
         {
-            return source.getstatus() == status;
+            return source.getStatus() == status;
         }
     }
 
@@ -905,7 +905,7 @@ public final class Linq
         @Override
         public boolean match(StoragePool source)
         {
-            return source.getstatus() != status;
+            return source.getStatus() != status;
         }
     }
 

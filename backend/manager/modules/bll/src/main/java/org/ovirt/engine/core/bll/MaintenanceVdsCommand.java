@@ -194,7 +194,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                     .getStoragePoolDao()
                     .get(vds.getStoragePoolId());
             if (StoragePoolStatus.Uninitialized != storage_pool
-                    .getstatus()) {
+                    .getStatus()) {
                 Backend.getInstance().getResourceManager()
                         .RunVdsCommand(
                                 VDSCommandType.DisconnectStoragePool,

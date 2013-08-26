@@ -48,7 +48,7 @@ public class DataCenterMapperTest extends
 
     private void testStatusMapping(StoragePoolStatus storagePoolStatus, DataCenterStatus dataCenterStatus) {
         StoragePool storagePool = new StoragePool();
-        storagePool.setstatus(storagePoolStatus);
+        storagePool.setStatus(storagePoolStatus);
         DataCenter dataCenter = DataCenterMapper.map(storagePool, null);
         assertEquals(dataCenter.getStatus().getState(), dataCenterStatus.value());
     }

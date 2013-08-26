@@ -174,15 +174,15 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             executeInNewTransaction(new TransactionMethod<Object>() {
                 @Override
                 public Object runInTransaction() {
-                    getCompensationContext().snapshotEntityStatus(getStoragePool(), getStoragePool().getstatus());
-                    getStoragePool().setstatus(StoragePoolStatus.Maintenance);
-                    getStoragePoolDAO().updateStatus(getStoragePool().getId(), getStoragePool().getstatus());
+                    getCompensationContext().snapshotEntityStatus(getStoragePool(), getStoragePool().getStatus());
+                    getStoragePool().setStatus(StoragePoolStatus.Maintenance);
+                    getStoragePoolDAO().updateStatus(getStoragePool().getId(), getStoragePool().getStatus());
                     getCompensationContext().stateChanged();
                     return null;
                 }
             });
 
-            StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getstatus());
+            StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getStatus());
             runSynchronizeOperation(new DisconnectStoragePoolAsyncOperationFactory());
             getStorageDomain().getStorageDynamicData().setAvailableDiskSize(null);
             getStorageDomain().getStorageDynamicData().setUsedDiskSize(null);

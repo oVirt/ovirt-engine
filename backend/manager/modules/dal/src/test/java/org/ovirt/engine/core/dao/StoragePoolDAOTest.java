@@ -34,7 +34,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
         dao = dbFacade.getStoragePoolDao();
         existingPool = dao
                 .get(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
-        existingPool.setstatus(StoragePoolStatus.Up);
+        existingPool.setStatus(StoragePoolStatus.Up);
         vds = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
         vdsGroup = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
         storageDomain = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab");
@@ -272,7 +272,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
     @Test
     public void testUpdateStatus() {
         dao.updateStatus(existingPool.getId(), StoragePoolStatus.NotOperational);
-        existingPool.setstatus(StoragePoolStatus.NotOperational);
+        existingPool.setStatus(StoragePoolStatus.NotOperational);
 
         StoragePool result = dao.get(existingPool.getId());
 

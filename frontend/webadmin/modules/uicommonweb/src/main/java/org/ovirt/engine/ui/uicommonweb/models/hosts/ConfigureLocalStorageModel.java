@@ -574,7 +574,7 @@ public class ConfigureLocalStorageModel extends Model {
     private boolean isLocalDataCenterEmpty(StoragePool dataCenter) {
 
         if (dataCenter != null && dataCenter.getStorageType() == StorageType.LOCALFS
-                && dataCenter.getstatus() == StoragePoolStatus.Uninitialized) {
+                && dataCenter.getStatus() == StoragePoolStatus.Uninitialized) {
             return true;
         }
         return false;

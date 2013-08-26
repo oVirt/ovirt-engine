@@ -271,7 +271,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
      */
     private StoragePool mockStoragePool() {
         StoragePool storagePool = new StoragePool();
-        storagePool.setstatus(StoragePoolStatus.Up);
+        storagePool.setStatus(StoragePoolStatus.Up);
 
         return storagePool;
     }

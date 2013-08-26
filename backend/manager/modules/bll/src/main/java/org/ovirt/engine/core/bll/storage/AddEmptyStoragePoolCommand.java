@@ -28,7 +28,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
 
     protected void addStoragePoolToDb() {
         getStoragePool().setId(Guid.newGuid());
-        getStoragePool().setstatus(StoragePoolStatus.Uninitialized);
+        getStoragePool().setStatus(StoragePoolStatus.Uninitialized);
         getStoragePoolDAO().save(getStoragePool());
     }
 

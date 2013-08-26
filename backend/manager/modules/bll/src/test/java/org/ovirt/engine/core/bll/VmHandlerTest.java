@@ -131,7 +131,7 @@ public class VmHandlerTest {
 //
 //    private static VmDynamic createVmDynamic(VMStatus status) {
 //        VmDynamic dynamic = new VmDynamic();
-//        dynamic.setstatus(status);
+//        dynamic.setStatus(status);
 //        return dynamic;
 //    }
 //

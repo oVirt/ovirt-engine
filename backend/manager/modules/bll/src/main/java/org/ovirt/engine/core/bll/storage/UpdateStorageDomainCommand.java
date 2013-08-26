@@ -62,7 +62,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         if (returnValue
                 && _storageDomainNameChanged
                 && getStoragePool() != null
-                && getStoragePool().getstatus() != StoragePoolStatus.Up) {
+                && getStoragePool().getStatus() != StoragePoolStatus.Up) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
             returnValue = false;
         }

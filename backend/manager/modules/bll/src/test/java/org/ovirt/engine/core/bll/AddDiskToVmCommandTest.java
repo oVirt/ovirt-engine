@@ -385,7 +385,7 @@ public class AddDiskToVmCommandTest {
         StoragePool storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
         storagePool.setcompatibility_version(compatibilityVersion);
-        storagePool.setstatus(StoragePoolStatus.Up);
+        storagePool.setStatus(StoragePoolStatus.Up);
         when(storagePoolDAO.get(storagePoolId)).thenReturn(storagePool);
 
         return storagePool;

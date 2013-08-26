@@ -121,11 +121,11 @@ public class StoragePool extends IVdcQueryable implements BusinessEntity<Guid>, 
         storagePoolFormatType = value;
     }
 
-    public StoragePoolStatus getstatus() {
+    public StoragePoolStatus getStatus() {
         return status;
     }
 
-    public void setstatus(StoragePoolStatus value) {
+    public void setStatus(StoragePoolStatus value) {
         status = value;
     }
 

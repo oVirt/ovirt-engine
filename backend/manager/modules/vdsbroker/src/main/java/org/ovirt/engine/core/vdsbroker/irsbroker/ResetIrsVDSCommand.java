@@ -30,7 +30,7 @@ public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends 
             }
             getCurrentIrsProxyData().ResetIrs();
             StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(parameters.getStoragePoolId());
-            if (pool != null && (pool.getstatus() == StoragePoolStatus.NotOperational)) {
+            if (pool != null && (pool.getStatus() == StoragePoolStatus.NotOperational)) {
                 ResourceManager
                         .getInstance()
                         .getEventListener()

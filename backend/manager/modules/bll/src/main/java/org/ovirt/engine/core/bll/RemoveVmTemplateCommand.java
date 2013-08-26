@@ -76,7 +76,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         }
 
         // check storage pool valid
-        if (getStoragePool() == null || getStoragePool().getstatus() != StoragePoolStatus.Up) {
+        if (getStoragePool() == null || getStoragePool().getStatus() != StoragePoolStatus.Up) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
         }
 

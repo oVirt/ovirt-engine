@@ -103,7 +103,7 @@ public class NewDiskModel extends AbstractDiskModel
 
     @Override
     protected boolean isDatacenterAvailable(StoragePool dataCenter) {
-        boolean isStatusUp = dataCenter.getstatus() == StoragePoolStatus.Up;
+        boolean isStatusUp = dataCenter.getStatus() == StoragePoolStatus.Up;
 
         boolean isInTreeContext = true;
         if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() != SystemTreeItemType.System)

@@ -33,7 +33,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
             entity.setName(rs.getString("name"));
             entity.setStorageType(StorageType.forValue(rs
                     .getInt("storage_pool_type")));
-            entity.setstatus(StoragePoolStatus.forValue(rs.getInt("status")));
+            entity.setStatus(StoragePoolStatus.forValue(rs.getInt("status")));
             entity.setmaster_domain_version(rs
                     .getInt("master_domain_version"));
             entity.setspm_vds_id(getGuid(rs, "spm_vds_id"));
@@ -133,7 +133,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("id", pool.getId())
                 .addValue("name", pool.getName())
                 .addValue("storage_pool_type", pool.getStorageType())
-                .addValue("status", pool.getstatus())
+                .addValue("status", pool.getStatus())
                 .addValue("master_domain_version",
                         pool.getmaster_domain_version())
                 .addValue("spm_vds_id", pool.getspm_vds_id())
@@ -153,7 +153,7 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
                 .addValue("id", pool.getId())
                 .addValue("name", pool.getName())
                 .addValue("storage_pool_type", pool.getStorageType())
-                .addValue("status", pool.getstatus())
+                .addValue("status", pool.getStatus())
                 .addValue("storage_pool_format_type", pool.getStoragePoolFormatType())
                 .addValue("master_domain_version",
                         pool.getmaster_domain_version())

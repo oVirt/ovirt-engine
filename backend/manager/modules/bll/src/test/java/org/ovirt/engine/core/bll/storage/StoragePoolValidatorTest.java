@@ -38,7 +38,7 @@ public class StoragePoolValidatorTest {
     @Before
     public void setup() {
         storagePool = new StoragePool();
-        storagePool.setstatus(StoragePoolStatus.Up);
+        storagePool.setStatus(StoragePoolStatus.Up);
         validator = spy(new StoragePoolValidator(storagePool));
     }
 
@@ -104,7 +104,7 @@ public class StoragePoolValidatorTest {
 
     @Test
     public void testIsUpdInvalid() {
-        storagePool.setstatus(StoragePoolStatus.NonResponsive);
+        storagePool.setStatus(StoragePoolStatus.NonResponsive);
         assertMessage(validator.isUp(), VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
     }
 

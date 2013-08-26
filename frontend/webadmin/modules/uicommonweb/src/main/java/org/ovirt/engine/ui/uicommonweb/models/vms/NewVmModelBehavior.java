@@ -42,7 +42,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
                         final ArrayList<StoragePool> dataCenters = new ArrayList<StoragePool>();
                         for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
-                            if (a.getstatus() == StoragePoolStatus.Up) {
+                            if (a.getStatus() == StoragePoolStatus.Up) {
                                 dataCenters.add(a);
                             }
                         }

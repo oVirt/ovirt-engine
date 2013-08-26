@@ -101,7 +101,7 @@ public class GetDiskAlignmentCommandTest {
         vds.setId(vdsId);
 
         storagePool = new StoragePool();
-        storagePool.setstatus(StoragePoolStatus.Up);
+        storagePool.setStatus(StoragePoolStatus.Up);
 
         when(vmDao.getVmsListForDisk(diskId)).thenReturn(Collections.singletonList(vm));
         when(vmDeviceDao.get(vmDeviceId)).thenReturn(vmDevice);
@@ -163,7 +163,7 @@ public class GetDiskAlignmentCommandTest {
 
     @Test
     public void testCanDoActionStoragePoolDown() {
-        storagePool.setstatus(StoragePoolStatus.Maintenance);
+        storagePool.setStatus(StoragePoolStatus.Maintenance);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
     }

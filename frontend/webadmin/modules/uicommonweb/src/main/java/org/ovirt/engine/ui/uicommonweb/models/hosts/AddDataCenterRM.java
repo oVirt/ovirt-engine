@@ -222,7 +222,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         StoragePool dataCenter = context.dataCenterFoundById;
 
         // Perform rollback only when the Data Center is un uninitialized.
-        if (dataCenter.getstatus() != StoragePoolStatus.Uninitialized) {
+        if (dataCenter.getStatus() != StoragePoolStatus.Uninitialized) {
 
             context.enlistment = null;
             enlistment.Done();

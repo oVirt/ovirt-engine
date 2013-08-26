@@ -822,7 +822,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         boolean isAllDown = true;
         for (StoragePool item : items)
         {
-            if (item.getstatus() == StoragePoolStatus.Up || item.getstatus() == StoragePoolStatus.Contend)
+            if (item.getStatus() == StoragePoolStatus.Up || item.getStatus() == StoragePoolStatus.Contend)
             {
                 isAllDown = false;
                 break;
@@ -836,7 +836,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         getForceRemoveCommand().setIsExecutionAllowed(storagePoolItem != null
                 && items.size() == 1
-                && storagePoolItem.getstatus() != StoragePoolStatus.Up);
+                && storagePoolItem.getStatus() != StoragePoolStatus.Up);
 
         getGuideCommand().setIsExecutionAllowed(getGuideContext() != null
                 || (getSelectedItem() != null && getSelectedItems() != null && getSelectedItems().size() == 1));
@@ -846,7 +846,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         {
             for (StoragePool a : items)
             {
-                if (a.getstatus() == StoragePoolStatus.Up || a.getstatus() == StoragePoolStatus.Uninitialized)
+                if (a.getStatus() == StoragePoolStatus.Up || a.getStatus() == StoragePoolStatus.Uninitialized)
                 {
                     getActivateCommand().setIsExecutionAllowed(false);
                     break;

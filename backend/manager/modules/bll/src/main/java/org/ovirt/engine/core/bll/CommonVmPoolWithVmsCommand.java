@@ -202,7 +202,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         }
         setStoragePoolId(grp.getStoragePoolId());
 
-        if (getStoragePool() == null || getStoragePool().getstatus() != StoragePoolStatus.Up) {
+        if (getStoragePool() == null || getStoragePool().getStatus() != StoragePoolStatus.Up) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
         }
 

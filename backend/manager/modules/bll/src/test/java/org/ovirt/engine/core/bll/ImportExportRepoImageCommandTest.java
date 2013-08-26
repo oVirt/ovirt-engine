@@ -148,7 +148,7 @@ public class ImportExportRepoImageCommandTest {
 
         storagePool  = new StoragePool();
         storagePool.setId(storagePoolId);
-        storagePool.setstatus(StoragePoolStatus.Up);
+        storagePool.setStatus(StoragePoolStatus.Up);
 
         Provider provider = new Provider();
         provider.setType(ProviderType.OPENSTACK_IMAGE);

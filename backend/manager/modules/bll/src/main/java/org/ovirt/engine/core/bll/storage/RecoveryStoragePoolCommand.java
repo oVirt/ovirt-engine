@@ -52,7 +52,7 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
         boolean returnValue = super.canDoAction() && checkStoragePool();
 
         if (returnValue) {
-            if (getStoragePool().getstatus() == StoragePoolStatus.Uninitialized) {
+            if (getStoragePool().getStatus() == StoragePoolStatus.Uninitialized) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_STATUS_ILLEGAL);
                 return false;
             } else if (getStorageDomain() != null && getStorageDomain().getStatus() != null

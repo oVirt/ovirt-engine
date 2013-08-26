@@ -196,7 +196,7 @@ public class RestoreAllSnapshotCommandTest {
     private void mockStoragePoolDao() {
         StoragePool sp = new StoragePool();
         sp.setId(spId);
-        sp.setstatus(StoragePoolStatus.Up);
+        sp.setStatus(StoragePoolStatus.Up);
         when(storagePoolDAO.get(spId)).thenReturn(sp);
         doReturn(storagePoolDAO).when(spyCommand).getStoragePoolDAO();
     }
