@@ -39,12 +39,13 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
-@LockIdNameAttribute
+@LockIdNameAttribute(isReleaseAtEndOfExecute = false)
 public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> extends CopyImageGroupCommand<T>
         implements QuotaStorageDependent {
 
     private List<PermissionSubject> cachedPermsList;
     private List<VM> cachedListVms;
+    private String cachedDiskIsBeingMigratedMessage;
 
     public MoveOrCopyDiskCommand(T parameters) {
         super(parameters);
@@ -368,7 +369,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (getParameters().getOperation() == ImageOperation.Copy) {
             if (!Guid.Empty.equals(getVmTemplateId())) {
                 return Collections.singletonMap(getVmTemplateId().toString(),
-                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, getDiskIsBeingMigratedMessage()));
             }
         } else {
             List<VM> vmsForDisk = getVmsForDiskId();
@@ -376,7 +377,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 Map<String, Pair<String, String>> lockMap = new HashMap<>();
                 for (VM currVm : vmsForDisk) {
                     lockMap.put(currVm.getId().toString(),
-                            LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                            LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, getDiskIsBeingMigratedMessage()));
                 }
                 return lockMap;
             }
@@ -388,7 +389,18 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         return Collections.singletonMap(
                 (getImage() != null ? getImage().getId() : Guid.Empty).toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.DISK, getDiskIsBeingMigratedMessage()));
+    }
+
+    private String getDiskIsBeingMigratedMessage() {
+        if (cachedDiskIsBeingMigratedMessage == null) {
+            StringBuilder builder = new StringBuilder(VdcBllMessages.ACTION_TYPE_FAILED_DISK_IS_BEING_MIGRATED.name());
+            if (getImage() != null) {
+                builder.append(String.format("$DiskName %1$s", getDiskAlias()));
+            }
+            cachedDiskIsBeingMigratedMessage = builder.toString();
+        }
+        return cachedDiskIsBeingMigratedMessage;
     }
 
     public String getDiskAlias() {

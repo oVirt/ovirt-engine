@@ -1543,6 +1543,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} is being removed.")
     String ACTION_TYPE_FAILED_DISK_IS_BEING_REMOVED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} is being moved or copied.")
+    String ACTION_TYPE_FAILED_DISK_IS_BEING_MIGRATED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Template ${TemplateName} is being exported.")
     String ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_EXPORTED();
 
