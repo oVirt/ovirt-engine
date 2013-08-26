@@ -62,7 +62,7 @@ in the user portal and web admin. The border is defined in gwt-common.css */
 /* ErrorPopupView.ui.xml:
 This class allows you to change the error icon on the error popup window. */
 .obrand_dialogLogoErrorImage {
-    backgroud-image: url(images/dialog/error.png);
+    background: url(images/dialog/error.png);
     width: 27px;
     height: 27px;
     border: 0px;
