@@ -137,9 +137,15 @@ class Plugin(plugin.PluginBase):
     def _customization(self):
         if self.environment[osetupcons.ConfigEnv.FIREWALL_MANAGER] is None:
             managers = []
-            if self.environment[otopicons.NetEnv.FIREWALLD_AVAILABLE]:
+            if (
+                self.environment[otopicons.NetEnv.FIREWALLD_AVAILABLE] and
+                self.services.status('firewalld')
+            ):
                 managers.append('firewalld')
-            if self.services.exists('iptables'):
+            if (
+                self.services.exists('iptables') and
+                self.services.status('iptables')
+            ):
                 managers.append('iptables')
 
             for manager in managers:
