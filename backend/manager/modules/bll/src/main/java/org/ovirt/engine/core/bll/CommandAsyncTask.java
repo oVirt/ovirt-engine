@@ -110,6 +110,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
         CommandMultiAsyncTasks entityInfo = GetCommandMultiAsyncTasks();
         VdcReturnValueBase vdcReturnValue = null;
         ExecutionContext context = null;
+        boolean endActionRuntimeException = false;
 
         AsyncTasks dbAsyncTask = getParameters().getDbAsyncTask();
         ArrayList<VdcActionParametersBase> imagesParameters = new ArrayList<VdcActionParametersBase>();
@@ -150,6 +151,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                 log.debug(ex);
             } catch (RuntimeException ex) {
                 log.error(getErrorMessage(), ex);
+                endActionRuntimeException = true;
             }
         }
 
@@ -157,11 +159,17 @@ public class CommandAsyncTask extends SPMAsyncTask {
             log.error(
                     "CommandAsyncTask::EndCommandAction [within thread]: An exception has been thrown (not related to 'EndAction' itself)",
                     Ex2);
+            endActionRuntimeException = true;
         }
 
         finally {
-            boolean isTaskGroupSuccess = dbAsyncTask.getActionParameters().getTaskGroupSuccess();
-            handleEndActionResult(entityInfo, vdcReturnValue, context, isTaskGroupSuccess);
+            // if a RuntimeExcpetion occurs we clear the task from db and perform no other action
+            if (endActionRuntimeException) {
+                handleEndActionRuntimeException(entityInfo, dbAsyncTask);
+            } else {
+                boolean isTaskGroupSuccess = dbAsyncTask.getActionParameters().getTaskGroupSuccess();
+                handleEndActionResult(entityInfo, vdcReturnValue, context, isTaskGroupSuccess);
+            }
         }
     }
 
@@ -176,6 +184,27 @@ public class CommandAsyncTask extends SPMAsyncTask {
     private String getErrorMessage() {
         return String.format("[within thread]: EndAction for action type %1$s threw an exception.",
                 getParameters().getDbAsyncTask().getActionParameters().getCommandType());
+    }
+
+    private void handleEndActionRuntimeException(CommandMultiAsyncTasks commandInfo, AsyncTasks dbAsyncTask) {
+        try {
+            VdcActionType actionType = getParameters().getDbAsyncTask().getaction_type();
+            log.infoFormat(
+                    "CommandAsyncTask::HandleEndActionResult: EndAction for action type '{0}' threw an unrecoverable RuntimeException the task will be cleared.",
+                    actionType);
+            commandInfo.clearTaskByVdsmTaskId(dbAsyncTask.getVdsmTaskId());
+            RemoveTaskFromDB();
+            if (commandInfo.getAllCleared()) {
+                log.infoFormat(
+                        "CommandAsyncTask::HandleEndActionRuntimeException: Removing CommandMultiAsyncTasks object for entity '{0}'",
+                        commandInfo.getCommandId());
+                _multiTasksByCommandIds.remove(commandInfo.getCommandId());
+            }
+        }
+
+        catch (RuntimeException ex) {
+            log.error("CommandAsyncTask::HandleEndActionResult [within thread]: an exception has been thrown", ex);
+        }
     }
 
     private void handleEndActionResult(CommandMultiAsyncTasks commandInfo, VdcReturnValueBase vdcReturnValue,

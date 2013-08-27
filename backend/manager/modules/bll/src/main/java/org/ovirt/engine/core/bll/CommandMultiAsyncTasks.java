@@ -139,6 +139,12 @@ public class CommandMultiAsyncTasks {
         }
     }
 
+    public void clearTaskByVdsmTaskId(Guid vdsmTaskId) {
+        synchronized (_listTasks) {
+            _listTasks.remove(vdsmTaskId);
+        }
+    }
+
     public void StartPollingTask(Guid TaskID) {
         synchronized (_listTasks) {
             if (_listTasks.containsKey(TaskID) && _listTasks.get(TaskID).getParameters() != null
