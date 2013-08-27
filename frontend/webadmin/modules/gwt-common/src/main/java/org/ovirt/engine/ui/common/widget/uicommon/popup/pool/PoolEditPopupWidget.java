@@ -122,6 +122,7 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         customPropertiesTab.disableContent();
         systemTab.disableContent();
         oSTypeEditor.setEnabled(false);
+        quotaEditor.setEnabled(false);
     }
 
     @Override
