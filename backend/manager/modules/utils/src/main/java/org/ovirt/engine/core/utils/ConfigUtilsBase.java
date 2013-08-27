@@ -26,20 +26,20 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
 
     @Override
     public final boolean getBoolValue(String name, String defaultValue) {
-        return ((Boolean) GetValue(DataType.Bool, name, defaultValue)).booleanValue();
+        return ((Boolean) getValue(DataType.Bool, name, defaultValue)).booleanValue();
     }
 
 
     @Override
     public final int getIntValue(String name, String defaultValue) {
-        return ((Integer) GetValue(DataType.Int, name, defaultValue)).intValue();
+        return ((Integer) getValue(DataType.Int, name, defaultValue)).intValue();
     }
 
 
     @Override
     public final Date getDateTimeValue(String name, String defaultValue) {
         Date dt = new java.util.Date(0);
-        String dateString = GetValue(DataType.String, name, defaultValue).toString();
+        String dateString = getValue(DataType.String, name, defaultValue).toString();
         try {
             dt = (new SimpleDateFormat("k:m:s")).parse(dateString);
         } catch (Exception e) {
@@ -51,36 +51,36 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
 
     @Override
     public final TimeSpan getTimeSpanValue(String name, String defaultValue) {
-        return (TimeSpan) GetValue(DataType.TimeSpan, name, defaultValue);
+        return (TimeSpan) getValue(DataType.TimeSpan, name, defaultValue);
     }
 
 
     @Override
     public final Version getVersionValue(String name, String defaultValue) {
-        return (Version) GetValue(DataType.Version, name, defaultValue);
+        return (Version) getValue(DataType.Version, name, defaultValue);
     }
 
 
     @Override
     public final String getPathValue(String name, String defaultValue) {
-        return (String) GetValue(DataType.String, name, defaultValue);
+        return (String) getValue(DataType.String, name, defaultValue);
     }
 
 
     @Override
-    public final void SetStringValue(String name, String value) {
-        SetValue(name, value, ConfigCommon.defaultConfigurationVersion);
+    public final void setStringValue(String name, String value) {
+        setValue(name, value, ConfigCommon.defaultConfigurationVersion);
     }
 
 
 
-    protected abstract void SetValue(String name, String value, String version);
+    protected abstract void setValue(String name, String value, String version);
 
-    protected abstract Object GetValue(DataType type, String name, String defaultValue);
+    protected abstract Object getValue(DataType type, String name, String defaultValue);
 
 
     @Override
-    public abstract <T> T GetValue(ConfigValues configValue, String version);
+    public abstract <T> T getValue(ConfigValues configValue, String version);
 
     public final static class EnumValue {
         final Class<?> fieldType;
@@ -112,7 +112,7 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
      * @param name
      * @return
      */
-    protected static EnumValue ParseEnumValue(String name) {
+    protected static EnumValue parseEnumValue(String name) {
 
         // get field from enum for its attributes
         Field fi = null;
@@ -159,7 +159,7 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
     @SuppressWarnings("unchecked")
     @Override
     public Map<String, String> getMapValue(final String name, final String defaultValue) {
-        final String jsonString = (String) GetValue(DataType.String, name, defaultValue);
+        final String jsonString = (String) getValue(DataType.String, name, defaultValue);
         if(jsonString != null) {
             return new JsonObjectDeserializer().deserialize(jsonString, HashMap.class);
         } else {

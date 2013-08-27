@@ -52,8 +52,8 @@
 //        // Mocking the Config class
 //        mockStatic(Config.class);
 //        when(Config.resolveSignScriptPath()).thenReturn(new String());
-//        when(Config.GetValue(any(ConfigValues.class))).thenReturn(new String());
-//        when(Config.GetValue(ConfigValues.SignCertTimeoutInSeconds)).thenReturn(defaultSignCertTimeoutInSeconds);
+//        when(Config.getValue(any(ConfigValues.class))).thenReturn(new String());
+//        when(Config.getValue(ConfigValues.SignCertTimeoutInSeconds)).thenReturn(defaultSignCertTimeoutInSeconds);
 //        when(Config.resolveCABasePath()).thenReturn(new String());
 //
 //        // Mocking the org.ovirt.engine.core.utils FileUtil class
@@ -83,7 +83,7 @@
 //    public void signCertificateRequestTimeoutTest() {
 //        processSucceeds();
 //        // In order to cause a timeout, timeout is set to zero
-//        when(Config.GetValue(ConfigValues.SignCertTimeoutInSeconds)).thenReturn(0);
+//        when(Config.getValue(ConfigValues.SignCertTimeoutInSeconds)).thenReturn(0);
 //        assertFalse(execSignCertificateRequest());
 //    }
 //

@@ -70,12 +70,12 @@ package org.ovirt.engine.core.vdsbroker;
 //        IConfigUtilsInterface mockConfigUtils = mock(IConfigUtilsInterface.class);
 //        Config.setConfigUtils(mockConfigUtils);
 //
-//        when(mockConfigUtils.<Integer> GetValue(ConfigValues.VdsRefreshRate, ConfigCommon.defaultConfigurationVersion)).thenReturn(60);
-//        when(mockConfigUtils.<Integer> GetValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes, ConfigCommon.defaultConfigurationVersion)).thenReturn(60);
-//        when(mockConfigUtils.<Integer> GetValue(ConfigValues.VdsRecoveryTimeoutInMintues, ConfigCommon.defaultConfigurationVersion)).thenReturn(60);
-//        when(mockConfigUtils.<Integer> GetValue(ConfigValues.NumberVmRefreshesBeforeSave, ConfigCommon.defaultConfigurationVersion)).thenReturn(1);
-//        when(mockConfigUtils.<Integer> GetValue(ConfigValues.vdsTimeout, ConfigCommon.defaultConfigurationVersion)).thenReturn(60);
-//        when(mockConfigUtils.<Boolean> GetValue(ConfigValues.UseSecureConnectionWithServers, ConfigCommon.defaultConfigurationVersion)).thenReturn(false);
+//        when(mockConfigUtils.<Integer> getValue(ConfigValues.VdsRefreshRate, ConfigCommon.defaultConfigurationVersion)).thenReturn(60);
+//        when(mockConfigUtils.<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes, ConfigCommon.defaultConfigurationVersion)).thenReturn(60);
+//        when(mockConfigUtils.<Integer> getValue(ConfigValues.VdsRecoveryTimeoutInMintues, ConfigCommon.defaultConfigurationVersion)).thenReturn(60);
+//        when(mockConfigUtils.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave, ConfigCommon.defaultConfigurationVersion)).thenReturn(1);
+//        when(mockConfigUtils.<Integer> getValue(ConfigValues.vdsTimeout, ConfigCommon.defaultConfigurationVersion)).thenReturn(60);
+//        when(mockConfigUtils.<Boolean> getValue(ConfigValues.UseSecureConnectionWithServers, ConfigCommon.defaultConfigurationVersion)).thenReturn(false);
 //    }
 //
 //    public void setMockups() {

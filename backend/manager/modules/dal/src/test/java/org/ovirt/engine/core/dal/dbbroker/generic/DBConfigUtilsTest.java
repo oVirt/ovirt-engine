@@ -54,7 +54,7 @@ public class DBConfigUtilsTest extends BaseDAOTestCase {
                     + " annotation: " + curConfig.name(), typeAttr);
             Class<?> c = typeAttr.value();
 
-            Object obj = config.GetValue(curConfig, ConfigCommon.defaultConfigurationVersion);
+            Object obj = config.getValue(curConfig, ConfigCommon.defaultConfigurationVersion);
 
             Assert.assertTrue("null return for " + curConfig.name(), obj != null);
             Assert.assertTrue(

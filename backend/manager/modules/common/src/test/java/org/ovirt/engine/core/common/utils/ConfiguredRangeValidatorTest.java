@@ -96,14 +96,14 @@ public class ConfiguredRangeValidatorTest {
 
     public void initConfiguredWithDefaultMinValue() {
         IConfigUtilsInterface configUtils = initConfigUtils();
-        when(configUtils.GetValue(ConfigValues.ConnectToServerTimeoutInSeconds, ConfigCommon.defaultConfigurationVersion)).thenReturn(TEST_MIN_RANGE);
+        when(configUtils.getValue(ConfigValues.ConnectToServerTimeoutInSeconds, ConfigCommon.defaultConfigurationVersion)).thenReturn(TEST_MIN_RANGE);
         Config.setConfigUtils(configUtils);
     }
 
     private IConfigUtilsInterface initConfigUtils() {
         validator = ValidationUtils.getValidator();
         IConfigUtilsInterface configUtils = mock(IConfigUtilsInterface.class);
-        when(configUtils.GetValue(ConfigValues.vdsTimeout, ConfigCommon.defaultConfigurationVersion)).thenReturn(TEST_MAX_RANGE);
+        when(configUtils.getValue(ConfigValues.vdsTimeout, ConfigCommon.defaultConfigurationVersion)).thenReturn(TEST_MAX_RANGE);
         return configUtils;
     }
 

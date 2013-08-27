@@ -94,9 +94,9 @@ public interface IConfigUtilsInterface {
      * @param value
      *            The value.
      */
-    void SetStringValue(String name, String value);
+    void setStringValue(String name, String value);
 
 
-    <T> T GetValue(ConfigValues configValue, String version);
+    <T> T getValue(ConfigValues configValue, String version);
 
 }

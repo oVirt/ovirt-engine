@@ -17,7 +17,6 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdcOptionDAO;
 import org.ovirt.engine.core.utils.ConfigUtilsBase;
-import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -82,9 +81,9 @@ public class DBConfigUtils extends ConfigUtilsBase {
      * @param option
      * @return
      */
-    private static Object GetValue(VdcOption option) {
+    private static Object getValue(VdcOption option) {
         Object result = option.getoption_value();
-        EnumValue enumValue = ParseEnumValue(option.getoption_name());
+        EnumValue enumValue = parseEnumValue(option.getoption_name());
         if (enumValue != null) {
             final OptionBehaviourAttribute optionBehaviour = enumValue.getOptionBehaviour();
             final Class<?> fieldType = enumValue.getFieldType();
@@ -97,7 +96,6 @@ public class DBConfigUtils extends ConfigUtilsBase {
             }
 
             if (optionBehaviour != null) {
-                EngineLocalConfig config = EngineLocalConfig.getInstance();
                 Map<String, Object> values = null;
                 switch (optionBehaviour.behaviour()) {
                 // split string by comma for List<string> constructor
@@ -178,13 +176,13 @@ public class DBConfigUtils extends ConfigUtilsBase {
      *            The value.
      */
     @Override
-    protected void SetValue(String name, String value, String version) {
+    protected void setValue(String name, String value, String version) {
         VdcOption vdcOption = dbfacade.getVdcOptionDao().getByNameAndVersion(name, version);
         vdcOption.setoption_value(value);
         dbfacade.getVdcOptionDao().update(vdcOption);
         try {
             // refresh the cache entry after update
-            _vdcOptionCache.get(vdcOption.getoption_name()).put(version, GetValue(vdcOption));
+            _vdcOptionCache.get(vdcOption.getoption_name()).put(version, getValue(vdcOption));
         } catch (java.lang.Exception e) {
             log.errorFormat("Could not update option {0} in cache.", name);
         }
@@ -208,17 +206,17 @@ public class DBConfigUtils extends ConfigUtilsBase {
     }
 
     @Override
-    protected Object GetValue(DataType type, String name, String defaultValue) {
+    protected Object getValue(DataType type, String name, String defaultValue) {
         // Note that the type parameter is useless, it should be removed (and
         // maybe all the method) in a future refactoring.
-        log.warnFormat("Using old GetValue for {0}.", name);
+        log.warnFormat("Using old getValue for {0}.", name);
         ConfigValues value = ConfigValues.valueOf(name);
-        return GetValue(value, ConfigCommon.defaultConfigurationVersion);
+        return getValue(value, ConfigCommon.defaultConfigurationVersion);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T> T GetValue(ConfigValues name, String version) {
+    public <T> T getValue(ConfigValues name, String version) {
         T returnValue;
         Map<String, Object> values = null;
         if ((values = _vdcOptionCache.get(name.toString())) != null && values.containsKey(version)) {
@@ -228,7 +226,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
             option.setoption_name(name.toString());
             option.setoption_value(null);
             // returns default value - version independent
-            returnValue = (T) GetValue(option);
+            returnValue = (T) getValue(option);
 
             // If just requested version is missing, add the default value with the requested version.
             if (values != null) {
@@ -274,7 +272,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
             values = new HashMap<String, Object>();
             _vdcOptionCache.put(option.getoption_name(), values);
         }
-        values.put(option.getversion(), GetValue(option));
+        values.put(option.getversion(), getValue(option));
     }
 
     private static boolean isReloadable(String optionName) throws NoSuchFieldException {

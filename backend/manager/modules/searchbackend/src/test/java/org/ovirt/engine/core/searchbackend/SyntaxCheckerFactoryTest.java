@@ -39,7 +39,7 @@ public class SyntaxCheckerFactoryTest {
     @Before
     public void setup() {
         final IConfigUtilsInterface configUtils = Mockito.mock(IConfigUtilsInterface.class);
-        Mockito.when(configUtils.GetValue(ConfigValues.SearchResultsLimit, ConfigCommon.defaultConfigurationVersion))
+        Mockito.when(configUtils.getValue(ConfigValues.SearchResultsLimit, ConfigCommon.defaultConfigurationVersion))
                 .thenReturn(100);
         Config.setConfigUtils(configUtils);
     }

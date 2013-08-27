@@ -151,10 +151,10 @@ public class VmHandlerTest {
 //    @Test
 //    public void UpdateVmGuestAgentVersionWithAppList() {
 //        PowerMockito.mockStatic(Config.class);
-//        Mockito.when(Config.GetValue(ConfigValues.AgentAppName)).thenReturn("oVirt-Agent");
+//        Mockito.when(Config.getValue(ConfigValues.AgentAppName)).thenReturn("oVirt-Agent");
 //        HashMap<String, String> drivers = new HashMap<String, String>();
 //        drivers.put("linux", "xorg-x11-drv-qxl");
-//        Mockito.when(Config.GetValue(ConfigValues.SpiceDriverNameInGuest)).thenReturn(drivers);
+//        Mockito.when(Config.getValue(ConfigValues.SpiceDriverNameInGuest)).thenReturn(drivers);
 //
 //        VM vm = new VM();
 //        vm.getStaticData().setos(VmOsType.OtherLinux);
@@ -169,7 +169,7 @@ public class VmHandlerTest {
 //        vdsGroup.setcompatibility_version(version);
 //
 //        PowerMockito.mockStatic(Config.class);
-//        Mockito.when(Config.<Boolean> GetValue(ConfigValues.NativeUSBEnabled, vdsGroup.getcompatibility_version()
+//        Mockito.when(Config.<Boolean> getValue(ConfigValues.NativeUSBEnabled, vdsGroup.getcompatibility_version()
 //                .getValue())).thenReturn(result);
 //
 //        List<String> messages = new ArrayList<String>();

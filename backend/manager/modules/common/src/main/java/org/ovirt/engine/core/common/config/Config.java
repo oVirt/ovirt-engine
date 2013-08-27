@@ -19,7 +19,7 @@ public final class Config {
     }
 
     public static <T> T GetValue(ConfigValues value, String version) {
-        return getConfigUtils().<T> GetValue(value, version);
+        return getConfigUtils().<T>getValue(value, version);
     }
 
     /**

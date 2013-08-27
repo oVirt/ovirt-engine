@@ -76,77 +76,66 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
         supportedVersions.add(new org.ovirt.engine.core.compat.Version(1, 5));
         supportedVersions.add(new org.ovirt.engine.core.compat.Version(10, 3));
 
-        //expect(Config.GetValue(ConfigValues.SupportedClusterLevels)).andReturn(supportedVersions);
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,
                 new String[] { "ConfigValue" },
                 new Object[] { ConfigurationValues.SupportedClusterLevels },
                 supportedVersions);
 
-        //expect(Config.GetValue(ConfigValues.ServerCPUList, "1.5")).andReturn("0:bar:0:foo");
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,
                 new String[] { "Version", "ConfigValue" },
                 new Object[] { "1.5", ConfigurationValues.ServerCPUList },
                 "0:bar:0:foo");
 
-        //expect(Config.GetValue(ConfigValues.ServerCPUList, "10.3")).andReturn("15:foo:1,2,3:bar");
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,
                 new String[] { "Version", "ConfigValue" },
                 new Object[] { "10.3", ConfigurationValues.ServerCPUList },
                 "15:foo:1,2,3:bar");
 
-        //expect(Config.GetValue(ConfigValues.VdsFenceOptionMapping, "1.5")).andReturn("foo:one=1,two=2");
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,
                 new String[] { "Version", "ConfigValue" },
                 new Object[] { "1.5", ConfigurationValues.VdsFenceOptionMapping },
                 "foo:one=1,two=2");
 
-        //expect(Config.GetValue(ConfigValues.VdsFenceOptionTypes, "1.5")).andReturn("one=int,two=bool");
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,
                 new String[] { "Version", "ConfigValue" },
                 new Object[] { "1.5", ConfigurationValues.VdsFenceOptionTypes },
                 "one=int,two=bool");
 
-        //expect(Config.GetValue(ConfigValues.VdsFenceOptionMapping, "10.3")).andReturn("foo:one=1,two=2");
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,
                 new String[] { "Version", "ConfigValue" },
                 new Object[] { "10.3", ConfigurationValues.VdsFenceOptionMapping },
                 "foo:one=1,two=2");
 
-        //expect(Config.GetValue(ConfigValues.VdsFenceOptionTypes, "10.3")).andReturn("one=int,two=bool");
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,
                 new String[] { "Version", "ConfigValue" },
                 new Object[] { "10.3", ConfigurationValues.VdsFenceOptionTypes },
                 "one=int,two=bool");
 
-        //expect(Config.GetValue(ConfigValues.PredefinedVMProperties, "1.5")).andReturn("");
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,
                 new String[] { "Version", "ConfigValue" },
                 new Object[] { "1.5", ConfigurationValues.PredefinedVMProperties },
                 "");
 
-        //expect(Config.GetValue(ConfigValues.UserDefinedVMProperties, "1.5")).andReturn("");
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,
                 new String[] { "Version", "ConfigValue" },
                 new Object[] { "1.5", ConfigurationValues.UserDefinedVMProperties },
                 "");
 
-        //expect(Config.GetValue(ConfigValues.PredefinedVMProperties, "10.3")).andReturn("foo=true|false");
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,
                 new String[] { "Version", "ConfigValue" },
                 new Object[] { "10.3", ConfigurationValues.PredefinedVMProperties },
                 "foo=true|false");
 
-        //expect(Config.GetValue(ConfigValues.UserDefinedVMProperties, "10.3")).andReturn("bar=[a-z]");
         setUpGetEntityExpectations(VdcQueryType.GetConfigurationValue,
                 GetConfigurationValueParameters.class,
                 new String[] { "Version", "ConfigValue" },

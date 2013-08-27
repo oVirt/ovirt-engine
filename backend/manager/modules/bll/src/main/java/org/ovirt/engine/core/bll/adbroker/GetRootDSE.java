@@ -144,7 +144,7 @@ public class GetRootDSE {
                 break;
             }
         }
-        Config.getConfigUtils().SetStringValue(ConfigValues.LDAPProviderTypes.name(), StringUtils.join(types, ","));
+        Config.getConfigUtils().setStringValue(ConfigValues.LDAPProviderTypes.name(), StringUtils.join(types, ","));
     }
 
     public Attributes getDomainAttributes(LdapProviderType general, String domain) {

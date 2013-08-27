@@ -30,8 +30,8 @@ public class MTUValidatorTest {
         validator = ValidationUtils.getValidator();
 
         IConfigUtilsInterface confUtils = mock(IConfigUtilsInterface.class);
-        when(confUtils.GetValue(ConfigValues.MaxMTU, ConfigCommon.defaultConfigurationVersion)).thenReturn(TEST_MAX_MTU);
-        when(confUtils.GetValue(ConfigValues.ManagementNetwork, ConfigCommon.defaultConfigurationVersion)).thenReturn(TEST_MANAGEMENT_NETWORK);
+        when(confUtils.getValue(ConfigValues.MaxMTU, ConfigCommon.defaultConfigurationVersion)).thenReturn(TEST_MAX_MTU);
+        when(confUtils.getValue(ConfigValues.ManagementNetwork, ConfigCommon.defaultConfigurationVersion)).thenReturn(TEST_MANAGEMENT_NETWORK);
         Config.setConfigUtils(confUtils);
     }
 

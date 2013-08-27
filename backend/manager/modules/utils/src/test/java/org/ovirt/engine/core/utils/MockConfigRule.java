@@ -87,7 +87,7 @@ public class MockConfigRule extends TestWatcher {
     }
 
     private static <T> void mockConfigValue(ConfigValues value, String version, T returnValue) {
-        when(Config.getConfigUtils().GetValue(value, version)).thenReturn(returnValue);
+        when(Config.getConfigUtils().getValue(value, version)).thenReturn(returnValue);
     }
 
     @Override

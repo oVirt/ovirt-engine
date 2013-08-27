@@ -20,8 +20,8 @@ public class SysprepHandlerTest {
     @Before
     public void setup() {
         IConfigUtilsInterface configUtils = Mockito.mock(IConfigUtilsInterface.class);
-        when(configUtils.GetValue(ConfigValues.AdUserPassword, ConfigCommon.defaultConfigurationVersion)).thenReturn(new HashMap<String, String>());
-        when(configUtils.GetValue(ConfigValues.AdUserName, ConfigCommon.defaultConfigurationVersion)).thenReturn("");
+        when(configUtils.getValue(ConfigValues.AdUserPassword, ConfigCommon.defaultConfigurationVersion)).thenReturn(new HashMap<String, String>());
+        when(configUtils.getValue(ConfigValues.AdUserName, ConfigCommon.defaultConfigurationVersion)).thenReturn("");
         Config.setConfigUtils(configUtils);
     }
 
