@@ -387,7 +387,7 @@ gwt-debug:
 	[ -n "$(DEBUG_MODULE)" ] || ( echo "Please specify DEBUG_MODULE" && false )
 	cd "frontend/webadmin/modules/$(DEBUG_MODULE)" && \
 		$(MVN) \
-			$(DEV_BUILD_FLAGS) \
+			$(DEV_EXTRA_BUILD_FLAGS) \
 			-Dgwt.noserver=true \
 			-Pgwtdev,gwt-admin,gwt-user \
 			gwt:debug
