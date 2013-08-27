@@ -31,10 +31,14 @@ public class InternalMigrateVmCommand<T extends InternalMigrateVmParameters> ext
      */
     @Override
     protected boolean canDoAction() {
-        if (getVm().getMigrationSupport() == MigrationSupport.MIGRATABLE) {
-            return super.canDoAction();
+        if (!super.canDoAction()) {
+            return false;
         }
 
-        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE);
+        if (getVm().getMigrationSupport() != MigrationSupport.MIGRATABLE) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NON_MIGRTABLE);
+        }
+
+        return true;
     }
 }
