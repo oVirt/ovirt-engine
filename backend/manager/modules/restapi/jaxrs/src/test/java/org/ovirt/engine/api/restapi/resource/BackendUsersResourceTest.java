@@ -38,7 +38,7 @@ public class BackendUsersResourceTest
     static final String[] PARSED_GROUPS =
         { "Schema Admins@Maghreb/Users", "Group Policy Creator Owners@Maghreb/Users", "Enterprise Admins@Maghreb/Users" };
 
-    protected static final String SEARCH_QUERY = "Users : name=s* AND id=*0 and usrname != \"\"";
+    protected static final String SEARCH_QUERY = "Users : usrname != \"\" and name=s* AND id=*0";
     protected static final String QUERY = "Users : usrname != \"\"";
 
     public BackendUsersResourceTest() {

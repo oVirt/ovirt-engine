@@ -27,10 +27,11 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class BackendUsersResourceBase extends AbstractBackendCollectionResource<User, DbUser> {
 
+    private static final String SORT_BY_SEARCH_PATTERN = "sortby";
     static final String[] SUB_COLLECTIONS = { "permissions", "roles", "tags" };
     protected static final String AD_SEARCH_TEMPLATE = "ADUSER@{0}: ";
     private static final String USERS_SEARCH_PATTERN = "usrname != \"\"";
-    private static final String AND_SEARCH_PATTERN = " and ";
+    private static final String AND_SEARCH_PATTERN = "and ";
 
     private BackendDomainResource parent;
 
@@ -49,10 +50,31 @@ public class BackendUsersResourceBase extends AbstractBackendCollectionResource<
 
     protected String getSearchPattern() {
         String user_defined_pattern = QueryHelper.getConstraint(getUriInfo(), "",  modelType);
-        return user_defined_pattern.equals("Users : ") ?
-               user_defined_pattern + USERS_SEARCH_PATTERN
-               :
-               user_defined_pattern + AND_SEARCH_PATTERN + USERS_SEARCH_PATTERN;
+        return filterOutGroups(user_defined_pattern);
+    }
+
+    /**
+     * Insert [usrname!=""] into the existing pattern, which prevens groups from being returned.
+     * Existing pattern might have different forms, e.g:
+     * "Users : "
+     * "Users : name=admin"
+     * "Users : sortby name asc page 1"
+     * "Users : name=admin sortby name asc page 1"
+     * [usrname!=""] will always be inserted right after "Users : "
+     * TODO: in the future move logic of differentiating groups from users to the engine
+     */
+    private String filterOutGroups(String user_defined_pattern) {
+
+        int splitPoint = user_defined_pattern.indexOf(":") + 1;
+        String prefix = user_defined_pattern.substring(0, splitPoint);
+        String suffix = user_defined_pattern.substring(splitPoint+1, user_defined_pattern.length());
+        String searchPattern = prefix + " " + USERS_SEARCH_PATTERN;
+        if (suffix.startsWith(SORT_BY_SEARCH_PATTERN)) {
+            searchPattern = searchPattern + " " + suffix;
+        } else if (!suffix.isEmpty()) {
+            searchPattern = searchPattern + " " + AND_SEARCH_PATTERN + suffix;
+        }
+        return searchPattern;
     }
 
     protected String getDomain(User user) {
