@@ -184,6 +184,7 @@ public class UserPortalLoginModel extends LoginModel
         // Completely override the base class functionality.
         if (!validate())
         {
+            getLoginFailedEvent().raise(this, EventArgs.Empty);
             return;
         }
 

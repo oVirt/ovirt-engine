@@ -238,6 +238,7 @@ public class LoginModel extends Model
     {
         if (!validate())
         {
+            getLoginFailedEvent().raise(this, EventArgs.Empty);
             return;
         }
 
