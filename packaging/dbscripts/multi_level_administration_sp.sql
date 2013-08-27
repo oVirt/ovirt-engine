@@ -188,12 +188,13 @@ Create or replace FUNCTION InsertRole(v_description VARCHAR(4000) ,
 	v_name VARCHAR(126),
 	v_is_readonly BOOLEAN,
 	v_role_type INTEGER,
-        v_allows_viewing_children BOOLEAN)
+        v_allows_viewing_children BOOLEAN,
+    v_app_mode INTEGER)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO roles(description, id, name, is_readonly, role_type, allows_viewing_children)
-	VALUES(v_description, v_id, v_name, v_is_readonly, v_role_type, v_allows_viewing_children);
+INSERT INTO roles(description, id, name, is_readonly, role_type, allows_viewing_children, app_mode)
+	VALUES(v_description, v_id, v_name, v_is_readonly, v_role_type, v_allows_viewing_children, v_app_mode);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -243,13 +244,33 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+-- The logic to get the applicable set of roles for a given application mode is as below-
+-- Calculate the bitwise AND of application mode from vdc_options and app_mode value of current
+-- role from roles table.
+-- If the calculated value is greater than 0, the role is applicable.
+--
+-- To explain with an example-
+-- Currently supported application modes which can be set for a role are-
+-- 1. VirtOnly		0000 0001
+-- 2. GlusterOnly	0000 0010
+-- 3. AllModes		1111 1111
+--
+-- Now suppose the value of application mode set in vdc_options is 2 (0000 0010), then
+-- set of applicable roles would include all the roles with app_mode values either 2 or 255
+-- Now start doing bitwise AND for valid app_mode values 1, 2 and 255 with application mode
+-- value 2 from vdc_options. Only bitwise AND with 2 and 255 would result in a value greater
+-- than ZERO (0) and applicable set of roles are identified.
+--
+-- 1 & 2 (0000 0001 & 0000 0010) = 0000 0000 = 0			Roles with this app_mode would NOT be listed
+-- 2 & 2 (0000 0010 & 0000 0010) = 0000 0010 = 2 > 0		Roles with this app_mode would be listed
+-- 255 & 2 (1111 1111 & 0000 0010) = 0000 0010 = 2 > 0		Roles with this app_mode would be listed
 
-
-Create or replace FUNCTION GetAllFromRole() RETURNS SETOF roles STABLE
+Create or replace FUNCTION GetAllFromRole(v_app_mode INTEGER) RETURNS SETOF roles STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
-   FROM roles;
+   FROM roles
+   WHERE (roles.app_mode & v_app_mode) > 0;
 
 END; $procedure$
 LANGUAGE plpgsql;
@@ -285,15 +306,16 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetAllRolesByUserIdAndGroupIds(v_user_id UUID, v_group_ids text)
+Create or replace FUNCTION GetAllRolesByUserIdAndGroupIds(v_user_id UUID, v_group_ids text, v_app_mode INTEGER)
 RETURNS SETOF roles STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT roles.*
    FROM roles INNER JOIN
    permissions ON permissions.role_id = roles.id
-   WHERE permissions.ad_element_id = v_user_id
-   or permissions.ad_element_id in(select id from getElementIdsByIdAndGroups(v_user_id, v_group_ids));
+   WHERE (roles.app_mode & v_app_mode) > 0
+   AND (permissions.ad_element_id = v_user_id
+   or permissions.ad_element_id in(select id from getElementIdsByIdAndGroups(v_user_id, v_group_ids)));
 
 END; $procedure$
 LANGUAGE plpgsql;

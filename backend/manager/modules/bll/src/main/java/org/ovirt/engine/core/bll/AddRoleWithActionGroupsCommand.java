@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -100,6 +101,8 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
         Role role = getRole();
         role.setId(Guid.newGuid());
         role.setAllowsViewingChildren(false);
+        // Set the application mode as 255 - AllModes by default
+        getRole().setAppMode(ApplicationMode.AllModes);
 
         for (ActionGroup group : getParameters().getActionGroups()) {
             if (group.allowsViewingChildren()) {

@@ -11,6 +11,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 
 public class RoleDAOTest extends BaseDAOTestCase {
@@ -35,6 +36,7 @@ public class RoleDAOTest extends BaseDAOTestCase {
         newRole.setdescription("This is a new role.");
         newRole.setType(RoleType.USER);
         newRole.setAllowsViewingChildren(false);
+        newRole.setAppMode(ApplicationMode.AllModes);
     }
 
     /**
@@ -97,21 +99,31 @@ public class RoleDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetAllForUsersAndGroups() {
         List<Role> result = dao.getAllForUserAndGroups(USER_ID,
-                GROUP_IDS);
+                GROUP_IDS, ApplicationMode.AllModes.getValue());
         assertNotNull(result);
         assertFalse(result.isEmpty());
+        assertEquals(11, result.size());
 
+        List<Role> result1 = dao.getAllForUserAndGroups(USER_ID,
+                GROUP_IDS, ApplicationMode.VirtOnly.getValue());
+        assertNotNull(result1);
+        assertFalse(result1.isEmpty());
+        assertEquals(2, result1.size());
+
+        List<Role> result2 = dao.getAllForUserAndGroups(USER_ID,
+                GROUP_IDS, ApplicationMode.VirtOnly.getValue());
+        assertNotNull(result2);
+        assertFalse(result2.isEmpty());
+        assertEquals(2, result1.size());
     }
 
     @Test
     public void testGetAllForUsersAndGroupsInvalidUserAndGroups() {
         List<Role> result = dao.getAllForUserAndGroups(Guid.newGuid(),
-                Guid.newGuid().toString());
+                Guid.newGuid().toString(), ApplicationMode.AllModes.getValue());
         assertNotNull(result);
         assertTrue(result.isEmpty());
-
     }
-
 
     /**
      * Ensures that saving a role works as expected.

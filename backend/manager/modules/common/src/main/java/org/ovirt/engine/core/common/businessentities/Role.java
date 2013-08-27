@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidName;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -30,8 +31,11 @@ public class Role extends IVdcQueryable implements BusinessEntity<Guid> {
 
     private boolean allowsViewingChildren;
 
+    private ApplicationMode appMode;
+
     public Role() {
         id = Guid.Empty;
+        appMode = ApplicationMode.AllModes;
     }
 
     @Override
@@ -43,6 +47,7 @@ public class Role extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + (readOnly ? 1231 : 1237);
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((appMode == null) ? 0 : appMode.getValue());
         return result;
     }
 
@@ -63,7 +68,8 @@ public class Role extends IVdcQueryable implements BusinessEntity<Guid> {
                 && readOnly == other.readOnly
                 && allowsViewingChildren == other.allowsViewingChildren
                 && ObjectUtils.objectsEqual(name, other.name)
-                && type == other.type);
+                && type == other.type
+                && appMode == other.appMode);
     }
 
     public String getdescription() {
@@ -119,5 +125,13 @@ public class Role extends IVdcQueryable implements BusinessEntity<Guid> {
 
     public void setAllowsViewingChildren(boolean allowsViewingChildren) {
         this.allowsViewingChildren = allowsViewingChildren;
+    }
+
+    public ApplicationMode getAppMode() {
+        return this.appMode;
+    }
+
+    public void setAppMode(ApplicationMode mode) {
+        this.appMode = mode;
     }
 }

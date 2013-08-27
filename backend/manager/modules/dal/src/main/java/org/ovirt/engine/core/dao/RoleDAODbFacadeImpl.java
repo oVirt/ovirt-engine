@@ -6,6 +6,9 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -31,10 +34,10 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
             entity.setis_readonly(rs.getBoolean("is_readonly"));
             entity.setType(RoleType.getById(rs.getInt("role_type")));
             entity.setAllowsViewingChildren(rs.getBoolean("allows_viewing_children"));
+            entity.setAppMode(ApplicationMode.from(rs.getInt("app_mode")));
             return entity;
         }
     }
-
 
     @Override
     public Role get(Guid id) {
@@ -54,20 +57,28 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
 
     @Override
     public List<Role> getAll() {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource();
+        Integer appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("app_mode", appMode.intValue());
 
         return getCallsHandler().executeReadList("GetAllFromRole", RolesRowMapper.instance, parameterSource);
     }
 
     @Override
     public List<Role> getAllForUserAndGroups(Guid id, String groupIds) {
+        Integer appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
+        return getAllForUserAndGroups(id, groupIds, appMode.intValue());
+    }
+
+    @Override
+    public List<Role> getAllForUserAndGroups(Guid id, String groupIds, int appMode) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("user_id", id)
-                .addValue("group_ids", groupIds);
+                .addValue("group_ids", groupIds)
+                .addValue("app_mode", appMode);
         return getCallsHandler().executeReadList("GetAllRolesByUserIdAndGroupIds",
                 RolesRowMapper.instance,
                 parameterSource);
-
     }
 
     @Override
@@ -77,7 +88,8 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
                 .addValue("id", role.getId()).addValue("name", role.getname())
                 .addValue("is_readonly", role.getis_readonly())
                 .addValue("role_type", role.getType().getId())
-                .addValue("allows_viewing_children", role.allowsViewingChildren());
+                .addValue("allows_viewing_children", role.allowsViewingChildren())
+                .addValue("app_mode", role.getAppMode().getValue());
 
         getCallsHandler().executeModification("InsertRole", parameterSource);
     }

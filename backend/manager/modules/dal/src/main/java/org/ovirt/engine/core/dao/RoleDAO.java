@@ -32,4 +32,18 @@ public interface RoleDAO extends GenericDao<Role, Guid> {
      * @return the list of the roles
      */
     List<Role> getAllForUserAndGroups(Guid userId, String groupIds);
+
+    /**
+     * This method gets the Roles for the given user and its groups. The purpose of this method is to be able to get
+     * roles even if the user is not already added to DB, by getting the roles for his groups
+     *
+     * @param userId
+     *            ID of the user to obtain roles for
+     * @param groupIds
+     *            comma delimited list of group IDs of the user
+     * @param appMode
+     *            application mode to obtain roles for
+     * @return the list of the roles
+     */
+    List<Role> getAllForUserAndGroups(Guid userId, String groupIds, int appMode);
 }
