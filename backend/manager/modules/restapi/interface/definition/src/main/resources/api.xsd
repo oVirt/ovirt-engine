@@ -3619,7 +3619,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="glusterhooks" type="GlusterHooks" />
+  <xs:element name="gluster_hooks" type="GlusterHooks" />
   <xs:complexType name="GlusterHooks">
     <xs:complexContent>
       <xs:extension base="BaseResources">
