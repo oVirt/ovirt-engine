@@ -61,6 +61,9 @@ class Plugin(plugin.PluginBase):
             osetupcons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_STORE,
             osetupcons.FileLocations.OVIRT_ENGINE_PKI_CA_CERT_CONF,
             osetupcons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF,
+            osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_SSH_KEY,
+            osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_KEY,
+            osetupcons.FileLocations.OVIRT_ENGINE_PKI_APACHE_CA_CERT,
         ):
             if os.path.exists(name):
                 uninstall_files.append(name)
