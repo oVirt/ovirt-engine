@@ -2,7 +2,10 @@ package org.ovirt.engine.core.bll.network.dc;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import org.ovirt.engine.core.bll.LockIdNameAttribute;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderValidator;
@@ -13,10 +16,13 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
+@LockIdNameAttribute
 public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkCommon<T> {
     public AddNetworkCommand(T parameters) {
         super(parameters);
@@ -82,6 +88,20 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.singletonList(new PermissionSubject(getStoragePoolId(),
                 VdcObjectType.StoragePool, getActionType().getActionGroup()));
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        if (getNetworkName() == null) {
+            return null;
+        }
+
+        Map<String, Pair<String, String>> locks = Collections.singletonMap(
+                getNetworkName(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.NETWORK,
+                        VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IS_USED));
+
+        return locks;
     }
 
     protected static class AddNetworkValidator extends NetworkValidator {
