@@ -601,7 +601,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
 
         if ((model.getIsNew() || model.getEntity() == null)
-                && model.getQuotaEnforceTypeListModel().getSelectedItem() != QuotaEnforcementTypeEnum.DISABLED) {
+                && model.getQuotaEnforceTypeListModel().getSelectedItem() == QuotaEnforcementTypeEnum.HARD_ENFORCEMENT) {
             promptNoQuotaInDCMessage();
         }
         else if (!model.getIsNew()
