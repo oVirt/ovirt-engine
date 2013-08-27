@@ -733,8 +733,10 @@ fi
 
 # Legacy
 # TODO: remove in 3.4
+%{_bindir}/engine-check-update
 %{_bindir}/engine-upgrade
-%{_bindir}/engine-check-upgrade
+%{engine_data}/bin/engine-check-update.sh
+%{engine_data}/bin/engine-upgrade.sh
 
 %files setup-plugin-allinone
 
@@ -820,11 +822,6 @@ fi
 %if %{ovirt_install_systemv}
 %{_initddir}/ovirt-engine-notifier
 %endif
-
-# Legacy
-# TODO: remove in 3.4
-%{engine_data}/bin/engine-check-upgrade.sh
-%{engine_data}/bin/engine-upgrade.sh
 
 %changelog
 * Thu Jan 17 2013 Juan Hernandez <juan.hernandez@redhat.com> - 3.3.0-1

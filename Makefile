@@ -380,7 +380,7 @@ install-layout: \
 
 	# legacy-begin
 	ln -sf "$(DATA_DIR)/bin/engine-upgrade.sh" "$(DESTDIR)$(BIN_DIR)/engine-upgrade"
-	ln -sf "$(DATA_DIR)/bin/engine-check-upgrade.sh" "$(DESTDIR)$(BIN_DIR)/engine-check-upgrade"
+	ln -sf "$(DATA_DIR)/bin/engine-check-update.sh" "$(DESTDIR)$(BIN_DIR)/engine-check-update"
 	# legacy-end
 
 gwt-debug:
