@@ -278,7 +278,7 @@ public class FeaturesHelper {
 
     private void addFeatureVirtioScsi(Features features) {
         Feature feature = new Feature();
-        feature.setName("Virtio-SCSI Support");
+        feature.setName("VirtIO-SCSI Support");
         feature.setDescription("Support for paravirtualized SCSI controller device.");
         features.getFeature().add(feature);
     }

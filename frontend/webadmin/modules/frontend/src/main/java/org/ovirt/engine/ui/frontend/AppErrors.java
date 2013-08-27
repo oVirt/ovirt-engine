@@ -2236,7 +2236,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Guest OS version is not supported.")
     String ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED();
 
-    @DefaultStringValue("Can plug only virtIO disks.")
+    @DefaultStringValue("Can plug only VirtIO disks.")
     String HOT_PLUG_DISK_IS_NOT_VIRTIO();
 
     @DefaultStringValue("Disk is already activated.")
@@ -2269,7 +2269,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. SCSI Generic IO is not supported for image disk.")
     String SCSI_GENERIC_IO_IS_NOT_SUPPORTED_FOR_IMAGE_DISK();
 
-    @DefaultStringValue("Virtio-SCSI interface is only available on cluster level 3.3 or higher.")
+    @DefaultStringValue("VirtIO-SCSI interface is only available on cluster level 3.3 or higher.")
     String VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL();
 
     // Suspected (not in use?)

@@ -502,7 +502,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Smartcard Enabled")
     String smartcardVmPopup();
 
-    @DefaultStringValue("Virtio Console Device Enabled")
+    @DefaultStringValue("VirtIO Console Device Enabled")
     String consoleDeviceEnabled();
 
     @DefaultStringValue("Pool")
