@@ -18,7 +18,6 @@ public class VdcUserTest {
     public void setUp() {
         adUser = new LdapUser();
         adUser.setUserName("UserName");
-        adUser.setPassword("password");
         adUser.setUserId(Guid.newGuid());
         adUser.setDomainControler("DomainController");
     }

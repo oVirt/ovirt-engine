@@ -54,7 +54,6 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
         } else {
             user = populateUserData((LdapUser) searchResult, getAuthenticationDomain());
             if (user != null) {
-                user.setPassword(getPassword());
                 user.setUserName(getLoginName());
                 GroupsDNQueryGenerator generator = createGroupsGeneratorForUser(user);
                 if (generator.getHasValues()) {

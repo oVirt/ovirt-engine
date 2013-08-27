@@ -33,7 +33,6 @@ public class LdapUserSearchQueryTest extends LdapSearchQueryTestBase {
     protected LdapUser getExpectedResult() {
         LdapUser user = new LdapUser();
         user.setUserName(NAME_TO_SEARCH);
-        user.setPassword("melon!");
         user.setUserId(Guid.newGuid());
         user.setDomainControler(DOMAIN);
         return user;

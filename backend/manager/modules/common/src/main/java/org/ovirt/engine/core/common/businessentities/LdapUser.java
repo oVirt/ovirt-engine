@@ -18,7 +18,6 @@ public class LdapUser extends IVdcQueryable implements Serializable {
     private static final long serialVersionUID = 6800096193162766377L;
     private Guid mUserId;
     private String mUserName;
-    private String mPassword;
     private String mDomainControler;
     private String mName;
     private String mSurName;
@@ -52,14 +51,6 @@ public class LdapUser extends IVdcQueryable implements Serializable {
 
     public void setUserName(String value) {
         mUserName = value;
-    }
-
-    public String getPassword() {
-        return mPassword;
-    }
-
-    public void setPassword(String value) {
-        mPassword = value;
     }
 
     public Guid getUserId() {
