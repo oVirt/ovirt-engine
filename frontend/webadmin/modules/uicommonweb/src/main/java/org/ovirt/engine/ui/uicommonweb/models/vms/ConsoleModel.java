@@ -208,7 +208,11 @@ public abstract class ConsoleModel extends EntityModel {
 
     /**
      * Executes given command. The confirmation dialog is displayed when it's
-     * not safe to take over the console.
+     * not safe to take over the console, which is when
+     *  - allow console reconnect is disabled AND
+     *  - there is an active console user who is different from current portal user and has not reconnect permissions AND
+     *  - current portal user has not reconnect permissions (this is to prevent extra information dialog. backend
+     *    validation will not allow connecting this user and frontend will display warning message anyway)
      *
      * @param command
      */
@@ -221,25 +225,45 @@ public abstract class ConsoleModel extends EntityModel {
         }
 
         //now we ask if the currently connected user has permission to reconnect (async)
-        HasAdElementReconnectPermissionParameters params =
+        final HasAdElementReconnectPermissionParameters consoleUserReconnectPermParams =
                 new HasAdElementReconnectPermissionParameters(vm.getConsoleUserId(),
                         vm.getId());
 
-        AsyncQuery query = new AsyncQuery();
-        query.setModel(this);
-        query.asyncCallback = new INewAsyncCallback() {
+        final HasAdElementReconnectPermissionParameters portalUserReconnectPermParams =
+                new HasAdElementReconnectPermissionParameters(Frontend.getLoggedInUser().getUserId(),
+                        vm.getId());
+
+        final AsyncQuery portalUserReconnectPermissionQuery = new AsyncQuery();
+        portalUserReconnectPermissionQuery.setModel(this);
+        portalUserReconnectPermissionQuery.asyncCallback = new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object result)
             {
-                boolean returnValue = ((Boolean) ((VdcQueryReturnValue)result).getReturnValue());
+                boolean returnValue = ((VdcQueryReturnValue)result).getReturnValue();
                 if (returnValue) {
-                    command.execute();
-                } else {
                     displayConsoleConnectConfirmPopup(command);
+                } else {
+                    command.execute(); //user will be stopped by backend validation
                 }
             }
         };
-        Frontend.RunQuery(VdcQueryType.HasAdElementReconnectPermission, params, query);
+
+        final AsyncQuery consoleUserReconnectPermissionQuery = new AsyncQuery();
+        consoleUserReconnectPermissionQuery.setModel(this);
+        consoleUserReconnectPermissionQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result)
+            {
+                boolean returnValue = ((VdcQueryReturnValue)result).getReturnValue();
+                if (returnValue) {
+                    command.execute();
+                } else {
+                    Frontend.RunQuery(VdcQueryType.HasAdElementReconnectPermission, portalUserReconnectPermParams, portalUserReconnectPermissionQuery);
+                }
+            }
+        };
+
+        Frontend.RunQuery(VdcQueryType.HasAdElementReconnectPermission, consoleUserReconnectPermParams, consoleUserReconnectPermissionQuery);
     }
 
     private void displayConsoleConnectConfirmPopup(final UICommand onConfirmCommand) {
