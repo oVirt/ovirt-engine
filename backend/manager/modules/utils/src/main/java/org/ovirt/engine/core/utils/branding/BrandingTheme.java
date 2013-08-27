@@ -7,6 +7,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -81,7 +83,7 @@ public class BrandingTheme {
     private static final Logger log = Logger.getLogger(BrandingTheme.class);
 
     /**
-     * The key for the resource bundle name.
+     * The key for the messages resource bundle name.
      */
     private static final String MESSAGES_KEY = "messages"; //$NON-NLS-1$
 
@@ -203,7 +205,7 @@ public class BrandingTheme {
      * Get the theme messages resource bundle for the US locale.
      * @return A {@code ResourceBundle} containing messages.
      */
-    public ResourceBundle getMessagesBundle() {
+    public List<ResourceBundle> getMessagesBundle() {
         // Default to US Locale.
         return getMessagesBundle(LocaleFilter.DEFAULT_LOCALE);
     }
@@ -213,21 +215,37 @@ public class BrandingTheme {
      * @param locale the locale to load the bundle for.
      * @return A {@code ResourceBundle} containing messages.
      */
-    public ResourceBundle getMessagesBundle(final Locale locale) {
-        ResourceBundle result = null;
+    public List<ResourceBundle> getMessagesBundle(final Locale locale) {
+        return getBundle(MESSAGES_KEY, locale);
+    }
+
+    /**
+     * Load the Java resource bundle associated with the passed in Locale and name.
+     * @param name The name of the {@code ResourceBundle} file.
+     * @param locale The locale to load.
+     * @return A {@code ResourceBundle} containing the resources.
+     */
+    private List<ResourceBundle> getBundle(String name, Locale locale) {
+        List<ResourceBundle> result = new ArrayList<ResourceBundle>();
         try {
             File themeDirectory = new File(filePath);
             URLClassLoader urlLoader = new URLClassLoader(
                     new URL[] {
                             themeDirectory.toURI().toURL() });
-            final String messageFileName = brandingProperties.getProperty(MESSAGES_KEY);
-            String bundleName = messageFileName.lastIndexOf(PROPERTIES_FILE_SUFFIX) != -1
-                    ? messageFileName.substring(0, messageFileName.lastIndexOf(PROPERTIES_FILE_SUFFIX))
-                    : messageFileName;
-            result = ResourceBundle.getBundle(bundleName, locale, urlLoader);
+            final String messageFileNames = brandingProperties.getProperty(name);
+            if (messageFileNames != null) {
+                //The values can be a comma separated list of file names, split them and load each of them.
+                for (String fileName: messageFileNames.split(",")) {
+                    fileName = fileName.trim();
+                    String bundleName = fileName.lastIndexOf(PROPERTIES_FILE_SUFFIX) != -1
+                            ? fileName.substring(0, fileName.lastIndexOf(PROPERTIES_FILE_SUFFIX))
+                            : messageFileNames;
+                    result.add(ResourceBundle.getBundle(bundleName, locale, urlLoader));
+                }
+            }
         } catch (IOException e) {
             // Unable to load messages resource bundle.
-            log.warn("Unable to read message resource " //$NON-NLS-1$
+            log.warn("Unable to read resources resource " //$NON-NLS-1$
                     + "bundle, returning null", e); //$NON-NLS-1$
         }
         return result;

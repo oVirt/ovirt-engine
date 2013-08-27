@@ -184,21 +184,34 @@ public class BrandingManager {
         Map<String, String> keyValues = new HashMap<String, String>();
         if (messageThemes != null) {
             for (BrandingTheme theme : messageThemes) {
-                ResourceBundle messagesBundle = theme.getMessagesBundle(locale);
-                for (String key : messagesBundle.keySet()) {
-                    if (key.startsWith(BRAND_PREFIX + "." + prefix) || key.startsWith(COMMON_PREFIX)) { //$NON-NLS-1$
-                        // We can potentially override existing values here
-                        // but this is fine as the themes are sorted in order
-                        // And later messages should override earlier ones.
-                        keyValues.put(key.replaceFirst(BRAND_PREFIX + "\\." //$NON-NLS-1$
-                                + prefix + "\\.", "") //$NON-NLS-1$
-                                .replaceFirst(COMMON_PREFIX + "\\.", ""), //$NON-NLS-1$
-                                messagesBundle.getString(key));
-                    }
+                List<ResourceBundle> bundles = theme.getMessagesBundle(locale);
+                for (ResourceBundle bundle: bundles) {
+                    getKeyValuesFromResourceBundle(prefix, keyValues, bundle);
                 }
             }
         }
         return keyValues;
+    }
+
+    /**
+     * Extract values from the passed resource bundle and put it into the passed in Map based on the prefix passed in.
+     * @param prefix The prefix to use.
+     * @param keyValues The {@code Map} to put the values into.
+     * @param messagesBundle The {@code ResourceBundle} to get the values from.
+     */
+    private void getKeyValuesFromResourceBundle(final String prefix, Map<String, String> keyValues,
+            ResourceBundle messagesBundle) {
+        for (String key : messagesBundle.keySet()) {
+            if (key.startsWith(BRAND_PREFIX + "." + prefix) || key.startsWith(COMMON_PREFIX)) { //$NON-NLS-1$
+                // We can potentially override existing values here
+                // but this is fine as the themes are sorted in order
+                // And later messages should override earlier ones.
+                keyValues.put(key.replaceFirst(BRAND_PREFIX + "\\." //$NON-NLS-1$
+                        + prefix + "\\.", "") //$NON-NLS-1$
+                        .replaceFirst(COMMON_PREFIX + "\\.", ""), //$NON-NLS-1$
+                        messagesBundle.getString(key));
+            }
+        }
     }
 
     /**

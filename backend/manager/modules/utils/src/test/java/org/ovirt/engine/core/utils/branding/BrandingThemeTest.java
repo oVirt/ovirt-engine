@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -47,15 +48,15 @@ public class BrandingThemeTest {
 
     @Test
     public void testGetMessagesBundle() {
-        ResourceBundle bundle = testTheme.getMessagesBundle();
+        List<ResourceBundle> bundle = testTheme.getMessagesBundle();
         assertNotNull("There should be a bundle", bundle); //$NON-NLS-1$
-        assertEquals("Login header", bundle.getString("obrand.common.login_header_label")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("Login header", bundle.get(0).getString("obrand.common.login_header_label")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     @Test
     public void testGetMessagesBundleLocale() {
-        ResourceBundle bundle = testTheme.getMessagesBundle(Locale.FRENCH);
+        List<ResourceBundle> bundle = testTheme.getMessagesBundle(Locale.FRENCH);
         assertNotNull("There should be a bundle", bundle); //$NON-NLS-1$
-        assertEquals("Login header(fr)", bundle.getString("obrand.common.login_header_label")); //$NON-NLS-1$ //$NON-NLS-2$
+        assertEquals("Login header(fr)", bundle.get(0).getString("obrand.common.login_header_label")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 }
