@@ -19,6 +19,7 @@
 """Engine plugin."""
 
 
+import os
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
@@ -76,6 +77,29 @@ class Plugin(plugin.PluginBase):
     )
     def _setup(self):
         self.environment[osetupcons.CoreEnv.GENERATE_POSTINSTALL] = False
+        if not os.path.exists(
+            osetupcons.FileLocations.OVIRT_SETUP_POST_INSTALL_CONFIG
+        ):
+            self.logger.error(_('Could not detect a completed product setup'))
+            self.dialog.note(
+                text=_(
+                    'Please use the cleanup utility only after a setup '
+                    'or after an upgrade from an older installation.'
+                )
+            )
+            if os.path.exists(
+                osetupcons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_CA_CERT
+            ):
+                self.dialog.note(
+                    text=_(
+                        'If you want to cleanup after setup of a previous '
+                        'version, you should use the setup package of that '
+                        'version.'
+                    )
+                )
+            raise RuntimeError(
+                _('Could not detect product setup')
+            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
