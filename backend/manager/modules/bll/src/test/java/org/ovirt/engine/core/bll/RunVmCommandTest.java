@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -43,6 +44,8 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -81,6 +84,9 @@ public class RunVmCommandTest {
 
     @Mock
     private IsoDomainListSyncronizer isoDomainListSyncronizer;
+
+    @Mock
+    OsRepository osRepository;
 
     private static final String ACTIVE_ISO_PREFIX =
             "/rhev/data-center/mnt/some_computer/f6bccab4-e2f5-4e02-bba0-5748a7bc07b6/images/11111111-1111-1111-1111-111111111111";
@@ -296,6 +302,9 @@ public class RunVmCommandTest {
 
     @Before
     public void createCommand() {
+        when(osRepository.isWindows(Mockito.anyInt())).thenReturn(false);
+        SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
+
         RunVmParams param = new RunVmParams(Guid.newGuid());
         command = spy(new RunVmCommand<RunVmParams>(param));
         mockIsoDomainListSyncronizer();
