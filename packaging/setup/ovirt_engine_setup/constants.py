@@ -103,6 +103,12 @@ class FileLocations(object):
         'iptables.default.in'
     )
 
+    SYSCONFIG_IPTABLES = os.path.join(
+        SYSCONFDIR,
+        'sysconfig',
+        'iptables',
+    )
+
     OVIRT_FIREWALLD_CONFIG = os.path.join(
         OVIRT_ENGINE_DATADIR,
         'firewalld',
