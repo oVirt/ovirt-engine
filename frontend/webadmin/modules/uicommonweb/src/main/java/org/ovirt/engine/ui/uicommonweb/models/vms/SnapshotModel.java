@@ -264,6 +264,7 @@ public class SnapshotModel extends EntityModel
         for (Snapshot snapshot : snapshots) {
             if (!validateNewSnapshotByStatus(snapshot.getStatus()) || !validateNewSnapshotByType(snapshot.getType())) {
                 getDescription().setIsAvailable(false);
+                getMemory().setIsAvailable(false);
                 return true;
             }
         }
