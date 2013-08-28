@@ -2077,8 +2077,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     StoragePool dataCenter = (StoragePool) model.getDataCenter().getSelectedItem();
                     if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                         storageListModel.attachStorageToDataCenter(sdToAdd1.getId(), dataCenter.getId());
+                        onFinish(storageListModel.context, true, storageListModel.storageModel, null);
+                    } else {
+                        postImportFileStorage(storageListModel.context, true, storageListModel.storageModel, null);
                     }
-                    postImportFileStorage(storageListModel.context, true, storageListModel.storageModel, null);
 
                 } else {
                     postImportFileStorage(storageListModel.context, false, storageListModel.storageModel, ""); //$NON-NLS-1$
