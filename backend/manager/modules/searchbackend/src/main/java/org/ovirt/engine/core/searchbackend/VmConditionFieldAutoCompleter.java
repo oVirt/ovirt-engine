@@ -97,6 +97,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         /**
          */
         notFreeTextSearchableFieldsList.add("APPS");
+        notFreeTextSearchableFieldsList.add("OS");
         // Building the validation dict
         buildBasicValidationTable();
     }
