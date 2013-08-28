@@ -181,15 +181,16 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
-        # must be at customization as otopi modules
-        # need a chance to validate content
-        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        stage=plugin.Stages.STAGE_VALIDATION,
         name=osetupcons.Stages.NET_FIREWALL_MANAGER_PROCESS_TEMPLATES,
-        priority=plugin.Stages.PRIORITY_LOW,
-        after=(
-            osetupcons.Stages.NET_FIREWALL_MANAGER_AVAILABLE,
-        ),
         # must be always enabled to create examples
+        # TODO: add:
+        # before=(
+        #    otopicons.Stages.FIREWALLD_VALIDATION,
+        #    constants.Stages.IPTABLES_VALIDATION,
+        #),
+        # and remove:
+        priority=plugin.Stages.PRIORITY_HIGH,
     )
     def _process_templates(self):
         for service in self.environment[osetupcons.NetEnv.FIREWALLD_SERVICES]:

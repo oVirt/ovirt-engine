@@ -137,9 +137,6 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        before=(
-            osetupcons.Stages.NET_FIREWALL_MANAGER_PROCESS_TEMPLATES,
-        ),
         after=(
             osetupcons.Stages.NET_FIREWALL_MANAGER_AVAILABLE,
             osetupcons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
