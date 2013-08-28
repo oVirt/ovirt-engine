@@ -37,9 +37,6 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
         VmNic nic = getParameters().getNic();
         VmDevice vmDevice = getParameters().getVmDevice();
         Version clusterVersion = getParameters().getVm().getVdsGroupCompatibilityVersion();
-
-        VmInfoBuilder.addProfileDataToNic(map, getParameters().getVm(), vmDevice, nic);
-
         map.put(VdsProperties.Type, vmDevice.getType().getValue());
         map.put(VdsProperties.Device, VmDeviceType.BRIDGE.getName());
         map.put(VdsProperties.MAC_ADDR, nic.getMacAddress());
@@ -47,6 +44,7 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
         if (FeatureSupported.networkLinking(clusterVersion)) {
             map.put(VdsProperties.LINK_ACTIVE, String.valueOf(nic.isLinked()));
         }
+
         addAddress(map, vmDevice.getAddress());
         map.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
         map.put(VdsProperties.NIC_TYPE, VmInterfaceType.forValue(nic.getType()).name());
@@ -56,6 +54,7 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
             map.put(VdsProperties.BootOrder, String.valueOf(vmDevice.getBootOrder()));
         }
 
+        VmInfoBuilder.addProfileDataToNic(map, getParameters().getVm(), vmDevice, nic);
         VmInfoBuilder.addNetworkFiltersToNic(map, clusterVersion);
         return map;
     }

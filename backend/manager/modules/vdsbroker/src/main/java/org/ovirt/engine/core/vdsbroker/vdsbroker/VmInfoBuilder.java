@@ -548,8 +548,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             vnicProfile = DbFacade.getInstance().getVnicProfileDao().get(nic.getVnicProfileId());
             if (vnicProfile != null) {
                 network = DbFacade.getInstance().getNetworkDao().get(vnicProfile.getNetworkId());
-                addQosForDevice((Map<String, Object>) struct.get(VdsProperties.SpecParams),
-                        vnicProfile, vm.getVdsGroupCompatibilityVersion());
+                addQosForDevice(struct, vnicProfile, vm.getVdsGroupCompatibilityVersion());
             }
         }
 
@@ -568,14 +567,19 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     }
 
-    private static void addQosForDevice(Map<String, Object> specParams, VnicProfile vnicProfile, Version vdsGroupCompatibilityVersion) {
+    private static void addQosForDevice(Map<String, Object> struct,
+            VnicProfile vnicProfile,
+            Version vdsGroupCompatibilityVersion) {
         if (FeatureSupported.networkQoS(vdsGroupCompatibilityVersion)
                 && vnicProfile.getNetworkQosId() != null) {
             NetworkQoS networkQoS = DbFacade.getInstance().getQosDao().get(vnicProfile.getNetworkQosId());
             if (networkQoS != null) {
+                Map<String, Object> specParams = (Map<String, Object>) struct.get(VdsProperties.SpecParams);
                 if (specParams == null) {
                     specParams = new HashMap<>();
+                    struct.put(VdsProperties.SpecParams, specParams);
                 }
+
                 addQosData(specParams, VdsProperties.QOS_INBOUND,
                         networkQoS.getInboundAverage(),
                         networkQoS.getInboundPeak(),
