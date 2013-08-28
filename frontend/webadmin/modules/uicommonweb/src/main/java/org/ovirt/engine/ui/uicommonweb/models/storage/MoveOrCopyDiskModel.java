@@ -121,7 +121,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         }
         Collections.sort(getActiveStorageDomains(), new NameableComparator());
 
-        if (!getActiveStorageDomains().isEmpty()) {
+        if (!storages.isEmpty()) {
             AsyncDataProvider.getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
@@ -131,7 +131,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
                     model.setQuotaEnforcementType(dataCenter.getQuotaEnforcementType());
                     model.postInitStorageDomains();
                 }
-            }), getActiveStorageDomains().get(0).getStoragePoolId());
+            }), storages.get(0).getStoragePoolId());
         }
         else {
             postInitStorageDomains();
