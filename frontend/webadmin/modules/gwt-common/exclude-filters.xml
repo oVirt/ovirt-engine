@@ -84,6 +84,9 @@
        <Class name="org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView" />
        <Field name="pathEditor"/>
        <Bug code="UrF"/>
+     </Match>
+
+       <!--
         findbugs complains that we are using the same class name as it super-class
         currently MenuBar is deeply coded in GWT and we will ignore findbugs warning for now
 

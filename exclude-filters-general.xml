@@ -1,99 +1,99 @@
 <FindBugsFilter>
-    <--
+    <!--
     Currently Ignoring.
     findbugs reason:
     Dm: Reliance on default encoding (DM_DEFAULT_ENCODING)
-    --!>
+    -->
     <Match>
         <Bug code="Dm" />
     </Match>
 
-    <--
+    <!--
     TBD:
     findbugs reason:
     EI: May expose internal representation by returning reference to mutable object (EI_EXPOSE_REP)
-    --!>
+    -->
     <Match>
         <Bug code="EI" />
     </Match>
 
-    <--
+    <!--
     TBD:
     findbugs reason:
     EI2: May expose internal representation by incorporating reference to mutable object (EI_EXPOSE_REP2)
-    --!>
+    -->
     <Match>
         <Bug code="EI2" />
     </Match>
 
-    <--
+    <!--
     Currently Ignoring.
     findbugs reason:
     MS: May expose internal static state by storing a mutable object into a static field (EI_EXPOSE_STATIC_REP2)
-    --!>
+    -->
     <Match>
         <Bug code="MS" />
     </Match>
 
-    <--
+    <!--
     TBD:
     findbugs reason:
     Eq: Class doesnt override equals in superclass (EQ_DOESNT_OVERRIDE_EQUALS)
-    --!>
+    -->
     <Match>
         <Bug code="Eq" />
     </Match>
 
-    <--
+    <!--
     Currently Ignoring.
     findbugs reason:
     IS: Inconsistent synchronization (IS2_INCONSISTENT_SYNC)
-    --!>
+    -->
     <Match>
         <Bug code="IS" />
     </Match>
 
-    <--
+    <!--
     Currently Ignoring.
     findbugs reason:
     REC: Exception is caught when Exception is not thrown (REC_CATCH_EXCEPTION)
-    --!>
+    -->
     <Match>
         <Bug code="REC" />
     </Match>
 
-    <--
+    <!--
     TBD:
     findbugs reason:
     Se: Non-transient non-serializable instance field in serializable class (SE_BAD_FIELD)
-    --!>
+    -->
     <Match>
         <Bug code="Se" />
     </Match>
 
-    <--
+    <!--
     Currently Ignoring.
     findbugs reason:
     SF: Switch statement found where default case is missing (SF_SWITCH_NO_DEFAULT)
-    --!>
+    -->
     <Match>
         <Bug code="SF" />
     </Match>
 
-    <--
+    <!--
     Currently Ignoring.
     findbugs reason:
     SIC: Should be a static inner class (SIC_INNER_SHOULD_BE_STATIC)
-    --!>
+    -->
     <Match>
         <Bug code="SIC" />
     </Match>
 
-    <--
+    <!--
     Currently Ignoring.
     findbugs reason:
     ST: Write to static field from instance method (ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD)
-    --!>
+    -->
     <Match>
         <Bug code="ST" />
     </Match>
