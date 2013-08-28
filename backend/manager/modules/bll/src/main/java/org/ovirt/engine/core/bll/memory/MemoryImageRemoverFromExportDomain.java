@@ -55,15 +55,20 @@ public class MemoryImageRemoverFromExportDomain extends MemoryImageRemover {
      */
     protected boolean isPostZero() {
         if (cachedPostZero == null) {
-            // check if one of the disks is marked with wipe_after_delete
-            cachedPostZero =
-                    vm.getDiskMap().values().contains(new Object() {
-                        @Override
-                        public boolean equals(Object obj) {
-                            return ((Disk) obj).isWipeAfterDelete();
-                        }
-                    });
+            cachedPostZero = isVmContainsWipeAfterDeleteDisk();
         }
         return cachedPostZero;
+    }
+
+    /**
+     * @return true IFF one of the disks is marked with wipe_after_delete
+     */
+    private boolean isVmContainsWipeAfterDeleteDisk() {
+        for (Disk disk : vm.getDiskMap().values()) {
+            if (disk.isWipeAfterDelete()) {
+                return true;
+            }
+        }
+        return false;
     }
 }
