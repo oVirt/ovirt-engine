@@ -174,35 +174,38 @@ class Plugin(plugin.PluginBase):
         transaction,
         filename,
     ):
+        lines = [
+            # we cannot use all for address <psql-9
+            (
+                '{host:7} '
+                '{user:15} '
+                '{database:15} '
+                '{address:23} '
+                '{auth}'
+            ).format(
+                host='host',
+                user=self.environment[
+                    osetupcons.DBEnv.USER
+                ],
+                database=self.environment[
+                    osetupcons.DBEnv.DATABASE
+                ],
+                address=address,
+                auth='md5',
+            )
+            for address in ('0.0.0.0/0', '::0/0')
+        ]
+
         content = []
         with open(filename, 'r') as f:
             for line in f.read().splitlines():
-                content.append(line)
+                if line not in lines:
+                    content.append(line)
 
                 # order is important, add after local
                 # so we be first
                 if line.lstrip().startswith('local'):
-                    # we cannot use all for address <psql-9
-                    for address in ('0.0.0.0/0', '::0/0'):
-                        content.append(
-                            (
-                                '{host:7} '
-                                '{user:15} '
-                                '{database:15} '
-                                '{address:23} '
-                                '{auth}'
-                            ).format(
-                                host='host',
-                                user=self.environment[
-                                    osetupcons.DBEnv.USER
-                                ],
-                                database=self.environment[
-                                    osetupcons.DBEnv.DATABASE
-                                ],
-                                address=address,
-                                auth='md5',
-                            )
-                        )
+                    content.extend(lines)
 
         transaction.append(
             filetransaction.FileTransaction(
