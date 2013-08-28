@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.google.gwt.event.shared.HandlerRegistration;
 import org.ovirt.engine.ui.common.uicommon.model.TreeNodeModel;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.tree.TreeModelWithElementId;
@@ -159,6 +160,9 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
 
     private NodeSelectionHandler nodeSelectionHandler;
 
+    private final HandlerRegistration selectionModelChangeHandlerReg;
+    private final List<HandlerRegistration> nodeModelSelectionHandlerRegList = new ArrayList<HandlerRegistration>();
+
     private String elementIdPrefix = DOM.createUniqueId();
 
     public ModelListTreeViewModel() {
@@ -184,7 +188,7 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
         };
 
         // Drive selection
-        selectionModel.addSelectionChangeHandler(new Handler() {
+        selectionModelChangeHandlerReg = selectionModel.addSelectionChangeHandler(new Handler() {
             @Override
             public void onSelectionChange(SelectionChangeEvent event) {
                 Set<M> selectedSet = selectionModel.getSelectedSet();
@@ -222,13 +226,20 @@ public class ModelListTreeViewModel<T, M extends TreeNodeModel<T, M>> implements
         if (nodeSelectionHandler == null) {
             nodeSelectionHandler = new NodeSelectionHandler(display);
         }
-        model.addSelectionHandler(nodeSelectionHandler);
+        nodeModelSelectionHandlerRegList.add(model.addSelectionHandler(nodeSelectionHandler));
 
         // show value
         display.getSelectionModel().setSelected(model, model.getSelected());
 
         for (int i = 0; i < model.getChildren().size(); i++) {
             UpdateSelection(model.getChildren().get(i), display);
+        }
+    }
+
+    public void removeHandlers() {
+        selectionModelChangeHandlerReg.removeHandler();
+        for (HandlerRegistration reg : nodeModelSelectionHandlerRegList) {
+            reg.removeHandler();
         }
     }
 
