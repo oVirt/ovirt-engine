@@ -573,6 +573,8 @@ class Stages(object):
 
     RENAME_PKI_CONF_MISC = 'osetup.rename.pki.conf.misc'
 
+    MEMORY_CHECK = 'osetup.memory.check'
+
 
 @util.export
 @util.codegen
@@ -764,7 +766,12 @@ class SystemEnv(object):
 
     SHMMAX = 'OVESETUP_SYSTEM/shmmax'
 
-    MEMCHECK_ENABLED = 'OVESETUP_SYSTEM/memCheckEnabled'
+    @osetupattrs(
+        answerfile=True,
+    )
+    def MEMCHECK_ENABLED(self):
+        return 'OVESETUP_SYSTEM/memCheckEnabled'
+
     MEMCHECK_MINIMUM_MB = 'OVESETUP_SYSTEM/memCheckMinimumMB'
     MEMCHECK_RECOMMENDED_MB = 'OVESETUP_SYSTEM/memCheckRecommendedMB'
 

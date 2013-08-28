@@ -95,7 +95,7 @@ class Plugin(plugin.PluginBase):
     def _init(self):
         self.environment.setdefault(
             osetupcons.SystemEnv.MEMCHECK_ENABLED,
-            None
+            True
         )
         self.environment.setdefault(
             osetupcons.SystemEnv.MEMCHECK_MINIMUM_MB,
@@ -106,10 +106,12 @@ class Plugin(plugin.PluginBase):
             osetupcons.Defaults.DEFAULT_SYSTEM_MEMCHECK_RECOMMENDED_MB
         )
 
+
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
+        name=osetupcons.Stages.MEMORY_CHECK,
     )
-    def _validation(self):
+    def _validateMemory(self):
         """
         Check if the system met the memory requirements.
         """
@@ -127,14 +129,27 @@ class Plugin(plugin.PluginBase):
         if match.group('unit') == "kB":
             self._total_memory //= 1024
 
-        satisfied = self._check_requirements()
-        interactive = self.environment[
+        self._satisfied = self._check_requirements()
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+        after=(
+            osetupcons.Stages.MEMORY_CHECK,
+        ),
+        condition=lambda self: self.environment[
             osetupcons.SystemEnv.MEMCHECK_ENABLED
-        ] is None
-        if not satisfied and interactive:
+        ],
+    )
+    def _validateContinueLowMemory(self):
+        if (
+            self.environment[
+                osetupcons.SystemEnv.MEMCHECK_ENABLED
+            ] and
+            not self._satisfied
+        ):
             if not dialog.queryBoolean(
                 dialog=self.dialog,
-                name='OVESETUP_MEMORY_CHECK',
+                name='OVESETUP_MEMCHECK_ENABLED',
                 note=_(
                     'Do you want Setup to continue, with amount of memory '
                     'less than recommended? (@VALUES@) [@DEFAULT@]: '
@@ -145,6 +160,10 @@ class Plugin(plugin.PluginBase):
                 default=False,
             ):
                 raise RuntimeError(_('Aborted by user'))
+
+            self.environment[
+                osetupcons.SystemEnv.MEMCHECK_ENABLED
+            ] = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
