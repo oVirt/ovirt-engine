@@ -592,8 +592,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
     }
 
-    private static void addQosData(Map<String, Object> specParams, String containerName, int average, int peak, int burst){
-        if (average > 0) {
+    private static void addQosData(Map<String, Object> specParams,
+            String containerName,
+            Integer average,
+            Integer peak,
+            Integer burst) {
+        if (average != null && average > 0) {
             Map<String, String> qosData = new HashMap<>();
             qosData.put(VdsProperties.QOS_AVERAGE, String.valueOf(average * MEGABITS_TO_KILOBYTES));
             qosData.put(VdsProperties.QOS_PEAK, String.valueOf(peak * MEGABITS_TO_KILOBYTES));
