@@ -178,7 +178,6 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         migrationSupport = MigrationSupport.MIGRATABLE;
         vmType = VmType.Desktop;
         defaultDisplayType = DisplayType.qxl;
-        singleQxlPci = true;
     }
 
     @EditableField
