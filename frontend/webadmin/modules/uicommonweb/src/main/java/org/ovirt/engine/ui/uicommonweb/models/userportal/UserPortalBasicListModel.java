@@ -20,8 +20,8 @@ import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleCo
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -46,14 +46,14 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
         privateSearchCompletedEvent = value;
     }
 
-    private ListModel privatevmBasicDiskListModel;
+    private SearchableListModel privatevmBasicDiskListModel;
 
-    public ListModel getvmBasicDiskListModel()
+    public SearchableListModel getvmBasicDiskListModel()
     {
         return privatevmBasicDiskListModel;
     }
 
-    private void setvmBasicDiskListModel(ListModel value)
+    private void setvmBasicDiskListModel(SearchableListModel value)
     {
         privatevmBasicDiskListModel = value;
     }
@@ -168,6 +168,12 @@ public class UserPortalBasicListModel extends IUserPortalListModel implements IV
             getItemsChangedEvent().raise(this, EventArgs.Empty);
             onPropertyChanged(new PropertyChangedEventArgs("Items")); //$NON-NLS-1$
         }
+    }
+
+    @Override
+    public void forceRefresh() {
+        super.forceRefresh();
+        getvmBasicDiskListModel().forceRefresh();
     }
 
     @Override
