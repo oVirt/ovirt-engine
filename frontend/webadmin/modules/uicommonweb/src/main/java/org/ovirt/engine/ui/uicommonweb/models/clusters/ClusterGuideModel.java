@@ -281,8 +281,9 @@ public class ClusterGuideModel extends GuideModel
                         dataCenter = (StoragePool) returnValue;
 
                         boolean isMultiHostDC = dataCenter.getStorageType() == StorageType.LOCALFS;
-                        if (isMultiHostDC)
+                        if (isMultiHostDC) {
                             model.setMultiSelection(false);
+                        }
 
                         setWindow(model);
                         model.getCluster().setItems(clusters);
@@ -467,7 +468,7 @@ public class ClusterGuideModel extends GuideModel
         host.setVdsName((String) model.getName().getEntity());
         host.setHostName((String) model.getHost().getEntity());
         host.setPort((Integer) model.getPort().getEntity());
-        host.setSshPort((Integer) model.getAuthSshPort().getEntity());
+        host.setSshPort(Integer.valueOf((String) model.getAuthSshPort().getEntity()));
         host.setSshUsername(model.getUserName().getEntity().toString());
         host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity().toString());
         host.setVdsGroupId(((VDSGroup) model.getCluster().getSelectedItem()).getId());
@@ -486,7 +487,6 @@ public class ClusterGuideModel extends GuideModel
         host.setPmSecondaryPassword((String) model.getPmSecondaryPassword().getEntity());
         host.setPmSecondaryType((String) model.getPmSecondaryType().getSelectedItem());
         host.setPmSecondaryOptionsMap(model.getPmSecondaryOptionsMap());
-
         // Save other PM parameters.
         host.setpm_enabled((Boolean) model.getIsPm().getEntity());
         host.setPmSecondaryConcurrent((Boolean) model.getPmSecondaryConcurrent().getEntity());
@@ -498,6 +498,7 @@ public class ClusterGuideModel extends GuideModel
         if (model.getUserPassword().getEntity() != null) {
             vdsActionParams.setPassword((String) model.getUserPassword().getEntity());
         }
+        vdsActionParams.setOverrideFirewall((Boolean) model.getOverrideIpTables().getEntity());
         vdsActionParams.setRebootAfterInstallation(((VDSGroup) model.getCluster().getSelectedItem()).supportsVirtService());
 
         model.startProgress(null);
