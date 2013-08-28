@@ -1,11 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
@@ -14,6 +12,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
 
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
@@ -35,6 +34,8 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
+        getTable().addColumn(new BrickStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+
         TextColumnWithTooltip<GlusterBrickEntity> serverColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
             @Override
             public String getValue(GlusterBrickEntity brick) {
@@ -50,16 +51,6 @@ public class SubTabVolumeBrickView extends AbstractSubTabTableView<GlusterVolume
             }
         };
         getTable().addColumn(directoryColumn, constants.brickDirectoryVolumeBrick(), "400px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<GlusterBrickEntity> statusColumn =
-                new EnumColumn<GlusterBrickEntity, GlusterStatus>() {
-
-                    @Override
-                    protected GlusterStatus getRawValue(GlusterBrickEntity object) {
-                        return object.getStatus();
-                    }
-                };
-        getTable().addColumn(statusColumn, constants.statusBrick(), "200px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterBrickEntity>(constants.addBricksBrick()) {
             @Override
