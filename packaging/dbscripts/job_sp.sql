@@ -65,7 +65,8 @@ AS $procedure$
 BEGIN
     RETURN QUERY SELECT job.*
     FROM JOB
-    where status != 'UNKNOWN';
+    where status != 'UNKNOWN'
+    order by start_time DESC;
 END; $procedure$
 LANGUAGE plpgsql;
 
