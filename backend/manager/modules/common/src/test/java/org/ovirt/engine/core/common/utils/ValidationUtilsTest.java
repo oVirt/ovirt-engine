@@ -12,11 +12,11 @@ public class ValidationUtilsTest {
         String[] straValid = new String[] { "www_redhat_com", "127001", "www_REDHAT_1" };
         String[] straInvalid = new String[] { "www.redhatcom", "me@localhost", "no/worries" };
         for (String s : straValid) {
-            assertTrue("Valid strings: " + s, !containsIlegalCharacters(s));
+            assertTrue("Valid strings: " + s, Pattern.matches(ValidationUtils.NO_SPECIAL_CHARACTERS, s));
         }
 
         for (String s : straInvalid) {
-            assertTrue("Invalid strings: " + s, containsIlegalCharacters(s));
+            assertTrue("Invalid strings: " + s, !Pattern.matches(ValidationUtils.NO_SPECIAL_CHARACTERS, s));
         }
     }
 
@@ -50,9 +50,5 @@ public class ValidationUtilsTest {
             assertTrue("Invalid strings (trimming whitespaces)",
                     !Pattern.matches(ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN, s));
         }
-    }
-
-    private static boolean containsIlegalCharacters(String s) {
-        return !Pattern.matches(ValidationUtils.NO_SPECIAL_CHARACTERS, s);
     }
 }
