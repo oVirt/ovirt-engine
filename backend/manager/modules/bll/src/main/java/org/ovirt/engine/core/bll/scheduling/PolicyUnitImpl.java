@@ -50,14 +50,14 @@ public class PolicyUnitImpl extends PolicyUnit {
             else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
                 return new NoneBalancePolicyUnit(policyUnit);
             }
-        case "PowerSaving":
+        case "OptimalForPowerSaving":
             if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
                 return new PowerSavingWeightPolicyUnit(policyUnit);
             }
             else if (policyUnit.getPolicyUnitType() == PolicyUnitType.LoadBalancing) {
                 return new PowerSavingBalancePolicyUnit(policyUnit);
             }
-        case "EvenDistribution":
+        case "OptimalForEvenDistribution":
             if (policyUnit.getPolicyUnitType() == PolicyUnitType.Weight) {
                 return new EvenDistributionWeightPolicyUnit(policyUnit);
             }
