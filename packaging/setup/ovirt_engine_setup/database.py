@@ -487,6 +487,7 @@ class OvirtUtils(base.Base):
                 self.environment[osetupcons.DBEnv.DATABASE],
             ),
             envAppend={
+                'PGPASSWORD': '',
                 'PGPASSFILE': self.environment[
                     osetupcons.DBEnv.PGPASS_FILE
                 ]
@@ -510,6 +511,7 @@ class OvirtUtils(base.Base):
                 '-f', backupFile,
             ),
             envAppend={
+                'PGPASSWORD': '',
                 'PGPASSFILE': self.environment[
                     osetupcons.DBEnv.PGPASS_FILE
                 ]
