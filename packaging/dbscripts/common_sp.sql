@@ -257,7 +257,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION generate_drop_all_functions_syntax() RETURNS SETOF text STABLE
    AS $procedure$
 BEGIN
-RETURN QUERY select 'drop function if exists ' || ns.nspname || '.' || proname || '(' || oidvectortypes(proargtypes) || ') cascade;' from pg_proc inner join pg_namespace ns on (pg_proc.pronamespace=ns.oid) where ns.nspname = 'public' and proname not ilike 'uuid%' order by proname;
+RETURN QUERY select 'drop function if exists ' || ns.nspname || '.' || proname || '(' || oidvectortypes(proargtypes) || ') cascade;' from pg_proc inner join pg_namespace ns on (pg_proc.pronamespace=ns.oid) where ns.nspname = 'public' order by proname;
 END; $procedure$
 LANGUAGE plpgsql;
 

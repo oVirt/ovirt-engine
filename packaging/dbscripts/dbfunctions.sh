@@ -82,8 +82,6 @@ cleandb() {
     CMD="select * from generate_drop_all_functions_syntax();"
     execute_command "$CMD"  ${DATABASE} ${SERVERNAME} ${PORT} >> $file
     execute_file "${file}" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
-    CMD="DROP FUNCTION IF EXISTS uuid_generate_v1();"
-    execute_command "$CMD" ${DATABASE} ${SERVERNAME} ${PORT} > /dev/null
 }
 
 #drops views before upgrade or refresh operations
