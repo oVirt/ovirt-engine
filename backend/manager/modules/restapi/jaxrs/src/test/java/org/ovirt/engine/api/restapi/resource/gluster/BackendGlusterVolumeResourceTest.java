@@ -101,6 +101,18 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
     }
 
     @Test
+    public void testStopRebalance() throws Exception {
+        setupParentExpectations();
+        resource.setParent(volumesResourceMock);
+        setUriInfo(setUpActionExpectations(VdcActionType.StopRebalanceGlusterVolume,
+                GlusterVolumeRebalanceParameters.class,
+                new String[] { "VolumeId" },
+                new Object[] { GUIDS[0] }));
+
+        verifyActionResponse(resource.stopRebalance(new Action()));
+    }
+
+    @Test
     public void testSetOptionInvalidParams() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         resource.setUriInfo(setUpBasicUriExpectations());

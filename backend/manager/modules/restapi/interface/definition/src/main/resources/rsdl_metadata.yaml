@@ -3773,6 +3773,19 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/stoprebalance|rel=stoprebalance
+  description: invoke the stop rebalance command on the gluster volume attached to the cluster
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+        description: invoke the stop rebalance command on the gluster volume attached to the cluster
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /api/clusters/{cluster:id}/glustervolumes/{glustervolume:id}/setoption|rel=setoption
   description: set an option for the gluster volume attached to the cluster
   request:

@@ -15,6 +15,10 @@ public class GlusterVolumeRebalanceParameters extends GlusterVolumeParameters {
     public GlusterVolumeRebalanceParameters() {
     }
 
+    public GlusterVolumeRebalanceParameters(Guid volumeId) {
+        super(volumeId);
+    }
+
     public GlusterVolumeRebalanceParameters(Guid volumeId, boolean fixLayoutOnly, boolean forceAction) {
         super(volumeId);
 

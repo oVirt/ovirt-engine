@@ -70,6 +70,12 @@ public class BackendGlusterVolumeResource
     }
 
     @Override
+    public Response stopRebalance(Action action) {
+        return doAction(VdcActionType.StopRebalanceGlusterVolume,
+                new GlusterVolumeRebalanceParameters(guid), action);
+    }
+
+    @Override
     public Response setOption(Action action) {
         Option option = action.getOption();
         validateParameters(option, "name", "value");
@@ -119,6 +125,6 @@ public class BackendGlusterVolumeResource
     }
 
     public String getId() {
-       return this.id;
+        return this.id;
     }
 }
