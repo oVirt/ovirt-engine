@@ -276,6 +276,9 @@
 		<include name="common/asynctasks/gluster/GlusterAsyncTask.java"/>
 		<include name="common/asynctasks/gluster/GlusterTaskStatus.java"/>
 		<include name="common/asynctasks/gluster/GlusterTaskType.java"/>
+		<include name="common/businessentities/gluster/GlusterVolumeTaskStatusDetail.java"/>
+		<include name="common/businessentities/gluster/GlusterVolumeTaskStatusForHost.java"/>
+		<include name="common/businessentities/gluster/GlusterVolumeTaskStatusEntity.java"/>
 		<include name="common/action/gluster/*.java"/>
 		<include name="common/queries/gluster/*.java"/>
 		<include name="common/constants/gluster/GlusterConstants.java"/>
