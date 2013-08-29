@@ -26,12 +26,12 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.vdscommands.CreateStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -154,15 +154,13 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                         }
                         final StorageDomainStatic staticDomain = storageDomain.getStorageStaticData();
                         boolean staticDomainChanged = false;
-                        // for data centers >= 3.1 we enforce the domain version to V3
-                        // this strictly needs to be before selecting the masterStorageDomain because the pool master
-                        // version (setmaster_domain_version) depends on the domain upgrade.
-                        if (getStoragePool().getcompatibility_version().compareTo(Version.v3_1) >= 0
-                                && staticDomain.getStorageFormat() != StorageFormatType.V3) {
+                        StorageFormatType requiredFormatType =
+                                VersionStorageFormatUtil.getFormatForVersion(getStoragePool().getcompatibility_version());
+                        if (staticDomain.getStorageFormat() != requiredFormatType) {
                             if (!staticDomainChanged) {
                                 getCompensationContext().snapshotEntity(staticDomain);
                             }
-                            staticDomain.setStorageFormat(StorageFormatType.V3);
+                            staticDomain.setStorageFormat(requiredFormatType);
                             staticDomainChanged = true;
                         }
                         storageDomain.setStoragePoolId(getStoragePool().getId());

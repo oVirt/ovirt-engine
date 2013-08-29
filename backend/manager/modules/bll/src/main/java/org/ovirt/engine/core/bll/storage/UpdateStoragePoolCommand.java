@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.vdscommands.SetStoragePoolDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpgradeStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -91,22 +92,12 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         final Guid spId = storagePool.getId();
         final Version spVersion = storagePool.getcompatibility_version();
         final Version oldSpVersion = _oldStoragePool.getcompatibility_version();
-        final StorageFormatType targetFormat;
 
         if (Version.OpEquality(spVersion, oldSpVersion)) {
             return;
         }
 
-        // TODO: The entire version -> format type scheme should be moved to a place
-        // when everyone can utilize it.
-        if (spVersion.compareTo(Version.v3_0) == 0) {
-            targetFormat = StorageFormatType.V2;
-        } else if (spVersion.compareTo(Version.v3_1) >= 0) {
-            targetFormat = StorageFormatType.V3;
-        } else {
-            targetFormat = StorageFormatType.V1;
-        }
-
+        final StorageFormatType targetFormat = VersionStorageFormatUtil.getFormatForVersion(spVersion);
         StorageType spType = storagePool.getStorageType();
         if (targetFormat == StorageFormatType.V2 && !spType.isBlockDomain()) {
             // There is no format V2 for domains that aren't ISCSI/FCP
