@@ -195,6 +195,7 @@ select fn_db_add_config_value('VirtIoScsiEnabled','true','3.3');
 select fn_db_add_config_value('VirtIoScsiUnsupportedOsList','WindowsXP,RHEL5,RHEL5x64,RHEL4,RHEL4x64,RHEL3,RHEL3x64','general');
 select fn_db_add_config_value('NormalizedMgmgNetworkEnabled','false','3.0');
 select fn_db_add_config_value('NormalizedMgmgNetworkEnabled','false','3.1');
+select fn_db_add_config_value('NormalizedMgmgNetworkEnabled','false','3.2');
 select fn_db_add_config_value('IterationsWithBalloonProblem','3','general');
 select fn_db_add_config_value('MomPoliciesOnHostSupported','false','3.0');
 select fn_db_add_config_value('MomPoliciesOnHostSupported','false','3.1');
