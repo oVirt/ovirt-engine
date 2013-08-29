@@ -13,6 +13,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -58,22 +60,29 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                 if (vdcReturnValue.getSucceeded()) {
                     getReturnValue().getInternalVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
                 } else {
+                    StorageDomain domain = getStorageDomainDao().get(image.getStorageIds().get(0));
                     failedRemoving.add(image);
-                    log.errorFormat("Can't remove image id: {0} for VM id: {1} due to: {2}. Image will be set at illegal state with no snapshot id.",
+                    log.errorFormat("Can't remove image id: {0} for VM id: {1} from domain id: {2} due to: {3}.",
                             image.getImageId(),
                             getParameters().getVmId(),
+                            image.getStorageIds().get(0),
                             vdcReturnValue.getFault().getMessage());
 
-                    TransactionSupport.executeInScope(TransactionScopeOption.Required,
-                            new TransactionMethod<Object>() {
-                                @Override
-                                public Object runInTransaction() {
-                                    // If VDSM task didn't succeed to initiate a task we change the disk to at illegal
-                                    // state.
-                                    updateDiskImagesToIllegal(image);
-                                    return true;
-                                }
-                            });
+                    if (domain.getStorageDomainType() == StorageDomainType.Data) {
+                        log.infoFormat("Image id: {0} will be set at illegal state with no snapshot id.", image.getImageId());
+                        TransactionSupport.executeInScope(TransactionScopeOption.Required,
+                                new TransactionMethod<Object>() {
+                                    @Override
+                                    public Object runInTransaction() {
+                                        // If VDSM task didn't succeed to initiate a task we change the disk to at illegal
+                                        // state.
+                                        updateDiskImagesToIllegal(image);
+                                        return true;
+                                    }
+                                });
+                    } else {
+                        log.infoFormat("Image id: {0} is not on a data domain and will not be marked as illegal.", image.getImageId());
+                    }
                 }
             }
         }
