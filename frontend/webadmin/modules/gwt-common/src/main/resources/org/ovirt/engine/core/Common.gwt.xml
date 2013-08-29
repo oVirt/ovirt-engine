@@ -188,6 +188,7 @@
 		<include name="common/TimeZoneType.java" />
         <include name="common/osinfo/OsRepository.java"/>
         <include name="common/utils/SimpleDependecyInjector.java"/>
+        <include name="common/utils/VersionStorageFormatUtil.java"/>
 
         <!-- Required by frontend -->
 		<include name="common/interfaces/SearchType.java" />

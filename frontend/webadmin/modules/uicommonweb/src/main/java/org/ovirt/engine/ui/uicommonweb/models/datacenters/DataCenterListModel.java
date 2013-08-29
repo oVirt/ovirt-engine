@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -24,6 +25,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -606,16 +608,25 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         }
         else if (!model.getIsNew()
                 && getSelectedItem() != null
-                && !((Version) model.getVersion().getSelectedItem()).equals(((StoragePool) getSelectedItem()).getcompatibility_version())) {
+                && !model.getVersion().getSelectedItem().equals(((StoragePool) getSelectedItem()).getcompatibility_version())) {
             ConfirmationModel confirmModel = new ConfirmationModel();
             setConfirmWindow(confirmModel);
             confirmModel.setTitle(ConstantsManager.getInstance()
                     .getConstants()
                     .changeDataCenterCompatibilityVersionTitle());
             confirmModel.setHashName("change_data_center_compatibility_version"); //$NON-NLS-1$
-            confirmModel.setMessage(ConstantsManager.getInstance()
-                    .getConstants()
-                    .youAreAboutChangeDcCompatibilityVersionMsg());
+
+            StorageFormatType newFormat = VersionStorageFormatUtil.getFormatForVersion((Version) model.getVersion().getSelectedItem());
+            StorageFormatType oldFormat = VersionStorageFormatUtil.getFormatForVersion(((StoragePool) getSelectedItem()).getcompatibility_version());
+            if (newFormat == oldFormat) {
+                confirmModel.setMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .youAreAboutChangeDcCompatibilityVersionMsg());
+            } else {
+                confirmModel.setMessage(ConstantsManager.getInstance()
+                        .getConstants()
+                        .youAreAboutChangeDcCompatibilityVersionWithUpgradeMsg());
+            }
 
             UICommand tempVar = new UICommand("OnSaveInternal", this); //$NON-NLS-1$
             tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());

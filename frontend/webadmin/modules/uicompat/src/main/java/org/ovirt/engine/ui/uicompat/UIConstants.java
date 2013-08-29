@@ -696,6 +696,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("You are about to change the Data Center Compatibility Version. Are you sure you want to continue?")
     String youAreAboutChangeDcCompatibilityVersionMsg();
 
+    @DefaultStringValue("You are about to change the Data Center Compatibility Version. This will upgrade all the Storage Domains belonging to the Data Center. Are you sure you want to continue?")
+    String youAreAboutChangeDcCompatibilityVersionWithUpgradeMsg();
+
     @DefaultStringValue("Logical Network(s)")
     String logicalNetworksMsg();
 
