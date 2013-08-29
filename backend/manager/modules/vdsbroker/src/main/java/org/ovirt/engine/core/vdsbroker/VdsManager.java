@@ -390,6 +390,7 @@ public class VdsManager {
     public VDS activate() {
         VDS vds = null;
         try {
+            vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
             refreshHost(vds);
         } catch (Exception e) {
             log.infoFormat("Failed to activate VDS = {0} with error: {1}.",
