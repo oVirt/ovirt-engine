@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
+import org.springframework.util.CollectionUtils;
 
 @InternalCommandAttribute
 public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
@@ -24,38 +25,36 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
 
     @Override
     protected void executeCommand() {
-        Guid storagePoolId = getDiskImage().getStoragePoolId() != null ? getDiskImage().getStoragePoolId()
-                : Guid.Empty;
-        Guid storageDomainId =
-                getDiskImage().getStorageIds() != null && getDiskImage().getStorageIds().size() > 0 ? getDiskImage().getStorageIds()
-                        .get(0)
-                        : Guid.Empty;
-        Guid imageGroupId = getDiskImage().getimage_group_id() != null ? getDiskImage().getimage_group_id()
-                : Guid.Empty;
+        Guid storagePoolId = (getDiskImage().getStoragePoolId() != null) ?
+                getDiskImage().getStoragePoolId() : Guid.Empty;
+
+        Guid storageDomainId = !CollectionUtils.isEmpty(getDiskImage().getStorageIds()) ?
+                getDiskImage().getStorageIds().get(0) : Guid.Empty;
 
         Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.RemoveSnapshot);
-
-        VDSReturnValue vdsReturnValue = Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
-                        VDSCommandType.MergeSnapshots,
-                        new MergeSnapshotsVDSCommandParameters(storagePoolId, storageDomainId, getVmId(), imageGroupId,
-                                getDiskImage().getImageId(), getDestinationDiskImage().getImageId(),
-                                getDiskImage().isWipeAfterDelete()));
-
+        VDSReturnValue vdsReturnValue = mergeSnapshots(storagePoolId, storageDomainId);
         if (vdsReturnValue != null && vdsReturnValue.getCreationInfo() != null) {
-            getReturnValue().getInternalVdsmTaskIdList().add(
-                    createTask(taskId,
-                            vdsReturnValue.getCreationInfo(),
-                            VdcActionType.RemoveSnapshot,
-                            ExecutionMessageDirector.resolveStepMessage(StepEnum.MERGE_SNAPSHOTS, getJobMessageProperties()),
-                            VdcObjectType.Storage,
-                            storageDomainId));
+            getReturnValue().getInternalVdsmTaskIdList().add(createTask(taskId, vdsReturnValue, storageDomainId));
             setSucceeded(vdsReturnValue.getSucceeded());
         } else {
             setSucceeded(false);
         }
+    }
+
+    private VDSReturnValue mergeSnapshots(Guid storagePoolId, Guid storageDomainId) {
+        MergeSnapshotsVDSCommandParameters params = new MergeSnapshotsVDSCommandParameters(storagePoolId,
+                storageDomainId, getVmId(), getDiskImage().getId(), getDiskImage().getImageId(),
+                getDestinationDiskImage().getImageId(), getDiskImage().isWipeAfterDelete());
+
+        return runVdsCommand(VDSCommandType.MergeSnapshots, params);
+    }
+
+    private Guid createTask(Guid taskId, VDSReturnValue vdsReturnValue, Guid storageDomainId) {
+        String message = ExecutionMessageDirector.resolveStepMessage(StepEnum.MERGE_SNAPSHOTS,
+                getJobMessageProperties());
+
+        return super.createTask(taskId, vdsReturnValue.getCreationInfo(), VdcActionType.RemoveSnapshot,
+                message, VdcObjectType.Storage, storageDomainId);
     }
 
     @Override
