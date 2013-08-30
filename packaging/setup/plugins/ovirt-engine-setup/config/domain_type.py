@@ -78,7 +78,7 @@ class Plugin(plugin.PluginBase):
             ] == 'gluster':
                 self.environment[
                     osetupcons.ConfigEnv.STORAGE_TYPE
-                ] = osetupcons.Defaults.DEFAULT_CONFIG_STORAGE_TYPE
+                ] = osetupcons.Defaults.DEFAULT_CONFIG_STORAGE_TYPE.lower()
             else:
                 self.environment[
                     osetupcons.ConfigEnv.STORAGE_TYPE
