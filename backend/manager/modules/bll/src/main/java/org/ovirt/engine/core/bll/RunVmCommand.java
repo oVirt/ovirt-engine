@@ -543,10 +543,20 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             if (mResume) {
                 return getSucceeded() ? AuditLogType.USER_RESUME_VM : AuditLogType.USER_FAILED_RESUME_VM;
             } else if (isInternalExecution()) {
-                return getSucceeded() ?
-                        (isStatelessSnapshotExistsForVm() ? AuditLogType.VDS_INITIATED_RUN_VM_AS_STATELESS
-                                : AuditLogType.VDS_INITIATED_RUN_VM) :
-                        AuditLogType.VDS_INITIATED_RUN_VM_FAILED;
+                if (getSucceeded()) {
+                    boolean isStateless = isStatelessSnapshotExistsForVm();
+                    boolean isVdsKnown = getVds() != null;
+                    if (isStateless && isVdsKnown) {
+                        return AuditLogType.VDS_INITIATED_RUN_VM_AS_STATELESS;
+                    } else if (isStateless) {
+                        return AuditLogType.VDS_INITIATED_RUN_AS_STATELESS_VM_NOT_YET_RUNNING;
+                    } else {
+                        return AuditLogType.VDS_INITIATED_RUN_VM;
+                    }
+
+                }
+
+                return AuditLogType.VDS_INITIATED_RUN_VM_FAILED;
             } else {
                 return getSucceeded() ?
                         (VMStatus) getActionReturnValue() == VMStatus.Up ?

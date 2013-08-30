@@ -326,6 +326,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.VDS_APPROVE_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.VDS_FAILED_TO_GET_HOST_HARDWARE_INFO, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VDS_INITIALIZING, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.VDS_INITIATED_RUN_AS_STATELESS_VM_NOT_YET_RUNNING, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.USER_ADD_VM_TEMPLATE, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VDS_DETECTED, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VDS_FAILURE, AuditLogSeverity.ERROR);
