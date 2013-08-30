@@ -149,9 +149,8 @@ public class BrandingTheme {
     public boolean load() {
         final String propertiesFileName = filePath + "/" + BRANDING_PROPERTIES_NAME; //$NON-NLS-1$
         available = false;
-        FileInputStream propertiesFile;
-        try {
-            propertiesFile = new FileInputStream(propertiesFileName);
+
+        try (FileInputStream propertiesFile = new FileInputStream(propertiesFileName)) {
             brandingProperties.load(propertiesFile);
             available = supportedBrandingVersion == getVersion(brandingProperties);
             if (!available) {
