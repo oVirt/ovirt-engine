@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.adbroker.LdapBrokerUtils;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 
@@ -20,7 +22,8 @@ public class GetDomainListQuery<P extends VdcQueryParametersBase> extends Querie
             filterInternalDomain = ((GetDomainListParameters)getParameters()).getFilterInternalDomain();
         }
         List<String> domains = LdapBrokerUtils.getDomainsList(filterInternalDomain);
-        Collections.sort(domains);
+        String internalDomainName = Config.<String>GetValue(ConfigValues.AdminDomain);
+        Collections.sort(domains, new LoginDomainComparator(internalDomainName));
         getQueryReturnValue().setReturnValue(domains);
     }
 }

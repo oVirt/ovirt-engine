@@ -188,7 +188,6 @@ public class LoginModel extends Model
                 }
 
                 List<String> domains = (List<String>) ReturnValue;
-                loginModel.getDomain().setSelectedItem(Linq.firstOrDefault(domains));
                 loginModel.getDomain().setItems(domains);
 
             }
