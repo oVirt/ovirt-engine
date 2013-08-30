@@ -51,8 +51,17 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
     @Override
     protected void postInitTemplate() {
-        setupWindowModelFrom(pool.getStaticData(), pool.getStoragePoolId());
+        setupWindowModelFrom(pool.getStaticData());
         getModel().setIsDisksAvailable(true);
+
+        List<DataCenterWithCluster> dataCenterWithClusters = (List<DataCenterWithCluster>) getModel().getDataCenterWithClustersList().getItems();
+        DataCenterWithCluster selectDataCenterWithCluster =
+                Linq.firstOrDefault(dataCenterWithClusters,
+                        new Linq.DataCenterWithClusterPredicate(pool.getStoragePoolId(), pool.getVdsGroupId()));
+
+        getModel().getDataCenterWithClustersList()
+                .setSelectedItem((selectDataCenterWithCluster != null) ? selectDataCenterWithCluster
+                        : Linq.firstOrDefault(dataCenterWithClusters));
     }
 
     @Override

@@ -78,7 +78,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         }, getModel().getHash()), true, false);
     }
 
-    protected void setupWindowModelFrom(VmBase vmBase, Guid dataCenterId) {
+    protected void setupWindowModelFrom(VmBase vmBase) {
         if (vmBase != null) {
             updateQuotaByCluster(vmBase.getQuotaId(), vmBase.getQuotaName());
             // Copy VM parameters from template.
@@ -107,15 +107,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             // Update domain list
             updateDomain();
-
-            List<DataCenterWithCluster> dataCenterWithClusters = (List<DataCenterWithCluster>) getModel().getDataCenterWithClustersList().getItems();
-            DataCenterWithCluster selectDataCenterWithCluster =
-                    Linq.firstOrDefault(dataCenterWithClusters,
-                            new Linq.DataCenterWithClusterPredicate(dataCenterId, vmBase.getVdsGroupId()));
-
-            getModel().getDataCenterWithClustersList()
-                    .setSelectedItem((selectDataCenterWithCluster != null) ? selectDataCenterWithCluster
-                            : Linq.firstOrDefault(dataCenterWithClusters));
 
             // Update display protocol selected item
             EntityModel displayProtocol = null;
