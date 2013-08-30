@@ -140,10 +140,13 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
     }
 
     void forceRefresh(M model) {
-        if (model instanceof SearchableListModel && !model.getLastExecutedCommand().getIsCancel()) {
-            // Refresh the grid using ForceRefresh command
-            SearchableListModel searchableList = (SearchableListModel) model;
-            searchableList.getForceRefreshCommand().execute();
+        if (model instanceof SearchableListModel) {
+            UICommand lastExecutedCommand = model.getLastExecutedCommand();
+            if (lastExecutedCommand != null && !lastExecutedCommand.getIsCancel()) {
+                // Refresh grid after invoking non-cancel command
+                SearchableListModel searchableList = (SearchableListModel) model;
+                searchableList.forceRefresh();
+            }
         }
     }
 

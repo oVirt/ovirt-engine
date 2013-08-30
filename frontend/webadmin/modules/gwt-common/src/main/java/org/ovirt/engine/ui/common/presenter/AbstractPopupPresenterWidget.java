@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.presenter;
 
+import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
+import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
 import org.ovirt.engine.ui.common.widget.dialog.PopupNativeKeyPressHandler;
 
 import com.google.gwt.dom.client.NativeEvent;
@@ -75,6 +77,15 @@ public abstract class AbstractPopupPresenterWidget<V extends AbstractPopupPresen
                 AbstractPopupPresenterWidget.this.onKeyPress(event);
             }
         });
+
+        registerHandler(getEventBus().addHandler(UserLoginChangeEvent.getType(), new UserLoginChangeHandler() {
+            @Override
+            public void onUserLoginChange(UserLoginChangeEvent event) {
+                if (isVisible()) {
+                    getView().hide();
+                }
+            }
+        }));
     }
 
     /**

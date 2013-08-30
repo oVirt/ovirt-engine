@@ -50,6 +50,7 @@ public class ModelBoundPopupHandler<M extends Model> {
      * Adds a property change listener to the given source model that handles its dialog models.
      */
     public void addDialogModelListener(final M source) {
+        hideAndClearAllPopups();
         source.getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -176,6 +177,18 @@ public class ModelBoundPopupHandler<M extends Model> {
             confirmWindowPopup = null;
         } else {
             windowPopup = null;
+        }
+    }
+
+    /**
+     * Hides all model-bound popups and clears their references.
+     */
+    void hideAndClearAllPopups() {
+        if (confirmWindowPopup != null) {
+            hideAndClearPopup(confirmWindowPopup, true);
+        }
+        if (windowPopup != null) {
+            hideAndClearPopup(windowPopup, false);
         }
     }
 
