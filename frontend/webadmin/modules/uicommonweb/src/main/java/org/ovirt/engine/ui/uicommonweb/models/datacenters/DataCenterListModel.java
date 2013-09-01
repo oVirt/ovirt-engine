@@ -239,7 +239,9 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         quotaListModel = new DataCenterQuotaListModel();
         quotaListModel.setIsAvailable(false);
         list.add(quotaListModel);
-        list.add(new DataCenterNetworkQoSListModel());
+        DataCenterNetworkQoSListModel networkQoSListModel = new DataCenterNetworkQoSListModel();
+        networkQoSListModel.setIsAvailable(false);
+        list.add(networkQoSListModel);
         list.add(new PermissionListModel());
         list.add(new DataCenterEventListModel());
         setDetailModels(list);
