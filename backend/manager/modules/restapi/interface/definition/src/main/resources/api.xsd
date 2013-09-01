@@ -432,7 +432,12 @@
 
   <xs:complexType name="CpuTune">
     <xs:sequence>
-      <xs:element name="vcpu_pin" type="VCpuPin" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:annotation>
+          <xs:appinfo>
+              <jaxb:property name="VCpuPin"/>
+          </xs:appinfo>
+        </xs:annotation>
+      <xs:element ref="vcpu_pin" minOccurs="0" maxOccurs="unbounded"/>
     </xs:sequence>
   </xs:complexType>
 

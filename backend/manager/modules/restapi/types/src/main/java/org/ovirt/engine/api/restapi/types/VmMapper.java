@@ -885,7 +885,7 @@ public class VmMapper {
     static String cpuTuneToString(final CpuTune tune) {
         final StringBuilder builder = new StringBuilder();
         boolean first = true;
-        for(final VCpuPin pin : tune.getVcpuPin()) {
+        for(final VCpuPin pin : tune.getVCpuPin()) {
             if(first) {
                 first = false;
             } else {
@@ -908,7 +908,7 @@ public class VmMapper {
         final CpuTune cpuTune = new CpuTune();
         for(String strCpu : cpuPinning.split("_")) {
             VCpuPin pin = stringToVCpupin(strCpu);
-            cpuTune.getVcpuPin().add(pin);
+            cpuTune.getVCpuPin().add(pin);
         }
 
         return cpuTune;

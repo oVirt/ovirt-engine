@@ -71,6 +71,12 @@ public class VmMapperTest extends
         while (from.getCpu().getTopology().getCores() == 0) {
             from.getCpu().getTopology().setCores(MappingTestHelper.rand(100));
         }
+        CpuTune cpuTune = new CpuTune();
+        VCpuPin pin = new VCpuPin();
+        pin.setVcpu(33);
+        pin.setCpuSet("1-4,6");
+        cpuTune.getVCpuPin().add(pin);
+        from.getCpu().setCpuTune(cpuTune);
         from.setTimezone("Australia/Darwin");
         return from;
     }
@@ -226,10 +232,10 @@ public class VmMapperTest extends
     public void stringToCpuTune() {
         CpuTune cpuTune = VmMapper.stringToCpuTune("0#0");
         assertNotNull(cpuTune);
-        assertNotNull(cpuTune.getVcpuPin());
-        assertEquals(1, cpuTune.getVcpuPin().size());
-        assertEquals(0, cpuTune.getVcpuPin().get(0).getVcpu());
-        assertEquals("0", cpuTune.getVcpuPin().get(0).getCpuSet());
+        assertNotNull(cpuTune.getVCpuPin());
+        assertEquals(1, cpuTune.getVCpuPin().size());
+        assertEquals(0, cpuTune.getVCpuPin().get(0).getVcpu());
+        assertEquals("0", cpuTune.getVCpuPin().get(0).getCpuSet());
     }
 
     @Test(expected = IllegalArgumentException.class)
