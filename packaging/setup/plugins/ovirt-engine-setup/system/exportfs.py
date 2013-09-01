@@ -189,7 +189,7 @@ class Plugin(plugin.PluginBase):
     def _closeupMessage(self):
         self.dialog.note(
             text=_(
-                'A default ISO NFS share has been created on this host.\n'
+                'An ISO NFS share has been created on this host.\n'
                 '    If IP based access restrictions are required, edit:\n'
                 '    entry {entry} in {file}'
             ).format(
