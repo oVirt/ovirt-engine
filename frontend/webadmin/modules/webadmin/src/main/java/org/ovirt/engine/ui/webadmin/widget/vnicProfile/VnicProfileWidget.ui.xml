@@ -6,7 +6,7 @@
 
     <ui:style type="org.ovirt.engine.ui.webadmin.widget.vnicProfile.VnicProfileWidget.WidgetStyle" >
 		.publicUse {
-			width: 90px;
+			width: 100px;
 		}
 
 		.qos {
@@ -18,7 +18,7 @@
 		}
 
 		.publicUsePanel {
-			width: 75px;
+			width: 95px;
 			margin-left: 20px;
 		}
 
