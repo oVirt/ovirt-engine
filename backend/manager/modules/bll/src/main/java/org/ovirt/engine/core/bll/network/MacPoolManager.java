@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network;
 
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -24,7 +25,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class MacPoolManager {
 
     private static final int HEX_RADIX = 16;
-    private static final String INIT_ERROR_MSG = "Error in initializing MAC Addresses pool manager. ";
+    private static final String INIT_ERROR_MSG = "{0}: Error in initializing MAC Addresses pool manager.";
     private static final MacPoolManager INSTANCE = new MacPoolManager();
 
     private static Log log = LogFactory.getLog(MacPoolManager.class);
@@ -64,13 +65,14 @@ public class MacPoolManager {
     public void initialize() {
         lockObj.writeLock().lock();
         try {
-            log.info("Start initializing " + getClass().getSimpleName());
+            log.infoFormat("{0}: Start initializing", instanceId());
             String ranges = Config.<String> GetValue(ConfigValues.MacPoolRanges);
             if (!"".equals(ranges)) {
                 try {
                     initRanges(ranges);
                 } catch (MacPoolExceededMaxException e) {
-                    log.error("MAC Pool range exceeded maximum number of mac pool addressed. Please check Mac Pool configuration.");
+                    log.errorFormat("{0}: MAC Pool range exceeded maximum number of mac pool addressed. "
+                            + "Please check Mac Pool configuration.", instanceId());
                 }
             }
 
@@ -80,12 +82,18 @@ public class MacPoolManager {
                 forceAddMac(iface.getMacAddress());
             }
             initialized = true;
-            log.info("Finished initializing " + getClass().getSimpleName());
+            log.infoFormat("{0}: Finished initializing", instanceId());
         } catch (Exception ex) {
-            log.error(INIT_ERROR_MSG, ex);
+            log.errorFormat(INIT_ERROR_MSG, instanceId(), ex);
         } finally {
             lockObj.writeLock().unlock();
         }
+    }
+
+    private String instanceId() {
+        return MessageFormat.format("{0}({1})",
+                getClass().getSimpleName(),
+                Integer.toHexString(System.identityHashCode(getInstance())));
     }
 
     private void initRanges(String ranges) {
@@ -94,10 +102,14 @@ public class MacPoolManager {
             String[] startendArray = range.split("[-]", -1);
             if (startendArray.length == 2) {
                 if (!initRange(startendArray[0], startendArray[1])) {
-                    log.errorFormat("Failed to initialize Mac Pool range. Please fix Mac Pool range: {0}", range);
+                    log.errorFormat("{0}: Failed to initialize Mac Pool range. Please fix Mac Pool range: {1}",
+                            instanceId(),
+                            range);
                 }
             } else {
-                log.errorFormat("Failed to initialize Mac Pool range. Please fix Mac Pool range: {0}", range);
+                log.errorFormat("{0}: Failed to initialize Mac Pool range. Please fix Mac Pool range: {1}",
+                        instanceId(),
+                        range);
 
             }
         }
@@ -202,7 +214,7 @@ public class MacPoolManager {
             }
 
             int availableMacsSize = availableMacs.size();
-            log.debugFormat("Number of available Mac addresses = {0}", availableMacsSize);
+            log.debugFormat("{0}: Number of available Mac addresses = {1}", instanceId(), availableMacsSize);
             return availableMacsSize;
         } finally {
             lockObj.readLock().unlock();
@@ -223,7 +235,7 @@ public class MacPoolManager {
     }
 
     private void logInitializationError(String message) {
-        log.error("The MAC addresses pool is not initialized");
+        log.errorFormat("{0}: The MAC addresses pool is not initialized", instanceId());
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("Message", message);
         AuditLogDirector.log(logable, AuditLogType.MAC_ADDRESSES_POOL_NOT_INITIALIZED);
