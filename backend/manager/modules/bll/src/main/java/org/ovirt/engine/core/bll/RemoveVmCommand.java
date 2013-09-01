@@ -306,15 +306,27 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<>();
-        for (DiskImage disk : getVm().getDiskList()){
-            if (disk.getQuotaId() != null && !Guid.Empty.equals(disk.getQuotaId())) {
-                list.add(new QuotaStorageConsumptionParameter(
-                        disk.getQuotaId(),
-                        null,
-                        QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
-                        disk.getStorageIds().get(0),
-                        (double)disk.getSizeInGigabytes()));
-            }
+        for (DiskImage disk : getVm().getDiskList()) {
+                ImagesHandler.fillImagesBySnapshots(getVm());
+                for (DiskImage snapshot : disk.getSnapshots()) {
+                    if (snapshot.getQuotaId() != null && !Guid.Empty.equals(snapshot.getQuotaId())) {
+                        if (snapshot.getActive()) {
+                            list.add(new QuotaStorageConsumptionParameter(
+                                    snapshot.getQuotaId(),
+                                    null,
+                                    QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
+                                    disk.getStorageIds().get(0),
+                                    (double) snapshot.getSizeInGigabytes()));
+                        } else {
+                            list.add(new QuotaStorageConsumptionParameter(
+                                    snapshot.getQuotaId(),
+                                    null,
+                                    QuotaStorageConsumptionParameter.QuotaAction.RELEASE,
+                                    disk.getStorageIds().get(0),
+                                    snapshot.getActualSize()));
+                        }
+                    }
+                }
         }
         return list;
     }
