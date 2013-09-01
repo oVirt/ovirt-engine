@@ -145,7 +145,7 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         nameEditor.setLabel(constants.nameNetworkIntefacePopup());
         profileEditor.setLabel(constants.profileNetworkIntefacePopup());
         nicTypeEditor.setLabel(constants.typeNetworkIntefacePopup());
-        enableManualMacCheckbox.setLabel(constants.specipyCustMacNetworkIntefacePopup());
+        enableManualMacCheckbox.setLabel(constants.customMacNetworkIntefacePopup());
 
         cardStatusEditor.setLabel(constants.cardStatusNetworkInteface());
         pluggedEditor.asRadioButton()

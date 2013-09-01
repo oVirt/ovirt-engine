@@ -946,8 +946,8 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Type")
     String typeNetworkIntefacePopup();
 
-    @DefaultStringValue("Specify custom MAC address")
-    String specipyCustMacNetworkIntefacePopup();
+    @DefaultStringValue("Custom MAC address")
+    String customMacNetworkIntefacePopup();
 
     @DefaultStringValue("Card Status")
     String cardStatusNetworkInteface();
