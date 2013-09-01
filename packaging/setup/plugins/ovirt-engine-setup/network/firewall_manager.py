@@ -226,16 +226,6 @@ class Plugin(plugin.PluginBase):
         self.environment[
             otopicons.NetEnv.IPTABLES_RULES
         ] = self._createIptablesConfig()
-        # This file is updated by otopi. Here we just prevent it from
-        # being deleted on cleanup.
-        # TODO: copy/move some uninstall code from the engine to otopi
-        # to allow just adding lines to iptables instead of replacing
-        # the file and also remove these lines on cleanup.
-        self.environment[
-            osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
-        ].append(
-            osetupcons.FileLocations.SYSCONFIG_IPTABLES,
-        )
 
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
@@ -245,6 +235,24 @@ class Plugin(plugin.PluginBase):
                     otopicons.CoreEnv.MODIFIED_FILES
                 ],
             )
+        )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_MISC,
+        condition=lambda self: self.environment[
+            otopicons.NetEnv.IPTABLES_ENABLE
+        ],
+    )
+    def _iptablesmark(self):
+        # This file is updated by otopi. Here we just prevent it from
+        # being deleted on cleanup.
+        # TODO: copy/move some uninstall code from the engine to otopi
+        # to allow just adding lines to iptables instead of replacing
+        # the file and also remove these lines on cleanup.
+        self.environment[
+            osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+        ].append(
+            osetupcons.FileLocations.SYSCONFIG_IPTABLES,
         )
 
     @plugin.event(
