@@ -2,21 +2,42 @@
 
 KEYTOOL="${JAVA_HOME:-/usr}/bin/keytool"
 
+clean_pki_dir() {
+	for f in \
+		"${PKIDIR}/cacert.conf" \
+		"${PKIDIR}/cert.conf" \
+		"${PKIDIR}/serial.txt" \
+		"${PKIDIR}/serial.txt.old" \
+		"${PKIDIR}/database.txt" \
+		"${PKIDIR}/database.txt.old" \
+		"${PKIDIR}/database.txt.attr" \
+		"${PKIDIR}/database.txt.attr.old" \
+		"${PKIDIR}/private/ca.pem" \
+		"${PKIDIR}/ca.pem" \
+		"${PKIDIR}/certs"/*.cer \
+		"${PKIDIR}/certs"/*.pem \
+		"${PKIDIR}/keys"/*.p12 \
+		"${PKIDIR}/keys"/*.nopass \
+		"${PKIDIR}/keys/engine_id_rsa" \
+		"${PKIDIR}/requests"/*.req \
+		"${PKIDIR}/requests"/*.csr \
+	; do
+		if [ -e "${f}" ]; then
+			common_backup "${f}"
+			rm "${f}" || \
+				die "Failed to remove ${f}"
+		fi
+	done
+}
+
 config() {
-	common_backup "${PKIDIR}/cacert.conf" "${PKIDIR}/cert.conf"
 	cp "${PKIDIR}/cacert.template" "${PKIDIR}/cacert.conf" || die "Cannot create cacert.conf"
-	cp "${PKIDIR}/cert.template" "${PKIDIR}/cert.conf" | die "Cannot create cert.conf"
+	cp "${PKIDIR}/cert.template" "${PKIDIR}/cert.conf" || die "Cannot create cert.conf"
 	chmod a+r "${PKIDIR}/cacert.conf" "${PKIDIR}/cert.conf" || die "Cannot set config files permissions"
 }
 
 enroll() {
 	local subject="$1"
-
-	common_backup \
-		"${PKIDIR}/serial.txt" \
-		"${PKIDIR}"/database.txt* \
-		"${PKIDIR}/private/ca.pem" \
-		"${PKIDIR}/ca.pem"
 
 	#
 	# openssl ca directory must
@@ -25,8 +46,9 @@ enroll() {
 	# so let's assume directory
 	# is in correct permissions
 	#
+
 	echo 1000 > "${PKIDIR}/serial.txt" || die "Cannot write to serial.txt"
-	rm -f "${PKIDIR}"/database.txt*
+
 	touch "${PKIDIR}/database.txt" "${PKIDIR}/.rnd" || die "Cannot write to database.txt"
 
 	touch "${PKIDIR}/private/ca.pem"
@@ -135,6 +157,7 @@ done
 [ -n "${SUBJECT}" ] || die "Please specify subject"
 [ -n "${KEYSTORE_PASSWORD}" ] || die "Please specify keystore password"
 
+clean_pki_dir
 config
 enroll "${SUBJECT}"
 keystore "${KEYSTORE_PASSWORD}"

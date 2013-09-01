@@ -15,7 +15,10 @@ common_backup() {
 	while [ -n "$1" ]; do
 		local f="$1"
 		shift
-		[ -f "${f}" ] && cp -a "${f}" "${f}.${time}"
+		if [ -f "${f}" ]; then
+			cp -a "${f}" "${f}.${time}" || \
+				die "Failed to backup ${f}"
+		fi
 	done
 }
 
