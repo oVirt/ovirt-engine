@@ -84,7 +84,7 @@ class Plugin(plugin.PluginBase):
                                 osetupcons.ConfigEnv.FQDN
                             ],
                             port=self.environment[
-                                osetupcons.ConfigEnv.HTTPS_PORT
+                                osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT
                             ],
                             user=osetupcons.Const.USER_ADMIN,
                             domain=osetupcons.Const.DOMAIN_INTERNAL,

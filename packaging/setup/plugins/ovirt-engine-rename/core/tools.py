@@ -78,7 +78,7 @@ class Plugin(plugin.PluginBase):
                             osetupcons.RenameEnv.FQDN
                         ],
                         self.environment[
-                            osetupcons.ConfigEnv.HTTPS_PORT
+                            osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT
                         ],
                     )
                 content.append(line)

@@ -52,10 +52,10 @@ class Plugin(plugin.PluginBase):
             osetupcons.NetEnv.FIREWALLD_SUBST
         ].update({
             '@HTTP_PORT@': self.environment[
-                osetupcons.ConfigEnv.HTTP_PORT
+                osetupcons.ConfigEnv.PUBLIC_HTTP_PORT
             ],
             '@HTTPS_PORT@': self.environment[
-                osetupcons.ConfigEnv.HTTPS_PORT
+                osetupcons.ConfigEnv.PUBLIC_HTTPS_PORT
             ],
             '@JBOSS_HTTP_PORT@': self.environment[
                 osetupcons.ConfigEnv.JBOSS_DIRECT_HTTP_PORT
