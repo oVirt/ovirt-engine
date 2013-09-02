@@ -64,7 +64,11 @@ public class VmDeviceUtils {
             }
 
             // if the console type has changed, recreate Video devices
-            if (oldVmBase.getDefaultDisplayType() != entity.getDefaultDisplayType()) {
+            boolean displayTypeChanged = oldVmBase.getDefaultDisplayType() != entity.getDefaultDisplayType();
+            boolean numOfMonitorsChanged = entity.getDefaultDisplayType() == DisplayType.qxl && oldVmBase.getNumOfMonitors() != entity.getNumOfMonitors();
+            boolean singleQxlChanged = oldVmBase.getSingleQxlPci() != entity.getSingleQxlPci();
+
+            if(displayTypeChanged || numOfMonitorsChanged || singleQxlChanged) {
                 // delete all video device
                 for (VmDevice device : dao.getVmDeviceByVmIdAndType(oldVmBase.getId(), VmDeviceGeneralType.VIDEO)) {
                     dao.remove(device.getId());
@@ -80,10 +84,6 @@ public class VmDeviceUtils {
                             false,
                             null);
                 }
-            } else if (entity.getDefaultDisplayType() == DisplayType.qxl && oldVmBase.getNumOfMonitors() != entity
-                    .getNumOfMonitors()) {
-                // spice number of monitors has changed
-                updateNumOfMonitorsInVmDevice(oldVmBase, entity);
             }
             updateUSBSlots(oldVmBase, entity);
             updateMemoryBalloon(oldVmBase, entity, params.isBalloonEnabled());
@@ -586,40 +586,6 @@ public class VmDeviceUtils {
     }
 
     /**
-     * updates new/existing VM video cards in vm device
-     * @param oldVmBase
-     * @param newStatic
-     */
-    private static void updateNumOfMonitorsInVmDevice(VmBase oldVmBase,
-            VmBase newStatic) {
-        int prevNumOfMonitors=0;
-        if (oldVmBase != null) {
-            prevNumOfMonitors = oldVmBase.getNumOfMonitors();
-        }
-        if (newStatic.getNumOfMonitors() > prevNumOfMonitors) {
-            // monitors were added
-            int monitors = newStatic.getSingleQxlPci() ? 1 : newStatic.getNumOfMonitors();
-            for (int i = prevNumOfMonitors; i < monitors; i++) {
-                Guid newId = Guid.newGuid();
-                VmDeviceUtils.addManagedDevice(new VmDeviceId(newId, newStatic.getId()),
-                        VmDeviceGeneralType.VIDEO,
-                        VmDeviceType.QXL,
-                        getMemExpr(newStatic.getNumOfMonitors(), newStatic.getSingleQxlPci()),
-                        true,
-                        false,
-                        null);
-            }
-        } else { // delete video cards
-            List<VmDevice> list = DbFacade
-                    .getInstance()
-                    .getVmDeviceDao()
-                    .getVmDeviceByVmIdAndType(newStatic.getId(),
-                            VmDeviceGeneralType.VIDEO);
-            removeNumberOfDevices(list, prevNumOfMonitors - newStatic.getNumOfMonitors());
-        }
-    }
-
-    /**
      * Updates new/existing VM USB slots in vm device
      * Currently assuming the number of slots is between 0 and SLOTS_PER_CONTROLLER, i.e., no more than one controller
      * @param oldVm
@@ -831,8 +797,13 @@ public class VmDeviceUtils {
      */
     private static Map<String, Object> getMemExpr(int numOfMonitors, boolean singleQxlPci) {
         int heads = singleQxlPci ? numOfMonitors : 1;
-        String mem = (numOfMonitors > 2 ? String.valueOf(VmDeviceCommonUtils.LOW_VIDEO_MEM * heads) :
-                String.valueOf(VmDeviceCommonUtils.HIGH_VIDEO_MEM * heads));
+        String mem;
+        if (singleQxlPci) {
+            mem = String.valueOf(VmDeviceCommonUtils.LOW_VIDEO_MEM * heads);
+        } else {
+           mem = (numOfMonitors < 2 ? String.valueOf(VmDeviceCommonUtils.LOW_VIDEO_MEM) :
+            String.valueOf(VmDeviceCommonUtils.HIGH_VIDEO_MEM));
+        }
         Map<String, Object> specParams = new HashMap<String, Object>();
         specParams.put(VRAM, mem);
         specParams.put(HEADS, String.valueOf(heads));
