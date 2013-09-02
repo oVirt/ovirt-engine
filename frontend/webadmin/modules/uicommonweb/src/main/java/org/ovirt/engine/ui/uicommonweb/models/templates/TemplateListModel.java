@@ -330,7 +330,6 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().removeTemplatesTitle());
         model.setHashName("remove_template"); //$NON-NLS-1$
-        model.setMessage(ConstantsManager.getInstance().getConstants().templatesMsg());
 
         ArrayList<String> items = new ArrayList<String>();
         ArrayList<VmTemplate> templates = Linq.<VmTemplate> cast(getSelectedItems());
