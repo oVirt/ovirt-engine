@@ -6,11 +6,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -122,6 +124,22 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     protected Guid getVmIdFromSnapshot() {
         return (getSnapshot() != null) ? getSnapshot().getVmId() : Guid.Empty;
+    }
+
+    @Override
+    protected void addVmNetwork() {
+        VnicProfileHelper vnicProfileHelper =
+                new VnicProfileHelper(getVdsGroupId(),
+                        getStoragePoolId(),
+                        getVdsGroup().getcompatibility_version(),
+                        AuditLogType.ADD_VM_FROM_SNAPSHOT_INVALID_INTERFACES);
+
+        for (VmNetworkInterface iface : vmFromConfiguration.getInterfaces()) {
+            vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser().getUserId());
+        }
+
+        vnicProfileHelper.auditInvalidInterfaces(getVmName());
+        super.addVmNetwork();
     }
 
     @Override

@@ -652,6 +652,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.USER_UPDATE_VM_FROM_UNTRUSTED_TO_TRUSTED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.VM_SET_TICKET, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.VM_SET_TICKET_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.ADD_VM_FROM_SNAPSHOT_INVALID_INTERFACES, AuditLogSeverity.WARNING);
     }
 
     private static void initClusterSeverities() {

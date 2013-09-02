@@ -757,6 +757,7 @@ public enum AuditLogType {
     HA_VM_RESTART_FAILED(9603),
 
     IMPORTEXPORT_SNAPSHOT_VM_INVALID_INTERFACES(9606, AuditLogTimeInterval.MINUTE.getValue()),
+    ADD_VM_FROM_SNAPSHOT_INVALID_INTERFACES(9607, AuditLogTimeInterval.MINUTE.getValue()),
 
     // DWH
     DWH_STOPPED(9701),
