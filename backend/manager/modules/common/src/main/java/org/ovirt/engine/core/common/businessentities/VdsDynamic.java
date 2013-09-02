@@ -238,11 +238,11 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.physical_mem_mb = value;
     }
 
-    public VDSStatus getstatus() {
+    public VDSStatus getStatus() {
         return status;
     }
 
-    public void setstatus(VDSStatus value) {
+    public void setStatus(VDSStatus value) {
         this.status = value;
     }
 

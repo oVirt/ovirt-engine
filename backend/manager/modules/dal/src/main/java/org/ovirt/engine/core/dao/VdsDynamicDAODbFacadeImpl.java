@@ -41,7 +41,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
             entity.setmem_commited((Integer) rs.getObject("mem_commited"));
             entity.setphysical_mem_mb((Integer) rs
                     .getObject("physical_mem_mb"));
-            entity.setstatus(VDSStatus.forValue(rs.getInt("status")));
+            entity.setStatus(VDSStatus.forValue(rs.getInt("status")));
             entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
             entity.setvm_active((Integer) rs.getObject("vm_active"));
             entity.setvm_count(rs.getInt("vm_count"));
@@ -110,7 +110,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("kvm_enabled", vds.getkvm_enabled())
                 .addValue("mem_commited", vds.getmem_commited())
                 .addValue("physical_mem_mb", vds.getphysical_mem_mb())
-                .addValue("status", vds.getstatus())
+                .addValue("status", vds.getStatus())
                 .addValue("vds_id", vds.getId())
                 .addValue("vm_active", vds.getvm_active())
                 .addValue("vm_count", vds.getvm_count())
@@ -168,7 +168,7 @@ public class VdsDynamicDAODbFacadeImpl extends BaseDAODbFacade implements VdsDyn
                 .addValue("kvm_enabled", vds.getkvm_enabled())
                 .addValue("mem_commited", vds.getmem_commited())
                 .addValue("physical_mem_mb", vds.getphysical_mem_mb())
-                .addValue("status", vds.getstatus())
+                .addValue("status", vds.getStatus())
                 .addValue("vds_id", vds.getId())
                 .addValue("vm_active", vds.getvm_active())
                 .addValue("vm_count", vds.getvm_count())

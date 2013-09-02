@@ -515,7 +515,7 @@ public class VdsUpdateRunTimeInfo {
     private void markIsSetNonOperationalExecuted() {
         if (!_vdsManager.isSetNonOperationalExecuted()) {
             VdsDynamic vdsDynamic = getDbFacade().getVdsDynamicDao().get(_vds.getId());
-            if (vdsDynamic.getstatus() == VDSStatus.NonOperational) {
+            if (vdsDynamic.getStatus() == VDSStatus.NonOperational) {
                 _vdsManager.setIsSetNonOperationalExecuted(true);
             }
         }

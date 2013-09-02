@@ -112,7 +112,7 @@ public class JsonObjectSerializationEntitiesTest {
         vdsDynamic.setkvm_enabled(random.nextBoolean());
         vdsDynamic.setmem_commited(random.nextInt());
         vdsDynamic.setphysical_mem_mb(random.nextInt());
-        vdsDynamic.setstatus(random.nextEnum(VDSStatus.class));
+        vdsDynamic.setStatus(random.nextEnum(VDSStatus.class));
         vdsDynamic.setId(Guid.newGuid());
         vdsDynamic.setvm_active(random.nextInt());
         vdsDynamic.setvm_count(random.nextInt());

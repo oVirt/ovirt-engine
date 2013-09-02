@@ -770,7 +770,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     int total = 0;
                     Integer maxSecToWait = Config.GetValue(ConfigValues.WaitForVdsInitInSec);
                     while (total <= maxSecToWait
-                            && DbFacade.getInstance().getVdsDynamicDao().get(curVdsId).getstatus() == VDSStatus.Initializing) {
+                            && DbFacade.getInstance().getVdsDynamicDao().get(curVdsId).getStatus() == VDSStatus.Initializing) {
                         try {
                             Thread.sleep(DELAY * 1000);
                         } catch (InterruptedException e) {

@@ -273,9 +273,9 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         // TODO: oVirt type - here oVirt behaves like power client?
         if (Config.<Boolean> GetValue(ConfigValues.InstallVds)
                 && getParameters().getVdsStaticData().getVdsType() == VDSType.VDS) {
-            vdsDynamic.setstatus(VDSStatus.Installing);
+            vdsDynamic.setStatus(VDSStatus.Installing);
         } else if (getParameters().getAddPending()) {
-            vdsDynamic.setstatus(VDSStatus.PendingApproval);
+            vdsDynamic.setStatus(VDSStatus.PendingApproval);
         }
         DbFacade.getInstance().getVdsDynamicDao().save(vdsDynamic);
         getCompensationContext().snapshotNewEntity(vdsDynamic);

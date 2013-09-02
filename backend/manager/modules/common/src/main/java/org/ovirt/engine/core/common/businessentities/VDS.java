@@ -362,12 +362,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     @Override
     public VDSStatus getStatus() {
-        return this.mVdsDynamic.getstatus();
+        return this.mVdsDynamic.getStatus();
     }
 
     @Override
     public void setStatus(VDSStatus value) {
-        this.mVdsDynamic.setstatus(value);
+        this.mVdsDynamic.setStatus(value);
     }
 
     public Integer getCpuCores() {

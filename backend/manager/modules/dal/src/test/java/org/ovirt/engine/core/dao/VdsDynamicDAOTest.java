@@ -90,8 +90,8 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
     @Test
     public void testUpdateStatus() {
         VdsDynamic before = dao.get(existingVds.getId());
-        before.setstatus(VDSStatus.Down);
-        dao.updateStatus(before.getId(), before.getstatus());
+        before.setStatus(VDSStatus.Down);
+        dao.updateStatus(before.getId(), before.getStatus());
         VdsDynamic after = dao.get(existingVds.getId());
         assertEquals(before, after);
     }

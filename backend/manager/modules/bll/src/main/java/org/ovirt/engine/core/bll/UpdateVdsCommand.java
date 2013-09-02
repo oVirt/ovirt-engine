@@ -169,7 +169,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                     // add old vds dynamic data to compensation context. This
                     // way the status will revert back to what it was before
                     // starting installation process
-                    getCompensationContext().snapshotEntityStatus(_oldVds.getDynamicData(), _oldVds.getDynamicData().getstatus());
+                    getCompensationContext().snapshotEntityStatus(_oldVds.getDynamicData(), _oldVds.getDynamicData().getStatus());
                     getCompensationContext().stateChanged();
                     return;
                 }
