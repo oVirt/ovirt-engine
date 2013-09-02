@@ -145,7 +145,8 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
     /**
      * Returns the entity representation of the given String which was passed to the suggest box.
      * @param value String from the suggest box
-     * @return the entity representation, or null if incorrect value passed
+     * @throws IllegalArgumentException if incorrect value has been passed
+     * @return the entity representation
      */
     protected abstract T asEntity(String value);
 
@@ -159,10 +160,11 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
         return asSuggestBox().addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
             public void onValueChange(ValueChangeEvent<String> event) {
-                T value = asEntity(event.getValue());
-                if (value != null) {
-                    handler.onValueChange(new ValueChangeEvent<T>(value) {
-                    });
+                try {
+                    T value = asEntity(event.getValue());
+                    handler.onValueChange(new ValueChangeEvent<T>(value) {});
+                } catch (IllegalArgumentException e) {
+                    // ignore - the user entered an incorrect string. Just do not notify the listeners
                 }
             }
         });

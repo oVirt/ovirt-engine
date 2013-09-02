@@ -160,6 +160,7 @@ public class VmInterfaceCreatingManager {
 
                                 if (sameNic && assignedProfileChanged) {
                                     created.setVnicProfileId(edited.getNetworkInterface().getVnicProfileId());
+                                    created.setNetworkName(edited.getNetworkInterface().getNetworkName());
                                     parameters.add(new AddVmInterfaceParameters(vmId, created));
                                     break;
                                 }
