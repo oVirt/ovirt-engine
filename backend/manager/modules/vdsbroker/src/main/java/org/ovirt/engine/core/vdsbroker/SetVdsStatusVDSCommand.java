@@ -17,7 +17,7 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
     }
 
     @Override
-    protected void ExecuteVdsIdCommand() {
+    protected void executeVdsIdCommand() {
         final SetVdsStatusVDSCommandParameters parameters = getParameters();
 
         if (_vdsManager != null) {

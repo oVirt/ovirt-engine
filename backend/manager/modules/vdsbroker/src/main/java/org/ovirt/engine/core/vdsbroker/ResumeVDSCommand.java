@@ -13,7 +13,7 @@ public class ResumeVDSCommand<P extends ResumeVDSCommandParameters> extends VdsI
     }
 
     @Override
-    protected void ExecuteVdsIdCommand() {
+    protected void executeVdsIdCommand() {
         ResumeVDSCommandParameters parameters = getParameters();
         if (_vdsManager != null) {
             VMStatus retval = VMStatus.Unknown;

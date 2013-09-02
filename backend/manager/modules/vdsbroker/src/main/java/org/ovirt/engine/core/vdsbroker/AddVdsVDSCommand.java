@@ -12,7 +12,7 @@ public class AddVdsVDSCommand<P extends AddVdsVDSCommandParameters> extends VdsI
     }
 
     @Override
-    protected void ExecuteVdsIdCommand() {
+    protected void executeVdsIdCommand() {
         log.infoFormat("AddVds - entered , starting logic to add VDS {0}", getVdsId());
         VDS vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
         log.infoFormat("AddVds - VDS {0} was added, will try to add it to the resource manager",

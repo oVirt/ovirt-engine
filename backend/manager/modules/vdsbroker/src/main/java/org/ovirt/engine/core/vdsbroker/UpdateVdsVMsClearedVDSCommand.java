@@ -9,7 +9,7 @@ public class UpdateVdsVMsClearedVDSCommand<P extends UpdateVdsVMsClearedVDSComma
     }
 
     @Override
-    protected void ExecuteVdsIdCommand() {
+    protected void executeVdsIdCommand() {
         if (_vdsManager != null) {
             getVds().setVmCount(0);
             getVds().setVmsCoresCount(0);

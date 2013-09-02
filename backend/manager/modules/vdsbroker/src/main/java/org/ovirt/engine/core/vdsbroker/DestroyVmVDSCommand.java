@@ -20,7 +20,7 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
     }
 
     @Override
-    protected void ExecuteVdsIdCommand() {
+    protected void executeVdsIdCommand() {
 
         if (_vdsManager != null) {
 

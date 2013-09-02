@@ -8,7 +8,7 @@ public class ActivateVdsVDSCommand<P extends ActivateVdsVDSCommandParameters> ex
     }
 
     @Override
-    protected void ExecuteVdsIdCommand() {
+    protected void executeVdsIdCommand() {
         if (_vdsManager != null) {
             setReturnValue(_vdsManager.activate());
         } else {

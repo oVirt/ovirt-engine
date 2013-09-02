@@ -28,7 +28,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
     }
 
     @Override
-    protected void ExecuteVdsIdCommand() {
+    protected void executeVdsIdCommand() {
         if (_vdsManager == null) {
             getVDSReturnValue().setSucceeded(false);
             return;

@@ -8,7 +8,7 @@ public class RemoveVdsVDSCommand<P extends RemoveVdsVDSCommandParameters> extend
     }
 
     @Override
-    protected void ExecuteVdsIdCommand() {
+    protected void executeVdsIdCommand() {
         ResourceManager.getInstance().RemoveVds(getVdsId());
     }
 }

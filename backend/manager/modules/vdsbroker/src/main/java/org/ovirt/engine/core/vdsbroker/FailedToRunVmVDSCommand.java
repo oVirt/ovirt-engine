@@ -8,7 +8,7 @@ public class FailedToRunVmVDSCommand<P extends FailedToRunVmVDSCommandParameters
     }
 
     @Override
-    protected void ExecuteVdsIdCommand() {
+    protected void executeVdsIdCommand() {
         if (_vdsManager != null) {
             _vdsManager.failedToRunVm(getVds());
         } else {

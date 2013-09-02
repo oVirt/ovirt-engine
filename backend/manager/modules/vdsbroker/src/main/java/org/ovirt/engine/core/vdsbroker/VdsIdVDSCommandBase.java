@@ -39,12 +39,12 @@ public abstract class VdsIdVDSCommandBase<P extends VdsIdVDSCommandParametersBas
     protected void executeVDSCommand() {
         if (_vdsManager != null) {
             synchronized (_vdsManager.getLockObj()) {
-                ExecuteVdsIdCommand();
+                executeVdsIdCommand();
             }
         } else {
-            ExecuteVdsIdCommand();
+            executeVdsIdCommand();
         }
     }
 
-    protected abstract void ExecuteVdsIdCommand();
+    protected abstract void executeVdsIdCommand();
 }

@@ -8,7 +8,7 @@ public class UpdateVmDynamicDataVDSCommand<P extends UpdateVmDynamicDataVDSComma
     }
 
     @Override
-    protected void ExecuteVdsIdCommand() {
+    protected void executeVdsIdCommand() {
         if (_vdsManager != null) {
             _vdsManager.UpdateVmDynamic(getParameters().getVmDynamic());
         } else {

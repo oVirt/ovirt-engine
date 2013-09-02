@@ -16,7 +16,7 @@ public class HibernateVDSCommand<P extends HibernateVDSCommandParameters> extend
     }
 
     @Override
-    protected void ExecuteVdsIdCommand() {
+    protected void executeVdsIdCommand() {
         if (_vdsManager == null) {
             getVDSReturnValue().setSucceeded(false);
             return;

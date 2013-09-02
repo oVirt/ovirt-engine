@@ -17,7 +17,7 @@ public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends Vd
     }
 
     @Override
-    protected void ExecuteVdsIdCommand() {
+    protected void executeVdsIdCommand() {
         MigrateVDSCommandParameters parameters = getParameters();
         if (_vdsManager != null) {
             VMStatus retval;
