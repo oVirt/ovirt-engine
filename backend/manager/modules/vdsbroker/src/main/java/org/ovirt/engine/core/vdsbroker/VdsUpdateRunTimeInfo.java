@@ -126,7 +126,7 @@ public class VdsUpdateRunTimeInfo {
     private static final Log log = LogFactory.getLog(VdsUpdateRunTimeInfo.class);
 
     private static final int TO_MEGA_BYTES = 1024;
-    private static final String HOSTED_ENGINE_VM_NAME = "oVirtHostedEngine";
+    private static final String HOSTED_ENGINE_VM_NAME = "HostedEngine";
     private static final String EXTERNAL_VM_NAME_FORMAT = "external-%1$s";
 
     private void saveDataToDb() {
