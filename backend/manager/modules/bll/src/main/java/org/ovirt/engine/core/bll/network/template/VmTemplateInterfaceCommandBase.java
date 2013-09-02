@@ -5,7 +5,7 @@ import java.util.List;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.VmTemplateCommand;
-import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateInterfaceParameters;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
@@ -48,8 +48,7 @@ public abstract class VmTemplateInterfaceCommandBase<T extends AddVmTemplateInte
     }
 
     protected boolean updateVnicForBackwardCompatibility() {
-        VmInterfaceManager nicManager = new VmInterfaceManager();
-        if (!validate(nicManager.updateNicForBackwardCompatibility(getParameters().getInterface(),
+        if (!validate(VnicProfileHelper.updateNicForBackwardCompatibility(getParameters().getInterface(),
                 getVmTemplate(),
                 getCurrentUser().getUserId()))) {
             return false;

@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.snapshots;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -11,12 +10,12 @@ import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
@@ -28,15 +27,11 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
@@ -47,9 +42,7 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
-import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.dao.network.VnicProfileViewDao;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
@@ -416,11 +409,11 @@ public class SnapshotsManager {
      */
     protected void synchronizeNics(VM vm, CompensationContext compensationContext, Guid userId) {
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
-        List<String> invalidNetworkNames = new ArrayList<>();
-        List<String> invalidIfaceNames = new ArrayList<>();
-        Map<String, Network> networksInClusterByName =
-                Entities.entitiesByName(getNetworkDao().getAllForCluster(vm.getVdsGroupId()));
-        List<VnicProfileView> vnicProfilesInDc = getVnicProfileViewDao().getAllForDataCenter(vm.getStoragePoolId());
+        VnicProfileHelper vnicProfileHelper =
+                new VnicProfileHelper(vm.getVdsGroupId(),
+                        vm.getStoragePoolId(),
+                        vm.getVdsGroupCompatibilityVersion(),
+                        AuditLogType.IMPORTEXPORT_SNAPSHOT_VM_INVALID_INTERFACES);
 
         vmInterfaceManager.removeAll(vm.getId());
         for (VmNetworkInterface vmInterface : vm.getInterfaces()) {
@@ -430,36 +423,11 @@ public class SnapshotsManager {
                 vmInterface.setId(Guid.newGuid());
             }
 
-            if (!vmInterfaceManager.updateNicWithVnicProfile(vmInterface,
-                    vm.getVdsGroupCompatibilityVersion(),
-                    networksInClusterByName,
-                    vnicProfilesInDc,
-                    userId)) {
-                markNicHasNoProfile(invalidNetworkNames, invalidIfaceNames, vmInterface);
-            }
-
+            vnicProfileHelper.updateNicWithVnicProfileForUser(vmInterface, userId);
             vmInterfaceManager.add(vmInterface, compensationContext, false, vm.getVdsGroupCompatibilityVersion());
         }
 
-        auditInvalidInterfaces(invalidNetworkNames, invalidIfaceNames, vm.getName());
-    }
-
-    private void markNicHasNoProfile(List<String> invalidNetworkNames,
-            List<String> invalidIfaceNames,
-            VmNetworkInterface iface) {
-        invalidNetworkNames.add(iface.getNetworkName());
-        invalidIfaceNames.add(iface.getName());
-        iface.setVnicProfileId(null);
-    }
-
-    private void auditInvalidInterfaces(List<String> invalidNetworkNames, List<String> invalidIfaceNames, String vmName) {
-        if (invalidNetworkNames.size() > 0) {
-            AuditLogableBase logable = new AuditLogableBase();
-            logable.addCustomValue("VmName", vmName);
-            logable.addCustomValue("Networks", StringUtils.join(invalidNetworkNames, ','));
-            logable.addCustomValue("Interfaces", StringUtils.join(invalidIfaceNames, ','));
-            AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_SNAPSHOT_VM_INVALID_INTERFACES);
-        }
+        vnicProfileHelper.auditInvalidInterfaces(vm.getName());
     }
 
     /**
@@ -570,13 +538,5 @@ public class SnapshotsManager {
 
     protected VmNetworkInterfaceDao getVmNetworkInterfaceDao() {
         return DbFacade.getInstance().getVmNetworkInterfaceDao();
-    }
-
-    private NetworkDao getNetworkDao() {
-        return DbFacade.getInstance().getNetworkDao();
-    }
-
-    private VnicProfileViewDao getVnicProfileViewDao() {
-        return DbFacade.getInstance().getVnicProfileViewDao();
     }
 }

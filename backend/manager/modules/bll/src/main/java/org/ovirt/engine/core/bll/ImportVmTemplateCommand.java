@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -35,11 +35,9 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -373,16 +371,13 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     }
 
     protected void addVmInterfaces() {
-        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
-        List<VmNetworkInterface> interfaces = getVmTemplate().getInterfaces();
-        List<String> invalidNetworkNames = new ArrayList<String>();
-        List<String> invalidIfaceNames = new ArrayList<String>();
-        Map<String, Network> networksInVdsByName =
-                Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVmTemplate().getVdsGroupId()));
-        List<VnicProfileView> vnicProfilesInDc =
-                getDbFacade().getVnicProfileViewDao().getAllForDataCenter(getStoragePoolId());
+        VnicProfileHelper vnicProfileHelper =
+                new VnicProfileHelper(getVmTemplate().getVdsGroupId(),
+                        getStoragePoolId(),
+                        getVdsGroup().getcompatibility_version(),
+                        AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_INVALID_INTERFACES);
 
-        for (VmNetworkInterface iface : interfaces) {
+        for (VmNetworkInterface iface : getVmTemplate().getInterfaces()) {
             if (iface.getId() == null) {
                 iface.setId(Guid.newGuid());
             }
@@ -396,15 +391,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             nic.setSpeed(iface.getSpeed());
             nic.setType(iface.getType());
 
-            if (!vmInterfaceManager.updateNicWithVnicProfile(iface,
-                    getVdsGroup().getcompatibility_version(),
-                    networksInVdsByName,
-                    vnicProfilesInDc,
-                    getCurrentUser().getUserId())) {
-                invalidNetworkNames.add(iface.getNetworkName());
-                invalidIfaceNames.add(iface.getName());
-            }
-
+            vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser().getUserId());
             nic.setVnicProfileId(iface.getVnicProfileId());
             getVmNicDao().save(nic);
             getCompensationContext().snapshotNewEntity(nic);
@@ -417,7 +404,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             getCompensationContext().snapshotNewEntity(iStat);
         }
 
-        auditInvalidInterfaces(invalidNetworkNames, invalidIfaceNames);
+        vnicProfileHelper.auditInvalidInterfaces(getVmTemplateName());
     }
 
     @Override
@@ -517,10 +504,5 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                     (double)disk.getSizeInGigabytes()));
         }
         return list;
-    }
-
-    @Override
-    protected AuditLogType getAuditLogTypeForInvalidInterfaces() {
-        return AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_INVALID_INTERFACES;
     }
 }

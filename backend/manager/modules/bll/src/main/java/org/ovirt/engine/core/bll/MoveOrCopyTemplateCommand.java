@@ -40,8 +40,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -365,28 +363,5 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             return false;
         }
         return true;
-    }
-
-    /**
-     * Log to audit-log the list of VmInterfaces that are attached to invalid networks. A network is invalid if it is a
-     * Non-VM Network, or if the Network is not in the Cluster
-     *
-     * @param invalidIfaceNames
-     * @param invalidNetworkNames
-     */
-    protected void auditInvalidInterfaces(List<String> invalidNetworkNames, List<String> invalidIfaceNames) {
-        if (invalidNetworkNames.size() > 0) {
-            AuditLogableBase logable = new AuditLogableBase();
-            logable.addCustomValue("Networks", StringUtils.join(invalidNetworkNames, ','));
-            logable.addCustomValue("Interfaces", StringUtils.join(invalidIfaceNames, ','));
-            AuditLogDirector.log(logable, getAuditLogTypeForInvalidInterfaces());
-        }
-    }
-
-    /**
-     * Functionality of this method should be implemented in subclasses
-     */
-    protected AuditLogType getAuditLogTypeForInvalidInterfaces() {
-        return AuditLogType.UNASSIGNED;
     }
 }

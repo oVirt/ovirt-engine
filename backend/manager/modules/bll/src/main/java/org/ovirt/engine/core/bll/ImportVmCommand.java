@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.memory.MemoryImageRemoverOnDataDomain;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -60,10 +61,8 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -1031,38 +1030,22 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
     protected void addVmInterfaces() {
         VmInterfaceManager vmInterfaceManager = new VmInterfaceManager();
-        List<String> invalidNetworkNames = new ArrayList<>();
-        List<String> invalidIfaceNames = new ArrayList<>();
-        Map<String, Network> networksInClusterByName =
-                Entities.entitiesByName(getNetworkDAO().getAllForCluster(getVm().getVdsGroupId()));
-        List<VnicProfileView> vnicProfilesInDc =
-                getDbFacade().getVnicProfileViewDao().getAllForDataCenter(getStoragePoolId());
+
+        VnicProfileHelper vnicProfileHelper =
+                new VnicProfileHelper(getVm().getVdsGroupId(),
+                        getStoragePoolId(),
+                        getVdsGroup().getcompatibility_version(),
+                        AuditLogType.IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES);
 
         for (VmNetworkInterface iface : getVm().getInterfaces()) {
             initInterface(iface);
-            if (!vmInterfaceManager.updateNicWithVnicProfile(iface,
-                    getVdsGroup().getcompatibility_version(),
-                    networksInClusterByName,
-                    vnicProfilesInDc,
-                    getCurrentUser().getUserId())) {
-                markNicHasNoProfile(invalidNetworkNames, invalidIfaceNames, iface);
-            }
-
+            vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser().getUserId());
             vmInterfaceManager.add(iface, getCompensationContext(), getParameters().isImportAsNewEntity(),
                     getVdsGroup().getcompatibility_version());
             macsAdded.add(iface.getMacAddress());
         }
 
-        auditInvalidInterfaces(invalidNetworkNames, invalidIfaceNames);
-    }
-
-
-    private void markNicHasNoProfile(List<String> invalidNetworkNames,
-            List<String> invalidIfaceNames,
-            VmNetworkInterface iface) {
-        invalidNetworkNames.add(iface.getNetworkName());
-        invalidIfaceNames.add(iface.getName());
-        iface.setVnicProfileId(null);
+        vnicProfileHelper.auditInvalidInterfaces(getVmName());
     }
 
     private void initInterface(VmNic iface) {
@@ -1212,11 +1195,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             jobProperties.put(VdcObjectType.VdsGroups.name().toLowerCase(), getVdsGroupName());
         }
         return jobProperties;
-    }
-
-    @Override
-    protected AuditLogType getAuditLogTypeForInvalidInterfaces() {
-        return AuditLogType.IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES;
     }
 
     @Override
