@@ -260,7 +260,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                 CompensationContext context = getCompensationContext();
                 for (StorageDomain domain : domains) {
                     for (StoragePoolIsoMap map : getStoragePoolIsoMap(domain)) {
-                        context.snapshotEntityStatus(map, map.getStatus());
+                        context.snapshotEntityStatus(map);
                         updateStatus(map, status);
                     }
                 }

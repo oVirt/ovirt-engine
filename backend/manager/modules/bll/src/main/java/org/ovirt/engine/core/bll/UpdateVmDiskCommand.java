@@ -526,12 +526,11 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
 
     private void lockImageInDb() {
         final DiskImage diskImage = (DiskImage) getOldDisk();
-        final ImageStatus imgStatus = diskImage.getImageStatus();
 
          TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                getCompensationContext().snapshotEntityStatus(diskImage.getImage(), imgStatus);
+                getCompensationContext().snapshotEntityStatus(diskImage.getImage());
                 getCompensationContext().stateChanged();
                 diskImage.setImageStatus(ImageStatus.LOCKED);
                 ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);

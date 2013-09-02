@@ -153,7 +153,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
             @Override
             public Void runInTransaction() {
-                getCompensationContext().snapshotEntityStatus(snapshot, snapshot.getStatus());
+                getCompensationContext().snapshotEntityStatus(snapshot);
                 getSnapshotDao().updateStatus(
                         getParameters().getSnapshotId(), SnapshotStatus.LOCKED);
                 getCompensationContext().stateChanged();

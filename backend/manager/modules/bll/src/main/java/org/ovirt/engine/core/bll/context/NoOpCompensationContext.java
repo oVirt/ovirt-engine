@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.context;
 import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 
 /**
  * An implementation of COmpensation Context that does nothing - will be used by commands that do not implement
@@ -24,7 +25,11 @@ public class NoOpCompensationContext implements CompensationContext {
     }
 
     @Override
-    public void snapshotEntityStatus(BusinessEntity<?> entity, Enum<?> status) {
+    public <T extends Enum<?>> void  snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity, T status) {
+    }
+
+    @Override
+    public <T extends Enum<?>> void snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity) {
     }
 
     @Override

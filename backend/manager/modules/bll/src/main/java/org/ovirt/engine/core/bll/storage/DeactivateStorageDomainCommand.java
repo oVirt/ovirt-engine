@@ -174,7 +174,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             executeInNewTransaction(new TransactionMethod<Object>() {
                 @Override
                 public Object runInTransaction() {
-                    getCompensationContext().snapshotEntityStatus(getStoragePool(), getStoragePool().getStatus());
+                    getCompensationContext().snapshotEntityStatus(getStoragePool());
                     getStoragePool().setStatus(StoragePoolStatus.Maintenance);
                     getStoragePoolDAO().updateStatus(getStoragePool().getId(), getStoragePool().getStatus());
                     getCompensationContext().stateChanged();
@@ -281,7 +281,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         _newMasterStorageDomainId = newMaster.getId();
                         if (!duringReconstruct) {
                             newMasterMap.setStatus(StorageDomainStatus.Unknown);
-                            getCompensationContext().snapshotEntityStatus(newMasterMap, newMasterMap.getStatus());
+                            getCompensationContext().snapshotEntityStatus(newMasterMap);
                             newMaster.setStatus(StorageDomainStatus.Locked);
                             getStoragePoolIsoMapDAO().updateStatus(newMasterMap.getId(), newMasterMap.getStatus());
                         }

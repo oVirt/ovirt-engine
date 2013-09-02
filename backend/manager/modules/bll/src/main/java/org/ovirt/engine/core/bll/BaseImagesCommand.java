@@ -290,7 +290,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                getCompensationContext().snapshotEntityStatus(diskImage.getImage(), diskImage.getImageStatus());
+                getCompensationContext().snapshotEntityStatus(diskImage.getImage());
                 getCompensationContext().stateChanged();
                 setImageStatus(ImageStatus.LOCKED);
                 return null;

@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.EntityStatusSnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
@@ -96,11 +97,16 @@ public class DefaultCompensationContext implements CompensationContext {
     }
 
     @Override
-    public void snapshotEntityStatus(BusinessEntity<?> entity, Enum<?> status) {
+    public <T extends Enum<?>> void  snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity, T status) {
         EntityStatusSnapshot snapshot = new EntityStatusSnapshot();
         snapshot.setId(entity.getId());
         snapshot.setStatus(status);
         snapshotEntityInMemory(entity, snapshot, SnapshotType.CHANGED_STATUS_ONLY);
+    }
+
+    @Override
+    public <T extends Enum<?>> void snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity) {
+        snapshotEntityStatus(entity, entity.getStatus());
     }
 
     /**

@@ -100,7 +100,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                     new TransactionMethod<Object>() {
                         @Override
                         public Object runInTransaction() {
-                            getCompensationContext().snapshotEntityStatus(getVm().getDynamicData(), getVm().getStatus());
+                            getCompensationContext().snapshotEntityStatus(getVm().getDynamicData());
 
                             // Set the VM to SavingState to lock the VM,to avoid situation of multi VM hibernation.
                             getVm().setStatus(VMStatus.PreparingForHibernate);

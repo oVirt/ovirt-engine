@@ -104,7 +104,7 @@ public class VmTemplateHandler {
         VmTemplate vmTemplate = DbFacade.getInstance().getVmTemplateDao().get(vmTemplateGuid);
         if (vmTemplate != null) {
             if (compensationContext != null) {
-                compensationContext.snapshotEntityStatus(vmTemplate, vmTemplate.getStatus());
+                compensationContext.snapshotEntityStatus(vmTemplate);
             }
             vmTemplate.setStatus(status);
             DbFacade.getInstance().getVmTemplateDao().update(vmTemplate);

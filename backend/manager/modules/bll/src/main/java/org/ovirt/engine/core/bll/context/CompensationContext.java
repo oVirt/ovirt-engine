@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.context;
 import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 
 /**
  * The compensation context contains information needed for compensating failed command executions.
@@ -54,7 +55,16 @@ public interface CompensationContext {
      * @param status
      *            The status to snapshot.
      */
-    public void snapshotEntityStatus(BusinessEntity<?> entity, Enum<?> status);
+    public <T extends Enum<?>> void  snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity, T status);
+
+    /**
+     * Snapshot the entity status only, so that in case of compensation for the entity, the status will be updated to
+     * it's original value.
+     *
+     * @param entity
+     *            The entity for which to save the status snapshot.
+     */
+    public <T extends Enum<?>> void snapshotEntityStatus(BusinessEntityWithStatus<?, T> entity);
 
     /**
      * Signify that the command state had changed and the transaction is about to end, so that the snapshots can

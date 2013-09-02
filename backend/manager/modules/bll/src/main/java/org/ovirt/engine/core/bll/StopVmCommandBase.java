@@ -161,7 +161,7 @@ public abstract class StopVmCommandBase<T extends VmOperationParameterBase> exte
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                getCompensationContext().snapshotEntityStatus(getVm().getDynamicData(),getVm().getStatus());
+                getCompensationContext().snapshotEntityStatus(getVm().getDynamicData());
                 updateVmData(getVm().getDynamicData());
                 getCompensationContext().stateChanged();
                 return null;

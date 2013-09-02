@@ -377,7 +377,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
             public Void runInTransaction() {
                 // Assumption - a snapshot can be locked only if in status OK, so if canDoAction passed
                 // this is the status of the snapshot. In addition the newly added VM is in down status
-                getCompensationContext().snapshotEntityStatus(getSnapshot(), getSnapshot().getStatus());
+                getCompensationContext().snapshotEntityStatus(getSnapshot());
                 getSnapshotDao().updateStatus(sourceSnapshotId, SnapshotStatus.LOCKED);
                 lockVmWithCompensationIfNeeded();
                 getCompensationContext().stateChanged();

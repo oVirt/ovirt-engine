@@ -189,12 +189,11 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
     protected void acquireExclusiveDiskDbLocks() {
         if (isImageExclusiveLockNeeded()) {
             final DiskImage diskImage = (DiskImage) getDisk();
-            final ImageStatus imgStatus = diskImage.getImageStatus();
 
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                 @Override
                 public Void runInTransaction() {
-                    getCompensationContext().snapshotEntityStatus(diskImage.getImage(), imgStatus);
+                    getCompensationContext().snapshotEntityStatus(diskImage.getImage());
                     getCompensationContext().stateChanged();
                     diskImage.setImageStatus(ImageStatus.LOCKED);
                     ImagesHandler.updateImageStatus(diskImage.getImageId(), ImageStatus.LOCKED);
