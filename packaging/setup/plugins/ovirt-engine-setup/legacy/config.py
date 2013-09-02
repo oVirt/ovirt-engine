@@ -125,6 +125,9 @@ class Plugin(plugin.PluginBase):
         legacy_rpmsave = legacy + '.rpmsave'
         legacy_confd = legacy + '.d'
 
+        # yum update renamed it. Here we rename back, so that if a failure
+        # causes a rollback to previous packages, the conf file will already
+        # be in place.
         if os.path.exists(legacy_rpmsave) and not os.path.exists(legacy):
             os.rename(legacy_rpmsave, legacy)
 
@@ -145,6 +148,20 @@ class Plugin(plugin.PluginBase):
                             content=f.read().splitlines(),
                         )
                     )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CLOSEUP,
+        condition=lambda self: self.environment[
+            osetupcons.CoreEnv.UPGRADE_FROM_LEGACY
+        ],
+    )
+    def _closeup(self):
+        legacy = osetupcons.FileLocations.LEGACY_OVIRT_ENGINE_SYSCONFIG
+        legacy_rpmsave = legacy + '.rpmsave'
+
+        # Here we don't need it anymore, and rename back
+        if os.path.exists(legacy) and not os.path.exists(legacy_rpmsave):
+            os.rename(legacy, legacy_rpmsave)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
