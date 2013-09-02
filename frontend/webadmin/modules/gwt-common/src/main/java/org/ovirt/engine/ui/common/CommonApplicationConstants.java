@@ -334,12 +334,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Force Remove")
     String forceRemove();
 
-    @DefaultStringValue("▼")
-    String horizontalSplitTableDown();
-
-    @DefaultStringValue("▲")
-    String horizontalSplitTableUp();
-
     // General
     @DefaultStringValue("Yes")
     String yes();

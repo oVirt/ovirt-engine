@@ -5,14 +5,19 @@
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
 
 	<ui:style>
+		.frame {
+			height: 520px;
+			margin: 5px;
+		}
 		.headers {
 			font-weight: bold;
 		}
 
 		.tables {
-			height: 200px;
+			height: 215px;
 			border-style: solid;
 			border-width: thin;
+			border-color: gray;
 		}
 
 		.buttons {
@@ -21,8 +26,8 @@
 		}
 	</ui:style>
 
-	<g:DockLayoutPanel ui:field="splitLayoutPanel" height="500px" width="100%">
-		<g:north size="230">
+	<g:DockLayoutPanel ui:field="splitLayoutPanel" addStyleNames="{style.frame}">
+		<g:north size="245">
 			<g:FlowPanel>
 				<g:Label ui:field="topTitle" addStyleNames="{style.headers}" />
 				<g:ScrollPanel addStyleNames="{style.tables}">
@@ -34,13 +39,13 @@
 			<g:HorizontalPanel height="100%" width="100%">
 				<g:cell horizontalAlignment="ALIGN_CENTER" verticalAlignment="ALIGN_MIDDLE">
 					<g:HorizontalPanel>
-						<d:SimpleDialogButton ui:field="downButton" addStyleNames="{style.buttons}" />
-						<d:SimpleDialogButton ui:field="upButton" addStyleNames="{style.buttons}" />
+						<d:ShapedButton ui:field="downButton" addStyleNames="{style.buttons}" />
+						<d:ShapedButton ui:field="upButton" addStyleNames="{style.buttons}" />
 					</g:HorizontalPanel>
 				</g:cell>
 			</g:HorizontalPanel>
 		</g:center>
-		<g:south size="230">
+		<g:south size="245">
 			<g:FlowPanel>
 				<g:Label ui:field="bottomTitle" addStyleNames="{style.headers}" />
 				<g:ScrollPanel addStyleNames="{style.tables}">

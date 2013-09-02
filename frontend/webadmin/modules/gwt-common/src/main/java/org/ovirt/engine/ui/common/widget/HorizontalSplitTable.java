@@ -4,8 +4,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Set;
 
-import org.ovirt.engine.ui.common.CommonApplicationConstants;
-import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogButton;
+import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.widget.dialog.ShapedButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -19,7 +19,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Widget;
@@ -33,7 +32,7 @@ public class HorizontalSplitTable extends Composite {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    private static CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
+    private static CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
 
     private final MultiSelectionModel<EntityModel> topSelectionModel;
     private final MultiSelectionModel<EntityModel> bottomSelectionModel;
@@ -44,11 +43,11 @@ public class HorizontalSplitTable extends Composite {
     private UICommand onDownButtonPressed;
     private UICommand onUpButtonPressed;
 
-    @UiField
-    protected SimpleDialogButton downButton;
+    @UiField(provided = true)
+    protected ShapedButton downButton;
 
-    @UiField
-    protected SimpleDialogButton upButton;
+    @UiField(provided = true)
+    protected ShapedButton upButton;
 
     @UiField(provided = true)
     protected EntityModelCellTable<ListModel> topTable;
@@ -72,15 +71,24 @@ public class HorizontalSplitTable extends Composite {
         this.bottomTable = bottomTable;
         this.topTitle = new Label(topTitle);
         this.bottomTitle = new Label(bottomTitle);
+
+        downButton =
+                new ShapedButton(resources.arrowDownNormal(),
+                        resources.arrowDownClick(),
+                        resources.arrowDownOver(),
+                        resources.arrowDownDisabled());
+        upButton =
+                new ShapedButton(resources.arrowUpNormal(),
+                        resources.arrowUpClick(),
+                        resources.arrowUpOver(),
+                        resources.arrowUpDisabled());
+        downButton.setEnabled(false);
+        upButton.setEnabled(false);
+
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
 
         topSelectionModel = (MultiSelectionModel<EntityModel>) topTable.getSelectionModel();
         bottomSelectionModel = (MultiSelectionModel<EntityModel>) bottomTable.getSelectionModel();
-
-        downButton.setText(constants.horizontalSplitTableDown());
-        upButton.setText(constants.horizontalSplitTableUp());
-        downButton.setEnabled(false);
-        upButton.setEnabled(false);
 
         addSelectionHandler(true);
         addSelectionHandler(false);
@@ -90,7 +98,7 @@ public class HorizontalSplitTable extends Composite {
 
     private void addSelectionHandler(boolean topTable) {
         final MultiSelectionModel<EntityModel> selectionModel = getSelectionModel(topTable);
-        final ButtonBase button = getButton(topTable);
+        final ShapedButton button = getButton(topTable);
         selectionModel.addSelectionChangeHandler(new Handler() {
 
             @Override
@@ -133,7 +141,7 @@ public class HorizontalSplitTable extends Composite {
         return top ? topSelectionModel : bottomSelectionModel;
     }
 
-    private ButtonBase getButton(boolean down) {
+    private ShapedButton getButton(boolean down) {
         return down ? downButton : upButton;
     }
 

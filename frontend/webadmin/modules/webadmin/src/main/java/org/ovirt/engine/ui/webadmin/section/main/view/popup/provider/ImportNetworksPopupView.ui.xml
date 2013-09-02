@@ -10,11 +10,11 @@
 		}
 
 		.section {
-			margin-bottom: 30px;
+			margin-bottom: 5px;
 		}
 	</ui:style>
 
-	<d:SimpleDialogPanel ui:field="mainPanel" width="600px" height="650px">
+	<d:SimpleDialogPanel ui:field="mainPanel" width="600px" height="625px">
 		<d:content>
 			<g:VerticalPanel>
 				<g:FlowPanel addStyleNames="{style.section}">
