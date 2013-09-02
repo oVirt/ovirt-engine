@@ -74,6 +74,11 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
             "</tr></table>")
     SafeHtml typeAheadNameDescription(String name, String description);
 
+    @Template("<table style='min-width: 200px; width: 100%; border-bottom: 1px solid #acacac;'><tr>" +
+            "<td>&nbsp</td>" +
+            "</tr></table>")
+    SafeHtml typeAheadEmptyContent();
+
     @Template("<div style='width: {0}; font-style: italic;'>{1}</div>")
     SafeHtml italicFixedWidth(String pxWidth, String text);
 

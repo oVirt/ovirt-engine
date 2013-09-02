@@ -211,11 +211,11 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             }
         } else {
             // something has been typed inside - validate
-            T newData = asEntity(providedText);
-            if (newData != null) {
+            try {
+                T newData = asEntity(providedText);
                 // correct provided - use it
                 setValue(newData);
-            } else {
+            } catch (IllegalArgumentException e) {
                 // incorrect - return to previous one
                 asSuggestBox().setText(renderer.getReplacementString(getValue()));
             }
@@ -225,14 +225,10 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     @Override
     protected T asEntity(String provided) {
         if (provided == null) {
-            return null;
+            throw new IllegalArgumentException("Only non-null arguments are accepted"); //$NON-NLS-1$
         }
 
         for (T data : acceptableValues) {
-            if (data == null) {
-                continue;
-            }
-
             String expected = renderer.getReplacementString(data);
             if (expected == null) {
                 continue;
@@ -243,7 +239,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             }
         }
 
-        return null;
+        throw new IllegalArgumentException("The provided value is not acceptable: '" + provided + "'"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public void setValue(T value) {
@@ -427,7 +423,11 @@ class EnterIgnoringNativePreviewHandler<T> implements NativePreviewHandler {
             Suggestion currentSelection = listModelTypeAheadListBox.getCurrentSelection();
             if (currentSelection != null) {
                 String replacementString = currentSelection.getReplacementString();
-                listModelTypeAheadListBox.setValue(listModelTypeAheadListBox.asEntity(replacementString), true);
+                try {
+                    listModelTypeAheadListBox.setValue(listModelTypeAheadListBox.asEntity(replacementString), true);
+                } catch (IllegalArgumentException e) {
+                    // do not set the value if it is not a correct one
+                }
             }
 
             listModelTypeAheadListBox.hideSuggestions();

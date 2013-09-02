@@ -63,6 +63,7 @@ public class ProfileInstanceTypeEditor extends Composite implements IsEditor<Tak
         // flush
         VnicProfileView profile = (VnicProfileView) profileEditor.asEditor().getSubEditor().getValue();
         vnicIntsanceType.getNetworkInterface().setVnicProfileId(profile != null ? profile.getId() : null);
+        vnicIntsanceType.getNetworkInterface().setNetworkName(profile != null ? profile.getNetworkName() : null);
         return vnicIntsanceType;
     }
 
