@@ -9,12 +9,13 @@
 select fn_db_add_column('roles', 'app_mode', 'INTEGER');
 
 UPDATE roles
-SET app_mode = (CASE WHEN name in ('UserRole', 'PowerUserRole', 'DataCenterAdmin', 'StorageAdmin', 'UserVmManager', 'VmPoolAdmin', 'TemplateAdmin', 'TemplateUser', 'QuotaConsumer', 'TemplateOwner', 'DiskOperator', 'DiskCreator', 'VmCreator', 'TemplateCreator', 'VnicProfileUser')
+SET app_mode = (CASE WHEN name in ('UserRole', 'PowerUserRole', 'DataCenterAdmin', 'StorageAdmin', 'UserVmManager', 'VmPoolAdmin', 'TemplateAdmin', 'TemplateUser', 'QuotaConsumer', 'TemplateOwner', 'DiskOperator', 'DiskCreator', 'VmCreator', 'TemplateCreator', 'VnicProfileUser', 'UserTemplateBasedVm')
 				THEN 1
 				WHEN name='GlusterAdmin'
 				THEN 2
 				WHEN name in ('ClusterAdmin', 'SuperUser', 'HostAdmin', 'NetworkAdmin', 'ExternalEventsCreator', 'ExternalTasksCreator')
 				THEN 255
+				ELSE 255
 				END);
 
 -- Create the constraint
