@@ -19,8 +19,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
@@ -85,7 +85,7 @@ public class BackendUsersResourceBase extends AbstractBackendCollectionResource<
             List<String> domains = getBackendCollection(
                String.class,
                VdcQueryType.GetDomainList,
-               new VdcQueryParametersBase());
+               new GetDomainListParameters());
             for (String domain :domains) {
                 Guid domainId = new Guid(domain.getBytes(), true);
                 if (domainId.toString().equals(user.getDomain().getId())) {
