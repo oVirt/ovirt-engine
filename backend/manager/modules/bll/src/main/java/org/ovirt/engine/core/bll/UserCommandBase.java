@@ -8,19 +8,10 @@ import org.ovirt.engine.core.bll.adbroker.LdapFactory;
 import org.ovirt.engine.core.bll.adbroker.LdapSearchByIdParameters;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.AdElementParametersBase;
-import org.ovirt.engine.core.common.action.PermissionsOperationsParametes;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.LdapUser;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.users.VdcUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -98,42 +89,6 @@ public abstract class UserCommandBase<T extends AdElementParametersBase> extends
             DbFacade.getInstance().getDbUserDao().update(dbUser);
         }
         return dbUser;
-    }
-
-    /**
-     * Process on changing VdcRole to user/group. First remove on current permissions since them not relevant anymore.
-     * Second if new user/group role are User or PowerUser - add to it default permission with specific role.
-     */
-    public static void ProcessAdElementDefaultRole(Guid adElementId, String userName) {
-        SearchParameters p = new SearchParameters(String.format("user:name = %1$s or usrname = %2$s", userName,
-                userName), SearchType.DBUser);
-        p.setMaxCount(Integer.MAX_VALUE);
-        List<IVdcQueryable> elements = Backend.getInstance()
-                .runInternalQuery(VdcQueryType.Search, p).getReturnValue();
-        DbUser adElement;
-        if (elements != null && elements.size() > 0
-                && (adElement = (DbUser) ((elements.get(0) instanceof DbUser) ? elements.get(0) : null)) != null) {
-            for (permissions permission : DbFacade.getInstance().getPermissionDao().getAllForAdElement(adElementId)) {
-                Backend.getInstance().runInternalAction(VdcActionType.RemovePermission,
-                        new PermissionsOperationsParametes(permission));
-            }
-        }
-    }
-
-    public static boolean CanAttachVmTo(Guid vmId, java.util.ArrayList<String> message) {
-        boolean returnValue = true;
-        VmStatic vmStatic = DbFacade.getInstance().getVmStaticDao().get(vmId);
-        if (vmStatic == null) {
-            message.add(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND.toString());
-            returnValue = false;
-        }
-
-        if (DbFacade.getInstance().getVmPoolDao().getVmPoolMapByVmGuid(vmId) != null) {
-            returnValue = false;
-            message.add(VdcBllMessages.USER_CANNOT_ATTACH_TO_VM_IN_POOL.toString());
-        }
-
-        return returnValue;
     }
 
     @Override

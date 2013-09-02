@@ -127,9 +127,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot create new VM. The disk image is being copied. Please wait for the Copy operation to complete.")
     String TEMPLATE_IMAGE_LOCKED();
 
-    @DefaultStringValue("Cannot attach User to a VM that belongs to a VM-Pool. ")
-    String USER_CANNOT_ATTACH_TO_VM_IN_POOL();
-
     @DefaultStringValue("Cannot remove User attached to VM-Pool.Remove User from VM-Pool first by:\n-Going to 'VM-Pool(s)' window.\n-Selecting the VM-Pool.\n-Clicking on 'Manage Pool Users' from the menu bar.")
     String USER_CANNOT_REMOVE_USER_ATTACHED_POOL();
 
