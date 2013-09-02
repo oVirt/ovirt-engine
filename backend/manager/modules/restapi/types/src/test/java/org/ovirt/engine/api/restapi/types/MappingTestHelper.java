@@ -1,16 +1,21 @@
 package org.ovirt.engine.api.restapi.types;
 
 import java.lang.reflect.Method;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import org.ovirt.engine.api.restapi.utils.GuidUtils;
 
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class MappingTestHelper {
 
     private static final String SET_ROOT = "set";
     private static final String GET_ROOT = "get";
+
+    private static final Log logger = LogFactory.getLog(MappingTestHelper.class);
 
     /**
      * Populate a JAXB model type by recursively walking element tree and
@@ -44,7 +49,11 @@ public class MappingTestHelper {
                     random(method, model);
                 } else if (takesEnum(method)) {
                     shuffle(method, model);
-                } else {
+                }
+                else if(takesBigDecimal(method)) {
+                    populateBigDecimal(method,model);
+                }
+                else {
                     descend(method, model, scope(seen));
                 }
             } else if (isGetter(method) && returnsList(method)) {
@@ -54,12 +63,21 @@ public class MappingTestHelper {
         return model;
     }
 
+    private static void populateBigDecimal(Method method, Object model) {
+        try {
+            method.invoke(model, new BigDecimal(rand(100)));
+        } catch (Exception e) {
+           logger.error("Failed to populate big decimal in " + method.getDeclaringClass() + "." + method.getName(),e);
+        }
+    }
+
     private static Object instantiate(Class<?> clz) {
         Object model = null;
         try {
             model = clz.newInstance();
         } catch (Exception e) {
             // should never occur, trivial instantiation
+            logger.error("Failed to instantiate class " + clz.getSimpleName(),e);
         }
         return model;
     }
@@ -169,6 +187,10 @@ public class MappingTestHelper {
     private static boolean takesBoolean(Method m) {
         return Boolean.TYPE.equals(m.getParameterTypes()[0])
                 || Boolean.class.equals(m.getParameterTypes()[0]);
+    }
+
+    private static boolean takesBigDecimal(Method m) {
+        return BigDecimal.class.equals(m.getParameterTypes()[0]);
     }
 
     private static boolean takesEnum(Method m) {
