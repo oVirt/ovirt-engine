@@ -15,7 +15,7 @@ import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 
-public class VdsDynamic implements BusinessEntity<Guid> {
+public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
     private static final long serialVersionUID = -6010035855157006935L;
 
     private Guid id;
@@ -238,10 +238,12 @@ public class VdsDynamic implements BusinessEntity<Guid> {
         this.physical_mem_mb = value;
     }
 
+    @Override
     public VDSStatus getStatus() {
         return status;
     }
 
+    @Override
     public void setStatus(VDSStatus value) {
         this.status = value;
     }

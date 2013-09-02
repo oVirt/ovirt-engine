@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class Image implements BusinessEntity<Guid> {
+public class Image implements BusinessEntityWithStatus<Guid, ImageStatus> {
 
     private static final long serialVersionUID = -7058426105212449257L;
 
@@ -120,10 +120,12 @@ public class Image implements BusinessEntity<Guid> {
         this.diskId = diskId;
     }
 
+    @Override
     public ImageStatus getStatus() {
         return status;
     }
 
+    @Override
     public void setStatus(ImageStatus status) {
         this.status = status;
     }

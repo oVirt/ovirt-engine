@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities.gluster;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
-import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -20,7 +20,7 @@ import org.ovirt.engine.core.compat.Guid;
  * @see GlusterVolumeEntity
  * @see GlusterBrickStatus
  */
-public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntity<Guid>, GlusterTaskSupport {
+public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntityWithStatus<Guid, GlusterStatus>, GlusterTaskSupport {
     private static final long serialVersionUID = 7119439284741452278L;
 
     @NotNull(message = "VALIDATION.GLUSTER.BRICK.ID.NOT_NULL", groups = { RemoveBrick.class })
@@ -82,10 +82,12 @@ public class GlusterBrickEntity extends IVdcQueryable implements BusinessEntity<
         return brickDirectory;
     }
 
+    @Override
     public GlusterStatus getStatus() {
         return status;
     }
 
+    @Override
     public void setStatus(GlusterStatus status) {
         this.status = status;
     }

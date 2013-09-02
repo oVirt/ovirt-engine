@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
+public class StoragePoolIsoMap implements BusinessEntityWithStatus<StoragePoolIsoMapId, StorageDomainStatus> {
 
     private static final long serialVersionUID = -2829958589095415567L;
 
@@ -48,6 +48,7 @@ public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
 
     private Integer persistentStorageDomainStatus;
 
+    @Override
     public StorageDomainStatus getStatus() {
         if (persistentStorageDomainStatus == null) {
             return null;
@@ -55,6 +56,7 @@ public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
         return StorageDomainStatus.forValue(persistentStorageDomainStatus);
     }
 
+    @Override
     public void setStatus(StorageDomainStatus value) {
         if (value == null) {
             persistentStorageDomainStatus = null;

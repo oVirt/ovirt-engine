@@ -1,10 +1,10 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Guid;
 
-public class NetworkCluster extends IVdcQueryable implements BusinessEntity<NetworkClusterId> {
+public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithStatus<NetworkClusterId, NetworkStatus> {
     private static final long serialVersionUID = -4900811332744926545L;
 
     private NetworkClusterId id;
@@ -67,10 +67,12 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntity<Netw
         id.setNetworkId(value);
     }
 
+    @Override
     public NetworkStatus getStatus() {
         return this.status;
     }
 
+    @Override
     public void setStatus(NetworkStatus value) {
         this.status = value;
     }

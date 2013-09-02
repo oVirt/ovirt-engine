@@ -16,7 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
  * <li>Any additional devices which were relevant</li>
  * </ul>
  */
-public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
+public class Snapshot extends IVdcQueryable implements BusinessEntityWithStatus<Guid, Snapshot.SnapshotStatus> {
 
     /**
      * Needed for java serialization/deserialization mechanism.
@@ -131,10 +131,12 @@ public class Snapshot extends IVdcQueryable implements BusinessEntity<Guid> {
         this.id = id;
     }
 
+    @Override
     public SnapshotStatus getStatus() {
         return status;
     }
 
+    @Override
     public void setStatus(SnapshotStatus status) {
         this.status = status;
     }

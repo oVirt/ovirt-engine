@@ -14,7 +14,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
-import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.utils.ListUtils;
@@ -38,7 +38,7 @@ import org.ovirt.engine.core.compat.StringHelper;
  * @see GlusterVolumeOptionEntity
  * @see AccessProtocol
  */
-public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity<Guid>, GlusterTaskSupport {
+public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntityWithStatus<Guid, GlusterStatus>, GlusterTaskSupport {
     private static final long serialVersionUID = 2355384696827317277L;
 
     @NotNull(message = "VALIDATION.GLUSTER.VOLUME.ID.NOT_NULL", groups = { RemoveEntity.class })
@@ -141,10 +141,12 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         setVolumeType(GlusterVolumeType.fromValue(volumeType));
     }
 
+    @Override
     public GlusterStatus getStatus() {
         return status;
     }
 
+    @Override
     public void setStatus(GlusterStatus status) {
         this.status = status;
     }

@@ -7,7 +7,7 @@ import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityG
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
+public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comparable<VmDynamic> {
     private static final long serialVersionUID = 7789482445091432555L;
 
     private Guid id;
@@ -275,10 +275,12 @@ public class VmDynamic implements BusinessEntity<Guid>, Comparable<VmDynamic> {
         this.runOnVds = value;
     }
 
+    @Override
     public VMStatus getStatus() {
         return this.status;
     }
 
+    @Override
     public void setStatus(VMStatus value) {
         this.status = value;
     }

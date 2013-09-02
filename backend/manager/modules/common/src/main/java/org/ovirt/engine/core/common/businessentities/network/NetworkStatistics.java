@@ -1,13 +1,13 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-import org.ovirt.engine.core.common.businessentities.BusinessEntity;
+import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * <code>NetworkStatistics</code>
  *
  */
-public abstract class NetworkStatistics implements BusinessEntity<Guid> {
+public abstract class NetworkStatistics implements BusinessEntityWithStatus<Guid, InterfaceStatus> {
     private static final long serialVersionUID = -748737255583275169L;
 
     private Guid id;
@@ -47,6 +47,7 @@ public abstract class NetworkStatistics implements BusinessEntity<Guid> {
      * @param status
      *            the status
      */
+    @Override
     public void setStatus(InterfaceStatus status) {
         this.status = status;
     }
@@ -56,6 +57,7 @@ public abstract class NetworkStatistics implements BusinessEntity<Guid> {
      *
      * @return the status
      */
+    @Override
     public InterfaceStatus getStatus() {
         return status;
     }
