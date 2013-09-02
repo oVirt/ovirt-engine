@@ -16,6 +16,6 @@ public class SetGlusterVolumeOptionVDSCommand<P extends GlusterVolumeOptionVDSPa
                 getBroker().glusterVolumeSet(getParameters().getVolumeName(),
                         getParameters().getVolumeOption().getKey(),
                         getParameters().getVolumeOption().getValue());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

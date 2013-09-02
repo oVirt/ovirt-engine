@@ -37,7 +37,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
                 getParameters().getImageId().toString());
         DiskImage di = null;
         try {
-            ProceedProxyReturnValue();
+            proceedProxyReturnValue();
             di = buildImageEntity(imageInfoReturn.mInfo);
         } catch (java.lang.Exception e) {
             PrintReturnValue();
@@ -55,7 +55,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
     }
 
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         if (returnStatus != VdcBllErrors.Done) {
             log.errorFormat(

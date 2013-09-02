@@ -35,7 +35,7 @@ public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParam
                 getTransportTypeArr(volume));
 
         // Handle errors if any
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
 
         if(getVDSReturnValue().getSucceeded()) {
             // set the volume updated with id as the return value

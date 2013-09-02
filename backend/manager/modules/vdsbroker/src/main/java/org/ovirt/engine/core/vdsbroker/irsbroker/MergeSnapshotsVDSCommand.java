@@ -21,7 +21,7 @@ public class MergeSnapshotsVDSCommand<P extends MergeSnapshotsVDSCommandParamete
                                                   getParameters().getImageId2().toString(),
                                                   String.valueOf(getParameters().getPostZero()).toLowerCase());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
 
         Guid taskID = new Guid(uuidReturn.mUuid);
 

@@ -30,7 +30,7 @@ public class GetVmsInfoVDSCommand<P extends GetVmsInfoVDSCommandParameters> exte
         }
 
         _vmsInfo = getIrsProxy().getVmsInfo(storagePoolId, storageDomainId, ids.toArray(new String[] {}));
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
 
         Map<String, Object> xmlRpcStruct = _vmsInfo.vmlist;
         java.util.ArrayList<String> retVal = new java.util.ArrayList<String>();

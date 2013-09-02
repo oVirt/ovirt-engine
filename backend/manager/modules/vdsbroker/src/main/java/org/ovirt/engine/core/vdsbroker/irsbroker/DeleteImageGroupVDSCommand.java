@@ -19,7 +19,7 @@ public class DeleteImageGroupVDSCommand<P extends DeleteImageGroupVDSCommandPara
                                                String.valueOf(getParameters().getPostZeros()),
                                                String.valueOf(getParameters().getForceDelete()).toLowerCase());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
 
         Guid taskID = new Guid(uuidReturn.mUuid);
 

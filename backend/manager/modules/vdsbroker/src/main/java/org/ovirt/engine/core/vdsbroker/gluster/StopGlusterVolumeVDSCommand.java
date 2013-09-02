@@ -12,6 +12,6 @@ public class StopGlusterVolumeVDSCommand<P extends GlusterVolumeActionVDSParamet
     protected void ExecuteVdsBrokerCommand() {
         status = getBroker().glusterVolumeStop(getParameters().getVolumeName(), getParameters().isForceAction());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

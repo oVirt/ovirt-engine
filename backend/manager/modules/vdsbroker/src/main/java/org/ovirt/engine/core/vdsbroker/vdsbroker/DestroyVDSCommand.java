@@ -18,6 +18,6 @@ public class DestroyVDSCommand<P extends DestroyVmVDSCommandParameters> extends 
         } else {
             status = getBroker().destroy(getParameters().getVmId().toString());
         }
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

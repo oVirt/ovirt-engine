@@ -18,7 +18,7 @@ public class ExtendVmDiskSizeVDSCommand <P extends ExtendVmDiskSizeVDSCommandPar
                 String.valueOf(getParameters().getNewSize())
         );
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
 
         if (getVDSReturnValue().getSucceeded()) {
             setReturnValue(result.getImageSize());

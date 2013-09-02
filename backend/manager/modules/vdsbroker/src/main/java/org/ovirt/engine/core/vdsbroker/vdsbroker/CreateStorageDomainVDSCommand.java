@@ -16,6 +16,6 @@ public class CreateStorageDomainVDSCommand<P extends CreateStorageDomainVDSComma
                         getParameters().getArgs(),
                         getParameters().getStorageDomain().getStorageDomainType().getValue(),
                         getParameters().getStorageDomain().getStorageFormat().getValue());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

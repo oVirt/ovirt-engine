@@ -12,7 +12,7 @@ public class GetDevicesVisibilityVDSCommand<P extends GetDevicesVisibilityVDSCom
 
     protected void ExecuteVdsBrokerCommand() {
         result = getBroker().getDevicesVisibility(getParameters().getDevicesIds());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         setReturnValue(result.getDevicesVisibilityResult());
     }
 

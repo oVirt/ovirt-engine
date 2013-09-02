@@ -23,18 +23,18 @@ public class ExtendStorageDomainVDSCommand<P extends ExtendStorageDomainVDSComma
                 getIrsProxy().extendStorageDomain(storageDomainId, storagePoolId, deviceArray, isForce) :
                 getIrsProxy().extendStorageDomain(storageDomainId, storagePoolId, deviceArray);
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case DeviceNotFound:
             getVDSReturnValue().setSucceeded(false);
             break;
         default:
-            super.ProceedProxyReturnValue();
+            super.proceedProxyReturnValue();
             initializeVdsError(returnStatus);
             break;
         }

@@ -13,7 +13,7 @@ public class GetVmStatsVDSCommand<P extends GetVmStatsVDSCommandParameters> exte
     @Override
     protected void ExecuteVdsBrokerCommand() {
         mVmListReturn = getBroker().getVmStats(getParameters().getVmId().toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         setReturnValue(createVmInternalData(mVmListReturn.mInfoList[0]));
     }
 }

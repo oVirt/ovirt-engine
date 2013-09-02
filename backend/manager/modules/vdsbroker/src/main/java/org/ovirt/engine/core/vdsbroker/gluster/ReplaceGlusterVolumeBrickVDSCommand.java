@@ -17,6 +17,6 @@ public class ReplaceGlusterVolumeBrickVDSCommand<P extends ReplaceGlusterVolumeB
                             getParameters().getNewBrickDir());
             break;
         }
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

@@ -15,7 +15,7 @@ public class ActivateStorageDomainVDSCommand<P extends ActivateStorageDomainVDSC
     protected void ExecuteIrsBrokerCommand() {
         _result = getIrsProxy().activateStorageDomain(getParameters().getStorageDomainId().toString(),
                 getParameters().getStoragePoolId().toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         setReturnValue(_result.mStorageStatus);
     }
 

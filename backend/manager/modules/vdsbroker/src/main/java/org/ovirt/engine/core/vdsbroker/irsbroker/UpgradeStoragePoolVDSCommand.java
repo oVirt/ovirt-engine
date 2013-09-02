@@ -17,7 +17,7 @@ public class UpgradeStoragePoolVDSCommand<P extends UpgradeStoragePoolVDSCommand
 
         log.infoFormat("Upgrading storage pool {0} to version {1}", storagePoolId, targetVersion);
         status = getIrsProxy().upgradeStoragePool(storagePoolId, targetVersion);
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 
     final private static Log log = LogFactory.getLog(UpgradeStoragePoolVDSCommand.class);

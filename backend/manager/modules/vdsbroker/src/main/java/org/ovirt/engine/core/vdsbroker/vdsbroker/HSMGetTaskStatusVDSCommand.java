@@ -17,12 +17,12 @@ public class HSMGetTaskStatusVDSCommand<P extends HSMTaskGuidBaseVDSCommandParam
     @Override
     protected void ExecuteVdsBrokerCommand() {
         _result = getBroker().getTaskStatus(getParameters().getTaskId().toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         setReturnValue(ParseTaskStatus(_result.TaskStatus));
     }
 
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case UnknownTask:
@@ -30,7 +30,7 @@ public class HSMGetTaskStatusVDSCommand<P extends HSMTaskGuidBaseVDSCommandParam
             break;
 
         default:
-            super.ProceedProxyReturnValue();
+            super.proceedProxyReturnValue();
             initializeVdsError(returnStatus);
             break;
         }

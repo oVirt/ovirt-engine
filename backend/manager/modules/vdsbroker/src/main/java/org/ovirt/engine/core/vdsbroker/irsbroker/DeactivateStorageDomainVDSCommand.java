@@ -14,6 +14,6 @@ public class DeactivateStorageDomainVDSCommand<P extends DeactivateStorageDomain
                 getParameters().getStoragePoolId().toString(),
                 getParameters().getMasterStorageDomainId().toString(),
                 getParameters().getMasterVersion());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

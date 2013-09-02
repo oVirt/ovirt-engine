@@ -11,11 +11,11 @@ public class HSMClearTaskVDSCommand<P extends HSMTaskGuidBaseVDSCommandParameter
     @Override
     protected void ExecuteVdsBrokerCommand() {
         status = getBroker().clearTask(getParameters().getTaskId().toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
 
         switch (returnStatus) {
@@ -27,6 +27,6 @@ public class HSMClearTaskVDSCommand<P extends HSMTaskGuidBaseVDSCommandParameter
             getVDSReturnValue().setSucceeded(false);
             return;
         }
-        super.ProceedProxyReturnValue();
+        super.proceedProxyReturnValue();
     }
 }

@@ -29,7 +29,7 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
     @Override
     protected void ExecuteIrsBrokerCommand() {
         _result = getIrsProxy().getStoragePoolInfo(getParameters().getStoragePoolId().toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         StoragePool sp = VdsBrokerObjectsBuilder.buildStoragePool(_result.mStoragePoolInfo);
         Guid masterId = Guid.Empty;
         if (_result.mStoragePoolInfo.containsKey("master_uuid")) {

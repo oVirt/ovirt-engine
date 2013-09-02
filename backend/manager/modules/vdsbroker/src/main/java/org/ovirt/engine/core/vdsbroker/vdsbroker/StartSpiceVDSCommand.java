@@ -17,6 +17,6 @@ public class StartSpiceVDSCommand<P extends StartSpiceVDSCommandParameters> exte
     @Override
     protected void ExecuteVdsBrokerCommand() {
         status = getBroker().startSpice(_ip, _port, _ticket);
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

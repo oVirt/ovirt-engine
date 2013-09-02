@@ -16,7 +16,7 @@ public class HSMGetStorageDomainsListVDSCommand<P extends HSMGetStorageDomainsLi
         _result = getBroker().getStorageDomainsList(getParameters().getStoragePoolId().toString(),
                 getParameters().getStorageDomainType().getValue(), getParameters().getStorageType().getValue(),
                 ((getParameters().getPath()) != null) ? getParameters().getPath() : "");
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
 
         java.util.ArrayList<Guid> domains = new java.util.ArrayList<Guid>();
         for (String domain : _result.mStorageDomainList) {

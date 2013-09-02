@@ -14,6 +14,6 @@ public class StartRebalanceGlusterVolumeVDSCommand<P extends GlusterVolumeRebala
                         getParameters().isFixLayoutOnly(),
                         getParameters().isForceAction());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

@@ -14,7 +14,7 @@ public class DestroyStoragePoolVDSCommand<P extends IrsBaseVDSCommandParameters>
         VDS vds = DbFacade.getInstance().getVdsDao().get(this.getCurrentIrsProxyData().getCurrentVdsId());
         status = getIrsProxy().destroyStoragePool(getParameters().getStoragePoolId().toString(),
                 vds.getVdsSpmId(), getParameters().getStoragePoolId().toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         RemoveIrsProxy();
     }
 }

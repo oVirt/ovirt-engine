@@ -23,6 +23,6 @@ public class GetGlusterHookContentVDSCommand<P extends GlusterHookVDSParameters>
                         getParameters().getHookStage().toString(),
                         getParameters().getHookName());
         setReturnValue(returnValue.getHookcontent());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

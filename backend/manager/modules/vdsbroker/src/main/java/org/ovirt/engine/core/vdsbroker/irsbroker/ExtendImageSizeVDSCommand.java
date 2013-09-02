@@ -22,7 +22,7 @@ public class ExtendImageSizeVDSCommand<P extends ExtendImageSizeVDSCommandParame
                 getParameters().getImageId().toString(),
                 String.valueOf(getParameters().getNewSize()));
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
 
         getVDSReturnValue().setCreationInfo(
                 new AsyncTaskCreationInfo(Guid.createGuidFromString(result.mUuid),

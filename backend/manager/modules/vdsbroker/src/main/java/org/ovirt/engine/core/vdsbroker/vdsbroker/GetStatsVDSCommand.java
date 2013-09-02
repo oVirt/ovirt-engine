@@ -22,7 +22,7 @@ public class GetStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> e
     @Override
     protected void ExecuteVdsBrokerCommand() {
         infoReturn = getBroker().getVdsStats();
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         if (getVds().getInterfaces().isEmpty()) {
             List<VdsNetworkInterface> interfaces = DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(
                     getVds().getId());

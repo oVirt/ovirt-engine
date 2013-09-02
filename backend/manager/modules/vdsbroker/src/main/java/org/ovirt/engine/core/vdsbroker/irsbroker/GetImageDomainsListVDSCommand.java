@@ -18,7 +18,7 @@ public class GetImageDomainsListVDSCommand<P extends GetImageDomainsListVDSComma
     protected void ExecuteIrsBrokerCommand() {
         _result = getIrsProxy().getImageDomainsList(getParameters().getStoragePoolId().toString(),
                 getParameters().getImageGroupId().toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         java.util.ArrayList<Guid> tempRetValue = new java.util.ArrayList<Guid>(_result.mStorageDomainGuidList.length);
         for (int i = 0; i < _result.mStorageDomainGuidList.length; i++) {
             tempRetValue.add(new Guid(_result.mStorageDomainGuidList[i]));
@@ -37,7 +37,7 @@ public class GetImageDomainsListVDSCommand<P extends GetImageDomainsListVDSComma
     }
 
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case GetStorageDomainListError:
@@ -45,7 +45,7 @@ public class GetImageDomainsListVDSCommand<P extends GetImageDomainsListVDSComma
             getVDSReturnValue().setSucceeded(false);
             break;
         default:
-            super.ProceedProxyReturnValue();
+            super.proceedProxyReturnValue();
             break;
         }
     }

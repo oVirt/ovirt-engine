@@ -16,7 +16,7 @@ public class DoesImageExistVDSCommand<P extends GetImageInfoVDSCommandParameters
                 getParameters().getImageId().toString());
 
         try {
-            ProceedProxyReturnValue();
+            proceedProxyReturnValue();
         }
 
         // NOTE: we should have been catching an IRSErrorImageNotExistException,

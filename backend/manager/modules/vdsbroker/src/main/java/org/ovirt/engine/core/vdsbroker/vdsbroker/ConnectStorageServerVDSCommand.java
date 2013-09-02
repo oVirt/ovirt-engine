@@ -31,14 +31,14 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
     protected void ExecuteVdsBrokerCommand() {
         _result = getBroker().connectStorageServer(getParameters().getStorageType().getValue(),
                 getParameters().getStoragePoolId().toString(), BuildStructFromConnectionListObject());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         Map<String, String> returnValue = _result.convertToStatusList();
         setReturnValue(returnValue);
         logFailedStorageConnections(returnValue);
     }
 
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case StorageServerConnectionRefIdAlreadyInUse:
@@ -49,7 +49,7 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
             getVDSReturnValue().setSucceeded(false);
             throw outEx;
         default:
-            super.ProceedProxyReturnValue();
+            super.proceedProxyReturnValue();
             break;
         }
     }

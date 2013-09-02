@@ -24,7 +24,7 @@ public class HotPlugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends Vd
     protected void ExecuteVdsBrokerCommand() {
         init();
         status = getBroker().hotPlugNic(struct);
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 
     protected void init() {

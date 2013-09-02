@@ -23,7 +23,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
     @Override
     protected void ExecuteVdsBrokerCommand() {
         _result = getBroker().getAllTasksStatuses();
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         setReturnValue(ParseTaskStatusList(_result.TaskStatusList));
     }
 
@@ -36,7 +36,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
             UpdateReturnStatus(taskStatus);
 
             try {
-                ProceedProxyReturnValue();
+                proceedProxyReturnValue();
             }
 
             catch (RuntimeException ex) {
@@ -97,8 +97,8 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
     }
 
     // overrides the value of the status that is being checked in the
-    // ProceedProxyReturnValue method.
-    // Used when multiple calls to ProceedProxyReturnValue are needed within
+    // proceedProxyReturnValue method.
+    // Used when multiple calls to proceedProxyReturnValue are needed within
     // the same VDSCommand on different status values, for example, a regular
     // verb
     // execution status and an asynchronous task status.

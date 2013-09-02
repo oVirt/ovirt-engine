@@ -11,6 +11,6 @@ public class FenceSpmStorageVDSCommand<P extends FenceSpmStorageVDSCommandParame
     protected void ExecuteVdsBrokerCommand() {
         status = getBroker().fenceSpmStorage(getParameters().getStoragePoolId().toString(),
                 getParameters().getPrevId(), getParameters().getPrevLVER());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

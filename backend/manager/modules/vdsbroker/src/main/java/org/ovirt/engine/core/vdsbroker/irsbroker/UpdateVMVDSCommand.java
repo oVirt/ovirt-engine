@@ -25,7 +25,7 @@ public class UpdateVMVDSCommand<P extends UpdateVMVDSCommandParameters> extends 
             status = getIrsProxy().updateVMInImportExport(getParameters().getStoragePoolId().toString(), vms,
                     getParameters().getStorageDomainId().toString());
         }
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 
     private Map[] BuildVmsStuctListFromParameters() {
@@ -51,7 +51,7 @@ public class UpdateVMVDSCommand<P extends UpdateVMVDSCommandParameters> extends 
     }
 
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case Done:

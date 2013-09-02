@@ -14,20 +14,20 @@ public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommand
         status = getBroker().connectStoragePool(getParameters().getStoragePoolId().toString(),
                 getParameters().getvds_spm_id(), getParameters().getStoragePoolId().toString(),
                 getParameters().getMasterDomainId().toString(), getParameters().getMasterVersion());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 
     // dont throw exception on errors except StoragePoolMasterNotFound for
     // master domain failure treatment
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case Done:
         case StoragePoolMasterNotFound:
         case StoragePoolTooManyMasters:
         case StoragePoolWrongMaster:
-            super.ProceedProxyReturnValue();
+            super.proceedProxyReturnValue();
             break;
         case ReleaseLockFailure:
         case AcquireHostIdFailure:

@@ -30,7 +30,7 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
                     getParameters().getRecoveryMode().getValue(),
                     String.valueOf(getParameters().getSCSIFencing()).toLowerCase(),
                     Config.<Integer> GetValue(ConfigValues.MaxNumberOfHostsInStoragePool), getParameters().getStoragePoolFormatType().getValue());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         Guid taskId = new Guid(_result.mUuid);
 
         AsyncTaskStatus taskStatus;

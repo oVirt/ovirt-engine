@@ -37,7 +37,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
         int storageType = getParameters().getStorageType().getValue();
         _result = getBroker().getDeviceList(storageType);
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         setReturnValue(ParseLUNList(_result.lunList));
     }
 

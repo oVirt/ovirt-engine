@@ -16,6 +16,6 @@ public class ResetGlusterVolumeOptionsVDSCommand<P extends ResetGlusterVolumeOpt
                 getBroker().glusterVolumeReset(getParameters().getVolumeName(),
                         (getParameters().getVolumeOption() == null) ? "" : getParameters().getVolumeOption().getKey(),
                         getParameters().isforceAction());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

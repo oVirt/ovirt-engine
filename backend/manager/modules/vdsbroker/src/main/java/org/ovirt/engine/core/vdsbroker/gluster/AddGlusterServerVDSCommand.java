@@ -12,6 +12,6 @@ public class AddGlusterServerVDSCommand<P extends AddGlusterServerVDSParameters>
     @Override
     protected void ExecuteVdsBrokerCommand() {
         status = getBroker().glusterHostAdd(getParameters().getHostnameOrIp());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

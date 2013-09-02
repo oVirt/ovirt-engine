@@ -12,7 +12,7 @@ public class DisconnectStorageServerVDSCommand<P extends StorageServerConnection
     protected void ExecuteVdsBrokerCommand() {
         _result = getBroker().disconnectStorageServer(getParameters().getStorageType().getValue(),
                 getParameters().getStoragePoolId().toString(), BuildStructFromConnectionListObject());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         setReturnValue(_result.convertToStatusList());
     }
 }

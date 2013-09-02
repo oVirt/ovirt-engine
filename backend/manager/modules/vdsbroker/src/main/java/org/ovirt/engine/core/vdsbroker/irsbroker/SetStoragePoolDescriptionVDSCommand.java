@@ -12,6 +12,6 @@ public class SetStoragePoolDescriptionVDSCommand<P extends SetStoragePoolDescrip
     protected void ExecuteIrsBrokerCommand() {
         status = getIrsProxy().setStoragePoolDescription(getParameters().getStoragePoolId().toString(),
                 getParameters().getDescription());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

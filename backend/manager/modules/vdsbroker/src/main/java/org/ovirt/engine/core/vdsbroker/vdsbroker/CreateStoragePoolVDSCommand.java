@@ -28,11 +28,11 @@ public class CreateStoragePoolVDSCommand<P extends CreateStoragePoolVDSCommandPa
                 Config.<Integer> GetValue(ConfigValues.LeaseTimeSec),
                 Config.<Integer> GetValue(ConfigValues.IoOpTimeoutSec),
                 Config.<Integer> GetValue(ConfigValues.LeaseRetries));
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         // fail the operation without throwing exception
@@ -45,7 +45,7 @@ public class CreateStoragePoolVDSCommand<P extends CreateStoragePoolVDSCommandPa
             break;
 
         default:
-            super.ProceedProxyReturnValue();
+            super.proceedProxyReturnValue();
             initializeVdsError(returnStatus);
             break;
         }

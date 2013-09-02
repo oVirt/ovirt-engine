@@ -21,7 +21,7 @@ public class GlusterServicesListVDSCommand<P extends GlusterServicesListVDSParam
         glusterServices =
                 getBroker().glusterServicesList(getParameters().getVdsId(),
                         getParameters().getServiceNames().toArray(new String[0]));
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         if (getVDSReturnValue().getSucceeded()) {
             setReturnValue(glusterServices.getServices());
         }

@@ -32,7 +32,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         getVDSReturnValue().setVdsError(tempVar);
     }
 
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         VDSExceptionBase outEx;
         switch (returnStatus) {

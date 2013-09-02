@@ -36,6 +36,6 @@ public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> ex
             status = getBroker().setVmTicket(mVmId.toString(), mTicket, String.valueOf(mValidTime));
         }
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

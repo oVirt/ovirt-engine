@@ -15,6 +15,6 @@ public class DisableGlusterHookVDSCommand<P extends GlusterHookVDSParameters> ex
                         getParameters().getHookStage().toString(),
                         getParameters().getHookName());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

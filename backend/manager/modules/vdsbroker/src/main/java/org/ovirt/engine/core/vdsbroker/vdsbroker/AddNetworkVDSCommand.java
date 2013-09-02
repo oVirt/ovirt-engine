@@ -62,7 +62,7 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
         }
 
         status = getBroker().addNetwork(networkName, vlanId, bond, nics, options);
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 
     @Override

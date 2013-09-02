@@ -18,7 +18,7 @@ public class GetAllVmStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBa
     @Override
     protected void ExecuteVdsBrokerCommand() {
         mVmListReturn = getBroker().getAllVmStats();
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         Map<Guid, VmInternalData> returnVMs = new HashMap<Guid, VmInternalData>();
         for (int idx = 0; idx < mVmListReturn.mInfoList.length; ++idx) {
             VmInternalData vmInternalData = createVmInternalData(mVmListReturn.mInfoList[idx]);

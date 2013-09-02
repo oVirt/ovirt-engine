@@ -15,7 +15,7 @@ public class GetVGInfoVDSCommand<P extends GetVGInfoVDSCommandParameters> extend
     @Override
     protected void ExecuteVdsBrokerCommand() {
         _result = getBroker().getVGInfo(getParameters().getVGID());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         // build temp data
         Object[] temp = (Object[]) _result.vgInfo.get("pvlist");
         Map<String, Object>[] pvList = new Map[0];

@@ -28,7 +28,7 @@ public class ManageGlusterServiceVDSCommand<P extends GlusterHookVDSParameters> 
                 getBroker().glusterServicesAction(getParameters().getVdsId(),
                         serviceNameList,
                         getParameters().getActionType());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         if (getVDSReturnValue().getSucceeded()) {
             setReturnValue(returnValue.getServices());
         }

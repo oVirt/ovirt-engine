@@ -18,7 +18,7 @@ public class CloneImageGroupStructureVDSCommand<P extends TargetDomainImageGroup
                         params.getImageGroupId().toString(),
                         params.getDstDomainId().toString());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
 
         Guid taskID = new Guid(uuidReturn.mUuid);
 

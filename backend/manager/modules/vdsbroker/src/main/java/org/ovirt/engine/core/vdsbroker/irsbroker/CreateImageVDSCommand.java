@@ -45,7 +45,7 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
                                                 getParameters().getNewImageDescription(), Guid.Empty.toString(),
                                                 Guid.Empty.toString());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
 
         Guid taskID = new Guid(uuidReturn.mUuid);
 

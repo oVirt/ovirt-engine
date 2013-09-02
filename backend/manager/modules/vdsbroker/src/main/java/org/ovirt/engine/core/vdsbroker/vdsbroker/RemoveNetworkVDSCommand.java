@@ -17,6 +17,6 @@ public class RemoveNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> 
         String[] nics = (getParameters().getNics() == null) ? new String[] {} : getParameters().getNics();
 
         status = getBroker().delNetwork(network, vlanId, bond, nics);
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

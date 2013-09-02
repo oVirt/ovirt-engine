@@ -10,6 +10,6 @@ public class SetSafeNetworkConfigVDSCommand<P extends VdsIdVDSCommandParametersB
     @Override
     protected void ExecuteVdsBrokerCommand() {
         status = getBroker().setSafeNetworkConfig();
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

@@ -47,7 +47,7 @@ public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParamete
                                                 getParameters().getSourceImageGroupId().toString(),
                                                 getParameters().getImageId().toString());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         Guid taskID = new Guid(uuidReturn.mUuid);
 
         mCreatedImageId = getParameters().getNewImageID().toString();

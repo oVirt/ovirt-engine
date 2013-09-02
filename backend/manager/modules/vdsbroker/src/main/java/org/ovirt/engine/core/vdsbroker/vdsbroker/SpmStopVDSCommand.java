@@ -48,7 +48,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                     log.infoFormat("SpmStopVDSCommand::Stopping SPM on vds {0}, pool id {1}", getVds().getName(),
                             getParameters().getStoragePoolId());
                     status = getBroker().spmStop(getParameters().getStoragePoolId().toString());
-                    ProceedProxyReturnValue();
+                    proceedProxyReturnValue();
                 } else if (getVDSReturnValue().getVdsError() == null) {
                     getVDSReturnValue().setSucceeded(false);
                     VDSError error = new VDSError();
@@ -94,7 +94,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
     }
 
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case StoragePoolUnknown:
@@ -106,7 +106,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
             getVDSReturnValue().setSucceeded(false);
             break;
         default:
-            super.ProceedProxyReturnValue();
+            super.proceedProxyReturnValue();
             initializeVdsError(returnStatus);
             break;
         }

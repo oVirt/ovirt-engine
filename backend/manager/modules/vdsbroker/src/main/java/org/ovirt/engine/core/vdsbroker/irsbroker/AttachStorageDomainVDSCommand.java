@@ -16,7 +16,7 @@ public class AttachStorageDomainVDSCommand<P extends AttachStorageDomainVDSComma
     protected void ExecuteIrsBrokerCommand() {
         status = getIrsProxy().attachStorageDomain(getParameters().getStorageDomainId().toString(),
                 getParameters().getStoragePoolId().toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 
     @Override

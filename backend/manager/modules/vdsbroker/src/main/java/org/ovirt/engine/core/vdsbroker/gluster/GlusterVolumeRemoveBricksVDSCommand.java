@@ -20,6 +20,6 @@ public class GlusterVolumeRemoveBricksVDSCommand<P extends GlusterVolumeRemoveBr
                 getBroker().glusterVolumeRemoveBrickForce(getParameters().getVolumeName(),
                         getParameters().getBrickDirectories().toArray(new String[0]), getParameters().getReplicaCount());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

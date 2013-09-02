@@ -20,7 +20,7 @@ public class SyncImageGroupDataVDSCommand<P extends SyncImageGroupDataVDSCommand
                 params.getDstDomainId().toString(),
                 params.getSyncType());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
 
         Guid taskID = new Guid(uuidReturn.mUuid);
 

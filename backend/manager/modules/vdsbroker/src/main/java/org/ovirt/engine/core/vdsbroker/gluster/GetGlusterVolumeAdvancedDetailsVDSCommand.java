@@ -52,6 +52,6 @@ public class GetGlusterVolumeAdvancedDetailsVDSCommand<P extends GlusterVolumeAd
                         getParameters().getVolumeName(),
                         getParameters().getBrickName() == null ? "" : getParameters().getBrickName(),
                         volumeStatusOption);
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

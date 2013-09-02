@@ -19,7 +19,7 @@ public class GetDiskAlignmentVDSCommand<P extends GetDiskAlignmentVDSCommandPara
                 getParameters().getDriveSpecs().toString());
 
         diskAlignment = getBroker().getDiskAlignment(getParameters().getVmId().toString(), getParameters().getDriveSpecs());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
 
         // At the moment we only check that all the partition are aligned.
         // In the future we might want to keep a list of the unaligned ones.

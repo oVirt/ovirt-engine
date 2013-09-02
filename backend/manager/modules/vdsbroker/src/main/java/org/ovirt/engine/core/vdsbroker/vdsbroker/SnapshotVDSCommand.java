@@ -22,7 +22,7 @@ public class SnapshotVDSCommand<P extends SnapshotVDSCommandParameters> extends 
     @Override
     protected void ExecuteVdsBrokerCommand() {
         status = executeSnapshotVerb();
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 
     private StatusOnlyReturnForXmlRpc executeSnapshotVerb() {

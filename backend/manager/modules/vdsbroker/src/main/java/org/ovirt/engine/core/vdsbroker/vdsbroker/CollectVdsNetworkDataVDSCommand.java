@@ -42,7 +42,7 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<V
         // update to db
         persistAndEnforceNetworkCompliance(getVds(), skipManagementNetwork());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 
     /**

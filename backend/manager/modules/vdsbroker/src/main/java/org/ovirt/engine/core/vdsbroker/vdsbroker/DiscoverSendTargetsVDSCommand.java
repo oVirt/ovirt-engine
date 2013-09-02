@@ -18,7 +18,7 @@ public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSComma
     protected void ExecuteVdsBrokerCommand() {
         _result = getBroker().discoverSendTargets(
                 ConnectStorageServerVDSCommand.CreateStructFromConnection(getParameters().getConnection(),null));
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         setReturnValue(_result.isFullTargets() ? parseFullTargets(_result.getIqnList())
                 : parseTargets(_result.getIqnList()));
     }

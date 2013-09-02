@@ -18,7 +18,7 @@ public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBas
     @Override
     protected void ExecuteVdsBrokerCommand() {
         _result = getBroker().getAllTasksInfo();
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         setReturnValue(ParseTaskInfoList(_result.TaskInfoList));
     }
 

@@ -48,7 +48,7 @@ public class CopyImageVDSCommand<P extends CopyImageVDSCommandParameters> extend
                                              getParameters().getPreallocate().getValue(),
                                              String.valueOf(getParameters().getPostZero()).toLowerCase(),
                                              String.valueOf(getParameters().getForce()).toLowerCase());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
 
         Guid taskID = new Guid(uuidReturn.mUuid);
 

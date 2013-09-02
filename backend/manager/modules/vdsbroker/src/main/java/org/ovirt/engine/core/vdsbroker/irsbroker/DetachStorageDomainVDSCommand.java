@@ -16,7 +16,7 @@ public class DetachStorageDomainVDSCommand<P extends DetachStorageDomainVDSComma
             try {
                 status = getIrsProxy().forcedDetachStorageDomain(getParameters().getStorageDomainId().toString(),
                         getParameters().getStoragePoolId().toString());
-                ProceedProxyReturnValue();
+                proceedProxyReturnValue();
             } catch (RuntimeException ex) {
                 PrintReturnValue();
                 log.errorFormat("Could not force detach domain {0} on pool {1}. error: {2}", getParameters()
@@ -28,7 +28,7 @@ public class DetachStorageDomainVDSCommand<P extends DetachStorageDomainVDSComma
                     getParameters().getStoragePoolId().toString(),
                     getParameters().getMasterStorageDomainId().toString(),
                     getParameters().getMasterVersion());
-            ProceedProxyReturnValue();
+            proceedProxyReturnValue();
         }
     }
 

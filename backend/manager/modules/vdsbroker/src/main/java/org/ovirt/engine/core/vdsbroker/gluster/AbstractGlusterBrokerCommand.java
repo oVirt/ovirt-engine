@@ -15,7 +15,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
     }
 
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case GlusterGeneralException:
@@ -63,7 +63,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
             getVDSReturnValue().setSucceeded(false);
             break;
         default:
-            super.ProceedProxyReturnValue();
+            super.proceedProxyReturnValue();
             break;
         }
     }

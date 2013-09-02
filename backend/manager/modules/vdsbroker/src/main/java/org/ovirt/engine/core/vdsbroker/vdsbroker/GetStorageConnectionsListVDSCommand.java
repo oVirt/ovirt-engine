@@ -19,7 +19,7 @@ public class GetStorageConnectionsListVDSCommand<P extends GetStorageConnections
     protected void ExecuteVdsBrokerCommand() {
         _result = getBroker().getStorageConnectionsList(
                 getParameters().getStoragePoolId().toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
 
         // parse result to storage_server_connections
         java.util.ArrayList<StorageServerConnections> connections =

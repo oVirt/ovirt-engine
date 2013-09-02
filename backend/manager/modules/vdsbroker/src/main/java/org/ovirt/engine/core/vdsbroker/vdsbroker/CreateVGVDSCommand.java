@@ -29,7 +29,7 @@ public class CreateVGVDSCommand<P extends CreateVGVDSCommandParameters> extends 
                 getBroker().createVG(storageDomainId, deviceArray, isForce) :
                 getBroker().createVG(storageDomainId, deviceArray);
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         setReturnValue(_result.mUuid);
     }
 

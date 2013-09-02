@@ -12,7 +12,7 @@ public class HotUnplugNicVDSCommand<P extends VmNicDeviceVDSParameters> extends 
     protected void executeVDSCommand() {
         init();
         status = getBroker().hotUnplugNic(struct);
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 
 }

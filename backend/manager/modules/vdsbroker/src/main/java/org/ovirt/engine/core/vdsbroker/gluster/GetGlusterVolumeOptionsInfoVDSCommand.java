@@ -18,7 +18,7 @@ public class GetGlusterVolumeOptionsInfoVDSCommand<P extends VdsIdVDSCommandPara
     @Override
     protected void ExecuteVdsBrokerCommand() {
         result = getBroker().glusterVolumeSetOptionsList();
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         setReturnValue(result.optionsHelpSet);
     }
 }

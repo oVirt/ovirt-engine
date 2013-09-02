@@ -11,6 +11,6 @@ public class DeleteGlusterVolumeVDSCommand<P extends GlusterVolumeVDSParameters>
     protected void ExecuteVdsBrokerCommand() {
         status = getBroker().glusterVolumeDelete(getParameters().getVolumeName());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

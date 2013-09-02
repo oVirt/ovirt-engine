@@ -18,6 +18,6 @@ public class AddGlusterHookVDSCommand<P extends GlusterHookVDSParameters> extend
                         getParameters().getChecksum(),
                         getParameters().getEnabled());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

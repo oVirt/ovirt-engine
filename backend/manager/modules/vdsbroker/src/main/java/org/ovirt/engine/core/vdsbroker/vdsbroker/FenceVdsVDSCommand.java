@@ -54,7 +54,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
                     getParameters().getType(), getParameters().getUser(),
                     getParameters().getPassword(), GetActualActionName(), "", options);
 
-            ProceedProxyReturnValue();
+            proceedProxyReturnValue();
             getVDSReturnValue().setSucceeded(false);
             if (getParameters().getAction() == FenceActionType.Status && _result.Power != null) {
                 String stat = _result.Power.toLowerCase();

@@ -10,6 +10,6 @@ public class HSMStopTaskVDSCommand<P extends HSMTaskGuidBaseVDSCommandParameters
     @Override
     protected void ExecuteVdsBrokerCommand() {
         status = getBroker().stopTask(getParameters().getTaskId().toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

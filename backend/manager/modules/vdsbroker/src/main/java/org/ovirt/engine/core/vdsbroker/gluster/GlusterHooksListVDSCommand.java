@@ -15,7 +15,7 @@ public class GlusterHooksListVDSCommand<P extends VdsIdVDSCommandParametersBase>
     protected void ExecuteVdsBrokerCommand() {
         glusterHooks = getBroker().glusterHooksList();
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         if (getVDSReturnValue().getSucceeded()) {
             setReturnValue(glusterHooks.getGlusterHooks());
         }

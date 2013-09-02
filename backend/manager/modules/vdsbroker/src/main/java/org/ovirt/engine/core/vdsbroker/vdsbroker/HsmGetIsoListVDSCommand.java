@@ -13,7 +13,7 @@ public class HsmGetIsoListVDSCommand<P extends HSMGetIsoListParameters> extends 
     @Override
     protected void ExecuteVdsBrokerCommand() {
         _isoList = getBroker().getIsoList(getParameters().getStoragePoolId().toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         if (_isoList.mVMList != null && _isoList.mVMList.length > 0) {
             setReturnValue(new java.util.ArrayList<String>(java.util.Arrays.asList(_isoList.mVMList)));
         } else {

@@ -13,7 +13,7 @@ public class ChangeDiskVDSCommand<P extends ChangeDiskVDSCommandParameters> exte
     @Override
     protected void ExecuteVdsBrokerCommand() {
         mVmReturn = getBroker().changeDisk(mVmId.toString(), mIsoLocation);
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         setReturnValue(VdsBrokerObjectsBuilder.buildVMDynamicData(mVmReturn.mVm).getStatus());
     }
 }

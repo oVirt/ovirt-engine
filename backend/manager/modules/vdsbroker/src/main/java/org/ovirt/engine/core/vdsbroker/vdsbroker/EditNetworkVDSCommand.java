@@ -61,6 +61,6 @@ public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ex
         }
 
         status = getBroker().editNetwork(oldNetwork, networkName, vlanId, bond, nics, options);
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

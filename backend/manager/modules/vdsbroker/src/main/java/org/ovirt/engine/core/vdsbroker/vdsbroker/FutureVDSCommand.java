@@ -70,7 +70,7 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
     public VDSReturnValue get(long timeout, TimeUnit unit) throws TimeoutException {
         try {
             status = new StatusOnlyReturnForXmlRpc(httpTask.get(timeout, unit));
-            ProceedProxyReturnValue();
+            proceedProxyReturnValue();
         } catch (TimeoutException e) {
             httpTask.cancel(true);
             VDSNetworkException ex = new VDSNetworkException("Timeout during xml-rpc call");

@@ -19,6 +19,6 @@ public class AddBricksToGlusterVolumeVDSCommand<P extends GlusterVolumeBricksAct
                         getParameters().getReplicaCount(),
                         getParameters().getStripeCount());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

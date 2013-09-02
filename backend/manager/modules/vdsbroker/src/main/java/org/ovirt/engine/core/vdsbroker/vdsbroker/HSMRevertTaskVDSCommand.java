@@ -11,11 +11,11 @@ public class HSMRevertTaskVDSCommand<P extends HSMTaskGuidBaseVDSCommandParamete
     @Override
     protected void ExecuteVdsBrokerCommand() {
         status = getBroker().revertTask(getParameters().getTaskId().toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
 
         switch (returnStatus) {
@@ -23,6 +23,6 @@ public class HSMRevertTaskVDSCommand<P extends HSMTaskGuidBaseVDSCommandParamete
             log.error(String.format("Trying to revert unknown task: %1$s", getParameters().getTaskId()));
             return;
         }
-        super.ProceedProxyReturnValue();
+        super.proceedProxyReturnValue();
     }
 }

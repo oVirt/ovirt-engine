@@ -36,6 +36,6 @@ public class ReconstructMasterVDSCommand<P extends ReconstructMasterVDSCommandPa
             Config.<Integer> GetValue(ConfigValues.LeaseRetries),
             getParameters().getVdsSpmId());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

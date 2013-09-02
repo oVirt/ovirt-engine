@@ -16,7 +16,7 @@ public class GetGlusterHostUUIDVDSCommand<P extends VdsIdVDSCommandParametersBas
     protected void ExecuteVdsBrokerCommand() {
         glusterHostUUID = getBroker().glusterHostUUIDGet();
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         if (getVDSReturnValue().getSucceeded()) {
             setReturnValue(glusterHostUUID.mUuid);
         }

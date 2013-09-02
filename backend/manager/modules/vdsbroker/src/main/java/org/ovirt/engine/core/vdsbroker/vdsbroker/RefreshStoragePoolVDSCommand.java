@@ -14,6 +14,6 @@ public class RefreshStoragePoolVDSCommand<P extends RefreshStoragePoolVDSCommand
                 .refreshStoragePool(getParameters().getStoragePoolId().toString(),
                         getParameters().getMasterStorageDomainId().toString(),
                         getParameters().getMasterVersion());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

@@ -13,7 +13,7 @@ public class RemoveGlusterServerVDSCommand<P extends RemoveGlusterServerVDSParam
     protected void ExecuteVdsBrokerCommand() {
         status = getBroker().glusterHostRemove(getParameters().getHostnameOrIp(), getParameters().isForceAction());
 
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }
 

@@ -15,7 +15,7 @@ public class CancelMigrateVDSCommand<P extends VdsAndVmIDVDSParametersBase> exte
     protected void ExecuteVdsBrokerCommand() {
         Guid vmId = getParameters().getVmId();
         status = getBroker().migrateCancel(vmId.toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         ResourceManager.getInstance().RemoveAsyncRunningVm(vmId);
     }
 
@@ -24,7 +24,7 @@ public class CancelMigrateVDSCommand<P extends VdsAndVmIDVDSParametersBase> exte
      * may happen when migration already ended.
      */
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case noVM:
@@ -34,7 +34,7 @@ public class CancelMigrateVDSCommand<P extends VdsAndVmIDVDSParametersBase> exte
             outEx.setVdsError(new VDSError(VdcBllErrors.MIGRATION_CANCEL_ERROR_NO_VM, getReturnStatus().mMessage));
             throw outEx;
         default:
-            super.ProceedProxyReturnValue();
+            super.proceedProxyReturnValue();
         }
     }
 }

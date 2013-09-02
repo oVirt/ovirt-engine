@@ -23,6 +23,6 @@ public class VmLogonVDSCommand<P extends VmLogonVDSCommandParameters> extends Vd
     @Override
     protected void ExecuteVdsBrokerCommand() {
         status = getBroker().desktopLogin(mVmId.toString(), mDomain, mUserName, mPassword);
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }

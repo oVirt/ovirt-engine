@@ -21,11 +21,11 @@ public class RemoveVMVDSCommand<P extends RemoveVMVDSCommandParameters> extends 
                             getParameters().getVmGuid().toString(),
                             getParameters().getStorageDomainId().toString());
         }
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case Done:

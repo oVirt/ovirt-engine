@@ -21,7 +21,7 @@ public class GetVolumesListVDSCommand<P extends StoragePoolDomainAndGroupIdBaseV
                 getIrsProxy().getVolumesList(getParameters().getStorageDomainId().toString(),
                         getParameters().getStoragePoolId().toString(),
                         getParameters().getImageGroupId().toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
         ArrayList<Guid> tempRetValue = new ArrayList<Guid>(_result.getUUIDList().length);
         for (String id : _result.getUUIDList()) {
             tempRetValue.add(new Guid(id));
@@ -40,7 +40,7 @@ public class GetVolumesListVDSCommand<P extends StoragePoolDomainAndGroupIdBaseV
     }
 
     @Override
-    protected void ProceedProxyReturnValue() {
+    protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = GetReturnValueFromStatus(getReturnStatus());
         switch (returnStatus) {
         case GetStorageDomainListError:
@@ -48,7 +48,7 @@ public class GetVolumesListVDSCommand<P extends StoragePoolDomainAndGroupIdBaseV
             getVDSReturnValue().setSucceeded(false);
             break;
         default:
-            super.ProceedProxyReturnValue();
+            super.proceedProxyReturnValue();
             break;
         }
     }

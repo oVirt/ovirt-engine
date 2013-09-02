@@ -10,6 +10,6 @@ public class MigrateStatusVDSCommand<P extends MigrateStatusVDSCommandParameters
     @Override
     protected void ExecuteVdsBrokerCommand() {
         status = getBroker().migrateStatus(getParameters().getVmId().toString());
-        ProceedProxyReturnValue();
+        proceedProxyReturnValue();
     }
 }
