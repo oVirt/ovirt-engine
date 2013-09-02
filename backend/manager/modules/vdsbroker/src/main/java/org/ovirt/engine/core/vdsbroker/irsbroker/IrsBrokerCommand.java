@@ -318,7 +318,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 domainPoolMap = storage_domain.getStoragePoolIsoMapData();
                 // If the domain is master in the DB
                 if (domainFromDb.getStorageDomainType() == StorageDomainType.Master && domainPoolMap != null
-                        && domainPoolMap.getstatus() != StorageDomainStatus.Locked) {
+                        && domainPoolMap.getStatus() != StorageDomainStatus.Locked) {
                     // and the domain is not master in the VDSM
                     if (!((data.getStorageDomainType() == StorageDomainType.Master) || (data.getStorageDomainType() == StorageDomainType.Unknown))) {
                         reconstructMasterDomainNotInSync(data.getStoragePoolId(),
@@ -345,9 +345,9 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     data.setStoragePoolId(_storagePoolId);
                     DbFacade.getInstance().getStoragePoolIsoMapDao().save(data.getStoragePoolIsoMapData());
                     statusChanged = true;
-                } else if (domainPoolMap.getstatus() != StorageDomainStatus.Locked
-                        && domainPoolMap.getstatus() != data.getStatus()) {
-                    if (domainPoolMap.getstatus() != StorageDomainStatus.InActive
+                } else if (domainPoolMap.getStatus() != StorageDomainStatus.Locked
+                        && domainPoolMap.getStatus() != data.getStatus()) {
+                    if (domainPoolMap.getStatus() != StorageDomainStatus.InActive
                             && data.getStatus() != StorageDomainStatus.InActive) {
                         DbFacade.getInstance().getStoragePoolIsoMapDao().update(data.getStoragePoolIsoMapData());
                         statusChanged = true;
@@ -367,7 +367,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 // if status didn't change and still not active no need to
                 // update dynamic data
                 if (statusChanged
-                        || (domainPoolMap.getstatus() != StorageDomainStatus.InActive && data.getStatus() == StorageDomainStatus.Active)) {
+                        || (domainPoolMap.getStatus() != StorageDomainStatus.InActive && data.getStatus() == StorageDomainStatus.Active)) {
                     DbFacade.getInstance().getStorageDomainDynamicDao().update(data.getStorageDynamicData());
                     if (data.getAvailableDiskSize() != null && data.getUsedDiskSize() != null) {
                         double freePercent = data.getStorageDynamicData().getfreeDiskPercent();
@@ -1060,7 +1060,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                     DbFacade.getInstance()
                                             .getStoragePoolIsoMapDao()
                                             .get(new StoragePoolIsoMapId(tempData.getDomainId(), _storagePoolId));
-                            map.setstatus(StorageDomainStatus.Active);
+                            map.setStatus(StorageDomainStatus.Active);
                             DbFacade.getInstance().getStoragePoolIsoMapDao().update(map);
                         }
                     }

@@ -27,12 +27,12 @@ public class SetStoragePoolStatusCommand<T extends SetStoragePoolStatusParameter
             List<StoragePoolIsoMap> storagesStatusInPool = DbFacade.getInstance()
                     .getStoragePoolIsoMapDao().getAllForStoragePool(getStoragePool().getId());
             for (StoragePoolIsoMap storageStatusInPool : storagesStatusInPool) {
-                if (storageStatusInPool.getstatus() != null
-                        && storageStatusInPool.getstatus() == StorageDomainStatus.Active) {
-                    storageStatusInPool.setstatus(StorageDomainStatus.Unknown);
+                if (storageStatusInPool.getStatus() != null
+                        && storageStatusInPool.getStatus() == StorageDomainStatus.Active) {
+                    storageStatusInPool.setStatus(StorageDomainStatus.Unknown);
                     DbFacade.getInstance()
                             .getStoragePoolIsoMapDao()
-                            .updateStatus(storageStatusInPool.getId(), storageStatusInPool.getstatus());
+                            .updateStatus(storageStatusInPool.getId(), storageStatusInPool.getStatus());
                 }
             }
         }

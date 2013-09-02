@@ -61,7 +61,7 @@ public class StoragePoolIsoMapDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testUpdateStoragePoolIsoMap() {
-        existingStoragePoolIsoMap.setstatus(StorageDomainStatus.Active);
+        existingStoragePoolIsoMap.setStatus(StorageDomainStatus.Active);
 
         dao.update(existingStoragePoolIsoMap);
 

@@ -310,7 +310,7 @@ public class IsoDomainListSyncronizer {
         while (iter.hasNext() && !refreshSucceeded) {
             StoragePoolIsoMap storagePoolIsoMap = iter.next();
             Guid storagePoolId = storagePoolIsoMap.getstorage_pool_id();
-            StorageDomainStatus status = storagePoolIsoMap.getstatus();
+            StorageDomainStatus status = storagePoolIsoMap.getStatus();
 
             if (status != StorageDomainStatus.Active) {
                 log.debugFormat("Storage domain id {0}, is not active, and therefore could not be refreshed for {1} file type (Iso domain status is {2}).",

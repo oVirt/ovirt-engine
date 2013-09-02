@@ -21,7 +21,7 @@ public class StoragePoolIsoMapDAODbFacadeImpl extends BaseDAODbFacade implements
             StoragePoolIsoMap entity = new StoragePoolIsoMap();
             entity.setstorage_id(getGuidDefaultEmpty(rs, "storage_id"));
             entity.setstorage_pool_id(getGuid(rs, "storage_pool_id"));
-            entity.setstatus(StorageDomainStatus.forValue(rs.getInt("status")));
+            entity.setStatus(StorageDomainStatus.forValue(rs.getInt("status")));
             return entity;
         }
     }
@@ -40,13 +40,13 @@ public class StoragePoolIsoMapDAODbFacadeImpl extends BaseDAODbFacade implements
     public void save(StoragePoolIsoMap map) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("storage_id",
                 map.getstorage_id()).addValue("storage_pool_id", map.getstorage_pool_id()).addValue("status",
-                map.getstatus());
+                map.getStatus());
         getCallsHandler().executeModification("Insertstorage_pool_iso_map", parameterSource);
     }
 
     @Override
     public void update(StoragePoolIsoMap map) {
-        updateStatus(map.getId(), map.getstatus());
+        updateStatus(map.getId(), map.getStatus());
     }
 
     @Override

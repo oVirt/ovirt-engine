@@ -19,7 +19,7 @@ public class ReconstructMasterVDSCommand<P extends ReconstructMasterVDSCommandPa
         final Map<String, String> domains = new HashMap<String, String>();
 
         for (StoragePoolIsoMap domain : getParameters().getDomainsList()) {
-            if (domain.getstatus() == StorageDomainStatus.Maintenance) {
+            if (domain.getStatus() == StorageDomainStatus.Maintenance) {
                 domains.put(domain.getstorage_id().toString(), "attached");
             } else {
                 domains.put(domain.getstorage_id().toString(), StorageDomainStatus.Active.toString().toLowerCase());

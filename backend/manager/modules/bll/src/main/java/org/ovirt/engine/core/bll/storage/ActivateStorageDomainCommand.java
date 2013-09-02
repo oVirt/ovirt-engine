@@ -83,8 +83,8 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                map.setstatus(StorageDomainStatus.Active);
-                DbFacade.getInstance().getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getstatus());
+                map.setStatus(StorageDomainStatus.Active);
+                DbFacade.getInstance().getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
                 if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
                     calcStoragePoolStatusByDomainsStatus();
                 }

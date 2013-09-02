@@ -51,7 +51,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     }
 
     private boolean checkIsDomainLocked(StoragePoolIsoMap domainMap) {
-        if (StorageDomainStatus.Locked == domainMap.getstatus()) {
+        if (StorageDomainStatus.Locked == domainMap.getStatus()) {
             addInvalidSDStatusMessage(StorageDomainStatus.Locked);
             return true;
         }

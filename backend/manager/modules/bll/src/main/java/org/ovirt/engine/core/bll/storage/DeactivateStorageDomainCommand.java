@@ -166,7 +166,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 getStoragePoolIsoMapDAO().get
                         (new StoragePoolIsoMapId(getParameters().getStorageDomainId(),
                                 getParameters().getStoragePoolId()));
-        map.setstatus(StorageDomainStatus.Unknown);
+        map.setStatus(StorageDomainStatus.Unknown);
         changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Locked);
         proceedStorageDomainTreatmentByDomainType(false);
 
@@ -226,15 +226,15 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
             @Override
             public Object runInTransaction() {
                 if (getParameters().isInactive()) {
-                    map.setstatus(StorageDomainStatus.InActive);
+                    map.setStatus(StorageDomainStatus.InActive);
                 } else {
-                    map.setstatus(StorageDomainStatus.Maintenance);
+                    map.setStatus(StorageDomainStatus.Maintenance);
                 }
-                getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
+                getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getStatus());
                 if (!Guid.Empty.equals(_newMasterStorageDomainId)) {
                     StoragePoolIsoMap mapOfNewMaster = getNewMaster(false).getStoragePoolIsoMapData();
-                    mapOfNewMaster.setstatus(StorageDomainStatus.Active);
-                    getStoragePoolIsoMapDAO().updateStatus(mapOfNewMaster.getId(), mapOfNewMaster.getstatus());
+                    mapOfNewMaster.setStatus(StorageDomainStatus.Active);
+                    getStoragePoolIsoMapDAO().updateStatus(mapOfNewMaster.getId(), mapOfNewMaster.getStatus());
                 }
                 return null;
             }
@@ -280,10 +280,10 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                         newMaster.setStorageDomainType(StorageDomainType.Master);
                         _newMasterStorageDomainId = newMaster.getId();
                         if (!duringReconstruct) {
-                            newMasterMap.setstatus(StorageDomainStatus.Unknown);
-                            getCompensationContext().snapshotEntityStatus(newMasterMap, newMasterMap.getstatus());
+                            newMasterMap.setStatus(StorageDomainStatus.Unknown);
+                            getCompensationContext().snapshotEntityStatus(newMasterMap, newMasterMap.getStatus());
                             newMaster.setStatus(StorageDomainStatus.Locked);
-                            getStoragePoolIsoMapDAO().updateStatus(newMasterMap.getId(), newMasterMap.getstatus());
+                            getStoragePoolIsoMapDAO().updateStatus(newMasterMap.getId(), newMasterMap.getStatus());
                         }
                         DbFacade.getInstance()
                                 .getStorageDomainStaticDao()

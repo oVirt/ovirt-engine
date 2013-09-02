@@ -208,7 +208,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         if (getStorageDomain() != null && getStorageDomain().getStoragePoolId() != null) {
             StoragePoolIsoMap map = getStorageDomain().getStoragePoolIsoMapData();
             if(context != null) {
-                context.snapshotEntityStatus(map, map.getstatus());
+                context.snapshotEntityStatus(map, map.getStatus());
             }
             getStorageDomain().setStatus(status);
             getStoragePoolIsoMapDAO().updateStatus(map.getId(), status);
@@ -315,9 +315,9 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
             @Override
             public StoragePoolIsoMap runInTransaction() {
                 CompensationContext context = getCompensationContext();
-                context.snapshotEntityStatus(map, map.getstatus());
-                map.setstatus(status);
-                getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
+                context.snapshotEntityStatus(map, map.getStatus());
+                map.setStatus(status);
+                getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getStatus());
                 getCompensationContext().stateChanged();
                 return null;
             }

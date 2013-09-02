@@ -103,7 +103,7 @@ public class ReconstructMasterVDSCommandParameters extends VdsIdVDSCommandParame
             sb.append("{ domainId: ");
             sb.append(map.getstorage_id());
             sb.append(", status: ");
-            sb.append(map.getstatus().name());
+            sb.append(map.getStatus().name());
             sb.append(" };");
         }
         return sb.toString();

@@ -151,7 +151,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                     StorageDomain domain = getStorageDomainDao().get(storageDomainId);
                     if (!domain.getStorageDomainSharedStatus().equals(StorageDomainSharedStatus.Unattached)) {
                         for (StoragePoolIsoMap map : getStoragePoolIsoMap(domain)) {
-                            if (!map.getstatus().equals(StorageDomainStatus.Maintenance)) {
+                            if (!map.getStatus().equals(StorageDomainStatus.Maintenance)) {
                                 String domainName = domain.getStorageName();
                                 problematicDomainNames.add(domainName);
                             } else {
@@ -260,7 +260,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
                 CompensationContext context = getCompensationContext();
                 for (StorageDomain domain : domains) {
                     for (StoragePoolIsoMap map : getStoragePoolIsoMap(domain)) {
-                        context.snapshotEntityStatus(map, map.getstatus());
+                        context.snapshotEntityStatus(map, map.getStatus());
                         updateStatus(map, status);
                     }
                 }
@@ -287,8 +287,8 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
 
     protected void updateStatus(StoragePoolIsoMap map, StorageDomainStatus status) {
         log.infoFormat("Setting domain %s to status $s", map.getId(), status.name());
-        map.setstatus(status);
-        getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getstatus());
+        map.setStatus(status);
+        getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
     }
 
     protected void executeInNewTransaction(TransactionMethod<?> method) {

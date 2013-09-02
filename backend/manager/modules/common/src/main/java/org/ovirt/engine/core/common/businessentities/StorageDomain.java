@@ -198,12 +198,12 @@ public class StorageDomain extends IVdcQueryable implements BusinessEntityWithSt
 
     @Override
     public StorageDomainStatus getStatus() {
-        return getStoragePoolIsoMapData().getstatus();
+        return getStoragePoolIsoMapData().getStatus();
     }
 
     @Override
     public void setStatus(StorageDomainStatus status) {
-        getStoragePoolIsoMapData().setstatus(status);
+        getStoragePoolIsoMapData().setStatus(status);
     }
 
     private String storagePoolName;

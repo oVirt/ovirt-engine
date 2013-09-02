@@ -118,6 +118,6 @@ public class AttachStorageDomainToPoolCommandTest {
         cmd.setCompensationContext(mock(CompensationContext.class));
         cmd.executeCommand();
         assertNotNull(map);
-        assertEquals(StorageDomainStatus.Maintenance, map.getstatus());
+        assertEquals(StorageDomainStatus.Maintenance, map.getStatus());
     }
 }

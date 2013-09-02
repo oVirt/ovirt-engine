@@ -82,8 +82,8 @@ public class AttachStorageDomainToPoolCommand<T extends StorageDomainPoolParamet
                         @Override
                         public Object runInTransaction() {
                             final StorageDomainType sdType = getStorageDomain().getStorageDomainType();
-                            map.setstatus(StorageDomainStatus.Maintenance);
-                            getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getstatus());
+                            map.setStatus(StorageDomainStatus.Maintenance);
+                            getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getStatus());
 
                             if (sdType == StorageDomainType.Master) {
                                 calcStoragePoolStatusByDomainsStatus();

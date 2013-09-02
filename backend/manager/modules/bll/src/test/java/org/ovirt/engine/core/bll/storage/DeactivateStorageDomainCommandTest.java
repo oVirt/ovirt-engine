@@ -89,10 +89,10 @@ public class DeactivateStorageDomainCommandTest {
         when(vdsBrokerFrontend.RunVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class)))
                 .thenReturn(returnValue);
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
-        map.setstatus(StorageDomainStatus.Active);
+        map.setStatus(StorageDomainStatus.Active);
 
         cmd.setCompensationContext(mock(CompensationContext.class));
         cmd.executeCommand();
-        assertTrue(map.getstatus() == StorageDomainStatus.Maintenance);
+        assertTrue(map.getStatus() == StorageDomainStatus.Maintenance);
     }
 }

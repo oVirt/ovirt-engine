@@ -15,7 +15,7 @@ public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
         this();
         setstorage_id(storage_id);
         setstorage_pool_id(storage_pool_id);
-        this.setstatus(status);
+        this.setStatus(status);
     }
 
     private StoragePoolIsoMapId id;
@@ -48,14 +48,14 @@ public class StoragePoolIsoMap implements BusinessEntity<StoragePoolIsoMapId> {
 
     private Integer persistentStorageDomainStatus;
 
-    public StorageDomainStatus getstatus() {
+    public StorageDomainStatus getStatus() {
         if (persistentStorageDomainStatus == null) {
             return null;
         }
         return StorageDomainStatus.forValue(persistentStorageDomainStatus);
     }
 
-    public void setstatus(StorageDomainStatus value) {
+    public void setStatus(StorageDomainStatus value) {
         if (value == null) {
             persistentStorageDomainStatus = null;
         } else {
