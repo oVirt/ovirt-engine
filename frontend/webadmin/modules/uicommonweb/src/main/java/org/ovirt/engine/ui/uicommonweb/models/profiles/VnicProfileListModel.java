@@ -106,8 +106,6 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
     }
 
     private void initNetworkList(final VnicProfileModel profileModel) {
-        profileModel.startProgress(null);
-
         SystemTreeItemModel treeSelectedItem =
                 (SystemTreeItemModel) CommonModel.getInstance().getSystemTree().getSelectedItem();
 
@@ -125,6 +123,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
                 treeSelectedItem.getType() == SystemTreeItemType.DataCenter ? treeSelectedItem : null;
 
         if (treeSelectedDc != null) {
+            profileModel.startProgress(null);
             StoragePool dc = (StoragePool) treeSelectedDc.getEntity();
 
             AsyncQuery _asyncQuery = new AsyncQuery();
@@ -146,6 +145,8 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
                     } else {
                         profileModel.getNetwork().setSelectedItem(Linq.firstOrDefault(networks));
                     }
+
+                    profileModel.stopProgress();
                 }
             };
 
