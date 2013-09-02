@@ -2523,6 +2523,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Transport Types")
     String transportTypesVolume();
 
+    @DefaultStringValue("Activities")
+    String activitiesOnVolume();
+
     @DefaultStringValue("Status")
     String statusVolume();
 
@@ -3224,4 +3227,16 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Status")
     String statusRebalance();
+
+    @DefaultStringValue("Rebalance in progress")
+    String rebalanceInProgress();
+
+    @DefaultStringValue("Rebalance stopped")
+    String rebalanceStopped();
+
+    @DefaultStringValue("Rebalance failed")
+    String rebalanceFailed();
+
+    @DefaultStringValue("Rebalance completed")
+    String rebalanceCompleted();
 }

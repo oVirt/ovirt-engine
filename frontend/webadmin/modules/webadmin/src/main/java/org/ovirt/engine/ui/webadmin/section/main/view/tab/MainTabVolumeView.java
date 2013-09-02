@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePres
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
+import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeActivityColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VolumeStatusColumn;
 
 import com.google.gwt.core.client.GWT;
@@ -111,6 +112,8 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
 
                 };
         getTable().addColumn(transportColumn, constants.transportTypesVolume(), "150px"); //$NON-NLS-1$
+
+        getTable().addColumn(new VolumeActivityColumn(), constants.activitiesOnVolume(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newVolume()) {
             @Override
