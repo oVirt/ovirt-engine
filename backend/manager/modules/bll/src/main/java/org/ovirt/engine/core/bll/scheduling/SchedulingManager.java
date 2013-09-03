@@ -606,7 +606,7 @@ public class SchedulingManager {
             }
 
             if (balanceResult != null && balanceResult.getSecond() != null) {
-                migrationHandler.migrateVM((ArrayList<Guid>) balanceResult.getFirst(), balanceResult.getSecond());
+                migrationHandler.migrateVM(balanceResult.getFirst(), balanceResult.getSecond());
             }
         }
     }

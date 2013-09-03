@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.PostConstruct;
 import javax.ejb.DependsOn;
@@ -51,9 +52,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
         SchedulingManager.getInstance().setMigrationHandler(new MigrationHandler() {
 
             @Override
-            public void migrateVM(ArrayList<Guid> initialHosts, Guid vmToMigrate) {
+            public void migrateVM(List<Guid> initialHosts, Guid vmToMigrate) {
                 MigrateVmParameters parameters = new MigrateVmParameters(false, vmToMigrate);
-                parameters.setInitialHosts(initialHosts);
+                parameters.setInitialHosts(new ArrayList<Guid>(initialHosts));
                 Backend.getInstance().runInternalAction(VdcActionType.MigrateVm,
                         parameters,
                         ExecutionHandler.createInternalJobContext());

@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.scheduling;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.compat.Guid;
 
@@ -10,5 +10,5 @@ public interface MigrationHandler {
      * @param initialHosts
      * @param vmToMigrate
      */
-    void migrateVM(ArrayList<Guid> initialHosts, Guid vmToMigrate);
+    void migrateVM(List<Guid> initialHosts, Guid vmToMigrate);
 }
