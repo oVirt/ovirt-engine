@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -70,12 +69,6 @@ public class VmPayload implements Serializable {
         return files;
     }
 
-    /**
-     * this is a calculated field our of the inner members.
-     * no need to de-serialize this as it is not a getter of a field.
-     * @return
-     */
-    @JsonIgnore
     public Map<String, Object> getSpecParams() {
         // function produce something like that:
         // vmPayload={volumeId:volume-id,file:{filename:content,filename2:content2,...}}
