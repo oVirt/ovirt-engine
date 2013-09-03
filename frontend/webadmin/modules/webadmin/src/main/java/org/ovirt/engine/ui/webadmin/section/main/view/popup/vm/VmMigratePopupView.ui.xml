@@ -17,14 +17,18 @@
 		.messagePanel {
 			height: 70px;
 		}
+
+        .contentWidgets {
+            width: 97%;
+        }
 	</ui:style>
 
 	<d:SimpleDialogPanel width="400px" height="300px">
 		<d:content>
 			<g:FlowPanel>
-				<e:EntityModelRadioButtonEditor ui:field="selectHostAutomaticallyEditor"/>
-				<e:EntityModelRadioButtonEditor ui:field="selectDestinationHostEditor"/>
-				<e:ListModelListBoxEditor ui:field="hostsListEditor"/>
+				<e:EntityModelRadioButtonEditor ui:field="selectHostAutomaticallyEditor" addStyleNames="{style.contentWidgets}"/>
+				<e:EntityModelRadioButtonEditor ui:field="selectDestinationHostEditor" addStyleNames="{style.contentWidgets}"/>
+				<e:ListModelListBoxEditor ui:field="hostsListEditor" addStyleNames="{style.contentWidgets}"/>
 				<g:FlowPanel addStyleNames="{style.messagePanel}" >
 					<g:Label ui:field="message1" addStyleNames="{style.errorLabel}" />
 					<g:Label ui:field="message2" addStyleNames="{style.noteLabel}" />
