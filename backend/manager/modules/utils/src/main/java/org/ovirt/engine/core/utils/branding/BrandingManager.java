@@ -192,7 +192,6 @@ public class BrandingManager {
                         // And later messages should override earlier ones.
                         keyValues.put(key.replaceFirst(BRAND_PREFIX + "\\." //$NON-NLS-1$
                                 + prefix + "\\.", "") //$NON-NLS-1$
-                                .replaceFirst(BRAND_PREFIX + "\\.", "") //$NON-NLS-1$ //$NON-NLS-2$ //Blank prefix
                                 .replaceFirst(COMMON_PREFIX + "\\.", ""), //$NON-NLS-1$
                                 messagesBundle.getString(key));
                     }

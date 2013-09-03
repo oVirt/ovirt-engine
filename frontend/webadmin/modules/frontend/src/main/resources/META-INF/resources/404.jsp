@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
-<title><fmt:message key="pagenotfound.page_not_found" /></title>
+<title><fmt:message key="obrand.pagenotfound.page_not_found" /></title>
     <c:if test="${requestScope['brandingStyle'] != null}">
         <c:forEach items="${requestScope['brandingStyle']}" var="theme">
             <c:if test="${theme.getThemeStyleSheet(requestScope['applicationType']) != null}">
@@ -18,7 +18,7 @@
     <div>
         <div class="obrand_left">
             <div class="obrand_header_nav">
-                <fmt:message key="pagenotfound.header.main" />
+                <fmt:message key="obrand.pagenotfound.header.main" />
             </div>
         </div>
         <div class="obrand_right">
@@ -27,8 +27,8 @@
         </div>
     </div>
     <div class="obrand_main">
-        <h2><span class="obrand_section_header"><fmt:message key="pagenotfound.page_not_found" /></span></h2>
-        <a href="/ovirt-engine"><fmt:message key="pagenotfound.link" /></a>
+        <h2><span class="obrand_section_header"><fmt:message key="obrand.pagenotfound.page_not_found" /></span></h2>
+        <a href="/ovirt-engine"><fmt:message key="obrand.pagenotfound.link" /></a>
     </div>
 </body>
 </html>
