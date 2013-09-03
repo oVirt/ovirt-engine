@@ -28,8 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.utils.ssl.AuthSSLProtocolSocketFactory;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 
@@ -64,10 +62,6 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             runHttpMethod(httpClient, httpMethod);
             ForemanHostWrapper[] hosts = objectMapper.readValue(httpMethod.getResponseBody(), ForemanHostWrapper[].class);
             return map(Arrays.asList(hosts));
-        } catch (JsonParseException e) {
-            handleException(e);
-        } catch (JsonMappingException e) {
-            handleException(e);
         } catch (IOException e) {
             handleException(e);
         }

@@ -1538,9 +1538,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 }
             } catch (IRSUnicodeArgumentException ex) {
                 throw new IRSGenericException("UNICODE characters are not supported.", ex);
-            } catch (IRSStoragePoolStatusException ex) {
-                throw ex;
-            } catch (IrsOperationFailedNoFailoverException ex) {
+            } catch (IRSStoragePoolStatusException | IrsOperationFailedNoFailoverException ex) {
                 throw ex;
             } catch (IRSNonOperationalException ex) {
                 getVDSReturnValue().setExceptionString(ex.toString());

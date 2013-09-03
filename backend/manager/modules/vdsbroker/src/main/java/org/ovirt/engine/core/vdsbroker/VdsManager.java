@@ -249,8 +249,6 @@ public class VdsManager {
                         logNetworkException(e);
                     } catch (VDSRecoveringException ex) {
                         HandleVdsRecoveringException(ex);
-                    } catch (IRSErrorException ex) {
-                        logFailureMessage(ex);
                     } catch (RuntimeException ex) {
                         logFailureMessage(ex);
                     }

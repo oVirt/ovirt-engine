@@ -106,13 +106,9 @@ public class CopyOnAccessMap<K, V> implements Map<K, V> {
             };
             return (O) objectIn.readObject();
         }
-        catch (IOException exception) {
+        catch (IOException | ClassNotFoundException exception) {
             throw new RuntimeException(exception);
-        }
-        catch (ClassNotFoundException exception) {
-            throw new RuntimeException(exception);
-        }
-        finally {
+        } finally {
             if (objectIn != null) {
                 try {
                     objectIn.close();

@@ -56,14 +56,9 @@ public abstract class BaseProviderProxy implements ProviderProxy {
             return chain;
         } catch (SSLHandshakeException e) {
             return chain;
-        } catch (NoSuchAlgorithmException e) {
+        } catch (NoSuchAlgorithmException | IOException | KeyManagementException e) {
             handleException(e);
-        } catch (KeyManagementException e) {
-            handleException(e);
-        } catch (IOException e) {
-            handleException(e);
-        }
-        finally {
+        } finally {
             if (conn != null) {
                 conn.disconnect();
             }

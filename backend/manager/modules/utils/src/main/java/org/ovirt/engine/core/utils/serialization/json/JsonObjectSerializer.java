@@ -7,8 +7,6 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import org.apache.commons.lang.SerializationException;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig.Feature;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
@@ -74,10 +72,6 @@ public class JsonObjectSerializer implements Serializer {
     private String writeJsonAsString(Object payload, ObjectMapper mapper) {
         try {
             return mapper.writeValueAsString(payload);
-        } catch (JsonGenerationException e) {
-            throw new SerializationException(e);
-        } catch (JsonMappingException e) {
-            throw new SerializationException(e);
         } catch (IOException e) {
             throw new SerializationException(e);
         }

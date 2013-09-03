@@ -326,9 +326,7 @@ public class ManageDomains {
 
         try {
             return LdapProviderType.valueOfIgnoreCase(parser.getArg(Arguments.provider.name()));
-        } catch (IllegalArgumentException i) {
-            // continue and print message
-        } catch (NullPointerException e) {
+        } catch (IllegalArgumentException | NullPointerException i) {
             // continue and print message
         }
 

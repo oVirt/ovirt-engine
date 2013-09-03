@@ -5,9 +5,7 @@ import java.io.Serializable;
 
 import org.apache.commons.lang.SerializationException;
 import org.apache.commons.lang.StringUtils;
-import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -84,10 +82,6 @@ public class JsonObjectDeserializer implements Deserializer {
     private <T> T readJsonString(Object source, Class<T> type, ObjectMapper mapper) {
         try {
             return mapper.readValue(source.toString(), type);
-        } catch (JsonParseException e) {
-            throw new SerializationException(e);
-        } catch (JsonMappingException e) {
-            throw new SerializationException(e);
         } catch (IOException e) {
             throw new SerializationException(e);
         }

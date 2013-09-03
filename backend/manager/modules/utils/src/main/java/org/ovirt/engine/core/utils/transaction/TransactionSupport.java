@@ -227,19 +227,8 @@ public class TransactionSupport {
                 tm.commit();
             }
 
-        } catch (SystemException e) {
-            throw new RuntimeException("Failed managing transaction", e);
-        } catch (SecurityException e) {
-            throw new RuntimeException("Failed managing transaction", e);
-        } catch (IllegalStateException e) {
-            throw new RuntimeException("Failed managing transaction", e);
-        } catch (RollbackException e) {
-            throw new RuntimeException("Failed managing transaction", e);
-        } catch (HeuristicMixedException e) {
-            throw new RuntimeException("Failed managing transaction", e);
-        } catch (HeuristicRollbackException e) {
-            throw new RuntimeException("Failed managing transaction", e);
-        } catch (NotSupportedException e) {
+        } catch (SystemException | NotSupportedException | HeuristicRollbackException | HeuristicMixedException |
+                 RollbackException | IllegalStateException | SecurityException e) {
             throw new RuntimeException("Failed managing transaction", e);
         } finally {
             // check if we need to resume previous transaction

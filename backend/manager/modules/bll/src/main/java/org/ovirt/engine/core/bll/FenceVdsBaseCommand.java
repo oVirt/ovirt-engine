@@ -294,9 +294,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                         } else {
                             tryOtherConcurrentAgent(lastStatus, ecs);
                         }
-                    } catch (InterruptedException e) {
-                        tryOtherConcurrentAgent(lastStatus, ecs);
-                    } catch (ExecutionException e) {
+                    } catch (InterruptedException | ExecutionException e) {
                         tryOtherConcurrentAgent(lastStatus, ecs);
                     }
 
@@ -325,9 +323,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     setFenceSucceeded(true);
                     break;
                 }
-            } catch (InterruptedException e) {
-                log.error(e);
-            } catch (ExecutionException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 log.error(e);
             }
         }

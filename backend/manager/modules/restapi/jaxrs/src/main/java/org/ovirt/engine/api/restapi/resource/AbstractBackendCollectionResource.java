@@ -173,7 +173,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
                 method = entityResource.getClass().getMethod("get");
                 method.invoke(entityResource);
             }
-        } catch (IllegalAccessException e) {
+        } catch (IllegalAccessException | SecurityException | NoSuchMethodException e) {
             LOG.error("Reflection Error", e);
         } catch (InvocationTargetException e) {
             if (e.getTargetException() instanceof WebApplicationException) {
@@ -181,10 +181,6 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             } else {
                 LOG.error("Reflection Error", e);
             }
-        } catch (SecurityException e) {
-            LOG.error("Reflection Error", e);
-        } catch (NoSuchMethodException e) {
-            LOG.error("Reflection Error", e);
         }
     }
 

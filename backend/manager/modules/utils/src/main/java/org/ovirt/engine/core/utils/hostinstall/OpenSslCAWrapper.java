@@ -162,9 +162,7 @@ public class OpenSslCAWrapper {
                     exitCode = process.exitValue();
                     completed = true;
                     break;
-                } catch (IllegalThreadStateException e) {
-                    // keep going
-                } catch (InterruptedException ie) {
+                } catch (IllegalThreadStateException | InterruptedException e) {
                     // keep going
                 }
             }

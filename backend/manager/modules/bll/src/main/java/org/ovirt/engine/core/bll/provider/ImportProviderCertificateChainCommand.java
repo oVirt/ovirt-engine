@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.provider;
 
 import java.security.KeyStore;
-import java.security.KeyStoreException;
 import java.security.cert.Certificate;
 import java.util.Collections;
 import java.util.List;
@@ -77,8 +76,6 @@ public class ImportProviderCertificateChainCommand<P extends ProviderParameters>
 
                 ExternalTrustStoreInitializer.setTrustStore(ks);
                 setSucceeded(true);
-            } catch (KeyStoreException e) {
-                handleException(e);
             } catch (Throwable e) {
                 handleException(e);
             }
