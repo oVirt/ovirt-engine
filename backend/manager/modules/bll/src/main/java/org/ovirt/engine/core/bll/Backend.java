@@ -98,6 +98,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     private DateTime _startedAt;
     private static boolean firstInitialization = true;
     private String poolMonitoringJobId;
+    private String autoStartVmsRunnerJobId;
 
     public static BackendInternal getInstance() {
         return EjbUtils.findBean(BeanType.BACKEND, BeanProxyType.LOCAL);
@@ -235,6 +236,13 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                         "managePrestartedVmsInAllVmPools", new Class[] {}, new Object[] {},
                         vmPoolMonitorIntervalInMinutes,
                         vmPoolMonitorIntervalInMinutes, TimeUnit.MINUTES);
+
+        int autoStartVmsRunnerIntervalInSeconds = Config.<Integer> GetValue(ConfigValues.AutoStartVmsRunnerIntervalInSeconds);
+        autoStartVmsRunnerJobId =
+                SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(AutoStartVmsRunner.getInstance(),
+                        "startFailedAutoStartVms", new Class[] {}, new Object[] {},
+                        autoStartVmsRunnerIntervalInSeconds,
+                        autoStartVmsRunnerIntervalInSeconds, TimeUnit.SECONDS);
 
         int quotaCacheIntervalInMinutes = Config.<Integer> GetValue(ConfigValues.QuotaCacheIntervalInMinutes);
         SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(QuotaManager.getInstance(),

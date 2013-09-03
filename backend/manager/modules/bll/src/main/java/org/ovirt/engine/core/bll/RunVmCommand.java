@@ -116,6 +116,15 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     @Override
+    protected boolean acquireLockInternal() {
+        final boolean acquireLock = super.acquireLockInternal();
+        if (!acquireLock && getVm() != null && getVm().isAutoStartup()) {
+            AutoStartVmsRunner.getInstance().addVmToRun(getParameters().getVmId());
+        }
+        return acquireLock;
+    }
+
+    @Override
     protected VDS getDestinationVds() {
         if (_destinationVds == null) {
             Guid vdsId =

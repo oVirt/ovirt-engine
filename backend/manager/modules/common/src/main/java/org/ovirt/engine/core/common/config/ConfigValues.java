@@ -1501,6 +1501,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     CloudInitSupported(537),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("60")
+    AutoStartVmsRunnerIntervalInSeconds(538),
+
     Invalid(65535);
 
     private int intValue;
