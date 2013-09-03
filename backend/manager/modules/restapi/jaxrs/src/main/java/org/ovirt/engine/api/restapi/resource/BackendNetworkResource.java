@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 public class BackendNetworkResource extends AbstractBackendNetworkResource implements NetworkResource {
 
     public BackendNetworkResource(String id, BackendNetworksResource parent) {
-        super(id, parent);
+        super(id, parent, BackendNetworksResource.SUB_COLLECTIONS);
     }
 
     @Override

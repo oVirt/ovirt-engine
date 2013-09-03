@@ -8,8 +8,8 @@ public class AbstractBackendNetworkResource
 
     protected AbstractBackendNetworksResource parent;
 
-    public AbstractBackendNetworkResource(String id, AbstractBackendNetworksResource parent) {
-        super(id, Network.class, org.ovirt.engine.core.common.businessentities.network.Network.class);
+    public AbstractBackendNetworkResource(String id, AbstractBackendNetworksResource parent, String... subCollections) {
+        super(id, Network.class, org.ovirt.engine.core.common.businessentities.network.Network.class, subCollections);
         this.parent = parent;
     }
 
