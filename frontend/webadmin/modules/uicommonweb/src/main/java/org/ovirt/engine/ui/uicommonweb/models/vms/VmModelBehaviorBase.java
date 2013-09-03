@@ -1011,16 +1011,14 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 List<VnicProfileView> profiles = (List<VnicProfileView>) returnValue;
-
                 List<VnicInstanceType> vnicInstanceTypes = new ArrayList<VnicInstanceType>();
+                List<VmNetworkInterface> nics = (argNics == null) ? new ArrayList<VmNetworkInterface>() : argNics;
 
-                List<VmNetworkInterface> nics = argNics;
-
-                if (argNics == null || argNics.size() == 0) {
-                    // create a default if none provided
+                if (nics.isEmpty() && profilesExist(profiles)) {
+                    // create a default if none provided AND if there are profiles to choose from
                     VmNetworkInterface networkInterface = new VmNetworkInterface();
                     networkInterface.setName(AsyncDataProvider.getNewNicName(null));
-                    nics = Arrays.asList(networkInterface);
+                    nics.add(networkInterface);
                 }
 
                 for (VmNetworkInterface nic : nics) {
@@ -1039,6 +1037,10 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         });
 
         behavior.initProfiles(hotUpdateSupported, getModel().getSelectedCluster().getId(), getModel().getSelectedDataCenter().getId(), query);
+    }
+
+    private boolean profilesExist(List<VnicProfileView> profiles) {
+        return !profiles.isEmpty() && profiles.get(0) != null;
     }
 
     public void updateSingleQxl(boolean visible) {

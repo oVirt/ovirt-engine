@@ -64,22 +64,20 @@ public class ProfilesInstanceTypeEditor extends Composite implements IsEditor<Ta
 
     @Override
     public void setAcceptableValues(Collection<Object> values) {
-        if (values == null) {
+        editors.clear();
+        contentPanel.clear();
+
+        if (values == null || values.size() == 0) {
+            headerLabel.setText(messages.assignNicsNothingToAssign());
             return;
         }
 
-        editors.clear();
-        contentPanel.clear();
         for (Object value : values) {
             ProfileInstanceTypeEditor networkEditor = new ProfileInstanceTypeEditor();
             networkEditor.setElementId(elementId);
             editors.add(networkEditor);
             networkEditor.setValue((VnicInstanceType) value);
             contentPanel.add(networkEditor);
-        }
-
-        if (values.size() == 0) {
-            return;
         }
 
         if (values.size() == 1) {

@@ -112,6 +112,9 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("VM has 1 Nic. Assign it to a Profile.")
     String assignNicsToProfilesSingular();
 
+    @DefaultMessage("VM has no network interfaces and there are no available profiles to choose from.")
+    String assignNicsNothingToAssign();
+
     @DefaultMessage("{0} ({1})")
     SafeHtml profileAndNetwork(String profileName, String networkName);
 
