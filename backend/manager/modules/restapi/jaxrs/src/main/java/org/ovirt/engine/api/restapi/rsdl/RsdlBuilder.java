@@ -653,9 +653,9 @@ public class RsdlBuilder {
                 &&
 
                 (
-                (link1.getRequest().getBody().isRequired() == Boolean.FALSE)
+                (Boolean.FALSE.equals(link1.getRequest().getBody().isRequired()))
                 &&
-                (link2.getRequest().getBody().isRequired() == Boolean.FALSE)
+                (Boolean.FALSE.equals(link2.getRequest().getBody().isRequired()))
                 )
            )
         {
