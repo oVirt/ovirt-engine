@@ -59,7 +59,7 @@ public class RoleDAODbFacadeImpl extends BaseDAODbFacade implements RoleDAO {
     public List<Role> getAll() {
         Integer appMode = Config.<Integer> GetValue(ConfigValues.ApplicationMode);
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("app_mode", appMode.intValue());
+                .addValue("app_mode", appMode);
 
         return getCallsHandler().executeReadList("GetAllFromRole", RolesRowMapper.instance, parameterSource);
     }
