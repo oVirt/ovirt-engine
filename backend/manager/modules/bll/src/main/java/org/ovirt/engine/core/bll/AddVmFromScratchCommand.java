@@ -137,7 +137,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
             return failCanDoAction(VdcBllMessages.VM_CLUSTER_IS_NOT_VALID);
         }
 
-        if (!ImagesHandler.CheckImagesConfiguration(getStorageDomainId(),
+        if (!ImagesHandler.checkImagesConfiguration(getStorageDomainId(),
                 getParameters().getDiskInfoList(), getReturnValue().getCanDoActionMessages())) {
             return false;
         }

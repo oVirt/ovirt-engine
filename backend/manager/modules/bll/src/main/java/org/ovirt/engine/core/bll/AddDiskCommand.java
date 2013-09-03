@@ -205,7 +205,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     /** Checks if the image's configuration is legal */
     protected boolean checkImageConfiguration() {
-        return ImagesHandler.CheckImageConfiguration(
+        return ImagesHandler.checkImageConfiguration(
                 getStorageDomain().getStorageStaticData(),
                 getDiskImageInfo(),
                 getReturnValue().getCanDoActionMessages());

@@ -87,7 +87,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
         fetchImageTemplates();
         List<Guid> storageDomainsList = getParameters().getStorageDomainsList();
-        Set<Guid> allDomainsList = getStorageDoaminsByDisks(imageTemplates, true);
+        Set<Guid> allDomainsList = getStorageDomainsByDisks(imageTemplates, true);
 
         // if null or empty list sent, get all template domains for deletion
         if (storageDomainsList == null || storageDomainsList.isEmpty()) {
@@ -137,7 +137,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
                         ImagesHandler.filterImageDisks(getDbFacade().getDiskDao().getAllForVm(vm.getId()),
                                 false,
                                 false);
-                Set<Guid> domainsIds = getStorageDoaminsByDisks(vmDIsks, false);
+                Set<Guid> domainsIds = getStorageDomainsByDisks(vmDIsks, false);
                 for (Guid domainId : domainsIds) {
                     if (!getParameters().getStorageDomainsList().contains(domainId)) {
                         problematicVmNames.add(vm.getName());
@@ -167,7 +167,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     /**
      * Get a list of all domains id that the template is on
      */
-    private Set<Guid> getStorageDoaminsByDisks(List<DiskImage> disks, boolean isFillStorageTodDiskMap) {
+    private Set<Guid> getStorageDomainsByDisks(List<DiskImage> disks, boolean isFillStorageTodDiskMap) {
         Set<Guid> domainsList = new HashSet<Guid>();
         if (disks != null) {
             for (DiskImage disk : disks) {
@@ -193,7 +193,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
 
                 @Override
                 public Void runInTransaction() {
-                    if (RemoveVmTemplateImages()) {
+                    if (removeVmTemplateImages()) {
                         setSucceeded(true);
                     }
                     return null;
@@ -216,12 +216,12 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         .toString();
     }
 
-    private void RemoveTemplateFromDb() {
+    private void removeTemplateFromDb() {
         RemoveNetwork();
         DbFacade.getInstance().getVmTemplateDao().remove(getVmTemplate().getId());
     }
 
-    protected boolean RemoveVmTemplateImages() {
+    protected boolean removeVmTemplateImages() {
         getParameters().setEntityInfo(getParameters().getEntityInfo());
         getParameters().setParentCommand(getActionType());
         getParameters().setParentParameters(getParameters());
@@ -265,7 +265,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     private void HandleEndAction() {
         try {
             if (getParameters().isRemoveTemplateFromDb()) {
-                RemoveTemplateFromDb();
+                removeTemplateFromDb();
             } else {
                 // unlock template
                 VmTemplateHandler.UnLockVmTemplate(getVmTemplateId());

@@ -126,7 +126,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
 
         Map<Guid, ? extends Disk> images = getVm().getDiskMap();
         // check that the images requested format are valid (COW+Sparse)
-        if (!ImagesHandler.CheckImagesConfiguration(getParameters().getStorageDomainId(),
+        if (!ImagesHandler.checkImagesConfiguration(getParameters().getStorageDomainId(),
                 new ArrayList<Disk>(images.values()),
                 getReturnValue().getCanDoActionMessages())) {
             return false;

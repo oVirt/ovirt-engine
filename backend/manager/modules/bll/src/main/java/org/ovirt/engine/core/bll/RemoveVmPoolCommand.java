@@ -20,12 +20,12 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
 
     @Override
     protected boolean canDoAction() {
-        return CanRemoveVmPool(getParameters().getVmPoolId(), getReturnValue().getCanDoActionMessages());
+        return canRemoveVmPool(getParameters().getVmPoolId(), getReturnValue().getCanDoActionMessages());
     }
 
     @Override
     protected void executeCommand() {
-        if (getVmPoolId() != null && CanRemoveVmPoolWithoutReasons(getVmPoolId())) {
+        if (getVmPoolId() != null && canRemoveVmPoolWithoutReasons(getVmPoolId())) {
             DbFacade.getInstance().getVmPoolDao().remove(getVmPoolId());
             setSucceeded(true);
         }
@@ -36,12 +36,12 @@ public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolC
         return getSucceeded() ? AuditLogType.USER_REMOVE_VM_POOL : AuditLogType.USER_REMOVE_VM_POOL_FAILED;
     }
 
-    public static boolean CanRemoveVmPoolWithoutReasons(Guid vmPoolId) {
+    public static boolean canRemoveVmPoolWithoutReasons(Guid vmPoolId) {
         java.util.ArrayList<String> reasons = new java.util.ArrayList<String>();
-        return (CanRemoveVmPool(vmPoolId, reasons));
+        return (canRemoveVmPool(vmPoolId, reasons));
     }
 
-    public static boolean CanRemoveVmPool(Guid vmPoolId, java.util.ArrayList<String> reasons) {
+    public static boolean canRemoveVmPool(Guid vmPoolId, java.util.ArrayList<String> reasons) {
         boolean returnValue = true;
         if (DbFacade.getInstance().getVmPoolDao().getVmPoolsMapByVmPoolId(vmPoolId).size() != 0) {
             returnValue = false;

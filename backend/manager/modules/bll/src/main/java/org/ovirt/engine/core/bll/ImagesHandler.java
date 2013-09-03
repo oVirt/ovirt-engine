@@ -419,7 +419,7 @@ public final class ImagesHandler {
         return fromIrs;
     }
 
-    public static boolean CheckImageConfiguration(StorageDomainStatic storageDomain,
+    public static boolean checkImageConfiguration(StorageDomainStatic storageDomain,
             DiskImageBase diskInfo, List<String> messages) {
         if (!checkImageConfiguration(storageDomain, diskInfo.getVolumeType(), diskInfo.getVolumeFormat())) {
             // not supported
@@ -438,14 +438,14 @@ public final class ImagesHandler {
                 || volumeType == VolumeType.Unassigned);
     }
 
-    public static boolean CheckImagesConfiguration(Guid storageDomainId,
+    public static boolean checkImagesConfiguration(Guid storageDomainId,
             Collection<? extends Disk> disksConfigList,
             List<String> messages) {
         boolean result = true;
         StorageDomainStatic storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(storageDomainId);
         for (Disk diskInfo : disksConfigList) {
             if (DiskStorageType.IMAGE == diskInfo.getDiskStorageType()) {
-                result = CheckImageConfiguration(storageDomain, (DiskImage) diskInfo, messages);
+                result = checkImageConfiguration(storageDomain, (DiskImage) diskInfo, messages);
             }
             if (!result)
                 break;

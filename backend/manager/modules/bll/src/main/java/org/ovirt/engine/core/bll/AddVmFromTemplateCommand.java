@@ -118,7 +118,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         if (retValue) {
             for (DiskImage dit : getVmTemplate().getDiskTemplateMap().values()) {
                 retValue =
-                        ImagesHandler.CheckImageConfiguration(destStorages.get(diskInfoDestinationMap.get(dit.getId()).getStorageIds().get(0))
+                        ImagesHandler.checkImageConfiguration(destStorages.get(diskInfoDestinationMap.get(dit.getId()).getStorageIds().get(0))
                                 .getStorageStaticData(),
                                 diskInfoDestinationMap.get(dit.getId()),
                                 getReturnValue().getCanDoActionMessages());

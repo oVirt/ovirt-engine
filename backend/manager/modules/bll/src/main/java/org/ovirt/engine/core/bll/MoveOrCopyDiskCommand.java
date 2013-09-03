@@ -197,7 +197,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     protected boolean checkImageConfiguration() {
-        return ImagesHandler.CheckImageConfiguration(getStorageDomain().getStorageStaticData(),
+        return ImagesHandler.checkImageConfiguration(getStorageDomain().getStorageStaticData(),
                 getImage(),
                 getReturnValue().getCanDoActionMessages());
     }

@@ -326,10 +326,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     private boolean validateImageConfig(List<String> canDoActionMessages,
             Map<Guid, StorageDomain> domainsMap,
             DiskImage image) {
-        return ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(image.getId()))
-                        .getStorageStaticData(),
-                        image,
-                        canDoActionMessages);
+        return ImagesHandler.checkImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(image.getId()))
+                .getStorageStaticData(),
+                image,
+                canDoActionMessages);
     }
 
     private boolean canDoActionAfterCloneVm(Map<Guid, StorageDomain> domainsMap) {
@@ -365,7 +365,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                     DiskImage key = (DiskImage) getVm().getDiskMap().get(disk.getId());
 
                     if (key != null) {
-                        if (!ImagesHandler.CheckImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(key.getId()))
+                        if (!ImagesHandler.checkImageConfiguration(domainsMap.get(imageToDestinationDomainMap.get(key.getId()))
                                 .getStorageStaticData(),
                                 (DiskImageBase) disk,
                                 getReturnValue().getCanDoActionMessages())) {

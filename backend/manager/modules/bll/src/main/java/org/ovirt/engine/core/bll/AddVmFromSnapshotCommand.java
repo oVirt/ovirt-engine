@@ -371,7 +371,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     protected boolean checkImageConfiguration(DiskImage diskImage) {
-        return ImagesHandler.CheckImageConfiguration(destStorages.get(diskInfoDestinationMap.get(diskImage.getId())
+        return ImagesHandler.checkImageConfiguration(destStorages.get(diskInfoDestinationMap.get(diskImage.getId())
                 .getStorageIds()
                 .get(0))
                 .getStorageStaticData(),
