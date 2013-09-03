@@ -223,6 +223,7 @@ public class UpdateVmCommandTest {
     private void prepareVmToPassCanDoAction() {
         vmStatic.setName("vm1");
         vmStatic.setMemSizeMb(256);
+        vmStatic.setSingleQxlPci(false);
         mockVmDaoGetVm();
         mockSameNameQuery(false);
         mockValidateCustomProperties();

@@ -1315,7 +1315,7 @@ public class UnitVmModel extends Model {
         getIsSoundcardEnabled().setIsChangable(false);
 
         setIsSingleQxlEnabled(new NotChangableForVmInPoolEntityModel());
-        getIsSingleQxlEnabled().setEntity(false);
+        getIsSingleQxlEnabled().setEntity(true);
     }
 
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem)
@@ -1333,7 +1333,7 @@ public class UnitVmModel extends Model {
         getIsHighlyAvailable().setEntity(false);
         getIsAutoAssign().setEntity(true);
         getIsTemplatePublic().setEntity(true);
-        getIsSingleQxlEnabled().setEntity(false);
+        getIsSingleQxlEnabled().setEntity(true);
 
         getHostCpu().setEntity(false);
         getMigrationMode().setIsChangable(true);

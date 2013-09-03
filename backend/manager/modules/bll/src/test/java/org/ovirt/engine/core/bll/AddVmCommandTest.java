@@ -462,6 +462,7 @@ public class AddVmCommandTest {
         stat.setPriority(1);
         vm.setStaticData(stat);
         vm.setDynamicData(dynamic);
+        vm.setSingleQxlPci(false);
         return vm;
     }
 
