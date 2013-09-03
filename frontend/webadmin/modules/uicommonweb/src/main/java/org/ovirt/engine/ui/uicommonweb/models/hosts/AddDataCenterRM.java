@@ -106,9 +106,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
                             @Override
                             public void executed(FrontendActionAsyncResult result) {
 
-                                VdcReturnValueBase returnValue = result.getReturnValue();
-
-                                context.addDataCenterReturnValue = returnValue;
+                                context.addDataCenterReturnValue = result.getReturnValue();
                                 prepare3();
                             }
                         });

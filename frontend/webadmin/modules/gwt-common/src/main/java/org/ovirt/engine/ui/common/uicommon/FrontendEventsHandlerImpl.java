@@ -50,7 +50,6 @@ public class FrontendEventsHandlerImpl implements IFrontendEventsHandler {
 
     @Override
     public void runMultipleActionFailed(VdcActionType action, List<VdcReturnValueBase> returnValues) {
-        String actionStr = EnumTranslator.createAndTranslate(action);
 
         List<Message> errors = new ArrayList<Message>();
 

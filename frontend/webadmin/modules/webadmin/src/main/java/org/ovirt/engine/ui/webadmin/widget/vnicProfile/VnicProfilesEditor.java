@@ -79,8 +79,6 @@ public class VnicProfilesEditor extends Composite implements IsEditor<TakesValue
         editors.clear();
         contentPanel.clear();
 
-        int numOfProfiles = values.size();
-
         for (final Object value : values) {
             final Guid dcId = ((VnicProfileModel) value).getDcId();
             VnicProfileWidget vnicProfileWidget = new VnicProfileWidget();

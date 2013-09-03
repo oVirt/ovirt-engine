@@ -52,7 +52,6 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
-                UnitVmModel model = (UnitVmModel) target;
                 final List<StoragePool> dataCenters = new ArrayList<StoragePool>();
                 for (StoragePool a : (ArrayList<StoragePool>) returnValue) {
                     if (a.getstatus() == StoragePoolStatus.Up) {

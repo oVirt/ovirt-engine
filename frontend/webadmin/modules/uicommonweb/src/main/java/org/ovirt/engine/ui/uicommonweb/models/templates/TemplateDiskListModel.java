@@ -149,7 +149,6 @@ public class TemplateDiskListModel extends SearchableListModel
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
-                            TemplateDiskListModel model = (TemplateDiskListModel) target;
                             ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
 
                             Collections.sort(storageDomains, new NameableComparator());
