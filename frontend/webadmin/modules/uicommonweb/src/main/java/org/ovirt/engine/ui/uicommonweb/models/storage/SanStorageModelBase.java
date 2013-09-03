@@ -258,8 +258,6 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         privateHash = value;
     }
 
-    public boolean loginAllInProgress;
-    public SanTargetModel sanTargetModel;
     private ArrayList<SanTargetModel> targetsToConnect;
 
     protected SanStorageModelBase()
