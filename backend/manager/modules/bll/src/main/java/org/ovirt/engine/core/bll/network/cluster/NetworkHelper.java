@@ -25,7 +25,7 @@ public class NetworkHelper {
      *            the Network ID
      */
     public static void addPermissionsOnNetwork(Guid userId, Guid networkId) {
-        addPermission(userId, networkId, PredefinedRoles.NETWORK_ADMIN);
+        addPermission(userId, networkId, PredefinedRoles.NETWORK_ADMIN, VdcObjectType.Network);
     }
 
     /**
@@ -40,13 +40,14 @@ public class NetworkHelper {
      *            Indicates of the network is intended for a public user
      */
     public static void addPermissionsOnVnicProfile(Guid userId, Guid vnicProfileId, boolean publicUse) {
-        addPermission(userId, vnicProfileId, PredefinedRoles.NETWORK_ADMIN);
+        addPermission(userId, vnicProfileId, PredefinedRoles.NETWORK_ADMIN, VdcObjectType.VnicProfile);
 
         // if the profile is for public use, set EVERYONE as a VNICProfileUser on the profile
         if (publicUse) {
             addPermission(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
                     vnicProfileId,
-                    PredefinedRoles.VNIC_PROFILE_USER);
+                    PredefinedRoles.VNIC_PROFILE_USER,
+                    VdcObjectType.VnicProfile);
         }
     }
 
@@ -59,10 +60,10 @@ public class NetworkHelper {
         return profile;
     }
 
-    private static void addPermission(Guid userId, Guid entityId, PredefinedRoles role) {
+    private static void addPermission(Guid userId, Guid entityId, PredefinedRoles role, VdcObjectType objectType) {
         permissions perms = new permissions();
         perms.setad_element_id(userId);
-        perms.setObjectType(VdcObjectType.Network);
+        perms.setObjectType(objectType);
         perms.setObjectId(entityId);
         perms.setrole_id(role.getId());
         MultiLevelAdministrationHandler.addPermission(perms);
