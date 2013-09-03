@@ -11,6 +11,7 @@ set_defaults() {
 
     if [ -n "${ENGINE_PGPASS}" ]; then
         export PGPASSFILE="${ENGINE_PGPASS}"
+        unset PGPASSWORD
     else
         export PGPASSFILE="/etc/ovirt-engine/.pgpass"
         if [ ! -r "${PGPASSFILE}" ]; then
