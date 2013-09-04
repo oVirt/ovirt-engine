@@ -94,7 +94,7 @@ public class WelcomeServlet extends HttpServlet {
         ServletException {
         request.setAttribute(LOCALE_KEYS, LocaleFilter.getLocaleKeys());
         request.setAttribute(APPLICATION_TYPE, BrandingTheme.ApplicationType.WELCOME);
-        String oVirtVersion = (String) backend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
+        String oVirtVersion = backend.RunPublicQuery(VdcQueryType.GetConfigurationValue,
                 new GetConfigurationValueParameters(ConfigurationValues.ProductRPMVersion,
                         ConfigCommon.defaultConfigurationVersion)).getReturnValue();
         request.setAttribute(VERSION, oVirtVersion != null ? oVirtVersion : "myVersion");

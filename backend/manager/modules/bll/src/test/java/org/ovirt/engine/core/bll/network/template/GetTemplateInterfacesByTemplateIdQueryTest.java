@@ -33,8 +33,7 @@ public class GetTemplateInterfacesByTemplateIdQueryTest extends AbstractUserQuer
 
         getQuery().executeQueryCommand();
 
-        @SuppressWarnings("unchecked")
-        List<VmNetworkInterface> result = (List<VmNetworkInterface>) getQuery().getQueryReturnValue().getReturnValue();
+        List<VmNetworkInterface> result = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong interfaces returned", expectedResult, result);
     }

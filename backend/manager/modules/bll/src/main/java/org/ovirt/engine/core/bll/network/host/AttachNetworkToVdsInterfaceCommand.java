@@ -167,8 +167,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
                     VdcQueryType.GetAllChildVlanInterfaces,
                     new InterfaceAndIdQueryParameters(params.getVdsId(), params
                             .getInterface()));
-            @SuppressWarnings("unchecked")
-            ArrayList<VdsNetworkInterface> vlanIfaces = (ArrayList<VdsNetworkInterface>) ret.getReturnValue();
+            ArrayList<VdsNetworkInterface> vlanIfaces = ret.getReturnValue();
             if (vlanIfaces.size() > 0) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_INTERFACE_CONNECT_TO_VLAN);
                 return false;

@@ -50,7 +50,7 @@ public class NetworkClusterHelper {
             SearchParameters searchParams = new SearchParameters("hosts: cluster = "
                     + vdsGroup.getName(), SearchType.VDS);
             searchParams.setMaxCount(Integer.MAX_VALUE);
-            List<VDS> vdsList = (List<VDS>) Backend.getInstance()
+            List<VDS> vdsList = Backend.getInstance()
                     .runInternalQuery(VdcQueryType.Search, searchParams).getReturnValue();
 
             if (networkCluster.isRequired()) {
@@ -58,8 +58,7 @@ public class NetworkClusterHelper {
                     if (vds.getStatus() != VDSStatus.Up) {
                         continue;
                     }
-                    List<VdsNetworkInterface> interfaces = (List<VdsNetworkInterface>) Backend
-                            .getInstance()
+                    List<VdsNetworkInterface> interfaces = Backend.getInstance()
                             .runInternalQuery(VdcQueryType.GetVdsInterfacesByVdsId,
                                     new IdQueryParameters(vds.getId())).getReturnValue();
                     VdsNetworkInterface iface = LinqUtils.firstOrNull(interfaces, new Predicate<VdsNetworkInterface>() {

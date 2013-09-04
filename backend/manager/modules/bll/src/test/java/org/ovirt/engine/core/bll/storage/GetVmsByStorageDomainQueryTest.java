@@ -51,7 +51,7 @@ public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryPar
         doReturn(returnValue).when(query).getAllDisksByStorageDomain(domainId);
         query.executeQueryCommand();
 
-        List<VM> vms = (List<VM>) query.getQueryReturnValue().getReturnValue();
+        List<VM> vms = query.getQueryReturnValue().getReturnValue();
         assertEquals(2,vms.size());
     }
 
@@ -70,7 +70,7 @@ public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryPar
         doReturn(returnValue).when(query).getAllDisksByStorageDomain(domainId);
         query.executeQueryCommand();
 
-        List<VM> vms = (List<VM>) query.getQueryReturnValue().getReturnValue();
+        List<VM> vms = query.getQueryReturnValue().getReturnValue();
         assertEquals(0,vms.size());
     }
 
@@ -110,7 +110,7 @@ public class GetVmsByStorageDomainQueryTest extends AbstractQueryTest<IdQueryPar
         doReturn(returnValue).when(query).getAllDisksByStorageDomain(domainId);
         query.executeQueryCommand();
 
-        List<VM> vms = (List<VM>) query.getQueryReturnValue().getReturnValue();
+        List<VM> vms = query.getQueryReturnValue().getReturnValue();
         assertEquals(2,vms.size());
         assertEquals(1,vms.get(0).getDiskList().size());
         assertEquals(1,vms.get(1).getDiskList().size());

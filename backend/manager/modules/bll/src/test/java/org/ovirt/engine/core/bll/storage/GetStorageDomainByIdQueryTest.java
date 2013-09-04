@@ -34,7 +34,7 @@ public class GetStorageDomainByIdQueryTest extends AbstractUserQueryTest<IdQuery
         getQuery().executeQueryCommand();
 
         // Assert we got the correct storage domain back
-        StorageDomain actual = (StorageDomain) getQuery().getQueryReturnValue().getReturnValue();
+        StorageDomain actual = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong storage domain returned", expected, actual);
     }

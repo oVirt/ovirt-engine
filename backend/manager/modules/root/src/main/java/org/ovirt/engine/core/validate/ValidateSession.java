@@ -68,7 +68,7 @@ public class ValidateSession extends HttpServlet {
             returnValue = queryReturnValue.getSucceeded();
 
             if (returnValue) {
-                VdcUser vdcUser = (VdcUser) queryReturnValue.getReturnValue();
+                VdcUser vdcUser = queryReturnValue.getReturnValue();
 
                 // We get the user name only in case the validation succeeded, and the user is an administrator
                 if (vdcUser.isAdmin()) {

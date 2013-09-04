@@ -153,14 +153,13 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
-    @SuppressWarnings("unchecked")
     private boolean isRepoImageExists(String repoImagePath, Guid storageDomainId, ImageFileType imageFileType) {
         VdcQueryReturnValue ret = getBackend().runInternalQuery(
                 VdcQueryType.GetImagesList,
                 new GetImagesListParameters(storageDomainId, imageFileType));
 
         if (ret != null && ret.getReturnValue() != null && ret.getSucceeded()) {
-            for (RepoImage isoFileMetaData : (List<RepoImage>) ret.getReturnValue()) {
+            for (RepoImage isoFileMetaData : ret.<List<RepoImage>>getReturnValue()) {
                 if (repoImagePath.equals(isoFileMetaData.getRepoImageId())) {
                     return true;
                 }

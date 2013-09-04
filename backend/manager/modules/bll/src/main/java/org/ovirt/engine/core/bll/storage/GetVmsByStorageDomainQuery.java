@@ -30,8 +30,8 @@ public class GetVmsByStorageDomainQuery<P extends IdQueryParameters>
         // get all disks and snapshots
         VdcQueryReturnValue queryReturnValue = getAllDisksByStorageDomain(domainId);
         if (queryReturnValue.getSucceeded()) {
-            disksOfDomain = (List<DiskImage>) queryReturnValue.getReturnValue();
-            Map<String, VM> vmNameToVMMap = new HashMap();
+            disksOfDomain = queryReturnValue.getReturnValue();
+            Map<String, VM> vmNameToVMMap = new HashMap<>();
 
             for (VM vm : vms) {
                 vmNameToVMMap.put(vm.getName(), vm);

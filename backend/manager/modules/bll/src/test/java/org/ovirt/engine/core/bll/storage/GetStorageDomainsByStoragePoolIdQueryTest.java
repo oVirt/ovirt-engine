@@ -37,8 +37,7 @@ public class GetStorageDomainsByStoragePoolIdQueryTest extends AbstractUserQuery
 
         getQuery().executeQueryCommand();
 
-        @SuppressWarnings("unchecked")
-        List<StorageDomain> result = (List<StorageDomain>) getQuery().getQueryReturnValue().getReturnValue();
+        List<StorageDomain> result = getQuery().getQueryReturnValue().getReturnValue();
         assertEquals("Wrong number of domains returned", 1, result.size());
         assertEquals("Wrong domain returned", domain, result.get(0));
     }

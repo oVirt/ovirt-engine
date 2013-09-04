@@ -101,8 +101,7 @@ public class GetDeviceListQueryTest extends AbstractQueryTest<GetDeviceListQuery
         getQuery().executeQueryCommand();
 
         // Assert the query's results
-        @SuppressWarnings("unchecked")
-        List<LUNs> lunsActual = (List<LUNs>) getQuery().getQueryReturnValue().getReturnValue();
+        List<LUNs> lunsActual = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals(lunsExpected, lunsActual);
     }

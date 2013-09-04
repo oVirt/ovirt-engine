@@ -39,7 +39,7 @@ public class GetManagementInterfaceAddressByVmIdQueryTest extends AbstractUserQu
 
         getQuery().executeQueryCommand();
 
-        String result = (String) getQuery().getQueryReturnValue().getReturnValue();
+        String result = getQuery().getQueryReturnValue().getReturnValue();
 
         assertEquals("Wrong address returned", "my_address", result);
     }
