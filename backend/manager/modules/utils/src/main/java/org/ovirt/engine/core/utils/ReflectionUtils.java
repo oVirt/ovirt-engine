@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.utils;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 
 
 
@@ -90,21 +88,5 @@ public class ReflectionUtils {
         } catch (ClassNotFoundException e) {
             throw new IllegalStateException(e);
         }
-    }
-
-
-    /**
-     * Get a Field Size annotation
-     * @param f
-     * @return
-     */
-    public static Annotation getSizeAnnotation(Field f) {
-        Annotation[] annotations = (Annotation[]) f.getAnnotations();
-        for(Annotation annotation : annotations){
-            if(annotation instanceof javax.validation.constraints.Size){
-                return annotation;
-            }
-        }
-        return null;
     }
 }
