@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.scheduling.external;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.utils.customprop.SimpleCustomPropertiesUtil;
@@ -35,16 +36,18 @@ public class ExternalSchedulerDiscoveryResult {
         HashMap<String, HashMap<String, Object[]>> castedResult = (HashMap<String, HashMap<String, Object[]>>) xmlRpcRawResult;
 
         // keys will be filter, score and balance
-        for (String type : castedResult.keySet()) {
-            HashMap<String, Object[]> typeMap = castedResult.get(type);
+        for (Map.Entry<String, HashMap<String, Object[]>> entry : castedResult.entrySet()) {
+            String type = entry.getKey();
+            HashMap<String, Object[]> typeMap = entry.getValue();
                 List<ExternalSchedulerDiscoveryUnit> currentList = getRelevantList(type);
                 if (currentList == null) {
                     log.error("External scheduler error, got unknown type");
                     return false;
                 }
-            // list of module names as keys and [description, regex] as value
-                for (String moduleName : typeMap.keySet()) {
-                    Object[] singleModule = typeMap.get(moduleName);
+                // list of module names as keys and [description, regex] as value
+                for (Map.Entry<String, Object[]> module: typeMap.entrySet()) {
+                    String moduleName = module.getKey();
+                    Object[] singleModule = module.getValue();
                     // check custom properties format.
                     String customPropertiesRegex = singleModule[1].toString();
                     if (!StringUtils.isEmpty(customPropertiesRegex) && SimpleCustomPropertiesUtil.getInstance()
