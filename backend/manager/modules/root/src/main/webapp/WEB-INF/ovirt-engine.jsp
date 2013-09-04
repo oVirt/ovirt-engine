@@ -6,6 +6,7 @@
 <html>
 <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+    <link rel="shortcut icon" href="${pageContext.request.contextPath}/ovirt-engine-theme-resource/favicon" type="image/x-icon" />
     <title><fmt:message key="obrand.welcome.title" /></title>
     <c:if test="${requestScope['brandingStyle'] != null}">
         <c:forEach items="${requestScope['brandingStyle']}" var="theme">

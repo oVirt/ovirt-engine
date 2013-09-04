@@ -34,10 +34,10 @@ public class BrandingManagerTest {
     public void testGetBrandingThemes() {
         List<BrandingTheme> result = testManager.getBrandingThemes();
         assertNotNull("There should be a result", result); //$NON-NLS-1$
-        assertEquals("There should be one active theme", 1, result.size()); //$NON-NLS-1$
+        assertEquals("There should be five active themes", 5, result.size()); //$NON-NLS-1$
         List<BrandingTheme> result2 = testManager.getBrandingThemes();
         assertNotNull("There should be a result", result2); //$NON-NLS-1$
-        assertEquals("There should be one active theme", 1, result2.size()); //$NON-NLS-1$
+        assertEquals("There should be five active themes", 5, result2.size()); //$NON-NLS-1$
         // The second result should be the exact same object as the first one.
         assertTrue("The result are not the same object", result == result2); //$NON-NLS-1$
     }
@@ -101,4 +101,43 @@ public class BrandingManagerTest {
         String result = testManager.getMessage(testKey, Locale.FRENCH);
         assertEquals("The result should be 'Main header(fr)'", "Main header(fr)", result);
     }
+
+    /**
+     * Test that resource serving works so that the resource in the highest number theme is served,
+     * unless that theme has no resource -- in which case search the next highest, and so on.
+     * e.g. if there are themes 01, 02, and 03, and 01 and 02 have favicon.ico, and 03 does not --
+     * the favicon.ico in 02 is served.
+     */
+    @Test
+    public void testGetCascadedResource() {
+        // resources for this are hardcoded in test/resources.
+        // brands  5, 4, 3 have no icon, brands 1 and 2 do. Should retrieve highest brand's (existing)
+        // favicon (so, 2)
+        assertNotNull("Should have found test brand 2's resource",
+                testManager.getCascadingResource("favicon"));
+        assertTrue("Should have found test brand 2's resource",
+                testManager.getCascadingResource("favicon").getFile().getAbsolutePath()
+                .contains("02-test2.brand"));
+    }
+
+    /**
+     * Test that looking for a not-defined (in resources.properties) resource returns null.
+     */
+    @Test
+    public void testGetCascadedResource_NotDefinedNotFound() {
+        // resources for this are hardcoded in test/resources.
+        assertNull("getCascadedResource should have returned null",
+                testManager.getCascadingResource("i_am_not_in_branding_properties")); // not in any theme
+    }
+
+    /**
+     * Test that looking for a not-defined (in resources.properties) resource returns null.
+     */
+    @Test
+    public void testGetCascadedResource_DefinedButNotFound() {
+        // resources for this are hardcoded in test/resources.
+        assertNull("getCascadedResource should have returned null",
+                testManager.getCascadingResource("doesnt_exist")); // exists is themes 1 and 2, but file is missing
+    }
+
 }

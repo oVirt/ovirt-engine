@@ -274,4 +274,34 @@ public class BrandingManager {
         }
         return templateBuilder.toString();
     }
+
+    /**
+     * <p>Look up the path to some cascading-capable resource. Branding uses CSS to handle cascading styles,
+     * and a style could be partially overridden by a "higher" brand. But HTML has no way to cascade
+     * simple images. So this method implements a similar cascading for other resources, like images
+     * (or any other resource that can be served out of a brand).
+     * </p>
+     * <p>
+     * We first look in the highest-numbered theme for the file. If it exists, its path is
+     * returned. If that theme has no such file, we look in the next-highest theme. And so on. If no
+     * matching files are found, return null.
+     * @return resource to serve, or null if no matching files exist
+     */
+    public CascadingResource getCascadingResource(String resourceName) {
+        if (resourceName == null) {
+            return null;
+        }
+
+        List<BrandingTheme> brandingThemes = getBrandingThemes(); // assume these are sorted 00, 01, 02, etc.
+        // return the first one we find
+        for (int i = brandingThemes.size() - 1; i >= 0; i--) {
+            CascadingResource cascadingResource = brandingThemes.get(i).getCascadingResource(resourceName);
+            if (cascadingResource != null) {
+                return cascadingResource;
+            }
+        }
+
+        // couldn't find it in any brand
+        return null;
+    }
 }

@@ -5,6 +5,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <link rel="shortcut icon" href="${pageContext.request.contextPath}/theme-resource/favicon" type="image/x-icon" />
     <meta name="gwt:property" content="locale=${requestScope['locale']}">
     <c:if test="${requestScope['brandingStyle'] != null}">
         <c:forEach items="${requestScope['brandingStyle']}" var="theme">

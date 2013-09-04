@@ -245,6 +245,16 @@
     <url-pattern>/ovirt-engine-theme/*</url-pattern>
   </servlet-mapping>
 
+  <!-- Branding Cascading Resource Servlet -->
+  <servlet>
+    <servlet-name>BrandingCascadingResourceServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.core.utils.branding.BrandingCascadingResourceServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>BrandingCascadingResourceServlet</servlet-name>
+    <url-pattern>/ovirt-engine-theme-resource/*</url-pattern>
+  </servlet-mapping>
+
   <!-- PageNotFound Servlet -->
   <servlet>
     <servlet-name>PageNotFoundServlet</servlet-name>

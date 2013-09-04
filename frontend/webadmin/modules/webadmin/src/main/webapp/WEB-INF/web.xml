@@ -55,6 +55,11 @@
     </servlet-mapping>
 
     <servlet-mapping>
+        <servlet-name>BrandingCascadingResourceServlet</servlet-name>
+        <url-pattern>/theme-resource/*</url-pattern>
+    </servlet-mapping>
+
+    <servlet-mapping>
         <servlet-name>PageNotFoundServlet</servlet-name>
         <url-pattern>/404.html</url-pattern>
     </servlet-mapping>

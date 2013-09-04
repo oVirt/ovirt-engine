@@ -76,6 +76,11 @@
         <servlet-class>org.ovirt.engine.core.utils.branding.BrandingServlet</servlet-class>
     </servlet>
 
+    <servlet>
+        <servlet-name>BrandingCascadingResourceServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.utils.branding.BrandingCascadingResourceServlet</servlet-class>
+    </servlet>
+
     <!-- PageNotFound Servlet -->
     <servlet>
         <servlet-name>PageNotFoundServlet</servlet-name>

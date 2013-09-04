@@ -10,6 +10,7 @@ import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
@@ -88,6 +89,11 @@ public class BrandingTheme {
     private static final String MESSAGES_KEY = "messages"; //$NON-NLS-1$
 
     /**
+     * The key for the cascading resources bundle name.
+     */
+    private static final String RESOURCES_KEY = "resources"; //$NON-NLS-1$
+
+    /**
      * The suffix of properties file name.
      */
     private static final String PROPERTIES_FILE_SUFFIX = ".properties"; //$NON-NLS-1$
@@ -106,6 +112,16 @@ public class BrandingTheme {
      * The key used to read the welcome page template.
      */
     private static final String TEMPLATE_KEY = "welcome"; //$NON-NLS-1$
+
+    /**
+     * Property suffix for cascading resources file.
+     */
+    private static final String FILE_SUFFIX = ".file"; //$NON-NLS-1$
+
+    /**
+     * Property suffix for cascading resources contentType.
+     */
+    private static final String CONTENT_TYPE_SUFFIX = ".contentType"; //$NON-NLS-1$
 
     /**
      * The properties associated with the branding theme.
@@ -220,6 +236,18 @@ public class BrandingTheme {
     }
 
     /**
+     * Get the theme cascading resources bundle.
+     * @return A {@code ResourceBundle} containing resource paths.
+     */
+    public ResourceBundle getResourcesBundle() {
+        List<ResourceBundle> bundleList = getBundle(RESOURCES_KEY, LocaleFilter.DEFAULT_LOCALE);
+        if (bundleList.size() >= 1) {
+            return bundleList.get(0);
+        }
+        throw new MissingResourceException("can't load resources bundle", null, null); //$NON-NLS-1$
+    }
+
+    /**
      * Load the Java resource bundle associated with the passed in Locale and name.
      * @param name The name of the {@code ResourceBundle} file.
      * @param locale The locale to load.
@@ -227,6 +255,7 @@ public class BrandingTheme {
      */
     private List<ResourceBundle> getBundle(String name, Locale locale) {
         List<ResourceBundle> result = new ArrayList<ResourceBundle>();
+        String lastProcessedBundle = null;
         try {
             File themeDirectory = new File(filePath);
             URLClassLoader urlLoader = new URLClassLoader(
@@ -236,18 +265,24 @@ public class BrandingTheme {
             if (messageFileNames != null) {
                 //The values can be a comma separated list of file names, split them and load each of them.
                 for (String fileName: messageFileNames.split(",")) {
-                    fileName = fileName.trim();
+                    fileName = lastProcessedBundle = fileName.trim();
                     String bundleName = fileName.lastIndexOf(PROPERTIES_FILE_SUFFIX) != -1
                             ? fileName.substring(0, fileName.lastIndexOf(PROPERTIES_FILE_SUFFIX))
                             : messageFileNames;
                     result.add(ResourceBundle.getBundle(bundleName, locale, urlLoader));
                 }
             }
+            else {
+                log.warn("Theme " + this.getPath() + " has no property defined for key " + name); //$NON-NLS-1$ //$NON-NLS-2$
+            }
         } catch (IOException e) {
             // Unable to load messages resource bundle.
             log.warn("Unable to read resources resource " //$NON-NLS-1$
                     + "bundle, returning null", e); //$NON-NLS-1$
+        } catch (MissingResourceException mre) {
+            log.warn("Theme " + this.getPath() + " is missing ResourceBundle " + lastProcessedBundle); //$NON-NLS-1$ //$NON-NLS-2$
         }
+
         return result;
     }
 
@@ -300,6 +335,42 @@ public class BrandingTheme {
             }
         }
         return templateBuilder.toString();
+    }
+
+    /**
+     * Look for the resource in this theme, and return the path to it if it exists.
+     * Return null if the resource isn't found in the theme.
+     * @return resource path, or null if no resource found in this theme
+     */
+    public CascadingResource getCascadingResource(String resourceName) {
+        if (resourceName == null) {
+            return null;
+        }
+
+        try {
+            String resourceFile = getResourcesBundle().getString(resourceName + FILE_SUFFIX);
+            if (resourceFile == null) {
+                return null;
+            }
+
+            File file = new File(filePath + "/" + resourceFile); //$NON-NLS-1$
+            if (file.exists() && file.canRead()) {
+                // ok, good, we have a file. was a contentType specified?
+                String contentType = null;
+                try {
+                    contentType = getResourcesBundle().getString(resourceName + CONTENT_TYPE_SUFFIX);
+                }
+                catch (MissingResourceException mre) {
+                    // no-op -- contentType is optional, no big deal
+                }
+                return new CascadingResource(file, contentType);
+            }
+        }
+        catch (MissingResourceException mre) {
+            // no-op -- this theme just doesn't have this resource. will try the next lowest theme.
+        }
+
+        return null;
     }
 
     @Override
