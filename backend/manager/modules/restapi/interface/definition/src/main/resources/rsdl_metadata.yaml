@@ -594,6 +594,18 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
+- name: /api/vms/{vm:id}/disks/{disk:id}/export|rel=export
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+      Filter: {value: true|false, required: false}
 - name: /api/vms/{vm:id}/nics|rel=get
   description: get all the network interfaces for a given virtual machine
   request:
@@ -944,6 +956,18 @@ actions:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/disks/{disk:id}/export|rel=export
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+      Filter: {value: true|false, required: false}
 - name: /api/disks|rel=add
   description: add a new disk the system
   request:
@@ -3222,6 +3246,18 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
       Filter: {value: true|false, required: false}
+- name:  /api/templates/{template:id}/disks/{disk:id}/export|rel=export
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+      Filter: {value: true|false, required: false}
 - name: /api/templates/{template:id}/nics|rel=get
   description: get the list of network interface cards attached to the template
   request:
@@ -3917,6 +3953,18 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /api/storagedomains/{storagedomain:id}/disks/export|rel=export
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {storagedomain.id|name: 'xs:string'}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+      Filter: {value: true|false, required: false}
 - name: /api/datacenters/{datacenter:id}/storagedomains/{storagedomain:id}/disks|rel=get
   description: get the list of all disks in the storage domain in the data center
   request:

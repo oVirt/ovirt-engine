@@ -18,6 +18,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -102,6 +103,20 @@ public class BackendTemplateDiskResourceTest
                     new Object[] { PARENT_ID },
                     getEntityList());
         }
+    }
+
+    @Test
+    public void testExport() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.ExportRepoImage,
+                ExportRepoImageParameters.class,
+                new String[]{"ImageGroupID", "DestinationDomainId"},
+                new Object[]{GUIDS[1], GUIDS[3]}, true, true, null, null, true));
+
+        Action action = new Action();
+        action.setStorageDomain(new StorageDomain());
+        action.getStorageDomain().setId(GUIDS[3].toString());
+
+        verifyActionResponse(resource.doExport(action));
     }
 
     @Test

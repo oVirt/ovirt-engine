@@ -14,6 +14,7 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.api.resource.VmDiskResource;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
@@ -115,6 +116,13 @@ public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, or
                                                              new GetPermissionsForObjectParameters(guid),
                                                              Disk.class,
                                                              VdcObjectType.Disk));
+    }
+
+    @Override
+    public Response doExport(Action action) {
+        validateParameters(action, "storageDomain.id|name");
+        return doAction(VdcActionType.ExportRepoImage,
+                new ExportRepoImageParameters(guid, getStorageDomainId(action)), action);
     }
 
     @Override

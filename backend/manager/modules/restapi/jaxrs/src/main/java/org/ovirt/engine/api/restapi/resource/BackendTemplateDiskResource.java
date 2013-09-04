@@ -6,6 +6,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.resource.TemplateDiskResource;
+import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
@@ -43,4 +44,12 @@ public class BackendTemplateDiskResource extends BackendReadOnlyDeviceResource<D
     protected Disk getDisk() {
         return performGet(VdcQueryType.GetDiskByDiskId, new IdQueryParameters(guid));
     }
+
+    @Override
+    public Response doExport(Action action) {
+        validateParameters(action, "storageDomain.id|name");
+        return doAction(VdcActionType.ExportRepoImage,
+                new ExportRepoImageParameters(guid, getStorageDomainId(action)), action);
+    }
+
 }

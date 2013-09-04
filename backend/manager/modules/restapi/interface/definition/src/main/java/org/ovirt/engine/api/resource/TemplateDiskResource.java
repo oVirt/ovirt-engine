@@ -41,4 +41,11 @@ public interface TemplateDiskResource extends ReadOnlyDeviceResource<Disk> {
     @Actionable
     @Path("copy")
     public Response copy(Action action);
+
+    @POST
+    @Formatted
+    @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+    @Actionable
+    @Path("export")
+    public Response doExport(Action action);
 }

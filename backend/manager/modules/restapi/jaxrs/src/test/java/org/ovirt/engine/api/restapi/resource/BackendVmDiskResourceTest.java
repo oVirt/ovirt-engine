@@ -18,10 +18,10 @@ import org.easymock.EasyMock;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
-import org.ovirt.engine.api.model.Disks;
 import org.ovirt.engine.api.model.Statistic;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.resource.VmDiskResource;
+import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.HotPlugDiskToVmParameters;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
@@ -40,7 +40,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmDiskResourceTest
-        extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendDeviceResource<Disk, Disks, org.ovirt.engine.core.common.businessentities.Disk>> {
+        extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendVmDiskResource> {
 
     protected static final Guid DISK_ID = GUIDS[1];
 
@@ -174,6 +174,20 @@ public class BackendVmDiskResourceTest
         assertNotNull(statisticsResource);
 
         verifyQuery(statisticsResource.getQuery(), entity);
+    }
+
+    @Test
+    public void testExport() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.ExportRepoImage,
+                ExportRepoImageParameters.class,
+                new String[]{"ImageGroupID", "DestinationDomainId"},
+                new Object[]{DISK_ID, GUIDS[3]}, true, true, null, null, true));
+
+        Action action = new Action();
+        action.setStorageDomain(new StorageDomain());
+        action.getStorageDomain().setId(GUIDS[3].toString());
+
+        verifyActionResponse(resource.doExport(action));
     }
 
     protected DiskImage setUpStatisticalExpectations() throws Exception {
