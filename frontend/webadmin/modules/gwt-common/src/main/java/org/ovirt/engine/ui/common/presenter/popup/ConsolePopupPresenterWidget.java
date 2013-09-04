@@ -1,7 +1,12 @@
 package org.ovirt.engine.ui.common.presenter.popup;
 
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.user.client.Window;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.utils.DynamicMessages;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -59,6 +64,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         HasValueChangeHandlers<Boolean> getRdpNativeImplRadioButton();
         HasValueChangeHandlers<Boolean> getRdpPluginImplRadioButton();
 
+        HasClickHandlers getConsoleClientResourcesAnchor();
+
         void showRdpPanel(boolean visible);
 
         void showSpicePanel(boolean visible);
@@ -110,17 +117,20 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     private boolean wanOptionsAvailable = false;
     private ConsolePopupModel model;
     private final CommonApplicationConstants constants;
+    private final DynamicMessages dynamicMessages;
     private final ConsoleOptionsFrontendPersister consoleOptionsPersister;
 
     @Inject
     public ConsolePopupPresenterWidget(EventBus eventBus, ViewDef view,
             ConsoleUtils consoleUtils,
             CommonApplicationConstants constants,
+            final DynamicMessages dynamicMessages,
             ConsoleOptionsFrontendPersister consoleOptionsPersister) {
         super(eventBus, view);
         this.consoleUtils = consoleUtils;
         this.constants = constants;
         this.consoleOptionsPersister = consoleOptionsPersister;
+        this.dynamicMessages = dynamicMessages;
     }
 
     @Override
@@ -254,6 +264,13 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         boolean spiceProxyEnabled = consoleUtils.isSpiceProxyDefined();
         getView().setSpiceProxyEnabled(spiceProxyEnabled, constants.spiceProxyCanBeEnabledOnlyWhenDefined());
+
+        registerHandler(getView().getConsoleClientResourcesAnchor().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Window.open(dynamicMessages.consoleClientResourcesUrl(), "_blank", null); //$NON-NLS-1$
+            }
+        }));
     }
 
     @Override

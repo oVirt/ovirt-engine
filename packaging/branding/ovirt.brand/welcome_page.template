@@ -11,4 +11,11 @@
   <div>
     <a href="/OvirtEngineWeb/ReportsRedirectServlet">{portal_reports}</a>
   </div>
+
+  <h2>
+    <span class="obrand_section_header">{downloads_title}</span>
+  </h2>
+  <div>
+    <a href="{console_client_resources_url}" target="_blank">{console_client_resources}</a>
+  </div>
 </div>

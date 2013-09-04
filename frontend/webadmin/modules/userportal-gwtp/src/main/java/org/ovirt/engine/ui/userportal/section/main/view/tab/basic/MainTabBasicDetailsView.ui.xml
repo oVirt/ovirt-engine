@@ -18,7 +18,7 @@
 		
 	<ui:style
 		type="org.ovirt.engine.ui.userportal.section.main.view.tab.basic.MainTabBasicDetailsView.Style">
-		
+
 		.detailsHeaderPanel {
 			margin-top: 10px;
 			margin-left: 10px;
@@ -44,7 +44,7 @@
 			float: left;
 			padding: 10px;
 		}
-		
+
 		.vmImage {
 			position: relative;
 			top: 38px;
@@ -101,7 +101,7 @@
 			padding-left: 40px;
 			padding-top: 10px;
 		}
-		
+
 		.horizontalLine {
 			float: left;
 			width: 100%;
@@ -110,17 +110,17 @@
 			margin-top: 20px;
 			margin-bottom: 20px;
 		}
-		
+
 		.horizontalLineWrapper {
 			width: 100%;
 			float: left;
 		}
-		
+
 		.diskImageWidget {
 			float: left;
 			width: 100%;
 		}
-		
+
 		.protocolWarning, .protocol {
 			float: right;
 			color: #3A5F7C;
@@ -129,9 +129,9 @@
 		    font-weight: bold;
 		    padding-left: 10px;
 		    white-space:nowrap;
-		    padding-top: 3px; 
+		    padding-top: 3px;
 		}
-		
+
 		.basicInfoDetailsLinkDisabled, .basicInfoDetailsLink {
 			font-family: Arial,sans-serif;
 			color: #3A5F7C;
@@ -142,7 +142,7 @@
 		    padding-top: 5px;
 		    padding-left: 5px;
 		}
-		
+
 		.basicInfoDetailsLinkDisabled, .basicInfoDetailsLinkDisabled:hover {
  		 	text-decoration: underline;
 			color: #AAAAAA;
@@ -153,7 +153,27 @@
 			text-decoration: underline;
 			cursor: pointer;
 		}
-		
+
+        .leftConsolePanel {
+            float: left;
+        }
+
+        .consoleLabel, .clientResourcesLink {
+            font-family: Arial, sans-serif;
+            color: #3A5F7C;
+            text-align: left;
+            padding-left: 5px;
+            padding-top: 4px;
+        }
+
+        .consoleLabel {
+            font-size: 19px;
+            font-weight: bold;
+        }
+
+        .clientResourcesLink {
+            font-size: 15px;
+        }
 	</ui:style>
 
 	<g:DockLayoutPanel addStyleNames="{style.mainPanel}">
@@ -187,7 +207,7 @@
 						<r:ToStringEntityModelLabel ui:field="memory" addStyleNames="{style.rowValue}" />
 					</g:FlowPanel>
 				</g:layer>
-				
+
 				<g:layer top='80px' height='60px'>
 					<g:FlowPanel addStyleNames="{style.detailsRow}">
 						<g:Image resource='{resources.basicCpuIcon}'
@@ -196,34 +216,33 @@
 						<r:ToStringEntityModelLabel ui:field="numberOfCores" addStyleNames="{style.rowValue}" />
 					</g:FlowPanel>
 				</g:layer>
-				
 				<g:layer top='120px' height='100%'>
 					<g:FlowPanel>
-					
 						<g:FlowPanel addStyleNames="{style.horizontalLineWrapper}" >
 							<g:FlowPanel addStyleNames="{style.horizontalLine}" />
-						</g:FlowPanel>	
-						
+						</g:FlowPanel>
+
 						<g:FlowPanel addStyleNames="{style.detailsRow}">
 							<g:Image resource='{resources.basicDriveIcon}'
 								addStyleNames="{style.rowIcon}" />
 							<g:Label text="{constants.drivesBasicDetails} : " addStyleNames="{style.rowLabel}" />
 							<e:DisksImageWidget ui:field="disks" addStyleNames="{style.diskImageWidget}" />
 						</g:FlowPanel>
-						
+
 						<g:FlowPanel addStyleNames="{style.horizontalLineWrapper}" >
 							<g:FlowPanel addStyleNames="{style.horizontalLine}" />
-						</g:FlowPanel>	
-						
+						</g:FlowPanel>
 						<g:FlowPanel addStyleNames="{style.detailsRow}">
 							<g:Image resource='{resources.basicConsoleIcon}' addStyleNames="{style.rowIcon}" />
-							<g:Label text="{constants.consoleBasicDetails} : " addStyleNames="{style.rowLabel}" />
-							<g:Anchor ui:field="editProtocolLink" text="({constants.editBasicDetails})" addStyleNames="{style.basicInfoDetailsLinkDisabled}"/>
-							<g:Label ui:field="protocolMessage" />
+                                <g:FlowPanel addStyleNames="{style.leftConsolePanel}">
+                                    <g:Label text="{constants.consoleBasicDetails} : " addStyleNames="{style.consoleLabel}" />
+                                    <g:Anchor ui:field="consoleClientResourcesUrl"  styleName="{style.clientResourcesLink}"/>
+                                </g:FlowPanel>
+                                <g:Anchor ui:field="editProtocolLink" text="({constants.editBasicDetails})" addStyleNames="{style.basicInfoDetailsLinkDisabled}"/>
+                                <g:Label ui:field="protocolMessage" />
 						</g:FlowPanel>
 					</g:FlowPanel>
 				</g:layer>
-				
 			</g:LayoutPanel>
 		</g:center>
 	</g:DockLayoutPanel>

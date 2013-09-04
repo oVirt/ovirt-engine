@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.presenter.popup.ConsolePopupPresenterWidget;
+import org.ovirt.engine.ui.common.utils.DynamicMessages;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelRadioButtonEditor;
@@ -21,7 +22,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.SpiceConsoleModel;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -40,9 +43,8 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     }
 
     interface Style extends CssResource {
-
         String ctrlAltDelContentWidget();
-
+        String consoleResourcesLink();
     }
 
     @UiField
@@ -126,6 +128,9 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @WithElementId
     EntityModelRadioButtonEditor rdpPluginImplRadioButton;
 
+    @Ignore
+    Anchor clientConsoleResourcesUrl;
+
     @UiField
     FlowPanel spicePanel;
 
@@ -146,16 +151,20 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
 
     private final CommonApplicationMessages messages;
 
+    private final DynamicMessages dynamicMessages;
+
     private ConsolePopupModel model;
 
     @Inject
     public ConsolePopupView(EventBus eventBus,
             CommonApplicationResources resources,
             CommonApplicationConstants constants,
-            CommonApplicationMessages messages) {
+            CommonApplicationMessages messages,
+            final DynamicMessages dynamicMessages) {
         super(eventBus, resources);
         this.constants = constants;
         this.messages = messages;
+        this.dynamicMessages = dynamicMessages;
 
         spiceRadioButton = new EntityModelRadioButtonEditor("1"); //$NON-NLS-1$
         spiceRadioButton.setLabel(constants.spice());
@@ -180,6 +189,8 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         rdpNativeImplRadioButton.setLabel(constants.nativeClient());
         rdpPluginImplRadioButton = new EntityModelRadioButtonEditor("4"); //$NON-NLS-1$
         rdpPluginImplRadioButton.setLabel(constants.browserPlugin());
+
+        clientConsoleResourcesUrl = new Anchor(dynamicMessages.consoleClientResources());
 
         disableSmartcard = new EntityModelValueCheckBoxEditor<ConsoleModel>(Align.RIGHT, new SpiceRenderer() {
 
@@ -307,7 +318,9 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
         vncPanel.setVisible(false);
         rdpPanel.setVisible(false);
 
+        clientConsoleResourcesUrl.asWidget().addStyleName(style.consoleResourcesLink());
         ctrlAltDel.getContentWidgetContainer().addStyleName(style.ctrlAltDelContentWidget());
+        asWidget().addStatusWidget(clientConsoleResourcesUrl);
     }
 
     @SuppressWarnings("unchecked")
@@ -708,6 +721,11 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @Override
     public HasValueChangeHandlers<Boolean> getRdpPluginImplRadioButton() {
         return rdpPluginImplRadioButton.asRadioButton();
+    }
+
+    @Override
+    public HasClickHandlers getConsoleClientResourcesAnchor() {
+        return clientConsoleResourcesUrl;
     }
 
     public HasValueChangeHandlers<Boolean> getNoVncImplRadioButton() {

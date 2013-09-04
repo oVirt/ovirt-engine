@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.basic;
 
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.utils.DynamicMessages;
 import org.ovirt.engine.ui.common.view.AbstractView;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalBasicListModel;
@@ -41,11 +43,8 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
 
     public interface Style extends CssResource {
         String protocolWarning();
-
         String protocol();
-
         String basicInfoDetailsLinkDisabled();
-
         String basicInfoDetailsLink();
     }
 
@@ -97,13 +96,21 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     @WithElementId
     Anchor editProtocolLink;
 
+    @UiField(provided = true)
+    @Ignore
+    @WithElementId
+    Anchor consoleClientResourcesUrl;
+
     @UiField
     Style style;
 
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public MainTabBasicDetailsView(ApplicationResources resources) {
+    public MainTabBasicDetailsView(ApplicationResources resources,
+                                   final CommonApplicationConstants constants,
+                                   final DynamicMessages dynamicMessages)
+    {
         operatingSystem = new ValueLabel<Integer>(new AbstractRenderer<Integer>() {
 
             @Override
@@ -111,6 +118,7 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
                 return AsyncDataProvider.getOsName(object);
             }
         });
+        consoleClientResourcesUrl = new Anchor(dynamicMessages.clientResources());
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
         ViewIdHandler.idHandler.generateAndSetIds(this);
@@ -161,6 +169,11 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     @Override
     public HasClickHandlers getEditButton() {
         return editProtocolLink;
+    }
+
+    @Override
+    public HasClickHandlers getConsoleClientResourcesAnchor() {
+        return consoleClientResourcesUrl;
     }
 
     @Override

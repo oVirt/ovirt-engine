@@ -36,6 +36,9 @@ public class DynamicMessages {
         FEEDBACK_LINK_LABEL("feedback_link_label"), //$NON-NLS-1$
         GUIDE_URL("guide_url"), //$NON-NLS-1$
         GUIDE_LINK_LABEL("guide_link_label"), //$NON-NLS-1$
+        CLIENT_RESOURCES("client_resources"), //$NON-NLS-1$
+        CONSOLE_CLIENT_RESOURCES("console_client_resources"), //$NON-NLS-1$
+        CONSOLE_CLIENT_RESOURCES_URL("console_client_resources_url"), //$NON-NLS-1$
         DOC("doc"); //$NON-NLS-1$
 
         private final String value;
@@ -271,6 +274,39 @@ public class DynamicMessages {
      */
     public final String guideLinkLabel() {
         return getString(DynamicMessageKey.GUIDE_LINK_LABEL);
+    }
+
+    /**
+     *
+     * Get the console client resources link name using the {@code Dictionary} in the host page. With a fall back to
+     * the standard GWT Constant.
+     *
+     * @return The console client resources page name.
+     */
+    public final String consoleClientResources() {
+        return getString(DynamicMessageKey.CONSOLE_CLIENT_RESOURCES);
+    }
+
+    /**
+     *
+     * Get the client resources link name using the {@code Dictionary} in the host page. With a fall back to
+     * the standard GWT Constant.
+     *
+     * @return The client resources page name.
+     */
+    public final String clientResources() {
+        return getString(DynamicMessageKey.CLIENT_RESOURCES);
+    }
+
+    /**
+     *
+     * Get the console client resources page url using the {@code Dictionary} in the host page. With a fall back to
+     * the standard GWT Constant.
+     *
+     * @return The console client resources page url.
+     */
+    public final String consoleClientResourcesUrl() {
+        return getString(DynamicMessageKey.CONSOLE_CLIENT_RESOURCES_URL);
     }
 
     /**

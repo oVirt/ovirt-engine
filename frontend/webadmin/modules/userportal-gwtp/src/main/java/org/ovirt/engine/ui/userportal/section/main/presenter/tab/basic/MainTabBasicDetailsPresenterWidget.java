@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.basic;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent;
 import org.ovirt.engine.ui.common.presenter.popup.ConsoleModelChangedEvent.ConsoleModelChangedHandler;
+import org.ovirt.engine.ui.common.utils.DynamicMessages;
 import org.ovirt.engine.ui.common.widget.HasEditorDriver;
 import org.ovirt.engine.ui.uicommonweb.ConsoleUtils;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleProtocol;
@@ -25,6 +25,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
@@ -43,6 +44,8 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
         HasClickHandlers getEditButton();
 
+        HasClickHandlers getConsoleClientResourcesAnchor();
+
         void clear();
 
         void displayVmOsImages(boolean dispaly);
@@ -50,6 +53,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
     private final ConsoleUtils consoleUtils;
     private final ApplicationMessages messages;
+    private final DynamicMessages dynamicMessages;
     private final Map<ConsoleProtocol, String> consoleTypeToName = new HashMap<ConsoleProtocol, String>();
 
     @Inject
@@ -58,10 +62,12 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
             final UserPortalBasicListProvider modelProvider,
             final ConsoleUtils consoleUtils,
             final ApplicationMessages messages,
+            final DynamicMessages dynamicMessages,
             final CommonApplicationConstants constants) {
         super(eventBus, view);
         this.consoleUtils = consoleUtils;
         this.messages = messages;
+        this.dynamicMessages = dynamicMessages;
 
         initConsoleTypeToNameMap(constants);
 
@@ -70,6 +76,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
         listenOnDiskModelChangeEvent(modelProvider);
 
         listenOnEditButton(modelProvider);
+        listenOnConsoleClientResourcesAnchor();
 
         listenOnConsoleModelChangeEvent(eventBus, modelProvider);
 
@@ -82,6 +89,15 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
             }
 
         });
+    }
+
+    private void listenOnConsoleClientResourcesAnchor() {
+        registerHandler(getView().getConsoleClientResourcesAnchor().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                Window.open(dynamicMessages.consoleClientResourcesUrl(), "_blank", null); //$NON-NLS-1$
+            }
+        }));
     }
 
     private void initConsoleTypeToNameMap(CommonApplicationConstants constants) {

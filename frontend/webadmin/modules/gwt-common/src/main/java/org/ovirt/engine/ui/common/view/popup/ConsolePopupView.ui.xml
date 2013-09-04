@@ -40,6 +40,9 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
             width: 90%;
 	    }
 
+        .consoleResourcesLink {
+            margin-left: 12px;
+	    }
 	</ui:style>
 
 	<d:SimpleDialogPanel width="500px" height="420px">
