@@ -120,6 +120,29 @@ public class BackendTemplateDiskResourceTest
     }
 
     @Test
+    public void testBadGuid() throws Exception {
+        control.replay();
+        try {
+            new BackendStorageDomainVmResource(null, "foo");
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyNotFoundException(wae);
+        }
+    }
+
+    @Test
+    public void testIncompleteExport() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        try {
+            control.replay();
+            resource.doExport(new Action());
+            fail("expected WebApplicationException on incomplete parameters");
+        } catch (WebApplicationException wae) {
+            verifyIncompleteException(wae, "Action", "doExport", "storageDomain.id|name");
+        }
+    }
+
+    @Test
     public void testCopyBySdId() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetDiskByDiskId,
                 IdQueryParameters.class,

@@ -1,11 +1,18 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import static org.ovirt.engine.api.restapi.resource.AbstractBackendDisksResourceTest.PARENT_ID;
+
 import java.util.ArrayList;
 
 import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
 import org.junit.Test;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.StorageDomain;
+import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
@@ -15,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+
 
 public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendDiskResource> {
 
@@ -57,6 +65,47 @@ public class BackendStorageDomainDiskResourceTest extends AbstractBackendSubReso
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             verifyNotFoundException(wae);
+        }
+    }
+
+    @Test
+    public void testExport() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.ExportRepoImage,
+                ExportRepoImageParameters.class,
+                new String[]{"ImageGroupID", "DestinationDomainId"},
+                new Object[]{DISK_ID, GUIDS[3]}, true, true, null, null, true));
+
+        Action action = new Action();
+        action.setStorageDomain(new StorageDomain());
+        action.getStorageDomain().setId(GUIDS[3].toString());
+
+        verifyActionResponse(resource.doExport(action));
+    }
+
+    private void verifyActionResponse(Response r) throws Exception {
+        verifyActionResponse(r, "/disks/" + PARENT_ID, false);
+    }
+
+    @Test
+    public void testBadGuid() throws Exception {
+        control.replay();
+        try {
+            new BackendStorageDomainVmResource(null, "foo");
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyNotFoundException(wae);
+        }
+    }
+
+    @Test
+    public void testIncompleteExport() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        try {
+            control.replay();
+            resource.doExport(new Action());
+            fail("expected WebApplicationException on incomplete parameters");
+        } catch (WebApplicationException wae) {
+            verifyIncompleteException(wae, "Action", "doExport", "storageDomain.id|name");
         }
     }
 

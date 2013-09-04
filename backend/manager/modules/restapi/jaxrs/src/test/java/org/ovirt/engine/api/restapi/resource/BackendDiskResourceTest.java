@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 
@@ -63,6 +64,29 @@ public class BackendDiskResourceTest extends AbstractBackendSubResourceTest<Disk
 
     private void verifyActionResponse(Response r) throws Exception {
         verifyActionResponse(r, "/disks/" + PARENT_ID, false);
+    }
+
+    @Test
+    public void testBadGuid() throws Exception {
+        control.replay();
+        try {
+            new BackendStorageDomainVmResource(null, "foo");
+            fail("expected WebApplicationException");
+        } catch (WebApplicationException wae) {
+            verifyNotFoundException(wae);
+        }
+    }
+
+    @Test
+    public void testIncompleteExport() throws Exception {
+        setUriInfo(setUpBasicUriExpectations());
+        try {
+            control.replay();
+            resource.doExport(new Action());
+            fail("expected WebApplicationException on incomplete parameters");
+        } catch (WebApplicationException wae) {
+            verifyIncompleteException(wae, "Action", "doExport", "storageDomain.id|name");
+        }
     }
 
     @Override
