@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -41,19 +41,15 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
 
         when(vmDao.getVmsListForDisk(getDiskImageId())).thenReturn(Arrays.asList(vm));
 
-        ExportRepoImageParameters exportParameters = new ExportRepoImageParameters(getDiskImageId());
-
-        exportParameters.setStoragePoolId(getStoragePoolId());
-        exportParameters.setStorageDomainId(getStorageDomainId());
-        exportParameters.setImageGroupID(getDiskImageGroupId());
-        exportParameters.setDestinationDomainId(getRepoStorageDomainId());
+        ExportRepoImageParameters exportParameters = new ExportRepoImageParameters(
+                getDiskImageGroupId(), getRepoStorageDomainId());
 
         cmd = spy(new ExportRepoImageCommand<>(exportParameters));
 
         doReturn(vmDao).when(cmd).getVmDAO();
         doReturn(getStorageDomainDao()).when(cmd).getStorageDomainDAO();
         doReturn(getStoragePoolDao()).when(cmd).getStoragePoolDAO();
-        doReturn(getDiskImageDao()).when(cmd).getDiskImageDao();
+        doReturn(getDiskDao()).when(cmd).getDiskDao();
         doReturn(getProviderProxy()).when(cmd).getProviderProxy();
     }
 
@@ -64,16 +60,16 @@ public class ExportRepoImageCommandTest extends ImportExportRepoImageCommandTest
 
     @Test
     public void testCanDoActionImageDoesNotExist() {
-        when(getDiskImageDao().get(getDiskImageId())).thenReturn(null);
+        when(getDiskDao().get(getDiskImageGroupId())).thenReturn(null);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
     }
 
     @Test
-    public void testCanDoActionPoolInMaintenance() {
-        getStoragePool().setstatus(StoragePoolStatus.Maintenance);
+    public void testCanDoActionDomainInMaintenance() {
+        getDiskStorageDomain().setStatus(StorageDomainStatus.Maintenance);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+                VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL);
     }
 
     @Test

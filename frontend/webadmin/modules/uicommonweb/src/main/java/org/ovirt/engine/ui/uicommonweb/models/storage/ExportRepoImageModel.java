@@ -58,18 +58,10 @@ public class ExportRepoImageModel extends ImportExportRepoImageBaseModel {
         ArrayList<VdcActionParametersBase> actionParameters = new ArrayList<VdcActionParametersBase>();
 
         for (EntityModel entity : getEntities()) {
-            DiskImage diskImage = (DiskImage) entity.getEntity();
-            ExportRepoImageParameters exportParameters = new ExportRepoImageParameters(diskImage.getImageId());
-
-            // source
-            exportParameters.setStoragePoolId(diskImage.getStoragePoolId());
-            exportParameters.setStorageDomainId(diskImage.getStorageIds().get(0));
-            exportParameters.setImageGroupID(diskImage.getId());
-
-            // destination
-            exportParameters.setDestinationDomainId(((StorageDomain) getStorageDomain().getSelectedItem()).getId());
-
-            actionParameters.add(exportParameters);
+            actionParameters.add(new ExportRepoImageParameters(
+                    ((DiskImage) entity.getEntity()).getId(),  // Source
+                    ((StorageDomain) getStorageDomain().getSelectedItem()).getId())  // Destination
+            );
         }
 
         Frontend.RunMultipleAction(VdcActionType.ExportRepoImage, actionParameters,

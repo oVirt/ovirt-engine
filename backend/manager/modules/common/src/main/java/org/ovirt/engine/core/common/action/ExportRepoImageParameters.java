@@ -4,15 +4,17 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class ExportRepoImageParameters extends ImagesActionsParametersBase {
 
-    private static final long serialVersionUID = 8168949491104775480L;
+    private static final long serialVersionUID = 5665917269570010693L;
 
     private Guid destinationDomainId;
 
     public ExportRepoImageParameters() {
     }
 
-    public ExportRepoImageParameters(Guid imageId) {
-        super(imageId);
+    public ExportRepoImageParameters(Guid sourceImageGroupId, Guid destinationDomainId) {
+        super();
+        setImageGroupID(sourceImageGroupId);
+        setDestinationDomainId(destinationDomainId);
     }
 
     public Guid getDestinationDomainId() {

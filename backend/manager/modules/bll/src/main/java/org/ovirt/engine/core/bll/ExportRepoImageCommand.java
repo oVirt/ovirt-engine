@@ -2,14 +2,16 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
-import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ExportRepoImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.HttpLocationInfo;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
@@ -22,7 +24,7 @@ import org.ovirt.engine.core.common.vdscommands.UploadImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.DiskDao;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -96,14 +98,15 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
         Guid taskId = getAsyncTaskId();
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.Disk, getParameters().getImageGroupID()));
 
-        VDSReturnValue vdsReturnValue = runVdsCommand(
-                VDSCommandType.UploadImage, new UploadImageVDSCommandParameters(
-                        getParameters().getStoragePoolId(),
-                        getParameters().getStorageDomainId(),
-                        getParameters().getImageGroupID(),
-                        getParameters().getImageId(),
+        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.UploadImage,
+                new UploadImageVDSCommandParameters(
+                        getStorageDomain().getStoragePoolId(),
+                        getStorageDomain().getId(),
+                        diskImage.getId(),
+                        diskImage.getImageId(),
                         new HttpLocationInfo(
-                                getProviderProxy().getImageUrl(newImageId), getProviderProxy().getUploadHeaders())
+                                getProviderProxy().getImageUrl(newImageId), getProviderProxy().getUploadHeaders()
+                        )
                 ));
 
         if (vdsReturnValue.getSucceeded()) {
@@ -159,16 +162,24 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
 
     @Override
     public Guid getStorageDomainId() {
-        return getParameters().getStorageDomainId();
+        return getDiskImage() != null ? getDiskImage().getStorageIds().get(0) : null;
     }
 
-    protected DiskImageDAO getDiskImageDao() {
-        return getDbFacade().getDiskImageDao();
+    @Override
+    public Guid getStoragePoolId() {
+        return getDiskImage() != null ? getDiskImage().getStoragePoolId() : null;
+    }
+
+    protected DiskDao getDiskDao() {
+        return getDbFacade().getDiskDao();
     }
 
     protected DiskImage getDiskImage() {
         if (diskImage == null) {
-            diskImage = getDiskImageDao().get(getParameters().getImageId());
+            Disk disk = getDiskDao().get(getParameters().getImageGroupID());
+            if (disk != null && disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                diskImage = (DiskImage) disk;
+            }
         }
         return diskImage;
     }
@@ -179,7 +190,7 @@ public class ExportRepoImageCommand<T extends ExportRepoImageParameters> extends
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
         }
 
-        if (!validate(new StoragePoolValidator(getStoragePool()).isUp())) {
+        if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive())) {
             return false;
         }
 

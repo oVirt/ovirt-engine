@@ -9,9 +9,11 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
@@ -19,6 +21,7 @@ import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.lock.LockManager;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.mockito.Mockito.when;
@@ -38,6 +41,9 @@ public class ImportExportRepoImageCommandTest {
     private StoragePoolDAO storagePoolDao;
 
     @Mock
+    private DiskDao diskDao;
+
+    @Mock
     private DiskImageDAO diskImageDao;
 
     @Mock
@@ -50,6 +56,8 @@ public class ImportExportRepoImageCommandTest {
     private Guid storagePoolId;
 
     private Guid storageDomainId;
+
+    private StorageDomain diskStorageDomain;
 
     private StoragePool storagePool;
 
@@ -71,6 +79,10 @@ public class ImportExportRepoImageCommandTest {
 
     public Guid getStorageDomainId() {
         return storageDomainId;
+    }
+
+    public StorageDomain getDiskStorageDomain() {
+        return diskStorageDomain;
     }
 
     public String getRepoImageId() {
@@ -101,6 +113,10 @@ public class ImportExportRepoImageCommandTest {
         return diskImageGroupId;
     }
 
+    public DiskDao getDiskDao() {
+        return diskDao;
+    }
+
     public DiskImageDAO getDiskImageDao() {
         return diskImageDao;
     }
@@ -122,12 +138,13 @@ public class ImportExportRepoImageCommandTest {
         storagePoolId = Guid.newGuid();
         storageDomainId = Guid.newGuid();
 
-        StorageDomain sourceStorageDomain = new StorageDomain();
-        sourceStorageDomain.setStorage(providerId.toString());
+        StorageDomain imageStorageDomain = new StorageDomain();
+        imageStorageDomain.setStorage(providerId.toString());
 
-        StorageDomain destinationStorageDomain = new StorageDomain();
-        destinationStorageDomain.setId(storageDomainId);
-        destinationStorageDomain.setStoragePoolId(storagePoolId);
+        diskStorageDomain = new StorageDomain();
+        diskStorageDomain.setId(storageDomainId);
+        diskStorageDomain.setStoragePoolId(storagePoolId);
+        diskStorageDomain.setStatus(StorageDomainStatus.Active);
 
         storagePool  = new StoragePool();
         storagePool.setId(storagePoolId);
@@ -138,11 +155,14 @@ public class ImportExportRepoImageCommandTest {
 
         diskImage = new DiskImage();
         diskImage.setId(diskImageId);
+        diskImage.setStorageIds(new ArrayList<>(Arrays.asList(storageDomainId)));
+        diskImage.setStoragePoolId(storagePoolId);
 
-        when(storageDomainDao.get(repoStorageDomainId)).thenReturn(sourceStorageDomain);
+        when(storageDomainDao.get(repoStorageDomainId)).thenReturn(imageStorageDomain);
         when(storageDomainDao.getAllForStorageDomain(storageDomainId))
-                .thenReturn(Arrays.asList(destinationStorageDomain));
+                .thenReturn(Arrays.asList(diskStorageDomain));
         when(storagePoolDao.get(storagePoolId)).thenReturn(storagePool);
+        when(diskDao.get(diskImageGroupId)).thenReturn(diskImage);
         when(diskImageDao.get(diskImageId)).thenReturn(diskImage);
         when(providerProxy.getImageAsDiskImage(repoImageId)).thenReturn(diskImage);
     }
