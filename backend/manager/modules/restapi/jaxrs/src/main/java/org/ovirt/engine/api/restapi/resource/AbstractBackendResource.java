@@ -146,7 +146,7 @@ public abstract class AbstractBackendResource<R extends BaseResource, Q /* exten
             IdQueryParameters params = new IdQueryParameters(jobId);
             VdcQueryReturnValue queryResult = runQuery(VdcQueryType.GetJobByJobId, params);
             if (queryResult != null && queryResult.getSucceeded() && queryResult.getReturnValue() != null) {
-                Job job = (Job)queryResult.getReturnValue();
+                Job job = queryResult.getReturnValue();
                 return job.getStatus()==JobExecutionStatus.STARTED ? CreationStatus.IN_PROGRESS : CreationStatus.COMPLETE;
             } else {
                 //not supposed to happen

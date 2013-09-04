@@ -93,7 +93,7 @@ public class LoginValidator implements Validator, PostProcessInterceptor {
         params.setSessionId(sessionId);
         VdcQueryReturnValue queryReturnValue = backend.RunPublicQuery(VdcQueryType.ValidateSession, params);
         if (queryReturnValue != null) {
-            VdcUser vdcUser = (VdcUser) queryReturnValue.getReturnValue();
+            VdcUser vdcUser = queryReturnValue.getReturnValue();
             if (vdcUser != null) {
                 principal = new Principal(vdcUser.getUserName(), vdcUser.getPassword(), vdcUser.getDomainControler());
                 sessionHelper.setSessionId(sessionId);

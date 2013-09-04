@@ -144,7 +144,7 @@ public class BackendAssignedPermissionsResource
 
         DbUser returnValue = null;
         if (userQueryResponse != null && userQueryResponse.getSucceeded()) {
-            returnValue = (DbUser) userQueryResponse.getReturnValue();
+            returnValue = userQueryResponse.getReturnValue();
         }
 
         return returnValue;
