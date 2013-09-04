@@ -39,8 +39,8 @@ public class SetupNetworksInterfacePopupView extends HostInterfacePopupView impl
 
         // resize
         layoutPanel.remove(infoPanel);
-        layoutPanel.setWidgetSize(mainPanel, 235);
-        asPopupPanel().setPixelSize(400, 325);
+        layoutPanel.setWidgetSize(mainPanel, 270);
+        asPopupPanel().setPixelSize(400, 350);
 
         bootProtocolLabel.setEnabled(object.getBootProtocolsAvailable());
         bootProtocol.setEnabled(object.getBootProtocolsAvailable());
