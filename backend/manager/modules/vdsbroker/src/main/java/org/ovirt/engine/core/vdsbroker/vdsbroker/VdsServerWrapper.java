@@ -963,11 +963,44 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc glusterVolumeRemoveBrickForce(String volumeName,
+    public GlusterTaskInfoReturnForXmlRpc glusterVolumeRemoveBricksStart(String volumeName,
+            String[] brickDirectories,
+            int replicaCount,
+            Boolean forceRemove) {
+        try {
+            if (forceRemove) {
+                return new GlusterTaskInfoReturnForXmlRpc(vdsServer.glusterVolumeRemoveBrickForce(volumeName,
+                        brickDirectories,
+                        replicaCount));
+            } else {
+                return new GlusterTaskInfoReturnForXmlRpc(vdsServer.glusterVolumeRemoveBrickStart(volumeName,
+                        brickDirectories,
+                        replicaCount));
+            }
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeRemoveBricksStop(String volumeName,
             String[] brickDirectories,
             int replicaCount) {
         try {
-            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeRemoveBrickForce(volumeName,
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeRemoveBrickStop(volumeName,
+                    brickDirectories,
+                    replicaCount));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeRemoveBricksCommit(String volumeName,
+            String[] brickDirectories,
+            int replicaCount) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeRemoveBrickCommit(volumeName,
                     brickDirectories,
                     replicaCount));
         } catch (UndeclaredThrowableException ute) {

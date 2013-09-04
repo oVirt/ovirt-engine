@@ -702,6 +702,15 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Gluster Volume Remove Bricks Failed.")
     String GlusterVolumeRemoveBricksFailed();
 
+    @DefaultStringValue("Failed to start removal of Bricks from Gluster Volume.")
+    String GlusterVolumeRemoveBricksStartFailed();
+
+    @DefaultStringValue("Failed to stop removal of Bricks from Gluster Volume.")
+    String GlusterVolumeRemoveBricksStopFailed();
+
+    @DefaultStringValue("Failed to commit removal of Bricks from Gluster Volume.")
+    String GlusterVolumeRemoveBricksCommitFailed();
+
     @DefaultStringValue("Gluster Volume Add Brick Failed.")
     String AddBricksToGlusterVolumeFailed();
 
