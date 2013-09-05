@@ -24,6 +24,7 @@ import platform
 import re
 import random
 import datetime
+import time
 import string
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
@@ -219,6 +220,26 @@ class Plugin(plugin.PluginBase):
         self.environment[
             osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
         ].append(filename)
+
+    def _waitDatabase(self, environment=None):
+        dbovirtutils = database.OvirtUtils(plugin=self)
+        for i in range(60):
+            try:
+                self.logger.debug('Attempting to connect database')
+                dbovirtutils.tryDatabaseConnect(environment=environment)
+                break
+            except RuntimeError:
+                self.logger.debug(
+                    'Database connection failed',
+                    exc_info=True,
+                )
+                time.sleep(1)
+            except Exception:
+                self.logger.debug(
+                    'Database connection failed, unknown exception',
+                    exc_info=True,
+                )
+                raise
 
     def _setDatabaseResources(self, environment):
         existing = False
@@ -549,6 +570,9 @@ class Plugin(plugin.PluginBase):
                     osetupcons.DBEnv.PASSWORD: '',
                     osetupcons.DBEnv.DATABASE: 'template1',
                 }
+                self._waitDatabase(
+                    environment=usockenv,
+                )
                 existing = self._setDatabaseResources(
                     environment=usockenv,
                 )
@@ -607,6 +631,8 @@ class Plugin(plugin.PluginBase):
             ],
             state=True,
         )
+
+        self._waitDatabase()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
