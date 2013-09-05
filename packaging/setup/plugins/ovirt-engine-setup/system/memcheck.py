@@ -106,7 +106,6 @@ class Plugin(plugin.PluginBase):
             osetupcons.Defaults.DEFAULT_SYSTEM_MEMCHECK_RECOMMENDED_MB
         )
 
-
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
         name=osetupcons.Stages.MEMORY_CHECK,
