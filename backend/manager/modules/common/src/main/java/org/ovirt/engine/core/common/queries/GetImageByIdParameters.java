@@ -11,6 +11,9 @@ public class GetImageByIdParameters extends VdcQueryParametersBase {
 
     private Guid storageDomainId;
 
+    public GetImageByIdParameters() {
+    }
+
     public GetImageByIdParameters(Guid storageDomainId, String repoImageId) {
         setStorageDomainId(storageDomainId);
         setRepoImageId(repoImageId);

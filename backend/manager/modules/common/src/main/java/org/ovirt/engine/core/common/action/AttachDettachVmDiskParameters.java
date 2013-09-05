@@ -9,6 +9,9 @@ public class AttachDettachVmDiskParameters extends VmDiskOperationParameterBase 
     private static final long serialVersionUID = 5640716432695539552L;
     private boolean isPlugUnPlug;
 
+    public AttachDettachVmDiskParameters() {
+    }
+
     public AttachDettachVmDiskParameters(Guid vmId, Guid diskId, boolean isPlugUnPlug) {
         super(vmId, null);
         setEntityInfo(new EntityInfo(VdcObjectType.Disk, diskId));

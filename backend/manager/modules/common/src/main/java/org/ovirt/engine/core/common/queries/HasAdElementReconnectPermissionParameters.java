@@ -9,7 +9,8 @@ public class HasAdElementReconnectPermissionParameters extends VdcQueryParameter
     private Guid adElementId;
     private Guid objectId;
 
-    public HasAdElementReconnectPermissionParameters() { }
+    public HasAdElementReconnectPermissionParameters() {
+    }
 
     public HasAdElementReconnectPermissionParameters(Guid adElementId, Guid objectId) {
         setAdElementId(adElementId);

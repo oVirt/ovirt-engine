@@ -9,6 +9,9 @@ public class HostStoragePoolParametersBase extends StoragePoolParametersBase {
     private VDS vds;
     private StoragePool storagePool;
 
+    public HostStoragePoolParametersBase() {
+    }
+
     public HostStoragePoolParametersBase(VDS vds) {
         super(vds.getStoragePoolId(), vds.getId());
         this.vds = vds;

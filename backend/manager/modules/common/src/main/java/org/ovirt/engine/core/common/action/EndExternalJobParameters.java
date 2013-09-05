@@ -38,6 +38,9 @@ public class EndExternalJobParameters extends VdcActionParametersBase {
         this.force = force;
     }
 
+    public EndExternalJobParameters() {
+    }
+
     public EndExternalJobParameters(Guid jobId, JobExecutionStatus status, boolean force) {
         super();
         this.jobId = jobId;

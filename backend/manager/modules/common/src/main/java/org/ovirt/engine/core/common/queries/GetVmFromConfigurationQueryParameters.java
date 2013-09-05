@@ -7,6 +7,9 @@ public class GetVmFromConfigurationQueryParameters extends VdcQueryParametersBas
     private String vmConfiguration;
     private ConfigurationType configurationType;
 
+    public GetVmFromConfigurationQueryParameters() {
+    }
+
     public GetVmFromConfigurationQueryParameters(ConfigurationType configurationType, String vmConfiguration) {
         super();
         this.configurationType = configurationType;

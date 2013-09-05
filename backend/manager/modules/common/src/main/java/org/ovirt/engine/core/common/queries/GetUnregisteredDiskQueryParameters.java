@@ -8,6 +8,9 @@ public class GetUnregisteredDiskQueryParameters extends GetUnregisteredDisksQuer
 
     private Guid diskId;
 
+    public GetUnregisteredDiskQueryParameters() {
+    }
+
     public GetUnregisteredDiskQueryParameters(Guid diskId, Guid storageDomainId, Guid storagePoolId) {
         super(storageDomainId, storagePoolId);
         this.diskId = diskId;

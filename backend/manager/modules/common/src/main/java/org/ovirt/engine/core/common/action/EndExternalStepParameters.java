@@ -28,6 +28,9 @@ public class EndExternalStepParameters extends VdcActionParametersBase {
         this.exitStatus = status;
     }
 
+    public EndExternalStepParameters() {
+    }
+
     public EndExternalStepParameters(Guid id, boolean status) {
         super();
         this.id = id;

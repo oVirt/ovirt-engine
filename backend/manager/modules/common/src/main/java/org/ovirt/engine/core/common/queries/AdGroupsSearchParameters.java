@@ -10,6 +10,9 @@ import org.ovirt.engine.core.common.interfaces.SearchType;
 public class AdGroupsSearchParameters extends SearchParameters {
     private static final long serialVersionUID = -4695945267348177923L;
 
+    public AdGroupsSearchParameters() {
+    }
+
     public AdGroupsSearchParameters(String searchPattern) {
         super(searchPattern, SearchType.AdGroup);
     }

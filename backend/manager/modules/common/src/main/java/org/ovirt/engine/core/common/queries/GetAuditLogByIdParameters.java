@@ -2,6 +2,9 @@ package org.ovirt.engine.core.common.queries;
 
 public class GetAuditLogByIdParameters extends VdcQueryParametersBase {
 
+    public GetAuditLogByIdParameters() {
+    }
+
     public GetAuditLogByIdParameters(Long id) {
         super();
         this.id = id;
