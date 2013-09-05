@@ -258,15 +258,20 @@ class OvirtUtils(base.Base):
 
     @property
     def environment(self):
-        return self._plugin.environment
+        return self._environment
 
     @property
     def command(self):
         return self._plugin.command
 
-    def __init__(self, plugin):
+    def __init__(self, plugin, environment=None):
         super(OvirtUtils, self).__init__()
         self._plugin = plugin
+        self._environment = (
+            self._plugin.environment
+            if environment is None
+            else environment
+        )
 
     def detectCommands(self):
         self.command.detect('pg_dump')

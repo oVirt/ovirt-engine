@@ -217,10 +217,12 @@ class Plugin(plugin.PluginBase):
             osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
         ].append(filename)
 
-    def _setDatabaseResources(self):
+    def _setDatabaseResources(self, environment):
         existing = False
 
-        dbstatement = database.Statement(self.environment)
+        dbstatement = database.Statement(
+            environment=environment,
+        )
         hasDatabase = dbstatement.execute(
             statement="""
                 select count(*) as count
@@ -232,10 +234,6 @@ class Plugin(plugin.PluginBase):
                     osetupcons.DBEnv.DATABASE
                 ],
             ),
-            host='',    # use uscock
-            user='postgres',
-            password='',
-            database='template1',
             ownConnection=True,
             transaction=False,
         )[0]['count'] != 0
@@ -250,21 +248,17 @@ class Plugin(plugin.PluginBase):
                     osetupcons.DBEnv.USER
                 ],
             ),
-            host='',    # use uscock
-            user='postgres',
-            password='',
-            database='template1',
             ownConnection=True,
             transaction=False,
         )[0]['count'] != 0
 
         if hasDatabase and hasUser:
             try:
-                dbovirtutils = database.OvirtUtils(plugin=self)
-                if not dbovirtutils.isNewDatabase(
-                    host='',
-                    user='postgres',
-                ):
+                dbovirtutils = database.OvirtUtils(
+                    plugin=self,
+                    environment=environment,
+                )
+                if not dbovirtutils.isNewDatabase():
                     raise RuntimeError(
                         _('Not new database')
                     )
@@ -285,6 +279,7 @@ class Plugin(plugin.PluginBase):
 
     def _performDatabase(
         self,
+        environment,
         op,
         user,
         password,
@@ -323,17 +318,15 @@ class Plugin(plugin.PluginBase):
             ),
         ]
 
-        dbstatement = database.Statement(self.environment)
+        dbstatement = database.Statement(
+            environment=environment,
+        )
         for statement in statements:
             dbstatement.execute(
                 statement=statement,
                 args=dict(
                     password=password,
                 ),
-                host='',    # use uscock
-                user='postgres',
-                password='',
-                database='template1',
                 ownConnection=True,
                 transaction=False,
             )
@@ -551,8 +544,20 @@ class Plugin(plugin.PluginBase):
                     osetupcons.SystemEnv.USER_POSTGRES
                 ],
             ):
-                existing = self._setDatabaseResources()
+                usockenv = {
+                    osetupcons.DBEnv.HOST: '',  # usock
+                    osetupcons.DBEnv.PORT: '',
+                    osetupcons.DBEnv.SECURED: False,
+                    osetupcons.DBEnv.SECURED_HOST_VALIDATION: False,
+                    osetupcons.DBEnv.USER: 'postgres',
+                    osetupcons.DBEnv.PASSWORD: '',
+                    osetupcons.DBEnv.DATABASE: 'template1',
+                }
+                existing = self._setDatabaseResources(
+                    environment=usockenv,
+                )
                 self._performDatabase(
+                    environment=usockenv,
                     op=(
                         'alter' if existing
                         else 'create'
