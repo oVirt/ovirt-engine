@@ -9,6 +9,9 @@ public class RegisterDiskParameters extends ImagesActionsParametersBase {
 
     private DiskImage diskImage;
 
+    public RegisterDiskParameters() {
+    }
+
     public RegisterDiskParameters(DiskImage diskImage, Guid storageDomainId) {
         super(diskImage.getId());
         this.diskImage = diskImage;

@@ -6,6 +6,9 @@ public class GetStepsByJobIdQueryParameters extends VdcQueryParametersBase {
 
     private static final long serialVersionUID = 758029173419093849L;
 
+    public GetStepsByJobIdQueryParameters() {
+    }
+
     public GetStepsByJobIdQueryParameters(Guid jobId) {
         super();
         this.jobId = jobId;

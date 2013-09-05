@@ -7,6 +7,9 @@ public class GetUnregisteredDisksQueryParameters extends StorageDomainQueryParam
 
     private Guid storagePoolId;
 
+    public GetUnregisteredDisksQueryParameters() {
+    }
+
     public GetUnregisteredDisksQueryParameters(Guid storageDomainId, Guid storagePoolId) {
         super(storageDomainId);
         this.storagePoolId = storagePoolId;

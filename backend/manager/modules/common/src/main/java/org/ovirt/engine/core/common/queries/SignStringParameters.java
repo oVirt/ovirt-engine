@@ -6,6 +6,8 @@ public class SignStringParameters extends VdcQueryParametersBase implements Seri
 
     private String string;
 
+    public SignStringParameters() {
+    }
 
     public SignStringParameters(String string) {
         super();

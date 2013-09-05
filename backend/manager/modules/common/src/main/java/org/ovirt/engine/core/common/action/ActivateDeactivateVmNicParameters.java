@@ -8,6 +8,9 @@ public class ActivateDeactivateVmNicParameters extends VmOperationParameterBase 
     private VmNic nic;
     private PlugAction action;
 
+    public ActivateDeactivateVmNicParameters() {
+    }
+
     public ActivateDeactivateVmNicParameters(VmNic nic, PlugAction action) {
         super();
         this.nic = nic;

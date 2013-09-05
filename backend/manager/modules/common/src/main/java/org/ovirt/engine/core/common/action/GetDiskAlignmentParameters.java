@@ -7,6 +7,9 @@ public class GetDiskAlignmentParameters extends VdcActionParametersBase {
 
     private Guid diskId;
 
+    public GetDiskAlignmentParameters() {
+    }
+
     public GetDiskAlignmentParameters(Guid diskId) {
         setDiskId(diskId);
     }

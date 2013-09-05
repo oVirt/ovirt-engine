@@ -6,6 +6,9 @@ public class GetHostsForStorageOperationParameters extends IdQueryParameters {
 
     private boolean localFsOnly;
 
+    public GetHostsForStorageOperationParameters() {
+    }
+
     public GetHostsForStorageOperationParameters(Guid storagePoolId, boolean localFsOnly) {
         super(storagePoolId);
         this.localFsOnly = localFsOnly;

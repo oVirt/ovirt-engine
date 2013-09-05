@@ -10,6 +10,9 @@ public class AddExternalJobParameters extends VdcActionParametersBase {
     private String description;
     private boolean isAutoCleared;
 
+    public AddExternalJobParameters() {
+    }
+
     public AddExternalJobParameters(String description, boolean isAutoCleared) {
         super();
         this.description = description;

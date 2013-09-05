@@ -38,6 +38,9 @@ public class AddExternalStepParameters extends VdcActionParametersBase{
         this.description = description;
     }
 
+    public AddExternalStepParameters() {
+    }
+
     public AddExternalStepParameters(Guid id, String description, StepEnum stepType) {
         super();
         this.parentId = id;
