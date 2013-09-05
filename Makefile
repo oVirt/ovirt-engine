@@ -221,6 +221,7 @@ install: \
 	install_poms \
 	$(NULL)
 
+.PHONY: ovirt-engine.spec.in
 ovirt-engine.spec: version.mak
 
 dist:	ovirt-engine.spec
