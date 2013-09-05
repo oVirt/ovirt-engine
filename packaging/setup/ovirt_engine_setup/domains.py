@@ -76,7 +76,7 @@ class DomainChecker(base.Base):
         """
         Iterate up in the tree structure until we get an existing path
         """
-        if os.path.exists(path.rstrip(os.path.sep)):
+        if os.path.exists(path):
             return path
         else:
             return self.get_base_path(
