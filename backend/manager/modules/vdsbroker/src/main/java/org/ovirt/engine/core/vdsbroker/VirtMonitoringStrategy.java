@@ -86,14 +86,12 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
 
     private boolean hostCompliesWithClusterEmulationMode(VDS vds, VDSGroup vdsGroup) {
 
-        String clusterEmulatedMachine = vdsGroup.getEmulatedMachine();
-
         // the initial cluster emulated machine value is set by the first host that complies.
-        if (clusterEmulatedMachine == null || clusterEmulatedMachine.isEmpty()) {
+        if (vdsGroup.isDetectEmulatedMachine()) {
             return hostEmulationModeMatchesTheConfigValues(vds);
         } else {
             // the cluster has the emulated machine flag set. match the host against it.
-            return vds.getSupportedEmulatedMachines() != null ? Arrays.asList(vds.getSupportedEmulatedMachines().split(",")).contains(clusterEmulatedMachine) : false;
+            return vds.getSupportedEmulatedMachines() != null ? Arrays.asList(vds.getSupportedEmulatedMachines().split(",")).contains(vdsGroup.getEmulatedMachine()) : false;
         }
     }
 
@@ -114,6 +112,6 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
 
     private void setClusterEmulatedMachine(VDS vds, String matchedEmulatedMachine) {
         // host matches and its value will set the cluster emulated machine
-        DbFacade.getInstance().getVdsGroupDao().setEmulatedMachine(vds.getVdsGroupId(), matchedEmulatedMachine);
+        DbFacade.getInstance().getVdsGroupDao().setEmulatedMachine(vds.getVdsGroupId(), matchedEmulatedMachine, false);
     }
 }

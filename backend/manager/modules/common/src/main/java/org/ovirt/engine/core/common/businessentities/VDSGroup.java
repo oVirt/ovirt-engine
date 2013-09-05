@@ -75,6 +75,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     private String clusterPolicyName;
 
     private Map<String, String> clusterPolicyProperties;
+    private boolean detectEmulatedMachine;
 
     public VDSGroup() {
         migrateOnError = MigrateOnErrorOptions.YES;
@@ -265,6 +266,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         this.enableBallooning = enableBallooning;
     }
 
+    public void setDetectEmulatedMachine(boolean detectEmulatedMachine) {
+        this.detectEmulatedMachine = detectEmulatedMachine;
+    }
+
+    public boolean isDetectEmulatedMachine() {
+        return detectEmulatedMachine;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -324,6 +333,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && ObjectUtils.objectsEqual(clusterPolicyId, other.clusterPolicyId)
                 && ObjectUtils.objectsEqual(clusterPolicyName, other.clusterPolicyName)
                 && ObjectUtils.objectsEqual(clusterPolicyProperties, other.clusterPolicyProperties)
-                && enableBallooning == other.enableBallooning);
+                && enableBallooning == other.enableBallooning
+                && detectEmulatedMachine == other.detectEmulatedMachine);
     }
+
 }

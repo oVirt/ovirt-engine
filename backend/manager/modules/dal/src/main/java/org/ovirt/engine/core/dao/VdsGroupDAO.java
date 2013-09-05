@@ -139,9 +139,11 @@ public interface VdsGroupDAO extends DAO, SearchDAO<VDSGroup> {
     /**
      * Sets the cluster's emulated machine value
      * @param vdsGroupId
-     *  @param emulatedMachine
+     * @param emulatedMachine
+     * @param detectEmulatedMachine - either the cluster emulated machine should be auto detected and set
+     *
      */
-    void setEmulatedMachine(Guid vdsGroupId, String emulatedMachine);
+    void setEmulatedMachine(Guid vdsGroupId, String emulatedMachine, boolean detectEmulatedMachine);
 
    /**
     * Retries trusted cluster

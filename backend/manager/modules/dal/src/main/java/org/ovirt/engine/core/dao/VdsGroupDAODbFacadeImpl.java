@@ -129,10 +129,11 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
     }
 
     @Override
-    public void setEmulatedMachine(Guid vdsGroupId, String emulatedMachine) {
+    public void setEmulatedMachine(Guid vdsGroupId, String emulatedMachine, boolean detectEmulatedMachine) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vds_group_id", vdsGroupId)
-                .addValue("emulated_machine", emulatedMachine);
+                .addValue("emulated_machine", emulatedMachine)
+                .addValue("detect_emulated_machine", detectEmulatedMachine);
 
         getCallsHandler().executeModification("UpdateVdsGroupEmulatedMachine", parameterSource);
     }
@@ -164,6 +165,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("gluster_service", group.supportsGlusterService())
                 .addValue("tunnel_migration", group.isTunnelMigration())
                 .addValue("emulated_machine", group.getEmulatedMachine())
+                .addValue("detect_emulated_machine", group.isDetectEmulatedMachine())
                 .addValue("trusted_service", group.supportsTrustedService())
                 .addValue("cluster_policy_id", group.getClusterPolicyId())
                 .addValue("cluster_policy_custom_properties",
@@ -201,6 +203,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setGlusterService(rs.getBoolean("gluster_service"));
             entity.setTunnelMigration(rs.getBoolean("tunnel_migration"));
             entity.setEmulatedMachine(rs.getString("emulated_machine"));
+            entity.setDetectEmulatedMachine(rs.getBoolean("detect_emulated_machine"));
             entity.setTrustedService(rs.getBoolean("trusted_service"));
             entity.setClusterPolicyId(Guid.createGuidFromString(rs.getString("cluster_policy_id")));
             entity.setClusterPolicyName(rs.getString("cluster_policy_name"));

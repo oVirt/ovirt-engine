@@ -289,6 +289,8 @@ public final class Cloner
         obj.setStoragePoolId(instance.getStoragePoolId());
         obj.setmax_vds_memory_over_commit(instance.getmax_vds_memory_over_commit());
         obj.setCountThreadsAsCores(instance.getCountThreadsAsCores());
+        obj.setEmulatedMachine(instance.getEmulatedMachine());
+        obj.setDetectEmulatedMachine(instance.isDetectEmulatedMachine());
 
         return obj;
     }

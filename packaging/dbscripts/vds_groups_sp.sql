@@ -23,6 +23,7 @@ Create or replace FUNCTION InsertVdsGroups(
 	v_gluster_service BOOLEAN,
 	v_tunnel_migration BOOLEAN,
 	v_emulated_machine VARCHAR(40),
+	v_detect_emulated_machine BOOLEAN,
 	v_trusted_service BOOLEAN,
         v_cluster_policy_id UUID,
         v_cluster_policy_custom_properties text,
@@ -31,10 +32,10 @@ RETURNS VOID
    AS $procedure$
 BEGIN
       INSERT INTO vds_groups(vds_group_id,description, name, free_text_comment, cpu_name, storage_pool_id,  max_vds_memory_over_commit, count_threads_as_cores, compatibility_version,
-        transparent_hugepages, migrate_on_error, virt_service, gluster_service, tunnel_migration, emulated_machine, trusted_service, cluster_policy_id,
+        transparent_hugepages, migrate_on_error, virt_service, gluster_service, tunnel_migration, emulated_machine, detect_emulated_machine, trusted_service, cluster_policy_id,
         cluster_policy_custom_properties, enable_balloon)
 	VALUES(v_vds_group_id,v_description, v_name, v_free_text_comment, v_cpu_name, v_storage_pool_id,  v_max_vds_memory_over_commit, v_count_threads_as_cores, v_compatibility_version,
-    v_transparent_hugepages, v_migrate_on_error, v_virt_service, v_gluster_service, v_tunnel_migration, v_emulated_machine, v_trusted_service, v_cluster_policy_id, v_cluster_policy_custom_properties, v_enable_balloon);
+    v_transparent_hugepages, v_migrate_on_error, v_virt_service, v_gluster_service, v_tunnel_migration, v_emulated_machine, v_detect_emulated_machine, v_trusted_service, v_cluster_policy_id, v_cluster_policy_custom_properties, v_enable_balloon);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -57,6 +58,7 @@ Create or replace FUNCTION UpdateVdsGroup(v_description VARCHAR(4000) ,
 	v_gluster_service BOOLEAN,
 	v_tunnel_migration BOOLEAN,
 	v_emulated_machine VARCHAR(40),
+	v_detect_emulated_machine BOOLEAN,
 	v_trusted_service BOOLEAN,
         v_cluster_policy_id UUID,
         v_cluster_policy_custom_properties text,
@@ -74,7 +76,7 @@ BEGIN
       compatibility_version = v_compatibility_version,transparent_hugepages = v_transparent_hugepages,
       migrate_on_error = v_migrate_on_error,
       virt_service = v_virt_service, gluster_service = v_gluster_service, tunnel_migration = v_tunnel_migration,
-      emulated_machine = v_emulated_machine, trusted_service = v_trusted_service, cluster_policy_id = v_cluster_policy_id,
+      emulated_machine = v_emulated_machine, detect_emulated_machine = v_detect_emulated_machine, trusted_service = v_trusted_service, cluster_policy_id = v_cluster_policy_id,
       cluster_policy_custom_properties = v_cluster_policy_custom_properties, enable_balloon = v_enable_balloon
       WHERE vds_group_id = v_vds_group_id;
 END; $procedure$
@@ -199,11 +201,13 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
---This SP updates the vds_group emulated machine
-Create or replace FUNCTION UpdateVdsGroupEmulatedMachine(v_vds_group_id UUID, v_emulated_machine varchar(40)) RETURNS VOID
+--This SP updates the vds_group emulated machine and the detection mode
+Create or replace FUNCTION UpdateVdsGroupEmulatedMachine(v_vds_group_id UUID, v_emulated_machine varchar(40), v_detect_emulated_machine BOOLEAN) RETURNS VOID
    AS $procedure$
 BEGIN
-    UPDATE vds_groups set emulated_machine = v_emulated_machine where vds_group_id = v_vds_group_id;
+    UPDATE vds_groups
+    SET emulated_machine = v_emulated_machine, detect_emulated_machine = v_detect_emulated_machine
+    WHERE vds_group_id = v_vds_group_id;
 END; $procedure$
 LANGUAGE plpgsql;
 

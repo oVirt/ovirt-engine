@@ -35,6 +35,7 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
     @Override
     protected void executeCommand() {
         CheckMaxMemoryOverCommitValue();
+        getVdsGroup().setDetectEmulatedMachine(true);
         DbFacade.getInstance().getVdsGroupDao().save(getVdsGroup());
 
         // add default network

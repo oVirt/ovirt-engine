@@ -59,6 +59,9 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         // set cluster policy name to allow equals method to succeed
         newGroup.setClusterPolicyName(clusterPolicyDao.get(existingVdsGroup.getClusterPolicyId()).getName());
         newGroup.setClusterPolicyProperties(new LinkedHashMap<String, String>());
+        newGroup.setDetectEmulatedMachine(true);
+        newGroup.setEmulatedMachine("rhel6.4.0");
+
     }
 
     /**
@@ -346,18 +349,49 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         assertNull(result);
     }
 
+    /**
+     * Test the use of the special procedure to update emulated_machine
+     */
     @Test
-    public void testUpdateEmulatedMachine() {
+    public void testSetEmulatedMachine() {
         String preUpdate = existingVdsGroup.getEmulatedMachine();
         String updatedValue = "pc-version-1.2.3";
 
         assertNotSame(preUpdate, updatedValue);
 
         existingVdsGroup.setEmulatedMachine(updatedValue);
-        dao.setEmulatedMachine(existingVdsGroup.getId(), updatedValue);
+        dao.setEmulatedMachine(existingVdsGroup.getId(), updatedValue, false);
 
         assertEquals(updatedValue, dao.get(existingVdsGroup.getId()).getEmulatedMachine());
     }
+
+    /**
+     * Test the use of the special procedure to update detect_emulated_machine
+     */
+    @Test
+    public void testSetDetectEmulatedMachine() {
+        boolean preUpdate = existingVdsGroup.isDetectEmulatedMachine();
+        boolean updateValue = false;
+
+        assertNotSame(preUpdate, updateValue);
+
+        dao.setEmulatedMachine(existingVdsGroup.getId(), existingVdsGroup.getEmulatedMachine(), updateValue);
+
+        assertEquals(updateValue, dao.get(existingVdsGroup.getId()).isDetectEmulatedMachine());
+    }
+
+    @Test
+    public void testUpdateVdsGroupsProps() {
+        existingVdsGroup.setEmulatedMachine("pc-1.2.3");
+        assertNotSame("pc-1.2.3",existingVdsGroup.getEmulatedMachine());
+        dao.update(existingVdsGroup);
+        assertEquals("pc-1.2.3", existingVdsGroup.getEmulatedMachine());
+
+        existingVdsGroup.setDetectEmulatedMachine(true);
+        dao.update(existingVdsGroup);
+        assertEquals(true, existingVdsGroup.isDetectEmulatedMachine());
+    }
+
 
     /**
      * Test that the correct vds_groups are fetched when looking for trusted_services

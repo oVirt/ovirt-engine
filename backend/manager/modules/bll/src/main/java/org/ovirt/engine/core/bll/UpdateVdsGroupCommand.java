@@ -24,6 +24,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
+import org.ovirt.engine.core.common.utils.ListUtils;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -53,6 +55,24 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
     protected void executeCommand() {
         // TODO: This code should be revisited and proper compensation logic should be introduced here
         CheckMaxMemoryOverCommitValue();
+        if (!ObjectUtils.objectsEqual(oldGroup.getcompatibility_version(), getParameters().getVdsGroup().getcompatibility_version())) {
+            String emulatedMachine = null;
+            // pick an UP host randomly - all should have latest compat version already if we passed the canDo.
+            for (VDS vds : allForVdsGroup) {
+                if (getVds().getStatus() == VDSStatus.Up) {
+                    emulatedMachine = ListUtils.firstMatch(
+                            Config.<List<String>>GetValue(ConfigValues.ClusterEmulatedMachines,
+                                    getParameters().getVdsGroup().getcompatibility_version().getValue()), vds.getSupportedEmulatedMachines().split(","));
+                    break;
+                }
+            }
+            if (emulatedMachine == null) {
+                getParameters().getVdsGroup().setDetectEmulatedMachine(true);
+            } else {
+                getParameters().getVdsGroup().setEmulatedMachine(emulatedMachine);
+            }
+        }
+
         getVdsGroupDAO().update(getParameters().getVdsGroup());
 
         if ((oldGroup.getStoragePoolId() != null
