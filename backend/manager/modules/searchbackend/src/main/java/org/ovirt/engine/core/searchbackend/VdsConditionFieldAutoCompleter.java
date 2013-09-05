@@ -2,6 +2,7 @@ package org.ovirt.engine.core.searchbackend;
 
 import java.util.UUID;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VDSNiceType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 
@@ -28,6 +29,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         mVerbs.add("TAG");
         mVerbs.add("TYPE");
         mVerbs.add("DATACENTER");
+        mVerbs.add("ARCHITECTURE");
         // mVerbs.Add("NOTE", "NOTE");
         buildCompletions();
         mVerbs.add("ID");
@@ -53,6 +55,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         getTypeDictionary().put("TYPE", VDSNiceType.class);
         getTypeDictionary().put("DATACENTER", String.class);
         getTypeDictionary().put("ID", UUID.class);
+        getTypeDictionary().put("ARCHITECTURE", ArchitectureType.class);
         // mTypeDict.Add("NOTE", typeof(string));
         // building the ColumnName Dict
         columnNameDict.put("NAME", "vds_name");
@@ -76,6 +79,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         columnNameDict.put("TYPE", "vds_type");
         columnNameDict.put("DATACENTER", "storage_pool_name");
         columnNameDict.put("ID", "vds_id");
+        columnNameDict.put("ARCHITECTURE", "architecture");
         // mColumnNameDict.Add("NOTE", "note");
         // Building the validation dict
         buildBasicValidationTable();
@@ -105,7 +109,8 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
         }
         else if ("TYPE".equals(fieldName)) {
             retval = new EnumValueAutoCompleter(VDSNiceType.class);
-        } else {
+        } else if ("ARCHITECTURE".equals(fieldName)) {
+            retval = new EnumValueAutoCompleter(ArchitectureType.class);
         }
         return retval;
     }

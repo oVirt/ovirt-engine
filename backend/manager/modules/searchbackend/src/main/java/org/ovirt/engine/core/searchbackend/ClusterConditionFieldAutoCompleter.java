@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 
 public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public ClusterConditionFieldAutoCompleter() {
@@ -8,6 +9,7 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         mVerbs.add("DESCRIPTION");
         mVerbs.add("COMMENT");
         mVerbs.add("INITIALIZED");
+        mVerbs.add("ARCHITECTURE");
 
         // Building the autoCompletion Dict
         buildCompletions();
@@ -16,11 +18,13 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         getTypeDictionary().put("DESCRIPTION", String.class);
         getTypeDictionary().put("COMMENT", String.class);
         getTypeDictionary().put("INITIALIZED", Boolean.class);
+        getTypeDictionary().put("ARCHITECTURE", ArchitectureType.class);
 
         // building the ColumnName Dict
         columnNameDict.put("NAME", "name");
         columnNameDict.put("DESCRIPTION", "description");
         columnNameDict.put("COMMENT", "free_text_comment");
+        columnNameDict.put("ARCHITECTURE", "architecture");
         // mColumnNameDict.put("INITIALIZED", "is_initialized");
 
         // Building the validation dict
@@ -37,7 +41,8 @@ public class ClusterConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         IConditionValueAutoCompleter retval = null;
         if ("INITIALIZED".equals(fieldName)) {
             retval = new BitValueAutoCompleter();
-        } else {
+        } else if ("ARCHITECTURE".equals(fieldName)) {
+            retval = new EnumValueAutoCompleter(ArchitectureType.class);
         }
         return retval;
     }

@@ -673,7 +673,7 @@ WHERE vm_type = '0';
 
 CREATE OR REPLACE VIEW vds
 as
-SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group_name, vds_groups.description as vds_group_description,
+SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group_name, vds_groups.description as vds_group_description, vds_groups.architecture as architecture,
                       vds_static.vds_id as vds_id, vds_static.vds_name as vds_name, vds_static.ip as ip, vds_static.vds_unique_id as vds_unique_id,
                       vds_static.host_name as host_name, vds_static.free_text_comment as free_text_comment,
                       vds_static.port as port, vds_static.vds_strength as vds_strength, vds_static.server_SSL_enabled as server_SSL_enabled, vds_static.vds_type as vds_type,
@@ -714,7 +714,7 @@ vds_spm_id_map ON vds_static.vds_id = vds_spm_id_map.vds_id;
 
 CREATE OR REPLACE VIEW vds_with_tags
 as
-SELECT     vds_groups.vds_group_id, vds_groups.name AS vds_group_name, vds_groups.description AS vds_group_description,
+SELECT     vds_groups.vds_group_id, vds_groups.name AS vds_group_name, vds_groups.description AS vds_group_description, vds_groups.architecture as architecture,
                       vds_static.vds_id, vds_static.vds_name, vds_static.ip, vds_static.vds_unique_id,
                       vds_static.host_name, vds_static.free_text_comment, vds_static.port, vds_static.vds_strength, vds_static.server_SSL_enabled, vds_static.vds_type,
                       vds_static.pm_type, vds_static.pm_user, vds_static.pm_password, vds_static.pm_port,
@@ -812,7 +812,7 @@ WHERE     (users_2.user_group = 'group');
 
 
 CREATE OR REPLACE VIEW vm_pools_view AS
- SELECT vm_pools.vm_pool_id, vm_pools.vm_pool_name, vm_pools.vm_pool_description, vm_pools.vm_pool_comment, vm_pools.vm_pool_type, vm_pools.parameters, vm_pools.prestarted_vms, vm_pools.vds_group_id, vds_groups.name AS vds_group_name, storage_pool.name as storage_pool_name, storage_pool.id as storage_pool_id, vm_pools.max_assigned_vms_per_user as max_assigned_vms_per_user
+ SELECT vm_pools.vm_pool_id, vm_pools.vm_pool_name, vm_pools.vm_pool_description, vm_pools.vm_pool_comment, vm_pools.vm_pool_type, vm_pools.parameters, vm_pools.prestarted_vms, vm_pools.vds_group_id, vds_groups.name AS vds_group_name, vds_groups.architecture AS architecture, storage_pool.name as storage_pool_name, storage_pool.id as storage_pool_id, vm_pools.max_assigned_vms_per_user as max_assigned_vms_per_user
    FROM vm_pools
    JOIN vds_groups ON vm_pools.vds_group_id = vds_groups.vds_group_id
    JOIN storage_pool ON storage_pool.id = vds_groups.storage_pool_id;
@@ -820,7 +820,7 @@ CREATE OR REPLACE VIEW vm_pools_view AS
 
 
 CREATE OR REPLACE VIEW vm_pools_full_view AS
- SELECT vmp.vm_pool_id, vmp.vm_pool_name, vmp.vm_pool_description, vmp.vm_pool_comment, vmp.vm_pool_type, vmp.parameters, vmp.prestarted_vms, vmp.vds_group_id, vmp.vds_group_name, vmp.max_assigned_vms_per_user, ( SELECT count(vm_pool_map.vm_pool_id) AS expr1
+ SELECT vmp.vm_pool_id, vmp.vm_pool_name, vmp.vm_pool_description, vmp.vm_pool_comment, vmp.vm_pool_type, vmp.parameters, vmp.prestarted_vms, vmp.vds_group_id, vmp.vds_group_name, vmp.architecture, vmp.max_assigned_vms_per_user, ( SELECT count(vm_pool_map.vm_pool_id) AS expr1
            FROM vm_pools_view v1
       LEFT JOIN vm_pool_map ON v1.vm_pool_id = vm_pool_map.vm_pool_id AND v1.vm_pool_id = vmp.vm_pool_id) AS assigned_vm_count, ( SELECT count(v2.vm_pool_id) AS expr1
            FROM vm_pools v2
@@ -953,7 +953,7 @@ AS
 SELECT     vds_groups.vds_group_id, vds_groups.name, vds_groups.description, vds_groups.free_text_comment, vds_groups.cpu_name, vds_groups._create_date,
                       vds_groups._update_date, vds_groups.storage_pool_id,
                       vds_groups.max_vds_memory_over_commit, vds_groups.count_threads_as_cores, vds_groups.compatibility_version,
-                      vds_groups.transparent_hugepages, vds_groups.migrate_on_error,
+                      vds_groups.transparent_hugepages, vds_groups.migrate_on_error, vds_groups.architecture,
                       storage_pool_iso_map.storage_id, storage_pool.name AS storage_pool_name
 FROM vds_groups
 LEFT JOIN storage_pool_iso_map ON vds_groups.storage_pool_id = storage_pool_iso_map.storage_pool_id

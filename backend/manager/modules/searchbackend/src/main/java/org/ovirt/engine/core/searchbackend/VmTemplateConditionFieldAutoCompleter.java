@@ -2,6 +2,7 @@ package org.ovirt.engine.core.searchbackend;
 
 import java.util.UUID;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DateEnumForSearch;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
@@ -21,6 +22,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         mVerbs.add("DATACENTER");
         mVerbs.add("QUOTA");
         mVerbs.add("DESCRIPTION");
+        mVerbs.add("ARCHITECTURE");
 
         buildCompletions();
         mVerbs.add("_VMT_ID");
@@ -39,6 +41,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         getTypeDictionary().put("QUOTA", String.class);
         getTypeDictionary().put("_VMT_ID", UUID.class);
         getTypeDictionary().put("DESCRIPTION", String.class);
+        getTypeDictionary().put("ARCHITECTURE", ArchitectureType.class);
 
         // building the ColumnName Dict
         columnNameDict.put("NAME", "name");
@@ -55,6 +58,7 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
         columnNameDict.put("QUOTA", "quota_name");
         columnNameDict.put("_VMT_ID", "vmt_guid");
         columnNameDict.put("DESCRIPTION", "description");
+        columnNameDict.put("ARCHITECTURE", "architecture");
         // Building the validation dict
         buildBasicValidationTable();
     }
@@ -80,6 +84,8 @@ public class VmTemplateConditionFieldAutoCompleter extends BaseConditionFieldAut
             return new EnumValueAutoCompleter(VmTemplateStatus.class);
         } else if ("QUOTA".equals(fieldName)) {
             return new NullableStringAutoCompleter();
+        } else if ("ARCHITECTURE".equals(fieldName)) {
+            return new EnumValueAutoCompleter(ArchitectureType.class);
         }
         return null;
     }

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.searchbackend;
 import java.util.Date;
 import java.util.UUID;
 
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -38,6 +39,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mVerbs.add("HOST");
         mVerbs.add("ID");
         mVerbs.add("DESCRIPTION");
+        mVerbs.add("ARCHITECTURE");
         // Building the autoCompletion Dict
         buildCompletions();
 
@@ -66,6 +68,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put("HOST", String.class);
         getTypeDictionary().put("ID", UUID.class);
         getTypeDictionary().put("DESCRIPTION", String.class);
+        getTypeDictionary().put("ARCHITECTURE", ArchitectureType.class);
 
         // building the ColumnName Dict
         columnNameDict.put("NAME", "vm_name");
@@ -93,6 +96,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put("HOST", "run_on_vds_name");
         columnNameDict.put("ID", "vm_guid");
         columnNameDict.put("DESCRIPTION", "vm_description");
+        columnNameDict.put("ARCHITECTURE", "architecture");
 
         // Override field names for purpose of sorting, if needed
         sortableFieldDict.put("IP", StringFormat.format("fn_get_comparable_ip_list(%s)", getDbFieldName("IP")));
@@ -129,6 +133,8 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
             return new EnumValueAutoCompleter(VmType.class);
         } else if ("QUOTA".equals(fieldName)) {
             return new NullableStringAutoCompleter();
+        } else if ("ARCHITECTURE".equals(fieldName)) {
+            return new EnumValueAutoCompleter(ArchitectureType.class);
         }
         return null;
     }
