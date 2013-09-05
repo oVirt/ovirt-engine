@@ -36,6 +36,7 @@ from otopi import filetransaction
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import domains as osetupdomains
+from ovirt_engine_setup import util as osetuputil
 
 
 @util.export
@@ -129,6 +130,23 @@ class Plugin(plugin.PluginBase):
             group='iso_domain',
             fileList=uninstall_files,
         )
+        if os.path.exists(path):
+            self.logger.debug(
+                'Enforcing ownership and access bits on {path}'.format(
+                    path=path,
+                )
+            )
+            os.chown(
+                path,
+                osetuputil.getUid(
+                    self.environment[osetupcons.SystemEnv.USER_VDSM]
+                ),
+                osetuputil.getGid(
+                    self.environment[osetupcons.SystemEnv.GROUP_KVM]
+                )
+            )
+            os.chmod(path, 0o755)
+
         self.logger.debug('Generating a new uuid for ISO domain')
         sdUUID = str(uuid.uuid4())
         description = self.environment[
