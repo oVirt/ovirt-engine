@@ -48,9 +48,9 @@ class Plugin(plugin.PluginBase):
     DEFAULT_MD = {
         'CLASS': 'Iso',
         'DESCRIPTION': 'isofun',
-        'IOOPTIMEOUTSEC': 10,
+        'IOOPTIMEOUTSEC': 1,
         'LEASERETRIES': 3,
-        'LEASETIMESEC': 60,
+        'LEASETIMESEC': 5,
         'LOCKPOLICY': '',
         'LOCKRENEWALINTERVALSEC': 5,
         'POOL_UUID': '',
@@ -59,13 +59,18 @@ class Plugin(plugin.PluginBase):
         'SDUUID': '',
         'TYPE': 'NFS',
         'VERSION': 0,
+        'MASTER_VERSION': 0,
     }
 
     def _generate_md_content(self, sdUUID, description):
         self.logger.debug('Generating ISO Domain metadata')
         md = self.DEFAULT_MD.copy()
-        md['SDUUID'] = sdUUID,
+        md['SDUUID'] = sdUUID
         md['DESCRIPTION'] = description
+        md['REMOTE_PATH'] = '%s:%s' % (
+            self.environment[osetupcons.ConfigEnv.FQDN],
+            self.environment[osetupcons.ConfigEnv.ISO_DOMAIN_NFS_MOUNT_POINT]
+        )
 
         lines = ['%s=%s' % (key, md[key]) for key in sorted(md.keys())]
         checksum = hashlib.sha1()
@@ -145,7 +150,7 @@ class Plugin(plugin.PluginBase):
                     osetupcons.Const.ISO_DOMAIN_IMAGE_UID,
                     '.keep',
                 ),
-                content='',
+                content=[],
                 mode=0o644,
                 dmode=0o755,
                 owner=self.environment[osetupcons.SystemEnv.USER_VDSM],
@@ -159,13 +164,13 @@ class Plugin(plugin.PluginBase):
         )
         #Create dom_md directory tree
         domMdDir = os.path.join(basePath, 'dom_md')
-        for name in ('ids', 'inbox', 'leases', 'outbox'):
+        for name in ('ids', 'inbox', 'outbox'):
             filename = os.path.join(domMdDir, name)
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
                 filetransaction.FileTransaction(
                     name=filename,
-                    content='',
-                    mode=0o644,
+                    content=[],
+                    mode=0o660,
                     dmode=0o755,
                     owner=self.environment[osetupcons.SystemEnv.USER_VDSM],
                     group=self.environment[osetupcons.SystemEnv.GROUP_KVM],
@@ -176,11 +181,27 @@ class Plugin(plugin.PluginBase):
                     modifiedList=uninstall_files,
                 )
             )
+        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
+            filetransaction.FileTransaction(
+                name=os.path.join(domMdDir, 'leases'),
+                content=b'\x00'*512,
+                binary=True,
+                mode=0o660,
+                dmode=0o755,
+                owner=self.environment[osetupcons.SystemEnv.USER_VDSM],
+                group=self.environment[osetupcons.SystemEnv.GROUP_KVM],
+                downer=self.environment[
+                    osetupcons.SystemEnv.USER_VDSM
+                ],
+                dgroup=self.environment[osetupcons.SystemEnv.GROUP_KVM],
+                modifiedList=uninstall_files,
+            )
+        )
         metadata = os.path.join(domMdDir, 'metadata')
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=metadata,
-                mode=0o755,
+                mode=0o644,
                 dmode=0o755,
                 owner=self.environment[osetupcons.SystemEnv.USER_VDSM],
                 group=self.environment[osetupcons.SystemEnv.GROUP_KVM],
