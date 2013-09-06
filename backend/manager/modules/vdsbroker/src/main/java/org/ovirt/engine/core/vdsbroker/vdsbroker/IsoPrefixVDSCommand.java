@@ -47,7 +47,10 @@ public class IsoPrefixVDSCommand<T extends VdsAndPoolIDVDSParametersBase> extend
 
             String isoPrefix = getIsoPrefixFromStoragePoolInfoReturnValue(retVal);
 
-            storagePoolIdToIsoPrefix.put(storagePoolId, isoPrefix);
+            if (!isoPrefix.isEmpty()) {
+                storagePoolIdToIsoPrefix.put(storagePoolId, isoPrefix);
+            }
+
             return isoPrefix;
         }
     }
