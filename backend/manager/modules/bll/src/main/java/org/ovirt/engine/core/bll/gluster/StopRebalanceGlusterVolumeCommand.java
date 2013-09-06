@@ -63,7 +63,7 @@ public class StopRebalanceGlusterVolumeCommand extends GlusterAsyncCommandBase<G
         }
 
         endStepJob();
-        clearVolumeTaskAndReleaseLock();
+        releaseVolumeLock();
         getReturnValue().setActionReturnValue(vdsReturnaValue);
     }
 

@@ -107,12 +107,10 @@ public abstract class GlusterAsyncCommandBase<T extends GlusterVolumeParameters>
                         VdcBllMessages.ACTION_TYPE_FAILED_VOLUME_OPERATION_IN_PROGRESS));
     }
 
-    protected void clearVolumeTaskAndReleaseLock() {
+    protected void releaseVolumeLock() {
         EngineLock lock = new EngineLock(getExclusiveLocks(), getSharedLocks());
         setLock(lock);
         freeLock();
-        getGlusterVolumeDao().updateVolumeTask(getGlusterVolumeId(), null);
-
     }
 
 }
