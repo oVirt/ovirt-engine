@@ -2752,4 +2752,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Invalid time zone for given OS type.")
     String ACTION_TYPE_FAILED_INVALID_TIMEZONE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Action type cannot be empty.")
+    String ACTION_TYPE_EMPTY_ACTION_TYPE();
 }

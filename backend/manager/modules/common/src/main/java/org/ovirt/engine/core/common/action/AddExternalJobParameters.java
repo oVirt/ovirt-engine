@@ -1,40 +1,18 @@
 package org.ovirt.engine.core.common.action;
 
-public class AddExternalJobParameters extends VdcActionParametersBase {
+public class AddExternalJobParameters extends AddJobParameters {
 
     /**
      *
      */
     private static final long serialVersionUID = 1L;
 
-    private String description;
-    private boolean isAutoCleared;
-
     public AddExternalJobParameters(String description, boolean isAutoCleared) {
-        super();
-        this.description = description;
-        this.isAutoCleared = isAutoCleared;
+        super(description,isAutoCleared);
     }
 
     public AddExternalJobParameters(String description) {
-        super();
-        this.description = description;
-        isAutoCleared = true;
+        super(description,true);
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public boolean isAutoCleared() {
-        return isAutoCleared;
-    }
-
-    public void setAutoCleared(boolean isAutoCleared) {
-        this.isAutoCleared = isAutoCleared;
-    }
 }
