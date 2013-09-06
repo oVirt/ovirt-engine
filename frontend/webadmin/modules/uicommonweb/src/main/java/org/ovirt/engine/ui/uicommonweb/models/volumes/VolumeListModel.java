@@ -11,6 +11,8 @@ import org.ovirt.engine.core.common.action.gluster.CreateGlusterVolumeParameters
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeActionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeOptionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRebalanceParameters;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -374,7 +376,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             allowOptimize = false;
         }
         else {
-            for (GlusterVolumeEntity volume : Linq.<GlusterVolumeEntity> cast(getSelectedItems())) {
+            List<GlusterVolumeEntity> list = Linq.<GlusterVolumeEntity> cast(getSelectedItems());
+            for (GlusterVolumeEntity volume : list) {
                 if (volume.getStatus() == GlusterStatus.UP) {
                     allowStart = false;
                     allowRemove = false;
@@ -382,13 +385,24 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 else if (volume.getStatus() == GlusterStatus.DOWN) {
                     allowStop = false;
                     allowStartRebalance = false;
-                    allowStopRebalance = false;
                 }
-                allowStartRebalance = allowStartRebalance &&
-                        (volume.getAsyncTask() == null || Guid.isNullOrEmpty(volume.getAsyncTask().getTaskId()));
-                allowStopRebalance = allowStopRebalance &&
-                        (volume.getAsyncTask() != null && volume.getAsyncTask().getStatus() != null &&
-                        volume.getAsyncTask().getStatus() == JobExecutionStatus.STARTED);
+
+                GlusterAsyncTask asyncTask = volume.getAsyncTask();
+                if (asyncTask != null) {
+                    allowStartRebalance = allowStartRebalance && asyncTask.getStatus() != JobExecutionStatus.STARTED;
+                }
+            }
+
+            if (list.size() == 1) {
+                GlusterVolumeEntity volumeEntity = list.get(0);
+                GlusterAsyncTask asyncTask = volumeEntity.getAsyncTask();
+                allowStopRebalance =
+                        volumeEntity.getStatus() == GlusterStatus.UP && asyncTask != null
+                                && asyncTask.getType() == GlusterTaskType.REBALANCE
+                                && asyncTask.getStatus() == JobExecutionStatus.STARTED;
+            }
+            else {
+                allowStopRebalance = false;
             }
             allowStatusRebalance = getRebalanceStatusAvailability(getSelectedItems());
         }
