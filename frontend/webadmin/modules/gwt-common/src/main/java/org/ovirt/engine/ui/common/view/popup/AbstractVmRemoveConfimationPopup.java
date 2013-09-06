@@ -23,7 +23,7 @@ public class AbstractVmRemoveConfimationPopup extends RemoveConfirmationPopupVie
 
     @SuppressWarnings("unchecked")
     @Override
-    void addItemText(Object item) {
+    protected void addItemText(Object item) {
         Entry<Guid, EntityModel> entry = (Entry<Guid, EntityModel>) item;
         EntityModelCheckBoxWidget cb =
                 new EntityModelCheckBoxWidget(Align.RIGHT,

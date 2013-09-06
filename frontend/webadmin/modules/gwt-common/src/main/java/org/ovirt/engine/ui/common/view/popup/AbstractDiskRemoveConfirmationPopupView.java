@@ -25,10 +25,10 @@ public abstract class AbstractDiskRemoveConfirmationPopupView extends RemoveConf
     }
 
     @Override
-    void addItemText(Object item) {
+    protected void addItemText(Object item) {
 
         DiskModel diskModel = (DiskModel) item;
-        Disk disk = (Disk) diskModel.getDisk();
+        Disk disk = diskModel.getDisk();
         boolean isInVm = diskModel.getVm() != null;
         notes.clear();
 

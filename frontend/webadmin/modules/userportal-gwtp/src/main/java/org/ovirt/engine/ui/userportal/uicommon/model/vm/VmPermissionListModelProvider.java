@@ -4,7 +4,7 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -22,7 +22,7 @@ public class VmPermissionListModelProvider
         extends UserPortalSearchableDetailModelProvider<permissions, UserPortalListModel, UserPortalPermissionListModel> {
 
     private final Provider<PermissionsPopupPresenterWidget> permissionPopupProvider;
-    private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
+    private final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
 
     @Inject
     public VmPermissionListModelProvider(EventBus eventBus,
@@ -31,7 +31,7 @@ public class VmPermissionListModelProvider
             UserPortalListProvider parentProvider,
             UserPortalModelResolver resolver,
             Provider<PermissionsPopupPresenterWidget> permissionPopupProvider,
-            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+            Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         super(eventBus, defaultConfirmPopupProvider, user,
                 parentProvider, UserPortalPermissionListModel.class, resolver);
         this.permissionPopupProvider = permissionPopupProvider;

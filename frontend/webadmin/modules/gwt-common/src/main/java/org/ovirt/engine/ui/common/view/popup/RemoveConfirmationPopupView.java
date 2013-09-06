@@ -104,13 +104,13 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         noteHTML.setHTML(SafeHtmlUtils.fromString(note != null ? note : "").asString().replace("\n", "<br>")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
-    void addItems(Iterable<?> items) {
+    protected void addItems(Iterable<?> items) {
         for (Object item : items) {
             addItemText(item);
         }
     }
 
-    void addItemText(Object item) {
+    protected void addItemText(Object item) {
         addItemLabel(getItemTextFormatted(String.valueOf(item)));
     }
 
@@ -118,7 +118,7 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         itemPanel.add(new Label(text));
     }
 
-    void addItemLabel(SafeHtml html) {
+    protected void addItemLabel(SafeHtml html) {
         itemPanel.add(new HTML(html));
     }
 

@@ -147,12 +147,7 @@ public class PermissionListModel extends SearchableListModel
         model.setTitle(ConstantsManager.getInstance().getConstants().removePermissionTitle());
         model.setHashName("remove_permission"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().permissionMsg());
-        ArrayList<String> items = new ArrayList<String>();
-        for (Object a : getSelectedItems())
-        {
-            items.add("Role " + ((permissions) a).getRoleName() + " on User " + ((permissions) a).getOwnerName()); //$NON-NLS-1$ //$NON-NLS-2$
-        }
-        model.setItems(items);
+        model.setItems(getSelectedItems());
 
         UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());

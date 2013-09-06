@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -136,7 +136,7 @@ public class DiskModule extends AbstractGinModule {
     public SearchableDetailModelProvider<permissions, DiskListModel, PermissionListModel> getDiskPermissionListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+            final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new SearchableDetailTabModelProvider<permissions, DiskListModel, PermissionListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 DiskListModel.class,

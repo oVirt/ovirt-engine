@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.common;
 
-import com.google.gwt.i18n.client.Messages.DefaultMessage;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
 import com.google.gwt.i18n.client.Messages;
@@ -120,4 +119,10 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("{0}/{1}")
     SafeHtml profileAndNetworkSelected(String profileName, String networkName);
+
+    @DefaultMessage("User: {0} with Role: {1}")
+    SafeHtml userWithRole(String userName, String roleName);
+
+    @DefaultMessage("Role: {0} on User {1}")
+    SafeHtml roleOnUser(String roleName, String userName);
 }

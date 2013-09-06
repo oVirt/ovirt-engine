@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.webadmin.uicommon.model;
 import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -15,12 +15,12 @@ import com.google.inject.Provider;
 
 public class RolePermissionModelProvider extends SearchableTabModelProvider<permissions, RolePermissionListModel> {
 
-    private final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
+    private final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
 
     @Inject
     public RolePermissionModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+            Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         super(eventBus, defaultConfirmPopupProvider);
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
     }

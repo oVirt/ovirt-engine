@@ -4,10 +4,12 @@ import org.ovirt.engine.ui.common.presenter.popup.ConsolePopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.ErrorPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.view.popup.ConsolePopupView;
 import org.ovirt.engine.ui.common.view.popup.DefaultConfirmationPopupView;
 import org.ovirt.engine.ui.common.view.popup.ErrorPopupView;
 import org.ovirt.engine.ui.common.view.popup.RemoveConfirmationPopupView;
+import org.ovirt.engine.ui.common.view.popup.RolePermissionsRemoveConfirmationPopupView;
 
 import com.gwtplatform.mvp.client.gin.AbstractPresenterModule;
 
@@ -29,6 +31,10 @@ public abstract class BasePresenterModule extends AbstractPresenterModule {
         bindPresenterWidget(RemoveConfirmationPopupPresenterWidget.class,
                 RemoveConfirmationPopupPresenterWidget.ViewDef.class,
                 RemoveConfirmationPopupView.class);
+        // Permissions removal
+        bindPresenterWidget(RolePermissionsRemoveConfirmationPopupPresenterWidget.class,
+                RolePermissionsRemoveConfirmationPopupPresenterWidget.ViewDef.class,
+                RolePermissionsRemoveConfirmationPopupView.class);
 
         // Console popup
         bindPresenterWidget(ConsolePopupPresenterWidget.class,

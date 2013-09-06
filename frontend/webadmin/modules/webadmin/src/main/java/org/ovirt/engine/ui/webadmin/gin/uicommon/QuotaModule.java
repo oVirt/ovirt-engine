@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.permissions;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
@@ -119,7 +120,7 @@ public class QuotaModule extends AbstractGinModule {
     public SearchableDetailModelProvider<permissions, QuotaListModel, QuotaUserListModel> getQuotaUserListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+            final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new SearchableDetailTabModelProvider<permissions, QuotaListModel, QuotaUserListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 QuotaListModel.class,
@@ -151,7 +152,7 @@ public class QuotaModule extends AbstractGinModule {
     public SearchableDetailModelProvider<permissions, QuotaListModel, QuotaPermissionListModel> getQuotaPermissionListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+            final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new SearchableDetailTabModelProvider<permissions, QuotaListModel, QuotaPermissionListModel>(
                 eventBus, defaultConfirmPopupProvider,
                 QuotaListModel.class,
