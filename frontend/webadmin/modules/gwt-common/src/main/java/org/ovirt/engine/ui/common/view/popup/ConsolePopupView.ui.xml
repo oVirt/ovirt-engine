@@ -37,6 +37,7 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 
 	    .protocolPanel {
 	        float: left;
+            width: 90%;
 	    }
 
 	</ui:style>
@@ -44,7 +45,7 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 	<d:SimpleDialogPanel width="500px" height="420px">
 		<d:content>
 			<g:FlowPanel addStyleNames="{style.fullWidth}">
-				<g:FlowPanel>
+				<g:FlowPanel addStyleNames="{style.protocolPanel}">
 					<g:Label ui:field="consoleTitle" addStyleNames="{style.labelStyle}" />
 					<g:FlowPanel>
 						<e:EntityModelRadioButtonEditor ui:field="spiceRadioButton" addStyleNames="{style.protocolRadioButton}"/>
@@ -54,7 +55,7 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 				</g:FlowPanel>
 
 				<g:FlowPanel ui:field="spicePanel" addStyleNames="{style.protocolPanel}">
-					<g:Label ui:field="consoleInvocation" text="{constants.consoleInvocation}" addStyleNames="{style.labelStyle}" />
+					<g:Label text="{constants.consoleInvocation}" addStyleNames="{style.labelStyle}" />
 					<e:EntityModelRadioButtonEditor ui:field="spiceAutoImplRadioButton" title="{constants.spiceInvokeAuto}"/>
 					<e:EntityModelRadioButtonEditor ui:field="spiceNativeImplRadioButton" title="{constants.spiceInvokeNative}"/>
 					<e:EntityModelRadioButtonEditor ui:field="spicePluginImplRadioButton" title="{constants.spiceInvokePlugin}"/>
@@ -76,16 +77,17 @@ xmlns:w="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.console">
 				</g:FlowPanel>
 
 				<g:FlowPanel ui:field="vncPanel" addStyleNames="{style.protocolPanel}">
-					<g:Label ui:field="vncConsoleInvocation" text="{constants.consoleInvocation}" addStyleNames="{style.labelStyle}" />
+					<g:Label text="{constants.consoleInvocation}" addStyleNames="{style.labelStyle}" />
 					<e:EntityModelRadioButtonEditor ui:field="vncNativeImplRadioButton" title="{constants.nativeClient}"/>
 					<e:EntityModelRadioButtonEditor ui:field="noVncImplRadioButton" title="{constants.noVnc}"/>
 				</g:FlowPanel>
 
 				<g:FlowPanel ui:field="rdpPanel" addStyleNames="{style.protocolPanel}">
-					<g:Label text="{constants.rdpOptions}" addStyleNames="{style.labelStyle}" />
+                    <g:Label text="{constants.consoleInvocation}" addStyleNames="{style.labelStyle}" />
 					<e:EntityModelRadioButtonEditor ui:field="rdpAutoImplRadioButton" />
 					<e:EntityModelRadioButtonEditor ui:field="rdpNativeImplRadioButton" />
 					<e:EntityModelRadioButtonEditor ui:field="rdpPluginImplRadioButton" />
+                    <g:Label text="{constants.rdpOptions}" addStyleNames="{style.labelStyle}" />
 					<w:EntityModelValueCheckBoxEditor ui:field="useLocalDrives" />
 				</g:FlowPanel>
 
