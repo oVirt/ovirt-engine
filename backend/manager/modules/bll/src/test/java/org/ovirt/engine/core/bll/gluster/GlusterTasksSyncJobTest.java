@@ -20,10 +20,16 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.gluster.tasks.GlusterTasksService;
+import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.JobRepository;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskParameters;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -32,10 +38,12 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GlusterTasksSyncJobTest {
@@ -47,6 +55,9 @@ public class GlusterTasksSyncJobTest {
 
     private static final Guid[] VOL_GUIDS = {new Guid("AA111111-1111-1111-1111-111111111111"),
         new Guid("AA222222-2222-2222-2222-222222222222")};
+
+    @ClassRule
+    public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     @Mock
     private ClusterUtils clusterUtils;
@@ -66,6 +77,11 @@ public class GlusterTasksSyncJobTest {
     @Mock
     private JobRepository jobRepository;
 
+    @Mock
+    private BackendInternal backend;
+
+    private GlusterAuditLogUtil logUtil;
+
     private GlusterTasksSyncJob tasksSyncJob;
 
     @ClassRule
@@ -77,14 +93,19 @@ public class GlusterTasksSyncJobTest {
     public void init() {
         MockitoAnnotations.initMocks(this);
         tasksSyncJob = Mockito.spy(GlusterTasksSyncJob.getInstance());
+        logUtil = Mockito.spy(GlusterAuditLogUtil.getInstance());
+        doNothing().when(logUtil).logClusterMessage(any(Guid.class),
+                                any(AuditLogType.class));
         doReturn(clusterDao).when(tasksSyncJob).getClusterDao();
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(provider).when(tasksSyncJob).getProvider();
         doReturn(stepDao).when(tasksSyncJob).getStepDao();
         doReturn(volumeDao).when(tasksSyncJob).getVolumeDao();
         doReturn(jobRepository).when(tasksSyncJob).getJobRepository();
+        doReturn(backend).when(tasksSyncJob).getBackend();
         doNothing().when(tasksSyncJob).releaseLock(any(Guid.class));
         doNothing().when(tasksSyncJob).endStepJob(any(Step.class));
+
     }
 
     @Test
@@ -106,6 +127,33 @@ public class GlusterTasksSyncJobTest {
         Mockito.verify(jobRepository, times(0)).updateStep(any(Step.class));
         Mockito.verify(tasksSyncJob, times(0)).endStepJob(any(Step.class));
     }
+
+    @Test
+    public void testCreateTasksStartedFromCLI() {
+        doReturn(getTasks(JobExecutionStatus.STARTED)).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
+        doReturn(mockVdcReturn(true, Guid.newGuid())).
+                        when(backend).runInternalAction(any(VdcActionType.class), any(VdcActionParametersBase.class));
+        prepareMocksForTasksFromCLI();
+
+        tasksSyncJob.updateGlusterAsyncTasks();
+        Mockito.verify(jobRepository, times(0)).updateStep(any(Step.class));
+        Mockito.verify(tasksSyncJob, times(0)).endStepJob(any(Step.class));
+        Mockito.verify(backend, times(6)).runInternalAction(any(VdcActionType.class), any(VdcActionParametersBase.class));
+    }
+
+    @Test
+    public void testCreateTasksStartedFromCLIWithErrors() {
+        doReturn(getTasks(JobExecutionStatus.STARTED)).when(provider).getTaskListForCluster(CLUSTER_GUIDS[1]);
+        doReturn(mockVdcReturn(false, null)).
+                        when(backend).runInternalAction(any(VdcActionType.class), any(VdcActionParametersBase.class));
+        prepareMocksForTasksFromCLI();
+
+        tasksSyncJob.updateGlusterAsyncTasks();
+        Mockito.verify(jobRepository, times(0)).updateStep(any(Step.class));
+        Mockito.verify(tasksSyncJob, times(0)).endStepJob(any(Step.class));
+        Mockito.verify(backend, times(2)).runInternalAction(any(VdcActionType.class), any(VdcActionParametersBase.class));
+    }
+
 
     @Test
     public void testUpdateWhenNoCompletedTasks() {
@@ -130,6 +178,13 @@ public class GlusterTasksSyncJobTest {
         doReturn(getVolume(1)).when(volumeDao).getVolumeByGlusterTask(TASK_GUIDS[1]);
         doReturn(getSteps()).when(stepDao).getStepsByExternalId(TASK_GUIDS[0]);
         doReturn(getSteps()).when(stepDao).getStepsByExternalId(TASK_GUIDS[1]);
+    }
+
+    private void prepareMocksForTasksFromCLI() {
+        doReturn(getVolume(0)).when(volumeDao).getVolumeByGlusterTask(TASK_GUIDS[0]);
+        doReturn(getVolume(1)).when(volumeDao).getVolumeByGlusterTask(TASK_GUIDS[1]);
+        doReturn(new ArrayList<Step>()).when(stepDao).getStepsByExternalId(TASK_GUIDS[0]);
+        doReturn(new ArrayList<Step>()).when(stepDao).getStepsByExternalId(TASK_GUIDS[1]);
     }
 
     private List<Step> getSteps() {
@@ -165,6 +220,13 @@ public class GlusterTasksSyncJobTest {
         return tasks;
     }
 
+    private VdcReturnValueBase mockVdcReturn(boolean succeeded, Guid returnId) {
+        VdcReturnValueBase retValue = new VdcReturnValueBase();
+        retValue.setSucceeded(succeeded);
+        retValue.setActionReturnValue(returnId);
+        return retValue;
+    }
+
     private GlusterAsyncTask createTask(Guid guid, JobExecutionStatus status) {
         GlusterAsyncTask task = new GlusterAsyncTask();
         task.setTaskId(guid);
@@ -172,6 +234,7 @@ public class GlusterTasksSyncJobTest {
         task.getTaskParameters().setVolumeName("VOL");
         task.setMessage("message");
         task.setStatus(status);
+        task.setType(GlusterTaskType.REBALANCE);
         return task;
     }
 
