@@ -16,6 +16,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.ejb.ConcurrencyManagement;
 import javax.ejb.ConcurrencyManagementType;
+import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
@@ -44,6 +45,7 @@ import org.quartz.impl.StdSchedulerFactory;
 // business and timeout methods in the singleton.
 // The developer of the singleton is responsible for ensuring that the state of the singleton is synchronized across all clients.
 @Singleton(name = "Scheduler")
+@DependsOn("LockManager")
 @Startup
 @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
