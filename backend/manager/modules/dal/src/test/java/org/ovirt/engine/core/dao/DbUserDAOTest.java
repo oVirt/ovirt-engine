@@ -6,13 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DbUserDAOTest extends BaseDAOTestCase {
@@ -36,7 +36,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
 
         newUser = new DbUser();
 
-        newUser.setExternalId(new byte[0]);
+        newUser.setExternalId(new ExternalId(new byte[0]));
         newUser.setFirstName("Bob");
         newUser.setLastName("Milqtoste");
         newUser.setLoginName("newuser");
@@ -71,9 +71,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidExternalId() {
-        byte[] externalId = {
-            (byte) 0x00
-        };
+        ExternalId externalId = new ExternalId(0);
         DbUser result = dao.getByExternalId("testportal.redhat.com", externalId);
         assertNull(result);
     }
@@ -83,12 +81,10 @@ public class DbUserDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByExternalId() {
-        byte[] externalId = {
-            (byte) 0x9b, (byte) 0xf7, (byte) 0xc6, (byte) 0x40,
-            (byte) 0xb6, (byte) 0x20, (byte) 0x45, (byte) 0x6f,
-            (byte) 0xa5, (byte) 0x50, (byte) 0x03, (byte) 0x48,
-            (byte) 0xf3, (byte) 0x66, (byte) 0x54, (byte) 0x4a
-        };
+        ExternalId externalId = new ExternalId(
+            0x9b, 0xf7, 0xc6, 0x40, 0xb6, 0x20, 0x45, 0x6f,
+            0xa5, 0x50, 0x03, 0x48, 0xf3, 0x66, 0x54, 0x4a
+        );
         DbUser result = dao.getByExternalId("testportal.redhat.com", externalId);
         assertNotNull(result);
     }
@@ -101,7 +97,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
         DbUser userBefore = dao.get(existingUser.getId());
         dao.update(userBefore);
         DbUser userAfter = dao.get(existingUser.getId());
-        assertTrue(Arrays.equals(userBefore.getExternalId(), userAfter.getExternalId()));
+        assertEquals(userBefore.getExternalId(), userAfter.getExternalId());
     }
 
     /**
@@ -198,7 +194,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
     @Test
     public void testSaveUserWithTooManyGroups() {
         DbUser tooManyGroupsUser = new DbUser();
-        tooManyGroupsUser.setExternalId(new byte[0]);
+        tooManyGroupsUser.setExternalId(new ExternalId(0));
         tooManyGroupsUser.setFirstName("I");
         tooManyGroupsUser.setLastName("Have");
         tooManyGroupsUser.setLoginName("too");

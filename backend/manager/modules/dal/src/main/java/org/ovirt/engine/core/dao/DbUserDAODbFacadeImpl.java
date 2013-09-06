@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.CustomMapSqlParameterSource;
 import org.springframework.jdbc.core.RowMapper;
@@ -37,7 +38,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             entity.setLoginName(rs.getString("username"));
             entity.setLastAdminCheckStatus(rs.getBoolean("last_admin_check_status"));
             entity.setGroupIds(rs.getString("group_ids"));
-            entity.setExternalId(rs.getBytes("external_id"));
+            entity.setExternalId(new ExternalId(rs.getBytes("external_id")));
             return entity;
         }
     }
@@ -80,10 +81,10 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
     }
 
     @Override
-    public DbUser getByExternalId(String domain, byte[] externalId) {
+    public DbUser getByExternalId(String domain, ExternalId externalId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("domain", domain)
-                .addValue("external_id", externalId);
+                .addValue("external_id", externalId.getBytes());
 
         return getCallsHandler().executeRead("GetUserByExternalId", DbUserRowMapper.instance, parameterSource);
     }

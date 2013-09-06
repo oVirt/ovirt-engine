@@ -1,9 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.util.Arrays;
-
 import javax.validation.constraints.Size;
 
+import org.ovirt.engine.core.common.utils.ExternalId;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -19,7 +18,7 @@ public class DbUser extends IVdcQueryable {
     /**
      * This is the identifier assigned by the external directory to this user.
      */
-    private byte[] externalId;
+    private ExternalId externalId;
 
     @Size(min = 1, max = BusinessEntitiesDefinitions.USER_DOMAIN_SIZE)
     private String domain;
@@ -83,7 +82,7 @@ public class DbUser extends IVdcQueryable {
 
     public DbUser(LdapUser ldapUser) {
         id = ldapUser.getUserId();
-        externalId = ldapUser.getUserId().toByteArray();
+        externalId = new ExternalId(ldapUser.getUserId().toByteArray());
         domain = ldapUser.getDomainControler();
         loginName = getFullLoginName(ldapUser);
         firstName = ldapUser.getName();
@@ -105,11 +104,11 @@ public class DbUser extends IVdcQueryable {
         this.id = id;
     }
 
-    public byte[] getExternalId() {
+    public ExternalId getExternalId() {
         return externalId;
     }
 
-    public void setExternalId(byte[] externalId) {
+    public void setExternalId(ExternalId externalId) {
         this.externalId = externalId;
     }
 
@@ -244,7 +243,7 @@ public class DbUser extends IVdcQueryable {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + Arrays.hashCode(externalId);
+        result = prime * result + ((externalId == null) ? 0 : externalId.hashCode());
         result = prime * result + ((department == null) ? 0 : department.hashCode());
         result = prime * result + ((domain == null) ? 0 : domain.hashCode());
         result = prime * result + ((email == null) ? 0 : email.hashCode());
@@ -272,7 +271,7 @@ public class DbUser extends IVdcQueryable {
         }
         DbUser other = (DbUser) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
-                && Arrays.equals(externalId, other.externalId)
+                && ObjectUtils.objectsEqual(externalId, other.externalId)
                 && ObjectUtils.objectsEqual(department, other.department)
                 && ObjectUtils.objectsEqual(domain, other.domain)
                 && ObjectUtils.objectsEqual(email, other.email)
