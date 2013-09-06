@@ -268,6 +268,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GLUSTER_VOLUME_REMOVE_BRICKS_FAILED();
 
+    String AuditLogType___START_REMOVING_GLUSTER_VOLUME_BRICKS();
+
+    String AuditLogType___START_REMOVING_GLUSTER_VOLUME_BRICKS_FAILED();
+
     String AuditLogType___GLUSTER_VOLUME_ADD_BRICK();
 
     String AuditLogType___GLUSTER_VOLUME_ADD_BRICK_FAILED();

@@ -9,20 +9,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAOTestCase;
+import org.ovirt.engine.core.dao.FixturesTool;
 
 public class GlusterBrickDaoTest extends BaseDAOTestCase {
-    private static final Guid SERVER_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
-    private static final Guid EXISTING_VOL_ID = new Guid("0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8");
-    private static final Guid EXISTING_BRICK_ID = new Guid("6ccdc294-d77b-4929-809d-8afe7634b47d");
-
-    private static final Guid BRICK_SERVER_ID = new Guid("23f6d691-5dfb-472b-86dc-9e1d2d3c18f3");
-    private static final String BRICK_DIRECTORY = "/export/test-vol-distribute-1/dir1";
-
     private GlusterBrickDao dao;
     private VdsStatic server;
 
@@ -30,13 +25,13 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getGlusterBrickDao();
-        server = dbFacade.getVdsStaticDao().get(SERVER_ID);
+        server = dbFacade.getVdsStaticDao().get(FixturesTool.GLUSTER_SERVER_UUID3);
     }
 
     @Test
     public void testSaveAndGetById() {
         GlusterBrickEntity brickToAdd = new GlusterBrickEntity();
-        brickToAdd.setVolumeId(EXISTING_VOL_ID);
+        brickToAdd.setVolumeId(FixturesTool.GLUSTER_VOLUME_UUID1);
         brickToAdd.setServerId(server.getId());
         brickToAdd.setServerName(server.getHostName());
         brickToAdd.setBrickDirectory("/export/test-vol-distribute-1/dir3");
@@ -52,31 +47,32 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testGlusterVolumeBricksByServerId() {
-        List<GlusterBrickEntity> bricks = dao.getGlusterVolumeBricksByServerId(SERVER_ID);
+        List<GlusterBrickEntity> bricks = dao.getGlusterVolumeBricksByServerId(FixturesTool.GLUSTER_SERVER_UUID3);
         assertNotNull(bricks);
     }
 
     @Test
     public void testGetBrickByServerIdAndDirectory() {
-        GlusterBrickEntity brick = dao.getBrickByServerIdAndDirectory(BRICK_SERVER_ID, BRICK_DIRECTORY);
+        GlusterBrickEntity brick =
+                dao.getBrickByServerIdAndDirectory(FixturesTool.GLUSTER_BRICK_SERVER1, FixturesTool.GLUSTER_BRICK_DIR1);
         assertNotNull(brick);
-        assertEquals(brick.getServerId(), BRICK_SERVER_ID);
-        assertEquals(brick.getBrickDirectory(), BRICK_DIRECTORY);
+        assertEquals(brick.getServerId(), FixturesTool.GLUSTER_BRICK_SERVER1);
+        assertEquals(brick.getBrickDirectory(), FixturesTool.GLUSTER_BRICK_DIR1);
     }
 
     @Test
     public void testRemove() {
-        GlusterBrickEntity existingBrick = dao.getById(EXISTING_BRICK_ID);
+        GlusterBrickEntity existingBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
         assertNotNull(existingBrick);
 
-        dao.removeBrick(EXISTING_BRICK_ID);
+        dao.removeBrick(FixturesTool.GLUSTER_BRICK_UUID1);
 
-        assertNull(dao.getById(EXISTING_BRICK_ID));
+        assertNull(dao.getById(FixturesTool.GLUSTER_BRICK_UUID1));
     }
 
     @Test
     public void testRemoveMultiple() {
-        List<GlusterBrickEntity> bricks = dao.getBricksOfVolume(EXISTING_VOL_ID);
+        List<GlusterBrickEntity> bricks = dao.getBricksOfVolume(FixturesTool.GLUSTER_VOLUME_UUID1);
         assertEquals(2, bricks.size());
 
         List<Guid> idsToRemove = new ArrayList<Guid>();
@@ -84,17 +80,17 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
         idsToRemove.add(bricks.get(1).getId());
         dao.removeAll(idsToRemove);
 
-        bricks = dao.getBricksOfVolume(EXISTING_VOL_ID);
+        bricks = dao.getBricksOfVolume(FixturesTool.GLUSTER_VOLUME_UUID1);
         assertTrue(bricks.isEmpty());
     }
 
     @Test
     public void testReplaceBrick() {
-        GlusterBrickEntity firstBrick = dao.getById(EXISTING_BRICK_ID);
+        GlusterBrickEntity firstBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
         assertNotNull(firstBrick);
 
         GlusterBrickEntity newBrick = new GlusterBrickEntity();
-        newBrick.setVolumeId(EXISTING_VOL_ID);
+        newBrick.setVolumeId(FixturesTool.GLUSTER_VOLUME_UUID1);
         newBrick.setServerId(server.getId());
         newBrick.setServerName(server.getHostName());
         newBrick.setBrickDirectory("/export/test-vol-distribute-1/dir3");
@@ -105,7 +101,7 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
 
         dao.replaceBrick(firstBrick, newBrick);
 
-        assertNull(dao.getById(EXISTING_BRICK_ID));
+        assertNull(dao.getById(FixturesTool.GLUSTER_BRICK_UUID1));
 
         GlusterBrickEntity retrievedBrick = dao.getById(newBrick.getId());
         assertNotNull(retrievedBrick);
@@ -114,14 +110,74 @@ public class GlusterBrickDaoTest extends BaseDAOTestCase {
 
     @Test
     public void testUpdateBrickStatus() {
-        GlusterBrickEntity existingBrick = dao.getById(EXISTING_BRICK_ID);
+        GlusterBrickEntity existingBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
         assertNotNull(existingBrick);
         assertEquals(GlusterStatus.UP, existingBrick.getStatus());
 
-        dao.updateBrickStatus(EXISTING_BRICK_ID, GlusterStatus.DOWN);
+        dao.updateBrickStatus(FixturesTool.GLUSTER_BRICK_UUID1, GlusterStatus.DOWN);
 
-        existingBrick = dao.getById(EXISTING_BRICK_ID);
+        existingBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
         assertNotNull(existingBrick);
         assertEquals(GlusterStatus.DOWN, existingBrick.getStatus());
+    }
+
+    @Test
+    public void testUpdateBrickStatuses() {
+        GlusterBrickEntity existingBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
+        GlusterBrickEntity existingBrick1 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID2);
+        assertNotNull(existingBrick);
+        assertNotNull(existingBrick1);
+        assertEquals(GlusterStatus.UP, existingBrick.getStatus());
+        assertEquals(GlusterStatus.UP, existingBrick1.getStatus());
+
+        List<GlusterBrickEntity> bricks = new ArrayList<GlusterBrickEntity>();
+        bricks.add(existingBrick);
+        bricks.add(existingBrick1);
+        dao.updateBrickStatuses(bricks);
+    }
+
+    @Test
+    public void testUpdateBrickTask() {
+        GlusterBrickEntity existingBrick = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
+        GlusterAsyncTask asyncTask = new GlusterAsyncTask();
+        asyncTask.setTaskId(new Guid("61c94fc7-26b0-43e3-9d26-fc9d8cd6a763"));
+
+        assertNotNull(existingBrick);
+        assertEquals(GlusterStatus.UP, existingBrick.getStatus());
+
+        dao.updateBrickTask(existingBrick.getId(), FixturesTool.GLUSTER_ASYNC_TASK_ID1);
+
+        GlusterBrickEntity newEnity = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
+
+        assertEquals(FixturesTool.GLUSTER_ASYNC_TASK_ID1, newEnity.getAsyncTask().getTaskId());
+    }
+
+    @Test
+    public void testUpdateBrickTasksInBatch() {
+        GlusterBrickEntity existingBrick1 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
+        GlusterBrickEntity existingBrick2 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID2);
+
+        GlusterAsyncTask asyncTask = new GlusterAsyncTask();
+        asyncTask.setTaskId(new Guid("61c94fc7-26b0-43e3-9d26-fc9d8cd6a763"));
+
+        assertNotNull(existingBrick1);
+        assertNotNull(existingBrick2);
+        assertEquals(GlusterStatus.UP, existingBrick1.getStatus());
+        assertEquals(GlusterStatus.UP, existingBrick2.getStatus());
+
+        existingBrick1.setAsyncTask(asyncTask);
+        existingBrick2.setAsyncTask(asyncTask);
+
+        List<GlusterBrickEntity> bricks = new ArrayList<>();
+        bricks.add(existingBrick1);
+        bricks.add(existingBrick2);
+
+        dao.updateBrickTasksInBatch(bricks);
+
+        GlusterBrickEntity newEnity1 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID1);
+        GlusterBrickEntity newEnity2 = dao.getById(FixturesTool.GLUSTER_BRICK_UUID2);
+
+        assertEquals(FixturesTool.GLUSTER_ASYNC_TASK_ID1, newEnity1.getAsyncTask().getTaskId());
+        assertEquals(FixturesTool.GLUSTER_ASYNC_TASK_ID1, newEnity2.getAsyncTask().getTaskId());
     }
 }

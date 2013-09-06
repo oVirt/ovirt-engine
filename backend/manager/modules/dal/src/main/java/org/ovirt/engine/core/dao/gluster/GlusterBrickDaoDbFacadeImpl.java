@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
@@ -57,15 +56,13 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     public void updateBrickStatus(Guid brickId, GlusterStatus status) {
         getCallsHandler().executeModification("UpdateGlusterVolumeBrickStatus",
                 getCustomMapSqlParameterSource()
-                .addValue("id", brickId)
-                .addValue("status", EnumUtils.nameOrNull(status)));
+                        .addValue("id", brickId)
+                        .addValue("status", EnumUtils.nameOrNull(status)));
     }
 
     @Override
     public void updateBrickStatuses(List<GlusterBrickEntity> bricks) {
-        for(GlusterBrickEntity brick : bricks) {
-            updateBrickStatus(brick.getId(), brick.getStatus());
-        }
+        updateAllInBatch("UpdateGlusterVolumeBrickStatus", bricks, getBatchMapper());
     }
 
     @Override
@@ -89,7 +86,6 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                 "GetBricksByGlusterVolumeGuid", brickRowMapper,
                 getCustomMapSqlParameterSource().addValue("volume_id", volumeId));
     }
-
 
     private MapSqlParameterSource createBrickParams(GlusterBrickEntity brick) {
         return getCustomMapSqlParameterSource().addValue("id", brick.getId())
@@ -120,6 +116,7 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
             brick.setBrickDirectory(rs.getString("brick_dir"));
             brick.setBrickOrder(rs.getInt("brick_order"));
             brick.setStatus(GlusterStatus.valueOf(rs.getString("status")));
+            brick.getAsyncTask().setTaskId(getGuid(rs, "task_id"));
             return brick;
         }
 
@@ -161,10 +158,40 @@ public class GlusterBrickDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
         return brickRowMapper;
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public MapSqlParameterMapper<GlusterBrickEntity> getBatchMapper() {
-        // TODO: Implement this
-        throw new NotImplementedException("Unsupported operation");
+        return new MapSqlParameterMapper<GlusterBrickEntity>() {
+            @Override
+            public MapSqlParameterSource map(GlusterBrickEntity entity) {
+                MapSqlParameterSource paramValue =
+                        new MapSqlParameterSource()
+                                .addValue("volume_id", entity.getVolumeId())
+                                .addValue("server_id", entity.getServerId())
+                                .addValue("brick_dir", entity.getBrickDirectory())
+                                .addValue("status", entity.getStatus().name())
+                                .addValue("id", entity.getId().toString())
+                                .addValue("brick_order", entity.getBrickOrder())
+                                .addValue("task_id",
+                                        entity.getAsyncTask().getTaskId() != null ? entity.getAsyncTask()
+                                                .getTaskId()
+                                                .toString()
+                                                : "");
+
+                return paramValue;
+            }
+        };
+    }
+
+    @Override
+    public void updateBrickTask(Guid brickId, Guid taskId) {
+        getCallsHandler().executeModification("UpdateGlusterVolumeBrickAsyncTask",
+                getCustomMapSqlParameterSource().
+                        addValue("id", brickId).
+                        addValue("task_id", taskId));
+    }
+
+    @Override
+    public void updateBrickTasksInBatch(Collection<GlusterBrickEntity> bricks) {
+        getCallsHandler().executeStoredProcAsBatch("UpdateGlusterVolumeBrickAsyncTask", bricks, getBatchMapper());
     }
 }

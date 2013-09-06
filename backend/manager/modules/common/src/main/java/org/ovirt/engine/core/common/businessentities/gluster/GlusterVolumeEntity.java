@@ -424,6 +424,16 @@ public class GlusterVolumeEntity extends IVdcQueryable implements BusinessEntity
         return null;
     }
 
+    public GlusterBrickEntity getBrickWithQualifiedName(String qualifiedName) {
+        for (GlusterBrickEntity brick : getBricks()) {
+            if (brick.getQualifiedName().equals(qualifiedName)) {
+                return brick;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public Object getQueryableId() {
         return getId();

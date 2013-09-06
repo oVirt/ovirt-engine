@@ -23,6 +23,7 @@ public enum StepEnum {
     // Gluster
     SETTING_GLUSTER_OPTION,
     REBALANCING_VOLUME,
+    REMOVING_BRICKS,
 
     /**
      * Maps VDSM tasks type to {@code StepEnum} so it can be resolvable as readable description

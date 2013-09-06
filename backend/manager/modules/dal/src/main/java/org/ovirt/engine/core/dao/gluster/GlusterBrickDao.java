@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao.gluster;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -31,4 +32,8 @@ public interface GlusterBrickDao extends DAO, MassOperationsDao<GlusterBrickEnti
     public List<GlusterBrickEntity> getGlusterVolumeBricksByServerId(Guid serverId);
 
     public GlusterBrickEntity getBrickByServerIdAndDirectory(Guid serverId, String brickDirectory);
+
+    public void updateBrickTask(Guid brickId, Guid taskId);
+
+    public void updateBrickTasksInBatch(Collection<GlusterBrickEntity> bricks);
 }
