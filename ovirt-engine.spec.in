@@ -192,7 +192,7 @@ Requires:	logrotate
 Requires:	mod_ssl
 Requires:	novnc
 Requires:	openssl
-Requires:	ovirt-host-deploy-java >= 1.1.0-1
+Requires:	ovirt-host-deploy-java >= 1.1.1-1
 Requires:	python-cheetah
 Requires:	spice-html5
 
@@ -281,7 +281,7 @@ Requires:	libxml2-python
 Requires:	logrotate
 Requires:	m2crypto
 Requires:	nfs-utils
-Requires:	otopi >= 1.1.0-1
+Requires:	otopi >= 1.1.1-1
 Requires:	policycoreutils-python
 Requires:	python-psycopg2
 Requires:	yum
@@ -428,8 +428,8 @@ Group:		Virtualization/Management
 Requires:	%{name}-sdk >= 3.3.0
 Requires:	%{name}-setup >= %{version}-%{release}
 Requires:	openssh-server
-Requires:	ovirt-host-deploy >= 1.1.0-1
-Requires:	ovirt-host-deploy-offline >= 1.1.0-1
+Requires:	ovirt-host-deploy >= 1.1.1-1
+Requires:	ovirt-host-deploy-offline >= 1.1.1-1
 
 %description setup-plugin-allinone
 All-in-one plugin for %{ovirt_product_name_short}'s setup
