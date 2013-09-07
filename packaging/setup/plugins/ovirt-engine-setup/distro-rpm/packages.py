@@ -387,6 +387,15 @@ class Plugin(plugin.PluginBase):
                             _('Package rollback information is unavailable')
                         )
 
+                    #
+                    # Disable yum rollback on transaction failure
+                    # as rhel yum will remove packages that were updated
+                    # without installing previous ones.
+                    #
+                    self.environment[
+                        otopicons.PackEnv.YUM_ROLLBACK
+                    ] = False
+
                 self._enabled = self.environment[
                     osetupcons.RPMDistroEnv.ENABLE_UPGRADE
                 ]
