@@ -544,19 +544,23 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             VmNic nic) {
         VnicProfile vnicProfile = null;
         Network network = null;
+        String networkName = "";
         if (nic.getVnicProfileId() != null) {
             vnicProfile = DbFacade.getInstance().getVnicProfileDao().get(nic.getVnicProfileId());
             if (vnicProfile != null) {
                 network = DbFacade.getInstance().getNetworkDao().get(vnicProfile.getNetworkId());
+                networkName = network.getName();
+                log.debugFormat("VNIC {0} is using profile {1} on network {2}",
+                        nic.getName(), vnicProfile, networkName);
                 addQosForDevice(struct, vnicProfile, vm.getVdsGroupCompatibilityVersion());
             }
         }
 
-        struct.put(VdsProperties.NETWORK, network == null ? "" : network.getName());
+        struct.put(VdsProperties.NETWORK, networkName);
 
         if (vnicProfile != null && vnicProfile.isPortMirroring()) {
             struct.put(VdsProperties.PORT_MIRRORING, network == null
-                    ? Collections.<String> emptyList() : Collections.singletonList(network.getName()));
+                    ? Collections.<String> emptyList() : Collections.singletonList(networkName));
         }
 
         addCustomPropertiesForDevice(struct,
