@@ -54,7 +54,7 @@ class Plugin(plugin.PluginBase):
             \d+
             :
             \s+
-            (?P<interface>\w+(\.\w+(@\w+)?)?)
+            (?P<interface>\w+(\.\w+?))(@\w+)?
             :
             \s+
             <(?P<options>[^>]+)
