@@ -12,7 +12,7 @@ public class GlusterServersListVDSCommand<P extends VdsIdVDSCommandParametersBas
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         glusterServers = getBroker().glusterServersList();
 
         proceedProxyReturnValue();

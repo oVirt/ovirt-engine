@@ -13,7 +13,7 @@ public class CreateStoragePoolVDSCommand<P extends CreateStoragePoolVDSCommandPa
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         Guid[] guids = getParameters().getDomainsIdList().toArray(new Guid[0]);
         String[] ids = new String[guids.length];
         for (int i = 0; i < guids.length; i++) {

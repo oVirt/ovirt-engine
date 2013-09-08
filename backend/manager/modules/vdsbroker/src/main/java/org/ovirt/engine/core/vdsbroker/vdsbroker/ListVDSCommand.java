@@ -19,7 +19,7 @@ public class ListVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> exten
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         mVmListReturn = getBroker().list();
         proceedProxyReturnValue();
         Map<Guid, VmInternalData> returnVMs = new HashMap<Guid, VmInternalData>();

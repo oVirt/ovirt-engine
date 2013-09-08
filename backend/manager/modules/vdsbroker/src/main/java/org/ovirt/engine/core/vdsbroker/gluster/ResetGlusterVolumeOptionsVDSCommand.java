@@ -11,7 +11,7 @@ public class ResetGlusterVolumeOptionsVDSCommand<P extends ResetGlusterVolumeOpt
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status =
                 getBroker().glusterVolumeReset(getParameters().getVolumeName(),
                         (getParameters().getVolumeOption() == null) ? "" : getParameters().getVolumeOption().getKey(),

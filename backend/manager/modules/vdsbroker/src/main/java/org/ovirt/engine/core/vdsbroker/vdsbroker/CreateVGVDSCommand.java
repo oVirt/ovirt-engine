@@ -16,7 +16,7 @@ public class CreateVGVDSCommand<P extends CreateVGVDSCommandParameters> extends 
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
 
         String storageDomainId = getParameters().getStorageDomainId().toString();
         List<String> deviceList = getParameters().getDeviceList();

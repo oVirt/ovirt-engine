@@ -25,7 +25,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         httpTask = getBroker().setupNetworks(generateNetworks(), generateBonds(), generateOptions());
     }
 

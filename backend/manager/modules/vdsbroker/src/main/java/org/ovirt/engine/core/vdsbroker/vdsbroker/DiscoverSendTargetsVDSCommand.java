@@ -15,7 +15,7 @@ public class DiscoverSendTargetsVDSCommand<P extends DiscoverSendTargetsVDSComma
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         _result = getBroker().discoverSendTargets(
                 ConnectStorageServerVDSCommand.CreateStructFromConnection(getParameters().getConnection(),null));
         proceedProxyReturnValue();

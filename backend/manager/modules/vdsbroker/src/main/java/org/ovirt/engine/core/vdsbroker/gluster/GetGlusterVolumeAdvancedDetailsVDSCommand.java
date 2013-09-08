@@ -22,7 +22,7 @@ public class GetGlusterVolumeAdvancedDetailsVDSCommand<P extends GlusterVolumeAd
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         executeVolumeStatusInfo("");
         GlusterVolumeAdvancedDetails volumeAdvancedDetails = result.getVolumeAdvancedDetails();
 

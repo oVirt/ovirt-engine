@@ -11,7 +11,7 @@ public class HsmGetIsoListVDSCommand<P extends HSMGetIsoListParameters> extends 
     protected IsoListReturnForXmlRpc _isoList;
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         _isoList = getBroker().getIsoList(getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();
         if (_isoList.mVMList != null && _isoList.mVMList.length > 0) {

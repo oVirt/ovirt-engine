@@ -20,7 +20,7 @@ public class GetStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBase> e
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         infoReturn = getBroker().getVdsStats();
         proceedProxyReturnValue();
         if (getVds().getInterfaces().isEmpty()) {

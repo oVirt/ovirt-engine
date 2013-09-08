@@ -17,7 +17,7 @@ public class GetGlusterHookContentVDSCommand<P extends GlusterHookVDSParameters>
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         returnValue =
                 getBroker().glusterHookRead(getParameters().getGlusterCommand(),
                         getParameters().getHookStage().toString(),

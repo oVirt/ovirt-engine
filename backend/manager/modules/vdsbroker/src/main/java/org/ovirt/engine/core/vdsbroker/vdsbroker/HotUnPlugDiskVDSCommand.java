@@ -9,7 +9,7 @@ public class HotUnPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         buildSendDataToVdsm();
         status = getBroker().hotunplugDisk(sendInfo);
         proceedProxyReturnValue();

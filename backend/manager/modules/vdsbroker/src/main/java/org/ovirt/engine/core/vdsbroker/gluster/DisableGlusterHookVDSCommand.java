@@ -9,7 +9,7 @@ public class DisableGlusterHookVDSCommand<P extends GlusterHookVDSParameters> ex
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status =
                 getBroker().glusterHookDisable(getParameters().getGlusterCommand(),
                         getParameters().getHookStage().toString(),

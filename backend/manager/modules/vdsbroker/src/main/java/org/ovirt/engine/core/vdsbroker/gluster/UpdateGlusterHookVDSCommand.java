@@ -9,7 +9,7 @@ public class UpdateGlusterHookVDSCommand<P extends GlusterHookVDSParameters> ext
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
          status =
                 getBroker().glusterHookUpdate(getParameters().getGlusterCommand(),
                         getParameters().getHookStage().toString(),

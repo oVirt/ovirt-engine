@@ -17,7 +17,7 @@ public class GlusterServicesListVDSCommand<P extends GlusterServicesListVDSParam
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         glusterServices =
                 getBroker().glusterServicesList(getParameters().getVdsId(),
                         getParameters().getServiceNames().toArray(new String[0]));

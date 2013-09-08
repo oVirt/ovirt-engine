@@ -17,7 +17,7 @@ public class PollVDSCommand<P extends VdsIdVDSCommandParametersBase> extends Fut
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         httpTask = getBroker().poll();
     }
 

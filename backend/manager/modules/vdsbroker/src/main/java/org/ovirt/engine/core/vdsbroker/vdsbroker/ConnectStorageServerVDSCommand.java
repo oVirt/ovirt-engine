@@ -28,7 +28,7 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         _result = getBroker().connectStorageServer(getParameters().getStorageType().getValue(),
                 getParameters().getStoragePoolId().toString(), BuildStructFromConnectionListObject());
         proceedProxyReturnValue();

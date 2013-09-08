@@ -10,8 +10,8 @@ public class GetDiskAlignmentVDSCommand<P extends GetDiskAlignmentVDSCommandPara
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
-        log.info("-- GetDiskAlignmentVDSCommand::ExecuteVdsBrokerCommand: calling 'getDiskAlignment' ");
+    protected void executeVdsBrokerCommand() {
+        log.info("-- GetDiskAlignmentVDSCommand::executeVdsBrokerCommand: calling 'getDiskAlignment' ");
         log.infoFormat("-- getDiskAlignment parameters:" + "\r\n"
                 + "                vmId={0}" + "\r\n"
                 + "                driveSpecs={1}" + "\r\n",

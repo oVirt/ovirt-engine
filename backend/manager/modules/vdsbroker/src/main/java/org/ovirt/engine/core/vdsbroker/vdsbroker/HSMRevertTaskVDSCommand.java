@@ -9,7 +9,7 @@ public class HSMRevertTaskVDSCommand<P extends HSMTaskGuidBaseVDSCommandParamete
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().revertTask(getParameters().getTaskId().toString());
         proceedProxyReturnValue();
     }

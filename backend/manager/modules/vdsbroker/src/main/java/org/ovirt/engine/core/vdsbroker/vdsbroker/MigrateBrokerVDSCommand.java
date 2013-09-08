@@ -29,7 +29,7 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().migrate(migrationInfo);
         proceedProxyReturnValue();
     }

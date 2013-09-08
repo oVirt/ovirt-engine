@@ -10,7 +10,7 @@ public class DestroyVDSCommand<P extends DestroyVmVDSCommandParameters> extends 
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         if (getParameters().getGracefully()) {
             status = getBroker().shutdown(getParameters().getVmId().toString(),
                     String.valueOf(getParameters().getSecondsToWait()),

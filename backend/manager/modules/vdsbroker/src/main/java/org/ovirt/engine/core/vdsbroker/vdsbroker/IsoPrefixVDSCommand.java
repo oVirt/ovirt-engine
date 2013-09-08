@@ -18,7 +18,7 @@ public class IsoPrefixVDSCommand<T extends VdsAndPoolIDVDSParametersBase> extend
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         getVDSReturnValue().setReturnValue(getIsoPrefix());
     }
 

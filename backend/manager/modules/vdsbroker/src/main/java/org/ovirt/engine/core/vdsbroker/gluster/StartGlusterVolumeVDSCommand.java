@@ -9,7 +9,7 @@ public class StartGlusterVolumeVDSCommand<P extends GlusterVolumeActionVDSParame
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().glusterVolumeStart(getParameters().getVolumeName(), getParameters().isForceAction());
 
         proceedProxyReturnValue();

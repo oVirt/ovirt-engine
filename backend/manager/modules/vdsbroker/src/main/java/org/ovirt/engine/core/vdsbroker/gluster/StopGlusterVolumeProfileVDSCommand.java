@@ -8,7 +8,7 @@ public class StopGlusterVolumeProfileVDSCommand<P extends GlusterVolumeVDSParame
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().glusterVolumeProfileStop(getParameters().getVolumeName());
 
         proceedProxyReturnValue();

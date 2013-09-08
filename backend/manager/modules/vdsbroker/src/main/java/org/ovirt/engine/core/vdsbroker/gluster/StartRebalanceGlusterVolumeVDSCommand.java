@@ -12,8 +12,7 @@ public class StartRebalanceGlusterVolumeVDSCommand<P extends GlusterVolumeRebala
         super(parameters);
     }
 
-    @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         glusterTaskReturn = getBroker().glusterVolumeRebalanceStart(getParameters().getVolumeName(),
                 getParameters().isFixLayoutOnly(),
                 getParameters().isForceAction());

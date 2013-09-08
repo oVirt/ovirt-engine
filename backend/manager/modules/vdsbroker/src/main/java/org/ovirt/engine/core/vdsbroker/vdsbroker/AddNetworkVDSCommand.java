@@ -16,7 +16,7 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         if (TransactionSupport.current() != null) {
             TransactionSupport.registerRollbackHandler(this);
         }
@@ -89,7 +89,7 @@ public class AddNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ext
                 status = getBroker().delNetwork(network, vlanId, bond, nics);
             }
         } catch (RuntimeException ex) {
-            log.error("Exception in Rollback ExecuteVdsBrokerCommand", ex);
+            log.error("Exception in Rollback executeVdsBrokerCommand", ex);
         }
     }
 }

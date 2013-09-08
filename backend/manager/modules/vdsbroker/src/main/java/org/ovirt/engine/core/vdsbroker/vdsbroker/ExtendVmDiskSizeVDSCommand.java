@@ -11,7 +11,7 @@ public class ExtendVmDiskSizeVDSCommand <P extends ExtendVmDiskSizeVDSCommandPar
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         result = getBroker().diskSizeExtend(
                 getParameters().getVmId().toString(),
                 getParameters().getDriveSpecs(),

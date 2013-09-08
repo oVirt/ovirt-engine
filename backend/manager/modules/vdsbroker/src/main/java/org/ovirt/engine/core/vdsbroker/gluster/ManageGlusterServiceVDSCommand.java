@@ -20,7 +20,7 @@ public class ManageGlusterServiceVDSCommand<P extends GlusterHookVDSParameters> 
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         List<String> serviceList = getParameters().getServiceList();
         String[] serviceNameList = new String[serviceList.size()];
         serviceList.toArray(serviceNameList);

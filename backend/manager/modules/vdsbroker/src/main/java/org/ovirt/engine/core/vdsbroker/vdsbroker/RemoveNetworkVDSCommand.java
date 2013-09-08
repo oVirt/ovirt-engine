@@ -8,7 +8,7 @@ public class RemoveNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> 
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         String network = (getParameters().getNetworkName() == null) ? "" : getParameters()
                 .getNetworkName();
         String vlanId = (getParameters().getVlanId() != null) ? getParameters().getVlanId().toString()

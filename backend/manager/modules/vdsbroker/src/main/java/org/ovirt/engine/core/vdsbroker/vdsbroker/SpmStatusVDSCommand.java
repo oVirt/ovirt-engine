@@ -20,7 +20,7 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         _result = getBroker().spmStatus(getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();
         setReturnValue(ParseSpmStatusResult(_result.spmStatus));

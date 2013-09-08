@@ -9,7 +9,7 @@ public class RefreshStoragePoolVDSCommand<P extends RefreshStoragePoolVDSCommand
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker()
                 .refreshStoragePool(getParameters().getStoragePoolId().toString(),
                         getParameters().getMasterStorageDomainId().toString(),

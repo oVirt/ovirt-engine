@@ -22,7 +22,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         buildVmData();
         mVmReturn = getBroker().create(createInfo);
         logCommandInfo();

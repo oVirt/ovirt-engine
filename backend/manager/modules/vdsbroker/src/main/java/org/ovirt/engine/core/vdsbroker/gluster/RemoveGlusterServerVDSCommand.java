@@ -10,7 +10,7 @@ public class RemoveGlusterServerVDSCommand<P extends RemoveGlusterServerVDSParam
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().glusterHostRemove(getParameters().getHostnameOrIp(), getParameters().isForceAction());
 
         proceedProxyReturnValue();

@@ -86,6 +86,6 @@ public abstract class FutureVDSCommand<P extends VdsIdVDSCommandParametersBase> 
     }
 
     @Override
-    abstract protected void ExecuteVdsBrokerCommand();
+    abstract protected void executeVdsBrokerCommand();
 
 }

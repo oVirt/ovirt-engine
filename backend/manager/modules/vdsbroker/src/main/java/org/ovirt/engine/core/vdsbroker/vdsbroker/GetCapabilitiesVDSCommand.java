@@ -11,7 +11,7 @@ public class GetCapabilitiesVDSCommand<P extends VdsIdAndVdsVDSCommandParameters
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         infoReturn = getBroker().getCapabilities();
         proceedProxyReturnValue();
         VdsBrokerObjectsBuilder.updateVDSDynamicData(getVds(), infoReturn.mInfo);

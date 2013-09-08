@@ -23,7 +23,7 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
     private OneStorageDomainInfoReturnForXmlRpc _result;
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         _result = getBroker().getStorageDomainInfo(getParameters().getStorageDomainId().toString());
         proceedProxyReturnValue();
         Pair<StorageDomainStatic, SANState> pairSdStatic = BuildStorageStaticFromXmlRpcStruct(_result.mStorageInfo);

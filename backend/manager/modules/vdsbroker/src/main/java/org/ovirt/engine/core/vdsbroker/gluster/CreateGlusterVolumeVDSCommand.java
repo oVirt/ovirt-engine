@@ -25,7 +25,7 @@ public class CreateGlusterVolumeVDSCommand<P extends CreateGlusterVolumeVDSParam
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         GlusterVolumeEntity volume = getParameters().getVolume();
 
         uuidReturn = getBroker().glusterVolumeCreate(volume.getName(),

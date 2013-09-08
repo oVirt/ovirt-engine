@@ -16,7 +16,7 @@ public class GetGlusterVolumeProfileInfoVDSCommand<P extends GlusterVolumeProfil
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         result = getBroker().glusterVolumeProfileInfo(getParameters().getClusterId(), getParameters().getVolumeName());
         proceedProxyReturnValue();
         setReturnValue(result.getGlusterVolumeProfileInfo());

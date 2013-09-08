@@ -14,7 +14,7 @@ public class VmMonitorCommandVDSCommand<P extends VmMonitorCommandVDSCommandPara
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().monitorCommand(mVmId.toString(), mMonitorCommand);
         proceedProxyReturnValue();
     }

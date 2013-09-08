@@ -10,7 +10,7 @@ public class ConnectStoragePoolVDSCommand<P extends ConnectStoragePoolVDSCommand
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().connectStoragePool(getParameters().getStoragePoolId().toString(),
                 getParameters().getvds_spm_id(), getParameters().getStoragePoolId().toString(),
                 getParameters().getMasterDomainId().toString(), getParameters().getMasterVersion());

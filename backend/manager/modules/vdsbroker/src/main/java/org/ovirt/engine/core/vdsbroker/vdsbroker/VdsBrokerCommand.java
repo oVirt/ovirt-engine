@@ -93,7 +93,7 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
     @Override
     protected void executeVDSCommand() {
         try {
-            ExecuteVdsBrokerCommand();
+            executeVdsBrokerCommand();
         } catch (VDSExceptionBase ex) {
             PrintReturnValue();
             throw ex;
@@ -120,5 +120,5 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
 
     }
 
-    protected abstract void ExecuteVdsBrokerCommand();
+    protected abstract void executeVdsBrokerCommand();
 }

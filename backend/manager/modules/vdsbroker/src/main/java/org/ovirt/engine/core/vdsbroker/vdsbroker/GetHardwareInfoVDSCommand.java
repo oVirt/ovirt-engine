@@ -8,7 +8,7 @@ public class GetHardwareInfoVDSCommand<P extends VdsIdAndVdsVDSCommandParameters
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         infoReturn = getBroker().getHardwareInfo();
         proceedProxyReturnValue();
         VdsBrokerObjectsBuilder.UpdateHardwareSystemInformation(infoReturn.mInfo, getVds());

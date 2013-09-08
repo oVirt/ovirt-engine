@@ -8,7 +8,7 @@ public class MigrateStatusVDSCommand<P extends MigrateStatusVDSCommandParameters
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().migrateStatus(getParameters().getVmId().toString());
         proceedProxyReturnValue();
     }

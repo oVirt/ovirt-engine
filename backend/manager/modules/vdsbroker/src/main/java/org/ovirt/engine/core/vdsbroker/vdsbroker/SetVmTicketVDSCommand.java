@@ -23,7 +23,7 @@ public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> ex
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         if (Config.<Boolean> GetValue(ConfigValues.SendVmTicketUID,
                     getVds().getVdsGroupCompatibilityVersion().toString())) {
             Map<String, String> params = new HashMap<String, String>();

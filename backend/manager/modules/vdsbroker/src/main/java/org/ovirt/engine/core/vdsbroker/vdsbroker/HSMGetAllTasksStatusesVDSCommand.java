@@ -21,7 +21,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         _result = getBroker().getAllTasksStatuses();
         proceedProxyReturnValue();
         setReturnValue(ParseTaskStatusList(_result.TaskStatusList));

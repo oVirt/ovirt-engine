@@ -11,7 +11,7 @@ public class SetGlusterVolumeOptionVDSCommand<P extends GlusterVolumeOptionVDSPa
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status =
                 getBroker().glusterVolumeSet(getParameters().getVolumeName(),
                         getParameters().getVolumeOption().getKey(),

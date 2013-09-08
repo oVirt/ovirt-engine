@@ -8,7 +8,7 @@ public class ReplaceGlusterVolumeBrickVDSCommand<P extends ReplaceGlusterVolumeB
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         switch (getParameters().getAction()) {
         case START:
             status =

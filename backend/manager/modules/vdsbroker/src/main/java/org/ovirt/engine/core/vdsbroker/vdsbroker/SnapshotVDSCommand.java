@@ -20,7 +20,7 @@ public class SnapshotVDSCommand<P extends SnapshotVDSCommandParameters> extends 
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = executeSnapshotVerb();
         proceedProxyReturnValue();
     }

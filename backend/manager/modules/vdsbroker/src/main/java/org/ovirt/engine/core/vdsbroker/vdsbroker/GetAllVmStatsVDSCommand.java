@@ -16,7 +16,7 @@ public class GetAllVmStatsVDSCommand<P extends VdsIdAndVdsVDSCommandParametersBa
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         mVmListReturn = getBroker().getAllVmStats();
         proceedProxyReturnValue();
         Map<Guid, VmInternalData> returnVMs = new HashMap<Guid, VmInternalData>();

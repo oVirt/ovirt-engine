@@ -13,7 +13,7 @@ public class FullListVdsCommand<P extends FullListVDSCommandParameters> extends 
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         List<String> vmIds = getParameters().getVmIds();
         String[] vmIdsArray = vmIds.toArray(new String[vmIds.size()]);
         fullVmListReturn = getBroker().list(Boolean.TRUE.toString(), vmIdsArray);

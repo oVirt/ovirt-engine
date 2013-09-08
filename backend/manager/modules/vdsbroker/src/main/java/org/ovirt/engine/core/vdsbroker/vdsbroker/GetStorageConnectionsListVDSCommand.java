@@ -16,7 +16,7 @@ public class GetStorageConnectionsListVDSCommand<P extends GetStorageConnections
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         _result = getBroker().getStorageConnectionsList(
                 getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();

@@ -11,7 +11,7 @@ public class AddBricksToGlusterVolumeVDSCommand<P extends GlusterVolumeBricksAct
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         List<String> bricks = GlusterCoreUtil.getQualifiedBrickList(getParameters().getBricks());
         status =
                 getBroker().glusterVolumeBrickAdd(getParameters().getVolumeName(),

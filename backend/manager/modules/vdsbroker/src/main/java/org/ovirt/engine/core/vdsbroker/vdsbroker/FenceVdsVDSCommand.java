@@ -44,7 +44,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         VdsFenceOptions vdsFencingOptions = new VdsFenceOptions(getParameters().getType(),
                 getParameters().getOptions());
         String options = vdsFencingOptions.ToInternalString();

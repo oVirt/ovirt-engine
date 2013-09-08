@@ -18,7 +18,7 @@ public class GetVGListVDSCommand<P extends VdsIdVDSCommandParametersBase> extend
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         _result = getBroker().getVGList();
         proceedProxyReturnValue();
         setReturnValue(ParseVGList(_result.vgList));

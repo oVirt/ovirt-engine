@@ -9,7 +9,7 @@ public class HSMClearTaskVDSCommand<P extends HSMTaskGuidBaseVDSCommandParameter
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().clearTask(getParameters().getTaskId().toString());
         proceedProxyReturnValue();
     }

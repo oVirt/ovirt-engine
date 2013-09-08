@@ -13,7 +13,7 @@ public class EditNetworkVDSCommand<P extends NetworkVdsmVDSCommandParameters> ex
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         String networkName = (getParameters().getNetworkName() == null) ? "" : getParameters()
                 .getNetworkName();
         String oldNetwork = (getParameters().getOldNetworkName() == null) ? "" : getParameters()

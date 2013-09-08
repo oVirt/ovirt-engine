@@ -12,7 +12,7 @@ public class HSMGetStorageDomainsListVDSCommand<P extends HSMGetStorageDomainsLi
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         _result = getBroker().getStorageDomainsList(getParameters().getStoragePoolId().toString(),
                 getParameters().getStorageDomainType().getValue(), getParameters().getStorageType().getValue(),
                 ((getParameters().getPath()) != null) ? getParameters().getPath() : "");

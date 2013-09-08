@@ -34,9 +34,9 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<V
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         // call getVdsCapabilities verb
-        super.ExecuteVdsBrokerCommand();
+        super.executeVdsBrokerCommand();
         updateNetConfigDirtyFlag();
 
         // update to db

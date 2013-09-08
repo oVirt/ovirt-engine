@@ -13,7 +13,7 @@ public class GetVGInfoVDSCommand<P extends GetVGInfoVDSCommandParameters> extend
 
     @SuppressWarnings("unchecked")
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         _result = getBroker().getVGInfo(getParameters().getVGID());
         proceedProxyReturnValue();
         // build temp data

@@ -23,7 +23,7 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         _result = getBroker().getStorageDomainStats(getParameters().getStorageDomainId().toString());
         proceedProxyReturnValue();
         StorageDomain domain = BuildStorageDynamicFromXmlRpcStruct(_result.mStorageStats);

@@ -9,7 +9,7 @@ public class DisconnectStorageServerVDSCommand<P extends StorageServerConnection
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         _result = getBroker().disconnectStorageServer(getParameters().getStorageType().getValue(),
                 getParameters().getStoragePoolId().toString(), BuildStructFromConnectionListObject());
         proceedProxyReturnValue();

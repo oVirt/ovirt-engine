@@ -16,7 +16,7 @@ public class GlusterVolumesListVDSCommand<P extends GlusterVolumesListVDSParamet
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         result = getBroker().glusterVolumesList(getParameters().getClusterId());
         proceedProxyReturnValue();
         setReturnValue(result.getVolumes());

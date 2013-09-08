@@ -20,7 +20,7 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         try {
             if (canVdsBeReached()) {
                 boolean performSpmStop = true;

@@ -9,7 +9,7 @@ public class FormatStorageDomainVDSCommand<P extends FormatStorageDomainVDSComma
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().formatStorageDomain(getParameters().getStorageDomainId().toString());
         proceedProxyReturnValue();
     }

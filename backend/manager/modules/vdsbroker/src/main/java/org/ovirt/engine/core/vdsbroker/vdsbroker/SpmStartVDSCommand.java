@@ -24,7 +24,7 @@ public class SpmStartVDSCommand<P extends SpmStartVDSCommandParameters> extends 
     private Guid vdsId;
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         _result = getBroker().spmStart(getParameters().getStoragePoolId().toString(),
                     getParameters().getPrevId(), getParameters().getPrevLVER(),
                     getParameters().getRecoveryMode().getValue(),

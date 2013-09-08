@@ -12,7 +12,7 @@ public class CancelMigrateVDSCommand<P extends VdsAndVmIDVDSParametersBase> exte
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         Guid vmId = getParameters().getVmId();
         status = getBroker().migrateCancel(vmId.toString());
         proceedProxyReturnValue();

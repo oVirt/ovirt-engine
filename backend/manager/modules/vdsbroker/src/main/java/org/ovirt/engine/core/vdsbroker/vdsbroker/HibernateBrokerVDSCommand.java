@@ -8,7 +8,7 @@ public class HibernateBrokerVDSCommand<P extends HibernateVDSCommandParameters> 
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().hibernate(getParameters().getVmId().toString(),
                 getParameters().getHibernationVolHandle());
         proceedProxyReturnValue();

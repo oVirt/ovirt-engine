@@ -33,7 +33,7 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         int storageType = getParameters().getStorageType().getValue();
         _result = getBroker().getDeviceList(storageType);
 

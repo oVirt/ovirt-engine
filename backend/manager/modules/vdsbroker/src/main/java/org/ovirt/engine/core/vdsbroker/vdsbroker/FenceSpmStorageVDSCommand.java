@@ -8,7 +8,7 @@ public class FenceSpmStorageVDSCommand<P extends FenceSpmStorageVDSCommandParame
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().fenceSpmStorage(getParameters().getStoragePoolId().toString(),
                 getParameters().getPrevId(), getParameters().getPrevLVER());
         proceedProxyReturnValue();

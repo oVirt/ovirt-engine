@@ -8,7 +8,7 @@ public class ResumeBrokerVDSCommand<P extends VdsAndVmIDVDSParametersBase> exten
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         mVmReturn = getBroker().resume(mVmId.toString());
         proceedProxyReturnValue();
     }

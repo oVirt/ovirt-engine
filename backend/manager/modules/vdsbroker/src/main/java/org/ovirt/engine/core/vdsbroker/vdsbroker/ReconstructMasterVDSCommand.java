@@ -15,7 +15,7 @@ public class ReconstructMasterVDSCommand<P extends ReconstructMasterVDSCommandPa
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         final Map<String, String> domains = new HashMap<String, String>();
 
         for (StoragePoolIsoMap domain : getParameters().getDomainsList()) {

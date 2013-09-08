@@ -9,7 +9,7 @@ public class CreateStorageDomainVDSCommand<P extends CreateStorageDomainVDSComma
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().createStorageDomain(getParameters().getStorageDomain().getStorageType().getValue(),
                         getParameters().getStorageDomain().getId().toString(),
                         getParameters().getStorageDomain().getStorageName(),

@@ -14,7 +14,7 @@ public class UpdateVmInterfaceVDSCommand extends VdsBrokerCommand<VmNicDeviceVDS
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().vmUpdateDevice(getParameters().getVm().getId().toString(), initDeviceStructure());
         proceedProxyReturnValue();
     }

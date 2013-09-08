@@ -15,7 +15,7 @@ public class GlusterVolumeRemoveBricksVDSCommand<P extends GlusterVolumeRemoveBr
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status =
                 getBroker().glusterVolumeRemoveBrickForce(getParameters().getVolumeName(),
                         getParameters().getBrickDirectories().toArray(new String[0]), getParameters().getReplicaCount());
