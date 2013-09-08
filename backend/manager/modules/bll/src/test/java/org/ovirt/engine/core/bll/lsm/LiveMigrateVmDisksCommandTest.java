@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.lsm;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -17,11 +18,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.CanDoActionTestUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
 import org.ovirt.engine.core.common.action.LiveMigrateVmDisksParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -32,6 +36,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -60,7 +65,13 @@ public class LiveMigrateVmDisksCommandTest {
     private VmDAO vmDao;
 
     @Mock
+    protected SnapshotDao snapshotDao;
+
+    @Mock
     private VmValidator vmValidator;
+
+    @Mock
+    private SnapshotsValidator snapshotsValidator;
 
     /**
      * The command under test
@@ -182,6 +193,20 @@ public class LiveMigrateVmDisksCommandTest {
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_RUNNING_STATELESS.name()));
     }
 
+    @Test
+    public void canDoActionVmInPreview() {
+        createParameters();
+        initDiskImage(diskImageId);
+        initVm(VMStatus.Up, null, diskImageId);
+        setVmInPreview(true);
+
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW)).when(snapshotsValidator)
+                .vmNotInPreview(any(Guid.class));
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW);
+    }
+
     /** Initialize Entities */
 
     private void initVm(VMStatus vmStatus, Guid runOnVds, Guid diskImageId) {
@@ -226,6 +251,10 @@ public class LiveMigrateVmDisksCommandTest {
         when(command.getStoragePoolId()).thenReturn(storagePoolId);
     }
 
+    private void setVmInPreview(boolean isInPreview) {
+        when(snapshotDao.exists(any(Guid.class), eq(Snapshot.SnapshotStatus.IN_PREVIEW))).thenReturn(isInPreview);
+    }
+
     /** Mock DAOs */
 
     private void mockDaos() {
@@ -254,6 +283,8 @@ public class LiveMigrateVmDisksCommandTest {
 
     private void mockValidators() {
         doReturn(vmValidator).when(command).createVmValidator();
+        doReturn(snapshotsValidator).when(command).createSnapshotsValidator();
         doReturn(ValidationResult.VALID).when(vmValidator).vmNotRunningStateless();
+        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
     }
 }

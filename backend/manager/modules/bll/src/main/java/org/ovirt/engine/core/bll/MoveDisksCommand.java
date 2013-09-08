@@ -2,10 +2,11 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LiveMigrateDiskParameters;
@@ -27,9 +28,9 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase<T> {
 
     private List<VdcReturnValueBase> vdcReturnValues = new ArrayList<VdcReturnValueBase>();
-    private List<MoveDiskParameters> moveParametersList = new ArrayList<MoveDiskParameters>();
-    private Map<Guid, List<LiveMigrateDiskParameters>> vmsLiveMigrateParametersMap =
-            new HashMap<Guid, List<LiveMigrateDiskParameters>>();
+    private List<MoveDiskParameters> moveDiskParametersList = new ArrayList<>();
+    private List<LiveMigrateVmDisksParameters> liveMigrateVmDisksParametersList = new ArrayList<>();
+    private Map<Guid, DiskImage> diskMap = new HashMap<>();
 
     public MoveDisksCommand(Guid commandId) {
         super(commandId);
@@ -41,14 +42,16 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
 
     @Override
     protected void executeCommand() {
-        if (!moveParametersList.isEmpty()) {
+        updateParameters();
+
+        if (!moveDiskParametersList.isEmpty()) {
             vdcReturnValues.addAll(Backend.getInstance().RunMultipleActions(VdcActionType.MoveOrCopyDisk,
-                    getMoveDisksParametersList(), false));
+                    getParametersArrayList(moveDiskParametersList), false));
         }
 
-        if (!vmsLiveMigrateParametersMap.isEmpty()) {
+        if (!liveMigrateVmDisksParametersList.isEmpty()) {
             vdcReturnValues.addAll(Backend.getInstance().RunMultipleActions(VdcActionType.LiveMigrateVmDisks,
-                    getLiveMigrateDisksParametersList(), false));
+                    getParametersArrayList(liveMigrateVmDisksParametersList), false));
         }
 
         handleChildReturnValue();
@@ -68,7 +71,7 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_DISKS_SPECIFIED);
         }
 
-        return updateParameters();
+        return true;
     }
 
     @Override
@@ -77,41 +80,89 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
     }
 
+    private void addDisksDeactivatedMessage(List<MoveDiskParameters> moveDiskParamsList) {
+        setActionMessageParameters();
+        addCanDoActionMessage(String.format("$%1$s %2$s", "diskAliases",
+                StringUtils.join(getDisksAliases(moveDiskParamsList), ", ")));
+        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MOVE_DISKS_MIXED_PLUGGED_STATUS);
+        getReturnValue().setCanDoAction(false);
+    }
+
+    private void addInvalidVmStateMessage(VM vm){
+        setActionMessageParameters();
+        addCanDoActionMessage(String.format("$%1$s %2$s", "VmName", vm.getName()));
+        addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
+        getReturnValue().setCanDoAction(false);
+    }
+
     /**
      * For each specified MoveDiskParameters, decide whether it should be moved
-     * using 'regular' move or using live migrate command.
-     *
-     * @return false if the command should fail on canDoAction; otherwise, true
+     * using offline move or live migrate command.
      */
-    private boolean updateParameters() {
-        for (MoveDiskParameters moveDiskParameters : getParameters().getParametersList()) {
-            DiskImage diskImage = getDiskImageDao().get(moveDiskParameters.getImageId());
-            if (diskImage == null) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
-            }
+    protected void updateParameters() {
+        Map<VM, List<MoveDiskParameters>> vmDiskParamsMap = createVmDiskParamsMap();
 
-            List<VM> allVms = getVmDAO().getVmsListForDisk(diskImage.getId());
-            VM vm = !allVms.isEmpty() ? allVms.get(0) : null;
+        for (Map.Entry<VM, List<MoveDiskParameters>> vmDiskParamsEntry : vmDiskParamsMap.entrySet()) {
+            VM vm = vmDiskParamsEntry.getKey();
+            List<MoveDiskParameters> moveDiskParamsList = vmDiskParamsEntry.getValue();
 
-            if (vm != null && !validate(createSnapshotsValidator().vmNotInPreview(vm.getId()))) {
-                return false;
-            }
-
-            if (vm == null || vm.isDown()) {
-                moveParametersList.add(moveDiskParameters);
+            if (vm == null || vm.isDown() || areAllDisksPluggedToVm(moveDiskParamsList, false)) {
+                // Adding parameters for offline move
+                moveDiskParametersList.addAll(moveDiskParamsList);
             }
             else if (vm.isRunningAndQualifyForDisksMigration()) {
-                MultiValueMapUtils.addToMap(vm.getId(),
-                        createLiveMigrateDiskParameters(moveDiskParameters, vm.getId()),
-                        vmsLiveMigrateParametersMap);
+                if (!areAllDisksPluggedToVm(moveDiskParamsList, true)) {
+                    // Cannot live migrate and move disks concurrently
+                    addDisksDeactivatedMessage(moveDiskParamsList);
+                    continue;
+                }
+
+                // Adding parameters for live migrate
+                liveMigrateVmDisksParametersList.add(createLiveMigrateVmDisksParameters(moveDiskParamsList, vm.getId()));
             }
             else {
-                addCanDoActionMessage(String.format("$%1$s %2$s", "VmName", vm.getName()));
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
+                // Live migrate / move disk is not applicable according to VM status
+                addInvalidVmStateMessage(vm);
             }
         }
+    }
 
-        return true;
+    /**
+     * @return a map of VMs to relevant MoveDiskParameters list.
+     */
+    private Map<VM, List<MoveDiskParameters>> createVmDiskParamsMap() {
+        Map<VM, List<MoveDiskParameters>> vmDisksMap = new HashMap<>();
+        for (MoveDiskParameters moveDiskParameters : getParameters().getParametersList()) {
+            DiskImage diskImage = getDiskImageDao().get(moveDiskParameters.getImageId());
+
+            Map<Boolean, List<VM>> allVmsForDisk = getVmDAO().getForDisk(diskImage.getId());
+            List<VM> vmsForPluggedDisk = allVmsForDisk.get(Boolean.TRUE);
+            List<VM> vmsForUnpluggedDisk = allVmsForDisk.get(Boolean.FALSE);
+
+            VM vm = vmsForPluggedDisk != null ? vmsForPluggedDisk.get(0) :
+                    vmsForUnpluggedDisk != null ? vmsForUnpluggedDisk.get(0) :
+                    null; // null is used for floating disks indication
+
+            addDiskToMap(diskImage, vmsForPluggedDisk, vmsForUnpluggedDisk);
+            MultiValueMapUtils.addToMap(vm, moveDiskParameters, vmDisksMap);
+        }
+
+        return vmDisksMap;
+    }
+
+    /**
+     * Add the specified diskImage to diskMap; with updated 'plugged' value.
+     * (diskMap contains all disks specified in the parameters).
+     */
+    private void addDiskToMap(DiskImage diskImage, List<VM> vmsForPluggedDisk, List<VM> vmsForUnpluggedDisk) {
+        if (vmsForPluggedDisk != null) {
+            diskImage.setPlugged(true);
+        }
+        else if (vmsForUnpluggedDisk != null) {
+            diskImage.setPlugged(false);
+        }
+
+        diskMap.put(diskImage.getImageId(), diskImage);
     }
 
     private LiveMigrateDiskParameters createLiveMigrateDiskParameters(MoveDiskParameters moveDiskParameters, Guid vmId) {
@@ -122,29 +173,50 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
                 moveDiskParameters.getQuotaId());
     }
 
-    protected ArrayList<VdcActionParametersBase> getMoveDisksParametersList() {
-        for (MoveDiskParameters moveDiskParameters : moveParametersList) {
-            moveDiskParameters.setSessionId(getParameters().getSessionId());
+    private LiveMigrateVmDisksParameters createLiveMigrateVmDisksParameters(List<MoveDiskParameters> moveDiskParamsList, Guid vmId) {
+        // Create LiveMigrateDiskParameters list
+        List<LiveMigrateDiskParameters> liveMigrateDiskParametersList = new ArrayList<>();
+        for (MoveDiskParameters moveDiskParameters : moveDiskParamsList) {
+            liveMigrateDiskParametersList.add(createLiveMigrateDiskParameters(moveDiskParameters, vmId));
         }
 
-        return new ArrayList<VdcActionParametersBase>(moveParametersList);
+        // Create LiveMigrateVmDisksParameters (multiple disks)
+        LiveMigrateVmDisksParameters liveMigrateDisksParameters =
+                new LiveMigrateVmDisksParameters(liveMigrateDiskParametersList, vmId);
+        liveMigrateDisksParameters.setParentCommand(VdcActionType.MoveDisks);
+
+        return liveMigrateDisksParameters;
     }
 
-    protected ArrayList<VdcActionParametersBase> getLiveMigrateDisksParametersList() {
-        ArrayList<LiveMigrateVmDisksParameters> liveMigrateDisksParametersList =
-                new ArrayList<LiveMigrateVmDisksParameters>();
-
-        for (Map.Entry<Guid, List<LiveMigrateDiskParameters>> entry : vmsLiveMigrateParametersMap.entrySet()) {
-            LiveMigrateVmDisksParameters liveMigrateDisksParameters =
-                    new LiveMigrateVmDisksParameters(entry.getValue(), entry.getKey());
-
-            liveMigrateDisksParameters.setParentCommand(VdcActionType.MoveDisks);
-            liveMigrateDisksParameters.setSessionId(getParameters().getSessionId());
-
-            liveMigrateDisksParametersList.add(liveMigrateDisksParameters);
+    private ArrayList<VdcActionParametersBase> getParametersArrayList(List<? extends VdcActionParametersBase> parametersList) {
+        for (VdcActionParametersBase parameters : parametersList) {
+            parameters.setSessionId(getParameters().getSessionId());
         }
 
-        return new ArrayList<VdcActionParametersBase>(liveMigrateDisksParametersList);
+        return new ArrayList<>(parametersList);
+    }
+
+    /**
+     * Return true if all specified disks are plugged; otherwise false.
+     */
+    private boolean areAllDisksPluggedToVm(List<MoveDiskParameters> moveDiskParamsList, boolean plugged) {
+        for (MoveDiskParameters moveDiskParameters : moveDiskParamsList) {
+            DiskImage diskImage = diskMap.get(moveDiskParameters.getImageId());
+            if (diskImage.getPlugged() != plugged) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private List<String> getDisksAliases(List<MoveDiskParameters> moveVmDisksParamsList) {
+        List<String> disksAliases = new LinkedList<>();
+        for (MoveDiskParameters moveDiskParameters : moveVmDisksParamsList) {
+            DiskImage diskImage = diskMap.get(moveDiskParameters.getImageId());
+            disksAliases.add(diskImage.getDiskAlias());
+        }
+        return disksAliases;
     }
 
     @Override
@@ -167,7 +239,11 @@ public class MoveDisksCommand<T extends MoveDisksParameters> extends CommandBase
         return getDbFacade().getDiskImageDao();
     }
 
-    protected SnapshotsValidator createSnapshotsValidator() {
-        return new SnapshotsValidator();
+    protected List<MoveDiskParameters> getMoveDiskParametersList() {
+        return moveDiskParametersList;
+    }
+
+    protected List<LiveMigrateVmDisksParameters> getLiveMigrateVmDisksParametersList() {
+        return liveMigrateVmDisksParametersList;
     }
 }

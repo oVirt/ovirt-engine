@@ -1,9 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -18,17 +18,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.common.action.MoveDiskParameters;
 import org.ovirt.engine.core.common.action.MoveDisksParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskImageDAO;
-import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDAO;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -45,9 +42,6 @@ public class MoveDisksCommandTest {
     @Mock
     private VmDAO vmDao;
 
-    @Mock
-    protected SnapshotDao snapshotDao;
-
     /**
      * The command under test
      */
@@ -57,7 +51,6 @@ public class MoveDisksCommandTest {
     public void setupCommand() {
         initSpyCommand();
         mockDaos();
-        mockSnapshotValidator();
     }
 
     private void initSpyCommand() {
@@ -78,40 +71,16 @@ public class MoveDisksCommandTest {
     }
 
     @Test
-    public void canDoActionImagesNotFound() {
-        command.getParameters().setParametersList(createMoveDisksParameters());
-
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST.toString()));
-    }
-
-    @Test
     public void canDoActionInvalidVmStatus() {
         command.getParameters().setParametersList(createMoveDisksParameters());
 
         initDiskImage(diskImageId);
         initVm(VMStatus.Unknown, Guid.newGuid(), diskImageId);
 
-        assertFalse(command.canDoAction());
+        command.updateParameters();
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP.toString()));
-    }
-
-    @Test
-    public void canDoActionVmInPreview() {
-        command.getParameters().setParametersList(createMoveDisksParameters());
-
-        initDiskImage(diskImageId);
-        initVm(VMStatus.Down, null, diskImageId);
-        setVmInPreview(true);
-
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_PREVIEW.toString()));
     }
 
     @Test
@@ -121,8 +90,8 @@ public class MoveDisksCommandTest {
         initDiskImage(diskImageId);
         initVm(VMStatus.Down, null, diskImageId);
 
-        assertTrue(command.canDoAction());
-        assertFalse(command.getMoveDisksParametersList().isEmpty());
+        command.updateParameters();
+        assertTrue(command.getMoveDiskParametersList().size() == 1);
     }
 
     @Test
@@ -131,8 +100,8 @@ public class MoveDisksCommandTest {
 
         initDiskImage(diskImageId);
 
-        assertTrue(command.canDoAction());
-        assertFalse(command.getMoveDisksParametersList().isEmpty());
+        command.updateParameters();
+        assertTrue(command.getMoveDiskParametersList().size() == 1);
     }
 
     @Test
@@ -142,8 +111,8 @@ public class MoveDisksCommandTest {
         initDiskImage(diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
 
-        assertTrue(command.canDoAction());
-        assertFalse(command.getLiveMigrateDisksParametersList().isEmpty());
+        command.updateParameters();
+        assertTrue(command.getLiveMigrateVmDisksParametersList().size() == 1);
     }
 
     @Test
@@ -153,8 +122,30 @@ public class MoveDisksCommandTest {
         initDiskImageBasedOnTemplate(diskImageId);
         initVm(VMStatus.Up, Guid.newGuid(), diskImageId);
 
-        assertTrue(command.canDoAction());
-        assertFalse(command.getLiveMigrateDisksParametersList().isEmpty());
+        command.updateParameters();
+        assertTrue(command.getLiveMigrateVmDisksParametersList().size() == 1);
+    }
+
+    @Test
+    public void moveUnpluggedDiskVmDown() {
+        command.getParameters().setParametersList(createMoveDisksParameters());
+
+        initDiskImage(diskImageId);
+        initVm(VMStatus.Down, Guid.newGuid(), diskImageId, false);
+
+        command.updateParameters();
+        assertEquals(command.getMoveDiskParametersList().size(), 1);
+    }
+
+    @Test
+    public void moveUnpluggedDiskVmUp() {
+        command.getParameters().setParametersList(createMoveDisksParameters());
+
+        initDiskImage(diskImageId);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageId, false);
+
+        command.updateParameters();
+        assertEquals(command.getMoveDiskParametersList().size(), 1);
     }
 
     @Test
@@ -171,24 +162,54 @@ public class MoveDisksCommandTest {
         initVm(VMStatus.Up, Guid.newGuid(), diskImageId1);
         initVm(VMStatus.Down, Guid.newGuid(), diskImageId2);
 
-        assertTrue(command.canDoAction());
-        assertFalse(command.getMoveDisksParametersList().isEmpty());
-        assertFalse(command.getLiveMigrateDisksParametersList().isEmpty());
+        command.updateParameters();
+        assertTrue(command.getMoveDiskParametersList().size() == 1);
+        assertTrue(command.getLiveMigrateVmDisksParametersList().size() == 1);
+    }
+
+    @Test
+    public void movePluggedDiskAndUnpluggedDiskVmUp() {
+        Guid diskImageId1 = Guid.newGuid();
+        Guid diskImageId2 = Guid.newGuid();
+
+        MoveDiskParameters moveDiskParameters1 = new MoveDiskParameters(diskImageId1, srcStorageId, dstStorageId);
+        MoveDiskParameters moveDiskParameters2 = new MoveDiskParameters(diskImageId2, srcStorageId, dstStorageId);
+        command.getParameters().setParametersList(Arrays.asList(moveDiskParameters1, moveDiskParameters2));
+
+        initDiskImage(diskImageId1);
+        initDiskImage(diskImageId2);
+        initVm(VMStatus.Up, Guid.newGuid(), diskImageId1, true, diskImageId2, false);
+
+        command.updateParameters();
+        assertTrue(command.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_MOVE_DISKS_MIXED_PLUGGED_STATUS.toString()));
     }
 
     /** Initialize Entities */
 
     private void initVm(VMStatus vmStatus, Guid runOnVds, Guid diskImageId) {
+        initVm(vmStatus, runOnVds, diskImageId, true, null, false);
+    }
+
+    private void initVm(VMStatus vmStatus, Guid runOnVds, Guid diskImageId, boolean isPlugged) {
+        initVm(vmStatus, runOnVds, diskImageId, isPlugged, null, false);
+    }
+
+    private void initVm(VMStatus vmStatus, Guid runOnVds, Guid diskImageId1, boolean isPlugged1,
+            Guid diskImageId2, boolean isPlugged2) {
         VM vm = new VM();
         vm.setStatus(vmStatus);
         vm.setRunOnVds(runOnVds);
 
         when(vmDao.get(any(Guid.class))).thenReturn(vm);
-        when(vmDao.getVmsListForDisk(diskImageId)).thenReturn(Collections.singletonList(vm));
-    }
+        when(vmDao.getForDisk(diskImageId1)).thenReturn(
+                Collections.singletonMap(isPlugged1, Collections.singletonList(vm)));
 
-    private void setVmInPreview(boolean isInPreview) {
-        when(snapshotDao.exists(any(Guid.class), eq(SnapshotStatus.IN_PREVIEW))).thenReturn(isInPreview);
+        if (diskImageId2 != null) {
+            when(vmDao.getForDisk(diskImageId2)).thenReturn(
+                    Collections.singletonMap(isPlugged2, Collections.singletonList(vm)));
+        }
     }
 
     private void initDiskImage(Guid diskImageId) {
@@ -205,19 +226,9 @@ public class MoveDisksCommandTest {
     private DiskImage mockDiskImage(Guid diskImageId) {
         DiskImage diskImage = new DiskImage();
         diskImage.setId(diskImageId);
+        diskImage.setImageId(diskImageId);
 
         return diskImage;
-    }
-
-    private void mockSnapshotValidator() {
-        SnapshotsValidator validator = new SnapshotsValidator() {
-            @Override
-            protected SnapshotDao getSnapshotDao() {
-                return snapshotDao;
-            }
-
-        };
-        doReturn(validator).when(command).createSnapshotsValidator();
     }
 
     /** Mock DAOs */

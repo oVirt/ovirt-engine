@@ -16,6 +16,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
+import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -234,7 +235,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         setStoragePoolId(getVm().getStoragePoolId());
 
         if (!isValidParametersList() || !checkImagesStatus() || !isValidSpaceRequirements()
-                || !isVmNotRunningStateless()) {
+                || !isVmNotRunningStateless() || !isVmNotInPreview()) {
             return false;
         }
 
@@ -359,5 +360,13 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     protected VmValidator createVmValidator() {
         return new VmValidator(getVm());
+    }
+
+    private boolean isVmNotInPreview() {
+        return validate(createSnapshotsValidator().vmNotInPreview(getVmId()));
+    }
+
+    protected SnapshotsValidator createSnapshotsValidator() {
+        return new SnapshotsValidator();
     }
 }

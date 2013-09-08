@@ -346,6 +346,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The following attached disks are in ILLEGAL status: ${diskAliases} - please remove them and try again.")
     String ACTION_TYPE_FAILED_DISKS_ILLEGAL();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The following disks could not be moved: ${diskAliases}. Please make sure that all disks are active or inactive in the VM.")
+    String ACTION_TYPE_FAILED_MOVE_DISKS_MIXED_PLUGGED_STATUS();
+
     @DefaultStringValue("Cannot ${action} ${type}. The following disks already exist: ${diskAliases}. Please import as a clone.")
     String ACTION_TYPE_FAILED_IMPORT_DISKS_ALREADY_EXIST();
 
