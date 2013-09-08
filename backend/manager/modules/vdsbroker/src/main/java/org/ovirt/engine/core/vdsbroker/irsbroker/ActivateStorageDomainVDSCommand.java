@@ -12,7 +12,7 @@ public class ActivateStorageDomainVDSCommand<P extends ActivateStorageDomainVDSC
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         _result = getIrsProxy().activateStorageDomain(getParameters().getStorageDomainId().toString(),
                 getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();

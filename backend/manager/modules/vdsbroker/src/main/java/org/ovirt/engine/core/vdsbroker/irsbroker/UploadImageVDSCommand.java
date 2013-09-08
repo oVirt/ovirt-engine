@@ -21,9 +21,9 @@ public class UploadImageVDSCommand<P extends UploadImageVDSCommandParameters> ex
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         setReturnValue(Guid.Empty);
-        log.info("-- UploadImageVDSCommand::ExecuteIrsBrokerCommand: calling 'uploadImage' ");
+        log.info("-- executeIrsBrokerCommand: calling 'uploadImage' ");
         log.infoFormat("-- uploadImage parameters:" + "\r\n"
                 + "                srcSpUUID={0}" + "\r\n"
                 + "                srcSdUUID={1}" + "\r\n"

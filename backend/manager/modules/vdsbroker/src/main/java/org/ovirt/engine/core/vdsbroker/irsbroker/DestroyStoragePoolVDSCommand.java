@@ -10,7 +10,7 @@ public class DestroyStoragePoolVDSCommand<P extends IrsBaseVDSCommandParameters>
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         VDS vds = DbFacade.getInstance().getVdsDao().get(this.getCurrentIrsProxyData().getCurrentVdsId());
         status = getIrsProxy().destroyStoragePool(getParameters().getStoragePoolId().toString(),
                 vds.getVdsSpmId(), getParameters().getStoragePoolId().toString());

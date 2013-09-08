@@ -11,7 +11,7 @@ public class GetIsoListVDSCommand<P extends IrsBaseVDSCommandParameters> extends
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         setReturnValue(ResourceManager
                 .getInstance()
                 .runVdsCommand(

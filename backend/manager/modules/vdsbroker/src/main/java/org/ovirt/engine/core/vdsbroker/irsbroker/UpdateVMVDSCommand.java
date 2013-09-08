@@ -17,7 +17,7 @@ public class UpdateVMVDSCommand<P extends UpdateVMVDSCommandParameters> extends 
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         Map[] vms = BuildVmsStuctListFromParameters();
         if (getParameters().getStorageDomainId().equals(Guid.Empty)) {
             status = getIrsProxy().updateVM(getParameters().getStoragePoolId().toString(), vms);

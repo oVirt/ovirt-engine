@@ -13,7 +13,7 @@ public class AttachStorageDomainVDSCommand<P extends AttachStorageDomainVDSComma
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         status = getIrsProxy().attachStorageDomain(getParameters().getStorageDomainId().toString(),
                 getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();

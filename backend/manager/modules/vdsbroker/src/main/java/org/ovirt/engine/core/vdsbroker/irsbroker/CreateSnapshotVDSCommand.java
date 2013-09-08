@@ -13,10 +13,10 @@ public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParamete
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         setReturnValue(Guid.Empty);
 
-        log.info("-- CreateSnapshotVDSCommand::ExecuteIrsBrokerCommand: calling 'createVolume' with two new parameters: description and UUID");
+        log.info("-- executeIrsBrokerCommand: calling 'createVolume' with two new parameters: description and UUID");
         log.infoFormat("-- createVolume parameters:" + "\r\n" + "                sdUUID={0}"
                 + "\r\n" + "                spUUID={1}" + "\r\n" + "                imgGUID={2}"
                 + "\r\n" + "                size={3} bytes" + "\r\n"

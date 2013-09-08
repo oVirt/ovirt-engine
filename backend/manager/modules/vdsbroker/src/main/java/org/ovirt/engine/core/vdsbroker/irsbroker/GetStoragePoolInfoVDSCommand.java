@@ -27,7 +27,7 @@ public class GetStoragePoolInfoVDSCommand<P extends GetStoragePoolInfoVDSCommand
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         _result = getIrsProxy().getStoragePoolInfo(getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();
         StoragePool sp = VdsBrokerObjectsBuilder.buildStoragePool(_result.mStoragePoolInfo);

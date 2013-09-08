@@ -9,7 +9,7 @@ public class SetStoragePoolDescriptionVDSCommand<P extends SetStoragePoolDescrip
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         status = getIrsProxy().setStoragePoolDescription(getParameters().getStoragePoolId().toString(),
                 getParameters().getDescription());
         proceedProxyReturnValue();

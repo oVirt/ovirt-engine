@@ -11,7 +11,7 @@ public class SPMStopTaskVDSCommand<P extends SPMTaskGuidBaseVDSCommandParameters
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         ResourceManager.getInstance().runVdsCommand(
                 VDSCommandType.HSMStopTask,
                 new HSMTaskGuidBaseVDSCommandParameters(getCurrentIrsProxyData().getCurrentVdsId(),

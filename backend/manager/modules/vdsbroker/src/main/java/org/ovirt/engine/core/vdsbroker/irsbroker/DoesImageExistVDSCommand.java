@@ -10,7 +10,7 @@ public class DoesImageExistVDSCommand<P extends GetImageInfoVDSCommandParameters
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         imageInfoReturn = getIrsProxy().getVolumeInfo(getParameters().getStorageDomainId().toString(),
                 getParameters().getStoragePoolId().toString(), getParameters().getImageGroupId().toString(),
                 getParameters().getImageId().toString());
@@ -25,7 +25,7 @@ public class DoesImageExistVDSCommand<P extends GetImageInfoVDSCommandParameters
         // means that the image that we asked info about doesn't exist.
         catch (IRSErrorException ex) {
             log.warnFormat(
-                    "IrsBrokerCommand::DoesImageExistVDSCommand::ExecuteIrsBrokerCommand: getImageInfo on {0} threw an exception - assuming image doesn't exist.",
+                    "executeIrsBrokerCommand: getImageInfo on {0} threw an exception - assuming image doesn't exist.",
                     getParameters().getImageId());
             setReturnValue(false);
             return;

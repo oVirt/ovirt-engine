@@ -13,9 +13,9 @@ public class SPMGetAllTasksInfoVDSCommand<P extends IrsBaseVDSCommandParameters>
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         log.infoFormat(
-                "-- SPMGetAllTasksInfoVDSCommand::ExecuteIrsBrokerCommand: Attempting on storage pool '{0}'",
+                "-- executeIrsBrokerCommand: Attempting on storage pool '{0}'",
                 getParameters().getStoragePoolId());
 
         setReturnValue(ResourceManager

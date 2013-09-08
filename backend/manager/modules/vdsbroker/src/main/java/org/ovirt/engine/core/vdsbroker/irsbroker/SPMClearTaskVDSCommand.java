@@ -13,7 +13,7 @@ public class SPMClearTaskVDSCommand<P extends SPMTaskGuidBaseVDSCommandParameter
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         VDSReturnValue returnValue = ResourceManager.getInstance().runVdsCommand(
                 VDSCommandType.HSMClearTask,
                 new HSMTaskGuidBaseVDSCommandParameters(getCurrentIrsProxyData().getCurrentVdsId(),

@@ -11,7 +11,7 @@ public class RemoveVMVDSCommand<P extends RemoveVMVDSCommandParameters> extends 
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         if (getParameters().getStorageDomainId().equals(Guid.Empty)) {
             status = getIrsProxy().removeVM(getParameters().getStoragePoolId().toString(),
                     getParameters().getVmGuid().toString());

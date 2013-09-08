@@ -10,7 +10,7 @@ public class SpmStopOnIrsVDSCommand<P extends SpmStopOnIrsVDSCommandParameters> 
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         ResourceManager.getInstance().runVdsCommand(
                 VDSCommandType.ResetIrs,
                 new ResetIrsVDSCommandParameters(getParameters().getStoragePoolId(),

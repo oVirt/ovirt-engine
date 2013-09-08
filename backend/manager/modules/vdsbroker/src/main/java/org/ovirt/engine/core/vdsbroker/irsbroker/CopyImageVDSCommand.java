@@ -13,14 +13,14 @@ public class CopyImageVDSCommand<P extends CopyImageVDSCommandParameters> extend
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         /**
          * TODO: EINAV: - Consider 'RunAsync' parameter (pass it to IRS too). - Add 'description' parameter. - we should
          * provide 'volumeUUID'. - TaskID should be provided by IRS.
          */
         setReturnValue(Guid.Empty);
 
-        log.info("-- CopyImageVDSCommand::ExecuteIrsBrokerCommand: calling 'copyImage' with two new parameters: description and UUID");
+        log.info("-- executeIrsBrokerCommand: calling 'copyImage' with two new parameters: description and UUID");
         log.infoFormat("-- copyImage parameters:" + "\r\n" + "                sdUUID={0}" + "\r\n"
                 + "                spUUID={1}" + "\r\n" + "                vmGUID={2}" + "\r\n"
                 + "                srcImageGUID={3}" + "\r\n" + "                srcVolUUID={4}" + "\r\n"

@@ -11,7 +11,7 @@ public class DetachStorageDomainVDSCommand<P extends DetachStorageDomainVDSComma
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         if (getParameters().getForce()) {
             try {
                 status = getIrsProxy().forcedDetachStorageDomain(getParameters().getStorageDomainId().toString(),

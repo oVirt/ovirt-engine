@@ -15,7 +15,7 @@ public class ExtendImageSizeVDSCommand<P extends ExtendImageSizeVDSCommandParame
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         result = getIrsProxy().extendVolumeSize(getParameters().getStoragePoolId().toString(),
                 getParameters().getStorageDomainId().toString(),
                 getParameters().getImageGroupId().toString(),

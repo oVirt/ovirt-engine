@@ -11,7 +11,7 @@ public class MergeSnapshotsVDSCommand<P extends MergeSnapshotsVDSCommandParamete
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         uuidReturn =
                 getIrsProxy().mergeSnapshots(getParameters().getStorageDomainId().toString(),
                                                   getParameters().getStoragePoolId().toString(),

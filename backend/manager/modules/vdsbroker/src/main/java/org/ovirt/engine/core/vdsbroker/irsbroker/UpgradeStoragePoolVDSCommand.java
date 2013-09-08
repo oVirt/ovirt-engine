@@ -10,7 +10,7 @@ public class UpgradeStoragePoolVDSCommand<P extends UpgradeStoragePoolVDSCommand
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         final P params = getParameters();
         final String storagePoolId = params.getStoragePoolId().toString();
         final String targetVersion = params.getCompatibilityVersion();

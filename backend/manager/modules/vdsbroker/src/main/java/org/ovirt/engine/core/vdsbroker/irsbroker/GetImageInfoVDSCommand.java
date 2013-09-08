@@ -31,7 +31,7 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         imageInfoReturn = getIrsProxy().getVolumeInfo(getParameters().getStorageDomainId().toString(),
                 getParameters().getStoragePoolId().toString(), getParameters().getImageGroupId().toString(),
                 getParameters().getImageId().toString());

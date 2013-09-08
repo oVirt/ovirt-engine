@@ -1489,7 +1489,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         synchronized (getCurrentIrsProxyData().syncObj) {
             try {
                 if (getIrsProxy() != null) {
-                    ExecuteIrsBrokerCommand();
+                    executeIrsBrokerCommand();
                 } else {
                     if (getVDSReturnValue().getVdsError() == null) {
                         getVDSReturnValue().setExceptionString("Cannot allocate IRS server");
@@ -1614,7 +1614,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         }
     }
 
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
     }
 
     /**

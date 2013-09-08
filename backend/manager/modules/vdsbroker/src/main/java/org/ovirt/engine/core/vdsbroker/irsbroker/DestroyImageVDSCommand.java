@@ -12,7 +12,7 @@ public class DestroyImageVDSCommand<P extends DestroyImageVDSCommandParameters> 
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
 
         DestroyImageVDSCommandParameters params = getParameters();
         int imageListSize = params.getImageList().size();

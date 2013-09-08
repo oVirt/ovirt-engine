@@ -9,7 +9,7 @@ public class DeactivateStorageDomainVDSCommand<P extends DeactivateStorageDomain
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         status = getIrsProxy().deactivateStorageDomain(getParameters().getStorageDomainId().toString(),
                 getParameters().getStoragePoolId().toString(),
                 getParameters().getMasterStorageDomainId().toString(),

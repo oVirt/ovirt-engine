@@ -12,7 +12,7 @@ public class SPMRevertTaskVDSCommand<P extends SPMTaskGuidBaseVDSCommandParamete
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         VDSReturnValue returnValue =
                 ResourceManager.getInstance().runVdsCommand(
                         VDSCommandType.HSMRevertTask,

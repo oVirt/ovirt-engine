@@ -12,7 +12,7 @@ public class GetFloppyListVDSCommand<P extends IrsBaseVDSCommandParameters> exte
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         _isoList = getIrsProxy().getFloppyList(getParameters().getStoragePoolId().toString());
         proceedProxyReturnValue();
         if (_isoList.mVMList != null && _isoList.mVMList.length > 0) {

@@ -11,7 +11,7 @@ public class DeleteImageGroupVDSCommand<P extends DeleteImageGroupVDSCommandPara
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         uuidReturn =
                 getIrsProxy().deleteImage(getParameters().getStorageDomainId().toString(),
                                                getParameters().getStoragePoolId().toString(),

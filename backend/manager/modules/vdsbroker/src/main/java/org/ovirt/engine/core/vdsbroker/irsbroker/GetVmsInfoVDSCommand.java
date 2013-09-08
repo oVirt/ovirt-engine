@@ -18,7 +18,7 @@ public class GetVmsInfoVDSCommand<P extends GetVmsInfoVDSCommandParameters> exte
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         String storagePoolId = getParameters().getStoragePoolId().toString();
         String storageDomainId = getParameters().getStorageDomainId().toString();
         java.util.ArrayList<String> ids = new java.util.ArrayList<String>();

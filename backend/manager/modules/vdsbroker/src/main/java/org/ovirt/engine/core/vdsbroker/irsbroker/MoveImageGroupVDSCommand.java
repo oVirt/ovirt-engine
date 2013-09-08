@@ -11,7 +11,7 @@ public class MoveImageGroupVDSCommand<P extends MoveImageGroupVDSCommandParamete
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         uuidReturn = getIrsProxy().moveImage(getParameters().getStoragePoolId().toString(),
                                              getParameters().getStorageDomainId().toString(),
                                              getParameters().getDstDomainId().toString(),

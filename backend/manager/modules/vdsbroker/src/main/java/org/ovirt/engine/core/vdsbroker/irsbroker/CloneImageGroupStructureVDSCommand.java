@@ -11,7 +11,7 @@ public class CloneImageGroupStructureVDSCommand<P extends TargetDomainImageGroup
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         P params = getParameters();
         uuidReturn = getIrsProxy().cloneImageStructure(params.getStoragePoolId().toString(),
                         params.getStorageDomainId().toString(),

@@ -11,7 +11,7 @@ public class SyncImageGroupDataVDSCommand<P extends SyncImageGroupDataVDSCommand
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         P params = getParameters();
 
         uuidReturn = getIrsProxy().syncImageData(params.getStoragePoolId().toString(),

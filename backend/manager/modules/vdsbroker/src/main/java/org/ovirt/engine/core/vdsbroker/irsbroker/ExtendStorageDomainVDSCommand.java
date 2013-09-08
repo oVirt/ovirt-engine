@@ -12,7 +12,7 @@ public class ExtendStorageDomainVDSCommand<P extends ExtendStorageDomainVDSComma
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         String storageDomainId = getParameters().getStorageDomainId().toString();
         String storagePoolId = getParameters().getStoragePoolId().toString();
         List<String> deviceList = getParameters().getDeviceList();

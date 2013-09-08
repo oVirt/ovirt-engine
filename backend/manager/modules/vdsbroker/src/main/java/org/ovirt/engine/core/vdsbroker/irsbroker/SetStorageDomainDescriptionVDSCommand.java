@@ -9,7 +9,7 @@ public class SetStorageDomainDescriptionVDSCommand<P extends SetStorageDomainDes
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         status = getIrsProxy().setStorageDomainDescription(getParameters().getStorageDomainId().toString(),
                 getParameters().getDescription());
         proceedProxyReturnValue();

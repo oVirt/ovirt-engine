@@ -15,7 +15,7 @@ public class GetImageDomainsListVDSCommand<P extends GetImageDomainsListVDSComma
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         _result = getIrsProxy().getImageDomainsList(getParameters().getStoragePoolId().toString(),
                 getParameters().getImageGroupId().toString());
         proceedProxyReturnValue();

@@ -16,7 +16,7 @@ public class GetVolumesListVDSCommand<P extends StoragePoolDomainAndGroupIdBaseV
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         _result =
                 getIrsProxy().getVolumesList(getParameters().getStorageDomainId().toString(),
                         getParameters().getStoragePoolId().toString(),

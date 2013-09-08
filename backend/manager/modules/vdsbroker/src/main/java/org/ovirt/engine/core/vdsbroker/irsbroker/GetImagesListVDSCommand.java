@@ -17,7 +17,7 @@ public class GetImagesListVDSCommand<P extends GetImagesListVDSCommandParameters
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         _result = getIrsProxy().getImagesList(getParameters().getStorageDomainId().toString());
         proceedProxyReturnValue();
         ArrayList<Guid> tempRetValue = new ArrayList<Guid>(_result.getImageList().length);

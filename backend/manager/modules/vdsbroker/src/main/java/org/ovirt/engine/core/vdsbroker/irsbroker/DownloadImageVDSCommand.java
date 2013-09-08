@@ -17,10 +17,10 @@ public class DownloadImageVDSCommand<P extends DownloadImageVDSCommandParameters
     }
 
     @Override
-    protected void ExecuteIrsBrokerCommand() {
+    protected void executeIrsBrokerCommand() {
         setReturnValue(Guid.Empty);
 
-        log.info("-- DownloadImageVDSCommand::ExecuteIrsBrokerCommand: calling 'downloadImage' ");
+        log.info("-- executeIrsBrokerCommand: calling 'downloadImage' ");
         log.infoFormat("-- downloadImage parameters:" + "\r\n"
                 + "                dstSpUUID={0}" + "\r\n"
                 + "                dstSdUUID={1}" + "\r\n"
