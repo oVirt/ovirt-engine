@@ -146,7 +146,7 @@ createmd5() {
 verifymd5() {
 	local tardir="$1"
 	local md5file="$2"
-	( cd "${tardir}" && md5sum -c "${md5file}" --status --strict ) || logdie "Checksum verification failed"
+	( cd "${tardir}" && md5sum -c "${md5file}" --status ) || logdie "Checksum verification failed"
 }
 
 backupFiles() {
