@@ -64,7 +64,8 @@ public class VmHandler {
     private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
     private static final Log log = LogFactory.getLog(VmHandler.class);
 
-    private static Set<VdcActionType> COMMANDS_ALLOWED_ON_NON_MANAGED_VMS = new HashSet<>();
+    private static Set<VdcActionType> COMMANDS_ALLOWED_ON_EXTERNAL_VMS = new HashSet<>();
+    private static Set<VdcActionType> COMMANDS_ALLOWED_ON_HOSTED_ENGINE = new HashSet<>();
     /**
      * Initialize static list containers, for identity and permission check. The initialization should be executed
      * before calling ObjectIdentityChecker.
@@ -90,12 +91,21 @@ public class VmHandler {
                 inspectedClassNames)) {
             mUpdateVmsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond());
         }
-        COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.MigrateVm);
-        COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.MigrateVmToServer);
-        COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.InternalMigrateVm);
-        COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.CancelMigrateVm);
-        COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.SetVmTicket);
-        COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.add(VdcActionType.VmLogon);
+        COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.MigrateVm);
+        COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.MigrateVmToServer);
+        COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.InternalMigrateVm);
+        COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.CancelMigrateVm);
+        COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.SetVmTicket);
+        COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.VmLogon);
+        COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.StopVm);
+        COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.ShutdownVm);
+        COMMANDS_ALLOWED_ON_EXTERNAL_VMS.add(VdcActionType.RemoveVm);
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.MigrateVm);
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.MigrateVmToServer);
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.InternalMigrateVm);
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.CancelMigrateVm);
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.SetVmTicket);
+        COMMANDS_ALLOWED_ON_HOSTED_ENGINE.add(VdcActionType.VmLogon);
     }
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status) {
@@ -573,11 +583,11 @@ public class VmHandler {
     public static ValidationResult canRunActionOnNonManagedVm(VM vm, VdcActionType actionType) {
         ValidationResult validationResult = ValidationResult.VALID;
 
-        if (!vm.isManagedVm()) {
-            if (!COMMANDS_ALLOWED_ON_NON_MANAGED_VMS.contains(actionType)) {
-                validationResult = new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_RUN_ACTION_ON_NON_MANAGED_VM);
-            }
+        if ((vm.isHostedEngine() && !COMMANDS_ALLOWED_ON_HOSTED_ENGINE.contains(actionType)) ||
+            (vm.isExternalVm() && !COMMANDS_ALLOWED_ON_EXTERNAL_VMS.contains(actionType))) {
+            validationResult = new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_RUN_ACTION_ON_NON_MANAGED_VM);
         }
+
         return validationResult;
     }
 
