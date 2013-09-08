@@ -275,7 +275,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                     return null;
                 }
             });
-            StoragePoolStatusHandler.PoolStatusChanged(getStoragePool().getId(), getStoragePool().getstatus());
+            StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getstatus());
         }
     }
 

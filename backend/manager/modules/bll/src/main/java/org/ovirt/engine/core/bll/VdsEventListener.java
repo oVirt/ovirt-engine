@@ -274,7 +274,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void storagePoolStatusChanged(Guid storagePoolId, StoragePoolStatus status) {
-        StoragePoolStatusHandler.PoolStatusChanged(storagePoolId, status);
+        StoragePoolStatusHandler.poolStatusChanged(storagePoolId, status);
     }
 
     @Override

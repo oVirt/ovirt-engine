@@ -65,7 +65,7 @@ public abstract class ConnectHostToStoragePooServerCommandBase<T extends Storage
         return _exportType;
     }
 
-    protected void InitConnectionList() {
+    protected void initConnectionList() {
         List<StorageDomain> allDomains = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(
                 getStoragePool().getId());
         List<StorageDomain> isoDomains = getStorageDomainsByStoragePoolId(allDomains, StorageDomainType.ISO);

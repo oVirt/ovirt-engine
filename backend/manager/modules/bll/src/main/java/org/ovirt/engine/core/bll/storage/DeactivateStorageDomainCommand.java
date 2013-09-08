@@ -168,7 +168,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                                 getParameters().getStoragePoolId()));
         map.setstatus(StorageDomainStatus.Unknown);
         changeStorageDomainStatusInTransaction(map, StorageDomainStatus.Locked);
-        ProceedStorageDomainTreatmentByDomainType(false);
+        proceedStorageDomainTreatmentByDomainType(false);
 
         if (_isLastMaster) {
             executeInNewTransaction(new TransactionMethod<Object>() {
@@ -182,7 +182,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 }
             });
 
-            StoragePoolStatusHandler.PoolStatusChanged(getStoragePool().getId(), getStoragePool().getstatus());
+            StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(), getStoragePool().getstatus());
             runSynchronizeOperation(new DisconnectStoragePoolAsyncOperationFactory());
             getStorageDomain().getStorageDynamicData().setAvailableDiskSize(null);
             getStorageDomain().getStorageDynamicData().setUsedDiskSize(null);
@@ -265,7 +265,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
      * @param duringReconstruct If true storagePool will be saved to DB outside of the transaction and master domain
      * will not be locked
      */
-    protected void ProceedStorageDomainTreatmentByDomainType(final boolean duringReconstruct) {
+    protected void proceedStorageDomainTreatmentByDomainType(final boolean duringReconstruct) {
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
             final StorageDomain newMaster = getNewMaster(duringReconstruct);
             if (newMaster != null) {

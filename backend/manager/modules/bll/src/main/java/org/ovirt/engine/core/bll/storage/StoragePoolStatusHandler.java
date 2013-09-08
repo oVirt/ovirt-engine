@@ -58,14 +58,14 @@ public final class StoragePoolStatusHandler {
             try {
                 StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(poolId);
                 if (pool != null && pool.getstatus() == StoragePoolStatus.NotOperational) {
-                    NonOperationalPoolTreatment(pool);
+                    nonOperationalPoolTreatment(pool);
                 }
             } catch (java.lang.Exception e) {
             }
         }
     }
 
-    public static void PoolStatusChanged(Guid poolId, StoragePoolStatus status) {
+    public static void poolStatusChanged(Guid poolId, StoragePoolStatus status) {
         if (_nonOperationalPools.containsKey(poolId) && status != StoragePoolStatus.NotOperational) {
             StoragePoolStatusHandler handler = _nonOperationalPools.get(poolId);
 
@@ -84,7 +84,7 @@ public final class StoragePoolStatusHandler {
         }
     }
 
-    private static void NonOperationalPoolTreatment(StoragePool pool) {
+    private static void nonOperationalPoolTreatment(StoragePool pool) {
         boolean changeStatus = false;
         if (StorageHandlingCommandBase.GetAllRunningVdssInPool(pool).size() > 0) {
             changeStatus = true;
@@ -106,7 +106,7 @@ public final class StoragePoolStatusHandler {
         List<StoragePool> allPools = DbFacade.getInstance().getStoragePoolDao().getAll();
         for (StoragePool pool : allPools) {
             if (pool.getstatus() == StoragePoolStatus.NotOperational) {
-                PoolStatusChanged(pool.getId(), StoragePoolStatus.NotOperational);
+                poolStatusChanged(pool.getId(), StoragePoolStatus.NotOperational);
             }
         }
     }

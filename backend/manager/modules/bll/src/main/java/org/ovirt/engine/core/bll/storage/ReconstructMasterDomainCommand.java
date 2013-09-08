@@ -92,7 +92,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
 
     protected boolean reconstructMaster() {
-        ProceedStorageDomainTreatmentByDomainType(true);
+        proceedStorageDomainTreatmentByDomainType(true);
 
         // To issue a reconstructMaster you need to set the domain inactive
         if (getParameters().isInactive()) {

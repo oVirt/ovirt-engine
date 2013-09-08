@@ -23,7 +23,7 @@ public class DisconnectHostFromStoragePoolServersCommand extends
 
     @Override
     protected void executeCommand() {
-        InitConnectionList();
+        initConnectionList();
         // TODO: check if host belong to more than one storage pool
         VDSReturnValue vdsReturnValue = Backend
                 .getInstance()

@@ -33,7 +33,7 @@ public class ConnectHostToStoragePoolServersCommand extends
 
     @Override
     protected void executeCommand() {
-        InitConnectionList();
+        initConnectionList();
         setSucceeded(connectStorageServer(getStoragePool().getStorageType(), getConnections()));
 
         if (getNeedToConnectIso()) {

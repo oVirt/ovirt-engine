@@ -70,7 +70,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                     getStoragePool().setStoragePoolFormatType(masterStorageDomain.getStorageFormat());
                     DbFacade.getInstance().getStoragePoolDao().update(getStoragePool());
                     getCompensationContext().stateChanged();
-                    StoragePoolStatusHandler.PoolStatusChanged(getStoragePool().getId(),
+                    StoragePoolStatusHandler.poolStatusChanged(getStoragePool().getId(),
                             getStoragePool().getstatus());
                     return null;
                 }
