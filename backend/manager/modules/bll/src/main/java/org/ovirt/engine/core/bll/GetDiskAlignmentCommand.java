@@ -47,7 +47,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
     private static final long serialVersionUID = -7266894047095142486L;
 
     private Disk diskToScan;
-    private Guid vdsInPool, storagePoolId, vdsGroupId;
+    private Guid vdsInPool, storagePoolId;
     private VM diskVm;
     private List<PermissionSubject> permsList;
 
