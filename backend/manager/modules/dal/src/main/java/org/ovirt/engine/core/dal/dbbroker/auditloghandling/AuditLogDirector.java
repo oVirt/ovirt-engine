@@ -450,6 +450,7 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.CONNECT_STORAGE_POOL_FAILED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.STORAGE_DOMAIN_ERROR, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_FAILED, AuditLogSeverity.ERROR);
+        severities.put(AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_INCOMPLETE, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.STORAGE_ALERT_VG_METADATA_CRITICALLY_FULL, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.STORAGE_ALERT_SMALL_VG_METADATA, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.STORAGE_ACTIVATE_ASYNC, AuditLogSeverity.NORMAL);

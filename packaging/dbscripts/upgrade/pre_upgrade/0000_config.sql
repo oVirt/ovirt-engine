@@ -627,6 +627,10 @@ select fn_db_add_config_value('ExternalSchedulerResponseTimeout','120000','gener
 
 select fn_db_add_config_value('DwhHeartBeatInterval', '30', 'general');
 
+-- OpenStack Glance
+select fn_db_add_config_value('GlanceImageListSize','20','general');
+select fn_db_add_config_value('GlanceImageTotalListSize','500','general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------

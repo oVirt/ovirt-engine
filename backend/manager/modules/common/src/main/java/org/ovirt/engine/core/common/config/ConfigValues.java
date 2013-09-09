@@ -1524,5 +1524,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("30")
     DwhHeartBeatInterval,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("20")
+    GlanceImageListSize,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("500")
+    GlanceImageTotalListSize,
+
     Invalid;
 }
