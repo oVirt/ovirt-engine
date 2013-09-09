@@ -63,7 +63,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             if (isSuccess && VDSCommandType.forValue(type) == VDSCommandType.ConnectStorageServer) {
                 isSuccess = isConnectSucceeded((Map<String, String>) returnValue.getReturnValue(), list);
 
-                if (isSuccess) {
+                if (isSuccess && storageDomain != null) {
                     // Synchronize LUN details comprising the storage domain with the DB
                     StorageDomainParametersBase parameters = new StorageDomainParametersBase(storageDomain.getId());
                     parameters.setVdsId(vdsId);
