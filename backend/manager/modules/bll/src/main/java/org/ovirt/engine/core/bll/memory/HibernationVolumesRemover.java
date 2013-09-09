@@ -59,7 +59,7 @@ public class HibernationVolumesRemover extends MemoryImageRemover {
                             new Object() {
                                 @Override
                                 public boolean equals(Object obj) {
-                                    return ((Disk) obj).isWipeAfterDelete();
+                                    return obj != null && ((Disk) obj).isWipeAfterDelete();
                                 }
                             });
         }
