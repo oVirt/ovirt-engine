@@ -3266,4 +3266,14 @@ public final class AsyncDataProvider {
                 new IdQueryParameters(providerId),
                 aQuery);
     }
+
+    public static Integer getMaxVmNameLengthWin() {
+        Integer maxVmNameLengthWindows = (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxVmNameLengthWindows);
+        return maxVmNameLengthWindows == null ? 15 : maxVmNameLengthWindows;
+    }
+
+    public static Integer getMaxVmNameLengthNonWin() {
+        Integer maxVmNameLengthNonWindows = (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxVmNameLengthNonWindows);
+        return maxVmNameLengthNonWindows == null ? 64 : maxVmNameLengthNonWindows;
+    }
 }

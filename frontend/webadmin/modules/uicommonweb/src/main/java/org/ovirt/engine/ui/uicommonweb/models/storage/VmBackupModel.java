@@ -38,7 +38,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -357,8 +356,8 @@ public class VmBackupModel extends ManageBackupModel {
 
     protected int getMaxClonedNameLength(Object object) {
         VM vm = ((ImportVmData) object).getVm();
-        return AsyncDataProvider.isWindowsOsType(vm.getOs()) ? UnitVmModel.WINDOWS_VM_NAME_MAX_LIMIT
-                : UnitVmModel.NON_WINDOWS_VM_NAME_MAX_LIMIT;
+        return AsyncDataProvider.isWindowsOsType(vm.getOs()) ? AsyncDataProvider.getMaxVmNameLengthWin()
+                : AsyncDataProvider.getMaxVmNameLengthNonWin();
     }
 
     protected boolean validateName(String newVmName, EntityModel entity, IValidation[] validators) {
