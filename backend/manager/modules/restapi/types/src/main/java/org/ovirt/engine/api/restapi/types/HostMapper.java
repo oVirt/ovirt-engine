@@ -117,20 +117,12 @@ public class HostMapper {
     public static VdsStatic map(PowerManagement model, VdsStatic template) {
         VdsStatic entity = template != null ? template : new VdsStatic();
         entity.setManagementIp(getManagementIp(model, entity));
-        if (model.isSetType()) {
-            entity.setPmType(model.getType());
-        }
+        entity.setPmType(getManagementType(model, entity));
+        entity.setPmUser(getManagementUser(model, entity));
+        entity.setPmPassword(getManagementPassword(model, entity));
+        entity.setPmOptions(getManagementOptions(model, entity));
         if (model.isSetEnabled()) {
             entity.setPmEnabled(model.isEnabled());
-        }
-        if (model.isSetUsername()) {
-            entity.setPmUser(model.getUsername());
-        }
-        if (model.isSetPassword()) {
-            entity.setPmPassword(model.getPassword());
-        }
-        if (model.isSetOptions()) {
-            entity.setPmOptions(map(model.getOptions(), null));
         }
         if (model.isSetPmProxies()) {
             String delim = "";
@@ -152,18 +144,6 @@ public class HostMapper {
                 }
                 if (order == 1) { // Primary
                     order++; // in case that order is not defined, secondary will still be defined correctly.
-                    if (agent.isSetType()) {
-                        entity.setPmType(agent.getType());
-                    }
-                    if (agent.isSetUsername()) {
-                        entity.setPmUser(agent.getUsername());
-                    }
-                    if (agent.isSetPassword()) {
-                        entity.setPmPassword(agent.getPassword());
-                    }
-                    if (agent.isSetOptions()) {
-                        entity.setPmOptions(map(agent.getOptions(), null));
-                    }
                 }
                 else if (order == 2) { // Secondary
                     if (agent.isSetType()) {
@@ -212,6 +192,78 @@ public class HostMapper {
             }
         }
         return vdsStatic.getManagementIp();
+    }
+
+    /**
+     * Get the management type to use.
+     * If the incoming Host management type is different from the one in
+     * VdsStatic we use incoming management type
+     * If incoming agent type different from the management type in
+     * VdsStatic we use the incoming agent type at order 1.
+     * @param model
+     * @param vdsStatic
+     * @return
+     */
+    private static String getManagementType(PowerManagement model, VdsStatic vdsStatic) {
+        if (model.isSetType() && !model.getType().equals(vdsStatic.getPmType())) {
+            return model.getType();
+        }
+        if (model.isSetAgents()) {
+            for (Agent agent : model.getAgents().getAgents()) {
+                if (agent.getOrder() == 1 && agent.isSetType() && !agent.getType().equals(vdsStatic.getPmType())) {
+                    return agent.getType();
+                }
+            }
+        }
+        return vdsStatic.getPmType();
+    }
+
+    private static String getManagementUser(PowerManagement model, VdsStatic vdsStatic) {
+        if (model.isSetUsername() && !model.getUsername().equals(vdsStatic.getPmUser())) {
+            return model.getUsername();
+        }
+        if (model.isSetAgents()) {
+            for (Agent agent : model.getAgents().getAgents()) {
+                if (agent.getOrder() == 1 && agent.isSetUsername() && !agent.getUsername().equals(vdsStatic.getPmUser())) {
+                    return agent.getUsername();
+                }
+            }
+        }
+        return vdsStatic.getPmUser();
+    }
+
+    private static String getManagementPassword(PowerManagement model, VdsStatic vdsStatic) {
+        if (model.isSetPassword() && !model.getPassword().equals(vdsStatic.getPmPassword())) {
+            return model.getPassword();
+        }
+        if (model.isSetAgents()) {
+            for (Agent agent : model.getAgents().getAgents()) {
+                if (agent.getOrder() == 1 && agent.isSetPassword() && !agent.getPassword().equals(vdsStatic.getPmPassword())) {
+                    return agent.getPassword();
+                }
+            }
+        }
+        return vdsStatic.getPmPassword();
+    }
+
+    private static String getManagementOptions(PowerManagement model, VdsStatic vdsStatic) {
+        if (model.isSetOptions()) {
+            String modelOptions = map(model.getOptions(), null);
+            if (!modelOptions.equals(vdsStatic.getPmOptions())) {
+                return modelOptions;
+            }
+        }
+        if (model.isSetAgents()) {
+            for (Agent agent : model.getAgents().getAgents()) {
+                if (agent.getOrder() == 1 && agent.isSetOptions()) {
+                    String agentOptions = map(agent.getOptions(), null);
+                    if (!agentOptions.equals(vdsStatic.getPmOptions())) {
+                        return agentOptions;
+                    }
+                }
+            }
+        }
+        return vdsStatic.getPmOptions();
     }
 
     @Mapping(from = Options.class, to = String.class)
