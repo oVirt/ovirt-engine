@@ -663,6 +663,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Name can contain only 'A-Z', 'a-z', '0-9', '_' or '-' characters.")
     String asciiNameValidationMsg();
 
+    @DefaultStringValue("Name can contain only 'A-Z', 'a-z', '0-9', '_', '-' or '.' characters.")
+    String noSpecialCharactersWithDotMsg();
+
     @DefaultStringValue("Only alphanumeric and some special characters that conform to the standard ASCII character set are allowed.")
     String asciiOrNoneValidationMsg();
 

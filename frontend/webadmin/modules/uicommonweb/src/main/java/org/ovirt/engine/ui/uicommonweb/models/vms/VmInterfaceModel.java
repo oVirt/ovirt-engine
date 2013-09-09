@@ -23,9 +23,9 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.MacAddressValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NoSpecialCharactersWithDotValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -350,7 +350,7 @@ public abstract class VmInterfaceModel extends Model
 
     public boolean validate()
     {
-        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation() });
+        getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new NoSpecialCharactersWithDotValidation() });
 
         getNicType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
