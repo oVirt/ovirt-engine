@@ -425,7 +425,7 @@ fi
 %package setup-plugin-allinone
 Summary:	All-in-one plugin for %{ovirt_product_name_short}'s setup
 Group:		Virtualization/Management
-Requires:	%{name}-sdk >= 3.3.0
+Requires:	%{name}-sdk >= 3.3.0.5
 Requires:	%{name}-setup >= %{version}-%{release}
 Requires:	openssh-server
 Requires:	ovirt-host-deploy >= 1.1.1-1
