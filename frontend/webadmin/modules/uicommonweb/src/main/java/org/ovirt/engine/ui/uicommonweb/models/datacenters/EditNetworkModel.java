@@ -86,7 +86,7 @@ public class EditNetworkModel extends NetworkModel {
                 for (VnicProfileView profileView : (List<VnicProfileView>) returnValue) {
                     VnicProfileModel editModel = new EditVnicProfileModel(getSourceListModel(),
                             getSelectedDc().getcompatibility_version(),
-                            profileView, null, false);
+                            profileView, getSelectedDc().getId(), false);
 
                     NetworkQoS networkQoS = new NetworkQoS();
                     networkQoS.setName(profileView.getNetworkQosName() == null
