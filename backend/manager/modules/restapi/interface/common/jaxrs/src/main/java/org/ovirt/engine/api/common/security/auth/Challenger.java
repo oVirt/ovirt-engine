@@ -42,10 +42,13 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 @Precedence("SECURITY")
 public class Challenger implements PreProcessInterceptor {
 
+    private static final int MINIMAL_SESSION_TTL = 1;
     private static final int SECONDS_IN_MINUTE = 60;
     protected static final Log LOG = LogFactory.getLog(Challenger.class);
     private static final String SESSION_TTL_EXTRACT_ERROR =
             "%1$s header content extraction has failed because of bad number format: %2$s";
+    private static final String SESSION_TTL_ILLEGAL_ERROR =
+            "%1$s header cannot be zero or negative, endless session is not supported.";
 
     private String realm;
     private Scheme scheme;
@@ -110,16 +113,24 @@ public class Challenger implements PreProcessInterceptor {
             // Authenticate the session
             successful = executeBasicAuthentication(headers, httpSession, preferPersistentAuth);
 
-            // Specifies the time, between client requests before the servlet
-            // container will invalidate this session. An interval value of zero
-            // or less indicates that the session should never timeout.
             if (successful && preferPersistentAuth) {
                 if (httpSession == null) {
                     httpSession = getCurrentSession(false);
                 }
                 if (httpSession != null && customHttpSessionTtl != null) {
-                    httpSession.setMaxInactiveInterval(
-                            customHttpSessionTtl.intValue() * SECONDS_IN_MINUTE);
+                    if (customHttpSessionTtl.intValue() >= MINIMAL_SESSION_TTL) {
+                        // Specifies the time, between client requests before the servlet
+                        // container will invalidate this session.
+                        httpSession.setMaxInactiveInterval(
+                                customHttpSessionTtl.intValue() * SECONDS_IN_MINUTE);
+                    } else {
+                        // An interval value of zero or less is not supported
+                        // (indicates that the session should never timeout).
+                        LOG.error(String.format(
+                                SESSION_TTL_ILLEGAL_ERROR,
+                                SessionUtils.SESSION_TTL_HEADER_FIELD));
+
+                    }
                 }
             }
         }
