@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -385,7 +386,8 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteStartElement(OvfProperties.VMD_ALIAS);
         _writer.WriteRaw(String.valueOf(vmDevice.getAlias()));
         _writer.WriteEndElement();
-        if (vmDevice.getSpecParams() != null && vmDevice.getSpecParams().size() != 0) {
+        if (vmDevice.getSpecParams() != null && vmDevice.getSpecParams().size() != 0
+                && !VmPayload.isPayload(vmDevice.getSpecParams())) {
             _writer.WriteStartElement(OvfProperties.VMD_SPEC_PARAMS);
             _writer.WriteMap(vmDevice.getSpecParams());
             _writer.WriteEndElement();
