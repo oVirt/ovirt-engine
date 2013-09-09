@@ -225,25 +225,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         {
             if (a.getLunType() == getType() || a.getLunType() == StorageType.UNKNOWN)
             {
-                ArrayList<SanTargetModel> targets = new ArrayList<SanTargetModel>();
-
-                if (a.getLunConnections() != null)
-                {
-                    for (StorageServerConnections b : a.getLunConnections())
-                    {
-                        SanTargetModel tempVar = new SanTargetModel();
-                        tempVar.setAddress(b.getconnection());
-                        tempVar.setPort(b.getport());
-                        tempVar.setName(b.getiqn());
-                        tempVar.setIsSelected(true);
-                        tempVar.setIsLoggedIn(true);
-                        tempVar.setLuns(new ObservableCollection<LunModel>());
-                        SanTargetModel model = tempVar;
-                        model.getLoginCommand().setIsExecutionAllowed(false);
-
-                        targets.add(model);
-                    }
-                }
+                ArrayList<SanTargetModel> targets = createTargetModelList(a);
 
                 LunModel lunModel = new LunModel();
                 lunModel.setLunId(a.getLUN_id());
@@ -275,6 +257,28 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
         initializeItems(newItems, null);
         proposeDiscover();
+    }
+
+    private ArrayList<SanTargetModel> createTargetModelList(LUNs a) {
+        ArrayList<SanTargetModel> targetModelList = new ArrayList<SanTargetModel>();
+        if (a.getLunConnections() != null)
+        {
+            for (StorageServerConnections b : a.getLunConnections())
+            {
+                SanTargetModel tempVar = new SanTargetModel();
+                tempVar.setAddress(b.getconnection());
+                tempVar.setPort(b.getport());
+                tempVar.setName(b.getiqn());
+                tempVar.setIsSelected(true);
+                tempVar.setIsLoggedIn(true);
+                tempVar.setLuns(new ObservableCollection<LunModel>());
+                SanTargetModel model = tempVar;
+                model.getLoginCommand().setIsExecutionAllowed(false);
+
+                targetModelList.add(model);
+            }
+        }
+        return targetModelList;
     }
 
     private void updateGrayedOut(LunModel lunModel) {
@@ -430,7 +434,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
                     currLun.setProductId(lun.getProductId());
                     currLun.setSerial(lun.getSerial());
                     currLun.setMultipathing(lun.getMultipathing());
-                    currLun.setTargets((ArrayList) targets);
+                    currLun.setTargets(createTargetModelList((LUNs) lun.getEntity()));
                     currLun.setSize(lun.getSize());
                     currLun.setIsAccessible(lun.getIsAccessible());
                     currLun.setStatus(lun.getStatus());
