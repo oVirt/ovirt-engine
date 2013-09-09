@@ -6,6 +6,7 @@ import com.woorea.openstack.base.client.OpenStackTokenProvider;
 import com.woorea.openstack.glance.Glance;
 import com.woorea.openstack.glance.model.Image;
 import com.woorea.openstack.glance.model.ImageDownload;
+import com.woorea.openstack.glance.model.Images;
 import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
@@ -213,16 +214,34 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
         return repoImage;
     }
 
-    public List<RepoImage> getAllImagesAsRepoImages() {
+    public List<RepoImage> getAllImagesAsRepoImages(Integer listSize, Integer totalListSize) {
         ArrayList<RepoImage> repoImages = new ArrayList<>();
 
         long currentTime = System.currentTimeMillis();
 
-        for (Image glanceImage : getClient().images().list(true).execute()) {
-            RepoImage repoImage = imageToRepoImage(glanceImage);
-            repoImage.setLastRefreshed(currentTime);
-            repoImages.add(repoImage);
-        }
+        Images images = null;
+
+        do {
+            OpenStackRequest<Images> listRequest = getClient().images()
+                    .list(true)
+                    .queryParam("limit", listSize)
+                    .queryParam("sort_key", "name")
+                    .queryParam("sort_dir", "asc");
+
+            if (images != null) {
+                listRequest.queryParam("marker",
+                        images.getList().get(images.getList().size() - 1).getId());
+            }
+
+            images = listRequest.execute();
+
+            for (Image glanceImage : images) {
+                RepoImage repoImage = imageToRepoImage(glanceImage);
+                repoImage.setLastRefreshed(currentTime);
+                repoImages.add(repoImage);
+            }
+        } while((images.getList().size() >= listSize) &&
+                (totalListSize != null && repoImages.size() < totalListSize));
 
         return repoImages;
     }

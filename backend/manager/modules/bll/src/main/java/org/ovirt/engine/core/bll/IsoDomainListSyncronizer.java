@@ -222,10 +222,23 @@ public class IsoDomainListSyncronizer {
                         @Override
                         public Object runInTransaction() {
                             repoFileMetaDataDao.removeRepoDomainFileList(storageDomain.getId(), imageType);
-                            for (RepoImage repoImage : client.getAllImagesAsRepoImages()) {
+
+                            Integer totalListSize = Config.<Integer> GetValue(ConfigValues.GlanceImageTotalListSize);
+                            List<RepoImage> repoImages = client.getAllImagesAsRepoImages(
+                                    Config.<Integer> GetValue(ConfigValues.GlanceImageListSize), totalListSize);
+
+                            if (repoImages.size() >= totalListSize) {
+                                AuditLogableBase logable = new AuditLogableBase();
+                                logable.addCustomValue("imageDomain", storageDomain.getName());
+                                logable.addCustomValue("imageListSize", String.valueOf(repoImages.size()));
+                                AuditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_INCOMPLETE);
+                            }
+
+                            for (RepoImage repoImage : repoImages) {
                                 repoImage.setRepoDomainId(storageDomain.getId());
                                 repoFileMetaDataDao.addRepoFileMap(repoImage);
                             }
+
                             return true;
                         }
                     });

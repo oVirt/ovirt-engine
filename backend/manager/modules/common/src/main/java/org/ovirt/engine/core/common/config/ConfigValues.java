@@ -1525,6 +1525,14 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     HotPlugDiskSnapshotSupported(541),
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("20")
+    GlanceImageListSize(542),
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("500")
+    GlanceImageTotalListSize(543),
+
     Invalid(65535);
 
     private int intValue;
