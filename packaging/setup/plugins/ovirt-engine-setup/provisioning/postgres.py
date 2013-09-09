@@ -59,18 +59,6 @@ class Plugin(plugin.PluginBase):
             $
         """
     )
-    _RE_POSTGRES_MAX_CONN = re.compile(
-        flags=re.VERBOSE,
-        pattern=r"""
-            ^
-            \s*
-            max_connections
-            \s*
-            =
-            .*
-            $
-        """
-    )
 
     class _alternateUser(object):
         def __init__(self, user):
@@ -124,14 +112,13 @@ class Plugin(plugin.PluginBase):
         filename,
         maxconn,
     ):
-        content = []
         with open(filename, 'r') as f:
-            for line in f.read().splitlines():
-                if self._RE_POSTGRES_MAX_CONN.match(line) is not None:
-                    line = 'max_connections = {maxconn}'.format(
-                        maxconn=maxconn,
-                    )
-                content.append(line)
+            content = osetuputil.editConfigContent(
+                content=f.read().splitlines(),
+                params={
+                    'max_connections': maxconn,
+                },
+            )
 
         transaction.append(
             filetransaction.FileTransaction(

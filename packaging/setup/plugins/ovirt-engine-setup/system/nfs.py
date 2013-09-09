@@ -31,6 +31,10 @@ from otopi import plugin
 from otopi import constants as otopicons
 from otopi import filetransaction
 
+
+from ovirt_engine import configfile
+
+
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import util as osetuputil
 from ovirt_engine_setup import dialog
@@ -41,6 +45,7 @@ class Plugin(plugin.PluginBase):
     """
     NFS and RPCbind services configuration plugin.
     """
+
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
         self._distribution = platform.linux_distribution(
@@ -158,17 +163,36 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self._enabled,
     )
     def _misc(self):
+        config = configfile.ConfigFile([
+            osetupcons.FileLocations.OVIRT_NFS_RHEL_CONFIG
+        ])
+        changed_lines = []
+        with open(osetupcons.FileLocations.NFS_RHEL_CONFIG, 'r') as f:
+            content = f.read().splitlines()
         self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
             filetransaction.FileTransaction(
                 name=osetupcons.FileLocations.NFS_RHEL_CONFIG,
-                content=osetuputil.processTemplate(
-                    osetupcons.FileLocations.OVIRT_NFS_RHEL_CONFIG,
-                ),
-                modifiedList=self.environment[
-                    otopicons.CoreEnv.MODIFIED_FILES
-                ],
+                content=osetuputil.editConfigContent(
+                    content=content,
+                    params=config.values,
+                    changed_lines=changed_lines,
+                )
             )
         )
+        self.environment[
+            osetupcons.CoreEnv.REGISTER_UNINSTALL_GROUPS
+        ].createGroup(
+            group='nfs_config',
+            description='NFS Configuration',
+            optional=True
+        ).addChanges(
+            'nfs_config',
+            osetupcons.FileLocations.NFS_RHEL_CONFIG,
+            changed_lines,
+        )
+        self.environment[
+            osetupcons.CoreEnv.UNINSTALL_UNREMOVABLE_FILES
+        ].append(osetupcons.FileLocations.NFS_RHEL_CONFIG)
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
