@@ -307,12 +307,19 @@ class Plugin(plugin.PluginBase):
                 """
                     {op} database {database}
                     owner {to} {user}
+                    {encoding}
                 """
             ).format(
                 op=op,
                 to='to' if op == 'alter' else '',
                 database=databaseName,
                 user=user,
+                encoding="""
+                    template template0
+                    encoding 'UTF8'
+                    lc_collate 'en_US.UTF-8'
+                    lc_ctype 'en_US.UTF-8'
+                """ if op != 'alter' else '',
             ),
         ]
 

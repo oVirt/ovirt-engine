@@ -53,7 +53,8 @@ sequence should work:
 # su - postgres -c "psql -d template1"
 template1=# create user engine password 'engine';
 template1=# drop database engine;
-template1=# create database engine owner engine;
+template1=# create database engine owner engine template template0
+encoding 'UTF8' lc_collate 'en_US.UTF-8' lc_ctype 'en_US.UTF-8';
 
 
 DEVELOPMENT
