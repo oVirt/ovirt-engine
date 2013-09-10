@@ -433,8 +433,6 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,5);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,6);
 --CONNECT_TO_VM
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,7);
---IMPORT_EXPORT_VM
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,8);
 --CONFIGURE_VM_NETWORK
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,9);
 --CONFIGURE_VM_STORAGE
