@@ -117,7 +117,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
      * @return <c>true</c> if [is domain legal] [the specified domain name];
      *         otherwise, <c>false</c>.
      */
-    public static boolean IsDomainLegal(String domainName, java.util.ArrayList<String> reasons) {
+    public static boolean isDomainLegal(String domainName, java.util.ArrayList<String> reasons) {
         boolean result = true;
         char[] illegalChars = new char[] { '&' };
         if (StringUtils.isNotEmpty(domainName)) {
@@ -145,7 +145,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
      * @return <c>true</c> if [is vm priority value legal] [the specified
      *         value]; otherwise, <c>false</c>.
      */
-    public static boolean IsVmPriorityValueLegal(int value, List<String> reasons) {
+    public static boolean isVmPriorityValueLegal(int value, List<String> reasons) {
         boolean res = false;
         if (value >= 0 && value <= Config.<Integer> GetValue(ConfigValues.VmPriorityMaxValue)) {
             res = true;
@@ -166,7 +166,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         return getVmTemplateName();
     }
 
-    protected void RemoveNetwork() {
+    protected void removeNetwork() {
         List<VmNic> list = getVmNicDao().getAllForTemplate(getVmTemplateId());
         for (VmNic iface : list) {
             DbFacade.getInstance().getVmDeviceDao().remove(new VmDeviceId(iface.getId(), getVmTemplateId()));

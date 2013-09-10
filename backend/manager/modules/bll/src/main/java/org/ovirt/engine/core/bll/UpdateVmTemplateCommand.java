@@ -73,10 +73,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getReturnValue()
                             .getCanDoActionMessages(),
                     getVdsGroup().getcompatibility_version())) {
-                if (IsVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
+                if (isVmPriorityValueLegal(getParameters().getVmTemplateData().getPriority(), getReturnValue()
                         .getCanDoActionMessages())
-                        && IsDomainLegal(getParameters().getVmTemplateData().getDomain(), getReturnValue()
-                                .getCanDoActionMessages())) {
+                        && isDomainLegal(getParameters().getVmTemplateData().getDomain(), getReturnValue()
+                        .getCanDoActionMessages())) {
                     returnValue = VmTemplateHandler.isUpdateValid(mOldTemplate, getVmTemplate());
                     if (!returnValue) {
                         addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);

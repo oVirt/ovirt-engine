@@ -217,7 +217,7 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
     }
 
     private void removeTemplateFromDb() {
-        RemoveNetwork();
+        removeNetwork();
         DbFacade.getInstance().getVmTemplateDao().remove(getVmTemplate().getId());
     }
 

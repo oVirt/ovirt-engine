@@ -297,7 +297,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
-        if (!VmTemplateCommand.IsVmPriorityValueLegal(vmFromParams.getPriority(),
+        if (!VmTemplateCommand.isVmPriorityValueLegal(vmFromParams.getPriority(),
                 getReturnValue().getCanDoActionMessages())) {
             return false;
         }

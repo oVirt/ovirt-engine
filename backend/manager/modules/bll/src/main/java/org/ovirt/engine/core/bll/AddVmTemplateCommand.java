@@ -252,7 +252,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 getReturnValue().getCanDoActionMessages(), getVdsGroup().getcompatibility_version())) {
             return false;
         }
-        if (!IsVmPriorityValueLegal(getParameters().getMasterVm().getPriority(), getReturnValue()
+        if (!isVmPriorityValueLegal(getParameters().getMasterVm().getPriority(), getReturnValue()
                 .getCanDoActionMessages())) {
             return false;
         }
@@ -532,7 +532,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // if template exist in db remove it
         if (getVmTemplate() != null) {
             DbFacade.getInstance().getVmTemplateDao().remove(getVmTemplateId());
-            RemoveNetwork();
+            removeNetwork();
         }
 
         if (!getVmId().equals(Guid.Empty) && getVm() != null) {

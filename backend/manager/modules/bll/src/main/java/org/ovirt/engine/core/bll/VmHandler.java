@@ -134,7 +134,7 @@ public class VmHandler {
                 reasons.add(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES.toString());
             }
             returnValue = false;
-        } else if (!VmTemplateCommand.IsVmPriorityValueLegal(vmPriority, reasons)) {
+        } else if (!VmTemplateCommand.isVmPriorityValueLegal(vmPriority, reasons)) {
             returnValue = false;
         }
         return returnValue;
