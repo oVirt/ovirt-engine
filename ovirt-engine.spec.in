@@ -600,8 +600,11 @@ fi
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/dump
 %dir %{engine_data}
+%dir %{engine_data}/bin
 %dir %{engine_data}/branding
 %dir %{engine_data}/conf
+%dir %{engine_data}/engine.ear
+%dir %{engine_data}/services
 %dir %{engine_etc}
 %dir %{engine_etc}/branding
 %dir %{engine_etc}/engine.conf.d
@@ -712,6 +715,7 @@ fi
 %config %{_sysconfdir}/logrotate.d/ovirt-engine-setup
 %config %{_sysconfdir}/ovirt-engine-setup.conf.d/10-packaging.conf
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_state}/backups
+%dir %{engine_data}/firewalld
 %dir %{engine_log}/setup
 %{_bindir}/engine-backup
 %{_bindir}/engine-cleanup
