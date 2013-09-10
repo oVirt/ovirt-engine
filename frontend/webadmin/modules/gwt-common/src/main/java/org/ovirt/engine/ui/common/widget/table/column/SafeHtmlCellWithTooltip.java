@@ -3,7 +3,14 @@ package org.ovirt.engine.ui.common.widget.table.column;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.user.client.ui.HTML;
 
+/**
+ * A Cell used to render HTML, providing tooltip in case the content doesn't fit the parent element.
+ * <p/>
+ * This cell does not escape the (SafeHtml) value when rendering cell HTML, i.e. the value is considered to be 'safe'
+ * already.
+ */
 public class SafeHtmlCellWithTooltip extends AbstractCellWithTooltip<SafeHtml> {
 
     public SafeHtmlCellWithTooltip() {
@@ -31,7 +38,9 @@ public class SafeHtmlCellWithTooltip extends AbstractCellWithTooltip<SafeHtml> {
 
     @Override
     protected String getTooltip(SafeHtml value) {
-        return value.asString();
+        // Since tooltips are implemented via HTML 'title' attribute,
+        // we must sanitize the value (un-escape and remove HTML tags)
+        return new HTML(value.asString()).getText();
     }
 
 }

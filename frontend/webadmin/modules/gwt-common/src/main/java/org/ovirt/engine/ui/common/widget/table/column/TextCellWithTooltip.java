@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import com.google.gwt.user.client.ui.HTML;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 
 import com.google.gwt.core.client.GWT;
@@ -12,8 +13,8 @@ import com.google.gwt.user.client.DOM;
 
 /**
  * A Cell used to render text, providing tooltip in case the content doesn't fit the parent element.
- *
- * @see com.google.gwt.cell.client.TextCell
+ * <p/>
+ * This cell escapes the (String) value when rendering cell HTML.
  */
 public class TextCellWithTooltip extends AbstractCellWithTooltip<String> {
 
@@ -79,7 +80,9 @@ public class TextCellWithTooltip extends AbstractCellWithTooltip<String> {
 
     @Override
     protected String getTooltip(String value) {
-        return getEscapedValue((title != null) ? title : value).asString();
+        // Since tooltips are implemented via HTML 'title' attribute,
+        // we must sanitize the value (un-escape and remove HTML tags)
+        return new HTML((title != null) ? title : value).getText();
     }
 
     @Override
