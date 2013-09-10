@@ -18,11 +18,13 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HasHandlers;
 
 /**
  * Provides refresh rate management for a {@link GridController}.
  */
-public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
+public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> implements HasHandlers {
 
     /**
      * Callback triggered when the user clicks the refresh button.
@@ -58,6 +60,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
     private final ModelProvider<? extends GridController> modelProvider;
     private final ClientStorage clientStorage;
     private final T refreshPanel;
+    private final EventBus eventBus;
     private ManualRefreshCallback manualRefreshCallback;
 
     private GridController controller;
@@ -66,6 +69,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
             EventBus eventBus, ClientStorage clientStorage) {
         this.modelProvider = modelProvider;
         this.clientStorage = clientStorage;
+        this.eventBus = eventBus;
         this.refreshPanel = createRefreshPanel();
         listenOnManualRefresh();
 
@@ -135,6 +139,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
                 if (manualRefreshCallback != null) {
                     manualRefreshCallback.onManualRefresh();
                 }
+                ManualRefreshEvent.fire(AbstractRefreshManager.this);
                 controller.refresh();
             }
         });
@@ -188,4 +193,8 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> {
         this.manualRefreshCallback = manualRefreshCallback;
     }
 
+    @Override
+    public void fireEvent(GwtEvent<?> event) {
+        eventBus.fireEvent(event);
+    }
 }

@@ -28,7 +28,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostListModel, HostInterfaceListModel>
-implements SubTabHostInterfacePresenter.ViewDef {
+    implements SubTabHostInterfacePresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabHostInterfaceView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -47,6 +47,7 @@ implements SubTabHostInterfacePresenter.ViewDef {
     @WithElementId
     final SimpleActionTable<HostInterfaceLineModel> table;
     private final VerticalPanel contentPanel;
+    HostInterfaceForm hostInterfaceForm = null;
 
     @Inject
     public SubTabHostInterfaceView(SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> modelProvider,
@@ -131,9 +132,16 @@ implements SubTabHostInterfacePresenter.ViewDef {
     }
 
     @Override
+    public void removeContent() {
+        if (hostInterfaceForm != null) {
+            hostInterfaceForm.setVisible(false);
+        }
+    }
+
+    @Override
     public void setMainTabSelectedItem(VDS selectedItem) {
         // TODO(vszocs) possible performance optimization: don't create HostInterfaceForm upon each selection
-        HostInterfaceForm hostInterfaceForm = new HostInterfaceForm(getDetailModel());
+        hostInterfaceForm = new HostInterfaceForm(getDetailModel());
         contentPanel.remove(contentPanel.getWidgetCount() - 1);
         contentPanel.add(hostInterfaceForm);
     }

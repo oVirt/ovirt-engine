@@ -7,7 +7,8 @@
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.table.SimpleActionTable.Style">
 		.panel {
-			overflow: auto;
+			overflow-y: auto;
+			overflow-x: hidden;
 			height: 100%;
 		}
 

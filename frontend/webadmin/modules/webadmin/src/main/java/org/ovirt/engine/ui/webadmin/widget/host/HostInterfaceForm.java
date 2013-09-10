@@ -82,6 +82,7 @@ public class HostInterfaceForm extends Composite {
     }
 
     void showModels(List<HostInterfaceLineModel> interfaceLineModels) {
+        this.setVisible(true);
         grid.resizeRows(interfaceLineModels.size());
         int row = 0;
 

@@ -4,6 +4,8 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
+import org.ovirt.engine.ui.common.widget.refresh.ManualRefreshEvent;
+import org.ovirt.engine.ui.common.widget.refresh.ManualRefreshEvent.ManualRefreshHandler;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceLineModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
@@ -23,7 +25,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabHostInterfacePresenter extends AbstractSubTabPresenter<VDS, HostListModel, HostInterfaceListModel, SubTabHostInterfacePresenter.ViewDef, SubTabHostInterfacePresenter.ProxyDef> {
+public class SubTabHostInterfacePresenter extends AbstractSubTabPresenter<VDS, HostListModel, HostInterfaceListModel,
+        SubTabHostInterfacePresenter.ViewDef, SubTabHostInterfacePresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.hostInterfaceSubTabPlace)
@@ -31,6 +34,7 @@ public class SubTabHostInterfacePresenter extends AbstractSubTabPresenter<VDS, H
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<VDS> {
+        void removeContent();
     }
 
     @TabInfo(container = HostSubTabPanelPresenter.class)
@@ -52,9 +56,21 @@ public class SubTabHostInterfacePresenter extends AbstractSubTabPresenter<VDS, H
         return PlaceRequestFactory.get(ApplicationPlaces.hostMainTabPlace);
     }
 
+    @Override
+    protected void onBind() {
+        super.onBind();
+        registerHandler(getEventBus().addHandler(ManualRefreshEvent.getType(), new ManualRefreshHandler() {
+            @Override
+            public void onManualRefresh(ManualRefreshEvent event) {
+                if (SubTabHostInterfacePresenter.this.isVisible()) {
+                    getView().removeContent();
+                }
+            }
+        }));
+    }
+
     @ProxyEvent
     public void onHostSelectionChange(HostSelectionChangeEvent event) {
         updateMainTabSelection(event.getSelectedItems());
     }
-
 }
