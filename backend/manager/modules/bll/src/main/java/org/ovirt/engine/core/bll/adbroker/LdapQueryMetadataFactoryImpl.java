@@ -540,7 +540,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
                         new MultipleLdapQueryExecutionFormatter("(|", ")"),
                         new DefaultGuidEncoder()));
         openLdapHashMap.put(LdapQueryType.getUsersByUserGuids, new LdapQueryMetadataImpl(
-                        "(uid=%1$s)",
+                        "(entryUUID=%1$s)",
                         "",
                         new OpenLdapUserContextMapper(),
                         SearchControls.SUBTREE_SCOPE,
