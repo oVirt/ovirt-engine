@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1098,9 +1099,11 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     public void activate()
     {
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-        for (Object item : getSelectedItems())
+
+        Collections.sort((List<VDS>) getSelectedItems(), new Linq.VdsSPMPriorityComparer());
+
+        for (VDS vds : (List<VDS>) getSelectedItems())
         {
-            VDS vds = (VDS) item;
             list.add(new VdsActionParameters(vds.getId()));
         }
 

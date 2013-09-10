@@ -74,6 +74,18 @@ public final class Linq
         }
     }
 
+    public static class VdsSPMPriorityComparer implements Comparator<VDS>, Serializable {
+        private static final long serialVersionUID = 1114793850392069219L;
+
+        @Override
+        public int compare(VDS vds1, VDS vds2)
+        {
+            return (vds1.getVdsSpmPriority() < vds2.getVdsSpmPriority()) ? 1
+                    : ((vds1.getVdsSpmPriority() == vds2.getVdsSpmPriority()) ? 0 : -1);
+
+        }
+    }
+
     public static class DiskImageByLastModifiedComparer implements Comparator<DiskImage>, Serializable
     {
 
