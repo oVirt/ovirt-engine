@@ -90,7 +90,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     }
 
     @Override
-    protected void Perform() {
+    protected void perform() {
         // Set the VM to null, to fetch it again from the DB ,instead from the cache.
         // We want to get the VM state from the DB, to avoid multi requests for VM hibernation.
         setVm(null);

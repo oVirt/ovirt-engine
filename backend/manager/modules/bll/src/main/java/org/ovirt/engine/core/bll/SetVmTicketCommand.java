@@ -113,7 +113,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     }
 
     @Override
-    protected void Perform() {
+    protected void perform() {
         // Generate the ticket if needed (in some situations the client will not send
         // a ticket):
         if (StringUtils.isEmpty(mTicket)) {

@@ -16,7 +16,7 @@ public class PauseVmCommand<T extends VmOperationParameterBase> extends VmOperat
     }
 
     @Override
-    protected void Perform() {
+    protected void perform() {
         if (getVm().isRunning()) {
             setActionReturnValue(Backend.getInstance().getResourceManager()
                     .RunVdsCommand(VDSCommandType.Pause, new PauseVDSCommandParameters(getVdsId(), getVmId()))

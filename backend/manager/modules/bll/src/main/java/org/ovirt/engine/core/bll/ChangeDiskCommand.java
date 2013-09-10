@@ -56,7 +56,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
     }
 
     @Override
-    protected void Perform() {
+    protected void perform() {
         setActionReturnValue(Backend
                 .getInstance()
                 .getResourceManager()

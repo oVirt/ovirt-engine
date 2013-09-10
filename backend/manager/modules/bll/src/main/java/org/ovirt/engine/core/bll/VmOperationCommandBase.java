@@ -28,7 +28,7 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
     @Override
     protected void executeVmCommand() {
         if (GetRunningOnVds()) {
-            Perform();
+            perform();
             return;
         }
         setActionReturnValue((getVm() != null) ? getVm().getStatus() : VMStatus.Down);
@@ -74,5 +74,5 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
         return true;
     }
 
-    protected abstract void Perform();
+    protected abstract void perform();
 }

@@ -14,7 +14,7 @@ public class MonitorCommand<T extends MonitorCommandParameters> extends VmOperat
     }
 
     @Override
-    protected void Perform() {
+    protected void perform() {
         setSucceeded(Backend
                 .getInstance()
                 .getResourceManager()

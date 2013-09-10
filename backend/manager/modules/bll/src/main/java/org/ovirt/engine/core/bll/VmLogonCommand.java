@@ -38,7 +38,7 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
     }
 
     @Override
-    protected void Perform() {
+    protected void perform() {
         // Get a reference to the virtual machine:
         final VM vm = getVm();
 

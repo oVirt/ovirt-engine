@@ -42,7 +42,7 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
     }
 
     @Override
-    protected void Perform() {
+    protected void perform() {
         log.infoFormat("Entered (VM {0}).", getVm().getName());
 
         VmHandler.UpdateVmGuestAgentVersion(getVm());

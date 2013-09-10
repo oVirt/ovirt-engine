@@ -20,7 +20,7 @@ public class ChangeFloppyCommand<T extends ChangeDiskCommandParameters> extends 
     }
 
     @Override
-    protected void Perform() {
+    protected void perform() {
         if (getVm().isRunningOrPaused()) {
             setActionReturnValue(Backend
                     .getInstance()
