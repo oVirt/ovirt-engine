@@ -2495,6 +2495,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Remove brick not started.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_STARTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Remove brick not finished.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_FINISHED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume should be started.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED();
 

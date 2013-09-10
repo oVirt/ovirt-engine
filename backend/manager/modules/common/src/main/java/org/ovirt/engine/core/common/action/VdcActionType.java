@@ -265,6 +265,7 @@ public enum VdcActionType {
     StopRebalanceGlusterVolume(1421, ActionGroup.MANIPULATE_GLUSTER_VOLUME,false, QuotaDependency.NONE),
     StartRemoveGlusterVolumeBricks(1422, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     StopRemoveGlusterVolumeBricks(1423, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    CommitRemoveGlusterVolumeBricks(1424, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     // Cluster Policy
     AddClusterPolicy(1450, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
     EditClusterPolicy(1451, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
