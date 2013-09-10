@@ -124,7 +124,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
             resource.setOption(action);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Option", "setOption", "name, value");
+            verifyIncompleteException(wae, "Option", "setOption", "name, value");
         }
     }
 
@@ -156,7 +156,7 @@ public class BackendGlusterVolumeResourceTest extends AbstractBackendSubResource
             resource.resetOption(action);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "Option", "resetOption", "name");
+            verifyIncompleteException(wae, "Option", "resetOption", "name");
         }
     }
 
