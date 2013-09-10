@@ -34,7 +34,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-@SuppressWarnings("unused")
 public abstract class RunOnceModel extends Model
 {
     // Boot Options tab
@@ -784,22 +783,30 @@ public abstract class RunOnceModel extends Model
         Frontend.RunQuery(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()),
                 new AsyncQuery(this, new INewAsyncCallback() {
 
-                 @Override
-                 public void onSuccess(Object model, Object returnValue) {
-                     boolean hasNics =
-                             ((ArrayList<VmNetworkInterface>) ((VdcQueryReturnValue) returnValue).getReturnValue()).size() > 0;
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        Iterable<VmNetworkInterface> nics =
+                                (Iterable<VmNetworkInterface>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        Iterable<VmNetworkInterface> pluggedNics =
+                                Linq.where(nics, new Linq.IPredicate<VmNetworkInterface>() {
 
-                     if (!hasNics)
-                     {
-                         BootSequenceModel bootSequenceModel = getBootSequence();
-                         bootSequenceModel.getNetworkOption().setIsChangable(false);
-                         bootSequenceModel.getNetworkOption()
-                                 .setChangeProhibitionReason(ConstantsManager.getInstance()
-                                         .getMessages()
-                                         .interfaceIsRequiredToBootFromNetwork());
-                     }
-                 }
-             }));
+                                    @Override
+                                    public boolean match(VmNetworkInterface vnic) {
+                                        return vnic.isPlugged();
+                                    }
+                                });
+                        boolean hasPluggedNics = !((List<VmNetworkInterface>) pluggedNics).isEmpty();
+
+                        if (!hasPluggedNics) {
+                            BootSequenceModel bootSequenceModel = getBootSequence();
+                            bootSequenceModel.getNetworkOption().setIsChangable(false);
+                            bootSequenceModel.getNetworkOption()
+                                    .setChangeProhibitionReason(ConstantsManager.getInstance()
+                                            .getMessages()
+                                            .interfaceIsRequiredToBootFromNetwork());
+                        }
+                    }
+                }));
     }
 
     private void updateDisplayProtocols() {
