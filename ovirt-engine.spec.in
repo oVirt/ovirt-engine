@@ -153,7 +153,30 @@ Requires:	ovirt-image-uploader >= 3.3.0
 Requires:	ovirt-iso-uploader >= 3.3.0
 Requires:	ovirt-log-collector >= 3.3.0
 Requires:	postgresql-server >= 8.4.7
+Requires:	ws-commons-util
 Requires:	yum-plugin-versionlock
+
+%if 0%{?fedora}
+%if %{fedora} >= 19
+Requires:	apache-commons-compress
+Requires:	apache-commons-configuration
+Requires:	apache-commons-jxpath
+Requires:	apache-sshd
+Requires:	jakarta-commons-httpclient
+Requires:	objectweb-asm
+Requires:	postgresql-jdbc
+Requires:	quartz
+Requires:	spring-ldap
+Requires:	springframework-aop
+Requires:	springframework-beans
+Requires:	springframework-context
+Requires:	springframework-expression
+Requires:	springframework-instrument
+Requires:	springframework-jdbc
+Requires:	springframework-tx
+Requires:	xmlrpc-client
+%endif
+%endif
 
 # We can't require exactly the same version and release of the
 # setup package because it needs to be updated independely as part
@@ -510,6 +533,47 @@ for pom in %{buildroot}%{_mavenpomdir}/*.pom; do
 	fi
 done
 %endif
+
+#
+# Link dependencies to system provided
+#
+while read dst src; do
+	[ -z "${dst}" ] && continue
+	[ -z "${src}" ] && src="$(basename "${dst}")"
+
+	dst="%{engine_jboss_modules}/${dst}"
+	src="%{_javadir}/${src}"
+	rm -f "%{buildroot}${dst}"
+	ln -s "${src}" "%{buildroot}${dst}"
+done << __EOF__
+org/apache/ws/commons/main/ws-commons-util.jar
+org/ovirt/otopi/main/otopi.jar otopi/otopi.jar
+org/ovirt/ovirt-host-deploy/main/ovirt-host-deploy.jar ovirt-host-deploy/ovirt-host-deploy.jar
+%if 0%{?fedora}
+%if %{fedora} >= 19
+org/apache/commons/compress/main/commons-compress.jar
+org/apache/commons/configuration/main/commons-configuration.jar commons-configuration.jar
+org/apache/commons/httpclient/main/commons-httpclient.jar
+org/apache/commons/jxpath/main/commons-jxpath.jar commons-jxpath.jar
+org/apache/mina/main/mina-core.jar apache-mina/mina-core.jar
+org/apache/sshd/main/sshd-core.jar apache-sshd/sshd-core.jar
+org/apache/xmlrpc/main/xmlrpc-client.jar
+org/apache/xmlrpc/main/xmlrpc-common.jar
+org/postgresql/main/postgresql.jar postgresql-jdbc.jar
+org/quartz/main/quartz.jar
+org/springframework/main/spring-aop.jar springframework/spring-aop.jar
+org/springframework/main/spring-asm.jar objectweb-asm/asm.jar
+org/springframework/main/spring-beans.jar springframework/spring-beans.jar
+org/springframework/main/spring-context.jar springframework/spring-context.jar
+org/springframework/main/spring-core.jar springframework/spring-core.jar
+org/springframework/main/spring-expression.jar springframework/spring-expression.jar
+org/springframework/main/spring-instrument.jar springframework/spring-instrument.jar
+org/springframework/main/spring-jdbc.jar springframework/spring-jdbc.jar
+org/springframework/main/spring-ldap-core.jar spring-ldap/spring-ldap-core.jar
+org/springframework/main/spring-tx.jar springframework/spring-tx.jar
+%endif
+%endif
+__EOF__
 
 #
 # Register services
