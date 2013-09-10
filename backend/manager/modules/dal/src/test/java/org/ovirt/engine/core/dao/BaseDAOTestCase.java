@@ -89,8 +89,9 @@ public abstract class BaseDAOTestCase {
         IDatabaseConnection connection = new DatabaseConnection(con);
         connection.getConfig().setProperty(DatabaseConfig.PROPERTY_DATATYPE_FACTORY, dataFactory);
         if (needInitializationSql) {
-            Statement stmt = con.createStatement();
-            stmt.executeUpdate(initSql);
+            try (Statement stmt = con.createStatement()) {
+                stmt.executeUpdate(initSql);
+            }
         }
         return connection;
     }
