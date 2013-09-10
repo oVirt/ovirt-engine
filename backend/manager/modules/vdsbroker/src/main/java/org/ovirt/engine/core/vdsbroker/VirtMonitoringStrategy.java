@@ -87,25 +87,23 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
     private boolean hostCompliesWithClusterEmulationMode(VDS vds, VDSGroup vdsGroup) {
 
         String clusterEmulatedMachine = vdsGroup.getEmulatedMachine();
-        String[] hostSupportedEmulatedMachines =
-                vds.getSupportedEmulatedMachines() != null ? vds.getSupportedEmulatedMachines().split(",") : new String[]{""};
 
         // the initial cluster emulated machine value is set by the first host that complies.
         if (clusterEmulatedMachine == null || clusterEmulatedMachine.isEmpty()) {
-            return hostEmulationModeMatchesTheConfigValues(vds, hostSupportedEmulatedMachines);
+            return hostEmulationModeMatchesTheConfigValues(vds);
         } else {
-            // the cluster has the emulated machine flag set. match the host on it.
-            return Arrays.asList(hostSupportedEmulatedMachines).contains(clusterEmulatedMachine);
+            // the cluster has the emulated machine flag set. match the host against it.
+            return vds.getSupportedEmulatedMachines() != null ? Arrays.asList(vds.getSupportedEmulatedMachines().split(",")).contains(clusterEmulatedMachine) : false;
         }
     }
 
-    private boolean hostEmulationModeMatchesTheConfigValues(VDS vds, String[] hostSupportedEmulatedMachines) {
+    private boolean hostEmulationModeMatchesTheConfigValues(VDS vds) {
         // match this host against the config flags by order
         String matchedEmulatedMachine =
                 ListUtils.firstMatch(
                         Config.<List<String>> GetValue(ConfigValues.ClusterEmulatedMachines,
                                 vds.getVdsGroupCompatibilityVersion().getValue()),
-                        hostSupportedEmulatedMachines);
+                        vds.getSupportedEmulatedMachines().split(","));
 
         if (matchedEmulatedMachine != null && !matchedEmulatedMachine.isEmpty()) {
             setClusterEmulatedMachine(vds, matchedEmulatedMachine);
