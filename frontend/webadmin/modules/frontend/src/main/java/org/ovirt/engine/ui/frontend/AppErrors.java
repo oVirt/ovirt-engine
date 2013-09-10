@@ -817,6 +817,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action start removing")
     String VAR__ACTION__REMOVE_BRICKS_START();
 
+    @DefaultStringValue("$action stop remove bricks")
+    String VAR__ACTION__REMOVE_BRICKS_STOP();
+
     @DefaultStringValue("$action start profiling")
     String VAR__ACTION__START_PROFILE();
 
@@ -2488,6 +2491,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Cannot remove all the bricks from a Volume.")
     String ACTION_TYPE_FAILED_CAN_NOT_REMOVE_ALL_BRICKS_FROM_VOLUME();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Remove brick not started.")
+    String ACTION_TYPE_FAILED_GLUSTER_VOLUME_REMOVE_BRICKS_NOT_STARTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Gluster Volume should be started.")
     String ACTION_TYPE_FAILED_GLUSTER_VOLUME_SHOULD_BE_STARTED();

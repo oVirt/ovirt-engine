@@ -18,6 +18,11 @@ public class GlusterVolumeRemoveBricksVDSParameters extends GlusterVolumeVDSPara
     private int replicaCount;
     private boolean forceRemove;
 
+    public GlusterVolumeRemoveBricksVDSParameters(Guid serverId, String volumeName, List<GlusterBrickEntity> bricks) {
+        super(serverId, volumeName);
+        this.bricks = bricks;
+    }
+
     public GlusterVolumeRemoveBricksVDSParameters(Guid serverId,
             String volumeName,
             List<GlusterBrickEntity> bricks,
@@ -62,5 +67,4 @@ public class GlusterVolumeRemoveBricksVDSParameters extends GlusterVolumeVDSPara
     public void setForceRemove(boolean forceRemove) {
         this.forceRemove = forceRemove;
     }
-
 }
