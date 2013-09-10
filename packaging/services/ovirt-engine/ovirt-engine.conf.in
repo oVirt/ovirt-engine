@@ -38,6 +38,12 @@ ENGINE_NOVNC_DIR="/usr/share/novnc"
 ENGINE_SPICE_HTML5_DIR="/usr/share/spice-html5"
 
 #
+# A file created on init and removed on orderly shutdown
+# Used to diagnose unexpected engine stop by the notification service.
+#
+ENGINE_UP_MARK="${ENGINE_VAR}/engine.up"
+
+#
 # Intervals for stoping the engine:
 #
 ENGINE_STOP_TIME=10

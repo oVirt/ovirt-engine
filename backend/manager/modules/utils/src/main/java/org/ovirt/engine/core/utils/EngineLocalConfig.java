@@ -209,4 +209,8 @@ public class EngineLocalConfig extends LocalConfig {
     public String getPKIEngineStoreAlias() {
         return getProperty("ENGINE_PKI_ENGINE_STORE_ALIAS");
     }
+
+    public File getEngineUpMark(){
+        return getFile("ENGINE_UP_MARK");
+    }
 }

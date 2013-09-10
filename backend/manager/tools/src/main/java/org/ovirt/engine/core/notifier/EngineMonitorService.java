@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.notifier;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -287,8 +286,9 @@ public class EngineMonitorService implements Runnable {
                 }
             } else {
                 // reports an error for non responsive server
-                if(new File(pidFile).exists()) {
-                    // assumed crash, since the pid file is still there
+                EngineLocalConfig config = EngineLocalConfig.getInstance();
+                if(config.getEngineUpMark().exists()) {
+                    // assumed crash, since engine up file is still there
                     insertEventIntoAuditLogSafe(AuditLogType.VDC_STOP,
                             AuditLogSeverity.ERROR,
                             ENGINE_NOT_RESPONDING_ERROR,

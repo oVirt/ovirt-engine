@@ -447,17 +447,30 @@ class Daemon(service.Daemon):
         return (consoleLog, consoleLog)
 
     def daemonContext(self):
-        self.daemonAsExternalProcess(
-            executable=self._executable,
-            args=self._engineArgs,
-            env=self._engineEnv,
-            stopTime=self._config.getinteger(
-                'ENGINE_STOP_TIME'
-            ),
-            stopInterval=self._config.getinteger(
-                'ENGINE_STOP_INTERVAL'
-            ),
-        )
+        try:
+            #
+            # create mark file to be used by notifier service
+            #
+            with open(self._config.get('ENGINE_UP_MARK'), 'w') as f:
+                f.write('%s\n' % os.getpid())
+
+            self.daemonAsExternalProcess(
+                executable=self._executable,
+                args=self._engineArgs,
+                env=self._engineEnv,
+                stopTime=self._config.getinteger(
+                    'ENGINE_STOP_TIME'
+                ),
+                stopInterval=self._config.getinteger(
+                    'ENGINE_STOP_INTERVAL'
+                ),
+            )
+
+            raise self.TerminateException()
+
+        except self.TerminateException:
+            if os.path.exists(self._config.get('ENGINE_UP_MARK')):
+                os.remove(self._config.get('ENGINE_UP_MARK'))
 
     def daemonCleanup(self):
         self._tempDir.destroy()
