@@ -191,8 +191,13 @@ public class NewDiskModel extends AbstractDiskModel
                 NewDiskModel diskModel = (NewDiskModel) result.getState();
                 diskModel.stopProgress();
                 diskModel.cancel();
+                postSave();
             }
         }, this);
+    }
+
+    protected void postSave() {
+        // empty by default
     }
 
     @Override

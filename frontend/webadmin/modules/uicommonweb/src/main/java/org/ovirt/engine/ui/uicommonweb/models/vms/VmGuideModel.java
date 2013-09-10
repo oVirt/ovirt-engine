@@ -147,7 +147,7 @@ public class VmGuideModel extends GuideModel
         }
 
         VmInterfaceModel model =
-                NewVmInterfaceModel.createInstance(getEntity().getStaticData(), getEntity().getStoragePoolId(),
+                NewGuideVmInterfaceModel.createInstance(getEntity().getStaticData(), getEntity().getStoragePoolId(),
                         getEntity().getVdsGroupCompatibilityVersion(),
                         nics,
                         this);
@@ -172,7 +172,7 @@ public class VmGuideModel extends GuideModel
             return;
         }
 
-        NewDiskModel model = new NewDiskModel();
+        NewDiskModel model = new NewGuideDiskModel(this);
         model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         model.setVm(getEntity());
