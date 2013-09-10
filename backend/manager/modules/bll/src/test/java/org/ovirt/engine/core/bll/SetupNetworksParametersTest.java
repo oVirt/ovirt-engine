@@ -28,6 +28,7 @@ public class SetupNetworksParametersTest {
         VdsNetworkInterface nic = new VdsNetworkInterface();
         params.setInterfaces(Arrays.asList(nic));
 
+        nic.setName("nic");
         nic.setNetworkName("otherThenMgmtNetwork");
         nic.setGateway("1.1.1.1");
 

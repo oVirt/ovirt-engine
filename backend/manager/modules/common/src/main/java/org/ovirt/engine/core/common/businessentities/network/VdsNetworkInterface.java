@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
@@ -49,6 +50,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
 
     @Override
     @Size(min = 1, max = BusinessEntitiesDefinitions.HOST_NIC_NAME_LENGTH)
+    @NotNull(message = "VALIDATION_NAME_NULL")
     public String getName() {
         return super.getName();
     }
