@@ -11,7 +11,7 @@ public class InternalSearchUserByQueryCommand extends InternalBrokerCommandBase 
     }
 
     @Override
-    protected void ExecuteQuery() {
+    protected void executeQuery() {
         List<LdapUser> userList = InternalBrokerUtils.getAllUsers();
         setReturnValue(userList);
         setSucceeded(true);

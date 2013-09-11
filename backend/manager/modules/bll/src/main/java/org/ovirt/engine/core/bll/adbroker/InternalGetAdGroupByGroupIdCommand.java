@@ -13,7 +13,7 @@ public class InternalGetAdGroupByGroupIdCommand extends InternalBrokerCommandBas
     }
 
     @Override
-    protected void ExecuteQuery() {
+    protected void executeQuery() {
         LdapGroup group = InternalBrokerUtils.getGroupByGroupGuid(getGroupId());
         setReturnValue(group);
         if (group != null) {

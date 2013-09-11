@@ -12,7 +12,7 @@ public class InternalGetAdUserByUserNameCommand extends InternalBrokerCommandBas
     }
 
     @Override
-    protected void ExecuteQuery() {
+    protected void executeQuery() {
         LdapUser user = InternalBrokerUtils.getUserByUPN(getUserName());
 
         if (user != null) {

@@ -25,7 +25,7 @@ public class InternalAuthenticateUserCommand extends InternalBrokerCommandBase {
     }
 
     @Override
-    protected void ExecuteQuery() {
+    protected void executeQuery() {
         String userName = getParameters().getLoginName();
         String password = getParameters().getPassword();
         String domain = BrokerUtils.getLoginDomain(userName, getDomain());

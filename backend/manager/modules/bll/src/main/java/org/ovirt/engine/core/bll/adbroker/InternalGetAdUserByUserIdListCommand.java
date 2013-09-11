@@ -18,7 +18,7 @@ public class InternalGetAdUserByUserIdListCommand extends InternalBrokerCommandB
     }
 
     @Override
-    protected void ExecuteQuery() {
+    protected void executeQuery() {
         List<LdapUser> results = new ArrayList<LdapUser>();
         for (Guid guid : getUserIds()) {
             LdapUser user = InternalBrokerUtils.getUserByUserGuid(guid);

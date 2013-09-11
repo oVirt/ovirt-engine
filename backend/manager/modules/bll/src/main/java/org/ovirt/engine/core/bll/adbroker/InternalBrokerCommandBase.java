@@ -17,7 +17,7 @@ public abstract class InternalBrokerCommandBase extends BrokerCommandBase {
     @Override
     public LdapReturnValueBase execute() {
         try {
-            ExecuteQuery();
+            executeQuery();
         } catch (RuntimeException e) {
             log.errorFormat("Error in executing Internal broker command. Exception is {0} ", e.getMessage());
             _ldapReturnValue.setSucceeded(false);
@@ -26,7 +26,7 @@ public abstract class InternalBrokerCommandBase extends BrokerCommandBase {
         return _ldapReturnValue;
     }
 
-    protected abstract void ExecuteQuery();
+    protected abstract void executeQuery();
 
 }
 

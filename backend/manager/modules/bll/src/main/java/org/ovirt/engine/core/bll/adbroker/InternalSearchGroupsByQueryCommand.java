@@ -9,7 +9,7 @@ public class InternalSearchGroupsByQueryCommand extends InternalBrokerCommandBas
     }
 
     @Override
-    protected void ExecuteQuery() {
+    protected void executeQuery() {
         java.util.List<LdapGroup> groupList = InternalBrokerUtils.getAllGroups();
         setReturnValue(groupList);
         setSucceeded(true);
