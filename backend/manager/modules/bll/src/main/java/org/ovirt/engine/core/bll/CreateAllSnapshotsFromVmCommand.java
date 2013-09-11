@@ -67,8 +67,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     private List<DiskImage> cachedSelectedActiveDisks;
     private Guid cachedStorageDomainId = Guid.Empty;
-    /** flag that indicates whether memory snapshot is about to be created */
-    private boolean prepareForMemorySnapshot;
     private String cachedSnapshotIsBeingTakenMessage;
     private Guid newActiveSnapshotId = Guid.newGuid();
 
@@ -138,10 +136,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             incrementVmGeneration();
         }
 
-        if (!prepareForMemorySnapshot) {
-            freeLock();
-        }
-
         setSucceeded(true);
     }
 
@@ -166,7 +160,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         }
 
         if (getParameters().isSaveMemory() && isLiveSnapshotApplicable()) {
-            prepareForMemorySnapshot = true;
             return new LiveSnapshotMemoryImageBuilder(getVm(), getStorageDomainIdForVmMemory(), getStoragePool(), this);
         }
 
