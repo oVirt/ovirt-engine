@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.osinfo;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import java.util.Map;
 import org.ovirt.engine.core.compat.Version;
 
 /**
@@ -64,10 +65,11 @@ public interface OsRepository {
      */
     public int getMaximumRam(int osId, Version version);
 
-    /**
-     * @return if that OS could be connected with SPICE
+     /**
+      * @return map (osId -> compatibility version -> Boolean) that indicates SPICE support for all OSs and
+      * compatibility versions
      */
-    public boolean hasSpiceSupport(int osId, Version version);
+    public Map<Integer, Map<Version, Boolean>> getSpiceSupportMatrix();
 
     /**
      * this is Windows OSs specific path to the sysprep file

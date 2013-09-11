@@ -36,8 +36,8 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
             case GetMinimumOsRam:
                 setReturnValue(osRepository.getMinimumRam(getParameters().getOsId(), getParameters().getVersion()));
                 break;
-            case HasSpiceSupport:
-                setReturnValue(osRepository.hasSpiceSupport(getParameters().getOsId(), getParameters().getVersion()));
+            case GetSpiceSupportMatrix:
+                setReturnValue(osRepository.getSpiceSupportMatrix());
                 break;
             case GetNetworkDevices:
                 setReturnValue(osRepository.getNetworkDevices(getParameters().getOsId(), getParameters().getVersion()));

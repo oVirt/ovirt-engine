@@ -2291,8 +2291,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         }
     }
 
-    private void updateActionAvailability()
-    {
+    private void updateActionAvailability() {
         List items =
                 getSelectedItems() != null && getSelectedItem() != null ? getSelectedItems()
                         : new ArrayList();

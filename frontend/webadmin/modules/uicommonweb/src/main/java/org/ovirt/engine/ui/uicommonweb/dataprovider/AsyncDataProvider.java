@@ -10,7 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
-
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.TimeZoneType;
@@ -49,8 +48,6 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.businessentities.permissions;
-import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
@@ -63,6 +60,8 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.core.common.businessentities.permissions;
+import org.ovirt.engine.core.common.businessentities.tags;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.CommandVersionsInfo;
@@ -160,6 +159,9 @@ public final class AsyncDataProvider {
     // cached windows OS
     private static List<Integer> windowsOsIds;
 
+    // cached os's support for SPICE (given compatibility version)
+    private static Map<Integer, Map<Version, Boolean>> spiceSupportMatrix;
+
     public static String getDefaultConfigurationVersion() {
         return _defaultConfigurationVersion;
     }
@@ -196,6 +198,7 @@ public final class AsyncDataProvider {
         initUniqueOsNames();
         initLinuxOsTypes();
         initWindowsOsTypes();
+        initHasSpiceSupport();
     }
 
     public static void getDomainListViaPublic(AsyncQuery aQuery, boolean filterInternalDomain) {
@@ -3081,10 +3084,19 @@ public final class AsyncDataProvider {
         return osNames.get(osId);
     }
 
-    public static void hasSpiceSupport(int osId, Version version, AsyncQuery callback) {
-        Frontend.RunQuery(VdcQueryType.OsRepository,
-                new OsQueryParameters(OsRepositoryVerb.HasSpiceSupport, osId, version),
-                callback);
+    public static Boolean hasSpiceSupport(int osId, Version version) {
+        return spiceSupportMatrix.get(osId).get(version);
+    }
+
+    private static void initHasSpiceSupport() {
+        AsyncQuery callback = new AsyncQuery();
+        callback.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                spiceSupportMatrix = ((VdcQueryReturnValue) returnValue).getReturnValue();
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.OsRepository, new OsQueryParameters(OsRepositoryVerb.GetSpiceSupportMatrix), callback);
     }
 
     public static List<Integer> getOsIds() {

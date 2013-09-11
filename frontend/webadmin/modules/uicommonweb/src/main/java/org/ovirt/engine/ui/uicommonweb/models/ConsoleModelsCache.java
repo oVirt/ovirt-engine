@@ -3,13 +3,9 @@ package org.ovirt.engine.ui.uicommonweb.models;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ConsoleModelErrorEventListener;
@@ -77,21 +73,13 @@ public class ConsoleModelsCache {
 
         final boolean isWindowsExplorer = parentModel.getConfigurator().isClientWindowsExplorer();
 
-        final AsyncQuery asyncQuery = new AsyncQuery();
-
-        asyncQuery.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object returnValue) {
-                Boolean hasSpiceSupport = (Boolean) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                if (isWindowsExplorer && hasSpiceSupport != null && hasSpiceSupport.booleanValue()) {
-                    cachedModels.get(RDP_INDEX).setUserSelected(true);
-                } else {
-                    determineConsoleModelFromVm(vm, cachedModels).setUserSelected(true);
-                }
-                setupSelectionContext(vm);
-            }};
-
-        AsyncDataProvider.hasSpiceSupport(vm.getOs(), vm.getVdsGroupCompatibilityVersion(), asyncQuery);
+        Boolean hasSpiceSupport = AsyncDataProvider.hasSpiceSupport(vm.getOs(), vm.getVdsGroupCompatibilityVersion());
+        if (isWindowsExplorer && hasSpiceSupport != null && !hasSpiceSupport) {
+            cachedModels.get(RDP_INDEX).setUserSelected(true);
+        } else {
+            determineConsoleModelFromVm(vm, cachedModels).setUserSelected(true);
+        }
+        setupSelectionContext(vm);
     }
 
     private void deselectUserSelectedProtocol(Guid vmId) {

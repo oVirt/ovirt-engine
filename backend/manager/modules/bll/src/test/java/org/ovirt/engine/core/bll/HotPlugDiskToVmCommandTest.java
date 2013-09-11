@@ -11,8 +11,9 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -133,13 +134,21 @@ public class HotPlugDiskToVmCommandTest {
     @Test
     public void canDoActionFailedVirtIODisk() throws Exception {
         mockVmStatusUp();
-        when(osRepository.hasSpiceSupport(0, Version.v3_1)).thenReturn(true);
+        mockSpiceSupportMatrix();
         when(osRepository.getOsName(0)).thenReturn("RHEL6");
         createNotVirtIODisk();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.HOT_PLUG_DISK_IS_NOT_VIRTIO.toString()));
+    }
+
+    private void mockSpiceSupportMatrix() {
+        Map<Integer, Map<Version, Boolean>> supportMatrix = new HashMap<>();
+        HashMap<Version, Boolean> chunk = new HashMap<>();
+        chunk.put(Version.v3_1, true);
+        supportMatrix.put(0, chunk);
+        when(osRepository.getSpiceSupportMatrix()).thenReturn(supportMatrix);
     }
 
     @Test

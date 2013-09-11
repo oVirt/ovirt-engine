@@ -3,7 +3,9 @@ package org.ovirt.engine.core.common.osinfo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -144,8 +146,21 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public boolean hasSpiceSupport(int osId, Version version) {
-        return getBoolean(getValueByVersion(idToUnameLookup.get(osId), "spiceSupport", version), false);
+    public Map<Integer, Map<Version, Boolean>> getSpiceSupportMatrix() {
+        Map<Integer, Map<Version, Boolean>> spiceSupportMatrix = new HashMap<Integer, Map<Version, Boolean>>();
+        Set<Version> versionsWithNull = new HashSet<Version>(Version.ALL);
+        versionsWithNull.add(null);
+
+        for (Integer osId : getOsIds()) {
+            spiceSupportMatrix.put(osId, new HashMap<Version, Boolean>());
+
+            for (Version ver : versionsWithNull) {
+                boolean spiceSupport = getBoolean(getValueByVersion(idToUnameLookup.get(osId), "spiceSupport", ver), false);
+                spiceSupportMatrix.get(osId).put(ver, spiceSupport);
+            }
+        }
+
+        return spiceSupportMatrix;
     }
 
     @Override

@@ -113,7 +113,7 @@ public class OsRepositoryImplTest {
 
     @Test
     public void testHasSpiceSupport() throws Exception {
-        assertTrue(OsRepositoryImpl.INSTANCE.hasSpiceSupport(777, null));
+        assertTrue(OsRepositoryImpl.INSTANCE.getSpiceSupportMatrix().get(777).get(null));
     }
 
     @Test
