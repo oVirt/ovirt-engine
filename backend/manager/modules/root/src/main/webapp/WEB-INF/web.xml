@@ -216,12 +216,12 @@
 
   <!-- Redirect servlet (used by the reports integration): -->
   <servlet>
-    <servlet-name>RedirectServlet</servlet-name>
-    <servlet-class>org.ovirt.engine.core.redirect.RedirectServlet</servlet-class>
+    <servlet-name>ReportsRedirectServlet</servlet-name>
+    <servlet-class>org.ovirt.engine.core.redirect.ReportsRedirectServlet</servlet-class>
   </servlet>
   <servlet-mapping>
-    <servlet-name>RedirectServlet</servlet-name>
-    <url-pattern>/OvirtEngineWeb/RedirectServlet</url-pattern>
+    <servlet-name>ReportsRedirectServlet</servlet-name>
+    <url-pattern>/OvirtEngineWeb/ReportsRedirectServlet</url-pattern>
   </servlet-mapping>
 
   <!-- Servlet used to validate sessions (used by the reports

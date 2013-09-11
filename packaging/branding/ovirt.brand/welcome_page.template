@@ -9,6 +9,6 @@
     <a href="/webadmin/webadmin/WebAdmin.html?locale={userLocale}">{portal_admin}</a>
   </div>
   <div>
-    <a href="/OvirtEngineWeb/RedirectServlet?Page=Reports">{portal_reports}</a>
+    <a href="/OvirtEngineWeb/ReportsRedirectServlet">{portal_reports}</a>
   </div>
 </div>
