@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -87,12 +88,19 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                                 VdcObjectType.Storage,
                                 getStorageDomainId()));
             } catch (VdcBLLException e) {
-                if (e.getErrorCode() != VdcBllErrors.ImageDoesNotExistInDomainError) {
+                if (e.getErrorCode() == VdcBllErrors.ImageDoesNotExistInDomainError) {
+                    log.infoFormat("Disk '{0}' doesn't exist on storage domain '{1}', rolling forward",
+                            getDiskImage().getId(), getStorageDomainId());
+                }
+                // VDSM renames the image before deleting it, so technically the image doesn't exist after renaming,
+                // but the actual delete can still fail with ImageDeleteError.
+                // In this case, Engine has to check whether image still exists on the storage or not.
+                else if (e.getErrorCode() == VdcBllErrors.ImageDeleteError && isImageRemovedFromStorage()) {
+                    log.infoFormat("Disk '{0}' was deleted from storage domain '{1}'", getDiskImage().getId(),
+                            getStorageDomainId());
+                } else {
                     throw e;
                 }
-                log.warnFormat("The image group with id {0} wasn't actually deleted from the storage domain {1} because it didn't exist in it",
-                        getDiskImage().getId(),
-                        getStorageDomainId());
             }
 
             if (getParameters().getParentCommand() != VdcActionType.RemoveVmFromImportExport
@@ -103,6 +111,26 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
             log.warn("DiskImage is null, nothing to remove");
         }
         setSucceeded(true);
+    }
+
+    protected boolean isImageRemovedFromStorage() {
+        VDSReturnValue retValue = getBackend().getResourceManager().RunVdsCommand(VDSCommandType.GetImagesList,
+            new GetImagesListVDSCommandParameters(getStorageDomainId(), getDiskImage().getStoragePoolId()));
+
+        if (retValue.getSucceeded()) {
+            List<Guid> ids = (List<Guid>) retValue.getReturnValue();
+            for (Guid id : ids) {
+                if (id.equals(getDiskImage().getId())) {
+                    return false;
+                }
+            }
+            return true;
+        } else {
+            log.warnFormat("Could not retrieve image list from storage domain '{0}' '{1}', disk '{2}' might " +
+                    "not have been deleted", getStorageDomainId(), getStorageDomain().getName(),
+                    getDiskImage().getId());
+            return false;
+        }
     }
 
     @Override
