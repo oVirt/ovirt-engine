@@ -12,7 +12,8 @@ Create or replace FUNCTION InsertJob(
     v_end_time TIMESTAMP WITH TIME ZONE,
     v_last_update_time TIMESTAMP WITH TIME ZONE,
     v_correlation_id VARCHAR(50),
-    v_is_external boolean)
+    v_is_external boolean,
+    v_is_auto_cleared boolean)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -27,7 +28,8 @@ BEGIN
         end_time,
         last_update_time,
         correlation_id,
-        is_external)
+        is_external,
+        is_auto_cleared)
     VALUES (
         v_job_id,
         v_action_type,
@@ -39,7 +41,8 @@ BEGIN
         v_end_time,
         v_last_update_time,
         v_correlation_id,
-        v_is_external);
+        v_is_external,
+        v_is_auto_cleared);
 END; $procedure$
 LANGUAGE plpgsql;
 
