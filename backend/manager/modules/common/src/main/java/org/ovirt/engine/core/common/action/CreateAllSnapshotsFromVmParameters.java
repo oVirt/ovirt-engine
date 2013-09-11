@@ -5,7 +5,6 @@ import javax.validation.constraints.Size;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,11 +20,6 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
     private String description;
 
     private boolean needsLocking;
-    /**
-     * Used to store the vm status when the command start, will be used to check if the vm went down during the
-     * execution
-     */
-    private VMStatus initialVmStatus;
 
     /** Used to indicate the type of snapshot to take */
     private SnapshotType snapshotType;
@@ -54,14 +48,6 @@ public class CreateAllSnapshotsFromVmParameters extends VmOperationParameterBase
 
     public SnapshotType getSnapshotType() {
         return snapshotType;
-    }
-
-    public void setInitialVmStatus(VMStatus vmStatus) {
-        this.initialVmStatus = vmStatus;
-    }
-
-    public VMStatus getInitialVmStatus() {
-        return initialVmStatus;
     }
 
     /**

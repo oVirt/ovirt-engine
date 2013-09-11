@@ -8,7 +8,6 @@ import java.util.Map;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.memory.LiveSnapshotMemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.MemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.NullableMemoryImageBuilder;
@@ -28,7 +27,6 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateAllSnapshotsFromVmParameters;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
-import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -42,7 +40,6 @@ import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -120,7 +117,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     protected void executeVmCommand() {
         Guid createdSnapshotId = getSnapshotDao().getId(getVmId(), SnapshotType.ACTIVE);
         getParameters().setSnapshotType(determineSnapshotType());
-        getParameters().setInitialVmStatus(getVm().getStatus());
 
         getSnapshotDao().updateId(createdSnapshotId, newActiveSnapshotId);
 
@@ -215,66 +211,48 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     @Override
     protected void endVmCommand() {
-        // The following code must be executed in an inner transaction to make the changes visible
-        // to the RunVm command that might occur afterwards
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                boolean taskGroupSucceeded = getParameters().getTaskGroupSuccess();
-                Snapshot createdSnapshot = getSnapshotDao().get(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
-                // if the snapshot was not created the command should be
-                // handled as a failure
-                if (createdSnapshot == null) {
-                    taskGroupSucceeded = false;
-                }
-                if (taskGroupSucceeded) {
-                    getSnapshotDao().updateStatus(createdSnapshot.getId(), SnapshotStatus.OK);
-
-                    if (isLiveSnapshotApplicable()) {
-                        performLiveSnapshot(createdSnapshot);
-                    } else {
-                        // If the created snapshot contains memory, remove the memory volumes as
-                        // they are not in use since no live snapshot was created
-                        if (!createdSnapshot.getMemoryVolume().isEmpty()) {
-                            logMemorySavingFailed();
-                            if (!removeMemoryFromSnapshot(createdSnapshot, true)) {
-                                log.errorFormat("Failed to remove unused memory {0} of snapshot {1}",
-                                        createdSnapshot.getMemoryVolume(), createdSnapshot.getId());
-                            }
-                        }
-                    }
-                } else {
-                    if (createdSnapshot != null) {
-                        revertToActiveSnapshot(createdSnapshot.getId());
-                        // If the removed snapshot contained memory, remove the memory volumes
-                        // Note that the memory volumes might not have been created
-                        if (!removeMemoryFromSnapshot(createdSnapshot, false)) {
-                            log.warnFormat("Failed to remove memory {0} of snapshot {1}",
-                                    createdSnapshot.getMemoryVolume(), createdSnapshot.getId());
-                        }
-                    } else {
-                        log.warnFormat("No snapshot was created for VM {0} which is in LOCKED status", getVmId());
-                    }
-                }
-
-                incrementVmGeneration();
-
-                endActionOnDisks();
-                setSucceeded(taskGroupSucceeded);
-                getReturnValue().setEndActionTryAgain(false);
-                return null;
-            }
-        });
-
-        // if the VM is HA + it went down during the snapshot creation process because of an error, run it
-        // (during the snapshot creation process the VM couldn't be started (rerun))
-        if (getVm() != null && getVm().isAutoStartup() && isVmDownUnintentionally() &&
-                getParameters().getInitialVmStatus() != VMStatus.Down) {
-            Backend.getInstance().runInternalAction(VdcActionType.RunVm,
-                    new RunVmParams(getVmId()),
-                    ExecutionHandler.createInternalJobContext());
+        boolean taskGroupSucceeded = getParameters().getTaskGroupSuccess();
+        Snapshot createdSnapshot = getSnapshotDao().get(getVmId(), getParameters().getSnapshotType(), SnapshotStatus.LOCKED);
+        // if the snapshot was not created the command should be
+        // handled as a failure
+        if (createdSnapshot == null) {
+            taskGroupSucceeded = false;
         }
+        if (taskGroupSucceeded) {
+            getSnapshotDao().updateStatus(createdSnapshot.getId(), SnapshotStatus.OK);
+
+            if (isLiveSnapshotApplicable()) {
+                performLiveSnapshot(createdSnapshot);
+            } else {
+                // If the created snapshot contains memory, remove the memory volumes as
+                // they are not in use since no live snapshot was created
+                if (!createdSnapshot.getMemoryVolume().isEmpty()) {
+                    logMemorySavingFailed();
+                    if (!removeMemoryFromSnapshot(createdSnapshot, true)) {
+                        log.errorFormat("Failed to remove unused memory {0} of snapshot {1}",
+                                createdSnapshot.getMemoryVolume(), createdSnapshot.getId());
+                    }
+                }
+            }
+        } else {
+            if (createdSnapshot != null) {
+                revertToActiveSnapshot(createdSnapshot.getId());
+                // If the removed snapshot contained memory, remove the memory volumes
+                // Note that the memory volumes might not have been created
+                if (!removeMemoryFromSnapshot(createdSnapshot, false)) {
+                    log.warnFormat("Failed to remove memory {0} of snapshot {1}",
+                            createdSnapshot.getMemoryVolume(), createdSnapshot.getId());
+                }
+            } else {
+                log.warnFormat("No snapshot was created for VM {0} which is in LOCKED status", getVmId());
+            }
+        }
+
+        incrementVmGeneration();
+
+        endActionOnDisks();
+        setSucceeded(taskGroupSucceeded);
+        getReturnValue().setEndActionTryAgain(false);
     }
 
     private void logMemorySavingFailed() {
@@ -313,14 +291,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         });
 
         return sortedList;
-    }
-
-    /**
-     * returns true if the VM is down because of an error, otherwise false
-     */
-    private boolean isVmDownUnintentionally() {
-        VM vm = getVmDAO().get(getVmId());
-        return vm.getExitStatus() == VmExitStatus.Error && vm.isDown();
     }
 
     /**
