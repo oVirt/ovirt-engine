@@ -119,11 +119,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         for (DiskImage image : mImages) {
             MultiValueMapUtils.addToMap(image.getStorageIds().get(0), image, sourceImageDomainsImageMap);
             if (!diskInfoDestinationMap.containsKey(image.getId())) {
-                Guid destStorageId =
-                        getParameters().getDestinationStorageDomainId() != null ? getParameters().getDestinationStorageDomainId()
-                                : image.getStorageIds().get(0);
-                ArrayList<Guid> storageIds = new ArrayList<Guid>();
-                storageIds.add(destStorageId);
                 diskInfoDestinationMap.put(image.getId(), image);
             }
         }
