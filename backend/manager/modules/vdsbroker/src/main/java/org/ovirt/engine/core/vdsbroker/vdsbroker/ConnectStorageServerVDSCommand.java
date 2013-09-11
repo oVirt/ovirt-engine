@@ -30,7 +30,7 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
     @Override
     protected void executeVdsBrokerCommand() {
         _result = getBroker().connectStorageServer(getParameters().getStorageType().getValue(),
-                getParameters().getStoragePoolId().toString(), BuildStructFromConnectionListObject());
+                getParameters().getStoragePoolId().toString(), buildStructFromConnectionListObject());
         proceedProxyReturnValue();
         Map<String, String> returnValue = _result.convertToStatusList();
         setReturnValue(returnValue);
@@ -55,20 +55,20 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
     }
 
     @SuppressWarnings("unchecked")
-    protected Map<String, String>[] BuildStructFromConnectionListObject() {
+    protected Map<String, String>[] buildStructFromConnectionListObject() {
         final StoragePool storagePool =
                 DbFacade.getInstance().getStoragePoolDao().getForVds(getParameters().getVdsId());
         final Map<String, String>[] result = new HashMap[getParameters().getConnectionList().size()];
         int i = 0;
         for (StorageServerConnections connection : getParameters().getConnectionList()) {
-            result[i] = CreateStructFromConnection(connection, storagePool);
+            result[i] = createStructFromConnection(connection, storagePool);
             i++;
         }
         return result;
     }
 
-    public static Map<String, String> CreateStructFromConnection(final StorageServerConnections connection,
-            final StoragePool storagePool) {
+    public static Map<String, String> createStructFromConnection(final StorageServerConnections connection,
+                                                                 final StoragePool storagePool) {
         // for information, see _connectionDict2ConnectionInfo in vdsm/storage/hsm.py
         DefaultValueMap con = new DefaultValueMap();
         con.put("id", connection.getid(), Guid.Empty.toString());
