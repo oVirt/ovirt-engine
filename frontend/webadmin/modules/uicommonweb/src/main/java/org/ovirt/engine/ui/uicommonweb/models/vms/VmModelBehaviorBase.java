@@ -1001,7 +1001,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }), id);
     }
 
-    protected void initNetworkInterfaces(final ProfileBehavior behavior, final List<VmNetworkInterface> argNics) {
+    protected void updateNetworkInterfaces(final ProfileBehavior behavior, final List<VmNetworkInterface> nics) {
         boolean hotUpdateSupported =
                 (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
                         getModel().getSelectedCluster().getcompatibility_version().toString());
@@ -1010,28 +1010,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                List<VnicProfileView> profiles = (List<VnicProfileView>) returnValue;
-                List<VnicInstanceType> vnicInstanceTypes = new ArrayList<VnicInstanceType>();
-                List<VmNetworkInterface> nics = (argNics == null) ? new ArrayList<VmNetworkInterface>() : argNics;
-
-                if (nics.isEmpty() && profilesExist(profiles)) {
-                    // create a default if none provided AND if there are profiles to choose from
-                    VmNetworkInterface networkInterface = new VmNetworkInterface();
-                    networkInterface.setName(AsyncDataProvider.getNewNicName(null));
-                    nics.add(networkInterface);
-                }
-
-                for (VmNetworkInterface nic : nics) {
-                    final VnicInstanceType vnicInstanceType = new VnicInstanceType(nic);
-                    vnicInstanceType.setItems(profiles);
-                    behavior.initSelectedProfile(vnicInstanceType,
-                            vnicInstanceType.getNetworkInterface());
-                    vnicInstanceTypes.add(vnicInstanceType);
-                }
-
-                getModel().getNicsWithLogicalNetworks().setItems(vnicInstanceTypes);
-                getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrDefault(vnicInstanceTypes));
-
+                assignVnicProfiles(behavior, nics, (List<VnicProfileView>) returnValue);
             }
 
         });
@@ -1039,8 +1018,23 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         behavior.initProfiles(hotUpdateSupported, getModel().getSelectedCluster().getId(), getModel().getSelectedDataCenter().getId(), query);
     }
 
-    private boolean profilesExist(List<VnicProfileView> profiles) {
-        return !profiles.isEmpty() && profiles.get(0) != null;
+    protected void assignVnicProfiles(ProfileBehavior behavior, List<VmNetworkInterface> nics, List<VnicProfileView> profiles) {
+        if (nics == null || nics.isEmpty()) {
+            return;
+        }
+
+        List<VnicInstanceType> vnicInstanceTypes = new ArrayList<VnicInstanceType>();
+
+        for (VmNetworkInterface nic : nics) {
+            final VnicInstanceType vnicInstanceType = new VnicInstanceType(nic);
+            vnicInstanceType.setItems(profiles);
+            behavior.initSelectedProfile(vnicInstanceType,
+                    vnicInstanceType.getNetworkInterface());
+            vnicInstanceTypes.add(vnicInstanceType);
+        }
+
+        getModel().getNicsWithLogicalNetworks().setItems(vnicInstanceTypes);
+        getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrDefault(vnicInstanceTypes));
     }
 
     public void updateSingleQxl(boolean visible) {

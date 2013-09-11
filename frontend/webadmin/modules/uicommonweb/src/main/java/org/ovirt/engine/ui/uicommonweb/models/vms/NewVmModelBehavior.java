@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -190,7 +191,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         }
         updateCpuPinningVisibility();
         updateTemplate();
-        initNetworkInterfaces(networkBehavior, null);
+        updateNetworkInterfaces(networkBehavior, null);
         updateMemoryBalloon();
         updateCpuSharesAvailability();
     }
@@ -206,13 +207,31 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
                 List<VmNetworkInterface> nics =
                         (List<VmNetworkInterface>) ((VdcQueryReturnValue) returnValue).getReturnValue();
-                initNetworkInterfaces(networkBehavior, nics);
+                updateNetworkInterfaces(networkBehavior, nics);
             }
         });
 
         Frontend.RunQuery(VdcQueryType.GetTemplateInterfacesByTemplateId,
                 new IdQueryParameters(template.getId()),
                 query);
+    }
+
+    @Override
+    protected void assignVnicProfiles(ProfileBehavior behavior, List argNics, List profiles) {
+        List<VmNetworkInterface> nics = (argNics == null) ? new ArrayList<VmNetworkInterface>() : argNics;
+
+        if (nics.isEmpty() && profilesExist(profiles)) {
+            // create a default if none provided AND if there are profiles to choose from
+            VmNetworkInterface networkInterface = new VmNetworkInterface();
+            networkInterface.setName(AsyncDataProvider.getNewNicName(null));
+            nics.add(networkInterface);
+        }
+
+        super.assignVnicProfiles(behavior, nics, profiles);
+    }
+
+    private boolean profilesExist(List<VnicProfileView> profiles) {
+        return !profiles.isEmpty() && profiles.get(0) != null;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -23,9 +24,14 @@ public class UnitVmModelNetworkAsyncCallbacks {
         public void executed(FrontendActionAsyncResult result) {
             VdcReturnValueBase returnValue = result.getReturnValue();
             if (returnValue != null && returnValue.getSucceeded()) {
-                doNetworkOperation(returnValue,
-                        (List<VnicInstanceType>) unitVmModel.getNicsWithLogicalNetworks().getItems()
-                );
+                List<VnicInstanceType> nicWithLogicalNetworks = (List<VnicInstanceType>)
+                        unitVmModel.getNicsWithLogicalNetworks().getItems();
+                if (nicWithLogicalNetworks == null) {
+                    // enter the opertation with null object if nothing has been edited by the user
+                    nicWithLogicalNetworks = new ArrayList<VnicInstanceType>();
+                }
+
+                doNetworkOperation(returnValue, nicWithLogicalNetworks);
             } else {
                 networkCreatingManager.getCallback().queryFailed();
             }
