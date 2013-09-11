@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.storage.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.StorageHelperBase;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.VmDiskOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -105,7 +106,12 @@ public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBa
         return checkPciAndIdeLimit(getVm().getNumOfMonitors(),
                 vmInterfaces,
                 allVmDisks,
+                isVirtioScsiControllerAttached(getVmId()),
                 getReturnValue().getCanDoActionMessages());
+    }
+
+    protected boolean isVirtioScsiControllerAttached(Guid vmId) {
+        return VmDeviceUtils.isVirtioScsiControllerAttached(vmId);
     }
 
     protected boolean isDiskCanBeAddedToVm(Disk diskInfo, VM vm) {

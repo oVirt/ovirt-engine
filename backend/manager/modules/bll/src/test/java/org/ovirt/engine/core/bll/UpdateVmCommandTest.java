@@ -70,7 +70,8 @@ public class UpdateVmCommandTest {
             mockConfig(ConfigValues.VmPriorityMaxValue, 100),
             mockConfig(ConfigValues.MaxNumOfVmCpus, "3.0", 16),
             mockConfig(ConfigValues.MaxNumOfVmSockets, "3.0", 16),
-            mockConfig(ConfigValues.MaxNumOfCpuPerSocket, "3.0", 16)
+            mockConfig(ConfigValues.MaxNumOfCpuPerSocket, "3.0", 16),
+            mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_3.toString(), true)
             );
 
     @Before

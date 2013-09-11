@@ -111,6 +111,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         String monitorsStyles();
 
         String migrationSelectorInner();
+
+        String isVirtioScsiEnabledEditor();
     }
 
     @UiField
@@ -504,6 +506,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("provisioningClone")
     public EntityModelRadioButtonEditor provisioningCloneEditor;
 
+    @UiField(provided = true)
+    @Path(value = "isVirtioScsiEnabled.entity")
+    EntityModelCheckBoxEditor isVirtioScsiEnabled;
+
+    @UiField(provided = true)
+    @Ignore
+    public InfoIcon isVirtioScsiEnabledInfoIcon;
+
     @UiField
     @Ignore
     Label disksAllocationLabel;
@@ -621,12 +631,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isSoundcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         copyTemplatePermissionsEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isMemoryBalloonDeviceEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer(), true);
+        isVirtioScsiEnabled = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSingleQxlEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         cpuPinningInfo =
                 new InfoIcon(SafeHtmlUtils.fromTrustedString(applicationTemplates.italicFixedWidth("400px",//$NON-NLS-1$
                         constants.cpuPinningLabelExplanation())
                         .asString()
                         .replaceAll("(\r\n|\n)", "<br />")), resources);//$NON-NLS-1$ //$NON-NLS-2$
+        isVirtioScsiEnabledInfoIcon =
+                new InfoIcon(applicationTemplates.italicText(constants.isVirtioScsiEnabledInfo()), resources);
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
         disksAllocationView = new DisksAllocationView(constants);
@@ -935,6 +948,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         copyTemplatePermissionsEditor.setLabel(constants.copyTemplatePermissions());
         isSmartcardEnabledEditor.setLabel(constants.smartcardVmPopup());
         isMemoryBalloonDeviceEnabled.setLabel(constants.memoryBalloonDeviceEnabled());
+        isVirtioScsiEnabled.setLabel(constants.isVirtioScsiEnabled());
 
         // Pools Tab
         poolTab.setLabel(constants.poolVmPopup());
@@ -1007,6 +1021,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         numOfMonitorsEditor.setStyleName(style.monitorsStyles());
         numOfMonitorsEditor.hideLabel();
         migrationModeEditor.addContentWidgetStyleName(style.migrationSelectorInner());
+        isVirtioScsiEnabled.addContentWidgetStyleName(style.isVirtioScsiEnabledEditor());
     }
 
     @Override
@@ -1095,7 +1110,20 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 boolean isDisksAvailable = object.getIsDisksAvailable();
                 changeApplicationLevelVisibility(disksAllocationPanel, isDisksAvailable);
 
-                changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable || isDisksAvailable);
+                changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable || isDisksAvailable ||
+                    (Boolean) object.getIsVirtioScsiEnabled().getIsAvailable());
+            }
+        });
+
+        object.getIsVirtioScsiEnabled().getPropertyChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
+
+                if (e.PropertyName == "IsAvailable") { //$NON-NLS-1$
+                    isVirtioScsiEnabledInfoIcon.setVisible(object.getIsVirtioScsiEnabled().getIsAvailable());
+                }
             }
         });
 
@@ -1205,7 +1233,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
                     boolean isProvisioningAvailable = vm.getProvisioning().getIsAvailable();
                     changeApplicationLevelVisibility(storageAllocationPanel, isProvisioningAvailable
-                            || isDisksAvailable);
+                            || isDisksAvailable || (Boolean) vm.getIsVirtioScsiEnabled().getIsAvailable());
 
                     if (isDisksAvailable) {
                         // Update warning message by disks status

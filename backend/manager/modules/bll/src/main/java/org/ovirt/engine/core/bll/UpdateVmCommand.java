@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
@@ -292,6 +293,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             if (!checkPciAndIdeLimit(vmFromParams.getNumOfMonitors(),
                     interfaces,
                     allDisks,
+                    isVirtioScsiEnabled(),
                     getReturnValue().getCanDoActionMessages())) {
                 return false;
             }
@@ -361,6 +363,17 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         if (!isCpuSharesValid(vmFromParams)) {
             return failCanDoAction(VdcBllMessages.QOS_CPU_SHARES_OUT_OF_RANGE);
+        }
+
+        if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
+                !FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
+            return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
+        }
+
+        if (getParameters().isVirtioScsiEnabled() != null && !getVm().isDown()
+                && vmDeviceChanged(VmDeviceGeneralType.CONTROLLER, getParameters().isVirtioScsiEnabled())) {
+            addCanDoActionMessage("$device VirtIO-SCSI");
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_DEVICE_VM_NOT_DOWN);
         }
 
         return true;
@@ -505,5 +518,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         if (!quotaSanityOnly) {
             super.addQuotaPermissionSubject(quotaPermissionList);
         }
+    }
+
+    protected boolean isVirtioScsiEnabled() {
+        Boolean virtioScsiEnabled = getParameters().isVirtioScsiEnabled();
+        return virtioScsiEnabled != null ? virtioScsiEnabled :
+                VmDeviceUtils.isVirtioScsiControllerAttached(getVmId());
     }
 }

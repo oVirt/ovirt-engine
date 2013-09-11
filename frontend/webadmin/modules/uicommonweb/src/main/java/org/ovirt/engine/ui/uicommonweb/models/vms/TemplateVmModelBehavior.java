@@ -113,6 +113,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
         updateMemoryBalloon();
         updateCpuSharesAvailability();
+        updateVirtioScsiAvailability();
     }
 
     @Override

@@ -20,6 +20,7 @@ public enum VdcQueryType implements Serializable {
     GetSoundDevices(VdcQueryAuthType.User),
     GetVmsByVnicProfileId,
     GetTemplatesByVnicProfileId,
+    GetVirtioScsiControllers,
 
     // Vds queries
     GetVdsByVdsId,

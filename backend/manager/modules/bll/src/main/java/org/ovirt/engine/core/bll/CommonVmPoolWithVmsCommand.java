@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
@@ -122,6 +123,9 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                     : VmType.Desktop == getParameters().getVmStaticData().getVmType());
 
             addVmAndAttachToPoolParams.setConsoleEnabled(getParameters().isConsoleEnabled());
+
+            addVmAndAttachToPoolParams.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
+
             VdcReturnValueBase returnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.AddVmAndAttachToPool,
                             addVmAndAttachToPoolParams,
@@ -237,6 +241,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (getParameters().getVmPool().getPrestartedVms() > getParameters().getVmPool().getAssignedVmsCount()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PRESTARTED_VMS_CANNOT_EXCEED_VMS_COUNT);
             return false;
+        }
+
+        if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
+                !FeatureSupported.virtIoScsi(grp.getcompatibility_version())) {
+            return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
         }
 
         return checkFreeSpaceAndTypeOnDestDomains();

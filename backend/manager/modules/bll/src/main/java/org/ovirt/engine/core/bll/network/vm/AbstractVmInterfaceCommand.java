@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.ActivateDeactivateVmNicParameters;
 import org.ovirt.engine.core.common.action.AddVmInterfaceParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
@@ -91,6 +92,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         List<Disk> allDisks = getDiskDao().getAllForVm(getVmId());
 
         return checkPciAndIdeLimit(vm.getNumOfMonitors(), allInterfaces, allDisks,
+                VmDeviceUtils.isVirtioScsiControllerAttached(getVmId()),
                 getReturnValue().getCanDoActionMessages());
     }
 

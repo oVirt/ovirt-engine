@@ -6,8 +6,10 @@ import java.util.List;
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.VmNicValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -81,6 +83,11 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
                 // Check that the USB policy is legal
                 if (!VmHandler.isUsbPolicyLegal(vm.getUsbPolicy(), vm.getOs(), targetCluster, getReturnValue().getCanDoActionMessages())) {
                     return false;
+                }
+
+                if (VmDeviceUtils.isVirtioScsiControllerAttached(vm.getId()) &&
+                        !FeatureSupported.virtIoScsi(targetCluster.getcompatibility_version())) {
+                    return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
                 }
             } else {
                 addCanDoActionMessage(VdcBllMessages.VM_STATUS_NOT_VALID_FOR_UPDATE);

@@ -62,6 +62,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
         parameters.setSoundDeviceEnabled(getParameters().isSoundDeviceEnabled());
         parameters.setConsoleEnabled(getParameters().isConsoleEnabled());
+        parameters.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
 
         return Backend.getInstance().runInternalAction(VdcActionType.AddVm,
                         parameters,

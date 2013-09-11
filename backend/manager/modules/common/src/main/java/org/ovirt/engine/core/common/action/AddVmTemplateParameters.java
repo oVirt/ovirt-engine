@@ -46,6 +46,8 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
 
     private Boolean consoleEnabled;
 
+    private Boolean virtioScsiEnabled;
+
     public AddVmTemplateParameters(VmStatic masterVm, String name, String description) {
         _masterVm = masterVm;
         _name = name;
@@ -141,5 +143,13 @@ public class AddVmTemplateParameters extends VmTemplateParametersBase {
 
     public void setCopyVmPermissions(boolean copyVmPermissions) {
         this.copyVmPermissions = copyVmPermissions;
+    }
+
+    public Boolean isVirtioScsiEnabled() {
+        return virtioScsiEnabled;
+    }
+
+    public void setVirtioScsiEnabled(Boolean virtioScsiEnabled) {
+        this.virtioScsiEnabled = virtioScsiEnabled;
     }
 }

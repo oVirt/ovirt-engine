@@ -267,7 +267,8 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
                 devices,
                 getSrcDeviceIdToTargetDeviceIdMapping(),
                 getParameters().isSoundDeviceEnabled(),
-                getParameters().isConsoleEnabled());
+                getParameters().isConsoleEnabled(),
+                isVirtioScsiEnabled());
     }
 
     @Override

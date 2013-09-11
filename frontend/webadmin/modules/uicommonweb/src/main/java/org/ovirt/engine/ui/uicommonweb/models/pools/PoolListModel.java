@@ -518,6 +518,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         param.setDiskInfoDestinationMap(model.getDisksAllocationModel()
                                 .getImageToDestinationDomainMap());
                         param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+                        param.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
 
                         param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                         if (model.getQuota().getSelectedItem() != null) {

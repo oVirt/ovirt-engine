@@ -2037,6 +2037,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         Guid.Empty);
                 parameters.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                 parameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+                parameters.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
                 parameters.setBalloonEnabled(balloonEnabled(model));
 
                 setVmWatchdogToParams(model, parameters);
@@ -2068,6 +2069,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
                                     Guid.Empty);
                             param.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+                            param.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
                             param.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
                             param.setBalloonEnabled(balloonEnabled(model));
                             param.setCopyTemplatePermissions((Boolean) model.getCopyPermissions().getEntity());
@@ -2095,6 +2097,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
                     parameters.add(params);
                     params.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
+                    params.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
                     setVmWatchdogToParams(model, params);
 
                     Frontend.RunAction(VdcActionType.AddVm, params, new NetworkCreateOrUpdateFrontendActionAsyncCallback(model, defaultNetworkCreatingManager), this);
@@ -2136,6 +2139,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                     updateVmParams.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled()
                                             .getEntity());
                                     updateVmParams.setBalloonEnabled(balloonEnabled(model));
+                                    updateVmParams.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
 
                                     Frontend.RunAction(VdcActionType.UpdateVm,
                                             updateVmParams, new NetworkUpdateFrontendAsyncCallback(model, defaultNetworkCreatingManager, vmListModel.getcurrentVm().getId()), vmListModel);
@@ -2163,6 +2167,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 updateVmParams.setSoundDeviceEnabled((Boolean) model.getIsSoundcardEnabled().getEntity());
                 updateVmParams.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
                 updateVmParams.setBalloonEnabled(balloonEnabled(model));
+                updateVmParams.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
                 Frontend.RunAction(VdcActionType.UpdateVm, updateVmParams, new NetworkUpdateFrontendAsyncCallback(model, defaultNetworkCreatingManager, getcurrentVm().getId()), this);
             }
         }

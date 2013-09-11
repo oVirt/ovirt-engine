@@ -230,4 +230,9 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
     protected void buildVmWatchdog() {
         // Not supported in old code
     }
+
+    @Override
+    protected void buildVmVirtioScsi() {
+        // Not supported in old code
+    }
 }

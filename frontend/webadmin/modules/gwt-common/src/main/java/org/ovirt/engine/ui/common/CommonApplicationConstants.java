@@ -1566,4 +1566,10 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("FQDN")
     String fqdn();
+
+    @DefaultStringValue("VirtIO-SCSI Enabled")
+    String isVirtioScsiEnabled();
+
+    @DefaultStringValue("Attach a VirtIO-SCSI controller when running the VM")
+    String isVirtioScsiEnabledInfo();
 }

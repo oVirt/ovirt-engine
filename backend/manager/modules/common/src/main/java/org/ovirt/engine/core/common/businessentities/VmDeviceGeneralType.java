@@ -137,6 +137,7 @@ public enum VmDeviceGeneralType {
 
             case CONTROLLER:
             case USB:
+            case VIRTIOSCSI:
                 type = CONTROLLER;
                 break;
 

@@ -542,6 +542,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     protected void endSuccessfullySynchronous() {
         VM vm = getVm();
         VmHandler.unLockVm(vm);
+        VmDeviceUtils.setVmDevices(vm.getStaticData());
         this.updateSnapshotOvf(vm);
         setSucceeded(true);
     }

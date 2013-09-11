@@ -74,6 +74,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         builder.buildVmUsbDevices();
         builder.buildVmMemoryBalloon();
         builder.buildVmWatchdog();
+        builder.buildVmVirtioScsi();
         builder.buildUnmanagedDevices();
     }
 

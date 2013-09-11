@@ -116,7 +116,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @return
      */
     public static <T extends Disk> boolean checkPciAndIdeLimit(int monitorsNumber, List<VmNic> interfaces,
-            List<T> disks, ArrayList<String> messages) {
+            List<T> disks, boolean virtioScsiEnabled, ArrayList<String> messages) {
         boolean result = true;
         // this adds: monitors + 2 * (interfaces with type rtl_pv) + (all other
         // interfaces) + (all disks that are not IDE)
@@ -138,12 +138,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }).size();
 
         // VirtIO SCSI controller requires one PCI slot
-        pciInUse += LinqUtils.filter(disks, new Predicate<T>() {
-            @Override
-            public boolean eval(T a) {
-                return a.getDiskInterface() == DiskInterface.VirtIO_SCSI;
-            }
-        }).isEmpty() ? 0 : 1;
+        pciInUse += virtioScsiEnabled ? 1 : 0;
 
         if (pciInUse > MAX_PCI_SLOTS) {
             result = false;

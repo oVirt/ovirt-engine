@@ -23,6 +23,7 @@ import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
@@ -209,7 +210,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             getVmTemplateId(),
                             srcDeviceIdToTargetDeviceIdMapping,
                             getParameters().isSoundDeviceEnabled(),
-                            getParameters().isConsoleEnabled());
+                            getParameters().isConsoleEnabled(),
+                            getParameters().isVirtioScsiEnabled());
                 } else {
                     // sending true for isVm in order to create basic devices needed
                     VmDeviceUtils.copyVmDevices(getVmId(),
@@ -220,7 +222,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                             Collections.<VmDevice> emptyList(),
                             srcDeviceIdToTargetDeviceIdMapping,
                             getParameters().isSoundDeviceEnabled(),
-                            getParameters().isConsoleEnabled());
+                            getParameters().isConsoleEnabled(),
+                            getParameters().isVirtioScsiEnabled());
                 }
 
                 setSucceeded(true);
@@ -276,6 +279,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getReturnValue().getCanDoActionMessages(),
                         getVdsGroup().getcompatibility_version())) {
             return false;
+        }
+
+        if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
+                !FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
+            return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
         }
 
         return imagesRelatedChecks() && AddVmCommand.checkCpuSockets(getParameters().getMasterVm().getNumOfSockets(),

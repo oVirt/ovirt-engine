@@ -44,6 +44,14 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
      */
     private Boolean consoleEnabled;
 
+    /*
+     * This parameter is used to decide whether to attach a VirtIO-SCSI controller or not.
+     * When value is null:
+     * - Add VM - defaulted to true for cluster >= 3.3
+     * - Update VM - preserve current configuration
+     */
+    private Boolean virtioScsiEnabled;
+
     public VmManagementParametersBase() {
         privateStorageDomainId = Guid.Empty;
         consoleEnabled = Boolean.FALSE;
@@ -178,5 +186,13 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
 
     public void setCopyTemplatePermissions(boolean copyTemplatePermissions) {
         this.copyTemplatePermissions = copyTemplatePermissions;
+    }
+
+    public Boolean isVirtioScsiEnabled() {
+        return virtioScsiEnabled;
+    }
+
+    public void setVirtioScsiEnabled(Boolean virtioScsiEnabled) {
+        this.virtioScsiEnabled = virtioScsiEnabled;
     }
 }

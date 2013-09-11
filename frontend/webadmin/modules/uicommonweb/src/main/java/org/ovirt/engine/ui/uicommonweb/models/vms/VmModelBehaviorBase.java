@@ -660,6 +660,13 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         }
     }
 
+    protected void updateVirtioScsiAvailability() {
+        VDSGroup cluster = getModel().getSelectedCluster();
+        boolean isVirtioScsiEnabled = (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+                ConfigurationValues.VirtIoScsiEnabled, cluster.getcompatibility_version().getValue());
+        getModel().getIsVirtioScsiEnabled().setIsAvailable(isVirtioScsiEnabled);
+    }
+
     protected void setupTemplate(VM vm, ListModel model) {
         AsyncDataProvider.getTemplateById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
@@ -972,6 +979,24 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 getModel().getIsConsoleDeviceEnabled().setEntity(!consoleDevices.isEmpty());
             }
         }));
+    }
+
+    protected void updateVirtioScsiEnabled(Guid vmId) {
+        if (Guid.isNullOrEmpty(vmId)) {
+            VDSGroup cluster = getModel().getSelectedCluster();
+            boolean isVirtioScsiEnabled = (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+                    ConfigurationValues.VirtIoScsiEnabled, cluster.getcompatibility_version().getValue());
+            getModel().getIsVirtioScsiEnabled().setEntity(isVirtioScsiEnabled);
+            return;
+        }
+
+        AsyncDataProvider.isVirtioScsiEnabledForVm(new AsyncQuery(getModel(), new INewAsyncCallback() {
+
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                getModel().getIsVirtioScsiEnabled().setEntity(returnValue);
+            }
+        }), vmId);
     }
 
     public void vmTypeChanged(VmType vmType) {
