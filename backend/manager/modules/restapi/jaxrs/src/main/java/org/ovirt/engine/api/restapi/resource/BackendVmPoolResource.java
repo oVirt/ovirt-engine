@@ -126,6 +126,7 @@ public class BackendVmPoolResource
                                                 new GetVmTemplateParameters(vm.getId()),
                                                 vm.getId().toString());
                 vm.getStaticData().setMemSizeMb(template.getMemSizeMb());
+                vm.getStaticData().setSingleQxlPci(template.getSingleQxlPci());
             }
 
             final AddVmPoolWithVmsParameters parameters = new AddVmPoolWithVmsParameters(entity, vm, size, -1);
