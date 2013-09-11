@@ -19,6 +19,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
@@ -100,6 +101,11 @@ public class NewNetworkModel extends NetworkModel {
     @Override
     protected void initIsVm() {
         getIsVmNetwork().setEntity(true);
+    }
+
+    @Override
+    protected void selectExternalProvider() {
+        getExternalProviders().setSelectedItem(Linq.firstOrDefault(getExternalProviders().getItems()));
     }
 
     @Override

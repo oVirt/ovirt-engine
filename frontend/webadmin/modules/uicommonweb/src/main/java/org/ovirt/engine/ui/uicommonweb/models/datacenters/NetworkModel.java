@@ -6,13 +6,16 @@ import java.util.List;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -84,8 +87,9 @@ public abstract class NetworkModel extends Model
             }
         });
 
-        setExternalProviders(new ListModel());
         setNetworkLabel(new EntityModel());
+        setExternalProviders(new ListModel());
+        initExternalProviderList();
 
         EntityModel stpEnabled = new EntityModel();
         stpEnabled.setEntity(false);
@@ -125,6 +129,22 @@ public abstract class NetworkModel extends Model
         onExportChanged();
         updateVlanTagChangeability();
         updateMtuChangeability();
+    }
+
+    private void initExternalProviderList() {
+        startProgress(null);
+        AsyncQuery getProvidersQuery = new AsyncQuery();
+        getProvidersQuery.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object result)
+            {
+                List<Provider> providers = (List<Provider>) result;
+                getExternalProviders().setItems(providers);
+                selectExternalProvider();
+                stopProgress();
+            }
+        };
+        AsyncDataProvider.GetAllNetworkProviders(getProvidersQuery);
     }
 
     public EntityModel getName()
@@ -491,6 +511,8 @@ public abstract class NetworkModel extends Model
     protected abstract void initMtu();
 
     protected abstract void initIsVm();
+
+    protected abstract void selectExternalProvider();
 
     protected abstract void initProfiles();
 
