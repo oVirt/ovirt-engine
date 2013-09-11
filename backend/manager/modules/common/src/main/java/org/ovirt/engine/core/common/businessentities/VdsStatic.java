@@ -436,6 +436,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
 
     public void setPmSecondaryOptionsMap(HashMap<String, String> value) {
         pmSecondaryOptionsMap = value;
+        pmSecondaryOptions = PmOptionsMapToString(value);
     }
 
     public long getOtpValidity() {

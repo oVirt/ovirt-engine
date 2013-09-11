@@ -160,6 +160,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setPmSecondaryIp(getPmSecondaryIp());
         vds.setPmSecondaryType(getPmSecondaryType());
         vds.setPmSecondaryPort(getPmSecondaryPort());
+        vds.setPmSecondaryOptions(getPmSecondaryOptions());
         vds.setPmSecondaryUser(getPmSecondaryUser());
         vds.setPmSecondaryPassword(getPmSecondaryPassword());
         vds.setPmSecondaryConcurrent(isPmSecondaryConcurrent());
