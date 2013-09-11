@@ -10,6 +10,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.GetDiskAlignmentParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -33,6 +34,7 @@ import org.ovirt.engine.core.common.vdscommands.GetDiskImageAlignmentVDSCommandP
 import org.ovirt.engine.core.common.vdscommands.GetDiskLunAlignmentVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
@@ -130,6 +132,8 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
     @Override
     protected void executeCommand() {
         GetDiskAlignmentVDSCommandParameters parameters;
+
+        AuditLogDirector.log(this, AuditLogType.DISK_ALIGNMENT_SCAN_START);
 
         acquireExclusiveDiskDbLocks();
 
@@ -281,5 +285,10 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
             diskToScan = getDiskDao().get((Guid) getParameters().getDiskId());
         }
         return diskToScan;
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        return getSucceeded() ? AuditLogType.DISK_ALIGNMENT_SCAN_SUCCESS : AuditLogType.DISK_ALIGNMENT_SCAN_FAILURE;
     }
 }

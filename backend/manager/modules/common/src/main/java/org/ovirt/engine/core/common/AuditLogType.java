@@ -79,6 +79,11 @@ public enum AuditLogType {
     HOST_REFRESHED_CAPABILITIES(606),
     HOST_REFRESH_CAPABILITIES_FAILED(607),
 
+    // Disk alignment audit logs
+    DISK_ALIGNMENT_SCAN_START(700),
+    DISK_ALIGNMENT_SCAN_FAILURE(701),
+    DISK_ALIGNMENT_SCAN_SUCCESS(702),
+
     // -- IRS Log types --
     IRS_FAILURE(22, AuditLogTimeInterval.HOUR.getValue() * 12),
     IRS_DISK_SPACE_LOW(26, AuditLogTimeInterval.HOUR.getValue() * 12),

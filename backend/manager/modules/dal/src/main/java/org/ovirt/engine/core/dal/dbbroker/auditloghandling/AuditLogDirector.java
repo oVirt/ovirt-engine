@@ -453,6 +453,9 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.STORAGE_DOMAIN_TASKS_ERROR, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.UPDATE_OVF_FOR_STORAGE_POOL_FAILED, AuditLogSeverity.WARNING);
         severities.put(AuditLogType.UPGRADE_STORAGE_POOL_ENCOUNTERED_PROBLEMS, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.DISK_ALIGNMENT_SCAN_START, AuditLogSeverity.NORMAL);
+        severities.put(AuditLogType.DISK_ALIGNMENT_SCAN_FAILURE, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.DISK_ALIGNMENT_SCAN_SUCCESS, AuditLogSeverity.NORMAL);
     }
 
     private static void initQuotaSeverities() {
