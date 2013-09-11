@@ -162,20 +162,16 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<V
         List<VdsNetworkInterface> dbIfaces = interfaceDAO.getAllInterfacesForVds(vds.getId());
         List<String> updatedIfaces = new ArrayList<String>();
 
-        List<VdsNetworkInterface> dbIfacesToBatch = new ArrayList<>();
-
         // First we check what interfaces need to update/delete
         for (VdsNetworkInterface dbIface : dbIfaces) {
             boolean found = false;
-
 
             for (VdsNetworkInterface vdsIface : vds.getInterfaces()) {
                 if (dbIface.getName().equals(vdsIface.getName())) {
                     // we preserve only the ID from the Database
                     // everything else is what we got from getVdsCapabilities
                     vdsIface.setId(dbIface.getId());
-                    // interfaceDAO.updateInterfaceForVds(vdsIface);
-                    dbIfacesToBatch.add(vdsIface);
+                    interfaceDAO.updateInterfaceForVds(vdsIface);
                     updatedIfaces.add(vdsIface.getName());
                     found = true;
                     break;
@@ -185,10 +181,6 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<V
                 interfaceDAO.removeInterfaceFromVds(dbIface.getId());
                 interfaceDAO.removeStatisticsForVds(dbIface.getId());
             }
-        }
-
-        if (!dbIfacesToBatch.isEmpty()) {
-            interfaceDAO.massUpdateInterfacesForVds(dbIfacesToBatch);
         }
 
         // now all that left is add the interfaces that not exists in the Database

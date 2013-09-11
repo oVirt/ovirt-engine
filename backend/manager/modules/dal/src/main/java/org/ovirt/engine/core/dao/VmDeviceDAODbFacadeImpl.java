@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.utils.SerializationFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -197,19 +196,4 @@ public class VmDeviceDAODbFacadeImpl extends
 
     }
 
-    @Override
-    public MapSqlParameterMapper<VmDevice> getBatchMapper() {
-        return new MapSqlParameterMapper<VmDevice>() {
-            @Override
-            public MapSqlParameterSource map(VmDevice entity) {
-                MapSqlParameterSource paramValue = new MapSqlParameterSource()
-                        .addValue("device_id", entity.getDeviceId())
-                        .addValue("vm_id", entity.getVmId())
-                        .addValue("address", entity.getAddress())
-                        .addValue("alias", entity.getAlias());
-
-                return paramValue;
-            }
-        };
-    }
 }

@@ -40,12 +40,13 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
         }
     }
 
+    @Override
     /**
      * Enables to send update procedure name as a parameter that overrides the default
      * one.
      * In case this parameter is null the default procedure is used.
      */
-    protected void updateAllInBatch(String procedureName,
+    public void updateAllInBatch(String procedureName,
             Collection<T> paramValues,
             MapSqlParameterMapper<T> mapper) {
         getCallsHandler().executeStoredProcAsBatch(procedureName == null ? getProcedureNameForUpdate() : procedureName,
@@ -65,11 +66,4 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
             save(entity);
         }
     }
-
-    @Override
-    public void updateAllInBatch(Collection<T> entities) {
-        updateAllInBatch(getProcedureNameForUpdate(), entities, getBatchMapper());
-    }
-
-    public abstract MapSqlParameterMapper<T> getBatchMapper();
 }

@@ -8,7 +8,6 @@ import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -56,26 +55,6 @@ public class VmNetworkStatisticsDaoDbFacadeImpl extends MassOperationsGenericDao
                 entity.setTransmitDropRate(rs.getDouble("tx_drop"));
                 entity.setStatus(InterfaceStatus.forValue(rs.getInt("iface_status")));
                 return entity;
-            }
-        };
-    }
-
-    @Override
-    public MapSqlParameterMapper<VmNetworkStatistics> getBatchMapper() {
-        return new MapSqlParameterMapper<VmNetworkStatistics>() {
-
-            @Override
-            public MapSqlParameterSource map(VmNetworkStatistics entity) {
-                MapSqlParameterSource paramValue = new MapSqlParameterSource()
-                        .addValue("id", entity.getId())
-                        .addValue("rx_drop", entity.getReceiveDropRate())
-                        .addValue("rx_rate", entity.getReceiveRate())
-                        .addValue("tx_drop", entity.getTransmitDropRate())
-                        .addValue("tx_rate", entity.getTransmitRate())
-                        .addValue("iface_status", entity.getStatus())
-                        .addValue("vm_id", entity.getVmId());
-
-                return paramValue;
             }
         };
     }

@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.VmExitStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
-import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -27,6 +26,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
         setProcedureNameForGet("GetVmDynamicByVmGuid");
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<VmDynamic> getAllRunningForVds(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
@@ -173,50 +173,5 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 return entity;
             }
         };
-    }
-
-    @Override
-    public MapSqlParameterMapper<VmDynamic> getBatchMapper() {
-        return new MapSqlParameterMapper<VmDynamic>() {
-            @Override
-            public MapSqlParameterSource map(VmDynamic entity) {
-                MapSqlParameterSource paramValue = new MapSqlParameterSource()
-                        .addValue("guest_cur_user_name", entity.getGuestCurrentUserName())
-                        .addValue("console_cur_user_name", entity.getConsoleCurrentUserName())
-                        .addValue("guest_last_login_time", entity.getGuestLastLoginTime())
-                        .addValue("guest_last_logout_time", entity.getGuestLastLogoutTime())
-                        .addValue("console_user_id", entity.getConsoleUserId())
-                        .addValue("guest_os", entity.getGuestOs())
-                        .addValue("migrating_to_vds", entity.getMigratingToVds())
-                        .addValue("run_on_vds", entity.getRunOnVds())
-                        .addValue("status", entity.getStatus())
-                        .addValue("vm_guid", entity.getId())
-                        .addValue("vm_host", entity.getVmHost())
-                        .addValue("vm_ip", entity.getVmIp())
-                        .addValue("last_start_time", entity.getLastStartTime())
-                        .addValue("vm_pid", entity.getVmPid())
-                        .addValue("display", entity.getDisplay())
-                        .addValue("acpi_enable", entity.getAcpiEnable())
-                        .addValue("session", entity.getSession())
-                        .addValue("display_ip", entity.getDisplayIp())
-                        .addValue("display_type", entity.getDisplayType())
-                        .addValue("kvm_enable", entity.getKvmEnable())
-                        .addValue("boot_sequence", entity.getBootSequence())
-                        .addValue("display_secure_port", entity.getDisplaySecurePort())
-                        .addValue("utc_diff", entity.getUtcDiff())
-                        .addValue("last_vds_run_on", entity.getLastVdsRunOn())
-                        .addValue("client_ip", entity.getClientIp())
-                        .addValue("guest_requested_memory", entity.getGuestRequestedMemory())
-                        .addValue("hibernation_vol_handle", entity.getHibernationVolHandle())
-                        .addValue("exit_status", entity.getExitStatus())
-                        .addValue("pause_status", entity.getPauseStatus())
-                        .addValue("exit_message", entity.getExitMessage())
-                        .addValue("hash", entity.getHash())
-                        .addValue("guest_agent_nics_hash", entity.getGuestAgentNicsHash())
-                        .addValue("last_watchdog_event", entity.getLastWatchdogEvent())
-                        .addValue("last_watchdog_action", entity.getLastWatchdogAction());
-
-                return paramValue;
-            }};
     }
 }
