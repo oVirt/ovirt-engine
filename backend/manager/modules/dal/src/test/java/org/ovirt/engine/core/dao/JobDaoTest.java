@@ -106,12 +106,10 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     public void updateJobLastUpdateTime() throws ParseException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date updateDate = df.parse("2012-10-01 10:00:00");
-        List<Job> jobsList = dao.getAll();
-        assertTrue("Check there are Job entries", !jobsList.isEmpty());
-        Job job = jobsList.get(0);
+        Job job = dao.get(getExistingEntityId());
         Date lastUpdateTime = job.getLastUpdateTime();
         dao.updateJobLastUpdateTime(getExistingEntityId(), updateDate);
-        Job jobAfterUpdate = dao.get(job.getId());
+        Job jobAfterUpdate = dao.get(getExistingEntityId());
         assertTrue("Compare the previous date is differ than new one",
                 !lastUpdateTime.equals(jobAfterUpdate.getLastUpdateTime()));
         assertEquals("Compare date was persisted by reading it from database",
