@@ -123,7 +123,11 @@ public final class EntityObject extends JavaScriptObject {
 
         // Event
         else if (businessEntity instanceof AuditLog) {
-            // No custom properties for now
+            obj.setProperty("correlationId", ((AuditLog) businessEntity).getCorrelationId()); //$NON-NLS-1$
+            obj.setProperty("message", ((AuditLog) businessEntity).getmessage()); //$NON-NLS-1$
+            obj.setProperty("callStack", ((AuditLog) businessEntity).getCallStack()); //$NON-NLS-1$
+            obj.setProperty("customEventId", String.valueOf(((AuditLog) businessEntity).getCustomEventId())); //$NON-NLS-1$
+            obj.setProperty("toString", ((AuditLog) businessEntity).toStringForLogging()); //$NON-NLS-1$
         }
 
         return obj;
