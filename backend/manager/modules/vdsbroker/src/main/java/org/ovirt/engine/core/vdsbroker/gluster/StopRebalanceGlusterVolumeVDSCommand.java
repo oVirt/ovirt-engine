@@ -9,7 +9,7 @@ public class StopRebalanceGlusterVolumeVDSCommand <P extends GlusterVolumeVDSPar
     }
 
     @Override
-    protected void ExecuteVdsBrokerCommand() {
+    protected void executeVdsBrokerCommand() {
         status = getBroker().glusterVolumeRebalanceStop(getParameters().getVolumeName());
         proceedProxyReturnValue();
     }
