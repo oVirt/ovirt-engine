@@ -236,7 +236,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmDrives() {
-        boolean containsVirtioScsiDisk = true;
         List<Disk> disks = getSortedDisks();
         for (Disk disk : disks) {
             Map<String, Object> struct = new HashMap<String, Object>();
@@ -265,7 +264,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         struct.put(VdsProperties.Device, VmDeviceType.LUN.getName());
                         struct.put(VdsProperties.Sgio, disk.getSgio().toString().toLowerCase());
                     }
-                    containsVirtioScsiDisk = true;
                     break;
                 default:
                     logUnsupportedInterfaceType();
@@ -303,14 +301,6 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 devices.add(struct);
                 addToManagedDevices(vmDevice);
             }
-        }
-
-        if (containsVirtioScsiDisk) {
-            Map<String, Object> struct = new HashMap<String, Object>();
-            struct.put(VdsProperties.Type, VmDeviceGeneralType.CONTROLLER.getValue());
-            struct.put(VdsProperties.Device, VdsProperties.Scsi);
-            struct.put(VdsProperties.Model, VdsProperties.VirtioScsi);
-            devices.add(struct);
         }
     }
 
@@ -854,6 +844,25 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             }
             watchdogFromRpc.put(VdsProperties.SpecParams, specParams);
             addDevice(watchdogFromRpc, watchdog, null);
+        }
+    }
+
+    @Override
+    protected void buildVmVirtioScsi() {
+        List<VmDevice> vmDevices =
+                DbFacade.getInstance()
+                        .getVmDeviceDao()
+                        .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+                                VmDeviceGeneralType.CONTROLLER,
+                                VmDeviceType.VIRTIOSCSI.getName());
+
+        for (VmDevice vmDevice : vmDevices) {
+            Map<String, Object> struct = new HashMap<>();
+            struct.put(VdsProperties.Type, VmDeviceGeneralType.CONTROLLER.getValue());
+            struct.put(VdsProperties.Device, VdsProperties.Scsi);
+            struct.put(VdsProperties.Model, VdsProperties.VirtioScsi);
+            addAddress(vmDevice, struct);
+            addDevice(struct, vmDevice, null);
         }
     }
 

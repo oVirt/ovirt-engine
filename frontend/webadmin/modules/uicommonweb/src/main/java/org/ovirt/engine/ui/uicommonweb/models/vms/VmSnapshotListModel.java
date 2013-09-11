@@ -643,6 +643,7 @@ public class VmSnapshotListModel extends SearchableListModel
         parameters.setDiskInfoDestinationMap(imageToDestinationDomainMap);
         setupAddVmFromSnapshotParameters(parameters);
         parameters.setConsoleEnabled((Boolean) model.getIsConsoleDeviceEnabled().getEntity());
+        parameters.setVirtioScsiEnabled((Boolean) model.getIsVirtioScsiEnabled().getEntity());
 
         model.startProgress(null);
 

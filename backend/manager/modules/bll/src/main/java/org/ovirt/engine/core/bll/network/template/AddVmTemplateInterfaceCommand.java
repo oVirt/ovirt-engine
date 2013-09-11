@@ -60,8 +60,10 @@ public class AddVmTemplateInterfaceCommand<T extends AddVmTemplateInterfaceParam
         VmTemplateHandler.UpdateDisksFromDb(getVmTemplate());
 
         if (!VmCommand.checkPciAndIdeLimit(getVmTemplate().getNumOfMonitors(),
-                Collections.<VmNic> singletonList(getParameters().getInterface()),
-                new ArrayList<DiskImageBase>(getVmTemplate().getDiskList()), getReturnValue().getCanDoActionMessages())) {
+                Collections.<VmNic>singletonList(getParameters().getInterface()),
+                new ArrayList<DiskImageBase>(getVmTemplate().getDiskList()),
+                    VmDeviceUtils.isVirtioScsiControllerAttached(getVmId()),
+                    getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 

@@ -1563,4 +1563,10 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Network")
     String networkProfilePopup();
+
+    @DefaultStringValue("VirtIO-SCSI Enabled")
+    String isVirtioScsiEnabled();
+
+    @DefaultStringValue("Attach a VirtIO-SCSI controller when running the VM")
+    String isVirtioScsiEnabledInfo();
 }

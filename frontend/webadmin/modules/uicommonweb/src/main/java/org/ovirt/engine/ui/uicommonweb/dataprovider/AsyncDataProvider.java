@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmGuestAgentInterface;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -652,6 +653,20 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.RunQuery(VdcQueryType.GetSoundDevices, new IdQueryParameters(vmId), aQuery);
+    }
+
+    public static void isVirtioScsiEnabledForVm(AsyncQuery aQuery, Guid vmId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                if (source != null) {
+                    return ((List<VmDevice>) source).size() > 0;
+                }
+
+                return false;
+            }
+        };
+        Frontend.RunQuery(VdcQueryType.GetVirtioScsiControllers, new IdQueryParameters(vmId), aQuery);
     }
 
     public static void getClusterListByService(AsyncQuery aQuery, final boolean supportsVirtService,

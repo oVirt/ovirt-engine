@@ -90,6 +90,7 @@ public class VmDeviceUtils {
             updateAudioDevice(oldVm.getStaticData(), entity, oldVm.getVdsGroupCompatibilityVersion(), params.isSoundDeviceEnabled());
             updateSmartcardDevice(oldVm, entity);
             updateConsoleDevice(entity, params.isConsoleEnabled());
+            updateVirtioScsiController(entity.getId(), params.isVirtioScsiEnabled());
         }
     }
 
@@ -153,10 +154,41 @@ public class VmDeviceUtils {
         }
     }
 
+    public static void updateVirtioScsiController(Guid vmId, Boolean isVirtioScsiEnabled) {
+        if (isVirtioScsiEnabled == null) {
+            return; //we don't want to update the device
+        }
+
+        List<VmDevice> controllers = DbFacade.getInstance()
+                .getVmDeviceDao()
+                .getVmDeviceByVmIdTypeAndDevice(vmId,
+                        VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI.getName());
+
+        if (isVirtioScsiEnabled) {
+            if (controllers.isEmpty()) {
+                addVirtioScsiController(vmId);
+            }
+        } else {
+            for (VmDevice device : controllers) {
+                dao.remove(device.getId());
+            }
+        }
+    }
+
     private static void addConsoleDevice(Guid vmId) {
         VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), vmId),
                 VmDeviceGeneralType.CONSOLE,
                 VmDeviceType.CONSOLE,
+                new HashMap<String, Object>(),
+                true,
+                false,
+                null);
+    }
+
+    private static void addVirtioScsiController(Guid vmId) {
+        VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), vmId),
+                VmDeviceGeneralType.CONTROLLER,
+                VmDeviceType.VIRTIOSCSI,
                 new HashMap<String, Object>(),
                 true,
                 false,
@@ -233,7 +265,8 @@ public class VmDeviceUtils {
                                      List<VmDevice> devicesDataToUse,
                                      Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping,
                                      boolean soundDeviceEnabled,
-                                     boolean isConsoleEnabled) {
+                                     boolean isConsoleEnabled,
+                                     Boolean isVirtioScsiEnabled) {
         Guid id;
         String isoPath=vmBase.getIsoPath();
         // indicates that VM should have CD either from its own (iso_path) or from the snapshot it was cloned from.
@@ -243,6 +276,7 @@ public class VmDeviceUtils {
         boolean addCD = (!hasAlreadyCD && shouldHaveCD);
         boolean hasSoundDevice = false;
         boolean hasAlreadyConsoleDevice = false;
+        boolean hasVirtioScsiController = false;
 
         for (VmDevice device : devicesDataToUse) {
             id = Guid.newGuid();
@@ -288,6 +322,12 @@ public class VmDeviceUtils {
                     if (VmDeviceType.USB.getName().equals(device.getDevice())) {
                         specParams = device.getSpecParams();
                     }
+                    else if (VmDeviceType.VIRTIOSCSI.getName().equals(device.getDevice())) {
+                        hasVirtioScsiController = true;
+                        if (Boolean.FALSE.equals(isVirtioScsiEnabled)) {
+                            continue;
+                        }
+                    }
                     break;
 
                 case VIDEO:
@@ -325,6 +365,7 @@ public class VmDeviceUtils {
                         continue;
                     }
                     break;
+
                 default:
                     break;
             }
@@ -351,6 +392,10 @@ public class VmDeviceUtils {
 
         if (isConsoleEnabled && !hasAlreadyConsoleDevice) {
             addConsoleDevice(dstId);
+        }
+
+        if (Boolean.TRUE.equals(isVirtioScsiEnabled) && !hasVirtioScsiController) {
+            addVirtioScsiController(dstId);
         }
 
         if (isVm) {
@@ -385,7 +430,8 @@ public class VmDeviceUtils {
                                      Guid dstId,
                                      Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping,
                                      boolean soundDeviceEnabled,
-                                     boolean isConsoleEnabled) {
+                                     boolean isConsoleEnabled,
+                                     Boolean isVirtioScsiEnabled) {
         VM vm = DbFacade.getInstance().getVmDao().get(dstId);
         VmBase vmBase = (vm != null) ? vm.getStaticData() : null;
         boolean isVm = (vmBase != null);
@@ -396,7 +442,7 @@ public class VmDeviceUtils {
 
         List<VmDevice> devices = dao.getVmDeviceByVmId(srcId);
         copyVmDevices(srcId, dstId, vm, vmBase, isVm, devices, srcDeviceIdToTargetDeviceIdMapping,
-                soundDeviceEnabled, isConsoleEnabled);
+                soundDeviceEnabled, isConsoleEnabled, isVirtioScsiEnabled);
     }
 
     private static void addVideoDevice(VmBase vm) {
@@ -951,5 +997,14 @@ public class VmDeviceUtils {
                 && vmDevice.getType() == VmDeviceGeneralType.DISK) ||
         (vmDevice.getDevice().equals(VmDeviceType.BRIDGE.getName())
                 && vmDevice.getType() == VmDeviceGeneralType.INTERFACE);
+    }
+
+    public static boolean isVirtioScsiControllerAttached(Guid vmId) {
+        return !getVirtioScsiControllers(vmId).isEmpty();
+    }
+
+    public static List<VmDevice> getVirtioScsiControllers(Guid vmId) {
+        return dao.getVmDeviceByVmIdTypeAndDevice(
+                vmId, VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI.getName());
     }
 }

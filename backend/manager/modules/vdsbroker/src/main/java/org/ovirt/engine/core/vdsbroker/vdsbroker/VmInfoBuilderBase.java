@@ -256,4 +256,6 @@ public abstract class VmInfoBuilderBase {
 
     protected abstract void buildVmWatchdog();
 
+    protected abstract void buildVmVirtioScsi();
+
 }

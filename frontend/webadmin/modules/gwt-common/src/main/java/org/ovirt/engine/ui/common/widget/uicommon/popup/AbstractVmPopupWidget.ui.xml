@@ -186,7 +186,7 @@
         	padding-right: 10px;
         }
         
-        .prestartedVmsIcon, .poolNameIcon, .maxAssignedVmsPerUserIcon {
+        .infoIcon, .prestartedVmsIcon, .poolNameIcon, .maxAssignedVmsPerUserIcon {
         	float: left;
         	padding-top: 5px;
             padding-left: 2px;
@@ -238,6 +238,9 @@
 			width: 197px;
         }
 
+        .isVirtioScsiEnabledEditor {
+            width: 100%;
+        }
 
 		.monitorPanel {
             line-height: 30px;
@@ -547,8 +550,12 @@
 									<e:EntityModelRadioButtonEditor ui:field="provisioningCloneEditor"/>
 								</g:VerticalPanel>
 							</g:HorizontalPanel>
+                            <g:HorizontalPanel>
+                                <e:EntityModelCheckBoxEditor ui:field="isVirtioScsiEnabled" addStyleNames="{style.checkbox}"/>
+                                <d:InfoIcon ui:field="isVirtioScsiEnabledInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
+                            </g:HorizontalPanel>
 							<g:FlowPanel ui:field="disksAllocationPanel">
-							<g:Label ui:field="disksAllocationLabel" text="{constants.disksAllocation}"  addStyleNames="{style.disksAllocation}" visible="false" />
+							    <g:Label ui:field="disksAllocationLabel" text="{constants.disksAllocation}"  addStyleNames="{style.disksAllocation}" visible="false" />
 								<g:VerticalPanel>
 									<s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="490px" showVolumeType="true" addStyleNames="{style.disksAllocationPanel}" />
 								</g:VerticalPanel>

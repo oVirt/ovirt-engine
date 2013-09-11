@@ -163,6 +163,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             allVmDisks.add(getNewDisk());
 
             if (!checkPciAndIdeLimit(vm.getNumOfMonitors(), allVmInterfaces, allVmDisks,
+                    VmDeviceUtils.isVirtioScsiControllerAttached(vm.getId()),
                     getReturnValue().getCanDoActionMessages())) {
                 return false;
             }

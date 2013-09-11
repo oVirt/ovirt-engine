@@ -139,4 +139,10 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
         }
         return (int) actualSize;
     }
+
+    @Override
+    protected boolean isVirtioScsiEnabled() {
+        return getParameters().isVirtioScsiEnabled() != null ?
+                super.isVirtioScsiEnabled() : isVirtioScsiControllerAttached(getVmTemplateId());
+    }
 }

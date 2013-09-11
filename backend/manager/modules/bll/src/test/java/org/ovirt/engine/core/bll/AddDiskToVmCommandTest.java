@@ -333,6 +333,7 @@ public class AddDiskToVmCommandTest {
         doNothing().when(command).updateDisksFromDb();
         doReturn(true).when(command).checkImageConfiguration();
         doReturn(mockSnapshotValidator()).when(command).getSnapshotsValidator();
+        doReturn(false).when(command).isVirtioScsiControllerAttached(any(Guid.class));
     }
 
     /**
@@ -572,7 +573,7 @@ public class AddDiskToVmCommandTest {
     }
 
     @Test
-    public void testAddingIDELunExeedsSlotLimit() {
+    public void testAddingIDELunExceedsSlotLimit() {
         LunDisk disk = createISCSILunDisk();
         disk.setDiskInterface(DiskInterface.IDE);
         AddDiskParameters parameters = createParameters();
@@ -591,7 +592,7 @@ public class AddDiskToVmCommandTest {
     }
 
     @Test
-    public void testAddingPCILunExeedsSlotLimit() {
+    public void testAddingPCILunExceedsSlotLimit() {
         LunDisk disk = createISCSILunDisk();
         disk.setDiskInterface(DiskInterface.VirtIO);
         AddDiskParameters parameters = createParameters();

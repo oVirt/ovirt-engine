@@ -208,6 +208,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
         updateConsoleDevice(getVm().getId());
 
+        updateVirtioScsiEnabled(getVm().getId());
+
         getModel().getVncKeyboardLayout().setSelectedItem(vm.getVncKeyboardLayout());
 
         Frontend.RunQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(getVm().getId()), new AsyncQuery(this,
@@ -267,6 +269,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         updateMemoryBalloon();
         updateCpuSharesAvailability();
         updateNetworkInterfaces(networkBehavior, networkInerfaces);
+        updateVirtioScsiAvailability();
     }
 
     @Override

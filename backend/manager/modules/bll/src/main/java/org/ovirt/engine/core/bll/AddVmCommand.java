@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -249,7 +250,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 returnValue
                         && checkPciAndIdeLimit(getParameters().getVmStaticData().getNumOfMonitors(),
                                 getVmInterfaces(),
-                                getVmDisks(), getReturnValue().getCanDoActionMessages())
+                                getVmDisks(),
+                                isVirtioScsiEnabled(),
+                                getReturnValue().getCanDoActionMessages())
                         && canAddVm(getReturnValue().getCanDoActionMessages(), destStorages.values())
                         && hostToRunExist();
         return returnValue;
@@ -391,6 +394,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
         if (!isCpuSharesValid(vmFromParams)) {
             return failCanDoAction(VdcBllMessages.QOS_CPU_SHARES_OUT_OF_RANGE);
+        }
+
+        if (Boolean.TRUE.equals(getParameters().isVirtioScsiEnabled()) &&
+                !FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
+            return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
         }
 
         return true;
@@ -605,7 +613,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 getVmId(),
                 getSrcDeviceIdToTargetDeviceIdMapping(),
                 getParameters().isSoundDeviceEnabled(),
-                getParameters().isConsoleEnabled());
+                getParameters().isConsoleEnabled(),
+                isVirtioScsiEnabled());
     }
 
     protected static boolean isLegalClusterId(Guid clusterId, List<String> reasons) {
@@ -934,5 +943,15 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         srcDeviceIdToTargetDeviceIdMapping.putAll(srcVmNicIdToTargetVmNicIdMapping);
         srcDeviceIdToTargetDeviceIdMapping.putAll(srcDiskIdToTargetDiskIdMapping);
         return srcDeviceIdToTargetDeviceIdMapping;
+    }
+
+    protected boolean isVirtioScsiEnabled() {
+        Boolean virtioScsiEnabled = getParameters().isVirtioScsiEnabled();
+        return virtioScsiEnabled != null ? virtioScsiEnabled :
+                FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version());
+    }
+
+    protected boolean isVirtioScsiControllerAttached(Guid vmId) {
+        return VmDeviceUtils.isVirtioScsiControllerAttached(vmId);
     }
 }

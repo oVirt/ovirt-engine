@@ -758,6 +758,16 @@ public class UnitVmModel extends Model {
         privateProvisioningClone_IsSelected = value;
     }
 
+    private EntityModel isVirtioScsiEnabled;
+
+    public EntityModel getIsVirtioScsiEnabled() {
+        return isVirtioScsiEnabled;
+    }
+
+    public void setIsVirtioScsiEnabled(EntityModel virtioScsiEnabled) {
+        this.isVirtioScsiEnabled = virtioScsiEnabled;
+    }
+
     private NotChangableForVmInPoolListModel privatePriority;
 
     public ListModel getPriority()
@@ -1289,6 +1299,10 @@ public class UnitVmModel extends Model {
         getMaxAssignedVmsPerUser().setIsAvailable(false);
 
         setDisksAllocationModel(new DisksAllocationModel());
+
+        setIsVirtioScsiEnabled(new EntityModel());
+        getIsVirtioScsiEnabled().setEntity(false);
+        getIsVirtioScsiEnabled().setIsAvailable(false);
 
         setProvisioningClone_IsSelected(new NotChangableForVmInPoolEntityModel());
         getProvisioningClone_IsSelected().getEntityChangedEvent().addListener(this);

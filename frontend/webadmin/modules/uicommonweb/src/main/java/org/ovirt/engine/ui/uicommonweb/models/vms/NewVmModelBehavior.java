@@ -108,6 +108,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             }
 
             updateConsoleDevice(template.getId());
+            updateVirtioScsiEnabled(template.getId());
             updateTimeZone(template.getTimeZone());
 
             // Update domain list
@@ -194,6 +195,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         updateNetworkInterfaces(networkBehavior, null);
         updateMemoryBalloon();
         updateCpuSharesAvailability();
+        updateVirtioScsiAvailability();
     }
 
     private void updateNetworkInterfacesByTemplate(VmTemplate template) {
@@ -362,7 +364,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
     @Override
     public void updateIsDisksAvailable()
     {
-        getModel().setIsDisksAvailable(getModel().getDisks() != null
+        getModel().setIsDisksAvailable(getModel().getDisks() != null && !getModel().getDisks().isEmpty()
                 && getModel().getProvisioning().getIsChangable());
     }
 

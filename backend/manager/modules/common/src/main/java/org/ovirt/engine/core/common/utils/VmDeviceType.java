@@ -23,6 +23,7 @@ public enum VmDeviceType {
     BALLOON("balloon"),
     CONSOLE("console"),
     WATCHDOG("watchdog"),
+    VIRTIOSCSI("virtio-scsi"),
     OTHER("other", "0"),
     UNKNOWN("unknown", "-1");
 

@@ -20,6 +20,7 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
     private HashMap<Guid, DiskImage> diskInfoDestinationMap;
     private Boolean soundDeviceEnabled;
     private Boolean consoleEnabled;
+    private Boolean virtioScsiEnabled;
 
     public AddVmPoolWithVmsParameters() {
     }
@@ -69,4 +70,11 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
         this.consoleEnabled = consoleEnabled;
     }
 
+    public Boolean isVirtioScsiEnabled() {
+        return virtioScsiEnabled;
+    }
+
+    public void setVirtioScsiEnabled(Boolean virtioScsiEnabled) {
+        this.virtioScsiEnabled = virtioScsiEnabled;
+    }
 }

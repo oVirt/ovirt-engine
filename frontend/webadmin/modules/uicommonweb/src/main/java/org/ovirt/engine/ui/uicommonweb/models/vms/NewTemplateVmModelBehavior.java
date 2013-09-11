@@ -174,6 +174,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         updateQuotaByCluster(null, null);
         updateMemoryBalloon();
         updateCpuSharesAvailability();
+        updateVirtioScsiAvailability();
     }
 
     @Override

@@ -108,6 +108,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
 
             updateTimeZone(vmBase.getTimeZone());
             updateConsoleDevice(vmBase.getId());
+            updateVirtioScsiEnabled(vmBase.getId());
 
             // Update domain list
             updateDomain();
@@ -192,6 +193,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         }
         updateMemoryBalloon();
         updateCpuSharesAvailability();
+        updateVirtioScsiAvailability();
         updateTemplate();
     }
 

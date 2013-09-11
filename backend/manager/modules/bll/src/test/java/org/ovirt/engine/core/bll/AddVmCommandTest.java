@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -69,6 +70,7 @@ public class AddVmCommandTest {
     private static final Guid STORAGE_POOL_ID = Guid.newGuid();
     private static final Guid STORAGE_DOMAIN_ID = Guid.newGuid();
     private VmTemplate vmTemplate = null;
+    private VDSGroup vdsGroup = null;
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule();
@@ -211,6 +213,13 @@ public class AddVmCommandTest {
         assertTrue("Clone vm should have failed due to no configuration id",
                 reasons.contains(VdcBllMessages.ACTION_TYPE_FAILED_VM_SNAPSHOT_HAS_NO_CONFIGURATION.toString()));
 
+    }
+
+    @Test
+    public void isVirtioScsiEnabledDefaultedToTrue() {
+        AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(0, 0);
+        doReturn(createVdsGroup()).when(cmd).getVdsGroup();
+        assertTrue("isVirtioScsiEnabled hasn't been defaulted to true on cluster >= 3.3.", cmd.isVirtioScsiEnabled());
     }
 
     protected void mockNonInterestingMethodsForCloneVmFromSnapshot(AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd) {
@@ -393,6 +402,14 @@ public class AddVmCommandTest {
         return vmTemplate;
     }
 
+    private VDSGroup createVdsGroup() {
+        if (vdsGroup == null) {
+            vdsGroup = new VDSGroup();
+            vdsGroup.setcompatibility_version(Version.v3_3);
+        }
+        return vdsGroup;
+    }
+
     private static DiskImage createDiskImageTemplate() {
         DiskImage i = new DiskImage();
         i.setSizeInGigabytes(USED_SPACE_GB + AVAILABLE_SPACE_GB);
@@ -442,6 +459,7 @@ public class AddVmCommandTest {
         mcr.mockConfigValue(ConfigValues.PredefinedVMProperties, Version.v3_0, "");
         mcr.mockConfigValue(ConfigValues.UserDefinedVMProperties, Version.v3_0, "");
         mcr.mockConfigValue(ConfigValues.InitStorageSparseSizeInGB, 1);
+        mcr.mockConfigValue(ConfigValues.VirtIoScsiEnabled, Version.v3_3, true);
     }
 
     private void mockConfigSizeRequirements(int requiredSpaceBufferInGB) {
@@ -495,9 +513,11 @@ public class AddVmCommandTest {
         doReturn(false).when(spy).isVmWithSameNameExists(anyString());
         doReturn(STORAGE_POOL_ID).when(spy).getStoragePoolId();
         doReturn(createVmTemplate()).when(spy).getVmTemplate();
+        doReturn(createVdsGroup()).when(spy).getVdsGroup();
         doReturn(true).when(spy).areParametersLegal(anyListOf(String.class));
         doReturn(Collections.<VmNetworkInterface> emptyList()).when(spy).getVmInterfaces();
         doReturn(Collections.<DiskImageBase> emptyList()).when(spy).getVmDisks();
+        doReturn(false).when(spy).isVirtioScsiControllerAttached(any(Guid.class));
         spy.setVmTemplateId(Guid.newGuid());
     }
 }
