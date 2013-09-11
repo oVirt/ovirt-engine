@@ -19,4 +19,14 @@ public class ApplicationDynamicMessages extends DynamicMessages {
         addFallback(DynamicMessageKey.GUIDE_LINK_LABEL, constants.guideLinkLabel());
     }
 
+    /**
+     * Get the extended guide URL using the {@code Dictionary} in the host page. Uses current locale (e.g. "en_US")
+     * for placeholder {0}, if it exists. With a fall back to the standard GWT Constant.
+     *
+     * @return The guide URL.
+     */
+    public final String extendedGuideUrl() {
+        return formatString(DynamicMessageKey.EXTENDED_GUIDE_URL, getCurrentLocaleAsString());
+    }
+
 }

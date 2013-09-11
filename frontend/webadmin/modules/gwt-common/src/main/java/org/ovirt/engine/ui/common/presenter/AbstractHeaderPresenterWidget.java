@@ -7,6 +7,7 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 
@@ -24,14 +25,14 @@ public abstract class AbstractHeaderPresenterWidget<V extends AbstractHeaderPres
 
     private final CurrentUser user;
     private final String windowName;
-    private final String guideUrl;
+    private String guideUrl;
 
     public AbstractHeaderPresenterWidget(EventBus eventBus, V view, CurrentUser user,
             String windowName, String guideUrl) {
         super(eventBus, view);
         this.user = user;
         this.windowName = windowName;
-        this.guideUrl = guideUrl;
+        setGuideUrl(guideUrl);
     }
 
     @Override
@@ -51,7 +52,14 @@ public abstract class AbstractHeaderPresenterWidget<V extends AbstractHeaderPres
                 WebUtils.openUrlInNewWindow(windowName, guideUrl, WebUtils.OPTION_SCROLLBARS);
             }
         }));
+    }
 
+    /**
+     * Set the URL of the guide link. This string is escaped.
+     * @param guideUrlString The new URL as a string.
+     */
+    public void setGuideUrl(String guideUrlString) {
+        this.guideUrl = SafeHtmlUtils.htmlEscapeAllowEntities(guideUrlString);
     }
 
     @Override

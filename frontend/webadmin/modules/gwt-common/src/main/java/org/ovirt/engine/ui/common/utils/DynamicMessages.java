@@ -35,6 +35,7 @@ public class DynamicMessages {
         FEEDBACK_URL("feedback_url"), //$NON-NLS-1$
         FEEDBACK_LINK_LABEL("feedback_link_label"), //$NON-NLS-1$
         GUIDE_URL("guide_url"), //$NON-NLS-1$
+        EXTENDED_GUIDE_URL("extended_guide_url"), //$NON-NLS-1$
         GUIDE_LINK_LABEL("guide_link_label"), //$NON-NLS-1$
         CLIENT_RESOURCES("client_resources"), //$NON-NLS-1$
         CONSOLE_CLIENT_RESOURCES("console_client_resources"), //$NON-NLS-1$
@@ -66,7 +67,7 @@ public class DynamicMessages {
     /**
      * The {@code Dictionary} that contains the messages from the host page.
      */
-    private Dictionary dictionary;
+    private final Dictionary dictionary;
 
     /**
      * The {@code Map} containing the fallback values in case the message is not found in the dictionary.
@@ -185,6 +186,14 @@ public class DynamicMessages {
     }
 
     /**
+     * Convenience method to get the current locale as a string.
+     * @return The current locale as a String.
+     */
+    protected String getCurrentLocaleAsString() {
+        return LocaleInfo.getCurrentLocale().getLocaleName();
+    }
+
+    /**
      * Get the application title using the {@code Dictionary} in the host page. With a fall back to the standard GWT
      * Constant.
      *
@@ -263,7 +272,7 @@ public class DynamicMessages {
      * @return The guide URL.
      */
     public final String guideUrl() {
-        return formatString(DynamicMessageKey.GUIDE_URL, LocaleInfo.getCurrentLocale().getLocaleName());
+        return formatString(DynamicMessageKey.GUIDE_URL, getCurrentLocaleAsString());
     }
 
     /**

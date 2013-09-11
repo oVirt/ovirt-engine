@@ -32,7 +32,8 @@ public abstract class BaseSystemModule extends AbstractGinModule {
         bindEventBus();
         bind(TokenFormatter.class).to(ParameterTokenFormatter.class).in(Singleton.class);
         bind(RootPresenter.class).asEagerSingleton();
-        bind(PlaceManager.class).to(placeManager).in(Singleton.class);
+        bind(PlaceManager.class).to(placeManager);
+        bind(placeManager).in(Singleton.class);
         bind(CurrentUser.class).in(Singleton.class);
         bind(LoggedInGatekeeper.class).in(Singleton.class);
         bind(ErrorPopupManager.class).to(ErrorPopupManagerImpl.class).in(Singleton.class);
