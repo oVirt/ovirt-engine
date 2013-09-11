@@ -2639,6 +2639,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Gluster service is not supported in compatibility version ${compatibilityVersion}.")
     String GLUSTER_NOT_SUPPORTED();
 
+    @DefaultStringValue("Volume id is invalid.")
+    String GLUSTER_VOLUME_ID_INVALID();
+
     @Constants.DefaultStringValue("Failed to run LDAP query, please check server logs for more info.")
     String FAILED_TO_RUN_LDAP_QUERY();
 

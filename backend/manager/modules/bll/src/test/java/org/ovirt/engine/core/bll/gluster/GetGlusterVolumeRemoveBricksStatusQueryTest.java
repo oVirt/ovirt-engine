@@ -18,19 +18,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
+import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterAsyncTask;
 import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusDetail;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusForHost;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.common.job.Step;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -39,8 +39,8 @@ import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 
-public class GetGlusterVolumeRebalanceStatusQueryTest extends
-        AbstractQueryTest<GlusterVolumeQueriesParameters, GetGlusterVolumeRebalanceStatusQuery<GlusterVolumeQueriesParameters>> {
+public class GetGlusterVolumeRemoveBricksStatusQueryTest extends
+        AbstractQueryTest<GlusterVolumeRemoveBricksQueriesParameters, GetGlusterVolumeRemoveBricksStatusQuery<GlusterVolumeRemoveBricksQueriesParameters>> {
 
     private static final Guid CLUSTER_ID = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
     private static final String SERVER_1 = "server1";
@@ -113,9 +113,31 @@ public class GetGlusterVolumeRebalanceStatusQueryTest extends
         return summary;
     }
 
+    private List<GlusterBrickEntity> getBricks() {
+        GlusterBrickEntity brick1 = new GlusterBrickEntity();
+        brick1.setId(Guid.newGuid());
+        brick1.setServerId(SERVER_ID);
+        brick1.setVolumeId(VOLUME_ID);
+
+        GlusterBrickEntity brick2 = new GlusterBrickEntity();
+        brick2.setId(Guid.newGuid());
+        brick2.setServerId(SERVER_ID);
+        brick2.setVolumeId(VOLUME_ID);
+
+        List<GlusterBrickEntity> bricksList = new ArrayList<GlusterBrickEntity>();
+        bricksList.add(brick1);
+        bricksList.add(brick2);
+
+        return bricksList;
+    }
+
     private GlusterVolumeEntity getVolume() {
         GlusterVolumeEntity volume = new GlusterVolumeEntity();
+        volume.setName("Vol1");
         volume.setId(VOLUME_ID);
+        volume.setReplicaCount(2);
+        volume.setBricks(getBricks());
+        volume.setVolumeType(GlusterVolumeType.DISTRIBUTE);
         volume.setAsyncTask(getAsyncTask());
         return volume;
     }
@@ -168,7 +190,7 @@ public class GetGlusterVolumeRebalanceStatusQueryTest extends
         returnValue.setSucceeded(true);
         returnValue.setReturnValue(expectedVolumeStatusDetails);
 
-        doReturn(returnValue).when(getQuery()).runVdsCommand(eq(VDSCommandType.GetGlusterVolumeRebalanceStatus),
+        doReturn(returnValue).when(getQuery()).runVdsCommand(eq(VDSCommandType.GetGlusterVolumeRemoveBricksStatus),
                 any(VDSParametersBase.class));
     }
 
@@ -196,7 +218,5 @@ public class GetGlusterVolumeRebalanceStatusQueryTest extends
         doReturn(null).when(volumeDao).getById(Guid.Empty);
 
         getQuery().executeQueryCommand();
-        VdcQueryReturnValue returnValue = (VdcQueryReturnValue)getQuery().getReturnValue();
-        assertEquals(VdcBllMessages.GLUSTER_VOLUME_ID_INVALID, returnValue.getExceptionString());
     }
 }
