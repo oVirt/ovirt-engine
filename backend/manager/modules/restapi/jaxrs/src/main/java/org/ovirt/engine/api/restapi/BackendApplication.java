@@ -62,6 +62,7 @@ import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.security.auth.LoginValidator;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
+import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 
 @ApplicationPath("/")
@@ -134,6 +135,7 @@ public class BackendApplication extends Application {
         addResource(new BackendJobsResource());
         addResource(new BackendStorageServerConnectionsResource());
         addResource(new BackendVnicProfilesResource());
+        addResource(VmHelper.getInstance());
 
         // Authentication singletons:
         final BasicAuthorizationScheme scheme = new BasicAuthorizationScheme();

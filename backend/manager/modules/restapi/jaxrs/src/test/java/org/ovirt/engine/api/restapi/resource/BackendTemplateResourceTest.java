@@ -17,6 +17,7 @@ import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -34,8 +35,16 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendTemplateResourceTest
     extends AbstractBackendSubResourceTest<Template, VmTemplate, BackendTemplateResource> {
 
+    protected VmHelper vmHelper = VmHelper.getInstance();
+
     public BackendTemplateResourceTest() {
         super(new BackendTemplateResource(GUIDS[0].toString()));
+    }
+
+    @Override
+    public void init() {
+        super.init();
+        initBackendResource(vmHelper);
     }
 
     @Test
@@ -90,6 +99,7 @@ public class BackendTemplateResourceTest
             populates.add("true");
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
             setUpGetConsoleExpectations(new int[]{0});
+            setUpGetVirtioScsiExpectations(new int[]{0});
         }
         control.replay();
 
@@ -123,6 +133,7 @@ public class BackendTemplateResourceTest
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUpGetConsoleExpectations(new int[]{0});
+        setUpGetVirtioScsiExpectations(new int[]{0});
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
                                            UpdateVmTemplateParameters.class,
@@ -310,6 +321,16 @@ public class BackendTemplateResourceTest
                                               ArrayList<AsyncTaskStatus> asyncStatuses) {
         String uri = "templates/" + GUIDS[0] + "/action";
         return setUpActionExpectations(task, clz, names, values, true, true, null, asyncTasks, asyncStatuses, null, null, uri, true);
+    }
+
+    private void setUpGetVirtioScsiExpectations(int ... idxs) throws Exception {
+        for (int i = 0; i < idxs.length; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[idxs[i]] },
+                    new ArrayList<>());
+        }
     }
 
     private void verifyActionResponse(Response r) throws Exception {

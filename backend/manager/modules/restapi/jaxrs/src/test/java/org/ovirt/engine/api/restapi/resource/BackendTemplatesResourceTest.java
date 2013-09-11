@@ -16,6 +16,7 @@ import org.ovirt.engine.api.model.CreationStatus;
 import org.ovirt.engine.api.model.Permissions;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
@@ -33,10 +34,17 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendTemplatesResourceTest
     extends AbstractBackendCollectionResourceTest<Template, VmTemplate, BackendTemplatesResource> {
 
+    protected VmHelper vmHelper = VmHelper.getInstance();
+
     public BackendTemplatesResourceTest() {
         super(new BackendTemplatesResource(), SearchType.VmTemplate, "Template : ");
     }
 
+    @Override
+    public void init() {
+        super.init();
+        initBackendResource(vmHelper);
+    }
 
     @Test
     public void testAddWithClonePermissionsDontClone() throws Exception {
@@ -63,6 +71,7 @@ public class BackendTemplatesResourceTest
                 setUpVm(GUIDS[1]));
         setUpGetEntityExpectations();
         setUpGetConsoleExpectations(new int[]{0, 0, 0});
+        setUpGetVirtioScsiExpectations(new int[]{0, 0});
         setUpEntityQueryExpectations(VdcQueryType.GetVdsGroupByVdsGroupId,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -182,6 +191,7 @@ public class BackendTemplatesResourceTest
                 getVdsGroupEntity());
 
         setUpGetConsoleExpectations(new int[]{0,0});
+        setUpGetVirtioScsiExpectations(new int[]{0});
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
@@ -218,6 +228,7 @@ public class BackendTemplatesResourceTest
         setUpHttpHeaderExpectations("Expect", "201-created");
 
         setUpGetConsoleExpectations(new int[]{0, 0, 0});
+        setUpGetVirtioScsiExpectations(new int[]{0, 0});
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
                                    IdQueryParameters.class,
                                    new String[] { "Id" },
@@ -268,6 +279,7 @@ public class BackendTemplatesResourceTest
                                    setUpVm(GUIDS[1]));
         setUpGetEntityExpectations();
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
+        setUpGetVirtioScsiExpectations(new int[] {0, 0});
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
@@ -315,6 +327,7 @@ public class BackendTemplatesResourceTest
 
         setUpGetEntityExpectations();
         setUpGetConsoleExpectations(new int[] {0,0,0});
+        setUpGetVirtioScsiExpectations(new int[] {0,0});
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
@@ -360,6 +373,7 @@ public class BackendTemplatesResourceTest
         setUpGetEntityExpectations();
 
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
+        setUpGetVirtioScsiExpectations(new int[] {0, 0});
 
         setUpCreationExpectations(VdcActionType.AddVmTemplate,
                                   AddVmTemplateParameters.class,
@@ -405,6 +419,7 @@ public class BackendTemplatesResourceTest
         setUpGetEntityExpectations();
 
         setUpGetConsoleExpectations(new int[] {0, 0, 0});
+        setUpGetVirtioScsiExpectations(new int[] {0, 0});
 
         setUpGetEntityExpectations("Cluster: name=" + NAMES[2],
                                    SearchType.Cluster,
@@ -552,6 +567,7 @@ public class BackendTemplatesResourceTest
             populates.add("true");
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
             setUpGetConsoleExpectations(new int[]{0, 1, 2});
+            setUpGetVirtioScsiExpectations(new int[] {0, 1, 2});
         }
 
         setUpQueryExpectations("");
@@ -584,5 +600,15 @@ public class BackendTemplatesResourceTest
         assertNotNull(model.getCpu().getTopology());
         assertEquals(4, model.getCpu().getTopology().getCores().intValue());
         assertEquals(2, model.getCpu().getTopology().getSockets().intValue());
+    }
+
+    private void setUpGetVirtioScsiExpectations(int ... idxs) throws Exception {
+        for (int i = 0; i < idxs.length; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[idxs[i]] },
+                    new ArrayList<>());
+        }
     }
 }

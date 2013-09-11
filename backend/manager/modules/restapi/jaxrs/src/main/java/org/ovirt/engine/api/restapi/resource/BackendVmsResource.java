@@ -28,10 +28,12 @@ import org.ovirt.engine.api.model.Statistics;
 import org.ovirt.engine.api.model.Tags;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
+import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
+import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -251,6 +253,8 @@ public class BackendVmsResource extends
                 new AddVmFromSnapshotParameters(staticVm, sourceSnapshotId);
         params.setDiskInfoDestinationMap(images);
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
+        params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
+                vm.getVirtioScsi().isEnabled() : null);
 
         params.setConsoleEnabled(vm.isSetConsole() && vm.getConsole().isSetEnabled()
                 ? vm.getConsole().isEnabled()
@@ -264,6 +268,8 @@ public class BackendVmsResource extends
     private Response cloneVmFromTemplate(VmStatic staticVm, VM vm, Guid templateId) {
         AddVmFromTemplateParameters params = new AddVmFromTemplateParameters(staticVm, getDisksToClone(vm.getDisks(), templateId), Guid.Empty);
         params.setVmPayload(getPayload(vm));
+        params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
+                vm.getVirtioScsi().isEnabled() : null);
         if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
         }
@@ -327,6 +333,9 @@ public class BackendVmsResource extends
                 ? vm.getConsole().isEnabled()
                 : !getConsoleDevicesForEntity(templateId).isEmpty());
 
+        params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
+                vm.getVirtioScsi().isEnabled() : null);
+
         return performCreate(VdcActionType.AddVm,
                                params,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
@@ -346,6 +355,8 @@ public class BackendVmsResource extends
         }
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         params.setStorageDomainId(storageDomainId);
+        params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
+                vm.getVirtioScsi().isEnabled() : null);
 
         if (vm.isSetConsole() && vm.getConsole().isSetEnabled()) {
             params.setConsoleEnabled(vm.getConsole().isEnabled());
@@ -525,6 +536,13 @@ public class BackendVmsResource extends
         model.getConsole().setEnabled(!getConsoleDevicesForEntity(new Guid(model.getId())).isEmpty());
     }
 
+    protected void setVirtioScsiController(VM model) {
+        if (!model.isSetVirtioScsi()) {
+            model.setVirtioScsi(new VirtIOSCSI());
+        }
+        model.getVirtioScsi().setEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(new Guid(model.getId())).isEmpty());
+    }
+
     public void setCertificateInfo(VM model) {
         VdcQueryReturnValue result =
                 runQuery(VdcQueryType.GetVdsCertificateSubjectByVmId,
@@ -554,6 +572,7 @@ public class BackendVmsResource extends
         setPayload(model);
         setBallooning(model);
         setConsoleDevice(model);
+        setVirtioScsiController(model);
         setCertificateInfo(model);
         return model;
     }
