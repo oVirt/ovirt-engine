@@ -17,6 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ForceSelectSPMParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
@@ -90,6 +91,13 @@ public class ForceSelectSPMCommandTest {
     }
 
     @Test
+    public void testCDAStoragePoolNotUp() {
+        storagePool.setStatus(StoragePoolStatus.Uninitialized);
+        assertFalse("canDoAction did not fail on a Storage Pool which is not up", command.canDoAction());
+        checkMessagesContains(command, VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+    }
+
+    @Test
     public void testCDAStoragePoolHasTasks() {
         List<Guid> tasks = Arrays.asList(Guid.newGuid());
         doReturn(tasks).when(asyncTaskDAOMock).getAsyncTaskIdsByStoragePoolId(storagePoolId);
@@ -108,6 +116,7 @@ public class ForceSelectSPMCommandTest {
 
         storagePool = new StoragePool();
         storagePool.setId(storagePoolId);
+        storagePool.setStatus(StoragePoolStatus.Up);
     }
 
     private void mockCommand() {

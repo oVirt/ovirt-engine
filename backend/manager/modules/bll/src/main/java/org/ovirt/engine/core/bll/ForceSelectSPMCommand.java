@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -47,6 +48,10 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
 
         if (getVds().getVdsSpmPriority() == BusinessEntitiesDefinitions.HOST_MIN_SPM_PRIORITY) {
             return failCanDoAction(VdcBllMessages.CANNOT_FORCE_SELECT_SPM_VDS_MARKED_AS_NEVER_SPM);
+        }
+
+        if (!validate(new StoragePoolValidator(getStoragePoolForVds()).isUp())) {
+            return false;
         }
 
         if (isAsyncTasksRunningOnPool(getStoragePoolForVds().getId())) {
