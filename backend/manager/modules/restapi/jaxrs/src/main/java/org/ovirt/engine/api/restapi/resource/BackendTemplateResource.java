@@ -10,6 +10,7 @@ import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Nics;
 import org.ovirt.engine.api.model.Template;
+import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
@@ -19,6 +20,7 @@ import org.ovirt.engine.api.resource.TemplateDisksResource;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.WatchdogsResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
+import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
@@ -130,6 +132,10 @@ public class BackendTemplateResource
             model.setConsole(new Console());
         }
         model.getConsole().setEnabled(!getConsoleDevicesForEntity(entity.getId()).isEmpty());
+        if (!model.isSetVirtioScsi()) {
+            model.setVirtioScsi(new VirtIOSCSI());
+        }
+        model.getVirtioScsi().setEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(entity.getId()).isEmpty());
         return model;
     }
 

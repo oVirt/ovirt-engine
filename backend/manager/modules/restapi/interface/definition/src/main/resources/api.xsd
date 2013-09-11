@@ -1180,6 +1180,12 @@
     <xs:attribute name="enabled" type="xs:boolean"/>
   </xs:complexType>
 
+  <xs:element name="virtio_scsi" type="VirtIO_SCSI"/>
+
+  <xs:complexType name="VirtIO_SCSI">
+    <xs:attribute name="enabled" type="xs:boolean"/>
+  </xs:complexType>
+
   <xs:complexType name="SchedulingPolicyThresholds">
     <xs:attribute name="low" type="xs:int">
         <xs:annotation>
@@ -2213,6 +2219,7 @@
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
           <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="virtio_scsi" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
           <!-- also rel="cdroms/disks/nics/watchdogs" links, see Devices below -->
         </xs:sequence>
@@ -2424,6 +2431,7 @@
           <xs:element ref="quota" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
           <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="virtio_scsi" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="vmpool" minOccurs="0" maxOccurs="1">
             <xs:annotation>

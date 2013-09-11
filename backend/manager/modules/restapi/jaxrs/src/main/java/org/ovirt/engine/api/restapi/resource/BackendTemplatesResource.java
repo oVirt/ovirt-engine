@@ -11,9 +11,11 @@ import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.Templates;
 import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.TemplateResource;
 import org.ovirt.engine.api.resource.TemplatesResource;
 import org.ovirt.engine.api.restapi.types.VmMapper;
+import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
@@ -79,6 +81,8 @@ public class BackendTemplatesResource
         params.setConsoleEnabled(template.getConsole() != null && template.getConsole().isSetEnabled() ?
                         template.getConsole().isEnabled() :
                         !getConsoleDevicesForEntity(staticVm.getId()).isEmpty());
+        params.setVirtioScsiEnabled(template.isSetVirtioScsi() && template.getVirtioScsi().isSetEnabled() ?
+                template.getVirtioScsi().isEnabled() : null);
         boolean isDomainSet = false;
         if (template.isSetStorageDomain() && template.getStorageDomain().isSetId()) {
             params.setDestinationStorageDomainId(asGuid(template.getStorageDomain().getId()));
@@ -178,6 +182,10 @@ public class BackendTemplatesResource
             model.setConsole(new Console());
         }
         model.getConsole().setEnabled(!getConsoleDevicesForEntity(entity.getId()).isEmpty());
+        if (!model.isSetVirtioScsi()) {
+            model.setVirtioScsi(new VirtIOSCSI());
+        }
+        model.getVirtioScsi().setEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(entity.getId()).isEmpty());
         return model;
     }
 

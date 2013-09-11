@@ -611,4 +611,12 @@ public abstract class AbstractBackendBaseTest extends Assert {
                 control.createMock(UriInfo.class),
                 true);
     }
+
+    protected void initBackendResource(BackendResource resource) {
+        resource.setBackend(backend);
+        resource.setValidatorLocator(validatorLocator);
+        resource.setSessionHelper(sessionHelper);
+        resource.setMessageBundle(messageBundle);
+        resource.setHttpHeaders(httpHeaders);
+    }
 }

@@ -82,6 +82,7 @@ actions:
           vm.origin: xs:string
           vm.os.kernel: xs:string
           vm.tunnel_migration: xs:boolean
+          vm.virtio_scsi.enabled: xs:boolean
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.files.file--COLLECTION: {file.name: 'xs:string', file.content: 'xs:string'}}
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
         description: update the virtual machine in the system for the given virtual machine id with the values specified in the request
@@ -152,6 +153,7 @@ actions:
           vm.os.kernel: xs:string
           vm.disks.clone: xs:boolean
           vm.tunnel_migration: xs:boolean
+          vm.virtio_scsi.enabled: xs:boolean
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.files.file--COLLECTION: {file.name: 'xs:string', file.content: 'xs:string'}}
           vm.initialization.configuration.type: 'xs:string'
           vm.initialization.configuration.data: 'xs:string'
@@ -195,6 +197,7 @@ actions:
           vm.origin: xs:string
           vm.os.kernel: xs:string
           vm.tunnel_migration: xs:boolean
+          vm.virtio_scsi.enabled: xs:boolean
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.files.file--COLLECTION: {file.name: 'xs:string', file.content: 'xs:string'}}
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
         description: add a virtual machine to the system by cloning from a snapshot
@@ -236,6 +239,7 @@ actions:
                 vm.os.kernel: xs:string
                 vm.disks.clone: xs:boolean
                 vm.tunnel_migration: xs:boolean
+                vm.virtio_scsi.enabled: xs:boolean
                 vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.files.file--COLLECTION: {file.name: 'xs:string', file.content: 'xs:string'}}
                 vm.initialization.configuration.type: 'xs:string'
                 vm.initialization.configuration.data: 'xs:string'
@@ -3117,6 +3121,7 @@ actions:
           template.usb.enabled: xs:boolean
           template.usb.type: xs:string
           template.tunnel_migration: xs:boolean
+          template.virtio_scsi.enabled: xs:boolean
         description: update the specified template in the system
     urlparams: {}
     headers:
@@ -3161,6 +3166,7 @@ actions:
           template.usb.enabled: xs:boolean
           template.usb.type: xs:string
           template.tunnel_migration: xs:boolean
+          template.virtio_scsi.enabled: xs:boolean
           template.vm.disks.disk--COLLECTION: {disk.id: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
           template.permissions.clone: xs:boolean
           template.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}

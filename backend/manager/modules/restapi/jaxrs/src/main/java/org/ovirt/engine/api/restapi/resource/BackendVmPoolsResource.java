@@ -9,6 +9,7 @@ import org.ovirt.engine.api.model.VmPool;
 import org.ovirt.engine.api.model.VmPools;
 import org.ovirt.engine.api.resource.VmPoolResource;
 import org.ovirt.engine.api.resource.VmPoolsResource;
+import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
@@ -68,6 +69,7 @@ public class BackendVmPoolsResource
 
         AddVmPoolWithVmsParameters params = new AddVmPoolWithVmsParameters(entity, vm, size, -1);
         params.setConsoleEnabled(!getConsoleDevicesForEntity(template.getId()).isEmpty());
+        params.setVirtioScsiEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(template.getId()).isEmpty());
 
         return performCreate(VdcActionType.AddVmPoolWithVms,
                                params,

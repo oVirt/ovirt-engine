@@ -338,6 +338,7 @@ public class BackendVmResource extends
     @Override
     protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
         parent.setConsoleDevice(model);
+        parent.setVirtioScsiController(model);
         return model;
     }
 
@@ -390,6 +391,9 @@ public class BackendVmResource extends
             }
             if (incoming.isSetConsole() && incoming.getConsole().isSetEnabled()) {
                 params.setConsoleEnabled(incoming.getConsole().isEnabled());
+            }
+            if (incoming.isSetVirtioScsi()) {
+                params.setVirtioScsiEnabled(incoming.getVirtioScsi().isEnabled());
             }
             return params;
         }
