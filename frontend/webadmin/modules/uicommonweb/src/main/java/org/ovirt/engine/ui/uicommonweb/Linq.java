@@ -1076,6 +1076,21 @@ public final class Linq
         }
     }
 
+    public final static class NetworkSameProviderPredicate implements IPredicate<Provider> {
+
+        private final Network network;
+
+        public NetworkSameProviderPredicate(Network network) {
+            this.network = network;
+        }
+
+        @Override
+        public boolean match(Provider provider) {
+            return network.isExternal() ? provider.getId().equals(network.getProvidedBy().getProviderId()) : false;
+        }
+
+    }
+
     public interface IPredicate<TSource>
     {
         boolean match(TSource source);

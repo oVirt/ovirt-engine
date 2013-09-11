@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
@@ -130,7 +129,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
             networkModel.getDataCenters().setItems(Arrays.asList(dc));
             networkModel.getDataCenters().setSelectedItem(dc);
             networkModel.getDataCenters().setIsChangable(false);
-            initExternalProvidersList(networkModel);
+            networkModel.stopProgress();
             return;
         }
 
@@ -150,34 +149,9 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
                 } else {
                     networkModel.getDataCenters().setSelectedItem(Linq.firstOrDefault(dataCenters));
                 }
-                initExternalProvidersList(networkModel);
+                networkModel.stopProgress();
             }
         }));
-    }
-
-    private void initExternalProvidersList(final NetworkModel networkModel) {
-        if (networkModel instanceof NewNetworkModel) {
-            AsyncQuery getProvidersQuery = new AsyncQuery();
-            getProvidersQuery.asyncCallback = new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object model, Object result)
-                {
-                    List<Provider> providers = (List<Provider>) result;
-                    networkModel.getExternalProviders().setItems(providers);
-                    networkModel.getExternalProviders().setSelectedItem(Linq.firstOrDefault(providers));
-                    networkModel.stopProgress();
-                }
-            };
-            AsyncDataProvider.GetAllNetworkProviders(getProvidersQuery);
-        } else {
-            NetworkView network = (NetworkView) getSelectedItem();
-            if (network.isExternal()) {
-                Provider provider = new Provider();
-                provider.setName(network.getProviderName());
-                networkModel.getExternalProviders().setSelectedItem(provider);
-            }
-            networkModel.stopProgress();
-        }
     }
 
     private StoragePool findDc(Guid dcId, List<StoragePool> dataCenters) {
