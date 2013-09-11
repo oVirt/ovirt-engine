@@ -432,65 +432,58 @@ public class VolumeBrickListModel extends SearchableListModel {
         GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
 
         RemoveBrickModel removeBrickModel = new RemoveBrickModel();
+        removeBrickModel.setHashName("volume_remove_bricks"); //$NON-NLS-1$
+        removeBrickModel.setTitle(ConstantsManager.getInstance().getConstants().removeBricksTitle());
+        setWindow(removeBrickModel);
+
         removeBrickModel.setReplicaCount(volumeEntity.getReplicaCount());
         removeBrickModel.setStripeCount(volumeEntity.getStripeCount());
-
-        if (!canRemoveBricks(volumeEntity.getVolumeType(),
-                Linq.<GlusterBrickEntity> cast(getSelectedItems()),
-                volumeEntity.getBricks(),
-                removeBrickModel))
-        {
-            ConfirmationModel model = new ConfirmationModel();
-            setWindow(model);
-            model.setEntity(removeBrickModel.isReduceReplica());
-            model.setTitle(ConstantsManager.getInstance().getConstants().removeBricksTitle());
-            model.setMessage(removeBrickModel.getValidationMessage());
-            model.setHashName("volume_remove_bricks_invalid"); //$NON-NLS-1$
-
-            UICommand command2 = new UICommand("Cancel", this); //$NON-NLS-1$
-            command2.setTitle(ConstantsManager.getInstance().getConstants().close());
-            command2.setIsCancel(true);
-            model.getCommands().add(command2);
-            return;
-        }
-
-        ConfirmationModel model = new ConfirmationModel();
-        setWindow(model);
-        model.setEntity(removeBrickModel.isReduceReplica());
-        model.setTitle(ConstantsManager.getInstance().getConstants().removeBricksTitle());
-        model.setHashName("volume_remove_bricks"); //$NON-NLS-1$
-        if (removeBrickModel.isReduceReplica())
-        {
-            model.setMessage(ConstantsManager.getInstance()
-                    .getMessages()
-                    .removeBricksReplicateVolumeMessage(volumeEntity.getReplicaCount(),
-                            volumeEntity.getReplicaCount() - 1));
-        }
-        else
-        {
-            model.setMessage(ConstantsManager.getInstance().getConstants().removeBricksMessage());
-        }
-        model.setNote(ConstantsManager.getInstance().getConstants().removeBricksWarning());
 
         ArrayList<String> list = new ArrayList<String>();
         for (GlusterBrickEntity item : Linq.<GlusterBrickEntity> cast(getSelectedItems()))
         {
             list.add(item.getQualifiedName());
         }
-        model.setItems(list);
+        removeBrickModel.setItems(list);
 
-        UICommand command1 = new UICommand("OnRemove", this); //$NON-NLS-1$
-        command1.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command1.setIsDefault(true);
-        model.getCommands().add(command1);
+        if (!validateRemoveBricks(volumeEntity.getVolumeType(),
+                Linq.<GlusterBrickEntity> cast(getSelectedItems()),
+                volumeEntity.getBricks(),
+                removeBrickModel))
+        {
+            removeBrickModel.setMigrationSupported(false);
+            removeBrickModel.setMessage(removeBrickModel.getValidationMessage());
+        }
+        else
+        {
+            removeBrickModel.setMigrationSupported(volumeEntity.getVolumeType().isDistributedType());
+            removeBrickModel.getMigrateData().setEntity(removeBrickModel.isMigrationSupported());
 
-        UICommand command2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        command2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command2.setIsCancel(true);
-        model.getCommands().add(command2);
+            if (removeBrickModel.isReduceReplica())
+            {
+                removeBrickModel.setMessage(ConstantsManager.getInstance()
+                        .getMessages()
+                        .removeBricksReplicateVolumeMessage(volumeEntity.getReplicaCount(),
+                                volumeEntity.getReplicaCount() - 1));
+            }
+            else
+            {
+                removeBrickModel.setMessage(ConstantsManager.getInstance().getConstants().removeBricksMessage());
+            }
+
+            UICommand command = new UICommand("OnRemove", this); //$NON-NLS-1$
+            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            command.setIsDefault(true);
+            removeBrickModel.getCommands().add(command);
+        }
+
+        UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
+        removeBrickModel.getCommands().add(command);
     }
 
-    public boolean canRemoveBricks(GlusterVolumeType volumeType,
+    public boolean validateRemoveBricks(GlusterVolumeType volumeType,
             List<GlusterBrickEntity> selectedBricks,
             List<GlusterBrickEntity> brickList,
             RemoveBrickModel removeBrickModel)
@@ -663,7 +656,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             return;
         }
 
-        ConfirmationModel model = (ConfirmationModel) getWindow();
+        RemoveBrickModel model = (RemoveBrickModel) getWindow();
 
         if (model.getProgress() != null)
         {
@@ -685,7 +678,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         }
         else if (volumeEntity.getVolumeType() == GlusterVolumeType.DISTRIBUTED_REPLICATE)
         {
-            if ((Boolean) model.getEntity())
+            if (model.isReduceReplica())
             {
                 parameter.setReplicaCount(volumeEntity.getReplicaCount() - 1);
             }
@@ -697,8 +690,10 @@ public class VolumeBrickListModel extends SearchableListModel {
 
         model.startProgress(null);
 
-        Frontend.RunAction(VdcActionType.GlusterVolumeRemoveBricks, parameter, new IFrontendActionAsyncCallback() {
+        boolean isMigrate = (Boolean) model.getMigrateData().getEntity();
 
+        Frontend.RunAction(isMigrate ? VdcActionType.StartRemoveGlusterVolumeBricks
+                : VdcActionType.GlusterVolumeRemoveBricks, parameter, new IFrontendActionAsyncCallback() {
             @Override
             public void executed(FrontendActionAsyncResult result) {
 

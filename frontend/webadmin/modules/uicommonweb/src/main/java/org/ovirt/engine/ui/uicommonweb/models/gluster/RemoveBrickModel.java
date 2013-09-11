@@ -1,15 +1,26 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
-import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class RemoveBrickModel extends Model {
-    int replicaCount;
-    int stripeCount;
-    boolean isReduceReplica;
-    String validationMessage;
+public class RemoveBrickModel extends ConfirmationModel {
+    private int replicaCount;
+
+    private int stripeCount;
+
+    private boolean isReduceReplica;
+
+    private String validationMessage;
+
+    private EntityModel migrateData;
+
+    private boolean isMigrationSupported;
 
     public RemoveBrickModel() {
         setReduceReplica(false);
+        setMigrateData(new EntityModel(false));
+        setMigrationSupported(true);
     }
 
     public int getReplicaCount() {
@@ -44,4 +55,22 @@ public class RemoveBrickModel extends Model {
         this.validationMessage = validationMessage;
     }
 
+    public EntityModel getMigrateData() {
+        return migrateData;
+    }
+
+    public void setMigrateData(EntityModel migrateData) {
+        this.migrateData = migrateData;
+    }
+
+    public boolean isMigrationSupported() {
+        return isMigrationSupported;
+    }
+
+    public void setMigrationSupported(boolean isMigrationSupported) {
+        if (this.isMigrationSupported != isMigrationSupported) {
+            this.isMigrationSupported = isMigrationSupported;
+            onPropertyChanged(new PropertyChangedEventArgs("IsMigrationSupported")); //$NON-NLS-1$
+        }
+    }
 }

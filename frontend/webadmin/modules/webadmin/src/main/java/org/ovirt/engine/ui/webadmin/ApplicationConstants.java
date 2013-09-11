@@ -2681,6 +2681,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("NOTE: Stripe groups will be create based on the order of the bricks.")
     String distributedStripeVolumeBrickInfoLabel();
 
+    @DefaultStringValue("Migrate Data from the bricks")
+    String removeBricksMigrateData();
+
+    @DefaultStringValue("Ensure safe data migration before removing the bricks")
+    String removeBricksMigrateDataInfo();
+
+    @DefaultStringValue("Please note that data will be lost if you choose not to migrate")
+    String removeBricksWarning();
+
     // Volume Brick Details
     @DefaultStringValue("General")
     String generalBrickAdvancedPopupLabel();
